@@ -1,0 +1,17 @@
+#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+# Comment this user in order to use the app/ocelot.json
+#USER app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS dev
+WORKDIR /src
+
+COPY ["./solutions/APIGatewaySolution/src/APIGateway/APIGateway.csproj", "./APIGateway/"]
+WORKDIR "/src/APIGateway"
+RUN dotnet restore "./APIGateway.csproj" --packages "./nuget" --verbosity normal
+COPY ["./solutions/APIGatewaySolution/src/APIGateway","."]
+
+ENTRYPOINT ["dotnet", "watch","run","--no-restore"]

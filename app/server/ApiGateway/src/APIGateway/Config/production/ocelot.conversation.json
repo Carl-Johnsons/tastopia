@@ -1,0 +1,48 @@
+{
+  "Routes": [
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "conversation-api",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/conversation/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ],
+      "UpstreamPathTemplate": "/api/conversation/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "conversation-api" ]
+      }
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "conversation-api",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/conversation/message/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ],
+      "UpstreamPathTemplate": "/api/conversation/message/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "conversation-api" ]
+      }
+    }
+  ]
+}

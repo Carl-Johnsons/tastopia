@@ -1,0 +1,26 @@
+{
+  "Routes": [
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "post-api",
+          "Port": 5005
+        }
+      ],
+      "DownstreamPathTemplate": "/api/post/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ],
+      "UpstreamPathTemplate": "/api/post/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "post-api" ]
+      }
+    }
+  ]
+}

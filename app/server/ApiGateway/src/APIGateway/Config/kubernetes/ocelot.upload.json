@@ -1,0 +1,19 @@
+{
+  "Routes": [
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "upload-api",
+          "Port": 5002
+        }
+      ],
+      "DownstreamPathTemplate": "/api/Upload/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/Upload/{everything}"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "env_update": "./scripts/update-env.sh",
+    "env_setup": "./scripts/setup-env.sh",
+    "services_rebuild": "./scripts/rebuild-service.sh",
+    "services_build_all": "./scripts/build-all-service.sh",
+    "migrations_apply_all": "./scripts/apply-all-migrations.sh",
+    "k8s_deploy": "./scripts/k8s-deploy.sh",
+    "generate_identity_key": "./scripts/generate_identity_key.sh",
+    "docker_prune": "./scripts/docker_prune.sh",
+    "run_all_services": "./scripts/run-all-services.sh"
+  }
+}

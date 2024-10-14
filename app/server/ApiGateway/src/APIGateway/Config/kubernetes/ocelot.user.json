@@ -1,0 +1,48 @@
+{
+  "Routes": [
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "identity-api",
+          "Port": 5001
+        }
+      ],
+      "DownstreamPathTemplate": "/api/users/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ],
+      "UpstreamPathTemplate": "/api/users/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "IdentityServerApi" ]
+      }
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "identity-api",
+          "Port": 5001
+        }
+      ],
+      "DownstreamPathTemplate": "/api/friend/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "OPTIONS"
+      ],
+      "UpstreamPathTemplate": "/api/friend/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "IdentityServerApi" ]
+      }
+    }
+  ]
+}
