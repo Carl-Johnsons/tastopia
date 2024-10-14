@@ -22,7 +22,7 @@ CYAN='\033[0;36m'
 CYAN_OCT='\o033[0;36m'
 LIGHT_CYAN='\033[1;36m'
 LIGHT_CYAN_OCT='\o033[1;36m'
-NC='\033[0m' # No Color
+NC='\033[0m'      # No Color
 NC_OCT='\o033[0m' # No Color
 
 # Read the content of scripts.json
@@ -35,7 +35,7 @@ echo "$scripts"
 # Extract script keys from the scripts variable
 script_keys=$(echo "$scripts" | cut -d':' -f1)
 
-display(){
+display() {
     # Display available scripts with indices
     echo "Available scripts:"
     index=0
@@ -46,7 +46,7 @@ display(){
             echo -e "$index: ${LIGHT_CYAN}$line${NC}"
         fi
         ((index++))
-        
+
     done
 }
 
@@ -59,7 +59,7 @@ while true; do
     if [ -n "$selected_script" ]; then
         echo -e "${LIGHT_BLUE}Executing script: $selected_script${NC}"
         bash "$selected_script"
-        read -rsp $'Press any key to clear the screen...\n' -n1 key  
+        read -rsp $'Press any key to clear the screen...\n' -n1 key
         clear
         display
     else
