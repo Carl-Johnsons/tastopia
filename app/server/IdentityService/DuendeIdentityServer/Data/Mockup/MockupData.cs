@@ -18,10 +18,6 @@ public class MockupData
 
     public void SeedUserData()
     {
-        if (_context.Users.Any()) {
-            return;
-        }
-
         Log.Debug("Seeding user data");
 
         foreach (var user in ApplicationUserData.Data)
