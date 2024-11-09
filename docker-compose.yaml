@@ -1,62 +1,44 @@
 version: "3.8"
 
 services:
-    sql-server:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        container_name: sqlserver
+    postgres:
+        image: postgres:17.0-alpine
+        container_name: postgres
         volumes:
-            - ./data/db:/var/opt/mssql/data # bind mount
-        user: root #mssql
+            - ./data/db:/var/lib/postgresql/data
         ports:
-            # Microsoft SQL Server uses the default port 1433 for all database connections
-            - "${DB_PORT}:1433"
+            # PostgreSQL uses the default port 5432
+            - "${DB_PORT}:5432"
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        restart: always
         networks:
             - back-end
-        environment:
-            ACCEPT_EULA: ${ACCEPT_EULA}
-            SA_PASSWORD: ${SA_PASSWORD}
-        restart: always
         healthcheck:
-            test: ["CMD-SHELL", '/opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P ${SA_PASSWORD} -Q "SELECT 1" || exit 1']
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} || exit 1"]
             interval: 10s
             timeout: 3s
             retries: 10
             start_period: 10s
-
-    sql-server.configurator:
-        build:
-            context: ./data
-            dockerfile: Dockerfile
-        depends_on:
-            sql-server:
-                condition: service_healthy
-        environment:
-            HOST: sql-server
-            DB_PORT: ${DB_PORT}
-            ACCEPT_EULA: ${ACCEPT_EULA}
-            SA_PASSWORD: ${SA_PASSWORD}
-            IdentityDB: ${IdentityDB}
-            MessageDB: ${MessageDB}
-            FileDB: ${FileDB}
-            PostDB: ${PostDB}
-        networks:
-            - back-end
 
     rabbitmq:
         # login guest:guest
         image: rabbitmq:4.0.2-management
         hostname: "rabbitmq"
         container_name: service-bus
+        restart: always
         labels:
             NAME: "rabbitmq"
         ports:
             - "${RABBITMQ_PORT}:5672"
             - "${RABBITMQ_MANAGEMENT_PORT}:15672"
-        #   Force to attach to network back-end to use hostname "rabbitmq"
-        # Otherwise, use hostname "localhost" didn't work
         networks:
             - back-end
         environment:
+            RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER} 
+            RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+            RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
             RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS: true
         volumes:
             - "./data/mq:/var/lib/rabbitmq"
@@ -66,146 +48,6 @@ services:
             timeout: 10s
             start_period: 10s
             retries: 5
-
-    api-gateway:
-        build:
-            context: .
-            dockerfile: ./dockerfiles/api-gateway/Dockerfile.${DOCKERFILE_API_GATEWAY_ENV:-prod}
-        container_name: apigateway
-        ports:
-            - "${API_GATEWAY_PORT}:80"
-        networks:
-            - back-end
-        env_file:
-            - ./solutions/APIGatewaySolution/src/APIGateway/.env
-        develop:
-            watch:
-                - path: ./solutions/APIGatewaySolution/src
-                  action: sync
-                  target: /src
-                  ignore:
-                      - Contract/
-
-    identity-api:
-        build:
-            context: .
-            dockerfile: ./dockerfiles/identity-api/Dockerfile.${DOCKERFILE_IDENTITY_ENV:-prod}
-        container_name: identity-service
-        ports:
-            - "${IDENTITY_SERVICE_PORT}:80"
-        depends_on:
-            sql-server:
-                condition: service_healthy
-            rabbitmq:
-                condition: service_healthy
-            websocket:
-                condition: service_started
-        networks:
-            - back-end
-        env_file:
-            - .env
-            - ./solutions/IdentitySolution/DuendeIdentityServer/.env
-        develop:
-            watch:
-                - path: ./solutions/IdentitySolution/DuendeIdentityServer
-                  action: sync
-                  target: /src/DuendeIdentityServer
-                  ignore:
-                      - Contract/
-
-    upload-api:
-        build:
-            context: .
-            dockerfile: ./dockerfiles/upload-api/Dockerfile.${DOCKERFILE_UPLOAD_ENV:-prod}
-        container_name: upload-service
-        depends_on:
-            sql-server:
-                condition: service_healthy
-            rabbitmq:
-                condition: service_healthy
-        ports:
-            - "${UPLOAD_SERVICE_PORT}:80"
-        networks:
-            - back-end
-        env_file:
-            - .env
-            - ./solutions/UploadFileSolution/src/UploadFileService.API/.env
-        develop:
-            watch:
-                - path: ./solutions/UploadFileSolution/src
-                  action: sync
-                  target: /src
-                  ignore:
-                      - Contract/
-
-    websocket:
-        build:
-            context: .
-            dockerfile: ./dockerfiles/websocket/Dockerfile.${DOCKERFILE_WEBSOCKET_ENV:-prod}
-        container_name: chat-hub
-        ports:
-            - "${SIGNALR_PORT}:80"
-        depends_on:
-            rabbitmq:
-                condition: service_healthy
-        networks:
-            - back-end
-            - front-end
-        env_file:
-            - ./solutions/ChatHubSolution/src/ChatHub/.env
-        develop:
-            watch:
-                - path: ./solutions/ChatHubSolution/src/ChatHub
-                  action: sync
-                  target: /src/ChatHub
-                  ignore:
-                      - Contract/
-
-    post-api:
-        build:
-            context: .
-            dockerfile: ./dockerfiles/post-api/Dockerfile.${DOCKERFILE_POST_ENV:-prod}
-        container_name: post-service
-        depends_on:
-            sql-server:
-                condition: service_healthy
-            rabbitmq:
-                condition: service_healthy
-            websocket:
-                condition: service_started
-        ports:
-            - "${POST_SERVICE_PORT}:80"
-        networks:
-            - back-end
-        env_file:
-            - ./solutions/PostSolution/src/PostService.API/.env
-        develop:
-            watch:
-                - path: ./solutions/PostSolution/src
-                  action: sync
-                  target: /src
-                  ignore:
-                      - Contract/
-
-    reactapp:
-        build:
-            context: .
-            dockerfile: ./dockerfiles/client/Dockerfile.${DOCKERFILE_REACT_ENV:-prod}
-        container_name: react-app
-        ports:
-            - "${CLIENT_PORT}:3000"
-        networks:
-            - front-end
-        env_file:
-            - .env
-            - ./solutions/Client/reactapp/.env
-        develop:
-            watch:
-                - path: ./solutions/Client/reactapp/package.json
-                  action: rebuild
-                - path: ./solutions/Client/reactapp
-                  target: /app
-                  action: sync
 
 networks:
     back-end:

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DuendeIdentityServer.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241109163925_init")]
+    [Migration("20241109170102_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -36,7 +36,7 @@ namespace DuendeIdentityServer.Data.Migrations
                     b.Property<bool>("Active")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValueSql("1");
+                        .HasDefaultValueSql("false");
 
                     b.Property<string>("AvatarUrl")
                         .IsRequired()

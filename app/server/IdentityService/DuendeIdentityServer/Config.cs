@@ -16,8 +16,8 @@ public static class Config
         var db = DotNetEnv.Env.GetString("DB", "Not found").Trim();
         var user = DotNetEnv.Env.GetString("POSTGRES_USER", "Not found").Trim();
         var pwd = DotNetEnv.Env.GetString("POSTGRES_PASSWORD", "Not found").Trim();
-        var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password{pwd};";
-
+        var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={pwd};";
+        Console.WriteLine(connectionString);
         Log.Information(connectionString);
         return connectionString;
     }

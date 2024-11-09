@@ -33,7 +33,7 @@ namespace DuendeIdentityServer.Data.Migrations
                     b.Property<bool>("Active")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
-                        .HasDefaultValueSql("1");
+                        .HasDefaultValueSql("false");
 
                     b.Property<string>("AvatarUrl")
                         .IsRequired()

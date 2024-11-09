@@ -36,7 +36,7 @@ namespace DuendeIdentityServer.Data.Migrations
                     BackgroundUrl = table.Column<string>(type: "text", nullable: false),
                     Dob = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Gender = table.Column<string>(type: "text", nullable: false),
-                    Active = table.Column<bool>(type: "boolean", nullable: false, defaultValueSql: "1"),
+                    Active = table.Column<bool>(type: "boolean", nullable: false, defaultValueSql: "false"),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),

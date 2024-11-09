@@ -30,7 +30,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 e =>
                 {
                     e.Property(u => u.Active)
-                        .HasDefaultValueSql("1");
+                        .HasDefaultValueSql("false");
                 });
     }
 }

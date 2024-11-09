@@ -17,13 +17,10 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        DotNetEnv.Env.Load(".env");
-        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
-        {
-            DotNetEnv.Env.Load(".env.production");
-        }
-        var reactUrl = Environment.GetEnvironmentVariable("REACT_URL") ?? "http://localhost:3000";
-        var issuer = Environment.GetEnvironmentVariable("ISSUER") ?? "http://localhost:5001";
+        EnvUtil.LoadEnvFile();
+
+        var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
+        var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");
 
 
         var services = builder.Services;
@@ -33,6 +30,7 @@ internal static class HostingExtensions
 
         services.AddControllers();
 
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         services.AddDbContext<ApplicationDbContext>();
 
 
@@ -51,9 +49,9 @@ internal static class HostingExtensions
             //busConfig.UsingInMemory((context, config) => config.ConfigureEndpoints(context));
             busConfig.UsingRabbitMq((context, config) =>
             {
-                var username = Environment.GetEnvironmentVariable("RABBITMQ_DEFAULT_USER") ?? "admin";
-                var password = Environment.GetEnvironmentVariable("RABBITMQ_DEFAULT_PASS") ?? "pass";
-                var rabbitMQHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost:5672";
+                var username = DotNetEnv.Env.GetString("RABBITMQ_DEFAULT_USER", "admin");
+                var password = DotNetEnv.Env.GetString("RABBITMQ_DEFAULT_PASS", "pass");
+                var rabbitMQHost = DotNetEnv.Env.GetString("RABBITMQ_HOST", "localhost:5672");
 
                 config.Host($"amqp://{rabbitMQHost}/", host =>
                 {
@@ -61,17 +59,6 @@ internal static class HostingExtensions
                     host.Password(password);
                 });
                 config.ConfigureEndpoints(context);
-
-                config.Message<FriendCreatedEvent>(m =>
-                {
-                    m.SetEntityName("friend-created-event"); // Explicit exchange name
-                });
-
-                config.Message<UserBlockedEvent>(u =>
-                {
-
-                });
-
             });
 
             busConfig.AddRequestClient<UploadMultipleFileEvent>(new Uri("queue:upload-multiple-file-event-queue"));
@@ -124,8 +111,8 @@ internal static class HostingExtensions
                 // register your IdentityServer with Google at https://console.developers.google.com
                 // enable the Google+ API
                 // set the redirect URI to https://localhost:5001/signin-google
-                options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID") ?? "";
-                options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET") ?? "";
+                options.ClientId = DotNetEnv.Env.GetString("GOOGLE_CLIENT_ID", "");
+                options.ClientSecret = DotNetEnv.Env.GetString("GOOGLE_CLIENT_SECRET", "");
 
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
