@@ -9,7 +9,7 @@ public static class Config
 {
     public static string GetConnectionString()
     {
-        EnvUtil.LoadEnvFile();
+        EnvUtility.LoadEnvFile();
         var host = DotNetEnv.Env.GetString("HOST", "localhost").Trim();
 
         var port = DotNetEnv.Env.GetString("DB_PORT", "2001").Trim();
@@ -38,15 +38,15 @@ public static class Config
     {
         get
         {
-            EnvUtil.LoadEnvFile();
+            EnvUtility.LoadEnvFile();
             
             var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000").Trim();
 
             return [
                 new Client
                 {
-                    ClientId = "react.spa",
-                    ClientName = "React SPA",
+                    ClientId = "react.native",
+                    ClientName = "React native",
                     RequireClientSecret = false, // TODO: add secret later
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
@@ -66,28 +66,6 @@ public static class Config
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.LocalApi.ScopeName,
                     },
-                },
-                new Client{
-                    ClientId="android.client",
-                    ClientName = "Android client",
-                    AllowedGrantTypes= GrantTypes.Code,
-                    RequirePkce = true,
-                    RequireConsent = false,
-                    RequireClientSecret=false, // TODO: add secret later
-                    RefreshTokenUsage = TokenUsage.ReUse,
-                    RedirectUris = {
-                       "https://www.getpostman.com/oauth2/callback"
-                    },
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.Phone,
-                        IdentityServerConstants.StandardScopes.Email,
-                        IdentityServerConstants.LocalApi.ScopeName,
-                        IdentityServerConstants.StandardScopes.OfflineAccess
-                    },
-                    AllowOfflineAccess = true
                 }
             ];
         }

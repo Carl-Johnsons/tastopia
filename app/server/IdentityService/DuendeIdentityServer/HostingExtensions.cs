@@ -17,7 +17,7 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-        EnvUtil.LoadEnvFile();
+        EnvUtility.LoadEnvFile();
 
         var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
         var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");

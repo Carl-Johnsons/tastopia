@@ -2,6 +2,10 @@ using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
+DotNetEnv.Env.Load();
+
+var reactUrl = Environment.GetEnvironmentVariable("REACT_URL") ?? "http://localhost:3000";
+
 var builder = new WebHostBuilder();
 builder.UseKestrel()
        .UseContentRoot(Directory.GetCurrentDirectory())
@@ -74,7 +78,7 @@ builder.ConfigureServices(services =>
         options.AddPolicy("AllowAnyOriginPolicy",
             builder =>
             {
-                builder.WithOrigins("http://localhost:3001", "http://localhost:3000")
+                builder.WithOrigins(reactUrl)
                        .AllowAnyMethod()
                        .AllowAnyHeader()
                        .AllowCredentials();
