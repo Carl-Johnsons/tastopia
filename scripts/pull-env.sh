@@ -1,19 +1,16 @@
 #!/bin/bash
 
-# Set project root directory
 project_root=$(pwd)
 
-echo -e "\e[95mPulling global env file ....\e[0m"
-npx dotenv-vault@latest pull
+pull_env_file() {
+  local service_path=$1
+  local file_name=$2
+  echo -e "\e[95mPulling $file_name env file...\e[0m"
+  (cd "$service_path" && npx dotenv-vault@latest pull -y)
+  cd "$project_root"
+}
 
-echo -e "\e[95mPulling api gateway env file ....\e[0m"
-(cd ./app/server/APIGateway && npx dotenv-vault@latest pull)
-cd "$project_root"
-
-echo -e "\e[95mPulling identity file service env file ....\e[0m"
-(cd ./app/server/IdentityService/DuendeIdentityServer && npx dotenv-vault@latest pull)
-cd "$project_root"
-
-echo -e "\e[95mPulling upload service env file ....\e[0m"
-(cd ./app/server/UploadFileService && npx dotenv-vault@latest pull)
-cd "$project_root"
+pull_env_file "./" global && \
+pull_env_file "./app/server/APIGateway" apigateway && \
+pull_env_file "./app/server/IdentityService/DuendeIdentityServer" identity && \
+pull_env_file "./app/server/UploadFileService" upload
