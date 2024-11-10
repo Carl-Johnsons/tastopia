@@ -1,7 +1,7 @@
 {
     "scripts": {
-        "env_update": "./scripts/update-env.sh",
-        "env_setup": "./scripts/setup-env.sh",
+        "push_env": "./scripts/pull-env.sh",
+        "pull_env": "./scripts/pull-env.sh",
         "services_rebuild": "./scripts/rebuild-service.sh",
         "services_build_all": "./scripts/build-all-service.sh",
         "migrations_apply_all": "./scripts/apply-all-migrations.sh",

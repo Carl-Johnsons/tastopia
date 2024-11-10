@@ -61,6 +61,8 @@ run_service() {
 }
 
 # Run each service
+run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway"
 run_service 5001 "./app/server/IdentityService/DuendeIdentityServer" "$PURPLE" "Identity"
+run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$YELLOW" "Upload"
 
 wait

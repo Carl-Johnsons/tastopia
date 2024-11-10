@@ -414,3 +414,7 @@ data
 /src/APIGateway/ocelot.json
 # Keep all file in Config folder
 !/src/APIGateway/Config/*
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
