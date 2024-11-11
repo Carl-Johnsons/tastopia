@@ -31,7 +31,7 @@ json=$(<scripts.json)
 scripts_content=$(echo "$json" | sed 's/"scripts": //; s/{//; s/}//')
 # Remove quotes, commas, leading/trailing spaces, and empty lines
 scripts=$(echo "$scripts_content" | sed 's/"//g; s/,//g; s/^[[:space:]]*//; s/[[:space:]]*$//' | grep -v '^$')
-echo "$scripts"
+# echo "$scripts"
 # Extract script keys from the scripts variable
 script_keys=$(echo "$scripts" | cut -d':' -f1)
 

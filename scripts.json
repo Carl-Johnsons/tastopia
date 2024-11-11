@@ -3,7 +3,7 @@
         "push_env": "./scripts/pull-env.sh",
         "pull_env": "./scripts/pull-env.sh",
         "services_rebuild": "./scripts/rebuild-service.sh",
-        "services_build_all": "./scripts/build-all-service.sh",
+        "install_service_dep": "./scripts/install-service-dep.sh",
         "migrations_apply_all": "./scripts/apply-all-migrations.sh",
         "k8s_deploy": "./scripts/k8s-deploy.sh",
         "generate_identity_key": "./scripts/generate_identity_key.sh",

@@ -1,7 +1,5 @@
 using AutoMapper;
-using Contract.Event.FriendEvent;
 using Contract.Event.UploadEvent;
-using Contract.Event.UserEvent;
 using Duende.IdentityServer;
 using DuendeIdentityServer.Data;
 using DuendeIdentityServer.DTOs;
