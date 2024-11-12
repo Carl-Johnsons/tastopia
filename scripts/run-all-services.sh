@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# Common color
+DANGER='\033[0;31m'
+WARNING='\033[1;33m'
+INFO='\033[0;32m'
+DEBUG='\033[1;36m'
+FATAL='\033[1;35m'
+SUCCESS='\033[1;32m'
+
 # Define color
 RED='\033[0;31m'
 RED_OCT='\o033[0;31m'
@@ -51,18 +59,31 @@ run_service() {
     local color=$3
     local name=$4
 
-    env SA_PASSWORD="$SA_PASSWORD" \
+    env NUGET_PACKAGES="$project_root/data/nuget" \
         ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
         ASPNETCORE_URLS="http://0.0.0.0:$port" \
         dotnet watch run \
         --no-launch-profile \
         --project "$project" \
-        2>&1 | sed "s/^/$(printf "${color}[${name}]${NC} ")/" &
+        2>&1 | while IFS= read -r line; do
+        if echo "$line" | grep -iq "warning"; then
+            echo -e "${color}[${name}]${NC}  ${WARNING}${line}${NC}"
+        elif echo "$line" | grep -iq "error"; then
+            echo -e "${color}[${name}]${NC}  ${DANGER}${line}${NC}"
+        elif echo "$line" | grep -iq "information"; then
+            echo -e "${color}[${name}]${NC}  ${INFO}${line}${NC}"
+        elif echo "$line" | grep -iq "API is listening on"; then
+            echo -e "${color}[${name}]${NC}  ${SUCCESS}${line}${NC}"
+        else
+            echo -e "${color}[${name}]${NC}  $line"
+        fi
+    done &
 }
 
 # Run each service
 run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway"
 run_service 5001 "./app/server/IdentityService/DuendeIdentityServer" "$PURPLE" "Identity"
-run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$YELLOW" "Upload"
+run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload"
+run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User"
 
 wait
