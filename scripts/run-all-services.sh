@@ -38,13 +38,13 @@ project_root=$(pwd)
 cd ./scripts
 
 # kill all ports
-./kill-port.sh 127.0.0.1:5000
-./kill-port.sh 127.0.0.1:5001
-./kill-port.sh 127.0.0.1:5002
-./kill-port.sh 127.0.0.1:5003
-./kill-port.sh 127.0.0.1:5004
-./kill-port.sh 127.0.0.1:5005
-./kill-port.sh 127.0.0.1:5006
+./kill-port.sh 0.0.0.0:5000
+./kill-port.sh 0.0.0.0:5001
+./kill-port.sh 0.0.0.0:5002
+./kill-port.sh 0.0.0.0:5003
+./kill-port.sh 0.0.0.0:5004
+./kill-port.sh 0.0.0.0:5005
+./kill-port.sh 0.0.0.0:5006
 
 cd "$project_root"
 
@@ -65,25 +65,18 @@ run_service() {
         dotnet watch run \
         --no-launch-profile \
         --project "$project" \
-        2>&1 | while IFS= read -r line; do
-        if echo "$line" | grep -iq "warning"; then
-            echo -e "${color}[${name}]${NC}  ${WARNING}${line}${NC}"
-        elif echo "$line" | grep -iq "error"; then
-            echo -e "${color}[${name}]${NC}  ${DANGER}${line}${NC}"
-        elif echo "$line" | grep -iq "information"; then
-            echo -e "${color}[${name}]${NC}  ${INFO}${line}${NC}"
-        elif echo "$line" | grep -iq "API is listening on"; then
-            echo -e "${color}[${name}]${NC}  ${SUCCESS}${line}${NC}"
-        else
-            echo -e "${color}[${name}]${NC}  $line"
-        fi
-    done &
+        2>&1 | sed \
+        -e "/Warning/ s/.*/$(printf "${WARNING}&${NC}")/" \
+        -e "/Error/ s/.*/$(printf "${DANGER}&${NC}")/" \
+        -e "/Information/ s/.*/$(printf "${INFO}&${NC}")/" \
+        -e "/API is listening on/ s/.*/$(printf "${SUCCESS}&${NC}")/" \
+        -e "s/^/$(printf "${color}[${name}]${NC} ")/"
 }
 
 # Run each service
-run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway"
-run_service 5001 "./app/server/IdentityService/DuendeIdentityServer" "$PURPLE" "Identity"
-run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload"
+run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" & \ 
+run_service 5001 "./app/server/IdentityService/DuendeIdentityServer" "$PURPLE" "Identity" & \
+run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" & \
 run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User"
 
 wait
