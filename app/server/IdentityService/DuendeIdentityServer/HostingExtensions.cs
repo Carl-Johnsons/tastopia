@@ -40,6 +40,8 @@ internal static class HostingExtensions
         services.AddSingleton<ISignalRService, SignalRService>();
         services.AddScoped(typeof(IPaginateDataUtility<,>), typeof(PaginateDataUtility<,>));
 
+        services.AddScoped<IServiceBus, MassTransitServiceBus>();
+
         services.AddMassTransit(busConfig =>
         {
             busConfig.SetKebabCaseEndpointNameFormatter();

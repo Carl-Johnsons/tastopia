@@ -1,8 +1,10 @@
+using Contract.Event.IdentityEvent;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
 using DuendeIdentityServer.Models;
+using DuendeIdentityServer.Services;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +24,7 @@ public class Index : PageModel
     private readonly IEventService _events;
     private readonly IAuthenticationSchemeProvider _schemeProvider;
     private readonly IIdentityProviderStore _identityProviderStore;
-    private readonly IBus _bus;
+    private readonly IServiceBus _serviceBus;
 
     public RegisterViewModel View { get; set; } = default!;
 
@@ -36,7 +38,7 @@ public class Index : PageModel
         IEventService events,
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        IBus bus)
+        IServiceBus serviceBus)
     {
         _userManager = userManager;
         _signInManager = signInManager;
@@ -44,7 +46,7 @@ public class Index : PageModel
         _schemeProvider = schemeProvider;
         _identityProviderStore = identityProviderStore;
         _events = events;
-        _bus = bus;
+        _serviceBus = serviceBus;
     }
 
     public async Task<IActionResult> OnGet(string? returnUrl)
@@ -107,6 +109,8 @@ public class Index : PageModel
 
             if (result.Succeeded)
             {
+                
+                await _serviceBus.Publish(new UserRegisterEvent {AccountId = Guid.Parse(user.Id)});
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
                 if (context != null)
