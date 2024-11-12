@@ -64,12 +64,7 @@ public class SeedData
             PhoneNumber = "0111111119",
             PhoneNumberConfirmed = true,
             /* Custom attribute */
-            Name = "Admin",
-            Gender = "Nam",
-            AvatarUrl = "https://scontent.fvca1-3.fna.fbcdn.net/v/t1.6435-9/84749807_107364874171943_5917239107272048640_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=5f2048&_nc_ohc=lX3TOXeqiYkQ7kNvgFEP5Uw&_nc_ht=scontent.fvca1-3.fna&oh=00_AYCnvLsQZfP1Q4TnefnX9fHZY4xCyZBZVVQNsi47CMrEcg&oe=669E447E",
-            BackgroundUrl = "https://scontent.fvca1-3.fna.fbcdn.net/v/t1.6435-9/84749807_107364874171943_5917239107272048640_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=5f2048&_nc_ohc=lX3TOXeqiYkQ7kNvgFEP5Uw&_nc_ht=scontent.fvca1-3.fna&oh=00_AYCnvLsQZfP1Q4TnefnX9fHZY4xCyZBZVVQNsi47CMrEcg&oe=669E447E",
             Active = true,
-            Dob = new DateTime(2005, 12, 3)
         };
 
         string userPassword = "Pass123$";

@@ -101,9 +101,6 @@ public class Index : PageModel
             {
                 UserName = Input.Username,
                 Email = Input.Email,
-                Dob = Input.Dob,
-                Gender = Input.Gender,
-                Name = Input.Name,
             };
 
             var result = await _userManager.CreateAsync(user, Input.Password!);

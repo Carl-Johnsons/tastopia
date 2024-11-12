@@ -15,15 +15,6 @@ public class RegisterInputModel
     [Required]
     public string Email { get; set; } = string.Empty;
 
-    [Required]
-    public string Name { get; set; } = string.Empty;
-
-    [Required]
-    public DateTime Dob { get; set; }
-
-    [Required]
-    public string Gender { get; set; } = string.Empty;
-
     public bool RememberLogin { get; set; }
     public string? ReturnUrl { get; set; }
     public string? Button { get; set; }

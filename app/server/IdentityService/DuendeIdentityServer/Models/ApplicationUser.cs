@@ -11,21 +11,5 @@ namespace DuendeIdentityServer.Models;
 public class ApplicationUser : IdentityUser
 {
     [Required]
-    public string Name { get; set; } = string.Empty;
-
-    [Required]
-    public string AvatarUrl { get; set; } = string.Empty;
-
-    [Required]
-    public string BackgroundUrl { get; set; } = string.Empty;
-
-    [Required]
-    public DateTime Dob { get; set; }
-
-    [Required]
-    public string Gender { get; set; } = string.Empty;
-
-    [Required]
     public bool Active { get; set; }
-
 }
