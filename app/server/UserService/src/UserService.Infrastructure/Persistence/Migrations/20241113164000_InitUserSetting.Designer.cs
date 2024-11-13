@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UserService.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using UserService.Infrastructure.Persistence;
 namespace UserService.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241113164000_InitUserSetting")]
+    partial class InitUserSetting
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,22 +46,6 @@ namespace UserService.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Settings");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("5fad2a82-82db-430b-b61b-13704a91944a"),
-                            Code = "LANGUAGE",
-                            DataType = "String",
-                            Description = "Language for display data for website dashboard and mobile app"
-                        },
-                        new
-                        {
-                            Id = new Guid("dad92eec-123c-4ae2-9848-b7f7a1a6ed56"),
-                            Code = "THEME",
-                            DataType = "String",
-                            Description = "Theme for website dashboard and mobile app"
-                        });
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.User", b =>
