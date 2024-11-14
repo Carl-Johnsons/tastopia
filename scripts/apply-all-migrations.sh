@@ -11,6 +11,6 @@ update_database() {
     cd "$project_root"
 }
 
-update_database "./app/server/IdentityService/DuendeIdentityServer" "Identity"
+update_database "./app/server/IdentityService/src/IdentityService.Infrastructure" "Identity"
 update_database "./app/server/UploadFileService/src/UploadFileService.Infrastructure" "Upload"
 update_database "./app/server/UserService/src/UserService.Infrastructure" "User"
