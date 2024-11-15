@@ -13,5 +13,6 @@ pull_env_file() {
 pull_env_file "./" global && \
 pull_env_file "./app/server/APIGateway" apigateway && \
 pull_env_file "./app/server/IdentityService" identity && \
-pull_env_file "./app/server/UploadFileService" upload
-pull_env_file "./app/server/UserService" user
+pull_env_file "./app/server/UploadFileService" upload && \
+pull_env_file "./app/server/UserService" user && \
+pull_env_file "./app/server/NotificationService" notification

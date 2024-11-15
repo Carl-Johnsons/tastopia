@@ -11,7 +11,7 @@ project_root=$(pwd)
 build_service() {
   local service_path=$1
   local service_name=$2
-  echo -e "\e[95mRestoring Nuget Package in $service_name service ...\e[0m"
+  echo -e "\e[95mBuilding $service_name service ...\e[0m"
 
   output=$(cd "$service_path" && dotnet build --packages "$project_root/data/nuget" 2>&1)
 
@@ -28,10 +28,11 @@ build_service() {
   cd "$project_root"
 }
 
-build_service "./app/server/APIGateway/src/APIGateway" "api gateway" &&
-build_service "./app/server/IdentityService/src/DuendeIdentityServer" "identity" &&
-build_service "./app/server/UploadFileService/src/UploadFileService.API" "upload" &&
-build_service "./app/server/UserService/src/UserService.API" "user"
+build_service "./app/server/APIGateway/src/APIGateway" "api gateway" && \
+build_service "./app/server/IdentityService/src/DuendeIdentityServer" "identity" && \
+build_service "./app/server/UploadFileService/src/UploadFileService.API" "upload" && \
+build_service "./app/server/UserService/src/UserService.API" "user" && \
+build_service "./app/server/NotificationService/src/NotificationService.API" notification
 
 # Publishing Contract solution
 echo -e "\e[95mPublishing Contract solution ...\e[0m"

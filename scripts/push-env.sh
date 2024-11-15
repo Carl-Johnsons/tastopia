@@ -13,5 +13,6 @@ push_env_file() {
 push_env_file "./" global && \
 push_env_file "./app/server/APIGateway" apigateway && \
 push_env_file "./app/server/IdentityService" identity && \
-push_env_file "./app/server/UploadFileService" upload
-push_env_file "./app/server/UserService" user
+push_env_file "./app/server/UploadFileService" upload && \
+push_env_file "./app/server/UserService" user && \
+push_env_file "./app/server/NotificationService" notification
