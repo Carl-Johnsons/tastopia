@@ -18,26 +18,27 @@ const SignIn = () => {
   const login = async (data: LoginFormFields) => {
     setIsSubmitting(true);
 
-    try {
-      const res = await signIn(data);
-      const jwtToken = res.jwtToken;
-      const user = res.user;
+    router.navigate("/(protected)");
+    // try {
+    //   const res = await signIn(data);
+    //   const jwtToken = res.jwtToken;
+    //   const user = res.user;
 
-      dispatch(saveAuthData({ jwtToken }));
-      dispatch(saveUserData(user));
+    //   dispatch(saveAuthData({ jwtToken }));
+    //   dispatch(saveUserData(user));
 
-      const route = "/(protected)";
-      router.navigate(route);
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        const firstErr = error.issues[0];
-        return Alert.alert("Error", firstErr.message);
-      }
+    //   const route = "/(protected)";
+    //   router.navigate(route);
+    // } catch (error: any) {
+    //   if (error instanceof ZodError) {
+    //     const firstErr = error.issues[0];
+    //     return Alert.alert("Error", firstErr.message);
+    //   }
 
-      Alert.alert("Error", error.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    //   Alert.alert("Error", error.message);
+    // } finally {
+    //   setIsSubmitting(false);
+    // }
   };
 
   const navigateToSignUpScreen = () => {
@@ -46,7 +47,7 @@ const SignIn = () => {
 
   return (
     <SafeAreaView>
-      <View className='h-full w-full dark:bg-black-200'>
+      <View className='w-full h-full dark:bg-black-200'>
         <View className={`flex h-[86%] justify-center gap-2 p-4`}>
           <View className='items-center'>
             <Logo
@@ -62,7 +63,7 @@ const SignIn = () => {
           />
           <Pressable>
             <Text
-              className='active:color-gray text-center active:underline dark:text-white'
+              className='text-center active:color-gray active:underline dark:text-white'
               onPress={navigateToSignUpScreen}
             >
               I don't have an account 🥲
