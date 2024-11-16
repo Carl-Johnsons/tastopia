@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "threads",
-    "slug": "threads",
+    "name": "tastopia",
+    "slug": "tastopia",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "scheme": "threads",
+    "scheme": "tastopia",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
@@ -14,15 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "package": "com.threads.app"
+      "package": "com.tastopia.app"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.threads.app",
-      "softwareKeyboardLayoutMode": "pan",
+      "package": "com.tastopia.app",
       "softwareKeyboardLayoutMode": "resize"
     },
     "web": {
@@ -31,14 +30,18 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-        "expo-router", [
+      "expo-router",
+      [
         "expo-image-picker",
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
-      ]],
+      ],
+      "expo-font"
+    ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "newArchEnabled": true
   }
 }
