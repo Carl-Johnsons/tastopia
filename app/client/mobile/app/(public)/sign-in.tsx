@@ -23,14 +23,10 @@ const SignIn = () => {
       const jwtToken = res.jwtToken;
       const user = res.user;
 
-      console.log("data in login", JSON.stringify(user, null, 2));
-
       dispatch(saveAuthData({ jwtToken }));
       dispatch(saveUserData(user));
 
       const route = "/(protected)";
-      console.log("navigating to route", route);
-
       router.navigate(route);
     } catch (error: any) {
       if (error instanceof ZodError) {
