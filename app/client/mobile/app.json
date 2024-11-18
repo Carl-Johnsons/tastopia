@@ -14,7 +14,12 @@
     },
     "ios": {
       "supportsTablet": true,
-      "package": "com.tastopia.app"
+      "package": "com.tastopia.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "We need camera access to let you take photos",
+        "NSMicrophoneUsageDescription": "We need microphone access for voice commands",
+        "NSPhotoLibraryUsageDescription": "We need access to your photos to save resources"
+      }
     },
     "android": {
       "adaptiveIcon": {
