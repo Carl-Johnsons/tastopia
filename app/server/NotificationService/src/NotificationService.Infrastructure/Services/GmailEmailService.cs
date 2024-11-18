@@ -3,7 +3,7 @@ using System.Net.Mail;
 
 namespace NotificationService.Infrastructure.Services;
 
-public class GmailEmailService
+public class GmailEmailService : IEmailService
 {
     private readonly string SMTPServer = "smtp.gmail.com";
     private readonly int SMTPPort = 587;

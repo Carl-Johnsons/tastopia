@@ -2,18 +2,20 @@
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NotificationService.Infrastructure.Services;
 using System.Reflection;
 
 namespace NotificationService.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static  IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
     {
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
         // MediatR require repository scope dependency injection
         services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
         services.AddScoped<MockupData>();
+        services.AddTransient<IEmailService, GmailEmailService>();
         services.AddMassTransitService();
 
         using (var serviceProvider = services.BuildServiceProvider())
