@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B17F4481-93E9-464C-BF5B-93880DD1123C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7E7DD171-FBEC-4288-BF87-712FA52EDEE1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatHub", "src\ChatHub\ChatHub.csproj", "{07837E22-A8E3-462C-8B5B-9E5399DB8835}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07837E22-A8E3-462C-8B5B-9E5399DB8835}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07837E22-A8E3-462C-8B5B-9E5399DB8835}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07837E22-A8E3-462C-8B5B-9E5399DB8835}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07837E22-A8E3-462C-8B5B-9E5399DB8835}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{07837E22-A8E3-462C-8B5B-9E5399DB8835} = {B17F4481-93E9-464C-BF5B-93880DD1123C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {68B3B09C-71B5-469C-8C99-BCD58E0D1AAD}
+	EndGlobalSection
+EndGlobal
