@@ -1,0 +1,29 @@
+@startuml
+skinparam style strictuml
+skinparam monochrome true
+skinparam linetype polyline
+left to right direction
+actor "Guest" as guest
+
+rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
+  usecase "Login" as ucLogin
+  usecase "View welcome screen" as ucViewWelcome
+  usecase "Register" as ucRegister
+  usecase "Forget password" as ucForgetPassword
+  usecase "Search" as ucSearch
+  usecase "Search posts" as ucSearchPosts
+  usecase "Search user" as ucSearchUser
+  usecase "Browse posts" as ucBrowsePosts
+  usecase "View other user profile" as ucViewUSProfile
+}
+
+guest --> ucViewWelcome
+    ucViewWelcome --> ucLogin
+        ucLogin <.. ucForgetPassword : <<extend>>
+    ucViewWelcome --> ucRegister
+    ucViewWelcome --> ucSearch
+        ucSearch <.. ucSearchPosts : <<extend>>
+        ucSearch <.. ucSearchUser : <<extend>>
+    ucViewWelcome --> ucBrowsePosts
+        ucBrowsePosts <.. ucViewUSProfile : <<extend>>
+@enduml

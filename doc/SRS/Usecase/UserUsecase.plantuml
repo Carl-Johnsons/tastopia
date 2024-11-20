@@ -1,6 +1,8 @@
 @startuml
+skinparam style strictuml
+skinparam monochrome true
+skinparam linetype polyline
 left to right direction
-' actor "Guest" as guest
 actor "User" as user
 actor "Premium User" as pUser
 ' actor "Admin" as admin
@@ -8,29 +10,43 @@ actor "Premium User" as pUser
 
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
-'   usecase "Register" as ucRegister
-  usecase "Search posts" as ucSearchPosts
-  usecase "Browse posts" as ucBrowsePosts
-  usecase "View user profile" as ucViewUSProfile
-  usecase "Search user" as ucSearchUser
+    usecase "Logout" as ucLogout
 
-  usecase "Login" as ucLogin
-  usecase "Search media" as ucSearchMedia
-  usecase "Search recipes" as ucSearchRecipes
-  usecase "Interact with posts" as ucInteractPosts
-  usecase "Bookmark post" as ucBookmarkPost
-  usecase "Manage own post" as ucManagePost
-  usecase "Manage profile" as ucManageProfile
-  usecase "Manage settings" as ucManageSetting
-  usecase "View notifications" as ucViewNotif
-  usecase "Step-to-step cooking mode" as ucStepToStepCCM
-  note "Create/Read/\nUpdate/Delete" as noteManagePost
-  note "Read/Update" as noteManageProfile
+    usecase "Search" as ucSearch
+    usecase "Search posts" as ucSearchPosts
+    usecase "Search recipes" as ucSearchRecipes
+    usecase "Search user" as ucSearchUser
 
+    usecase "Browse posts" as ucBrowsePosts
+    usecase "Interact with posts" as ucInteractPosts
+    usecase "Like posts" as ucLikePost
+    usecase "Comment posts" as ucCmtPost
+    usecase "Report posts" as ucReportPost
+    usecase "Bookmark post" as ucBookmarkPost
+    usecase "View detail posts" as ucViewDetailPost
+    usecase "Step-to-step cooking mode" as ucStepToStepCCM
+    usecase "View other user profile" as ucViewUSProfile
 
-  usecase "Command by voice \n in cooking mode" as ucCommandVoiceCCM
-  usecase "Recognize ingredients \n by capturing image" as ucRecognizeIngre
+    usecase "View menu" as ucViewMenu
+    usecase "Manage profile" as ucManageProfile
+    usecase "Manage own post" as ucManagePost
+    usecase "Manage allergic\n ingredients" as ucManageAller
+    usecase "Manage settings" as ucManageSetting
+    usecase "Setting language" as ucSetLang
+    usecase "Setting theme" as ucSetTheme
+    usecase "View recent recipes" as ucViewRecentRecipes
+    usecase "Upgrade to premium" as ucUpgradeToPremium
 
+    usecase "View notifications" as ucViewNotif
+    note "Create/Read/\nUpdate/Delete" as noteManagePost
+    note "Create/Read/\nUpdate/Delete" as noteManageAller
+    note "Read/Update" as noteManageProfile
+    note "Create/Read/\nUpdate/Delete" as noteLikePost
+    note "Create/Read/\nUpdate/Delete" as noteCmtPost
+    note "Create/Read/\nUpdate/Delete" as noteBookmarkPost
+    note "{Only available for User}" as noteUpgradeToPremium
+
+    
 '   usecase "View statistic" as ucViewStatistic
 '   usecase "View report" as ucViewRepost
 '   usecase "Administer users" as ucAdmUser
@@ -38,43 +54,54 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
 '   usecase "Administer posts" as ucAdmPost
 '   usecase "Administer recipes" as ucAdmRecipes
 '   usecase "Administer ingredients" as ucAdmIngre
+    user --> ucSearch
+        ucSearch <.. ucSearchUser : <<extend>>
+        ucSearch <.. ucSearchPosts : <<extend>>
+        ucSearch <.. ucSearchRecipes : <<extend>>
 
-  
+    user --> ucBrowsePosts
+        ucBrowsePosts <.. ucInteractPosts : <<extend>>
+            ucInteractPosts <.. ucLikePost : <<extend>>
+                ucLikePost . noteLikePost
+            ucInteractPosts <.. ucCmtPost : <<extend>>
+                ucCmtPost . noteCmtPost
+            ucInteractPosts <.. ucReportPost : <<extend>>
+            ucInteractPosts <.. ucViewDetailPost : <<extend>>
+                ucViewDetailPost <.. ucStepToStepCCM : <<extend>>
+        ucBrowsePosts <.. ucBookmarkPost : <<extend>>
+            ucBookmarkPost . noteBookmarkPost
+        ucBrowsePosts <.. ucViewUSProfile : <<extend>>
+
+    user --> ucViewMenu
+        ucViewMenu <.. ucManageProfile : <<extend>>
+            ucManageProfile . noteManageProfile
+            ucManageProfile <.. ucManagePost : <<extend>>
+                ucManagePost . noteManagePost
+            ucManageProfile <.. ucManageAller : <<extend>>
+                ucManageAller . noteManageAller
+        ucViewMenu <.. ucManageSetting : <<extend>>
+            ucManageSetting <.. ucSetLang : <<extend>>
+            ucManageSetting <.. ucSetTheme : <<extend>>
+        ucViewMenu <.. ucViewRecentRecipes : <<extend>>
+        ucViewMenu <.. ucUpgradeToPremium : <<extend>>
+            ucUpgradeToPremium . noteUpgradeToPremium
+        ucViewMenu <.. ucLogout : <<extend>>
+
+    user --> ucViewNotif
 
 
+    usecase "Command by voice \n in cooking mode" as ucCommandVoiceCCM
+    usecase "Recognize ingredients \n by capturing image" as ucRecognizeIngre
+    usecase "Manage subscription plan" as ucMngSubcriptPlan
+
+    note "{Only available for Premium User}" as noteMngSubcriptPlan
+
+    pUser -|> user
+    pUser --> ucRecognizeIngre
+    ucStepToStepCCM <.. ucCommandVoiceCCM : <<extend>>
+    ucViewMenu <.. ucMngSubcriptPlan : <<extend>>
+        ucMngSubcriptPlan . noteMngSubcriptPlan
+    note top of ucCommandVoiceCCM: {Only available for Premium User}
 }
-' guest --> ucRegister
-' guest --> ucSearchPosts
-' guest --> ucBrowsePosts
-' ucBrowsePosts --> ucViewUSProfile
-' guest --> ucSearchUser
-' ucSearchUser --> ucViewUSProfile
-
-
-user --> ucSearchMedia
-user --> ucSearchRecipes
-user --> ucInteractPosts
-user --> ucBookmarkPost
-user --> ucManagePost
-user --> ucManageProfile
-user --> ucManageSetting
-user --> ucViewNotif
-user --> ucStepToStepCCM
-
-ucManagePost . noteManagePost
-ucManageProfile . noteManageProfile
-
-
-
-ucSearchMedia ..> ucLogin : <<include>>
-ucSearchRecipes ..> ucLogin : <<include>>
-ucInteractPosts ..> ucLogin : <<include>>
-ucBookmarkPost ..> ucLogin : <<include>>
-ucManagePost ..> ucLogin : <<include>>
-ucManageProfile ..> ucLogin : <<include>>
-ucManageSetting ..> ucLogin : <<include>>
-ucViewNotif ..> ucLogin : <<include>>
-ucStepToStepCCM ..> ucLogin : <<include>>
-
 
 @enduml
