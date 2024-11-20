@@ -65,11 +65,11 @@ run_service() {
         dotnet watch run \
         --no-launch-profile \
         --project "$project" \
-        2>&1 | sed \
-        -e "/Warning/ s/.*/$(printf "${WARNING}&${NC}")/" \
-        -e "/Error/ s/.*/$(printf "${DANGER}&${NC}")/" \
-        -e "/Information/ s/.*/$(printf "${INFO}&${NC}")/" \
-        -e "/API is listening on/ s/.*/$(printf "${SUCCESS}&${NC}")/" \
+        2>&1 | sed -E \
+        -e "/(warning|warn)/I s/.*/$(printf "${WARNING}&${NC}")/" \
+        -e "/(error|err)/I s/.*/$(printf "${DANGER}&${NC}")/" \
+        -e "/(information|info|inf)/I s/.*/$(printf "${INFO}&${NC}")/" \
+        -e "/ is listening on/I s/.*/$(printf "${SUCCESS}&${NC}")/" \
         -e "s/^/$(printf "${color}[${name}]${NC} ")/"
 }
 
@@ -78,6 +78,7 @@ run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGa
 run_service 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" & \
 run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" & \
 run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" & \
+run_service 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR"
 run_service 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification"
 
 wait
