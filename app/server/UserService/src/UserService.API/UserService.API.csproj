@@ -26,10 +26,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="EventHandlers\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\UserService.Application\UserService.Application.csproj" />
 	  <ProjectReference Include="..\UserService.Infrastructure\UserService.Infrastructure.csproj" />
 	</ItemGroup>
