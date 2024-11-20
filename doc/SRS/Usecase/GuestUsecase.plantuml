@@ -1,7 +1,8 @@
-@startuml
+@startuml GuestUsecase
 skinparam style strictuml
 skinparam monochrome true
 skinparam linetype polyline
+skinparam defaultFontSize 12
 left to right direction
 actor "Guest" as guest
 
@@ -11,9 +12,9 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
   usecase "Register" as ucRegister
   usecase "Forget password" as ucForgetPassword
   usecase "Search" as ucSearch
-  usecase "Search posts" as ucSearchPosts
+  usecase "Search recipes" as ucSearchRecipes
   usecase "Search user" as ucSearchUser
-  usecase "Browse posts" as ucBrowsePosts
+  usecase "Browse recipes" as ucBrowseRecipes
   usecase "View other user profile" as ucViewUSProfile
 }
 
@@ -22,8 +23,8 @@ guest --> ucViewWelcome
         ucLogin <.. ucForgetPassword : <<extend>>
     ucViewWelcome --> ucRegister
     ucViewWelcome --> ucSearch
-        ucSearch <.. ucSearchPosts : <<extend>>
+        ucSearch <.. ucSearchRecipes : <<extend>>
         ucSearch <.. ucSearchUser : <<extend>>
-    ucViewWelcome --> ucBrowsePosts
-        ucBrowsePosts <.. ucViewUSProfile : <<extend>>
+    ucViewWelcome --> ucBrowseRecipes
+        ucBrowseRecipes <.. ucViewUSProfile : <<extend>>
 @enduml

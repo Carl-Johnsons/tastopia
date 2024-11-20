@@ -1,35 +1,31 @@
-@startuml
+@startuml UserUsecase
 skinparam style strictuml
 skinparam monochrome true
 skinparam linetype polyline
+skinparam defaultFontSize 12
 left to right direction
 actor "User" as user
 actor "Premium User" as pUser
 ' actor "Admin" as admin
-
-
-
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "Logout" as ucLogout
 
     usecase "Search" as ucSearch
-    usecase "Search posts" as ucSearchPosts
     usecase "Search recipes" as ucSearchRecipes
     usecase "Search user" as ucSearchUser
 
-    usecase "Browse posts" as ucBrowsePosts
-    usecase "Interact with posts" as ucInteractPosts
-    usecase "Like posts" as ucLikePost
-    usecase "Comment posts" as ucCmtPost
-    usecase "Report posts" as ucReportPost
-    usecase "Bookmark post" as ucBookmarkPost
-    usecase "View detail posts" as ucViewDetailPost
-    usecase "Step-to-step cooking mode" as ucStepToStepCCM
+    usecase "Browse recipes" as ucBrowseRecipes
+    usecase "Vote recipes" as ucVoteRecipe
+    usecase "Comment recipes" as ucCmtRecipe
+    usecase "Report recipes" as ucReportRecipe
+    usecase "Bookmark recipe" as ucBookmarkRecipe
+    usecase "View recipe detail" as ucViewRecipeDetail
+    usecase "Use guided cooking mode" as ucGuidedCCM
     usecase "View other user profile" as ucViewUSProfile
 
     usecase "View menu" as ucViewMenu
     usecase "Manage profile" as ucManageProfile
-    usecase "Manage own post" as ucManagePost
+    usecase "Manage own recipe" as ucManageRecipe
     usecase "Manage allergic\n ingredients" as ucManageAller
     usecase "Manage settings" as ucManageSetting
     usecase "Setting language" as ucSetLang
@@ -38,12 +34,12 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "Upgrade to premium" as ucUpgradeToPremium
 
     usecase "View notifications" as ucViewNotif
-    note "Create/Read/\nUpdate/Delete" as noteManagePost
+    note "Create/Read/\nUpdate/Delete" as noteManageRecipe
     note "Create/Read/\nUpdate/Delete" as noteManageAller
     note "Read/Update" as noteManageProfile
-    note "Create/Read/\nUpdate/Delete" as noteLikePost
-    note "Create/Read/\nUpdate/Delete" as noteCmtPost
-    note "Create/Read/\nUpdate/Delete" as noteBookmarkPost
+    note "Create/Read/\nUpdate/Delete" as noteVoteRecipe
+    note "Create/Read/\nUpdate/Delete" as noteCmtRecipe
+    note "Create/Read/\nUpdate/Delete" as noteBookmarkRecipe
     note "{Only available for User}" as noteUpgradeToPremium
 
     
@@ -51,32 +47,30 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
 '   usecase "View report" as ucViewRepost
 '   usecase "Administer users" as ucAdmUser
 '   usecase "Administer permission" as ucAdmPermis
-'   usecase "Administer posts" as ucAdmPost
+'   usecase "Administer recipes" as ucAdmRecipe
 '   usecase "Administer recipes" as ucAdmRecipes
 '   usecase "Administer ingredients" as ucAdmIngre
     user --> ucSearch
         ucSearch <.. ucSearchUser : <<extend>>
-        ucSearch <.. ucSearchPosts : <<extend>>
         ucSearch <.. ucSearchRecipes : <<extend>>
 
-    user --> ucBrowsePosts
-        ucBrowsePosts <.. ucInteractPosts : <<extend>>
-            ucInteractPosts <.. ucLikePost : <<extend>>
-                ucLikePost . noteLikePost
-            ucInteractPosts <.. ucCmtPost : <<extend>>
-                ucCmtPost . noteCmtPost
-            ucInteractPosts <.. ucReportPost : <<extend>>
-            ucInteractPosts <.. ucViewDetailPost : <<extend>>
-                ucViewDetailPost <.. ucStepToStepCCM : <<extend>>
-        ucBrowsePosts <.. ucBookmarkPost : <<extend>>
-            ucBookmarkPost . noteBookmarkPost
-        ucBrowsePosts <.. ucViewUSProfile : <<extend>>
+    user --> ucBrowseRecipes
+        ucBrowseRecipes <.. ucVoteRecipe : <<extend>>
+            ucVoteRecipe . noteVoteRecipe
+        ucBrowseRecipes <.. ucCmtRecipe : <<extend>>
+            ucCmtRecipe . noteCmtRecipe
+        ucBrowseRecipes <.. ucReportRecipe : <<extend>>
+        ucBrowseRecipes <.. ucViewRecipeDetail : <<extend>>
+            ucViewRecipeDetail <.. ucGuidedCCM : <<extend>>
+        ucBrowseRecipes <.. ucBookmarkRecipe : <<extend>>
+            ucBookmarkRecipe . noteBookmarkRecipe
+        ucBrowseRecipes <.. ucViewUSProfile : <<extend>>
 
     user --> ucViewMenu
         ucViewMenu <.. ucManageProfile : <<extend>>
             ucManageProfile . noteManageProfile
-            ucManageProfile <.. ucManagePost : <<extend>>
-                ucManagePost . noteManagePost
+            ucManageProfile <.. ucManageRecipe : <<extend>>
+                ucManageRecipe . noteManageRecipe
             ucManageProfile <.. ucManageAller : <<extend>>
                 ucManageAller . noteManageAller
         ucViewMenu <.. ucManageSetting : <<extend>>
@@ -95,13 +89,15 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "Manage subscription plan" as ucMngSubcriptPlan
 
     note "{Only available for Premium User}" as noteMngSubcriptPlan
+    note "{Only available for Premium User}" as noteCommandVoiceCCM
+
 
     pUser -|> user
     pUser --> ucRecognizeIngre
-    ucStepToStepCCM <.. ucCommandVoiceCCM : <<extend>>
+    ucGuidedCCM <.. ucCommandVoiceCCM : <<extend>>
+        ucCommandVoiceCCM . noteCommandVoiceCCM
     ucViewMenu <.. ucMngSubcriptPlan : <<extend>>
         ucMngSubcriptPlan . noteMngSubcriptPlan
-    note top of ucCommandVoiceCCM: {Only available for Premium User}
 }
 
 @enduml
