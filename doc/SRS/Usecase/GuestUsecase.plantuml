@@ -7,15 +7,15 @@ left to right direction
 actor "Guest" as guest
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
-  usecase "Login" as ucLogin
-  usecase "View welcome screen" as ucViewWelcome
-  usecase "Register" as ucRegister
-  usecase "Forget password" as ucForgetPassword
-  usecase "Search" as ucSearch
-  usecase "Search recipes" as ucSearchRecipes
-  usecase "Search user" as ucSearchUser
-  usecase "Browse recipes" as ucBrowseRecipes
-  usecase "View other user profile" as ucViewUSProfile
+usecase "UC-1: View welcome screen" as ucViewWelcome
+    usecase "UC-2: Login" as ucLogin
+    usecase "UC-3: Register" as ucRegister
+    usecase "UC-4: Forget password" as ucForgetPassword
+    usecase "UC-5: Search" as ucSearch
+    usecase "UC-6: Search recipes" as ucSearchRecipes
+    usecase "UC-7: Search user" as ucSearchUser
+    usecase "UC-8: Browse recipes" as ucBrowseRecipes
+    usecase "UC-9: View other user profile" as ucViewUSProfile
 }
 
 guest --> ucViewWelcome

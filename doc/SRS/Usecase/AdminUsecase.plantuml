@@ -7,17 +7,19 @@ left to right direction
 actor "Admin" as admin
 ' actor "Admin" as admin
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
-    usecase "Logout" as ucLogout
-    usecase "View statistic" as ucViewStatistic
-    usecase "Administer reported recipes" as ucAdmReportedRepices
-    usecase "Administer users" as ucAdmUser
-    usecase "Administer role permission" as ucAdmRolePermis
-    usecase "Administer recipes" as ucAdmRecipe
-    usecase "Administer ingredients" as ucAdmIngre
-    usecase "Administer subscriptions" as ucAdmSubcript
-    usecase "Administer event" as ucAdmEvent
-    usecase "View income" as ucViewIncome
-    usecase "Export income" as ucExportIncome
+    usecase "UC-2: Login" as ucLogin
+    usecase "UC-10: Logout" as ucLogout
+
+    usecase "UC-30: View statistic" as ucViewStatistic
+    usecase "UC-34: Administer reported recipes" as ucAdmReportedRepices
+    usecase "UC-31: Administer users" as ucAdmUser
+    usecase "UC-32: Administer role permission" as ucAdmRolePermis
+    usecase "UC-33: Administer recipes" as ucAdmRecipe
+    usecase "UC-35: Administer ingredients" as ucAdmIngre
+    usecase "UC-36: Administer subscriptions" as ucAdmSubcript
+    usecase "UC-37: Administer event" as ucAdmEvent
+    usecase "UC-38: View income" as ucViewIncome
+    usecase "UC-39: Export income" as ucExportIncome
 
     note "Read/\nUpdate/Delete" as noteAdmUser
     note "Create/Read/\nUpdate/Delete" as noteAdmRecipe
@@ -45,6 +47,15 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     admin --> ucViewIncome
         ucViewIncome <.. ucExportIncome : <<extend>>
     admin --> ucLogout
+
+    ucLogout .....> ucLogin : <<include>>
+    ucViewStatistic .....> ucLogin : <<include>>
+    ucAdmUser .....> ucLogin : <<include>>
+    ucAdmRolePermis .....> ucLogin : <<include>>
+    ucAdmRecipe .....> ucLogin : <<include>>
+    ucAdmIngre .....> ucLogin : <<include>>
+    ucAdmSubcript .....> ucLogin : <<include>>
+    ucViewIncome .....> ucLogin : <<include>>
 
 }
 

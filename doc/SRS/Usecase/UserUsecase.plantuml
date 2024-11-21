@@ -8,32 +8,34 @@ actor "User" as user
 actor "Premium User" as pUser
 ' actor "Admin" as admin
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
-    usecase "Logout" as ucLogout
+    usecase "UC-2: Login" as ucLogin
+    usecase "UC-10: Logout" as ucLogout
 
-    usecase "Search" as ucSearch
-    usecase "Search recipes" as ucSearchRecipes
-    usecase "Search user" as ucSearchUser
+    usecase "UC-5: Search" as ucSearch
+    usecase "UC-6: Search recipes" as ucSearchRecipes
+    usecase "UC-7: Search user" as ucSearchUser
 
-    usecase "Browse recipes" as ucBrowseRecipes
-    usecase "Vote recipes" as ucVoteRecipe
-    usecase "Comment recipes" as ucCmtRecipe
-    usecase "Report recipes" as ucReportRecipe
-    usecase "Bookmark recipe" as ucBookmarkRecipe
-    usecase "View recipe detail" as ucViewRecipeDetail
-    usecase "Use guided cooking mode" as ucGuidedCCM
-    usecase "View other user profile" as ucViewUSProfile
+    usecase "UC-8: Browse recipes" as ucBrowseRecipes
+    usecase "UC-11: Vote recipes" as ucVoteRecipe
+    usecase "UC-12: Comment recipes" as ucCmtRecipe
+    usecase "UC-13: Report recipes" as ucReportRecipe
+    usecase "UC-14: Bookmark recipe" as ucBookmarkRecipe
+    usecase "UC-15: View recipe detail" as ucViewRecipeDetail
+    usecase "UC-16: Use guided cooking mode" as ucGuidedCCM
+    usecase "UC-9: View other user profile" as ucViewUSProfile
 
-    usecase "View menu" as ucViewMenu
-    usecase "Manage profile" as ucManageProfile
-    usecase "Manage own recipe" as ucManageRecipe
-    usecase "Manage allergic\n ingredients" as ucManageAller
-    usecase "Manage settings" as ucManageSetting
-    usecase "Setting language" as ucSetLang
-    usecase "Setting theme" as ucSetTheme
-    usecase "View recent recipes" as ucViewRecentRecipes
-    usecase "Upgrade to premium" as ucUpgradeToPremium
+    usecase "UC-17: View menu" as ucViewMenu
+    usecase "UC-18: Manage profile" as ucManageProfile
+    usecase "UC-19: Manage own recipe" as ucManageRecipe
+    usecase "UC-20: Manage allergic\n ingredients" as ucManageAller
+    usecase "UC-21: Manage settings" as ucManageSetting
+    usecase "UC-22: Setting language" as ucSetLang
+    usecase "UC-23: Setting theme" as ucSetTheme
+    usecase "UC-24: View recent recipes" as ucViewRecentRecipes
+    usecase "UC-25: Upgrade to premium" as ucUpgradeToPremium
 
-    usecase "View notifications" as ucViewNotif
+    usecase "UC-26: View notifications" as ucViewNotif
+    
     note "Create/Read/\nUpdate/Delete" as noteManageRecipe
     note "Create/Read/\nUpdate/Delete" as noteManageAller
     note "Read/Update" as noteManageProfile
@@ -42,14 +44,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     note "Create/Read/\nUpdate/Delete" as noteBookmarkRecipe
     note "{Only available for User}" as noteUpgradeToPremium
 
-    
-'   usecase "View statistic" as ucViewStatistic
-'   usecase "View report" as ucViewRepost
-'   usecase "Administer users" as ucAdmUser
-'   usecase "Administer permission" as ucAdmPermis
-'   usecase "Administer recipes" as ucAdmRecipe
-'   usecase "Administer recipes" as ucAdmRecipes
-'   usecase "Administer ingredients" as ucAdmIngre
+
     user --> ucSearch
         ucSearch <.. ucSearchUser : <<extend>>
         ucSearch <.. ucSearchRecipes : <<extend>>
@@ -83,10 +78,16 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
 
     user --> ucViewNotif
 
+    ucSearch .....> ucLogin : <<include>>
+    ucBrowseRecipes .....> ucLogin : <<include>>
+    ucViewMenu .....> ucLogin : <<include>>
+    ucViewNotif .....>ucLogin : <<include>>
 
-    usecase "Command by voice \n in cooking mode" as ucCommandVoiceCCM
-    usecase "Recognize ingredients \n by capturing image" as ucRecognizeIngre
-    usecase "Manage subscription plan" as ucMngSubcriptPlan
+
+    usecase "UC-27: Command by voice \n in cooking mode" as ucCommandVoiceCCM
+    usecase "UC-28: Recognize ingredients \n by capturing image" as ucRecognizeIngre
+    usecase "UC-29: Manage subscription plan" as ucMngSubcriptPlan
+    
 
     note "{Only available for Premium User}" as noteMngSubcriptPlan
     note "{Only available for Premium User}" as noteCommandVoiceCCM
@@ -98,6 +99,9 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
         ucCommandVoiceCCM . noteCommandVoiceCCM
     ucViewMenu <.. ucMngSubcriptPlan : <<extend>>
         ucMngSubcriptPlan . noteMngSubcriptPlan
+
+    ucRecognizeIngre .....> ucLogin : <<include>>
+
 }
 
 @enduml
