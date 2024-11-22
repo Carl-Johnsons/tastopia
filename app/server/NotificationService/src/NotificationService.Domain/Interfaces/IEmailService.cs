@@ -1,8 +1,7 @@
 ﻿
-namespace NotificationService.Infrastructure.Services
+namespace NotificationService.Infrastructure.Services;
+
+public interface IEmailService
 {
-    public interface IEmailService
-    {
-        Task SendEmail(string emailTo, string subject, string body, bool isHtml = false);
-    }
+    Task SendEmail(string emailTo, string subject, string body, bool isHtml = false);
 }
