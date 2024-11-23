@@ -1,4 +1,47 @@
-﻿.welcome-page .logo {
+﻿:root {
+    --primary: #FE724C;
+    --primary-hover: #ff6a00;
+    --white: #fff;
+}
+
+h1 {
+    font-size: 36px;
+    font-weight: bolder
+}
+
+label {
+    font-size: 16px;
+    color: #9796A1;
+}
+
+div, p {
+    font-size: 14px;
+}
+
+.primary-text {
+    color: var(--primary)
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
+    height: 60px;
+    border-radius: 28.5px;
+    font-size: 16px;
+    font-weight: 400
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
+    height: 60px;
+    border-radius: 28.5px;
+    font-size: 16px;
+    font-weight: 400
+}
+
+
+.welcome-page .logo {
     width: 64px;
 }
 
