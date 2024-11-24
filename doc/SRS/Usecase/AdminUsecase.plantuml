@@ -8,21 +8,25 @@ actor "Admin" as admin
 ' actor "Admin" as admin
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-2: Login" as ucLogin
-    usecase "UC-10: Logout" as ucLogout
+    usecase "UC-8: Logout" as ucLogout
+    usecase "UC-19: Manage settings" as ucManageSetting
 
-    usecase "UC-30: View statistic" as ucViewStatistic
-    usecase "UC-34: Administer reported recipes" as ucAdmReportedRepices
-    usecase "UC-31: Administer users" as ucAdmUser
-    usecase "UC-32: Administer role permission" as ucAdmRolePermis
-    usecase "UC-33: Administer recipes" as ucAdmRecipe
-    usecase "UC-35: Administer ingredients" as ucAdmIngre
-    usecase "UC-36: Administer subscriptions" as ucAdmSubcript
-    usecase "UC-37: Administer event" as ucAdmEvent
-    usecase "UC-38: View income" as ucViewIncome
-    usecase "UC-39: Export income" as ucExportIncome
 
-    note "Read/\nUpdate/Delete" as noteAdmUser
-    note "Create/Read/\nUpdate/Delete" as noteAdmRecipe
+    usecase "UC-26: View statistic" as ucViewStatistic
+    usecase "UC-27: Administer reported recipes" as ucAdmReportedRepices
+    usecase "UC-28: Administer users" as ucAdmUser
+    usecase "UC-29: Administer role permission" as ucAdmRolePermis
+    usecase "UC-30: Administer recipes" as ucAdmRecipe
+    usecase "UC-31: Administer ingredients" as ucAdmIngre
+    usecase "UC-32: Administer subscriptions" as ucAdmSubcript
+    usecase "UC-33: Administer event" as ucAdmEvent
+    usecase "UC-34: View income" as ucViewIncome
+    usecase "UC-35: Export income" as ucExportIncome
+    usecase "UC-36: View activity log" as ucViewActivityLog
+
+
+    note "Read/Update" as noteAdmUser
+    note "Create/Read/\nUpdate" as noteAdmRecipe
     note "Create/Read/\nUpdate/Delete" as noteAdmIngre
     note "Create/Read/\nUpdate/Delete" as noteAdmSubcipt
     note "Create/Read/\nUpdate/Delete" as noteAdmEvent
@@ -46,6 +50,8 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     admin --> ucViewStatistic
     admin --> ucViewIncome
         ucViewIncome <.. ucExportIncome : <<extend>>
+    admin --> ucViewActivityLog
+    admin --> ucManageSetting
     admin --> ucLogout
 
     ucLogout .....> ucLogin : <<include>>
@@ -56,7 +62,8 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     ucAdmIngre .....> ucLogin : <<include>>
     ucAdmSubcript .....> ucLogin : <<include>>
     ucViewIncome .....> ucLogin : <<include>>
-
+    ucManageSetting .....> ucLogin : <<include>>
+    ucViewActivityLog .....> ucLogin : <<include>>
 }
 
 @enduml
