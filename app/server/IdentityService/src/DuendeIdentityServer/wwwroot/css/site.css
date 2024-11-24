@@ -1,7 +1,16 @@
-﻿:root {
+﻿@font-face {
+    font-family: "Sofia-pro";
+    src: url("../fonts/sofia-pro/Sofia Pro Regular Az.otf");
+}
+
+:root {
     --primary: #FE724C;
-    --primary-hover: #ff6a00;
+    --primary-hover: #D96141;
     --white: #fff;
+}
+
+* {
+    font-family: "Sofia-pro"
 }
 
 h1 {
@@ -28,16 +37,25 @@ div, p {
     height: 60px;
     border-radius: 28.5px;
     font-size: 16px;
-    font-weight: 400
+    font-weight: 400;
+    border: none;
 }
 
-.btn-primary {
-    background-color: var(--primary);
-    color: var(--white);
-    height: 60px;
-    border-radius: 28.5px;
-    font-size: 16px;
-    font-weight: 400
+
+    .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active {
+        color: #fff;
+        background-color: var(--primary-hover);
+        border-width: 0px;
+        box-shadow: none;
+    }
+
+        .btn:focus, .btn-primary:not(:disabled):not(.disabled):active:focus {
+            box-shadow: none;
+        }
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: var(--primary);
 }
 
 
@@ -50,8 +68,7 @@ div, p {
 }
 
 .body-container {
-    margin-top: 60px;
-    padding-bottom: 40px;
+    flex: 1;
 }
 
 .welcome-page li {
@@ -85,7 +102,7 @@ div, p {
     }
 
 .card {
-    width: 300px;
+    width: 500px;
 }
 
 body#body {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,10 +14,10 @@
     <link rel="stylesheet" href="~/lib/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body id="body">
-    <partial name="_Nav" />
+<body id="body" class="h-100 d-flex flex-column">
+    @* <partial name="_Nav" /> *@
    
-    <div class="container body-container">
+    <div class="container body-container flex-grow-1">
         @RenderBody()
     </div>
 

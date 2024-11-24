@@ -4,23 +4,24 @@
     var returnUrl = ViewData["ReturnUrl"] as string;
 }
 <partial name="_ValidationSummary" />
+<link rel="stylesheet" href="~/css/login.css" />
 
-<div class="row d-flex justify-content-center align-items-center " style="background-color:azure">
+<div class="row d-flex justify-content-center align-items-center h-100">
 
-    <div class="card bg-white shadow">
-        <div class="card-body">
+    <div class="card bg-white shadow h-100">
+        <div class="card-body d-flex flex-column justify-content-center">
             @if (Model.View.EnableLocalLogin)
             {
-                <h1 style="margin-bottom:32px;">Tastopia</h1>
+                <h1 style="margin-bottom:32px;">Login</h1>
                 <form asp-page="/Account/Login/Index">
                     <input type="hidden" asp-for="Input.ReturnUrl" />
                     <div class="form-group form-floating">
                         <label for="floatingInput" asp-for="Input.Username"></label>
-                        <input class="form-control" id="floatingInput" placeholder="Username" asp-for="Input.Username" autofocus>
+                        <input class="form-control shadow-sm" id="floatingInput" placeholder="Username" asp-for="Input.Username" autofocus>
                     </div>
                     <div class="form-group form-floating">
                         <label for="floatingInput" asp-for="Input.Password"></label>
-                        <input type="password" id="floatingInput" class="form-control" placeholder="Password" asp-for="Input.Password" autocomplete="off">
+                        <input type="password" id="floatingInput" class="form-control shadow-sm" placeholder="Password" asp-for="Input.Password" autocomplete="off">
                     </div>
 
                     @if (Model.View.AllowRememberLogin)
@@ -35,11 +36,11 @@
                         </div>
                     }
                     <div class="d-flex justify-content-center">
-                        <a href="/Account/Register?returnUrl=@returnUrl" class="primary-text">Forgot password?</a>
+                        <a href="/Account/Register?returnUrl=@returnUrl" class="primary-text mb-4 font-weight-bold">Forgot password?</a>
                     </div>
 
                     <div class=" d-flex justify-content-center">
-                        <button class="btn btn-primary w-100" name="Input.Button" value="login">Login</button>
+                        <button class="btn btn-primary w-75 shadow" name="Input.Button" value="login">Login</button>
                     </div>
                     @*<button class="btn btn-secondary" name="Input.Button" value="cancel">Cancel</button>*@
                 </form>
@@ -53,6 +54,11 @@
             }
 
             <p class=" d-flex justify-content-center">or</p>
+            <div class="hr-with-text">
+                <hr>
+                <span class="hr-text">Sign in with</span>
+                <hr>
+            </div>
 
             @if (Model.View.VisibleExternalProviders.Any())
             {
@@ -61,7 +67,7 @@
                     @foreach (var provider in Model.View.VisibleExternalProviders)
                     {
                         @*<li class="list-inline-item">*@
-                        <a class="btn border border-dark text-dark w-100"
+                        <a class="btn btn-google border border-0 text-dark shadow-sm"
                            asp-page="/ExternalLogin/Challenge"
                            asp-route-scheme="@provider.AuthenticationScheme"
                            asp-route-returnUrl="@Model.Input.ReturnUrl">
