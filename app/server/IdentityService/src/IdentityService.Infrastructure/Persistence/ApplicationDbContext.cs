@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace IdentityService.Infrastructure.Persistence;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
+public class ApplicationDbContext : IdentityDbContext<ApplicationAccount>, IApplicationDbContext
 {
     public ApplicationDbContext()
     {
@@ -33,15 +33,20 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<ApplicationUser>().ToTable("Account");
+        builder.Entity<ApplicationAccount>().ToTable("Account");
         builder.Entity<IdentityRole>().ToTable("Role");
-        builder.Entity<IdentityUserRole<string>>().ToTable("UserRole");
-        builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaim");
-        builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogin");
+        builder.Entity<IdentityUserRole<string>>().ToTable("AccountRole");
+        builder.Entity<IdentityUserClaim<string>>().ToTable("AccountClaim");
+        builder.Entity<IdentityUserLogin<string>>().ToTable("AccountLogin");
         builder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaim");
-        builder.Entity<IdentityUserToken<string>>().ToTable("UserToken");
+        builder.Entity<IdentityUserToken<string>>().ToTable("AccountToken");
 
-        builder.Entity<ApplicationUser>(
+        builder.Entity<IdentityUserRole<string>>().Property(c => c.UserId).HasColumnName("AccountId");
+        builder.Entity<IdentityUserClaim<string>>().Property(c => c.UserId).HasColumnName("AccountId");
+        builder.Entity<IdentityUserLogin<string>>().Property(c => c.UserId).HasColumnName("AccountId");
+        builder.Entity<IdentityUserToken<string>>().Property(c => c.UserId).HasColumnName("AccountId");
+
+        builder.Entity<ApplicationAccount>(
                 e =>
                 {
                     e.Property(u => u.Active)

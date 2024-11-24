@@ -16,8 +16,8 @@ namespace DuendeIdentityServer.Pages.Account.Register;
 [AllowAnonymous]
 public class Index : PageModel
 {
-    private readonly UserManager<ApplicationUser> _userManager;
-    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly UserManager<ApplicationAccount> _userManager;
+    private readonly SignInManager<ApplicationAccount> _signInManager;
     private readonly IIdentityServerInteractionService _interaction;
     private readonly IEventService _events;
     private readonly IAuthenticationSchemeProvider _schemeProvider;
@@ -34,8 +34,8 @@ public class Index : PageModel
         IAuthenticationSchemeProvider schemeProvider,
         IIdentityProviderStore identityProviderStore,
         IEventService events,
-        UserManager<ApplicationUser> userManager,
-        SignInManager<ApplicationUser> signInManager,
+        UserManager<ApplicationAccount> userManager,
+        SignInManager<ApplicationAccount> signInManager,
         IServiceBus serviceBus)
     {
         _userManager = userManager;
@@ -97,7 +97,7 @@ public class Index : PageModel
 
         if (ModelState.IsValid)
         {
-            var user = new ApplicationUser
+            var user = new ApplicationAccount
             {
                 UserName = Input.Username,
                 Email = Input.Email,

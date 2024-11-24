@@ -8,8 +8,8 @@ public class MappingConfig
     {
         var mappingConfig = new MapperConfiguration(config =>
         {
-            config.CreateMap<ApplicationUser, ApplicationUserResponseDTO>().ReverseMap();
-            config.CreateMap<ApplicationUser, UpdateUserDTO>().ReverseMap();
+            config.CreateMap<ApplicationAccount, ApplicationUserResponseDTO>().ReverseMap();
+            config.CreateMap<ApplicationAccount, UpdateUserDTO>().ReverseMap();
 
         });
 

@@ -68,7 +68,7 @@ internal static class HostingExtensions
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients)
-            .AddAspNetIdentity<ApplicationUser>()
+            .AddAspNetIdentity<ApplicationAccount>()
             .AddProfileService<ProfileService>();
 
         //   .AddDeveloperSigningCredential(); // not recommended for production

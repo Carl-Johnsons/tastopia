@@ -4,11 +4,13 @@
 
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IdentityService.Domain.Entities;
 
 // Add profile data for application users by adding properties to the ApplicationUser class
-public class ApplicationUser : IdentityUser
+[Table("Account")]
+public class ApplicationAccount : IdentityUser
 {
     [MaxLength(6)]
     public string? EmailConfirmationOTP { get; set; } = null!;

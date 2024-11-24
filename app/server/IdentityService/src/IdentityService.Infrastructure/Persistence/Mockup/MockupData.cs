@@ -5,11 +5,11 @@ namespace IdentityService.Infrastructure.Persistence.Mockup;
 
 internal class MockupData
 {
-    private UserManager<ApplicationUser> _userManager;
+    private UserManager<ApplicationAccount> _userManager;
     private RoleManager<IdentityRole> _roleManager;
     private readonly ApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
-    public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+    public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork, UserManager<ApplicationAccount> userManager, RoleManager<IdentityRole> roleManager)
     {
         _context = context;
         _unitOfWork = unitOfWork;
@@ -36,7 +36,7 @@ internal class MockupData
         await Console.Out.WriteLineAsync("================================================");
 
         // Create a default admin user
-        var adminUser = new ApplicationUser
+        var adminUser = new ApplicationAccount
         {
             Id = "f9a8c16e-610a-49f5-aac0-82183d8c3a16",
             UserName = "admin",
@@ -68,7 +68,7 @@ internal class MockupData
 
     public async Task SeedUserData()
     {
-        foreach (var user in ApplicationUserData.Data)
+        foreach (var user in ApplicationAccountData.Data)
         {
             var userResult = _userManager.FindByNameAsync(user.UserName!).Result;
             if (userResult == null)

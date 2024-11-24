@@ -9,10 +9,10 @@ namespace DuendeIdentityServer.Services;
 
 public class ProfileService : IProfileService
 {
-    private readonly IUserClaimsPrincipalFactory<ApplicationUser> _claimFactory;
-    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IUserClaimsPrincipalFactory<ApplicationAccount> _claimFactory;
+    private readonly UserManager<ApplicationAccount> _userManager;
 
-    public ProfileService(IUserClaimsPrincipalFactory<ApplicationUser> claimFactory, UserManager<ApplicationUser> userManager)
+    public ProfileService(IUserClaimsPrincipalFactory<ApplicationAccount> claimFactory, UserManager<ApplicationAccount> userManager)
     {
         _claimFactory = claimFactory;
         _userManager = userManager;

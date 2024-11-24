@@ -19,8 +19,8 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
     [SecurityHeaders]
     public class Callback : PageModel
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationAccount> _userManager;
+        private readonly SignInManager<ApplicationAccount> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly ILogger<Callback> _logger;
         private readonly IEventService _events;
@@ -29,8 +29,8 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
             IIdentityServerInteractionService interaction,
             IEventService events,
             ILogger<Callback> logger,
-            UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            UserManager<ApplicationAccount> userManager,
+            SignInManager<ApplicationAccount> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -127,11 +127,11 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1851:Possible multiple enumerations of 'IEnumerable' collection", Justification = "<Pending>")]
-        private async Task<ApplicationUser> AutoProvisionUserAsync(string provider, string providerUserId, IEnumerable<Claim> claims)
+        private async Task<ApplicationAccount> AutoProvisionUserAsync(string provider, string providerUserId, IEnumerable<Claim> claims)
         {
             var sub = Guid.NewGuid().ToString();
 
-            var user = new ApplicationUser
+            var user = new ApplicationAccount
             {
                 Id = sub,
                 UserName = sub, // don't need a username, since the user will be using an external provider to login
