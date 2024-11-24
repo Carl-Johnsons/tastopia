@@ -20,7 +20,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-12: Bookmark recipe" as ucBookmarkRecipe
     usecase "UC-13: View recipe detail" as ucViewRecipeDetail
     usecase "UC-14: Use guided cooking mode" as ucGuidedCCM
-    usecase "UC-7: View other user profile" as ucViewUSProfile
+    usecase "UC-7: View other user's profile" as ucViewUSProfile
 
     usecase "UC-15: View menu" as ucViewMenu
     usecase "UC-16: Manage profile" as ucManageProfile
@@ -31,7 +31,8 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-21: Upgrade to premium" as ucUpgradeToPremium
 
     usecase "UC-22: View notifications" as ucViewNotif
-    
+    usecase "UC-37: View follower and following" as ucViewFollow
+
     note "Create/Read/\nUpdate/Delete" as noteManageRecipe
     note "Create/Read/\nUpdate/Delete" as noteManageAller
     note "Read/Update" as noteManageProfile
@@ -39,7 +40,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     note "Create/Read/\nUpdate/Delete" as noteCmtRecipe
     note "Create/Read/\nUpdate/Delete" as noteBookmarkRecipe
     note "{Only available for User}" as noteUpgradeToPremium
-
+    note "{Follow/Unfollow}" as noteViewUSProfile
 
     user --> ucSearch
 
@@ -54,11 +55,13 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
         ucBrowseRecipes <.. ucBookmarkRecipe : <<extend>>
             ucBookmarkRecipe . noteBookmarkRecipe
         ucBrowseRecipes <.. ucViewUSProfile : <<extend>>
+            ucViewUSProfile . noteViewUSProfile
 
     user --> ucViewMenu
         ucViewMenu <.. ucManageProfile : <<extend>>
             ucManageProfile . noteManageProfile
             ucManageProfile <.. ucManageRecipe : <<extend>>
+            ucManageProfile <.. ucViewFollow : <<extend>>
                 ucManageRecipe . noteManageRecipe
             ucManageProfile <.. ucManageAller : <<extend>>
                 ucManageAller . noteManageAller
