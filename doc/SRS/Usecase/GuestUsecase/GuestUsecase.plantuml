@@ -13,7 +13,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-4: Forget password" as ucForgetPassword
     usecase "UC-5: Search" as ucSearch
     usecase "UC-6: Browse recipes" as ucBrowseRecipes
-    usecase "UC-7: View other user profile" as ucViewUSProfile
+    usecase "UC-7: View other users' profiles" as ucViewUSProfile
 }
 
 guest --> ucViewWelcome
