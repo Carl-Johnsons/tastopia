@@ -17,11 +17,8 @@ export const AuthSlice = createSlice({
   initialState,
   reducers: {
     saveAuthData: (state, action) => {
-      console.log("State:", current(state));
       Object.assign(state, action.payload);
-      console.log("Updated auth data");
-      console.log("State:", current(state));
-    },
+    }
   },
   extraReducers: builder => {
     builder.addCase(PURGE, () => {

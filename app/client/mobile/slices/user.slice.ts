@@ -31,10 +31,7 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     saveUserData: (state, action) => {
-      console.log("State:", current(state));
       Object.assign(state, action.payload);
-      console.log("Updated user data");
-      console.log("State:", current(state));
     }
   },
   extraReducers: builder => {
