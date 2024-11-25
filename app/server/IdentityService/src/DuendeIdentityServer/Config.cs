@@ -24,7 +24,7 @@ public static class Config
         get
         {
             EnvUtility.LoadEnvFile();
-            
+
             var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000").Trim();
 
             return [
@@ -33,11 +33,12 @@ public static class Config
                     ClientId = "react.native",
                     ClientName = "React native",
                     RequireClientSecret = false, // TODO: add secret later
-                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowedGrantTypes = [GrantType.AuthorizationCode, GrantType.ResourceOwnerPassword],
                     RequirePkce = true,
                     AllowAccessTokensViaBrowser = false,
                     AlwaysIncludeUserClaimsInIdToken = true, // Attach user claim for SPA client
                     AccessTokenLifetime = 2592000,
+                    AllowOfflineAccess = true,
                     RedirectUris = {
                        $"{reactUrl}/api/auth/callback/duende-identityserver6",
                        "https://www.getpostman.com/oauth2/callback"
