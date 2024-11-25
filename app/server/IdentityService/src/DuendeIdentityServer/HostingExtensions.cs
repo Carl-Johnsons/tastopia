@@ -3,6 +3,7 @@ using Duende.IdentityServer;
 using DuendeIdentityServer.DTOs;
 using DuendeIdentityServer.Services;
 using IdentityService.Infrastructure;
+using Microsoft.AspNetCore.DataProtection;
 using Serilog;
 
 namespace DuendeIdentityServer;
@@ -20,7 +21,6 @@ internal static class HostingExtensions
         var host = builder.Host;
 
         services.AddInfrastructureServices(builder.Configuration);
-
 
         host.UseSerilog((context, config) =>
         {
@@ -72,8 +72,7 @@ internal static class HostingExtensions
             .AddProfileService<ProfileService>()
             .AddResourceOwnerValidator<UserValidator>();
 
-        //   .AddDeveloperSigningCredential(); // not recommended for production
-
+        //  .AddDeveloperSigningCredential(); // not recommended for production
 
         services.AddAuthentication()
             .AddGoogle(options =>
@@ -93,6 +92,10 @@ internal static class HostingExtensions
 
         services.AddLocalApiAuthentication();
 
+        // Config data protection
+        services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo(@"/keys"))
+            .SetApplicationName("tastopia");
 
         services.AddCors(o => o.AddPolicy("AllowSpecificOrigins", builder =>
         {
