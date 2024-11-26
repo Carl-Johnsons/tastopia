@@ -1,5 +1,6 @@
 using AutoMapper;
 using Duende.IdentityServer;
+using Duende.IdentityServer.ResponseHandling;
 using DuendeIdentityServer.DTOs;
 using DuendeIdentityServer.Services;
 using IdentityService.Infrastructure;
@@ -91,6 +92,8 @@ internal static class HostingExtensions
             });
 
         services.AddLocalApiAuthentication();
+
+        services.AddScoped<IAuthorizeInteractionResponseGenerator, CustomAuthorizeInteractionResponseGenerator>();
 
         // Config data protection
         services.AddDataProtection()
