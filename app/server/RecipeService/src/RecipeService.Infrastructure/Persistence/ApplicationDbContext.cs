@@ -29,7 +29,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<RecipeTag> RecipeTags { get; set; }
     public DbSet<RecipeVote> RecipeVotes { get; set; }
 
-    public DbSet<UserAllergicIngredient> UserAllergicIngredients { get; set; }
     public DbSet<UserBookmarkRecipe> UserBookmarkRecipes { get; set; }
     public DbSet<UserReportRecipe> UserReportRecipes { get; set; }
     public DbSet<UserViewRecipe> UserViewRecipes { get; set; }
