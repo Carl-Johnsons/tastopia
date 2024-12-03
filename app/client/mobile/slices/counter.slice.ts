@@ -26,10 +26,10 @@ export const counterSlice = createSlice({
   }
 });
 
-export const selectCount = createSelector(
-  (state: RootState) => state,
-  state => state.counter
-);
+// export const selectCount = createSelector(
+//   (state: RootState) => state,
+//   state => state.counter
+// );
 
 export const { increment, decrement, incrementByAmount } = counterSlice.actions;
 

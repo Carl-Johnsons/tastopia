@@ -35,21 +35,21 @@ const TabIcon = ({ icon, color, name, focused }: TabIconType) => {
 };
 
 const TabsLayout = () => {
-  const jwtToken = selectJwtToken();
-  const navigationState = useRootNavigationState();
+  // const jwtToken = selectJwtToken();
+  // const navigationState = useRootNavigationState();
 
-  if (!jwtToken) {
-    return !navigationState?.key ? (
-      <View className='h-full justify-center'>
-        <ActivityIndicator
-          size={"large"}
-          color={"black"}
-        />
-      </View>
-    ) : (
-      <Redirect href={"/sign-in"} />
-    );
-  }
+  // if (!jwtToken) {
+  //   return !navigationState?.key ? (
+  //     <View className='justify-center h-full'>
+  //       <ActivityIndicator
+  //         size={"large"}
+  //         color={"black"}
+  //       />
+  //     </View>
+  //   ) : (
+  //     <Redirect href={"/sign-in"} />
+  //   );
+  // }
 
   return (
     <>
@@ -63,7 +63,9 @@ const TabsLayout = () => {
             backgroundColor: "#161622",
             borderTopWidth: 1,
             borderTopColor: "#232553",
-            height: 84
+            height: 84,
+            paddingTop: 20,
+            display: "flex"
           }
         }}
       >
@@ -80,6 +82,7 @@ const TabsLayout = () => {
               />
             ),
             tabBarIconStyle: {
+              width: "100%",
               marginRight: "20%"
             }
           }}
@@ -97,6 +100,7 @@ const TabsLayout = () => {
               />
             ),
             tabBarIconStyle: {
+              width: "100%",
               marginRight: "67%"
             }
           }}
@@ -114,17 +118,18 @@ const TabsLayout = () => {
               />
             ),
             tabBarIconStyle: {
+              width: "100%",
               marginLeft: "20%"
             }
           }}
         />
       </Tabs>
       <View
-        className={`absolute ${useOsValue("bottom-7", "bottom-5")} right-[30%] rounded-3xl bg-white/10 p-4 blur-xl`}
+        className={`absolute ${useOsValue("bottom-7", "bottom-3")} right-[30%] rounded-3xl bg-white/10 p-4 blur-xl`}
       >
         <Button
           onPress={() => router.navigate("/createPost")}
-          className='size-full'
+          className='flex items-center justify-center lg:size-10'
         >
           <AntDesign
             name='plus'

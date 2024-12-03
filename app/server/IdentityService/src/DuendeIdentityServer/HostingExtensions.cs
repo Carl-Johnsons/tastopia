@@ -1,8 +1,10 @@
 using AutoMapper;
 using Duende.IdentityServer;
+using Duende.IdentityServer.ResponseHandling;
 using DuendeIdentityServer.DTOs;
 using DuendeIdentityServer.Services;
 using IdentityService.Infrastructure;
+using Microsoft.AspNetCore.DataProtection;
 using Serilog;
 
 namespace DuendeIdentityServer;
@@ -15,12 +17,11 @@ internal static class HostingExtensions
 
         var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
         var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");
-        
+
         var services = builder.Services;
         var host = builder.Host;
 
         services.AddInfrastructureServices(builder.Configuration);
-
 
         host.UseSerilog((context, config) =>
         {
@@ -69,10 +70,10 @@ internal static class HostingExtensions
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryClients(Config.Clients)
             .AddAspNetIdentity<ApplicationAccount>()
-            .AddProfileService<ProfileService>();
+            .AddProfileService<ProfileService>()
+            .AddResourceOwnerValidator<UserValidator>();
 
-        //   .AddDeveloperSigningCredential(); // not recommended for production
-
+        //  .AddDeveloperSigningCredential(); // not recommended for production
 
         services.AddAuthentication()
             .AddGoogle(options =>
@@ -92,6 +93,12 @@ internal static class HostingExtensions
 
         services.AddLocalApiAuthentication();
 
+        services.AddScoped<IAuthorizeInteractionResponseGenerator, CustomAuthorizeInteractionResponseGenerator>();
+
+        // Config data protection
+        services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo(@"/keys"))
+            .SetApplicationName("tastopia");
 
         services.AddCors(o => o.AddPolicy("AllowSpecificOrigins", builder =>
         {

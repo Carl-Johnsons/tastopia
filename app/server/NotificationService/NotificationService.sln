@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationService.Domain"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationService.Infrastructure", "src\NotificationService.Infrastructure\NotificationService.Infrastructure.csproj", "{1D33E24B-9A3A-4AE8-8F93-234684CF2FC5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailWorker", "src\EmailWorker\EmailWorker.csproj", "{67F2C264-7856-494A-BD9D-AF27623B9319}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{1D33E24B-9A3A-4AE8-8F93-234684CF2FC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D33E24B-9A3A-4AE8-8F93-234684CF2FC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D33E24B-9A3A-4AE8-8F93-234684CF2FC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{67F2C264-7856-494A-BD9D-AF27623B9319}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67F2C264-7856-494A-BD9D-AF27623B9319}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67F2C264-7856-494A-BD9D-AF27623B9319}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67F2C264-7856-494A-BD9D-AF27623B9319}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{3F815784-5569-4576-90BB-44AF14D5467C} = {1FBC458E-EE5A-4245-A969-AD34E104F8A2}
 		{13034B50-05F9-4D94-8E26-6F59DFEAAD7A} = {1FBC458E-EE5A-4245-A969-AD34E104F8A2}
 		{1D33E24B-9A3A-4AE8-8F93-234684CF2FC5} = {1FBC458E-EE5A-4245-A969-AD34E104F8A2}
+		{67F2C264-7856-494A-BD9D-AF27623B9319} = {1FBC458E-EE5A-4245-A969-AD34E104F8A2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {378850A7-56F4-4815-B92A-E73F7C48F05B}

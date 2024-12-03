@@ -2,22 +2,11 @@ using DuendeIdentityServer;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
 using Serilog;
-using Serilog.Core;
-using Serilog.Events;
 
 IdentityService.Infrastructure.Utilities.EnvUtility.LoadEnvFile();
 
-var levelSwitch = new LoggingLevelSwitch();
-//var minimumLevel = Environment.GetEnvironmentVariable("Serilog__MinimumLevel") ?? "Information";
-var minimumLevel = "Information";
-
-// Set the initial log level based on the environment variable, defaulting to Information if parsing fails
-levelSwitch.MinimumLevel = Enum.TryParse<LogEventLevel>(minimumLevel, true, out var parsedLevel)
-    ? parsedLevel
-    : LogEventLevel.Information;
-
-
 Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
     .WriteTo.Console()
     .CreateBootstrapLogger();
 
@@ -28,7 +17,6 @@ try
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Host.UseSerilog((ctx, lc) => lc
-        .MinimumLevel.ControlledBy(levelSwitch)
         .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}")
         .Enrich.FromLogContext()
         .ReadFrom.Configuration(ctx.Configuration));

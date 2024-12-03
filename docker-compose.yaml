@@ -36,7 +36,7 @@ services:
         networks:
             - back-end
         environment:
-            RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER} 
+            RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
             RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
             RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
             RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS: true
@@ -48,6 +48,12 @@ services:
             timeout: 10s
             start_period: 10s
             retries: 5
+
+    redis:
+        image: redis:8.0-M02-alpine
+        container_name: redis
+        networks:
+            - back-end
 
 networks:
     back-end:
