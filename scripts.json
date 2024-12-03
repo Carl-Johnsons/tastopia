@@ -1,12 +1,12 @@
 {
     "scripts": {
         "pull_env": "./scripts/pull-env.sh",
+        "setup-backend": "./scripts/setup-backend.sh",
+        "run_all_services": "./scripts/run-all-services.sh",
         "build_all_service": "./scripts/build-all-services.sh",
         "restore_all_services": "./scripts/restore-all-services.sh",
         "migrations_apply_all": "./scripts/apply-all-migrations.sh",
         "k8s_deploy": "./scripts/k8s-deploy.sh",
-        "generate_identity_key": "./scripts/generate_identity_key.sh",
-        "docker_prune": "./scripts/docker_prune.sh",
-        "run_all_services": "./scripts/run-all-services.sh"
+        "generate_identity_key": "./scripts/generate_identity_key.sh"
     }
 }
