@@ -33,12 +33,12 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-22: View notifications" as ucViewNotif
     usecase "UC-37: View follower and following" as ucViewFollow
 
-    note "Create/Read/\nUpdate/Delete" as noteManageRecipe
-    note "Create/Read/\nUpdate/Delete" as noteManageAller
+    note "Create/Read/\nEdit/Delete" as noteManageRecipe
+    note "Create/Read/\nEdit/Delete" as noteManageAller
     note "Read/Update" as noteManageProfile
-    note "Create/Read/\nUpdate/Delete" as noteVoteRecipe
-    note "Create/Read/\nUpdate/Delete" as noteCmtRecipe
-    note "Create/Read/\nUpdate/Delete" as noteBookmarkRecipe
+    note "Create/Read/\nEdit/Delete" as noteVoteRecipe
+    note "Create/Read/\nEdit/Delete" as noteCmtRecipe
+    note "Create/Read/\nEdit/Delete" as noteBookmarkRecipe
     note "{Only available for User}" as noteUpgradeToPremium
     note "{Follow/Unfollow}" as noteViewUSProfile
 

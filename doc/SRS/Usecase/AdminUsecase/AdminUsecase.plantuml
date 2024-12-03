@@ -9,8 +9,8 @@ actor "Admin" as admin
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-2: Login" as ucLogin
     usecase "UC-8: Logout" as ucLogout
+    usecase "UC-16: Manage profile" as ucManageProfile
     usecase "UC-19: Manage settings" as ucManageSetting
-
 
     usecase "UC-26: View statistics" as ucViewStatistic
     usecase "UC-27: Administer reported recipes" as ucAdmReportedRepices
@@ -24,12 +24,11 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-35: Export income" as ucExportIncome
     usecase "UC-36: View activity log" as ucViewActivityLog
 
-
     note "Read/Update" as noteAdmUser
-    note "Create/Read/\nUpdate" as noteAdmRecipe
-    note "Create/Read/\nUpdate/Delete" as noteAdmIngre
-    note "Create/Read/\nUpdate/Delete" as noteAdmSubcipt
-    note "Create/Read/\nUpdate/Delete" as noteAdmEvent
+    note "Create/Read/\nEdit" as noteAdmRecipe
+    note "Create/Read/\nEdit/Delete" as noteAdmIngre
+    note "Create/Read/\nEdit/Delete" as noteAdmSubcipt
+    note "Create/Read/\nEdit/Delete" as noteAdmEvent
     note "Read/Delete" as noteAdmReportedRecipes
     note "Read/Update" as noteAmdRolePermis
 
@@ -51,7 +50,8 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     admin --> ucViewIncome
         ucViewIncome <.. ucExportIncome : <<extend>>
     admin --> ucViewActivityLog
-    admin --> ucManageSetting
+    admin --> ucManageProfile
+        ucManageProfile <.. ucManageSetting: <<extend>>
     admin --> ucLogout
 
     ucLogout .....> ucLogin : <<include>>
@@ -62,7 +62,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     ucAdmIngre .....> ucLogin : <<include>>
     ucAdmSubcript .....> ucLogin : <<include>>
     ucViewIncome .....> ucLogin : <<include>>
-    ucManageSetting .....> ucLogin : <<include>>
+    ucManageProfile .....> ucLogin : <<include>>
     ucViewActivityLog .....> ucLogin : <<include>>
 }
 
