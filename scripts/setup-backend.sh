@@ -6,6 +6,8 @@ GREEN_OCT='\o033[0;32m'
 NC='\033[0m'      # No Color
 NC_OCT='\o033[0m' # No Color
 
+dotnet tool install --global dotnet-ef --version 9.0.0
+
 ./scripts/pull-env.sh
 printf "\n\t*** ${GREEN}DONE PULLING ENV${NC} ***\n\n"
 
