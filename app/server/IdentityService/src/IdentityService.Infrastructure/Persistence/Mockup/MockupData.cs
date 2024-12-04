@@ -65,6 +65,22 @@ internal class MockupData
         }
     }
 
+    public async Task SeedPermissionData()
+    {
+        var permissions = new List<Permission> {
+            new Permission { Code = "READ_OTHER_PROFILE", Value = "ReadOtherProfile", Id = Guid.NewGuid() },
+            new Permission { Code = "EDIT_BIO", Value = "EditBio", Id = Guid.NewGuid() },
+            new Permission { Code = "EDIT_DISPLAY_NAME", Value = "EditDisplayName", Id = Guid.NewGuid() },
+            new Permission { Code = "EDIT_USERNAME", Value = "EditUsername", Id = Guid.NewGuid() },
+            new Permission { Code = "BAN_USER", Value = "BAN_USER", Id = Guid.NewGuid() },
+        };
+
+        if (!_context.Permissions.Any())
+        {
+            await _context.AddRangeAsync(permissions);
+            await _unitOfWork.SaveChangeAsync();
+        }
+    }
 
     public async Task SeedUserData()
     {
