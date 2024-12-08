@@ -19,13 +19,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbContext Instance => this;
     
     public DbSet<Recipe> Recipes {  get; set; }
-    public DbSet<Ingredient> Ingredients { get; set; }
     public DbSet<Tag> Tags { get; set; }
     public DbSet<Step> Steps { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Vote> Votes { get; set; }
     //Relationship
-    public DbSet<RecipeIngredient> RecipeIngredients { get; set; }
     public DbSet<RecipeTag> RecipeTags { get; set; }
     public DbSet<RecipeVote> RecipeVotes { get; set; }
 
@@ -90,15 +88,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                   .HasConversion(v => v.ToUniversalTime(),
                                  v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         });
-        modelBuilder.Entity<Ingredient>(entity =>
-        {
-            entity.Property(e => e.CreatedAt)
-                  .HasConversion(v => v.ToUniversalTime(),
-                                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
-            entity.Property(e => e.UpdatedAt)
-                  .HasConversion(v => v.ToUniversalTime(),
-                                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
-        });
         modelBuilder.Entity<Tag>(entity =>
         {
             entity.Property(e => e.CreatedAt)
@@ -141,12 +130,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             .OnDelete(DeleteBehavior.Cascade);
 
         //many to many
-        modelBuilder.Entity<RecipeIngredient>()
-            .HasOne(ri => ri.Recipe)
-            .WithMany(r => r.RecipeIngredients)
-            .HasForeignKey(ri => ri.RecipeId)
-            .OnDelete(DeleteBehavior.Cascade);
-
         modelBuilder.Entity<RecipeTag>()
             .HasOne(ri => ri.Recipe)
             .WithMany(r => r.RecipeTags)
@@ -165,7 +148,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
         //RecipeData.Seed(modelBuilder);
 
-        Recipes.Where(r => EF.Functions.JsonExists(r.Id, "key")).ToList();
+     
 
     }
 }

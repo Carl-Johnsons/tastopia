@@ -20,12 +20,7 @@ public class RecipeData
             }
         );
 
-        modelBuilder.Entity<RecipeIngredient>().HasData(
-            new RecipeIngredient { RecipeId = recipe1Id, IngredientId = IngredientData.Data.First(i => i.Name == "Chicken Egg").Id },
-            new RecipeIngredient { RecipeId = recipe1Id, IngredientId = IngredientData.Data.First(i => i.Name == "Butter").Id },
-            new RecipeIngredient { RecipeId = recipe1Id, IngredientId = IngredientData.Data.First(i => i.Name == "Salt").Id },
-            new RecipeIngredient { RecipeId = recipe1Id, IngredientId = IngredientData.Data.First(i => i.Name == "Black Pepper").Id }
-        );
+        
 
         modelBuilder.Entity<Step>().HasData(
             new Step { RecipeId = recipe1Id, Content = "Crack eggs into a bowl, add salt and pepper, and whisk well.", OdinalNumber = 1 },
@@ -47,12 +42,7 @@ public class RecipeData
             }
         );
 
-        modelBuilder.Entity<RecipeIngredient>().HasData(
-            new RecipeIngredient { RecipeId = recipe2Id, IngredientId = IngredientData.Data.First(i => i.Name == "Tomato").Id },
-            new RecipeIngredient { RecipeId = recipe2Id, IngredientId = IngredientData.Data.First(i => i.Name == "Onion").Id },
-            new RecipeIngredient { RecipeId = recipe2Id, IngredientId = IngredientData.Data.First(i => i.Name == "Garlic").Id },
-            new RecipeIngredient { RecipeId = recipe2Id, IngredientId = IngredientData.Data.First(i => i.Name == "Olive Oil").Id }
-        );
+        
 
         modelBuilder.Entity<Step>().HasData(
             new Step { RecipeId = recipe2Id, Content = "Heat olive oil in a pot, sauté onions and garlic until soft.", OdinalNumber = 1 },
@@ -74,12 +64,6 @@ public class RecipeData
             }
         );
 
-        modelBuilder.Entity<RecipeIngredient>().HasData(
-            new RecipeIngredient { RecipeId = recipe3Id, IngredientId = IngredientData.Data.First(i => i.Name == "Carrot").Id },
-            new RecipeIngredient { RecipeId = recipe3Id, IngredientId = IngredientData.Data.First(i => i.Name == "Broccoli").Id },
-            new RecipeIngredient { RecipeId = recipe3Id, IngredientId = IngredientData.Data.First(i => i.Name == "Bell Pepper").Id },
-            new RecipeIngredient { RecipeId = recipe3Id, IngredientId = IngredientData.Data.First(i => i.Name == "Soy Sauce").Id }
-        );
 
         modelBuilder.Entity<Step>().HasData(
             new Step { RecipeId = recipe3Id, Content = "Heat oil in a pan, add sliced carrots, broccoli, and bell peppers.", OdinalNumber = 1 },
@@ -101,12 +85,7 @@ public class RecipeData
             }
         );
 
-        modelBuilder.Entity<RecipeIngredient>().HasData(
-            new RecipeIngredient { RecipeId = recipe4Id, IngredientId = IngredientData.Data.First(i => i.Name == "Bread").Id },
-            new RecipeIngredient { RecipeId = recipe4Id, IngredientId = IngredientData.Data.First(i => i.Name == "Butter").Id },
-            new RecipeIngredient { RecipeId = recipe4Id, IngredientId = IngredientData.Data.First(i => i.Name == "Garlic").Id }
-        );
-
+        
         modelBuilder.Entity<Step>().HasData(
             new Step { RecipeId = recipe4Id, Content = "Preheat the oven to 375°F (190°C).", OdinalNumber = 1 },
             new Step { RecipeId = recipe4Id, Content = "Spread garlic butter on bread slices and arrange on a baking sheet.", OdinalNumber = 2 },
@@ -125,13 +104,6 @@ public class RecipeData
                 Serves = 4,
                 CookTime = new TimeSpan(0, 20, 0)
             }
-        );
-
-        modelBuilder.Entity<RecipeIngredient>().HasData(
-            new RecipeIngredient { RecipeId = recipe5Id, IngredientId = IngredientData.Data.First(i => i.Name == "Spaghetti").Id },
-            new RecipeIngredient { RecipeId = recipe5Id, IngredientId = IngredientData.Data.First(i => i.Name == "Bacon").Id },
-            new RecipeIngredient { RecipeId = recipe5Id, IngredientId = IngredientData.Data.First(i => i.Name == "Parmesan Cheese").Id },
-            new RecipeIngredient { RecipeId = recipe5Id, IngredientId = IngredientData.Data.First(i => i.Name == "Egg").Id }
         );
 
         modelBuilder.Entity<Step>().HasData(

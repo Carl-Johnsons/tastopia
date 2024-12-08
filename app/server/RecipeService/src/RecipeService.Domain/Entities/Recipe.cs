@@ -17,6 +17,9 @@ public class Recipe : BaseAuditableEntity
     [Required]
     public string ImageUrl { get; set; } = null!;
 
+    [Required]
+    public List<string> Ingredients { get; set; } = null!;
+
     [Column(TypeName = "INTERVAL")]
     public TimeSpan? CookTime { get; set; }
     public int? Serves { get; set; }
@@ -26,7 +29,6 @@ public class Recipe : BaseAuditableEntity
     public virtual List<Step>? Steps { get; set; }
     public virtual List<Comment>? Comments { get; set; }
     //many to many
-    public virtual List<RecipeIngredient>? RecipeIngredients { get; set; }
     public virtual List<RecipeTag>? RecipeTags { get; set; }
     public virtual List<RecipeVote>? RecipeVotes { get; set; }
 

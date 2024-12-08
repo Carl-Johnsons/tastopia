@@ -13,5 +13,8 @@ public class Tag : BaseAuditableEntity
     [Required]
     public string Code { get; set; } = null!;
 
+    [Required]
+    public string Type { get; set; } = null!;
+
     public string? ImageUrl { get; set; }
 }

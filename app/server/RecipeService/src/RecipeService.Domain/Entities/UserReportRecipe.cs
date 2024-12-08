@@ -18,4 +18,6 @@ public class UserReportRecipe
 
     [Required]
     public string Status { get; set; } = "Pending";
+
+    public virtual Recipe? Recipe { get; set; }
 }
