@@ -1,0 +1,69 @@
+@startuml AdminUsecase
+skinparam style strictuml
+skinparam monochrome true
+skinparam linetype polyline
+skinparam defaultFontSize 12
+left to right direction
+actor "Admin" as admin
+' actor "Admin" as admin
+rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
+    usecase "UC-2: Login" as ucLogin
+    usecase "UC-8: Logout" as ucLogout
+    usecase "UC-16: Manage profile" as ucManageProfile
+    usecase "UC-19: Manage settings" as ucManageSetting
+
+    usecase "UC-26: View statistics" as ucViewStatistic
+    usecase "UC-27: Administer reported recipes" as ucAdmReportedRepices
+    usecase "UC-28: Administer users" as ucAdmUser
+    usecase "UC-29: Administer role permission" as ucAdmRolePermis
+    usecase "UC-30: Administer recipes" as ucAdmRecipe
+    usecase "UC-31: Administer ingredients" as ucAdmIngre
+    usecase "UC-32: Administer subscriptions" as ucAdmSubcript
+    usecase "UC-33: Administer event" as ucAdmEvent
+    usecase "UC-34: View income" as ucViewIncome
+    usecase "UC-35: Export income" as ucExportIncome
+    usecase "UC-36: View activity log" as ucViewActivityLog
+
+    note "Read/Update" as noteAdmUser
+    note "Create/Read/\nEdit" as noteAdmRecipe
+    note "Create/Read/\nEdit/Delete" as noteAdmIngre
+    note "Create/Read/\nEdit/Delete" as noteAdmSubcipt
+    note "Create/Read/\nEdit/Delete" as noteAdmEvent
+    note "Read/Delete" as noteAdmReportedRecipes
+    note "Read/Update" as noteAmdRolePermis
+
+    admin --> ucAdmUser
+        ucAdmUser .. noteAdmUser
+    admin --> ucAdmRecipe
+        ucAdmRecipe <.. ucAdmReportedRepices : <<extend>>
+            ucAdmReportedRepices .. noteAdmReportedRecipes
+        ucAdmRecipe .. noteAdmRecipe
+    admin --> ucAdmIngre
+        ucAdmIngre .. noteAdmIngre
+    admin --> ucAdmRolePermis
+        ucAdmRolePermis .. noteAmdRolePermis
+    admin --> ucAdmSubcript
+        ucAdmSubcript <.. ucAdmEvent : <<extend>>
+            ucAdmEvent .. noteAdmEvent
+        ucAdmSubcript .. noteAdmSubcipt
+    admin --> ucViewStatistic
+    admin --> ucViewIncome
+        ucViewIncome <.. ucExportIncome : <<extend>>
+    admin --> ucViewActivityLog
+    admin --> ucManageProfile
+        ucManageProfile <.. ucManageSetting: <<extend>>
+    admin --> ucLogout
+
+    ucLogout .....> ucLogin : <<include>>
+    ucViewStatistic .....> ucLogin : <<include>>
+    ucAdmUser .....> ucLogin : <<include>>
+    ucAdmRolePermis .....> ucLogin : <<include>>
+    ucAdmRecipe .....> ucLogin : <<include>>
+    ucAdmIngre .....> ucLogin : <<include>>
+    ucAdmSubcript .....> ucLogin : <<include>>
+    ucViewIncome .....> ucLogin : <<include>>
+    ucManageProfile .....> ucLogin : <<include>>
+    ucViewActivityLog .....> ucLogin : <<include>>
+}
+
+@enduml
