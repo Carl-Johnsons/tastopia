@@ -1,6 +1,7 @@
 ﻿using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Infrastructure.Persistence;
 
@@ -16,6 +17,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationAccount>, IAppl
     }
 
     public DbContext Instance => this;
+    public DbSet<Permission> Permissions {  get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -57,5 +59,17 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationAccount>, IAppl
                           .HasConversion(v => v.ToUniversalTime(),
                                          v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
                 });
+
+        builder.Entity<RolePermission>()
+           .HasOne(rp => rp.Role)
+           .WithMany()
+           .HasForeignKey(rp => rp.RoleId)
+           .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<RolePermission>()
+            .HasOne(rp => rp.Permission)
+            .WithMany()
+            .HasForeignKey(rp => rp.PermissionId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

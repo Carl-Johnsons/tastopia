@@ -35,6 +35,7 @@ public static class DependencyInjection
             var mockupData = serviceProvider.GetRequiredService<MockupData>();
             mockupData.SeedUserRoleAsync().Wait();
             mockupData.SeedUserData().Wait();
+            mockupData.SeedPermissionData().Wait();
         }
 
         return services;
