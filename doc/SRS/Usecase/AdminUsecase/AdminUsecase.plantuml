@@ -5,65 +5,43 @@ skinparam linetype polyline
 skinparam defaultFontSize 12
 left to right direction
 actor "Admin" as admin
-' actor "Admin" as admin
+actor "Cloudinary" as cl
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-2: Login" as ucLogin
     usecase "UC-8: Logout" as ucLogout
-    usecase "UC-16: Manage profile" as ucManageProfile
-    usecase "UC-19: Manage settings" as ucManageSetting
+    usecase "UC-9: Manage profile" as ucManageProfile
+    usecase "UC-10: Manage settings" as ucManageSetting
 
-    usecase "UC-26: View statistics" as ucViewStatistic
-    usecase "UC-27: Administer reported recipes" as ucAdmReportedRepices
     usecase "UC-28: Administer users" as ucAdmUser
-    usecase "UC-29: Administer role permission" as ucAdmRolePermis
-    usecase "UC-30: Administer recipes" as ucAdmRecipe
-    usecase "UC-31: Administer ingredients" as ucAdmIngre
-    usecase "UC-32: Administer subscriptions" as ucAdmSubcript
-    usecase "UC-33: Administer event" as ucAdmEvent
-    usecase "UC-34: View income" as ucViewIncome
-    usecase "UC-35: Export income" as ucExportIncome
-    usecase "UC-36: View activity log" as ucViewActivityLog
+    usecase "UC-29: Administer tags" as ucAdmTags
+    usecase "UC-31: Administer recipes" as ucAdmRecipe
+    usecase "UC-38: Administer reports" as ucAdmReport
 
-    note "Read/Update" as noteAdmUser
-    note "Create/Read/\nEdit" as noteAdmRecipe
-    note "Create/Read/\nEdit/Delete" as noteAdmIngre
-    note "Create/Read/\nEdit/Delete" as noteAdmSubcipt
-    note "Create/Read/\nEdit/Delete" as noteAdmEvent
-    note "Read/Delete" as noteAdmReportedRecipes
-    note "Read/Update" as noteAmdRolePermis
+    note "Read/Delete" as noteAdmUser
+    note "Read/Delete" as noteAdmRecipe
+    note "Create" as noteAdmTag
+    note "Read/Delete" as noteAdmReport
 
     admin --> ucAdmUser
         ucAdmUser .. noteAdmUser
     admin --> ucAdmRecipe
-        ucAdmRecipe <.. ucAdmReportedRepices : <<extend>>
-            ucAdmReportedRepices .. noteAdmReportedRecipes
         ucAdmRecipe .. noteAdmRecipe
-    admin --> ucAdmIngre
-        ucAdmIngre .. noteAdmIngre
-    admin --> ucAdmRolePermis
-        ucAdmRolePermis .. noteAmdRolePermis
-    admin --> ucAdmSubcript
-        ucAdmSubcript <.. ucAdmEvent : <<extend>>
-            ucAdmEvent .. noteAdmEvent
-        ucAdmSubcript .. noteAdmSubcipt
-    admin --> ucViewStatistic
-    admin --> ucViewIncome
-        ucViewIncome <.. ucExportIncome : <<extend>>
-    admin --> ucViewActivityLog
+    admin --> ucAdmReport
+        ucAdmReport .. noteAdmReport
+    admin --> ucAdmTags
+        ucAdmTags .. noteAdmTag
     admin --> ucManageProfile
         ucManageProfile <.. ucManageSetting: <<extend>>
     admin --> ucLogout
 
     ucLogout .....> ucLogin : <<include>>
-    ucViewStatistic .....> ucLogin : <<include>>
     ucAdmUser .....> ucLogin : <<include>>
-    ucAdmRolePermis .....> ucLogin : <<include>>
     ucAdmRecipe .....> ucLogin : <<include>>
-    ucAdmIngre .....> ucLogin : <<include>>
-    ucAdmSubcript .....> ucLogin : <<include>>
-    ucViewIncome .....> ucLogin : <<include>>
+    ucAdmTags .....> ucLogin : <<include>>
     ucManageProfile .....> ucLogin : <<include>>
-    ucViewActivityLog .....> ucLogin : <<include>>
+
+    cl --up----> ucManageProfile
+    cl --up----> ucAdmTags
 }
 
 @enduml

@@ -6,32 +6,34 @@ skinparam defaultFontSize 12
 left to right direction
 actor "User" as user
 actor "Premium User" as pUser
-' actor "Admin" as admin
+actor "Gmail" as gmail
+actor "Google Play Billing" as gpb
+actor "App Store Payment" as asp
+actor "Cloudinary" as cl
+
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-2: Login" as ucLogin
     usecase "UC-8: Logout" as ucLogout
+    usecase "UC-9: Manage settings" as ucManageSetting
+    usecase "UC-10: Manage profile" as ucManageProfile
 
     usecase "UC-5: Search" as ucSearch
-
     usecase "UC-6: Browse recipes" as ucBrowseRecipes
-    usecase "UC-9: Vote recipes" as ucVoteRecipe
-    usecase "UC-10: Comment recipes" as ucCmtRecipe
-    usecase "UC-11: Report recipes" as ucReportRecipe
-    usecase "UC-12: Bookmark recipe" as ucBookmarkRecipe
-    usecase "UC-13: View recipe detail" as ucViewRecipeDetail
-    usecase "UC-14: Use guided cooking mode" as ucGuidedCCM
+    usecase "UC-11: Vote recipes" as ucVoteRecipe
+    usecase "UC-12: Comment recipes" as ucCmtRecipe
+    usecase "UC-13: Report recipes" as ucReportRecipe
+    usecase "UC-14: Bookmark recipe" as ucBookmarkRecipe
+    usecase "UC-15: View recipe detail" as ucViewRecipeDetail
+    usecase "UC-16: Use guided cooking mode" as ucGuidedCCM
     usecase "UC-7: View other users' profiles" as ucViewUSProfile
 
-    usecase "UC-15: View menu" as ucViewMenu
-    usecase "UC-16: Manage profile" as ucManageProfile
-    usecase "UC-17: Manage own recipe" as ucManageRecipe
-    usecase "UC-18: Manage allergic\n ingredients" as ucManageAller
-    usecase "UC-19: Manage settings" as ucManageSetting
-    usecase "UC-20: View recent recipes" as ucViewRecentRecipes
-    usecase "UC-21: Upgrade to premium" as ucUpgradeToPremium
+    usecase "UC-17: View menu" as ucViewMenu
+    usecase "UC-18: Manage own recipe" as ucManageRecipe
+    usecase "UC-19: View recent recipes" as ucViewRecentRecipes
+    usecase "UC-20: Upgrade to premium" as ucUpgradeToPremium
 
-    usecase "UC-22: View notifications" as ucViewNotif
-    usecase "UC-37: View follower and following" as ucViewFollow
+    usecase "UC-21: View notifications" as ucViewNotif
+    usecase "UC-22: View follower and following" as ucViewFollow
 
     note "Create/Read/\nEdit/Delete" as noteManageRecipe
     note "Create/Read/\nEdit/Delete" as noteManageAller
@@ -63,8 +65,6 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
             ucManageProfile <.. ucManageRecipe : <<extend>>
             ucManageProfile <.. ucViewFollow : <<extend>>
                 ucManageRecipe . noteManageRecipe
-            ucManageProfile <.. ucManageAller : <<extend>>
-                ucManageAller . noteManageAller
         ucViewMenu <.. ucManageSetting : <<extend>>
         ucViewMenu <.. ucViewRecentRecipes : <<extend>>
         ucViewMenu <.. ucUpgradeToPremium : <<extend>>
@@ -72,6 +72,12 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
         ucViewMenu <.. ucLogout : <<extend>>
 
     user --> ucViewNotif
+    
+    gmail -up-> ucLogin
+    gpb --up---> ucUpgradeToPremium 
+    asp --up---> ucUpgradeToPremium
+    cl --up--> ucManageProfile
+    cl --up--> ucManageRecipe
 
     ucSearch .....> ucLogin : <<include>>
     ucBrowseRecipes .....> ucLogin : <<include>>

@@ -5,6 +5,8 @@ skinparam linetype polyline
 skinparam defaultFontSize 12
 left to right direction
 actor "Guest" as guest
+actor "Gmail" as gmail
+actor "Twilio"as twilio
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-1: View welcome screen" as ucViewWelcome
@@ -23,4 +25,10 @@ guest --> ucViewWelcome
     ucViewWelcome --> ucSearch
     ucViewWelcome --> ucBrowseRecipes
         ucBrowseRecipes <.. ucViewUSProfile : <<extend>>
+
+gmail -up-> ucLogin
+twilio -up-> ucForgetPassword
+gmail -up-> ucForgetPassword
+twilio -up-> ucRegister
+gmail -up-> ucRegister
 @enduml
