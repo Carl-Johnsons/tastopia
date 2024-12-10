@@ -12,10 +12,10 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-9: Manage profile" as ucManageProfile
     usecase "UC-10: Manage settings" as ucManageSetting
 
-    usecase "UC-28: Administer users" as ucAdmUser
-    usecase "UC-29: Administer tags" as ucAdmTags
-    usecase "UC-31: Administer recipes" as ucAdmRecipe
-    usecase "UC-38: Administer reports" as ucAdmReport
+    usecase "UC-26: Administer users" as ucAdmUser
+    usecase "UC-27: Administer tags" as ucAdmTags
+    usecase "UC-29: Administer recipes" as ucAdmRecipe
+    usecase "UC-33: Administer reports" as ucAdmReport
 
     note "Read/Delete" as noteAdmUser
     note "Read/Delete" as noteAdmRecipe

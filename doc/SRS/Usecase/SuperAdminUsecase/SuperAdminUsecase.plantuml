@@ -18,13 +18,11 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-28: Administer role permissions" as ucAdmRolePermis
     usecase "UC-29: Administer recipes" as ucAdmRecipe
     usecase "UC-30: Administer subscriptions" as ucAdmSubcript
-        usecase "UC-31: Administer events" as ucAdmEvent
+    usecase "UC-31: Administer events" as ucAdmEvent
     usecase "UC-32: View statistics" as ucViewStatistic
-        usecase "UC-33: View income" as ucViewIncome
-        usecase "UC-34: Export income" as ucExportIncome
-    usecase "UC-35: Administer reports" as ucAdmReport
-    usecase "UC-36: Administer admins" as ucAdmAdmin
-    usecase "UC-37: View activity log" as ucViewActivityLog
+    usecase "UC-33: Administer reports" as ucAdmReport
+    usecase "UC-34: Administer admins" as ucAdmAdmin
+    usecase "UC-35: View activity log" as ucViewActivityLog
 
     note "Read/Delete" as noteAdmUser
     note "Read/Delete" as noteAdmRecipe
@@ -46,12 +44,10 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     admin --> ucAdmRolePermis
         ucAdmRolePermis .. noteAmdRolePermis
     admin --> ucAdmSubcript
-        ucAdmSubcript <.. ucAdmEvent : <<extend>>
-            ucAdmEvent .. noteAdmEvent
         ucAdmSubcript .. noteAdmSubcipt
+    admin --> ucAdmEvent
+        ucAdmEvent .. noteAdmEvent
     admin --> ucViewStatistic
-    admin --> ucViewIncome
-        ucViewIncome <.. ucExportIncome : <<extend>>
     admin --> ucViewActivityLog
     admin --> ucManageProfile
         ucManageProfile <.. ucManageSetting: <<extend>>
@@ -66,7 +62,6 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     ucAdmRecipe .....> ucLogin : <<include>>
     ucAdmTags .....> ucLogin : <<include>>
     ucAdmSubcript .....> ucLogin : <<include>>
-    ucViewIncome .....> ucLogin : <<include>>
     ucManageProfile .....> ucLogin : <<include>>
     ucViewActivityLog .....> ucLogin : <<include>>
     ucAdmAdmin .....> ucLogin : <<include>>
