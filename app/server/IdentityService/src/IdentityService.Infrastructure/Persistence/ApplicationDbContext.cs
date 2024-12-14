@@ -1,7 +1,6 @@
 ﻿using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Infrastructure.Persistence;
 
@@ -17,7 +16,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationAccount>, IAppl
     }
 
     public DbContext Instance => this;
-    public DbSet<Permission> Permissions {  get; set; }
+    public DbSet<Permission> Permissions { get; set; }
+    public DbSet<Group> Groups { get; set; }
+    public DbSet<RoleGroupPermission> RoleGroupPermissions { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -60,16 +61,22 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationAccount>, IAppl
                                          v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
                 });
 
-        builder.Entity<RolePermission>()
-           .HasOne(rp => rp.Role)
-           .WithMany()
-           .HasForeignKey(rp => rp.RoleId)
-           .OnDelete(DeleteBehavior.Cascade);
+        builder.Entity<RoleGroupPermission>(e =>
+        {
+            e.HasOne(rgp => rgp.Role)
+                .WithMany()
+                .HasForeignKey(rgp => rgp.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Entity<RolePermission>()
-            .HasOne(rp => rp.Permission)
-            .WithMany()
-            .HasForeignKey(rp => rp.PermissionId)
-            .OnDelete(DeleteBehavior.Cascade);
+            e.HasOne(rp => rp.Permission)
+                .WithMany()
+                .HasForeignKey(rp => rp.PermissionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            e.HasOne(rp => rp.Group)
+                .WithMany()
+                .HasForeignKey(rp => rp.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 }
