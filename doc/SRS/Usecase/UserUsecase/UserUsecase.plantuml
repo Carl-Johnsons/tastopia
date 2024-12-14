@@ -22,7 +22,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-11: Vote recipes" as ucVoteRecipe
     usecase "UC-12: Comment recipes" as ucCmtRecipe
     usecase "UC-13: Report recipes" as ucReportRecipe
-    usecase "UC-14: Bookmark recipe" as ucBookmarkRecipe
+    usecase "UC-14: Bookmark recipes" as ucBookmarkRecipe
     usecase "UC-15: View recipe detail" as ucViewRecipeDetail
     usecase "UC-16: Use guided cooking mode" as ucGuidedCCM
     usecase "UC-7: View other users' profiles" as ucViewUSProfile
@@ -33,7 +33,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-20: Upgrade to premium" as ucUpgradeToPremium
 
     usecase "UC-21: View notifications" as ucViewNotif
-    usecase "UC-22: View follower and following" as ucViewFollow
+    usecase "UC-22: View followers and followings" as ucViewFollow
 
     note "Create/Read/\nEdit/Delete" as noteManageRecipe
     note "Read/Update" as noteManageProfile

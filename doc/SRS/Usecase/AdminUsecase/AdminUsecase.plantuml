@@ -9,8 +9,8 @@ actor "Cloudinary" as cl
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-2: Login" as ucLogin
     usecase "UC-8: Logout" as ucLogout
-    usecase "UC-9: Manage profile" as ucManageProfile
-    usecase "UC-10: Manage settings" as ucManageSetting
+    usecase "UC-9: Manage settings" as ucManageSetting
+    usecase "UC-10: Manage profile" as ucManageProfile
 
     usecase "UC-26: Administer users" as ucAdmUser
     usecase "UC-27: Administer tags" as ucAdmTags
