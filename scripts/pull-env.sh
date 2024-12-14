@@ -4,19 +4,20 @@ project_root=$(pwd)
 
 init() {
   echo -e "\e[95mSetting up dotenv-vault's environment...\e[0m"
-  npm i -g dotenv-vault
+  npm i dotenv-vault
 }
 
 clean() {
   echo -e "\e[95mCleaning up...\e[0m"
-  npm un -g dotenv-vault
+  npm un dotenv-vault
+  rm package.json package-lock.json
 }
 
 pull_env_file() {
   local service_path=$1
   local file_name=$2
   echo -e "\e[95mPulling $file_name env file...\e[0m"
-  (cd "$service_path" && dotenv-vault pull -y)
+  (cd "$service_path" && npx dotenv-vault pull -y)
   cd $project_root
 }
 
