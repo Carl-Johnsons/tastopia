@@ -1,4 +1,7 @@
 #!/bin/bash
+
+break_index=3
+
 # Define color
 RED='\033[0;31m'
 RED_OCT='\o033[0;31m'
@@ -22,7 +25,7 @@ CYAN='\033[0;36m'
 CYAN_OCT='\o033[0;36m'
 LIGHT_CYAN='\033[1;36m'
 LIGHT_CYAN_OCT='\o033[1;36m'
-NC='\033[0m' # No Color
+NC='\033[0m'      # No Color
 NC_OCT='\o033[0m' # No Color
 
 # Read the content of scripts.json
@@ -31,22 +34,29 @@ json=$(<scripts.json)
 scripts_content=$(echo "$json" | sed 's/"scripts": //; s/{//; s/}//')
 # Remove quotes, commas, leading/trailing spaces, and empty lines
 scripts=$(echo "$scripts_content" | sed 's/"//g; s/,//g; s/^[[:space:]]*//; s/[[:space:]]*$//' | grep -v '^$')
-echo "$scripts"
+# echo "$scripts"
 # Extract script keys from the scripts variable
 script_keys=$(echo "$scripts" | cut -d':' -f1)
 
-display(){
+display() {
     # Display available scripts with indices
     echo "Available scripts:"
     index=0
     echo "$script_keys" | while IFS= read -r line; do
+        if [ $index -eq $break_index ]; then
+            printf "${RED}\t***Do not run these script unless you are DevOps***${NC}\n"
+        fi
+        
+        if [ $index -ge $break_index ]; then
+            printf "\t${RED}*${NC} "
+        fi
         if [ $((index % 2)) -ne 0 ]; then
-            echo -e "$index: ${CYAN}$line${NC}"
+            printf "$index: ${CYAN}$line${NC}\n"
         else
-            echo -e "$index: ${LIGHT_CYAN}$line${NC}"
+            printf "$index: ${LIGHT_CYAN}$line${NC}\n"
         fi
         ((index++))
-        
+
     done
 }
 
@@ -59,7 +69,7 @@ while true; do
     if [ -n "$selected_script" ]; then
         echo -e "${LIGHT_BLUE}Executing script: $selected_script${NC}"
         bash "$selected_script"
-        read -rsp $'Press any key to clear the screen...\n' -n1 key  
+        read -rsp $'Press any key to clear the screen...\n' -n1 key
         clear
         display
     else

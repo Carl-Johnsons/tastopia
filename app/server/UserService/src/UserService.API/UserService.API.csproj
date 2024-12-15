@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>5fbd38f4-9da2-4a02-a5cd-d8fd83de54ff</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>..\..\..</DockerfileContext>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MediatR" Version="12.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
+		<PackageReference Include="Serilog" Version="4.1.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Contract">
+			<HintPath Condition="Exists('..\..\..\Contract\Contract\bin\Release\net8.0\Contract.dll')">..\..\..\Contract\Contract\bin\Release\net8.0\Contract.dll</HintPath>
+			<HintPath Condition="Exists('..\Contract\Contract.dll')">..\Contract\Contract.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\UserService.Application\UserService.Application.csproj" />
+	  <ProjectReference Include="..\UserService.Infrastructure\UserService.Infrastructure.csproj" />
+	</ItemGroup>
+	<PropertyGroup>
+		<DefaultItemExcludes>.git\**;$(DefaultItemExcludes)</DefaultItemExcludes>
+	</PropertyGroup>
+</Project>

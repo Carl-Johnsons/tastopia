@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B17F4481-93E9-464C-BF5B-93880DD1123C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7E7DD171-FBEC-4288-BF87-712FA52EDEE1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalRHub", "src\SignalRHub\SignalRHub.csproj", "{7394FD04-1458-4227-B7F4-9C796D1B06CA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalRService.Domain", "src\SignalRService.Domain\SignalRService.Domain.csproj", "{E051F750-F083-4824-80D5-66C939B39588}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalRService.Infrastructure", "src\SignalRService.Infrastructure\SignalRService.Infrastructure.csproj", "{1F85AB02-DBBD-435C-BE3F-237345A98D28}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7394FD04-1458-4227-B7F4-9C796D1B06CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7394FD04-1458-4227-B7F4-9C796D1B06CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7394FD04-1458-4227-B7F4-9C796D1B06CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7394FD04-1458-4227-B7F4-9C796D1B06CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E051F750-F083-4824-80D5-66C939B39588}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E051F750-F083-4824-80D5-66C939B39588}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E051F750-F083-4824-80D5-66C939B39588}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E051F750-F083-4824-80D5-66C939B39588}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F85AB02-DBBD-435C-BE3F-237345A98D28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F85AB02-DBBD-435C-BE3F-237345A98D28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F85AB02-DBBD-435C-BE3F-237345A98D28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F85AB02-DBBD-435C-BE3F-237345A98D28}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7394FD04-1458-4227-B7F4-9C796D1B06CA} = {B17F4481-93E9-464C-BF5B-93880DD1123C}
+		{E051F750-F083-4824-80D5-66C939B39588} = {B17F4481-93E9-464C-BF5B-93880DD1123C}
+		{1F85AB02-DBBD-435C-BE3F-237345A98D28} = {B17F4481-93E9-464C-BF5B-93880DD1123C}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {68B3B09C-71B5-469C-8C99-BCD58E0D1AAD}
+	EndGlobalSection
+EndGlobal
