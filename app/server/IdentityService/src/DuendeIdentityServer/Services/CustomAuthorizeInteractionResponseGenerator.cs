@@ -6,6 +6,7 @@ using Duende.IdentityServer.Validation;
 using Serilog;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 
 namespace DuendeIdentityServer.Services;
 
@@ -19,28 +20,41 @@ public class CustomAuthorizeInteractionResponseGenerator : AuthorizeInteractionR
     {
         var response = await base.ProcessLoginAsync(request);
 
-        if (response.IsLogin)
+        if (response.IsLogin && request.ClientId == "react.native")
         {
             Log.Information("Login to google instead default :)");
-            var redirectUri = request.RedirectUri;
-            var responseType = request.ResponseType;
 
             var externalProvider = "Google";
             var codeChallenge = request.Raw.Get("code_challenge");
             var codeChallengeMethod = request.Raw.Get("code_challenge_method");
 
+            Log.Information("Authorize request details: ClientId={ClientId}, RedirectUri={RedirectUri}, ResponseType={ResponseType}, State={State}, RequestedScopes={RequestedScopes}",
+                           request.ClientId, request.RedirectUri, request.ResponseType, request.State, string.Join(", ", request.RequestedScopes));
+
+
+            var returnUrl = new StringBuilder("/connect/authorize/callback?");
+            returnUrl.Append($"response_type={HttpUtility.UrlEncode(request.ResponseType)}");
+            returnUrl.Append($"&client_id={HttpUtility.UrlEncode(request.ClientId)}");
+            returnUrl.Append($"&state={HttpUtility.UrlEncode(request.State)}");
+            returnUrl.Append($"&scope={HttpUtility.UrlEncode(string.Join(" ", request.RequestedScopes))}");
+            returnUrl.Append($"&redirect_uri={HttpUtility.UrlEncode(request.RedirectUri)}");
+
             if (!string.IsNullOrEmpty(codeChallenge))
             {
-                Log.Information("Code Challenge: {CodeChallenge}", codeChallenge);
-                Log.Information("Code Challenge Method: {CodeChallengeMethod}", codeChallengeMethod);
+                returnUrl.Append($"&code_challenge={HttpUtility.UrlEncode(codeChallenge)}");
+                returnUrl.Append($"&code_challenge_method={HttpUtility.UrlEncode(codeChallengeMethod)}");
             }
-            var endcodedReturnUrl = $"/connect/authorize/callback?response_type={responseType}&client_id=react.native&state=f&scope=IdentityServerApi%20openid%20profile&redirect_uri={redirectUri}&code_challenge={codeChallenge}&code_challenge_method";
-            var returnUrl = $"%2Fconnect%2Fauthorize%2Fcallback%3Fresponse_type%3Dcode%26client_id%3Dreact.native%26state%3Df%26scope%3DIdentityServerApi%2520openid%2520profile%26redirect_uri%3Dhttps%253A%252F%252Fwww.getpostman.com%252Foauth2%252Fcallback%26code_challenge%3D{codeChallenge}%26code_challenge_method%3D{codeChallengeMethod}";
-            Log.Information(endcodedReturnUrl);
+
+            Log.Information("Constructed Return URL: {ReturnUrl}", returnUrl.ToString());
+
+            //var returnUrl = $"%2Fconnect%2Fauthorize%2Fcallback%3Fresponse_type%3Dcode%26client_id%3Dreact.native%26state%3Df%26scope%3DIdentityServerApi%2520openid%2520profile%26redirect_uri%3Dhttps%253A%252F%252Fwww.getpostman.com%252Foauth2%252Fcallback%26code_challenge%3D{codeChallenge}%26code_challenge_method%3D{codeChallengeMethod}";
+            var redirectUrl = HttpUtility.UrlPathEncode($"/ExternalLogin/Challenge?scheme={externalProvider}&returnUrl={HttpUtility.UrlEncode(returnUrl.ToString())}");
+            Log.Information("Constructed redirect Url: " + redirectUrl);
+
             return new InteractionResponse
             {
                 IsLogin = false, // Disable default login handling
-                RedirectUrl = $"/ExternalLogin/Challenge?scheme={externalProvider}&returnUrl={endcodedReturnUrl}"
+                RedirectUrl = redirectUrl
             };
         }
 
