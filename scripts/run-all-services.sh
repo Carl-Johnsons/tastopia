@@ -59,14 +59,15 @@ source .env
 docker compose up -d postgres rabbitmq
 
 run_service() {
-    local port=$1
-    local project=$2
-    local color=$3
-    local name=$4
+    local scheme=$1
+    local port=$2
+    local project=$3
+    local color=$4
+    local name=$5
 
     env NUGET_PACKAGES="$project_root/data/nuget" \
         ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
-        ASPNETCORE_URLS="http://0.0.0.0:$port" \
+        ASPNETCORE_URLS="$scheme://0.0.0.0:$port" \
         dotnet watch run \
         --no-launch-profile \
         --project "$project" \
@@ -79,11 +80,11 @@ run_service() {
 }
 
 # Run each service
-run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" & \ 
-run_service 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" & \
-run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" & \
-run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" & \
-run_service 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
-run_service 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification"
+run_service http 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" & \ 
+run_service https 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" & \
+run_service http 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" & \
+run_service http 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" & \
+run_service http 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
+run_service http 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification"
 
 wait
