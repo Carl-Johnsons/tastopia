@@ -50,6 +50,17 @@ public class UploadController : ControllerBase
         return Ok(result.Value);
     }
 
+    [HttpPost("images")]
+    public async Task<IActionResult> UploadMultipleImage([FromForm] UploadMultipleFileDTO uploadMultipleFileDTO)
+    {
+        var result = await _sender.Send(new CreateMultipleCloudinaryImageFileCommand
+        {
+            FormFiles = uploadMultipleFileDTO.Files
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [HttpPost("video")]
     public async Task<IActionResult> UploadVideo([FromForm] UploadFileDTO uploadFileDTO)
     {

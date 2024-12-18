@@ -1,8 +1,4 @@
-﻿using Contract.Event.UploadEvent.EventModel;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
-
-namespace UploadFileService.Infrastructure.Utilities;
+﻿namespace UploadFileService.Infrastructure.Utilities;
 
 public class FileUtility : IFileUtility
 {
@@ -21,46 +17,46 @@ public class FileUtility : IFileUtility
             ".asf", ".swf", ".m2v",".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma", ".m4a",
             ".aiff", ".alac", ".opus", ".amr"
         };
-    public string getFileType(string fileName)
+    public IFileUtility.FileType GetFileType(string fileName)
     {
 
 
         if (fileName == null || fileName.Length == 0)
         {
-            return "Invalid";
+            return IFileUtility.FileType.INVALID;
         }
 
         string extension = Path.GetExtension(fileName);
         if (imageExtensions.Contains(extension))
         {
-            return "Image";
+            return IFileUtility.FileType.IMAGE;
         }
 
         else if (videoExtensions.Contains(extension))
         {
-            return "Video";
+            return IFileUtility.FileType.VIDEO;
         }
 
         else
         {
-            return "Raw";
+            return IFileUtility.FileType.RAW;
         }
     }
 
-    public List<IFormFile> convertFileStreamsToIFormFile(List<FileStreamEvent> fileStreamEvents)
-    {
-        List<IFormFile> formFiles = new List<IFormFile>(fileStreamEvents.Count);
-        for (int i = 0; i < fileStreamEvents.Count; i++)
-        {
-            var fileStreamEvent = fileStreamEvents[i];
-            var fileStream = new MemoryStream(fileStreamEvent.Stream);
-            IFormFile formFile = new FormFile(fileStream, 0, fileStreamEvent.Stream.Length, fileStreamEvent.FileName, fileStreamEvent.FileName)
-            {
-                Headers = new HeaderDictionary(),
-                ContentType = fileStreamEvent.ContentType,
-            };
-            formFiles.Add(formFile);
-        }
-        return formFiles;
-    }
+    //public List<IFormFile> convertFileStreamsToIFormFile(List<FileStreamEvent> fileStreamEvents)
+    //{
+    //    List<IFormFile> formFiles = new List<IFormFile>(fileStreamEvents.Count);
+    //    for (int i = 0; i < fileStreamEvents.Count; i++)
+    //    {
+    //        var fileStreamEvent = fileStreamEvents[i];
+    //        var fileStream = new MemoryStream(fileStreamEvent.Stream);
+    //        IFormFile formFile = new FormFile(fileStream, 0, fileStreamEvent.Stream.Length, fileStreamEvent.FileName, fileStreamEvent.FileName)
+    //        {
+    //            Headers = new HeaderDictionary(),
+    //            ContentType = fileStreamEvent.ContentType,
+    //        };
+    //        formFiles.Add(formFile);
+    //    }
+    //    return formFiles;
+    //}
 }
