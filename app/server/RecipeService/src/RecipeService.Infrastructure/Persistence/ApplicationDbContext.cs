@@ -2,7 +2,6 @@
 using RecipeService.Domain.Entities;
 using RecipeService.Infrastructure.Persistence.Mockup.Data;
 using RecipeService.Infrastructure.Utilities;
-using System.Runtime.CompilerServices;
 
 namespace RecipeService.Infrastructure.Persistence;
 
@@ -17,19 +16,20 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     }
 
     public DbContext Instance => this;
-    
+   
     public DbSet<Recipe> Recipes {  get; set; }
     public DbSet<Tag> Tags { get; set; }
     public DbSet<Step> Steps { get; set; }
     public DbSet<Comment> Comments { get; set; }
-    public DbSet<Vote> Votes { get; set; }
     //Relationship
     public DbSet<RecipeTag> RecipeTags { get; set; }
     public DbSet<RecipeVote> RecipeVotes { get; set; }
+    public DbSet<CommentVote> CommentVotes { get; set; }
 
     public DbSet<UserBookmarkRecipe> UserBookmarkRecipes { get; set; }
     public DbSet<UserReportRecipe> UserReportRecipes { get; set; }
-    public DbSet<UserViewRecipe> UserViewRecipes { get; set; }
+    public DbSet<UserReportComment> UserReportComments { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -107,7 +107,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                                  v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         });
 
-        modelBuilder.Entity<Vote>(entity =>
+        modelBuilder.Entity<UserReportComment>(entity =>
         {
             entity.Property(e => e.CreatedAt)
                   .HasConversion(v => v.ToUniversalTime(),
@@ -116,6 +116,18 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                   .HasConversion(v => v.ToUniversalTime(),
                                  v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         });
+
+        modelBuilder.Entity<UserReportRecipe>(entity =>
+        {
+            entity.Property(e => e.CreatedAt)
+                  .HasConversion(v => v.ToUniversalTime(),
+                                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+            entity.Property(e => e.UpdatedAt)
+                  .HasConversion(v => v.ToUniversalTime(),
+                                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+        });
+
+
         //one to many
         modelBuilder.Entity<Step>()
             .HasOne(s => s.Recipe)
@@ -129,6 +141,18 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             .HasForeignKey(s => s.RecipeId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<RecipeVote>()
+            .HasOne(ri => ri.Recipe)
+            .WithMany(r => r.RecipeVotes)
+            .HasForeignKey(ri => ri.RecipeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<CommentVote>()
+            .HasOne(cv => cv.Comment)
+            .WithMany(c => c.CommentVotes)
+            .HasForeignKey(ci => ci.CommentId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         //many to many
         modelBuilder.Entity<RecipeTag>()
             .HasOne(ri => ri.Recipe)
@@ -136,19 +160,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             .HasForeignKey(ri => ri.RecipeId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<RecipeVote>()
-            .HasOne(ri => ri.Recipe)
-            .WithMany(r => r.RecipeVotes)
-            .HasForeignKey(ri => ri.RecipeId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        //modelBuilder.Entity<Ingredient>().HasData(IngredientData.Data);
-        //modelBuilder.Entity<Vote>().HasData(VoteData.Data);
-        //modelBuilder.Entity<Tag>().HasData(TagData.Data);
-
-        //RecipeData.Seed(modelBuilder);
-
-     
-
+        modelBuilder.Entity<Tag>().HasData(TagData.Data);
+        modelBuilder.Entity<Recipe>().HasData(RecipeData.Recipe);
+        modelBuilder.Entity<Step>().HasData(RecipeData.Step);
+        modelBuilder.Entity<RecipeTag>().HasData(RecipeTagData.Data);
     }
 }

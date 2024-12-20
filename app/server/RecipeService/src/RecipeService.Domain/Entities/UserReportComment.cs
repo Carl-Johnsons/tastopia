@@ -3,14 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecipeService.Domain.Entities;
 
-[Table("UserReportRecipe")]
-public class UserReportRecipe : BaseAuditableEntity
+[Table("UserReportComment")]
+public class UserReportComment : BaseAuditableEntity
 {
     [Required]
     public Guid UserId { get; set; }
 
     [Required]
-    public Guid RecipeId { get; set; }
+    public Guid CommentId { get; set; }
 
     [Required]
     [MaxLength(300)]
@@ -20,5 +20,5 @@ public class UserReportRecipe : BaseAuditableEntity
     [MaxLength(20)]
     public string Status { get; set; } = "Pending";
 
-    public virtual Recipe? Recipe { get; set; }
+    public virtual Comment? Comment { get; set; }
 }

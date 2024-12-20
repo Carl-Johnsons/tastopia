@@ -8,6 +8,7 @@ namespace RecipeService.Domain.Entities;
 public class Comment : BaseAuditableEntity
 {
     [Required]
+    [MaxLength(1000)]
     public string Content { get; set; } = null!;
 
     [Required]
@@ -15,5 +16,10 @@ public class Comment : BaseAuditableEntity
 
     [Required]
     public Guid RecipeId { get; set; }
+
+    [Required]
+    public bool IsActive { get; set; } = true;
+
     public virtual Recipe? Recipe { get; set; }
+    public virtual List<CommentVote>? CommentVotes { get; set; }
 }

@@ -11,6 +11,7 @@ public class Step : BaseAuditableEntity
     [Required]
     public int OdinalNumber { get; set; }
     [Required]
+    [MaxLength(500)]
     public string Content { get; set; } = null!;
 
     //Json string url array object

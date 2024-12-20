@@ -9,9 +9,11 @@ public class Recipe : BaseAuditableEntity
     public Guid AuthorId { get; set; }
 
     [Required]
+    [MaxLength(50)]
     public string Title { get; set; } = null!;
 
     [Required]
+    [MaxLength (500)]
     public string Description { get; set; } = null!;
 
     [Required]
@@ -20,17 +22,24 @@ public class Recipe : BaseAuditableEntity
     [Required]
     public List<string> Ingredients { get; set; } = null!;
 
-    [Column(TypeName = "INTERVAL")]
-    public TimeSpan? CookTime { get; set; }
+    public string? CookTime { get; set; }
+
     public int? Serves { get; set; }
+
     public int? VoteDiff { get; set; }
+
+    [Required]
+    public bool IsActive { get; set; } = true;
+
+    [Required]
+    public int TotalView { get; set; } = 0;
 
     //one to many
     public virtual List<Step>? Steps { get; set; }
     public virtual List<Comment>? Comments { get; set; }
+    public virtual List<RecipeVote>? RecipeVotes { get; set; }
     //many to many
     public virtual List<RecipeTag>? RecipeTags { get; set; }
-    public virtual List<RecipeVote>? RecipeVotes { get; set; }
 
 
 }

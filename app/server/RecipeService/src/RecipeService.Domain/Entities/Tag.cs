@@ -14,7 +14,13 @@ public class Tag : BaseAuditableEntity
     public string Code { get; set; } = null!;
 
     [Required]
-    public string Type { get; set; } = null!;
+    public string Category { get; set; } = null!;
+
+    [Required]
+    public string Status { get; set; } = "Pending";
+
+    [Required]
+    public bool IsActive { get; set; } = false;
 
     public string? ImageUrl { get; set; }
 }
