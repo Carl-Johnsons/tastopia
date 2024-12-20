@@ -10,4 +10,5 @@ public interface IFileUtility
         RAW = 3
     }
     FileType GetFileType(string fileName);
+    string GetPublicIdByUrl(string fileName);
 }

@@ -7,19 +7,21 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 
 namespace UploadFileService.Application.CloudinaryFiles.Commands;
-public record CreateMultipleCloudinaryImageFileCommand : IRequest<Result<List<CloudinaryFile>?>>
+public record UpdateMultipleCloudinaryImageFileCommand : IRequest<Result<List<CloudinaryFile>?>>
 {
+    [Required]
+    public List<string> Urls { get; init; } = null!;
     [Required]
     public List<IFormFile> FormFiles { get; init; } = null!;
 }
-public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<CreateMultipleCloudinaryImageFileCommand, Result<List<CloudinaryFile>?>>
+public class UpdateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<UpdateMultipleCloudinaryImageFileCommand, Result<List<CloudinaryFile>?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IFileUtility _fileUtility;
     private readonly Cloudinary _cloudinary;
 
-    public CreateMultipleCloudinaryImageFileCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, Cloudinary cloudinary, IFileUtility fileUtility)
+    public UpdateMultipleCloudinaryImageFileCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, Cloudinary cloudinary, IFileUtility fileUtility)
     {
         _context = context;
         _unitOfWork = unitOfWork;
@@ -27,9 +29,10 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
         _fileUtility = fileUtility;
     }
 
-    public async Task<Result<List<CloudinaryFile>?>> Handle(CreateMultipleCloudinaryImageFileCommand request, CancellationToken cancellationToken)
+    public async Task<Result<List<CloudinaryFile>?>> Handle(UpdateMultipleCloudinaryImageFileCommand request, CancellationToken cancellationToken)
     {
         var formFiles = request.FormFiles;
+        var urls = request.Urls;
 
         if (formFiles == null || !formFiles.Any())
         {
@@ -56,6 +59,11 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
         var formFileSizes = Enumerable.Repeat(0L, formFiles.Count).ToList();
         var extensionValues = Enumerable.Repeat(string.Empty, formFiles.Count).ToList();
         var extensionTypes = Enumerable.Repeat(new ExtensionType(), formFiles.Count).ToList();
+        var listPublicId = new List<string?>();
+
+        foreach (var url in urls) {
+            listPublicId.Add(_fileUtility.GetPublicIdByUrl(url));
+        }
 
         //Used to store new extension type that not in DB
         List<ExtensionType> newExtensionTypes = new List<ExtensionType>();
@@ -73,10 +81,12 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
                 cloudinaryFileError = CloudinaryFileError.InvalidFile("Image", Path.GetExtension(fileName));
                 return;
             }
+
             var uploadParams = new ImageUploadParams()
             {
                 File = new FileDescription(fileName, fileStream),
-                PublicId = Guid.NewGuid().ToString(),
+                PublicId = listPublicId[index],
+                Overwrite = true,
                 Folder = Environment.GetEnvironmentVariable("Cloudinary_Folder"),
             };
             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
@@ -94,7 +104,6 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
         for (int i = 0; i < uploadResults.Count; i++)
         {
             var uploadResult = uploadResults[i];
-
             string publicId = uploadResult.PublicId;
             string name = formFileNames[i];
             long size = formFileSizes[i];

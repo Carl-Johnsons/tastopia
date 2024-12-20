@@ -1,4 +1,6 @@
-﻿namespace UploadFileService.Infrastructure.Utilities;
+﻿using System.Text.RegularExpressions;
+
+namespace UploadFileService.Infrastructure.Utilities;
 
 public class FileUtility : IFileUtility
 {
@@ -17,6 +19,7 @@ public class FileUtility : IFileUtility
             ".asf", ".swf", ".m2v",".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma", ".m4a",
             ".aiff", ".alac", ".opus", ".amr"
         };
+
     public IFileUtility.FileType GetFileType(string fileName)
     {
 
@@ -41,6 +44,21 @@ public class FileUtility : IFileUtility
         {
             return IFileUtility.FileType.RAW;
         }
+    }
+
+    public string? GetPublicIdByUrl(string url)
+    {
+        string pattern = @"upload\/(?:v\d+\/)?(.+?)\.(\w+)$";
+
+        Match match = Regex.Match(url, pattern);
+
+        if (match.Success)
+        {
+            string publicId = match.Groups[1].Value;
+            return publicId;
+        }
+
+        return null;
     }
 
     //public List<IFormFile> convertFileStreamsToIFormFile(List<FileStreamEvent> fileStreamEvents)
