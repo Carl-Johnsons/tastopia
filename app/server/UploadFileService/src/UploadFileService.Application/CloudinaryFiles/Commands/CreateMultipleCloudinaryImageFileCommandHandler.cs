@@ -87,7 +87,10 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
         //check if has error in tasks
         if (cloudinaryFileError != null) return Result<List<CloudinaryFile>?>.Failure(cloudinaryFileError.Errors);
         //check if all image upload to cloud susscess
-        if (uploadResults.Any(result => result.StatusCode != HttpStatusCode.OK)) return Result<List<CloudinaryFile>?>.Failure(CloudinaryFileError.UploadToCloudFail);
+        if (uploadResults.Any(result => result.StatusCode != HttpStatusCode.OK)) { 
+            RollBackCloudinary(uploadResults);
+            return Result<List<CloudinaryFile>?>.Failure(CloudinaryFileError.UploadToCloudFail);
+        }
         await Console.Out.WriteLineAsync("Upload result count:" + uploadResults.Count);
         for (int i = 0; i < uploadResults.Count; i++)
         {
@@ -133,5 +136,17 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
         await Console.Out.WriteLineAsync("return result count:" + returnResult.Count);
         return Result<List<CloudinaryFile>?>.Success(returnResult);
 
+    }
+    private async void RollBackCloudinary(List<ImageUploadResult> uploadResults)
+    {
+        var tasks = uploadResults.Select(async (result, index) =>
+        {
+            var deleteParams = new DeletionParams(result.PublicId)
+            {
+                ResourceType = (ResourceType)Enum.Parse(typeof(ResourceType),result.ResourceType),
+            };
+            var deleteResult = _cloudinary.Destroy(deleteParams);
+        }).ToList();
+        await Task.WhenAll(tasks);
     }
 }
