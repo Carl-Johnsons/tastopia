@@ -32,6 +32,9 @@ public class CloudinaryFile : BaseEntity
     [JsonProperty("url")]
     public string Url { get; set; } = null!;
 
+    [JsonProperty("transactionId")]
+    public Guid? TransactionId { get; set; }
+
     //navigation props
     public virtual ExtensionType ExtensionType { get; set; } = null!;
 }

@@ -1,0 +1,107 @@
+@startuml UserUsecase
+skinparam style strictuml
+skinparam monochrome true
+skinparam linetype polyline
+skinparam defaultFontSize 12
+left to right direction
+actor "User" as user
+actor "Premium User" as pUser
+actor "Gmail" as gmail
+actor "Google Play Billing" as gpb
+actor "App Store Payment" as asp
+actor "Cloudinary" as cl
+
+rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
+    usecase "UC-2: Login" as ucLogin
+    usecase "UC-8: Logout" as ucLogout
+    usecase "UC-9: Manage settings" as ucManageSetting
+    usecase "UC-10: Manage profile" as ucManageProfile
+
+    usecase "UC-5: Search" as ucSearch
+    usecase "UC-6: Browse recipes" as ucBrowseRecipes
+    usecase "UC-11: Vote recipes" as ucVoteRecipe
+    usecase "UC-12: Comment recipes" as ucCmtRecipe
+    usecase "UC-13: Report recipes" as ucReportRecipe
+    usecase "UC-14: Bookmark recipes" as ucBookmarkRecipe
+    usecase "UC-15: View recipe detail" as ucViewRecipeDetail
+    usecase "UC-16: Use guided cooking mode" as ucGuidedCCM
+    usecase "UC-7: View other users' profiles" as ucViewUSProfile
+
+    usecase "UC-17: View menu" as ucViewMenu
+    usecase "UC-18: Manage own recipe" as ucManageRecipe
+    usecase "UC-19: View recent recipes" as ucViewRecentRecipes
+    usecase "UC-20: Upgrade to premium" as ucUpgradeToPremium
+
+    usecase "UC-21: View notifications" as ucViewNotif
+    usecase "UC-22: View followers and followings" as ucViewFollow
+
+    note "Create/Read/\nEdit/Delete" as noteManageRecipe
+    note "Read/Update" as noteManageProfile
+    note "Create/Read/\nEdit/Delete" as noteVoteRecipe
+    note "Create/Read/\nEdit/Delete" as noteCmtRecipe
+    note "Create/Read/\nEdit/Delete" as noteBookmarkRecipe
+    note "{Only available for User}" as noteUpgradeToPremium
+    note "{Follow/Unfollow}" as noteViewUSProfile
+
+    user --> ucSearch
+
+    user --> ucBrowseRecipes
+        ucBrowseRecipes <.. ucVoteRecipe : <<extend>>
+            ucVoteRecipe . noteVoteRecipe
+        ucBrowseRecipes <.. ucReportRecipe : <<extend>>
+        ucBrowseRecipes <.. ucViewRecipeDetail : <<extend>>
+            ucViewRecipeDetail <.. ucCmtRecipe : <<extend>>
+                ucCmtRecipe . noteCmtRecipe
+            ucViewRecipeDetail <.. ucGuidedCCM : <<extend>>
+        ucBrowseRecipes <.. ucBookmarkRecipe : <<extend>>
+            ucBookmarkRecipe . noteBookmarkRecipe
+        ucBrowseRecipes <.. ucViewUSProfile : <<extend>>
+            ucViewUSProfile . noteViewUSProfile
+
+    user --> ucViewMenu
+        ucViewMenu <.. ucManageProfile : <<extend>>
+            ucManageProfile . noteManageProfile
+            ucManageProfile <.. ucManageRecipe : <<extend>>
+            ucManageProfile <.. ucViewFollow : <<extend>>
+                ucManageRecipe . noteManageRecipe
+        ucViewMenu <.. ucManageSetting : <<extend>>
+        ucViewMenu <.. ucViewRecentRecipes : <<extend>>
+        ucViewMenu <.. ucUpgradeToPremium : <<extend>>
+            ucUpgradeToPremium . noteUpgradeToPremium
+        ucViewMenu <.. ucLogout : <<extend>>
+
+    user --> ucViewNotif
+    
+    gmail -up-> ucLogin
+    gpb --up---> ucUpgradeToPremium 
+    asp --up---> ucUpgradeToPremium
+    cl --up--> ucManageProfile
+    cl --up--> ucManageRecipe
+
+    ucSearch .....> ucLogin : <<include>>
+    ucBrowseRecipes .....> ucLogin : <<include>>
+    ucViewMenu .....> ucLogin : <<include>>
+    ucViewNotif .....>ucLogin : <<include>>
+
+
+    usecase "UC-23: Command by voice \n in cooking mode" as ucCommandVoiceCCM
+    usecase "UC-24: Recognize ingredients \n by capturing image" as ucRecognizeIngre
+    usecase "UC-25: Manage subscription plan" as ucMngSubcriptPlan
+    
+
+    note "{Only available for Premium User}" as noteMngSubcriptPlan
+    note "{Only available for Premium User}" as noteCommandVoiceCCM
+
+
+    pUser -|> user
+    pUser --> ucRecognizeIngre
+    ucGuidedCCM <.. ucCommandVoiceCCM : <<extend>>
+        ucCommandVoiceCCM . noteCommandVoiceCCM
+    ucViewMenu <.. ucMngSubcriptPlan : <<extend>>
+        ucMngSubcriptPlan . noteMngSubcriptPlan
+
+    ucRecognizeIngre .....> ucLogin : <<include>>
+
+}
+
+@enduml

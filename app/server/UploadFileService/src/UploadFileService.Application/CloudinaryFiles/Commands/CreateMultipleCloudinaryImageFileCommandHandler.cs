@@ -38,8 +38,17 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
             return Result<List<CloudinaryFile>?>.Failure(CloudinaryFileError.NotFound);
         }
 
-        if (formFiles.Any(file => file == null)) return Result<List<CloudinaryFile>?>.Failure(CloudinaryFileError.FileListContainNull);
-
+        foreach(var file in formFiles)
+        {
+            if(file == null)
+            {
+                return Result<List<CloudinaryFile>?>.Failure(CloudinaryFileError.FileListContainNull);
+            }
+            if (file.Length > 10 * 1024 * 1024)
+            {
+                return Result<List<CloudinaryFile>?>.Failure(CloudinaryFileError.FileListContainLarge(10*1024*1024, file.Length));
+            }
+        }
 
         var returnResult = Enumerable.Repeat(new CloudinaryFile(), formFiles.Count).ToList();
         var uploadResults = Enumerable.Repeat(new ImageUploadResult(), formFiles.Count).ToList();
@@ -51,17 +60,15 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
         //Used to store new extension type that not in DB
         List<ExtensionType> newExtensionTypes = new List<ExtensionType>();
 
-        await Console.Out.WriteLineAsync("FormFile count command:" + formFiles.Count);
         Result? cloudinaryFileError = null;
         var tasks = formFiles.Select(async (formFile, index) =>
         {
-            await Console.Out.WriteLineAsync("asyn index:" + index);
             string fileName = formFile.FileName;
             Stream fileStream = formFile.OpenReadStream();
             formFileNames[index] = fileName;
             formFileSizes[index] = fileStream.Length;
             extensionValues[index] = Path.GetExtension(fileName);
-            if (_fileUtility.getFileType(fileName) != "Image")
+            if (_fileUtility.GetFileType(fileName) != IFileUtility.FileType.IMAGE)
             {
                 cloudinaryFileError = CloudinaryFileError.InvalidFile("Image", Path.GetExtension(fileName));
                 return;
@@ -79,9 +86,11 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
         await Task.WhenAll(tasks);
         //check if has error in tasks
         if (cloudinaryFileError != null) return Result<List<CloudinaryFile>?>.Failure(cloudinaryFileError.Errors);
-        ;
         //check if all image upload to cloud susscess
-        if (uploadResults.Any(result => result.StatusCode != HttpStatusCode.OK)) return Result<List<CloudinaryFile>?>.Failure(CloudinaryFileError.UploadToCloudFail);
+        if (uploadResults.Any(result => result.StatusCode != HttpStatusCode.OK)) { 
+            RollBackCloudinary(uploadResults);
+            return Result<List<CloudinaryFile>?>.Failure(CloudinaryFileError.UploadToCloudFail);
+        }
         await Console.Out.WriteLineAsync("Upload result count:" + uploadResults.Count);
         for (int i = 0; i < uploadResults.Count; i++)
         {
@@ -104,7 +113,7 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
                 {
                     Value = extensionValue,
                     Code = extensionValue.Replace(".", "").ToUpper(),
-                    Type = _fileUtility.getFileType(name).ToUpper(),
+                    Type = _fileUtility.GetFileType(name).ToString(),
                 };
                 newExtensionTypes.Add(extensionType);
                 _context.ExtensionTypes.Add(extensionType);
@@ -127,5 +136,17 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
         await Console.Out.WriteLineAsync("return result count:" + returnResult.Count);
         return Result<List<CloudinaryFile>?>.Success(returnResult);
 
+    }
+    private async void RollBackCloudinary(List<ImageUploadResult> uploadResults)
+    {
+        var tasks = uploadResults.Select(async (result, index) =>
+        {
+            var deleteParams = new DeletionParams(result.PublicId)
+            {
+                ResourceType = (ResourceType)Enum.Parse(typeof(ResourceType),result.ResourceType),
+            };
+            var deleteResult = _cloudinary.Destroy(deleteParams);
+        }).ToList();
+        await Task.WhenAll(tasks);
     }
 }

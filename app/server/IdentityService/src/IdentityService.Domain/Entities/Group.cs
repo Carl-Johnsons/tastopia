@@ -1,13 +1,12 @@
 ﻿using IdentityService.Domain.Common;
 using System.ComponentModel.DataAnnotations.Schema;
 
-
 namespace IdentityService.Domain.Entities;
 
-[Table("Permission")]
-public class Permission : BaseEntity
+[Table("Group")]
+public class Group : BaseEntity
 {
     public string Code { get; set; } = null!;
-    public string Value { get; set; } = null!;
+    public string Name { get; set; } = null!;
     public string? Description { get; set; } = null!;
 }

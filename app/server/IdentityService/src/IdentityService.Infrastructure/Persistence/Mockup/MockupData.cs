@@ -17,24 +17,16 @@ internal class MockupData
         _roleManager = roleManager;
     }
 
-    public async Task SeedUserRoleAsync()
+    public async Task SeedAllData()
     {
-        string[] roleNames = { "Admin", "User" };
-        IdentityResult roleResult;
+        await SeedRoleGroupPermission();
+        await SeedSuperAdminRoleAsync();
+        await SeedUserDataAsync();
+    }
 
-        await Console.Out.WriteLineAsync("================================================");
-        await Console.Out.WriteLineAsync("Seed role data");
-        foreach (var roleName in roleNames)
-        {
-            var roleExist = await _roleManager.RoleExistsAsync(roleName);
-            if (!roleExist)
-            {
-                roleResult = await _roleManager.CreateAsync(new IdentityRole(roleName));
-                await Console.Out.WriteLineAsync($"Seed role '{roleName}' data successfully");
-            }
-        }
-        await Console.Out.WriteLineAsync("================================================");
 
+    public async Task SeedSuperAdminRoleAsync()
+    {
         // Create a default admin user
         var adminUser = new ApplicationAccount
         {
@@ -54,35 +46,51 @@ internal class MockupData
         if (user == null)
         {
             await Console.Out.WriteLineAsync("================================================");
-            await Console.Out.WriteLineAsync("Seed admin data");
+            await Console.Out.WriteLineAsync("Seed super admin data");
             var createAdminUser = await _userManager.CreateAsync(adminUser, userPassword);
             if (createAdminUser.Succeeded)
             {
-                await _userManager.AddToRoleAsync(adminUser, "Admin");
+                await _userManager.AddToRoleAsync(adminUser, "SUPER ADMIN");
                 await Console.Out.WriteLineAsync("Seed admin data successfully");
             }
             await Console.Out.WriteLineAsync("================================================");
         }
     }
 
-    public async Task SeedPermissionData()
+    public async Task SeedRoleGroupPermission()
     {
-        var permissions = new List<Permission> {
-            new Permission { Code = "READ_OTHER_PROFILE", Value = "ReadOtherProfile", Id = Guid.NewGuid() },
-            new Permission { Code = "EDIT_BIO", Value = "EditBio", Id = Guid.NewGuid() },
-            new Permission { Code = "EDIT_DISPLAY_NAME", Value = "EditDisplayName", Id = Guid.NewGuid() },
-            new Permission { Code = "EDIT_USERNAME", Value = "EditUsername", Id = Guid.NewGuid() },
-            new Permission { Code = "BAN_USER", Value = "BAN_USER", Id = Guid.NewGuid() },
-        };
+        await Console.Out.WriteLineAsync("================================================");
+        await Console.Out.WriteLineAsync("Seed role data");
+        foreach (var roleName in RoleGroupPermissionData.ROLES_DATA)
+        {
+            var roleExist = await _roleManager.RoleExistsAsync(roleName);
+            if (!roleExist)
+            {
+                await _roleManager.CreateAsync(new IdentityRole(roleName));
+                await Console.Out.WriteLineAsync($"Seed role '{roleName}' data successfully");
+            }
+        }
+        await Console.Out.WriteLineAsync("================================================");
 
         if (!_context.Permissions.Any())
         {
-            await _context.AddRangeAsync(permissions);
-            await _unitOfWork.SaveChangeAsync();
+            await Console.Out.WriteLineAsync("================================================");
+            await Console.Out.WriteLineAsync("Seed permission data");
+            await _context.Permissions.AddRangeAsync(RoleGroupPermissionData.PERMISSIONS_DATA);
+            await Console.Out.WriteLineAsync("================================================");
+        }
+
+        if (!_context.Groups.Any())
+        {
+            await Console.Out.WriteLineAsync("================================================");
+            await Console.Out.WriteLineAsync("Seed permission data");
+            await _context.Groups.AddRangeAsync(RoleGroupPermissionData.GROUPS_DATA);
+            await Console.Out.WriteLineAsync("================================================");
         }
     }
 
-    public async Task SeedUserData()
+
+    public async Task SeedUserDataAsync()
     {
         foreach (var user in ApplicationAccountData.Data)
         {
@@ -101,6 +109,4 @@ internal class MockupData
             Console.WriteLine($"{user.UserName} already exists");
         }
     }
-
-
 }

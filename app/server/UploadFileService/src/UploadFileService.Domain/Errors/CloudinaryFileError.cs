@@ -16,6 +16,8 @@ public class CloudinaryFileError
             new("CloudinaryFileError.FailOperation", "Fail operation to upload cloudinary file");
     public static Error FileListContainNull =>
             new("CloudinaryFileError.FileListContainNull", "File list contains a null element.");
+    public static Error FileListContainLarge(long MaxSize, long FileSize) =>
+        new("CloudinaryFileError.FileListContainLarge", $"File list contains a large element, max size: {MaxSize}, chosen file size: {FileSize}");
 
     public static Error InvalidFile(string Type, string ChosenFileType) =>
         new("CloudinaryFileError.InvalidFile", $"Invalid file {Type}, chosen file:{ChosenFileType}");

@@ -9,6 +9,7 @@ Commit rule:
 -   AI related: `ai: `
 -   DevOps related: `do: `
 -   General: `g: `
+-   Document related: `doc: `
 
 ## Action:
 
