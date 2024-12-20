@@ -1,10 +1,13 @@
-﻿namespace UploadFileService.API.DTOs;
+﻿using Newtonsoft.Json;
+
+namespace UploadFileService.API.DTOs;
 
 public class TestDTO
 {
+    [JsonProperty("name")]
     public string name;
-    public List<string> ingredients;
-    public List <StepDTO> steps;
+    //public List<string> ingredients;
+    //public List <StepDTO> steps;
 }
 
 public class StepDTO

@@ -101,10 +101,10 @@ public class UploadController : ControllerBase
     }
 
 
-    [HttpPost("test")]
-    public async Task<IActionResult> Test([FromForm] TestDTO testDTO)
+    [HttpPost("upload_recipe")]
+    public async Task<IActionResult> Test123([FromBody] TestDTO testDTO)
     {
-        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(testDTO));
-        return Ok();
+        await Console.Out.WriteLineAsync(testDTO.name);
+        return Ok(testDTO);
     }
 }
