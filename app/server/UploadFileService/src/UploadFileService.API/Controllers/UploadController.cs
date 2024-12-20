@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using UploadFileService.API.DTOs;
 using UploadFileService.Application.CloudinaryFiles.Commands;
 using UploadFileService.Application.CloudinaryFiles.Queries;
 
@@ -96,5 +98,13 @@ public class UploadController : ControllerBase
             return NoContent();
         }
         return BadRequest("Delete fail");
+    }
+
+
+    [HttpPost("test")]
+    public async Task<IActionResult> Test([FromForm] TestDTO testDTO)
+    {
+        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(testDTO));
+        return Ok();
     }
 }

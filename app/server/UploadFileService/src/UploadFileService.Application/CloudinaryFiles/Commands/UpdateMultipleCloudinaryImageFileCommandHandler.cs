@@ -125,7 +125,6 @@ public class UpdateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<U
                 };
                 newExtensionTypes.Add(extensionType);
                 _context.ExtensionTypes.Add(extensionType);
-
             }
             var cloudinaryFile = new CloudinaryFile
             {
