@@ -29,11 +29,11 @@ public class UploadController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] GetCloudinaryFileByIdDTO getCloudinaryFileByIdDTO)
     {
-        if(getCloudinaryFileByIdDTO.Id != null)
+        if (getCloudinaryFileByIdDTO.Id != null)
         {
-            var result = await _sender.Send(new GetCloudinaryFileByIdQuery 
-            { 
-                Id  = getCloudinaryFileByIdDTO.Id
+            var result = await _sender.Send(new GetCloudinaryFileByIdQuery
+            {
+                Id = getCloudinaryFileByIdDTO.Id
             });
             result.ThrowIfFailure();
             return Ok(result.Value);
@@ -88,8 +88,9 @@ public class UploadController : ControllerBase
     [HttpDelete]
     public async Task<IActionResult> Delete([FromQuery] DeleteCloudinaryFileByIdDTO deleteCloudinaryFileById)
     {
-        if(deleteCloudinaryFileById.Id != null) {
-        
+        if (deleteCloudinaryFileById.Id != null)
+        {
+
             var result = await _sender.Send(new DeleteCloudinaryFileCommand
             {
                 Id = deleteCloudinaryFileById.Id
@@ -100,6 +101,12 @@ public class UploadController : ControllerBase
         return BadRequest("Delete fail");
     }
 
+    [HttpPost("recipe")]
+    public async Task<IActionResult> AddRecipe([FromForm] RecipeDTO recipeDTO)
+    {
+        Console.WriteLine(JsonConvert.SerializeObject(recipeDTO));
+        return Ok(recipeDTO);
+    }
 
     [HttpPost("upload_recipe")]
     public async Task<IActionResult> Test123([FromBody] TestDTO testDTO)
