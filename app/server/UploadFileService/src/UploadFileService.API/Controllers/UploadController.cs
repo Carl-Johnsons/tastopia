@@ -101,17 +101,10 @@ public class UploadController : ControllerBase
         return BadRequest("Delete fail");
     }
 
-    [HttpPost("recipe")]
-    public async Task<IActionResult> AddRecipe([FromForm] RecipeDTO recipeDTO)
-    {
-        Console.WriteLine(JsonConvert.SerializeObject(recipeDTO));
-        return Ok(recipeDTO);
-    }
-
     [HttpPost("upload_recipe")]
-    public async Task<IActionResult> Test123([FromBody] TestDTO testDTO)
+    public async Task<IActionResult> Test123([FromForm] TestDTO testDTO)
     {
-        await Console.Out.WriteLineAsync(testDTO.name);
+        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(testDTO));
         return Ok(testDTO);
     }
 }
