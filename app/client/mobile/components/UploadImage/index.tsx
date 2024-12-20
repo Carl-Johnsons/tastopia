@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
-import { ReactNativeFile } from "apollo-upload-client";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
@@ -13,17 +12,17 @@ import {
   Alert
 } from "react-native";
 
-import { extensionToMimeType, generateRNFile } from "@/utils/file";
-import { FileObject } from "@/helper/types";
+import { FileObject, ImageFileType } from "@/types/image";
 import { globalStyles } from "../GlobalStyles";
 import { transformPlatformURI } from "@/utils/functions";
 import styles from "./UploadImage.style";
+import { extensionToMimeType } from "@/utils/file";
 
 type UploadImageProps = {
   /**
    * Function to handle file change (should be setState function)
    */
-  onFileChange: (files: ReactNativeFile[]) => void;
+  onFileChange: (files: ImageFileType[]) => void;
 
   /**
    * Disable remove image
@@ -96,20 +95,23 @@ const UploadImage = ({
         const fileName =
           asset.fileName ||
           asset.uri.substring(asset.uri.lastIndexOf("/") + 1, asset.uri.length);
-        const type = asset.mimeType || extensionToMimeType(asset.uri.split(".").pop()!);
 
-        const RNFile = generateRNFile(asset.uri, fileName, type);
+        const type = asset.mimeType || extensionToMimeType(asset.uri.split(".").pop()!);
 
         return {
           id: asset.uri,
           previewPath: asset.uri,
-          file: RNFile
+          file: {
+            uri: asset.uri,
+            type,
+            name: fileName
+          }
         };
       });
 
       const newFileObjects = [...(fileObjects || []), ...files];
       setFileObjects(newFileObjects);
-      onFileChange(newFileObjects.map(file => file.file as ReactNativeFile));
+      onFileChange(newFileObjects.map(file => file.file as ImageFileType));
       setImageCount(prev => prev + files.length);
     }
   };
@@ -117,7 +119,7 @@ const UploadImage = ({
   const handleRemoveImage = (id: string) => {
     const newFileObjects = fileObjects?.filter(file => file.id !== id);
     setFileObjects(newFileObjects);
-    onFileChange(newFileObjects!.map(file => file.file as ReactNativeFile));
+    onFileChange(newFileObjects!.map(file => file.file as ImageFileType));
     setImageCount(prev => prev - 1);
   };
 
