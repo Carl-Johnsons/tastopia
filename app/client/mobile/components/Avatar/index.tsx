@@ -13,7 +13,7 @@ type AvatarProps = {
   onFileChange?: (file: UpdateMediaType) => void;
 };
 
-const PagoAvatar = ({
+const Avatar = ({
   size,
   src,
   upload = false,
@@ -55,7 +55,7 @@ const PagoAvatar = ({
   );
 };
 
-export default PagoAvatar;
+export default Avatar;
 
 const styles = StyleSheet.create({
   wrapper: {

@@ -5,8 +5,8 @@ import { AntDesign } from "@expo/vector-icons";
 
 import { UNIT } from "@/constants/unit";
 import { UnitTypeCode, useGetUnitsByUnitTypeCodeQuery } from "@/generated/schema";
-import PagoDropDown from "../PagoDropDown";
-import PagoButton from "../PagoButton";
+import DropDown from "../DropDown";
+import Button from "../Button";
 import { globalStyles } from "../GlobalStyles";
 import { ViewIadWareHousePlantItemWithIndex } from "../Screens/InventoryManagement/type";
 
@@ -77,7 +77,7 @@ const Unit = ({
       <Text style={styles.title}>{t("plantItemPage.dataTable.columnData.unit")}</Text>
 
       {!unitPlantMeasureDataResponseLoading && (
-        <PagoDropDown
+        <DropDown
           onCancel={() => {
             setShowDropDown(false);
           }}
@@ -85,7 +85,7 @@ const Unit = ({
           listStyle={{ width: 90, backgroundColor: "#fff" }}
           align='right'
           renderBtn={() => (
-            <PagoButton
+            <Button
               buttonStyle={styles.btnStyle}
               title={""}
               color='primary'

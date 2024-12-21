@@ -7,8 +7,8 @@ import * as ImagePicker from "expo-image-picker";
 import { extensionToMimeType, generateRNFile } from "@/utils/file";
 import { FileObject, UpdateMediaType } from "@/helper/types";
 import { globalStyles } from "@/components/GlobalStyles";
-import PagoButton from "@/components/PagoButton";
-import PagoDropDown from "@/components/PagoDropDown";
+import Button from "@/components/Button/index";
+import DropDown from "@/components/DropDown";
 import { useTranslation } from "react-i18next";
 
 type UploadAvatarProps = {
@@ -81,7 +81,7 @@ const UploadAvatar = ({ onFileChange = () => {}, defaultImages }: UploadAvatarPr
   return (
     <View style={styles.container}>
       <View style={styles.uploadButtonContainer}>
-        <PagoDropDown
+        <DropDown
           show={showDropDown}
           align='center'
           dropDownGap={6}
@@ -90,7 +90,7 @@ const UploadAvatar = ({ onFileChange = () => {}, defaultImages }: UploadAvatarPr
             setShowDropDown(false);
           }}
           renderBtn={() => (
-            <PagoButton
+            <Button
               type='iconButton'
               title=''
               buttonStyle={styles.uploadButton}
