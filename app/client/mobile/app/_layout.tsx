@@ -16,15 +16,22 @@ SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
   const [fontsLoaded, error] = useFonts({
-    "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
-    "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
-    "Poppins-ExtraBold": require("../assets/fonts/Poppins-ExtraBold.ttf"),
-    "Poppins-ExtraLight": require("../assets/fonts/Poppins-ExtraLight.ttf"),
-    "Poppins-Light": require("../assets/fonts/Poppins-Light.ttf"),
-    "Poppins-Medium": require("../assets/fonts/Poppins-Medium.ttf"),
-    "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
-    "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
-    "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf")
+    "Sofia-Pro-Black": require("../assets/fonts/Sofia-Pro-Black-Az.otf"),
+    "Sofia-Pro-Black-Italic": require("../assets/fonts/Sofia-Pro-Black-Italic-Az.otf"),
+    "Sofia-Pro-Bold": require("../assets/fonts/Sofia-Pro-Bold-Az.otf"),
+    "Sofia-Pro-Bold-Italic": require("../assets/fonts/Sofia-Pro-Bold-Italic-Az.otf"),
+    "Sofia-Pro-ExtraLight": require("../assets/fonts/Sofia-Pro-ExtraLight-Az.otf"),
+    "Sofia-Pro-ExtraLight-Italic": require("../assets/fonts/Sofia-Pro-ExtraLight-Italic-Az.otf"),
+    "Sofia-Pro-Light": require("../assets/fonts/Sofia-Pro-Light-Az.otf"),
+    "Sofia-Pro-Light-Italic": require("../assets/fonts/Sofia-Pro-Light-Italic-Az.otf"),
+    "Sofia-Pro-Medium": require("../assets/fonts/Sofia-Pro-Medium-Az.otf"),
+    "Sofia-Pro-Medium-Italic": require("../assets/fonts/Sofia-Pro-Medium-Italic-Az.otf"),
+    "Sofia-Pro-Regular": require("../assets/fonts/Sofia-Pro-Regular-Az.otf"),
+    "Sofia-Pro-Regular-Italic": require("../assets/fonts/Sofia-Pro-Regular-Italic-Az.otf"),
+    "Sofia-Pro-Semi-Bold": require("../assets/fonts/Sofia-Pro-Semi-Bold-Az.otf"),
+    "Sofia-Pro-Semi-Bold-Italic": require("../assets/fonts/Sofia-Pro-Semi-Bold-Italic-Az.otf"),
+    "Sofia-Pro-UltraLight": require("../assets/fonts/Sofia-Pro-UltraLight-Az.otf"),
+    "Sofia-Pro-UltraLight-Italic": require("../assets/fonts/Sofia-Pro-UltraLight-Italic-Az.otf")
   });
   const bgColor = useColorModeValue("white", "black");
   const textColor = useColorModeValue("black", "white");
