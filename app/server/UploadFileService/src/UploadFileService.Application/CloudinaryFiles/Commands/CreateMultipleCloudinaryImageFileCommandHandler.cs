@@ -144,7 +144,7 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
             {
                 ResourceType = (ResourceType)Enum.Parse(typeof(ResourceType),result.ResourceType),
             };
-            var deleteResult = _cloudinary.Destroy(deleteParams);
+            var deleteResult = await _cloudinary.DestroyAsync(deleteParams);
         }).ToList();
         await Task.WhenAll(tasks);
     }

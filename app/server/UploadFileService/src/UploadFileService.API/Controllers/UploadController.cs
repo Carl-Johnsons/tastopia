@@ -107,4 +107,16 @@ public class UploadController : ControllerBase
         await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(testDTO));
         return Ok(testDTO);
     }
+
+    [HttpPost("update-images")]
+    public async Task<IActionResult> UpdateImage([FromForm] UpdateMultipleImageDTO updateMultipleImageDTO)
+    {
+        var result = await _sender.Send(new UpdateMultipleCloudinaryImageFileCommand
+        {
+            FormFiles = updateMultipleImageDTO.Files,
+            Urls = updateMultipleImageDTO.Urls,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
 }
