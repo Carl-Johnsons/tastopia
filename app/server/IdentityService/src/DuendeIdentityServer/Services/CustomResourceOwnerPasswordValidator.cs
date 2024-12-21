@@ -5,12 +5,12 @@ using static IdentityModel.OidcConstants;
 
 namespace DuendeIdentityServer.Services;
 
-public class UserValidator : IResourceOwnerPasswordValidator
+public class CustomResourceOwnerPasswordValidator : IResourceOwnerPasswordValidator
 {
     private readonly UserManager<ApplicationAccount> _userManager;
     private readonly SignInManager<ApplicationAccount> _signInManager;
 
-    public UserValidator(UserManager<ApplicationAccount> userManager, SignInManager<ApplicationAccount> signInManager)
+    public CustomResourceOwnerPasswordValidator(UserManager<ApplicationAccount> userManager, SignInManager<ApplicationAccount> signInManager)
     {
         _userManager = userManager;
         _signInManager = signInManager;
