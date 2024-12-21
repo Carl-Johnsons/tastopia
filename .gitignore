@@ -399,8 +399,6 @@ FodyWeavers.xsd
 # Data bind mount
 data/*
 !data/sh
-# appsettings
-**appsettings.*
 # IdentityServer4
 **/tempkey.jwk
 .env*
@@ -413,3 +411,6 @@ data/*
 
 # misc
 .DS_Store
+
+# doc
+doc/**/*.svg

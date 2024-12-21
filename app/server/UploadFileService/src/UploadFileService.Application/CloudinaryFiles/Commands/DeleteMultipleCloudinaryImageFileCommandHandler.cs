@@ -45,12 +45,12 @@ public class DeleteMultipleCloudinaryImageFileCommandHandler : IRequestHandler<D
         }
         await Console.Out.WriteLineAsync("FormFile count command:" + fileIds.Count);
         Result? cloudinaryFileError = null;
-        var tasks = cloudinaryFiles.Select(async (cloudinaryFile, index) =>
+        var tasks = cloudinaryFiles.Select((cloudinaryFile, index) =>
         {
             if (cloudinaryFile == null || cloudinaryFile.PublicId == null)
             {
                 cloudinaryFileError = CloudinaryFileError.NotFound;
-                return;
+                return Task.CompletedTask;
             }
             ResourceType rst;
             switch (cloudinaryFile.ExtensionType.Type)
@@ -66,7 +66,7 @@ public class DeleteMultipleCloudinaryImageFileCommandHandler : IRequestHandler<D
                     break;
                 default:
                     cloudinaryFileError = CloudinaryFileError.InvalidFile("Image, Video, Raw", Path.GetExtension(cloudinaryFile.Name));
-                    return;
+                    return Task.CompletedTask;
             }
             var deleteParams = new DeletionParams(cloudinaryFile.PublicId)
             {
@@ -74,6 +74,7 @@ public class DeleteMultipleCloudinaryImageFileCommandHandler : IRequestHandler<D
             };
             var deleteResult = _cloudinary.Destroy(deleteParams);
             deleteResults[index] = deleteResult;
+            return Task.CompletedTask;
         }).ToList();
         await Task.WhenAll(tasks);
         //check if has error in tasks

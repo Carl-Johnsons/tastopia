@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using Serilog;
+using System.Text.Json.Serialization;
 using UploadFileService.API.Middleware;
 using UploadFileService.Application;
 using UploadFileService.Infrastructure;
@@ -10,10 +11,15 @@ public static class DependenciesInjection
 {
     public static WebApplicationBuilder AddAPIServices(this WebApplicationBuilder builder)
     {
-        builder.Logging.AddConsole();
-
         var services = builder.Services;
         var config = builder.Configuration;
+        var host = builder.Host;
+
+        host.UseSerilog((context, config) =>
+        {
+            config.ReadFrom.Configuration(context.Configuration);
+        });
+
         services.AddApplicationServices();
         services.AddInfrastructureServices(config);
 
@@ -34,23 +40,9 @@ public static class DependenciesInjection
         return builder;
     }
 
-    public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
+    public static WebApplication UseAPIServices(this WebApplication app)
     {
-
-        app.Use(async (context, next) =>
-        {
-            // Log information about the incoming request
-            app.Logger.LogInformation($"Request: {context.Request.Method} {context.Request.Path}");
-
-            await next(); // Call the next middleware
-        });
-
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
-        }
+        app.UseSerilogRequestLogging();
 
         app.UseHttpsRedirection();
 

@@ -1,0 +1,74 @@
+@startuml SuperAdminUsecase
+skinparam style strictuml
+skinparam monochrome true
+skinparam linetype polyline
+skinparam defaultFontSize 12
+left to right direction
+actor "Super Admin" as admin
+actor "Cloudinary" as cl
+
+rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
+    usecase "UC-2: Login" as ucLogin
+    usecase "UC-8: Logout" as ucLogout
+    usecase "UC-9: Manage profile" as ucManageProfile
+    usecase "UC-10: Manage settings" as ucManageSetting
+
+    usecase "UC-26: Administer users" as ucAdmUser
+    usecase "UC-27: Administer tags" as ucAdmTags
+    usecase "UC-28: Administer role permissions" as ucAdmRolePermis
+    usecase "UC-29: Administer recipes" as ucAdmRecipe
+    usecase "UC-30: Administer subscriptions" as ucAdmSubcript
+    usecase "UC-31: Administer events" as ucAdmEvent
+    usecase "UC-32: View statistics" as ucViewStatistic
+    usecase "UC-33: Administer reports" as ucAdmReport
+    usecase "UC-34: Administer admins" as ucAdmAdmin
+    usecase "UC-35: View activity log" as ucViewActivityLog
+
+    note "Read/Delete" as noteAdmUser
+    note "Read/Delete" as noteAdmRecipe
+    note "Create/Read/\nEdit/Delete/\nReview" as noteAdmTag
+    note "Create/Read/\nEdit/Delete" as noteAdmSubcipt
+    note "Create/Read/\nEdit/Delete" as noteAdmEvent
+    note "Create/Read/\nDelete" as noteAdmAdmin
+    note "Read/Delete" as noteAdmReport
+    note "Read/Update" as noteAmdRolePermis
+
+    admin --> ucAdmUser
+        ucAdmUser .. noteAdmUser
+    admin --> ucAdmRecipe
+        ucAdmRecipe .. noteAdmRecipe
+    admin --> ucAdmReport
+        ucAdmReport .. noteAdmReport
+    admin --> ucAdmTags
+        ucAdmTags .. noteAdmTag
+    admin --> ucAdmRolePermis
+        ucAdmRolePermis .. noteAmdRolePermis
+    admin --> ucAdmSubcript
+        ucAdmSubcript .. noteAdmSubcipt
+    admin --> ucAdmEvent
+        ucAdmEvent .. noteAdmEvent
+    admin --> ucViewStatistic
+    admin --> ucViewActivityLog
+    admin --> ucManageProfile
+        ucManageProfile <.. ucManageSetting: <<extend>>
+    admin --> ucLogout
+    admin --> ucAdmAdmin
+        ucAdmAdmin .. noteAdmAdmin
+
+    ucLogout .....> ucLogin : <<include>>
+    ucViewStatistic .....> ucLogin : <<include>>
+    ucAdmUser .....> ucLogin : <<include>>
+    ucAdmRolePermis .....> ucLogin : <<include>>
+    ucAdmRecipe .....> ucLogin : <<include>>
+    ucAdmTags .....> ucLogin : <<include>>
+    ucAdmSubcript .....> ucLogin : <<include>>
+    ucManageProfile .....> ucLogin : <<include>>
+    ucViewActivityLog .....> ucLogin : <<include>>
+    ucAdmAdmin .....> ucLogin : <<include>>
+
+    cl --up---> ucManageProfile
+    cl --up----> ucAdmEvent
+    cl --up---> ucAdmTags
+}
+
+@enduml

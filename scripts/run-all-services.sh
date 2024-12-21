@@ -1,5 +1,18 @@
 #!/bin/sh
 
+if ! sudo docker info > /dev/null 2>&1; then
+    printf "\n\t${LIGHT_RED}*** Docker is not running ❌${NC} *** . Exiting the script.\n\n"
+    exit 1
+fi
+
+# Common color
+DANGER='\033[0;31m'
+WARNING='\033[1;33m'
+INFO='\033[0;32m'
+DEBUG='\033[1;36m'
+FATAL='\033[1;35m'
+SUCCESS='\033[1;32m'
+
 # Define color
 RED='\033[0;31m'
 RED_OCT='\o033[0;31m'
@@ -30,20 +43,20 @@ project_root=$(pwd)
 cd ./scripts
 
 # kill all ports
-./kill-port.sh 127.0.0.1:5000
-./kill-port.sh 127.0.0.1:5001
-./kill-port.sh 127.0.0.1:5002
-./kill-port.sh 127.0.0.1:5003
-./kill-port.sh 127.0.0.1:5004
-./kill-port.sh 127.0.0.1:5005
-./kill-port.sh 127.0.0.1:5006
+./kill-port.sh 0.0.0.0:5000
+./kill-port.sh 0.0.0.0:5001
+./kill-port.sh 0.0.0.0:5002
+./kill-port.sh 0.0.0.0:5003
+./kill-port.sh 0.0.0.0:5004
+./kill-port.sh 0.0.0.0:5005
+./kill-port.sh 0.0.0.0:5006
 
 cd "$project_root"
 
 # Source the .env file to load environment variables
 source .env
 
-docker compose up -d sql-server sql-server.configurator rabbitmq
+docker compose up -d postgres rabbitmq
 
 run_service() {
     local port=$1
@@ -51,18 +64,26 @@ run_service() {
     local color=$3
     local name=$4
 
-    env SA_PASSWORD="$SA_PASSWORD" \
-        ASPNETCORE_ENVIRONMENT=Development \
-        ASPNETCORE_URLS="http://localhost:$port" \
+    env NUGET_PACKAGES="$project_root/data/nuget" \
+        ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
+        ASPNETCORE_URLS="http://0.0.0.0:$port" \
         dotnet watch run \
         --no-launch-profile \
         --project "$project" \
-        2>&1 | sed "s/^/$(printf "${color}[${name}]${NC} ")/" &
+        2>&1 | sed -E \
+        -e "/(warning|warn|wrn)/I s/.*/$(printf "${WARNING}&${NC}")/" \
+        -e "/(error|err)/I s/.*/$(printf "${DANGER}&${NC}")/" \
+        -e "/(information|info|inf)/I s/.*/$(printf "${INFO}&${NC}")/" \
+        -e "/ is listening on/I s/.*/$(printf "${SUCCESS}&${NC}")/" \
+        -e "s/^/$(printf "${color}[${name}]${NC} ")/"
 }
 
 # Run each service
-run_service 5000 "./solutions/APIGatewaySolution/src/APIGateway" "$BLUE" "APIGateway"
-run_service 5002 "./solutions/UploadFileSolution/src/UploadFileService.API" "$LIGHT_CYAN" "Upload"
-run_service 5005 "./solutions/PostSolution/src/PostService.API" "$LIGHT_GREEN" "Post"
+run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" & \ 
+run_service 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" & \
+run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" & \
+run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" & \
+run_service 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
+run_service 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification"
 
 wait

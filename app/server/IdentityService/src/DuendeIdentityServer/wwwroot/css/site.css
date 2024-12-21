@@ -1,0 +1,115 @@
+﻿@font-face {
+    font-family: "Sofia-pro";
+    src: url("../fonts/sofia-pro/Sofia Pro Regular Az.otf");
+}
+
+:root {
+    --primary: #FE724C;
+    --primary-hover: #D96141;
+    --white: #fff;
+}
+
+* {
+    font-family: "Sofia-pro"
+}
+
+h1 {
+    font-size: 36px;
+    font-weight: bolder
+}
+
+label {
+    font-size: 16px;
+    color: #9796A1;
+}
+
+div, p {
+    font-size: 14px;
+}
+
+.primary-text {
+    color: var(--primary)
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: var(--white);
+    height: 60px;
+    border-radius: 28.5px;
+    font-size: 16px;
+    font-weight: 400;
+    border: none;
+}
+
+
+    .btn-primary:hover, .btn-primary:focus, .btn-primary:not(:disabled):not(.disabled):active {
+        color: #fff;
+        background-color: var(--primary-hover);
+        border-width: 0px;
+        box-shadow: none;
+    }
+
+        .btn:focus, .btn-primary:not(:disabled):not(.disabled):active:focus {
+            box-shadow: none;
+        }
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: var(--primary);
+}
+
+
+.welcome-page .logo {
+    width: 64px;
+}
+
+.icon-banner {
+    width: 32px;
+}
+
+.body-container {
+    flex: 1;
+}
+
+.welcome-page li {
+    list-style: none;
+    padding: 4px;
+}
+
+.logged-out-page iframe {
+    display: none;
+    width: 0;
+    height: 0;
+}
+
+.grants-page .card {
+    margin-top: 20px;
+    border-bottom: 1px solid lightgray;
+}
+
+    .grants-page .card .card-title {
+        font-size: 120%;
+        font-weight: bold;
+    }
+
+        .grants-page .card .card-title img {
+            width: 100px;
+            height: 100px;
+        }
+
+    .grants-page .card label {
+        font-weight: bold;
+    }
+
+.card {
+    width: 500px;
+}
+
+body#body {
+    background-color: #d1d1d1 !important;
+}
+
+.register-page .back-icon {
+    width: 20px;
+    height: 20px;
+}

@@ -1,0 +1,47 @@
+@startuml AdminUsecase
+skinparam style strictuml
+skinparam monochrome true
+skinparam linetype polyline
+skinparam defaultFontSize 12
+left to right direction
+actor "Admin" as admin
+actor "Cloudinary" as cl
+rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
+    usecase "UC-2: Login" as ucLogin
+    usecase "UC-8: Logout" as ucLogout
+    usecase "UC-9: Manage settings" as ucManageSetting
+    usecase "UC-10: Manage profile" as ucManageProfile
+
+    usecase "UC-26: Administer users" as ucAdmUser
+    usecase "UC-27: Administer tags" as ucAdmTags
+    usecase "UC-29: Administer recipes" as ucAdmRecipe
+    usecase "UC-33: Administer reports" as ucAdmReport
+
+    note "Read/Delete" as noteAdmUser
+    note "Read/Delete" as noteAdmRecipe
+    note "Create" as noteAdmTag
+    note "Read/Delete" as noteAdmReport
+
+    admin --> ucAdmUser
+        ucAdmUser .. noteAdmUser
+    admin --> ucAdmRecipe
+        ucAdmRecipe .. noteAdmRecipe
+    admin --> ucAdmReport
+        ucAdmReport .. noteAdmReport
+    admin --> ucAdmTags
+        ucAdmTags .. noteAdmTag
+    admin --> ucManageProfile
+        ucManageProfile <.. ucManageSetting: <<extend>>
+    admin --> ucLogout
+
+    ucLogout .....> ucLogin : <<include>>
+    ucAdmUser .....> ucLogin : <<include>>
+    ucAdmRecipe .....> ucLogin : <<include>>
+    ucAdmTags .....> ucLogin : <<include>>
+    ucManageProfile .....> ucLogin : <<include>>
+
+    cl --up----> ucManageProfile
+    cl --up----> ucAdmTags
+}
+
+@enduml

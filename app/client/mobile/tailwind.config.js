@@ -5,7 +5,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#161622",
+        primary: "#FE724C",
         secondary: {
           DEFAULT: "#FF9C01",
           100: "#FF9001",
@@ -21,15 +21,22 @@ module.exports = {
         }
       },
       fontFamily: {
-        pthin: ["Poppins-Thin", "sans-serif"],
-        pextralight: ["Poppins-ExtraLight", "sans-serif"],
-        plight: ["Poppins-Light", "sans-serif"],
-        pregular: ["Poppins-Regular", "sans-serif"],
-        pmedium: ["Poppins-Medium", "sans-serif"],
-        psemibold: ["Poppins-SemiBold", "sans-serif"],
-        pbold: ["Poppins-Bold", "sans-serif"],
-        pextrabold: ["Poppins-ExtraBold", "sans-serif"],
-        pblack: ["Poppins-Black", "sans-serif"]
+        sans: ["Sofia-Pro-Regular", "sans-serif"],
+        bold: ["Sofia-Pro-Bold", "sans-serif"],
+        light: ["Sofia-Pro-Light", "sans-serif"],
+        medium: ["Sofia-Pro-Medium", "sans-serif"],
+        semibold: ["Sofia-Pro-Semi-Bold", "sans-serif"],
+        black: ["Sofia-Pro-Black", "sans-serif"],
+        extralight: ["Sofia-Pro-ExtraLight", "sans-serif"],
+        ultralight: ["Sofia-Pro-UltraLight", "sans-serif"],
+        italic: ["Sofia-Pro-Regular-Italic", "sans-serif"],
+        "bold-italic": ["Sofia-Pro-Bold-Italic", "sans-serif"],
+        "light-italic": ["Sofia-Pro-Light-Italic", "sans-serif"],
+        "medium-italic": ["Sofia-Pro-Medium-Italic", "sans-serif"],
+        "semibold-italic": ["Sofia-Pro-Semi-Bold-Italic", "sans-serif"],
+        "black-italic": ["Sofia-Pro-Black-Italic", "sans-serif"],
+        "extralight-italic": ["Sofia-Pro-ExtraLight-Italic", "sans-serif"],
+        "ultralight-italic": ["Sofia-Pro-UltraLight-Italic", "sans-serif"]
       }
     }
   },

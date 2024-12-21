@@ -1,4 +1,6 @@
-﻿namespace UploadFileService.Infrastructure.Persistence;
+﻿using UploadFileService.Infrastructure.Utilities;
+
+namespace UploadFileService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
@@ -10,6 +12,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public ApplicationDbContext()
     {
     }
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : base(options)
     {
@@ -17,19 +20,13 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        DotNetEnv.Env.Load();
-        var server = DotNetEnv.Env.GetString("DB_SERVER", "localhost, 2001").Trim();
-        var db = DotNetEnv.Env.GetString("DB", "Not found").Trim();
-        var pwd = DotNetEnv.Env.GetString("SA_PASSWORD", "Not found").Trim();
-
-        var connectionString = $"Server={server};Database={db};User Id=sa;Password='{pwd}';TrustServerCertificate=true;MultipleActiveResultSets=True";
-        Console.WriteLine(connectionString);
-        optionsBuilder.UseSqlServer(connectionString, sqlOptions =>
+        optionsBuilder.UseNpgsql(EnvUtility.GetConnectionString(), option =>
         {
-            sqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 10,
-                maxRetryDelay: TimeSpan.FromSeconds(5),
-                errorNumbersToAdd: null);
+            option.EnableRetryOnFailure(
+                    maxRetryCount: 10,
+                    maxRetryDelay: TimeSpan.FromSeconds(15),
+                    errorCodesToAdd: null
+                );
         });
     }
 

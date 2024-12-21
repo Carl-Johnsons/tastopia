@@ -1,4 +1,7 @@
 #!/bin/bash
+
+break_index=3
+
 # Define color
 RED='\033[0;31m'
 RED_OCT='\o033[0;31m'
@@ -31,7 +34,7 @@ json=$(<scripts.json)
 scripts_content=$(echo "$json" | sed 's/"scripts": //; s/{//; s/}//')
 # Remove quotes, commas, leading/trailing spaces, and empty lines
 scripts=$(echo "$scripts_content" | sed 's/"//g; s/,//g; s/^[[:space:]]*//; s/[[:space:]]*$//' | grep -v '^$')
-echo "$scripts"
+# echo "$scripts"
 # Extract script keys from the scripts variable
 script_keys=$(echo "$scripts" | cut -d':' -f1)
 
@@ -40,10 +43,17 @@ display() {
     echo "Available scripts:"
     index=0
     echo "$script_keys" | while IFS= read -r line; do
+        if [ $index -eq $break_index ]; then
+            printf "${RED}\t***Do not run these script unless you are DevOps***${NC}\n"
+        fi
+        
+        if [ $index -ge $break_index ]; then
+            printf "\t${RED}*${NC} "
+        fi
         if [ $((index % 2)) -ne 0 ]; then
-            echo -e "$index: ${CYAN}$line${NC}"
+            printf "$index: ${CYAN}$line${NC}\n"
         else
-            echo -e "$index: ${LIGHT_CYAN}$line${NC}"
+            printf "$index: ${LIGHT_CYAN}$line${NC}\n"
         fi
         ((index++))
 
