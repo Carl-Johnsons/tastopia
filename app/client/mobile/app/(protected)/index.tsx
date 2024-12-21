@@ -1,8 +1,15 @@
 import Recipe from "@/components/common/Recipe";
+import i18next from "i18next";
 import React from "react";
-import { Text, SafeAreaView, View } from "react-native";
+import { Text, View, Button } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Community = () => {
+  const toggleLanguage = () => {
+    const currentLang = i18next.language;
+    const newLang = currentLang === "en" ? "vi" : "en";
+    i18next.changeLanguage(newLang);
+  };
   return (
     <SafeAreaView>
       <View className='size-full'>
@@ -14,6 +21,11 @@ const Community = () => {
           comments={777}
           onPress={() => console.log("Card pressed")}
         />
+
+        <Button
+          title={"Toggle language"}
+          onPress={() => toggleLanguage()}
+        ></Button>
       </View>
     </SafeAreaView>
   );

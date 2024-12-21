@@ -1,6 +1,6 @@
 export const globalStyles = {
   color: {
-    primary: "#77b267",
+    primary: "#FE724C",
     primaryOpacity: "#77b26726",
     primaryMoreOpacity: "#77b26720",
     secondary: "#387562",

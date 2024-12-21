@@ -1,13 +1,15 @@
 import { useEffect } from "react";
+import i18n from "@/i18n/i18next";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { persistor, store } from "@/store";
-import { PersistGate } from "redux-persist/integration/react";
+import { I18nextProvider } from "react-i18next";
+import { SplashScreen, Stack } from "expo-router";
 import { StatusBar, StyleSheet } from "react-native";
 import { useColorModeValue } from "@/hooks/alternator";
+import { PersistGate } from "redux-persist/integration/react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 // import { GlobalProvider } from "@/context/GlobalProvider";
 
 import("./global.css");
@@ -61,18 +63,16 @@ const RootLayout = () => {
           loading={null}
           persistor={persistor}
         >
-          <SafeAreaProvider>
-            <StatusBar barStyle={statusBarStyle} />
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name='(public)' />
-              <Stack.Screen
-                name='(modals)/createPost'
-                options={{ presentation: "modal" }}
-              />
-              <Stack.Screen name='(protected)' />
-              <Stack.Screen name='+not-found' />
-            </Stack>
-          </SafeAreaProvider>
+          <I18nextProvider i18n={i18n}>
+            <SafeAreaProvider>
+              <StatusBar barStyle={statusBarStyle} />
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name='(public)' />
+                <Stack.Screen name='(protected)' />
+                <Stack.Screen name='+not-found' />
+              </Stack>
+            </SafeAreaProvider>
+          </I18nextProvider>
         </PersistGate>
       </Provider>
     </GestureHandlerRootView>

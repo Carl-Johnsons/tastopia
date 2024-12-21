@@ -1,15 +1,15 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Search = () => {
+const Menu = () => {
   return (
     <SafeAreaView>
       <View>
-        <Text>Search page</Text>
+        <Text>Menu</Text>
       </View>
     </SafeAreaView>
   );
 };
 
-export default Search;
+export default Menu;
