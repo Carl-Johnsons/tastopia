@@ -1,40 +1,21 @@
-import React from "react";
-import { ActivityIndicator, Image, ImageSourcePropType, Text, View } from "react-native";
-import { Tabs, Redirect, useRootNavigationState, router } from "expo-router";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import React, { useEffect, useState } from "react";
+import {
+  Image,
+  ImageSourcePropType,
+  Text,
+  View,
+  StyleSheet,
+  Keyboard
+} from "react-native";
+import { Tabs } from "expo-router";
+import { menuList } from "@/constants/menu";
+import { globalStyles } from "@/components/common/GlobalStyles";
+import { useTranslation } from "react-i18next";
 
-import { icons } from "../../constants";
-import { selectJwtToken } from "@/slices/auth.slice";
-import Button from "@/components/Button";
-import { useOsValue } from "@/hooks/alternator";
+const ProtectedLayout = () => {
+  const { t } = useTranslation("menu");
 
-type TabIconType = {
-  icon: ImageSourcePropType | undefined;
-  color: string;
-  name: string;
-  focused: boolean;
-};
-
-const TabIcon = ({ icon, color, name, focused }: TabIconType) => {
-  return (
-    <View className='items-center justify-center gap-2'>
-      <Image
-        source={icon}
-        resizeMode='contain'
-        tintColor={color}
-        className='size-6'
-      />
-      <Text
-        className={`${focused ? "font-psemibold" : "font-pregular"} text-xs`}
-        style={{ color: color }}
-      >
-        {name}
-      </Text>
-    </View>
-  );
-};
-
-const TabsLayout = () => {
+  const [isKeyBoardVisible, setIsKeyBoardVisible] = useState(false);
   // const jwtToken = selectJwtToken();
   // const navigationState = useRootNavigationState();
 
@@ -51,95 +32,95 @@ const TabsLayout = () => {
   //   );
   // }
 
+  // Handle bottom tabs bar visibility when keyboard is shown
+  const sortedMenuItems = menuList?.[0].menuItems.sort(
+    (cur, next) =>
+      (cur.includeInMainTab?.position ?? -99) - (next.includeInMainTab?.position ?? -99)
+  );
+
+  useEffect(() => {
+    const KeyboardDidShow = Keyboard.addListener("keyboardDidShow", () => {
+      setIsKeyBoardVisible(true);
+    });
+
+    const KeyboardDidHide = Keyboard.addListener("keyboardDidHide", () => {
+      setIsKeyBoardVisible(false);
+    });
+
+    return () => {
+      KeyboardDidShow.remove();
+      KeyboardDidHide.remove();
+    };
+  }, []);
   return (
     <>
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,
-          headerShown: false,
-          tabBarActiveTintColor: "#FFA001",
-          tabBarInactiveTintColor: "#CDCDE0",
-          tabBarStyle: {
-            backgroundColor: "#161622",
-            borderTopWidth: 1,
-            borderTopColor: "#232553",
-            height: 84,
-            paddingTop: 20,
-            display: "flex"
-          }
+          tabBarActiveTintColor: globalStyles.color.light,
+          tabBarInactiveTintColor: globalStyles.color.primary,
+          tabBarStyle: [styles.tabBar, { bottom: isKeyBoardVisible ? -50 : 0 }],
+          tabBarHideOnKeyboard: true
         }}
       >
-        <Tabs.Screen
-          name='index'
-          options={{
-            title: "Home",
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.home}
-                color={color}
-                name='home'
-                focused={focused}
-              />
-            ),
-            tabBarIconStyle: {
-              width: "100%",
-              marginRight: "20%"
-            }
-          }}
-        />
-        <Tabs.Screen
-          name='search'
-          options={{
-            title: "Search",
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.search}
-                color={color}
-                name='search'
-                focused={focused}
-              />
-            ),
-            tabBarIconStyle: {
-              width: "100%",
-              marginRight: "67%"
-            }
-          }}
-        />
-        <Tabs.Screen
-          name='profile'
-          options={{
-            title: "Profile",
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.profile}
-                color={color}
-                name='profile'
-                focused={focused}
-              />
-            ),
-            tabBarIconStyle: {
-              width: "100%",
-              marginLeft: "20%"
-            }
-          }}
-        />
+        {sortedMenuItems.map(menuItem => {
+          const { code, translateCode, path, icon, hidden, includeInMainTab } = menuItem;
+          // const isNotAllowed = !accountPermissionGroups?.includes(code);
+          //! Update authorization later
+          const isNotAllowed = false;
+          return (
+            <Tabs.Screen
+              key={path}
+              name={path}
+              options={{
+                ...(((isNotAllowed && code !== "OPTION") ||
+                  hidden ||
+                  !includeInMainTab) && { href: null }),
+                ...(translateCode && { title: t(translateCode) }),
+                headerShown: false,
+                tabBarIcon: ({ size, focused }) => (
+                  <View style={styles.tabItem}>
+                    {typeof icon === "function"
+                      ? icon({
+                          focused,
+                          color: focused
+                            ? globalStyles.color.primary
+                            : globalStyles.color.dark,
+                          size
+                        })
+                      : icon}
+                  </View>
+                )
+              }}
+            />
+          );
+        })}
       </Tabs>
-      <View
-        className={`absolute ${useOsValue("bottom-7", "bottom-3")} right-[30%] rounded-3xl bg-white/10 p-4 blur-xl`}
-      >
-        <Button
-          onPress={() => router.navigate("/createPost")}
-          className='flex items-center justify-center lg:size-10'
-        >
-          <AntDesign
-            name='plus'
-            size={24}
-            color='white'
-          />
-        </Button>
-      </View>
     </>
   );
 };
 
-export default TabsLayout;
+const styles = StyleSheet.create({
+  tabBar: {
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    backgroundColor: globalStyles.color.light,
+    borderTopWidth: 1,
+    height: 80,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingHorizontal: 10,
+    borderTopColor: globalStyles.color.light,
+    elevation: 10,
+    zIndex: 2
+  },
+
+  tabItem: {
+    width: 80,
+    padding: 0,
+    justifyContent: "center"
+  }
+});
+
+export default ProtectedLayout;

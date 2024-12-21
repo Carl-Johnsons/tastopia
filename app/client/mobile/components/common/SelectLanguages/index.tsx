@@ -12,7 +12,7 @@ const SelectLanguages = () => {
   }[] = [
     {
       label: "",
-      language: "vn",
+      language: "vi",
       image: require("../../assets/images/languages/vn-flag.png")
     },
     {
