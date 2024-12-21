@@ -6,9 +6,9 @@ import * as ImagePicker from "expo-image-picker";
 
 import { extensionToMimeType, generateRNFile } from "@/utils/file";
 import { FileObject, UpdateMediaType } from "@/helper/types";
-import { globalStyles } from "@/components/GlobalStyles";
-import Button from "@/components/Button/index";
-import DropDown from "@/components/DropDown";
+import { globalStyles } from "@/components/common/GlobalStyles";
+import Button from "@/components/common/Button/index";
+import DropDown from "@/components/common/DropDown";
 import { useTranslation } from "react-i18next";
 
 type UploadAvatarProps = {
