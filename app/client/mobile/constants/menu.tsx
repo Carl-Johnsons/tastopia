@@ -1,17 +1,10 @@
-import React, { ReactElement, ReactNode } from "react";
-import { useTranslation } from "react-i18next";
-import { View, Text, Image, TouchableHighlight } from "react-native";
-import logoIcon from "@/assets/images/logo-icon.png";
-import { globalStyles } from "@/components/common/GlobalStyles";
 import { router } from "expo-router";
-
-import {
-  AntDesign,
-  Feather,
-  Ionicons,
-  MaterialCommunityIcons,
-  Octicons
-} from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
+import CameraIconSvg from "@/components/common/SVG";
+import React, { ReactElement, ReactNode } from "react";
+import { View, Text, TouchableHighlight } from "react-native";
+import { globalStyles } from "@/components/common/GlobalStyles";
+import { Feather, Ionicons, Octicons } from "@expo/vector-icons";
 import {
   CAPTURE_PATH,
   COMMUNITY_PATH,
@@ -29,16 +22,8 @@ type TabIconType = {
   hideTitle?: boolean;
 };
 
-const TabIcon = ({
-  icon,
-  color,
-  translateCode,
-  focused,
-  hidden,
-  hideTitle
-}: TabIconType) => {
+const TabIcon = ({ icon, translateCode, focused, hidden, hideTitle }: TabIconType) => {
   const { t } = useTranslation("menu");
-  console.log("translate code", t(translateCode));
   return (
     <View
       style={{
@@ -84,20 +69,10 @@ const MainTabIcon = ({ icon, color, translateCode, focused }: TabIconType) => {
         elevation: 0
       }}
     >
-      {/* <Ionicons
-        name='scan-circle-outline'
-        size={60}
-        color={focused ? globalStyles.color.primary : color}
-      /> */}
-      {/* <Ionicons
-        name='scan-sharp'
-        size={40}
-        color='black'
-      /> */}
-      <AntDesign
-        name='scan1'
-        size={40}
-        color={color}
+      <CameraIconSvg
+        width={40}
+        height={40}
+        fill={focused ? globalStyles.color.primary : globalStyles.color.dark}
       />
     </TouchableHighlight>
   );
