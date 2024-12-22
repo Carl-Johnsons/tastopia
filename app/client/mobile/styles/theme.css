@@ -3,96 +3,98 @@
 @tailwind utilities;
 
 @layer utilities {
-  .background-dark100_light900 {
-    @apply bg-dark-100 dark:bg-light-900;
+  .bg-black_white {
+    @apply bg-black dark:bg-white;
   }
 
-  .background-light850_dark100 {
-    @apply bg-light-850 dark:bg-dark-100;
+  .bg-black200_white100 {
+    @apply bg-black-200 dark:bg-white-100;
   }
 
-  .background-light900_dark200 {
-    @apply bg-light-900 dark:bg-dark-200;
+  .bg-white_black {
+    @apply bg-white dark:bg-black;
+  }
+  .bg-gray-default_600 {
+    @apply bg-gray-DEFAULT dark:bg-gray-600;
   }
 
-  .background-light900_dark300 {
-    @apply bg-light-900 dark:bg-dark-300;
+  .bg-gray200_gray600 {
+    @apply bg-gray-200 dark:bg-gray-600;
   }
 
-  .background-light800_darkgradient {
-    @apply bg-light-800 dark:dark-gradient;
+  .bg-gray300_gray600 {
+    @apply bg-gray-300 dark:bg-gray-600;
   }
 
-  .background-light700_dark400 {
-    @apply bg-light-700 dark:bg-dark-400;
+  .bg-white_black100 {
+    @apply bg-white dark:bg-black-100;
   }
 
-  .background-light700_dark300 {
-    @apply bg-light-700 dark:bg-dark-300;
+  .bg-white100_black200 {
+    @apply bg-white-100 dark:bg-black-200;
   }
 
-  .background-light600_dark300 {
-    @apply bg-light-600 dark:bg-dark-300;
+  .bg-gray100_black100 {
+    @apply bg-gray-100 dark:bg-black-100;
+  }
+  .bg-gray100_black200 {
+    @apply bg-gray-100 dark:bg-black-200;
   }
 
-  .background-light800_dark400 {
-    @apply bg-light-800 dark:bg-dark-400;
+  .bg-gray200_black100 {
+    @apply bg-gray-200 dark:bg-black-100;
   }
 
-  .background-light800_dark300 {
-    @apply bg-light-800 dark:bg-dark-300 !important;
+  .bg-gray300_gray600 {
+    @apply bg-gray-300 dark:bg-gray-600;
   }
 
-  .text-dark100_light900 {
-    @apply text-dark-100 dark:text-light-900 !important;
+  .text-black_white {
+    @apply text-black dark:text-white;
   }
 
-  .text-dark200_light900 {
-    @apply text-dark-200 dark:text-light-900;
+  .text-black200_white100 {
+    @apply text-black-200 dark:text-white-100;
   }
 
-  .text-dark200_light800 {
-    @apply text-dark-200 dark:text-light-800 !important;
+  .text-white_black {
+    @apply text-white dark:text-black;
   }
 
-  .text-dark300_light700 {
-    @apply text-dark-300 dark:text-light-700;
+  .text-gray-default_600 {
+    @apply text-gray-DEFAULT dark:text-gray-600;
   }
 
-  .text-dark400_light700 {
-    @apply text-dark-400 dark:text-light-700;
+  .text-gray200_gray600 {
+    @apply text-gray-200 dark:text-gray-600;
   }
 
-  .text-dark450_light700 {
-    @apply text-dark-450 dark:text-light-700;
+  .text-gray300_gray600 {
+    @apply text-gray-300 dark:text-gray-600;
   }
 
-  .text-dark500_light700 {
-    @apply text-dark-500 dark:text-light-700 !important;
+  .text-white_black100 {
+    @apply text-white dark:text-black-100;
   }
 
-  .text-dark500_light500 {
-    @apply text-dark-500 dark:text-light-500;
+  .text-white100_black200 {
+    @apply text-white-100 dark:text-black-200;
   }
 
-  .text-dark300_light900 {
-    @apply text-dark-300 dark:text-light-900 !important;
+  .text-gray100_black100 {
+    @apply text-gray-100 dark:text-black-100;
   }
 
-  .text-dark400_light800 {
-    @apply text-dark-400 dark:text-light-800;
+  .text-gray100_black200 {
+    @apply text-gray-100 dark:text-black-200;
   }
 
-  .text-light400_light500 {
-    @apply text-light-400 dark:text-light-500 !important;
+  .text-gray200_black100 {
+    @apply text-gray-200 dark:text-black-100;
   }
 
-  .text-dark400_light500 {
-    @apply text-dark-400 dark:text-light-500;
-  }
-
-  .text-dark400_light900 {
-    @apply text-dark-400 dark:text-light-900 !important;
+  .text-gray300_gray600 {
+    @apply text-gray-300 dark:text-gray-600;
   }
 
   .light-border {
