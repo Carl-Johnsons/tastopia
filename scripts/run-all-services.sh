@@ -81,7 +81,7 @@ run_service() {
 
 # Run each service
 run_service http 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" & \ 
-run_service https 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" & \
+run_service http 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" & \
 run_service http 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" & \
 run_service http 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" & \
 run_service http 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
