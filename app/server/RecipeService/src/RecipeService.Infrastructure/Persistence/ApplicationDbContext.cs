@@ -7,17 +7,7 @@ namespace RecipeService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    public ApplicationDbContext()
-    {
-    }
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : base(options)
-    {
-    }
-
-    public DbContext Instance => this;
-   
-    public DbSet<Recipe> Recipes {  get; set; }
+    public DbSet<Recipe> Recipes { get; set; }
     public DbSet<Tag> Tags { get; set; }
     public DbSet<Step> Steps { get; set; }
     public DbSet<Comment> Comments { get; set; }
@@ -30,6 +20,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserReportRecipe> UserReportRecipes { get; set; }
     public DbSet<UserReportComment> UserReportComments { get; set; }
 
+    public DbContext Instance => this;
+    public ApplicationDbContext()
+    {
+    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : base(options)
+    {
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
