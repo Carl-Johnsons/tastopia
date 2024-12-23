@@ -10,7 +10,7 @@ public class AccountController : BaseApiController
     {
     }
 
-    [HttpPost]
+    [HttpPost("register")]
     public async Task<IActionResult> Register(RegisterAccountDTO dto)
     {
         var command = await _sender.Send(_mapper.Map<RegisterAccountCommand>(dto));

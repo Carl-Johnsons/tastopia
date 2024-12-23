@@ -1,10 +1,10 @@
-﻿using Google.Apis.Auth.OAuth2;
+﻿using EmailWorker.Utilities;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Gmail.v1.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using MimeKit;
-using NotificationService.Infrastructure.Utilities;
 using System.Text;
 
 namespace NotificationService.Infrastructure.Services;
@@ -41,8 +41,11 @@ public class GmailEmailService : IEmailService
 
     private async Task<UserCredential> GetUserCredentialAsync()
     {
-        using var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read);
-        string credPath = "token.json";
+        using var stream = new FileStream(Directory.GetCurrentDirectory() + "/credentials.json", FileMode.Open, FileAccess.Read);
+        string credPath = Directory.GetCurrentDirectory() + "/Tokens";
+
+        // Create a custom data store to save the token in token.json file
+        var fileDataStore = new FileDataStore(credPath, true);
 
         return await GoogleWebAuthorizationBroker.AuthorizeAsync(
             GoogleClientSecrets.FromStream(stream).Secrets,
