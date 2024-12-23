@@ -62,10 +62,8 @@ check_docker() {
     if ! docker info > /dev/null 2>&1; then
       err_docker
     fi
-  fi
-
-  if ! sudo docker info > /dev/null 2>&1; then
-    err_docker
+  elif ! sudo docker info > /dev/null 2>&1; then 
+   err_docker
   fi
 }
 
