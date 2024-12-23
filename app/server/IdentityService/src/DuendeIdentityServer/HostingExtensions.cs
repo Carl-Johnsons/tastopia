@@ -1,8 +1,7 @@
-using AutoMapper;
 using Duende.IdentityServer;
 using Duende.IdentityServer.ResponseHandling;
-using DuendeIdentityServer.DTOs;
 using DuendeIdentityServer.Services;
+using IdentityService.Application;
 using IdentityService.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
 using Serilog;
@@ -21,6 +20,7 @@ internal static class HostingExtensions
         var services = builder.Services;
         var host = builder.Host;
 
+        services.AddApplicationServices();
         services.AddInfrastructureServices(builder.Configuration);
 
         host.UseSerilog((context, config) =>
@@ -101,7 +101,7 @@ internal static class HostingExtensions
 
         // Config data protection
         services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo(@"/keys"))
+            .PersistKeysToFileSystem(new DirectoryInfo(Directory.GetCurrentDirectory() + "/keys"))
             .SetApplicationName("tastopia");
 
         services.AddCors(o => o.AddPolicy("AllowSpecificOrigins", builder =>
