@@ -1,11 +1,10 @@
 #!/bin/bash
 
-if ! docker info > /dev/null 2>&1; then
-    printf "\n\t${LIGHT_RED}*** Docker is not running ❌${NC} *** . Exiting the script.\n\n"
-    exit 1
-fi
+. ./scripts/lib.sh && check_docker
 
 project_root=$(pwd)
+
+[[ "$PLATFORM" != "windows" ]] && sudo chmod 755 data/db -R && echo -e "${GREEN}Run chmod 755 for data/db directory successfully${NC}"
 
 update_database() {
     local service_path=$1

@@ -1,9 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-if ! docker info > /dev/null 2>&1; then
-    printf "\n\t${LIGHT_RED}*** Docker is not running ❌${NC} *** . Exiting the script.\n\n"
-    exit 1
-fi
+. ./scripts/lib.sh && check_docker
 
 # Common color
 DANGER='\033[0;31m'
@@ -55,6 +52,11 @@ cd "$project_root"
 
 # Source the .env file to load environment variables
 source .env
+
+if [[ "$PLATFORM" != "windows" ]]; then
+  sudo chmod 777 app/server/IdentityService/src/DuendeIdentityServer -R && \
+  echo -e "${GREEN}Run chmod 777 for DuendeIdentityServer directory successfully${NC}"
+fi
 
 docker compose up -d postgres rabbitmq
 

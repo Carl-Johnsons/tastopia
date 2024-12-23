@@ -1,22 +1,16 @@
-#!/bin/sh
+#!/bin/bash
 
-# Define color
-LIGHT_RED='\033[1;31m'
-GREEN='\033[0;32m'
-GREEN_OCT='\o033[0;32m'
-NC='\033[0m'      # No Color
+. ./scripts/lib.sh
 
-if ! docker info > /dev/null 2>&1; then
-    printf "\n\t${LIGHT_RED}*** Docker is not running ❌${NC} *** . Exiting the script.\n\n"
-    exit 1
-fi
-
+check_docker
 dotnet tool install --global dotnet-ef --version 9.0.0
+echo "Install dotnet-ef successfully"
 
 ./scripts/pull-env.sh
 printf "\n\t*** ${GREEN}DONE PULLING ENV${NC} ***\n\n"
 
-docker compose up -d postgres rabbitmq redis
+$SUDO_PREFIX docker compose up -d postgres rabbitmq redis
+[[ "$PLATFORM" != "windows" ]] && sudo chown $(whoami) data -R && echo -e "${GREEN}Run chown for data directory successfully${NC}"
 printf "\n\t*** ${GREEN}DONE RUNNING CONTAINER${NC} ***\n\n"
 
 ./scripts/build-all-services.sh

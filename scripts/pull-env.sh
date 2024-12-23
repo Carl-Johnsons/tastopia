@@ -10,7 +10,7 @@ init() {
 clean() {
   echo -e "\e[95mCleaning up...\e[0m"
   npm un dotenv-vault
-  rm package.json package-lock.json
+  rm -r package.json package-lock.json node_modules
 }
 
 pull_env_file() {
