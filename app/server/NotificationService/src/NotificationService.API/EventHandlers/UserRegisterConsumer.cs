@@ -1,5 +1,6 @@
 ﻿using Contract.Event.IdentityEvent;
 using MassTransit;
+using NotificationService.Application.Emails;
 
 namespace NotificationService.API.EventHandlers;
 
@@ -12,8 +13,17 @@ public class UserRegisterConsumer : IConsumer<UserRegisterEvent>
         _sender = sender;
     }
 
-    public Task Consume(ConsumeContext<UserRegisterEvent> context)
+    public async Task Consume(ConsumeContext<UserRegisterEvent> context)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(JsonConvert.SerializeObject(context.Message));
+
+        await _sender.Send(new SendEmailCommand
+        {
+            EmailTo = context.Message.Email,
+            Subject = "Verify your account",
+            Body = $"Your <b>Tastopia</b> account is create. Your OTP to verify is <b>{context.Message.EmailOTP}</b>",
+            IsHTML = true,
+        });
+
     }
 }

@@ -1,4 +1,8 @@
 
+using Contract.Event.NotificationEvent;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NotificationService.Infrastructure.Services;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
@@ -9,15 +13,17 @@ public class Worker : IHostedLifecycleService
 {
     private readonly ILogger<Worker> _logger;
     private readonly RabbitMQProvider _rabbitmqProvider;
+    private readonly IEmailService _emailService;
     private IConnection _connection;
     private IChannel _channel;
     private readonly string EXCHANGE_NAME = "email-worker-exchange";
     private readonly string QUEUE_NAME = "email-worker-queue";
 
-    public Worker(ILogger<Worker> logger, RabbitMQProvider rabbitmqProvider)
+    public Worker(ILogger<Worker> logger, RabbitMQProvider rabbitmqProvider, IEmailService emailService)
     {
         _logger = logger;
         _rabbitmqProvider = rabbitmqProvider;
+        _emailService = emailService;
     }
     public Task StartingAsync(CancellationToken cancellationToken)
     {
@@ -32,7 +38,7 @@ public class Worker : IHostedLifecycleService
             _connection = await _rabbitmqProvider.GetConnectionAsync();
             _channel = await _connection.CreateChannelAsync();
 
-            await _channel.ExchangeDeclareAsync(EXCHANGE_NAME, ExchangeType.Direct);
+            //await _channel.ExchangeDeclareAsync(EXCHANGE_NAME, ExchangeType.Fanout);
             await _channel.QueueDeclareAsync(QUEUE_NAME, durable: true, exclusive: false, autoDelete: false, arguments: null);
             await _channel.QueueBindAsync(QUEUE_NAME, EXCHANGE_NAME, "email-exchange-key");
             StartListening();
@@ -70,10 +76,28 @@ public class Worker : IHostedLifecycleService
         consumer.ReceivedAsync += async (model, ea) =>
         {
             var body = ea.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
+            var rawMessage = Encoding.UTF8.GetString(body);
             try
             {
-                _logger.LogInformation($"Processed message {message}");
+                var outerJson = JsonConvert.DeserializeObject<JObject>(rawMessage);
+                var innerMessageJson = outerJson?["message"]?.ToString();
+                if (string.IsNullOrWhiteSpace(innerMessageJson))
+                {
+                    throw new Exception("Message property is missing or empty in the JSON payload");
+                }
+
+                var emailObj = JsonConvert.DeserializeObject<SendEmailEvent>(innerMessageJson);
+
+                if (emailObj == null)
+                {
+                    throw new Exception("Email Object is null");
+                }
+
+                await _emailService.SendEmail(
+                            emailTo: emailObj.EmailTo,
+                            subject: emailObj.Subject,
+                            body: emailObj.Body,
+                            isHtml: true);
 
                 await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
                 _logger.LogInformation("Message acknowledged");
@@ -84,10 +108,13 @@ public class Worker : IHostedLifecycleService
                 await _channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: false);
             }
         };
+
         await _channel.BasicConsumeAsync(
             queue: QUEUE_NAME,
             autoAck: false,
             consumer: consumer);
+
         _logger.LogInformation($"Listening on queue: {QUEUE_NAME}");
     }
+
 }
