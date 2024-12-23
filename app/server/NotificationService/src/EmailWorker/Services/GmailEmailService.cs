@@ -1,4 +1,5 @@
-﻿using EmailWorker.Utilities;
+﻿using EmailWorker.Interfaces;
+using EmailWorker.Utilities;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Gmail.v1.Data;
@@ -7,7 +8,7 @@ using Google.Apis.Util.Store;
 using MimeKit;
 using System.Text;
 
-namespace NotificationService.Infrastructure.Services;
+namespace EmailWorker.Services;
 
 // Ref: https://stackoverflow.com/questions/31209273/how-do-i-set-return-uri-for-googlewebauthorizationbroker-authorizeasync
 public class GmailEmailService : IEmailService

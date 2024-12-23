@@ -1,6 +1,7 @@
 using EmailWorker;
+using EmailWorker.Interfaces;
+using EmailWorker.Services;
 using EmailWorker.Utilities;
-using NotificationService.Infrastructure.Services;
 
 EnvUtility.LoadEnvFile();
 

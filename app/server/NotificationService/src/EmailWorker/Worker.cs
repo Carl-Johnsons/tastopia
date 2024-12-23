@@ -1,8 +1,8 @@
 
 using Contract.Event.NotificationEvent;
+using EmailWorker.Interfaces;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NotificationService.Infrastructure.Services;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
