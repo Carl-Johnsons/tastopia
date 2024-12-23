@@ -70,7 +70,7 @@ run_service() {
     env NUGET_PACKAGES="$project_root/data/nuget" \
         ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
         ASPNETCORE_URLS="$scheme://0.0.0.0:$port" \
-        dotnet watch run \
+        dotnet watch run --non-interactive \
         --no-launch-profile \
         --project "$project" \
         2>&1 | sed -E \
