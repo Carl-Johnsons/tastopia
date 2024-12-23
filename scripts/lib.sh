@@ -23,6 +23,7 @@ CYAN='\033[0;36m'
 CYAN_OCT='\o033[0;36m'
 LIGHT_CYAN='\033[1;36m'
 LIGHT_CYAN_OCT='\o033[1;36m'
+GRAY='\033[0;37m'
 NC='\033[0m'      # No Color
 NC_OCT='\o033[0m' # No Color
 
