@@ -47,6 +47,7 @@ cd ./scripts
 ./kill-port.sh 0.0.0.0:5004
 ./kill-port.sh 0.0.0.0:5005
 ./kill-port.sh 0.0.0.0:5006
+./kill-port.sh 0.0.0.0:6000
 
 cd "$project_root"
 
@@ -87,6 +88,7 @@ run_service http 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$
 run_service http 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" & \
 run_service http 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" & \
 run_service http 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
-run_service http 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification"
+run_service http 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification" & \
+run_service http 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker"
 
 wait
