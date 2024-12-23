@@ -1,8 +1,7 @@
-using AutoMapper;
 using Duende.IdentityServer;
 using Duende.IdentityServer.ResponseHandling;
-using DuendeIdentityServer.DTOs;
 using DuendeIdentityServer.Services;
+using IdentityService.Application;
 using IdentityService.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
 using Serilog;
@@ -21,6 +20,7 @@ internal static class HostingExtensions
         var services = builder.Services;
         var host = builder.Host;
 
+        services.AddApplicationServices();
         services.AddInfrastructureServices(builder.Configuration);
 
         host.UseSerilog((context, config) =>
@@ -71,7 +71,7 @@ internal static class HostingExtensions
             .AddInMemoryClients(Config.Clients)
             .AddAspNetIdentity<ApplicationAccount>()
             .AddProfileService<ProfileService>()
-            .AddResourceOwnerValidator<UserValidator>();
+            .AddResourceOwnerValidator<CustomResourceOwnerPasswordValidator>();
 
         //  .AddDeveloperSigningCredential(); // not recommended for production
 
@@ -89,6 +89,10 @@ internal static class HostingExtensions
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
+
+                // Config cookie
+                //options.CorrelationCookie.SameSite = SameSiteMode.None;
+                //options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
         services.AddLocalApiAuthentication();
@@ -97,7 +101,7 @@ internal static class HostingExtensions
 
         // Config data protection
         services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo(@"/keys"))
+            .PersistKeysToFileSystem(new DirectoryInfo(Directory.GetCurrentDirectory() + "/keys"))
             .SetApplicationName("tastopia");
 
         services.AddCors(o => o.AddPolicy("AllowSpecificOrigins", builder =>
@@ -123,6 +127,14 @@ internal static class HostingExtensions
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
+
+        //app.UseCookiePolicy(new CookiePolicyOptions
+        //{
+        //    MinimumSameSitePolicy = SameSiteMode.None,
+        //    Secure = app.Environment.IsDevelopment()
+        //        ? CookieSecurePolicy.SameAsRequest // Allow http in development
+        //        : CookieSecurePolicy.Always        // Enforce https in production
+        //});
 
         app.UseCors("AllowSpecificOrigins");
 

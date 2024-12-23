@@ -10,6 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="MediatR" Version="12.2.0" />
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="DotNetEnv" Version="3.0.0" />
 		<PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.0.4" />
@@ -48,6 +49,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\IdentityService.Application\IdentityService.Application.csproj" />
 		<ProjectReference Include="..\IdentityService.Domain\IdentityService.Domain.csproj" />
 		<ProjectReference Include="..\IdentityService.Infrastructure\IdentityService.Infrastructure.csproj" />
 	</ItemGroup>

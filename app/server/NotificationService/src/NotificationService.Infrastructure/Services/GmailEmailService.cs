@@ -1,61 +1,78 @@
-﻿using NotificationService.Infrastructure.Utilities;
-using System.Net;
-using System.Net.Mail;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Gmail.v1;
+using Google.Apis.Gmail.v1.Data;
+using Google.Apis.Services;
+using Google.Apis.Util.Store;
+using MimeKit;
+using NotificationService.Infrastructure.Utilities;
+using System.Text;
 
 namespace NotificationService.Infrastructure.Services;
 
+// Ref: https://stackoverflow.com/questions/31209273/how-do-i-set-return-uri-for-googlewebauthorizationbroker-authorizeasync
 public class GmailEmailService : IEmailService
 {
-    private readonly string SMTPServer = "smtp.gmail.com";
-    private readonly int SMTPPort = 587;
-    private string EmailAddress;
-    private string EmailPassword;
+    private readonly string[] Scopes = { GmailService.Scope.GmailSend };
+    private readonly string APPLICATION_NAME;
+    private readonly string EMAIL_ADDRESS;
 
     public GmailEmailService()
     {
         EnvUtility.LoadEnvFile();
-        EmailAddress = DotNetEnv.Env.GetString("EMAIL_ADDRESS", "Not Found");
-        EmailPassword = DotNetEnv.Env.GetString("EMAIL_PASSWORD", "Not Found");
+        APPLICATION_NAME = DotNetEnv.Env.GetString("APPLICATION_NAME", "Not Found");
+        EMAIL_ADDRESS = DotNetEnv.Env.GetString("EMAIL_ADDRESS", "Not found");
     }
 
     public async Task SendEmail(string emailTo, string subject, string body, bool isHtml = false)
     {
-        if (!IsValidEmail(emailTo))
-            throw new ArgumentException("Invalid recipient email address.", nameof(emailTo));
-        if (!IsValidEmail(EmailAddress))
-            throw new InvalidOperationException("Configured email address is invalid.");
+        var credential = await GetUserCredentialAsync();
 
-        using var smtpClient = new SmtpClient(SMTPServer, SMTPPort)
+        var service = new GmailService(new BaseClientService.Initializer
         {
-            Credentials = new NetworkCredential(EmailAddress, EmailPassword),
-            EnableSsl = true
-        };
+            HttpClientInitializer = credential,
+            ApplicationName = APPLICATION_NAME,
+        });
 
-        var mailMessage = new MailMessage
-        {
-            From = new MailAddress(EmailAddress),
-            Subject = subject,
-            Body = body,
-            IsBodyHtml = isHtml
-        };
+        var emailMessage = CreateEmailMessage(emailTo, subject, body, isHtml);
 
-        mailMessage.To.Add(emailTo);
-
-        await smtpClient.SendMailAsync(mailMessage);
+        var request = service.Users.Messages.Send(emailMessage, "me");
+        await request.ExecuteAsync();
     }
 
-    private bool IsValidEmail(string email)
+    private async Task<UserCredential> GetUserCredentialAsync()
     {
-        try
-        {
-            var addr = new MailAddress(email);
-            return addr.Address == email;
-        }
-        catch
-        {
-            return false;
-        }
+        using var stream = new FileStream("credentials.json", FileMode.Open, FileAccess.Read);
+        string credPath = "token.json";
+
+        return await GoogleWebAuthorizationBroker.AuthorizeAsync(
+            GoogleClientSecrets.FromStream(stream).Secrets,
+            Scopes,
+            "user",
+            CancellationToken.None,
+            new FileDataStore(credPath, true)
+        );
     }
 
+    private Message CreateEmailMessage(string to, string subject, string body, bool isHtml)
+    {
+        var mimeMessage = new MimeMessage();
+        mimeMessage.From.Add(new MailboxAddress(APPLICATION_NAME, EMAIL_ADDRESS));
+        mimeMessage.To.Add(new MailboxAddress("", to));
+        mimeMessage.Subject = subject;
+        mimeMessage.Body = new TextPart(isHtml ? "html" : "plain") { Text = body };
 
+        return new Message
+        {
+            Raw = Base64UrlEncode(mimeMessage.ToString())
+        };
+    }
+
+    private string Base64UrlEncode(string input)
+    {
+        byte[] byteArray = Encoding.UTF8.GetBytes(input);
+        return Convert.ToBase64String(byteArray)
+                     .Replace('+', '-')
+                     .Replace('/', '_')
+                     .Replace("=", "");
+    }
 }
