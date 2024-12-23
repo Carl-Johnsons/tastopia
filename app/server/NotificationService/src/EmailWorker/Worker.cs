@@ -38,7 +38,11 @@ public class Worker : IHostedLifecycleService
             _connection = await _rabbitmqProvider.GetConnectionAsync();
             _channel = await _connection.CreateChannelAsync();
 
-            //await _channel.ExchangeDeclareAsync(EXCHANGE_NAME, ExchangeType.Fanout);
+            await _channel.ExchangeDeclareAsync(
+                exchange: EXCHANGE_NAME,
+                type: ExchangeType.Fanout,
+                durable: true
+            );
             await _channel.QueueDeclareAsync(QUEUE_NAME, durable: true, exclusive: false, autoDelete: false, arguments: null);
             await _channel.QueueBindAsync(QUEUE_NAME, EXCHANGE_NAME, "email-exchange-key");
             StartListening();
