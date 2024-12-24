@@ -47,7 +47,9 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
 
     private async Task<Result<TokenResponse?>> RegisterByEmail(RegisterAccountCommand request, CancellationToken cancellationToken)
     {
-        var account = _userManager.FindByEmailAsync(request.Identifier);
+        var account = _userManager.Users.SingleOrDefault(u => u.Email == request.Identifier);
+        Console.WriteLine("==========================" + JsonConvert.SerializeObject(account));
+        Console.WriteLine(account == null);
         if (account != null)
         {
             return Result<TokenResponse>.Failure(AccountError.EmailAlreadyExisted);
