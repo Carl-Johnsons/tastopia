@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using Contract.Constants;
+using MassTransit;
 using System.ComponentModel.DataAnnotations;
 
 namespace Contract.Event.IdentityEvent;
@@ -10,9 +11,9 @@ public record UserRegisterEvent
     [Required]
     public Guid AccountId { get; set; }
     [Required]
-    public string Phone { get; set; } = null!;
+    public string Identifier { get; set; } = null!;
     [Required]
-    public string Email { get; set; } = null!;
+    public string OTP { get; set; } = null!;
     [Required]
-    public string EmailOTP { get; set; } = null!;
+    public AccountMethod Method { get; set; }
 }

@@ -1,5 +1,6 @@
 using Duende.IdentityServer;
 using Duende.IdentityServer.ResponseHandling;
+using DuendeIdentityServer.Middleware;
 using DuendeIdentityServer.Services;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
@@ -143,7 +144,7 @@ internal static class HostingExtensions
         // UseIdentityServer already call UseAuthenticate()
         app.UseIdentityServer();
         app.UseAuthorization();
-
+        app.UseGlobalHandlingErrorMiddleware();
         app.MapRazorPages();
 
         // Add a user api endpoint so this will not be a minimal API

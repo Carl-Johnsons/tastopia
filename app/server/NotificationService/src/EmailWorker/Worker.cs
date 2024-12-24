@@ -1,4 +1,3 @@
-
 using Contract.Event.NotificationEvent;
 using EmailWorker.Interfaces;
 using Newtonsoft.Json;

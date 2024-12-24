@@ -11,7 +11,7 @@ public class MappingConfig
         {
             config.CreateMap<RegisterAccountDTO, RegisterAccountCommand>().ReverseMap();
             config.CreateMap<ApplicationAccount, ApplicationUserResponseDTO>().ReverseMap();
-            config.CreateMap<ApplicationAccount, UpdateUserDTO>().ReverseMap();
+            config.CreateMap<VerifyAccountDTO, VerifyAccountCommand>().ReverseMap();
         });
 
 
