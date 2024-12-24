@@ -5,11 +5,12 @@ using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
+using RecipeService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.Application.Recipes;
 
-public record CreateRecipeCommand : IRequest<Result<Recipe>>
+public record CreateRecipeCommand : IRequest<Result<Recipe?>>
 {
     [Required]
     public Guid AuthorId { get; set; }
@@ -48,7 +49,7 @@ public class StepDTO
     public List<IFormFile>? Images { get; set; } = null!;
 }
 
-public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, Result<Recipe>>
+public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, Result<Recipe?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
@@ -61,8 +62,9 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         _bus = bus;
     }
 
-    public async Task<Result<Recipe>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
     {
+        List <UploadImageFileEventResponseDTO>? rollBackFiles = null;
         try {
             var steps = request.Steps;
             var imageIndex = GetImageIndexMap(steps);
@@ -77,6 +79,8 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             {
                 throw new Exception("Invalid upload file response");
             }
+
+            rollBackFiles = response.Message.Files;
 
             var recipe = new Recipe();
 
@@ -115,22 +119,33 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             _context.Recipes.Add(recipe);
             await _unitOfWork.SaveChangeAsync(cancellationToken);
 
-            return Result<Recipe>.Success(recipe);
+            return Result<Recipe?>.Success(recipe);
 
 
         }
         catch (Exception ex)
         {
-
+            await RollBackImage(rollBackFiles);
+            await Console.Out.WriteLineAsync(ex.Message);
         }
 
-        return Result<Recipe>.Failure(new Error("Add recipe fail"));
+        return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
 
     }
 
-    public async void RollBackImage(List<UploadImageFileEventResponseDTO> files)
+    public async Task RollBackImage(List<UploadImageFileEventResponseDTO>? files)
     {
-        
+        if (files == null) return;
+        var listUrls = new List<string>();
+        foreach (var file in files)
+        {
+            listUrls.Add(file.Url);
+        }
+        var requestClient = _bus.CreateRequestClient<DeleteMultipleFileEvent>();
+        await requestClient.GetResponse<DeleteMultipleFileEventResponseDTO>(new DeleteMultipleFileEvent
+        {
+            DeleteUrl = listUrls,
+        });
     }
 
     private Dictionary<string, int> GetImageIndexMap(List<StepDTO> steps)
