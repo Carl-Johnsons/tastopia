@@ -10,11 +10,11 @@ public class AccountError
             StatusCode: (int)HttpStatusCode.NotFound,
             Message: "Account not found!");
     public static Error EmailAlreadyExisted =>
-        new("AccountError.NotFound",
+        new("AccountError.EmailAlreadyExisted",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Email already existed!");
     public static Error PhoneAlreadyExisted =>
-        new("AccountError.NotFound",
+        new("AccountError.PhoneAlreadyExisted",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Phone already existed!");
 
