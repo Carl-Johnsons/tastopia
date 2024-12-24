@@ -22,15 +22,6 @@ public sealed class UploadMultipleImageFileConsumer : IConsumer<UploadMultipleIm
         var fileStreamEvents = context.Message.FileStreamEvents;
         List<IFormFile> formFiles = new List<IFormFile>(fileStreamEvents.Count);
 
-        await Console.Out.WriteLineAsync(fileStreamEvents.Count + "list" + fileStreamEvents.Count);
-        for (int i = 0; i < fileStreamEvents.Count; i++)
-        {
-            await Console.Out.WriteLineAsync(fileStreamEvents[i].FileName);
-            await Console.Out.WriteLineAsync(fileStreamEvents[i].ContentType);
-            await Console.Out.WriteLineAsync(fileStreamEvents[i].Stream.Length + "");
-            await Console.Out.WriteLineAsync("**********************************************************");
-        }
-
         for (int i = 0; i < fileStreamEvents.Count; i++)
         {
             var fileStreamEvent = fileStreamEvents[i];
@@ -43,8 +34,6 @@ public sealed class UploadMultipleImageFileConsumer : IConsumer<UploadMultipleIm
             formFiles.Add(formFile);
         }
 
-        await Console.Out.WriteLineAsync("FormFile element count:" + formFiles.Count);
-        await Console.Out.WriteLineAsync("Going create multiple image command");
         var response = await _sender.Send(new CreateMultipleCloudinaryImageFileCommand
         {
             FormFiles = formFiles
