@@ -37,6 +37,6 @@ build_service "./app/server/APIGateway/src/APIGateway" "api gateway" && \
 build_service "./app/server/IdentityService/src/DuendeIdentityServer" "identity" && \
 build_service "./app/server/UploadFileService/src/UploadFileService.API" "upload" && \
 build_service "./app/server/UserService/src/UserService.API" "user" && \
+build_service "./app/server/RecipeService/src/RecipeService.API" "recipe" && \
 build_service "./app/server/NotificationService/src/NotificationService.API" notification && \
 build_service "./app/server/SignalRService/src/SignalRHub" "signalR"
-
