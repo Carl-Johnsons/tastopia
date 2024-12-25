@@ -1,4 +1,6 @@
-import Svg, { Path } from "react-native-svg";
+import { StyleSheet } from "react-native";
+import Svg, { Path, Rect, SvgProps } from "react-native-svg";
+import { globalStyles } from "./GlobalStyles";
 
 type CameraIconProps = {
   width?: number;
@@ -7,7 +9,7 @@ type CameraIconProps = {
   fill?: string;
 } & React.ComponentProps<typeof Svg>;
 
-export default function CameraIconSvg({ color, fill, ...props }: CameraIconProps) {
+function CameraIconSvg({ color, fill, ...props }: CameraIconProps) {
   // Use either color or fill prop, with color taking precedence
   const finalColor = color || fill || "black";
 
@@ -25,3 +27,103 @@ export default function CameraIconSvg({ color, fill, ...props }: CameraIconProps
     </Svg>
   );
 }
+
+function UpvoteIcon({ color }: { color: string }) {
+  return (
+    <Svg
+      viewBox='0 0 24 24'
+      width={20}
+      height={20}
+    >
+      <Path
+        d='M12.781 2.375c-.381-.475-1.181-.475-1.562 0l-8 10A1.001 1.001 0 0 0 4 14h4v7a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-7h4a1.001 1.001 0 0 0 .781-1.625l-8-10zM15 12h-1v8h-4v-8H6.081L12 4.601 17.919 12H15z'
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+function DownvoteIcon({ color }: { color: string }) {
+  return (
+    <Svg
+      viewBox='0 0 24 24'
+      width={20}
+      height={20}
+    >
+      <Path
+        d='M20.901 10.566A1.001 1.001 0 0 0 20 10h-4V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v7H4a1.001 1.001 0 0 0-.781 1.625l8 10a1 1 0 0 0 1.562 0l8-10c.24-.301.286-.712.12-1.059zM12 19.399 6.081 12H10V4h4v8h3.919L12 19.399z'
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+type CustomSvgProps = SvgProps & {
+  isActive: boolean;
+};
+
+function LogoIcon(props: CustomSvgProps) {
+  const { isActive, ...rest } = props;
+
+  return (
+    <Svg
+      width={93}
+      height={93}
+      viewBox='0 0 93 93'
+      fill='none'
+      style={[styles.svg, isActive && styles.active]}
+      {...rest}
+    >
+      <Rect
+        width={93}
+        height={93}
+        rx={24}
+        fill='#fff'
+      />
+      <Path
+        d='M42.265 25.738l23.241 23.241c1.074 1.074 1.074 2.836 0 3.931a2.774 2.774 0 01-3.91.022l-.02-.022c-1.075-1.052-2.793-1.03-3.867.022L44.477 66.163a2.748 2.748 0 11-3.888-3.887l13.296-13.297a2.67 2.67 0 000-3.759l-.129-.128a2.67 2.67 0 00-3.759 0L30.773 64.316a2.748 2.748 0 01-3.888 0 2.732 2.732 0 01-.795-1.933c0-.709.258-1.396.795-1.933l19.181-19.182a2.732 2.732 0 00.795-1.933c0-.709-.258-1.396-.794-1.933a2.748 2.748 0 00-3.888 0l-9.28 9.279a2.748 2.748 0 01-3.888 0 2.732 2.732 0 01-.794-1.933c0-.709.279-1.396.794-1.933l9.344-9.344a2.67 2.67 0 000-3.76l-.043-.042a2.767 2.767 0 01-.816-1.955c0-.709.28-1.418.816-1.955 1.117-1.095 2.879-1.095 3.953-.021zM67.073 24.191c5.692 5.693 6.358 14.5 1.997 20.922a2.582 2.582 0 01-3.952.387L45.765 26.146a2.571 2.571 0 01.386-3.952c6.423-4.36 15.23-3.695 20.922 1.997zM72.071 23.032a2.728 2.728 0 10-3.858-3.858 2.728 2.728 0 003.858 3.858z'
+        fill='#FE724C'
+      />
+      <Rect
+        x={19.9431}
+        y={52.1569}
+        width={6.5122}
+        height={5.44227}
+        rx={2.72114}
+        transform='rotate(-45 19.943 52.157)'
+        fill='#FE724C'
+      />
+      <Rect
+        x={18.1455}
+        y={69.2335}
+        width={6.5122}
+        height={5.44227}
+        rx={2.72114}
+        transform='rotate(-45 18.145 69.234)'
+        fill='#FE724C'
+      />
+      <Rect
+        x={31.6272}
+        y={71.0311}
+        width={6.5122}
+        height={5.44227}
+        rx={2.72114}
+        transform='rotate(-45 31.627 71.031)'
+        fill='#FE724C'
+      />
+    </Svg>
+  );
+}
+
+const styles = StyleSheet.create({
+  svg: {},
+  active: {
+    shadowColor: globalStyles.color.primary,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 5
+  }
+});
+
+export { CameraIconSvg, UpvoteIcon, DownvoteIcon, LogoIcon };
