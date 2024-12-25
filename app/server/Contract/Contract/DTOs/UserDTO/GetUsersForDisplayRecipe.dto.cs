@@ -2,7 +2,7 @@
 
 public class GetUsersForDisplayRecipeDTO
 {
-    public List<UserForDisplayRecipe> Users { get; set; } = null!;
+    public Dictionary<Guid, UserForDisplayRecipe> Users { get; set; } = null!;
 }
 
 public class UserForDisplayRecipe

@@ -42,5 +42,19 @@ namespace RecipeService.API.Controllers
             return Ok(result.Value);
         }
 
+
+        [HttpGet("get-recipe-feed")]
+        public async Task<IActionResult> GetRecipeFeed([FromBody] GetRecipeFeedsDTO getRecipeFeedsDTO)
+        {
+            var result = await _sender.Send(new GetRecipeFeedsCommand
+            {
+                Skip = getRecipeFeedsDTO.Skip,
+                TagValues = getRecipeFeedsDTO.TagValues,
+            });
+            result.ThrowIfFailure();
+            return Ok(result.Value);
+        }
+
     }
+
 }

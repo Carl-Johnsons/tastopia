@@ -29,11 +29,11 @@ public class GetUsersForRecipesConsumer : IConsumer<GetRecipesEvent>
             throw new Exception("Users not found");
         }
 
-        var listUser = new List<UserForDisplayRecipe>();
+        var mapUser = new Dictionary<Guid ,UserForDisplayRecipe>();
 
         foreach(var user in users)
         {
-            listUser.Add(new UserForDisplayRecipe
+            mapUser.Add(user.Id, new UserForDisplayRecipe
             {
                 UserId = user.Id,
                 AvtUrl = user.AvatarUrl,
@@ -42,7 +42,7 @@ public class GetUsersForRecipesConsumer : IConsumer<GetRecipesEvent>
         }
 
         var result = new GetUsersForDisplayRecipeDTO { 
-            Users = listUser,
+            Users = mapUser,
         };
 
         await context.RespondAsync(result);

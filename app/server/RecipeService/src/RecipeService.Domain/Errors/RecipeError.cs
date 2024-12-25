@@ -1,14 +1,17 @@
-﻿namespace RecipeService.Domain.Errors;
+﻿using System.Net;
+
+namespace RecipeService.Domain.Errors;
 
 public class RecipeError
 {
     public static Error NotFound =>
         new("RecipeError.NotFound",
-            "Recipe not found");
+           Message: "Recipe not found",
+           StatusCode: (int) HttpStatusCode.NotFound);
     public static Error AddRecipeFail =>
-        new("RecipeError.AddRecipeFail", "Add recipe fail");
+        new("RecipeError.AddRecipeFail", Message: "Add recipe fail");
     public static Error DeleteRecipeFail =>
-        new("RecipeError.DeleteRecipeFail", "Delete recipe fail");
+        new("RecipeError.DeleteRecipeFail",Message: "Delete recipe fail");
     public static Error UpdateRecipeFail =>
-            new("RecipeError.UpdateRecipeFail", "Update recipe fail");
+            new("RecipeError.UpdateRecipeFail",Message: "Update recipe fail");
 }

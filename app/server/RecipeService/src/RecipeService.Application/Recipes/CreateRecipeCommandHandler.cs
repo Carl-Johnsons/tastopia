@@ -13,40 +13,40 @@ namespace RecipeService.Application.Recipes;
 public record CreateRecipeCommand : IRequest<Result<Recipe?>>
 {
     [Required]
-    public Guid AuthorId { get; set; }
+    public Guid AuthorId { get; init; }
 
     [Required]
-    public IFormFile RecipeImage { get; set; } = null!;
+    public IFormFile RecipeImage { get; init; } = null!;
 
     [Required]
     [MaxLength(50)]
-    public string Title { get; set; } = null!;
+    public string Title { get; init; } = null!;
 
     [Required]
     [MaxLength(500)]
-    public string Description { get; set; } = null!;
+    public string Description { get; init; } = null!;
 
-    public int? Serves { get; set; }
+    public int? Serves { get; init; }
 
-    public string? CookTime { get; set; }
+    public string? CookTime { get; init; }
 
     [Required]
-    public List<string> Ingredients { get; set; } = null!;
+    public List<string> Ingredients { get; init; } = null!;
 
     [Required]
     [JsonProperty("steps")]
-    public List<StepDTO> Steps { get; set; } = null!;
+    public List<StepDTO> Steps { get; init; } = null!;
 }
 
 public class StepDTO
 {
     [Required]
-    public int OrdinalNumber { get; set; }
+    public int OrdinalNumber { get; init; }
 
     [Required]
     [MaxLength(500)]
-    public string Content { get; set; } = null!;
-    public List<IFormFile>? Images { get; set; } = null!;
+    public string Content { get; init; } = null!;
+    public List<IFormFile>? Images { get; init; } = null!;
 }
 
 public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, Result<Recipe?>>

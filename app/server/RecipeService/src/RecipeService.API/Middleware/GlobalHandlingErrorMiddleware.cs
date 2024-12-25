@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using RecipeService.API.DTOs;
 using System.Net;
 
 namespace RecipeService.API.Middleware;
@@ -22,6 +23,22 @@ public class GlobalHandlingErrorMiddleware
         {
             await _next(context);
         }
+        catch (ResultException rex)
+        {
+            _logger.LogError(rex, rex.Message);
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            ErrorResponseDTO errorDTO = new()
+            {
+                Code = rex.Errors.First().Code,
+                Message = rex.Errors.First().Message ?? "",
+                Status = rex.Errors.First().StatusCode ?? (int)HttpStatusCode.InternalServerError
+            };
+
+            string jsonResponse = JsonConvert.SerializeObject(errorDTO);
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = errorDTO.Status;
+            await context.Response.WriteAsync(jsonResponse);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
@@ -35,6 +52,7 @@ public class GlobalHandlingErrorMiddleware
             };
             string jsonResponse = JsonConvert.SerializeObject(problem);
             context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)problem.Status;
             await context.Response.WriteAsync(jsonResponse);
         }
     }
