@@ -1,4 +1,6 @@
 using EmailWorker;
+using EmailWorker.Interfaces;
+using EmailWorker.Services;
 using EmailWorker.Utilities;
 
 EnvUtility.LoadEnvFile();
@@ -6,6 +8,8 @@ EnvUtility.LoadEnvFile();
 var builder = Host.CreateDefaultBuilder(args)
     .ConfigureServices((context, services) =>
     {
+        services.AddTransient<IEmailService, GmailEmailService>();
+
         services.AddSingleton(provider => new RabbitMQProvider(new RabbitMQ.Client.ConnectionFactory
         {
             HostName = DotNetEnv.Env.GetString("RABBITMQ_HOST", "localhost"),

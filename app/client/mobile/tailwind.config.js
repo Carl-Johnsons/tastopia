@@ -5,31 +5,50 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#161622",
+        primary: "#FE724C",
         secondary: {
           DEFAULT: "#FF9C01",
           100: "#FF9001",
           200: "#FF8E01"
         },
         black: {
-          DEFAULT: "#000",
-          100: "#1E1E2D",
-          200: "#232533"
+          DEFAULT: "#000000",
+          100: "#1E1E1E",
+          200: "#191919",
+          300: "#0D0D0D"
+        },
+        white: {
+          DEFAULT: "#FFFFFF",
+          100: "#EFEFEF"
         },
         gray: {
-          100: "#CDCDE0"
+          DEFAULT: "#C4C4C4",
+          100: "#F3F4F6",
+          200: "#D9D9D9",
+          300: "#C4C4C4",
+          400: "#C4C7D0",
+          500: "#9CA3AF",
+          600: "#626C70",
+          700: "#5B5B5E"
         }
       },
       fontFamily: {
-        pthin: ["Poppins-Thin", "sans-serif"],
-        pextralight: ["Poppins-ExtraLight", "sans-serif"],
-        plight: ["Poppins-Light", "sans-serif"],
-        pregular: ["Poppins-Regular", "sans-serif"],
-        pmedium: ["Poppins-Medium", "sans-serif"],
-        psemibold: ["Poppins-SemiBold", "sans-serif"],
-        pbold: ["Poppins-Bold", "sans-serif"],
-        pextrabold: ["Poppins-ExtraBold", "sans-serif"],
-        pblack: ["Poppins-Black", "sans-serif"]
+        sans: ["Sofia-Pro-Regular", "sans-serif"],
+        bold: ["Sofia-Pro-Bold", "sans-serif"],
+        light: ["Sofia-Pro-Light", "sans-serif"],
+        medium: ["Sofia-Pro-Medium", "sans-serif"],
+        semibold: ["Sofia-Pro-Semi-Bold", "sans-serif"],
+        black: ["Sofia-Pro-Black", "sans-serif"],
+        extralight: ["Sofia-Pro-ExtraLight", "sans-serif"],
+        ultralight: ["Sofia-Pro-UltraLight", "sans-serif"],
+        italic: ["Sofia-Pro-Regular-Italic", "sans-serif"],
+        "bold-italic": ["Sofia-Pro-Bold-Italic", "sans-serif"],
+        "light-italic": ["Sofia-Pro-Light-Italic", "sans-serif"],
+        "medium-italic": ["Sofia-Pro-Medium-Italic", "sans-serif"],
+        "semibold-italic": ["Sofia-Pro-Semi-Bold-Italic", "sans-serif"],
+        "black-italic": ["Sofia-Pro-Black-Italic", "sans-serif"],
+        "extralight-italic": ["Sofia-Pro-ExtraLight-Italic", "sans-serif"],
+        "ultralight-italic": ["Sofia-Pro-UltraLight-Italic", "sans-serif"]
       }
     }
   },

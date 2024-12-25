@@ -30,9 +30,8 @@ build_service() {
 
 # Publishing Contract solution
 echo -e "\e[95mPublishing Contract solution ...\e[0m"
-(cd ./app/server/Contract/Contract && dotnet publish)
+(cd ./app/server/Contract/Contract && dotnet publish -o ./Published)
 cd "$project_root"
-
 
 build_service "./app/server/APIGateway/src/APIGateway" "api gateway" && \
 build_service "./app/server/IdentityService/src/DuendeIdentityServer" "identity" && \

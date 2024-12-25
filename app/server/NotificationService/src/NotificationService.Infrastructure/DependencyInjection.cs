@@ -15,7 +15,6 @@ public static class DependencyInjection
         // MediatR require repository scope dependency injection
         services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
         services.AddScoped<MockupData>();
-        services.AddTransient<IEmailService, GmailEmailService>();
         services.AddMassTransitService();
 
         using (var serviceProvider = services.BuildServiceProvider())
