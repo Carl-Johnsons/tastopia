@@ -6,7 +6,7 @@ using UploadFileService.Application.CloudinaryFiles.Commands;
 
 
 namespace UploadFileService.API.EventHandlers;
-[QueueName("delete-multiple-file-event-queue")]
+[QueueName("delete-multiple-file-event")]
 public sealed class DeleteMultipleFileConsumer : IConsumer<DeleteMultipleFileEvent>
 {
     private readonly ISender _sender;

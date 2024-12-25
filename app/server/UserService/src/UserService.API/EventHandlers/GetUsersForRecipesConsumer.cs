@@ -6,7 +6,7 @@ using UserService.Application.Users.Commands;
 
 namespace UserService.API.EventHandlers;
 
-[QueueName("get-recipes-event-queue")]
+[QueueName("get-recipes-event")]
 public class GetUsersForRecipesConsumer : IConsumer<GetRecipesEvent>
 {
     private readonly ISender _sender;

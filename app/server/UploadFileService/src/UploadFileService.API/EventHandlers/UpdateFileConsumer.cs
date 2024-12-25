@@ -6,7 +6,7 @@ using UploadFileService.Application.CloudinaryFiles.Commands;
 
 
 namespace UploadFileService.API.EventHandlers;
-[QueueName("update-file-event-queue")]
+[QueueName("update-file-event")]
 public sealed class UpdateFileConsumer : IConsumer<UpdateFileEvent>
 {
     private readonly ISender _sender;

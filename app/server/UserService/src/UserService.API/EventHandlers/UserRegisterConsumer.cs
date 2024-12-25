@@ -6,7 +6,7 @@ using UserService.Domain.Entities;
 
 namespace UserService.API.EventHandlers;
 
-[QueueName("user-register-event-queue")]
+[QueueName("user-register-event")]
 public sealed class UserRegisterConsumer : IConsumer<UserRegisterEvent>
 {
     private readonly ISender _sender;
