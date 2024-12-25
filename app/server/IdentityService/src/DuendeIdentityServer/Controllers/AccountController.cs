@@ -64,4 +64,32 @@ public class AccountController : BaseApiController
         result.ThrowIfFailure();
         return Ok();
     }
+
+    [HttpPost("resend/email")]
+    public async Task<IActionResult> ResendEmailOTP()
+    {
+        var command = new ResendOTPCommand();
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+
+        command.Method = AccountMethod.Email;
+        command.AccountId = Guid.Parse(userId!);
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return Ok();
+    }
+
+    [HttpPost("resend/phone")]
+    public async Task<IActionResult> ResendPhoneOTP()
+    {
+        var command = new ResendOTPCommand();
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+
+        command.Method = AccountMethod.Phone;
+        command.AccountId = Guid.Parse(userId!);
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return Ok();
+    }
 }

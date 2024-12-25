@@ -6,26 +6,25 @@ using NotificationService.Application.Emails;
 
 namespace NotificationService.API.EventHandlers;
 
-[QueueName("user-register-event-queue")]
-public class UserRegisterConsumer : IConsumer<UserRegisterEvent>
+[QueueName("user-resend-otp-event-queue")]
+public class UserResendOTPConsumer : IConsumer<UserResendOTPEvent>
 {
     private readonly ISender _sender;
 
-    public UserRegisterConsumer(ISender sender)
+    public UserResendOTPConsumer(ISender sender)
     {
         _sender = sender;
     }
 
-    public async Task Consume(ConsumeContext<UserRegisterEvent> context)
+    public async Task Consume(ConsumeContext<UserResendOTPEvent> context)
     {
-        Console.WriteLine(JsonConvert.SerializeObject(context.Message));
         switch (context.Message.Method)
         {
             case AccountMethod.Email:
                 await _sender.Send(new SendEmailCommand
                 {
                     EmailTo = context.Message.Identifier,
-                    Subject = "Verify your account",
+                    Subject = "Resend Verify your account",
                     Body = $"Your <b>Tastopia</b> account is create. Your OTP to verify is <b>{context.Message.OTP}</b>",
                     IsHTML = true,
                 });

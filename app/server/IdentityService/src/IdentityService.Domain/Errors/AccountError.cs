@@ -9,6 +9,14 @@ public class AccountError
         new("AccountError.NotFound",
             StatusCode: (int)HttpStatusCode.NotFound,
             Message: "Account not found!");
+    public static Error EmailNotFound =>
+        new("AccountError.EmailNotFound",
+            StatusCode: (int)HttpStatusCode.NotFound,
+            Message: "Account's email not found!");
+    public static Error PhoneNotFound =>
+        new("AccountError.EmailNotFound",
+            StatusCode: (int)HttpStatusCode.NotFound,
+            Message: "Account's email not found!");
     public static Error EmailAlreadyExisted =>
         new("AccountError.EmailAlreadyExisted",
             StatusCode: (int)HttpStatusCode.BadRequest,
@@ -44,4 +52,8 @@ public class AccountError
         new("AccountError.PhoneAlreadyConfirmed",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Phone already confirmed");
+    public static Error ResendOTPFailed =>
+        new("AccountError.ResendOTPFailed",
+            StatusCode: (int)HttpStatusCode.InternalServerError,
+            Message: "Resend OTP Failed");
 }

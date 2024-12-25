@@ -24,7 +24,6 @@ public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand,
 
     public async Task<Result> Handle(VerifyAccountCommand request, CancellationToken cancellationToken)
     {
-        Console.WriteLine(JsonConvert.SerializeObject(request));
         switch (request.Method)
         {
             case AccountMethod.Email:
@@ -64,6 +63,7 @@ public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand,
         }
 
         user.EmailConfirmed = true;
+        user.EmailOTP = null;
         user.EmailOTPCreated = null;
         user.EmailOTPExpiry = null;
         user.RequestOTPCount = 0;
@@ -101,6 +101,7 @@ public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand,
         }
 
         user.PhoneNumberConfirmed = true;
+        user.PhoneOTP = null;
         user.PhoneOTPCreated = null;
         user.PhoneOTPExpiry = null;
         user.RequestOTPCount = 0;

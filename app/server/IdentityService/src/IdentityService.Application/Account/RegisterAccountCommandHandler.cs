@@ -48,8 +48,6 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
     private async Task<Result<TokenResponse?>> RegisterByEmail(RegisterAccountCommand request, CancellationToken cancellationToken)
     {
         var account = _userManager.Users.SingleOrDefault(u => u.Email == request.Identifier);
-        Console.WriteLine("==========================" + JsonConvert.SerializeObject(account));
-        Console.WriteLine(account == null);
         if (account != null)
         {
             return Result<TokenResponse>.Failure(AccountError.EmailAlreadyExisted);
@@ -70,10 +68,8 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
         };
 
         var result = await _userManager.CreateAsync(acc, request.Password);
-        Console.WriteLine(JsonConvert.SerializeObject(acc));
         if (!result.Succeeded)
         {
-            Console.WriteLine(JsonConvert.SerializeObject(result.Errors));
             return Result<TokenResponse>.Failure(AccountError.CreateAccountFailed);
         }
 
@@ -112,10 +108,8 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
         };
 
         var result = await _userManager.CreateAsync(acc, request.Password);
-        Console.WriteLine(JsonConvert.SerializeObject(acc));
         if (!result.Succeeded)
         {
-            Console.WriteLine(JsonConvert.SerializeObject(result.Errors));
             return Result<TokenResponse>.Failure(AccountError.CreateAccountFailed);
         }
 

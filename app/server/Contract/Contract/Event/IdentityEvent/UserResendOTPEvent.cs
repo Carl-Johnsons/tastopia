@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Contract.Event.IdentityEvent;
 
-public record UserRegisterEvent
+public record UserResendOTPEvent
 {
     [Required]
     public Guid AccountId { get; set; }
