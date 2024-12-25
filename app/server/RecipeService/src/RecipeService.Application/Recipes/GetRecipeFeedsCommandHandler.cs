@@ -49,9 +49,11 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
 
         var totalPage = (await recipesQuery.CountAsync() + RECIPE_CONSTANTS.RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.RECIPE_LIMIT;
 
+        if(skip >= totalPage) skip = totalPage - 1;
+
         recipesQuery = _paginateDataUtility.PaginateQuery(recipesQuery, new PaginateParam
         {
-            Offset = request.Skip * RECIPE_CONSTANTS.RECIPE_LIMIT,
+            Offset = skip * RECIPE_CONSTANTS.RECIPE_LIMIT,
             Limit = RECIPE_CONSTANTS.RECIPE_LIMIT
         });
 

@@ -2,5 +2,5 @@
 
 public class RECIPE_CONSTANTS
 {
-    public readonly static int RECIPE_LIMIT = 2;
+    public readonly static int RECIPE_LIMIT = 10;
 }
