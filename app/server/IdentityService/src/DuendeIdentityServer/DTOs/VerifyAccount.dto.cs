@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DuendeIdentityServer.DTOs;
 
-public class UnblockUserDTO
+public class VerifyAccountDTO
 {
     [Required]
-    [JsonProperty("unblockUserId")]
-    public string UnblockUserId { get; set; } = null!;
+    [JsonProperty("OTP")]
+    public string OTP { get; set; } = null!;
 }

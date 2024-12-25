@@ -1,9 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-if ! docker info >/dev/null 2>&1; then
-        printf "\n\t${LIGHT_RED}*** Docker is not running ❌${NC} *** . Exiting the script.\n\n"
-        exit 1
-fi
+. ./scripts/lib.sh && check_docker
 
 # Common color
 DANGER='\033[0;31m'
@@ -50,11 +47,17 @@ cd ./scripts
 ./kill-port.sh 0.0.0.0:5004
 ./kill-port.sh 0.0.0.0:5005
 ./kill-port.sh 0.0.0.0:5006
+./kill-port.sh 0.0.0.0:6000
 
 cd "$project_root"
 
 # Source the .env file to load environment variables
 source .env
+
+if [[ "$PLATFORM" != "windows" ]]; then
+        sudo chmod 777 app/server/IdentityService/src/DuendeIdentityServer -R &&
+                echo -e "${GREEN}Run chmod 777 for DuendeIdentityServer directory successfully${NC}"
+fi
 
 docker compose up -d postgres rabbitmq
 
@@ -67,8 +70,8 @@ run_service() {
 
         env NUGET_PACKAGES="$project_root/data/nuget" \
                 ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
-                ASPNETCORE_URLS="http://0.0.0.0:$port" \
-                dotnet watch run \
+                ASPNETCORE_URLS="$scheme://0.0.0.0:$port" \
+                dotnet watch run --non-interactive \
                 --no-launch-profile \
                 --project "$project" \
                 2>&1 | sed -E \
@@ -86,6 +89,7 @@ run_service http 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$
 run_service http 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" &
 run_service http 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" &
 run_service http 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" &
-run_service http 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification"
+run_service http 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification" &
+run_service http 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker"
 
 wait
