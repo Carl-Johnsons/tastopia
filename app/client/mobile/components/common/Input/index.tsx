@@ -15,11 +15,11 @@ import FormGroup from "../FormGroup";
 import Fragment from "../Fragment";
 import ErrorValidationMessages from "../ErrorValidationMessages";
 import styles from "./Input.style";
-import { formatDate } from "@/utils/format-date";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { isFalsy, isNumeric as checkIfNumber } from "@/utils/functions";
 import { globalStyles } from "../GlobalStyles";
 import Loader from "../Loader";
+import { formatDate } from "@/utils/format-date";
+import { isFalsy, isNumeric as checkIfNumber } from "@/utils/functions";
 
 /**
  * - value: if value is Date type, must be in type string and in format "yyyy-MM-dd"
