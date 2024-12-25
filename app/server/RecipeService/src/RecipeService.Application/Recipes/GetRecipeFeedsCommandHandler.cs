@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.Application.Recipes;
 
-public class GetRecipeFeedsCommand : IRequest<Result<PaginatedRecipeListResponse>>
+public class GetRecipeFeedsCommand : IRequest<Result<PaginatedRecipeFeedsListResponse>>
 {
     [Required]
     public int Skip {  get; init; }
@@ -18,7 +18,7 @@ public class GetRecipeFeedsCommand : IRequest<Result<PaginatedRecipeListResponse
     public List<string>? TagValues { get; init; }
 }
 
-public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Result<PaginatedRecipeListResponse>>
+public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Result<PaginatedRecipeFeedsListResponse>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IBus _bus;
@@ -31,7 +31,7 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
         _bus = bus;
     }
 
-    public  async Task<Result<PaginatedRecipeListResponse>> Handle(GetRecipeFeedsCommand request, CancellationToken cancellationToken)
+    public  async Task<Result<PaginatedRecipeFeedsListResponse>> Handle(GetRecipeFeedsCommand request, CancellationToken cancellationToken)
     {
         var tagValues = request.TagValues;
         var skip = request.Skip;
@@ -48,8 +48,6 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
         }
 
         var totalPage = (await recipesQuery.CountAsync() + RECIPE_CONSTANTS.RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.RECIPE_LIMIT;
-
-        if(skip >= totalPage) skip = totalPage - 1;
 
         recipesQuery = _paginateDataUtility.PaginateQuery(recipesQuery, new PaginateParam
         {
@@ -69,6 +67,18 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
             NumberOfComment = r.NumberOfComment,
             VoteDiff = r.VoteDiff,
         }).ToListAsync();
+
+        if (recipeList == null || !recipeList.Any())
+        {
+            return Result<PaginatedRecipeFeedsListResponse>.Success(new PaginatedRecipeFeedsListResponse
+            {
+                Metadata = new CommonPaginatedMetadata
+                {
+                    TotalPage = 0
+                },
+                PaginatedData = []
+            });
+        }
 
         var authorIds = recipesQuery
         .Select(r => r.AuthorId)
@@ -95,7 +105,7 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
             recipe.AuthorAvtUrl = mapUser[recipe.AuthorId].AvtUrl;
         }
 
-        var paginatedResponse = new PaginatedRecipeListResponse
+        var paginatedResponse = new PaginatedRecipeFeedsListResponse
         {
             PaginatedData = recipeList,
             Metadata = new CommonPaginatedMetadata
@@ -103,6 +113,6 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
                 TotalPage = totalPage,
             }
         };
-        return Result<PaginatedRecipeListResponse>.Success(paginatedResponse);
+        return Result<PaginatedRecipeFeedsListResponse>.Success(paginatedResponse);
     }
 }
