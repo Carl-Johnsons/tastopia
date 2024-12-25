@@ -8,7 +8,7 @@ import {
   ViewStyle
 } from "react-native";
 
-import styles from "./Loader.style";
+import styles from "../Loader/Input.style";
 import { globalStyles } from "../GlobalStyles";
 
 type LoaderProps = {
