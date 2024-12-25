@@ -55,6 +55,20 @@ namespace RecipeService.API.Controllers
             return Ok(result.Value);
         }
 
+        [HttpGet("search-recipe")]
+        public async Task<IActionResult> SearchRecipe([FromBody] SearchRecipesDTO searchRecipesDTO)
+        {
+            var result = await _sender.Send(new SearchRecipesCommand
+            {
+                Skip = searchRecipesDTO.Skip,
+                TagValues = searchRecipesDTO.TagValues,
+                Keyword = searchRecipesDTO.Keyword,
+                UserId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
+            });
+            result.ThrowIfFailure();
+            return Ok(result.Value);
+        }
+
     }
 
 }

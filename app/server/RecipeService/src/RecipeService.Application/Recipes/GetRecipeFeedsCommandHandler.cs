@@ -40,11 +40,11 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
 
         if(tagValues != null && tagValues.Any())
         {
-            recipesQuery = _context.Recipes.Where(r => tagValues.Any(tag =>
-                r.Title.Contains(tag) ||
-                r.Description.Contains(tag) ||
-                r.Ingredients.Any(ingredient => ingredient.Contains(tag))
-            )).OrderByDescending(r => r.CreatedAt).AsQueryable();
+            recipesQuery = recipesQuery.Where(r => tagValues.Any(tag =>
+                r.Title.ToLower().Contains(tag.ToLower()) ||
+                r.Description.ToLower().Contains(tag.ToLower()) ||
+                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.ToLower()))
+            ));
         }
 
         var totalPage = (await recipesQuery.CountAsync() + RECIPE_CONSTANTS.RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.RECIPE_LIMIT;

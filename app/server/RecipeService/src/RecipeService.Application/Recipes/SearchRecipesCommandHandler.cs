@@ -1,126 +1,136 @@
-﻿//using Contract.DTOs.UserDTO;
-//using Contract.Event.RecipeEvent;
-//using MassTransit;
-//using MassTransit.Initializers;
-//using Microsoft.EntityFrameworkCore;
-//using RecipeService.Domain.Entities;
-//using RecipeService.Domain.Responses;
-//using System.ComponentModel.DataAnnotations;
+﻿using Contract.DTOs.UserDTO;
+using Contract.Event.RecipeEvent;
+using MassTransit;
+using MassTransit.Initializers;
+using Microsoft.EntityFrameworkCore;
+using RecipeService.Domain.Entities;
+using RecipeService.Domain.Responses;
+using System.ComponentModel.DataAnnotations;
 
-//namespace RecipeService.Application.Recipes;
+namespace RecipeService.Application.Recipes;
 
-//public class SearchRecipesCommand : IRequest<Result<PaginatedSearchRecipeListResponse>>
-//{
-//    [Required]
-//    public int Skip {  get; init; }
+public class SearchRecipesCommand : IRequest<Result<PaginatedSearchRecipeListResponse>>
+{
+    [Required]
+    public int Skip {  get; init; }
 
-//    [Required]
-//    public List<string>? TagValues { get; init; }
+    [Required]
+    public List<string>? TagValues { get; init; }
 
-//    [Required]
-//    public string? Keyword { get; init; }
+    [Required]
+    public string? Keyword { get; init; }
 
-//    [Required]
-//    public Guid UserId { get; init; }
-//}
+    [Required]
+    public Guid UserId { get; init; }
+}
 
-//public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand, Result<PaginatedSearchRecipeListResponse>>
-//{
-//    private readonly IApplicationDbContext _context;
-//    private readonly IBus _bus;
-//    private readonly IPaginateDataUtility<Recipe, CommonPaginatedMetadata> _paginateDataUtility;
+public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand, Result<PaginatedSearchRecipeListResponse>>
+{
+    private readonly IApplicationDbContext _context;
+    private readonly IBus _bus;
+    private readonly IPaginateDataUtility<Recipe, CommonPaginatedMetadata> _paginateDataUtility;
 
-//    public SearchRecipesCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IPaginateDataUtility<Recipe, CommonPaginatedMetadata> paginateDataUtility, IBus bus)
-//    {
-//        _context = context;
-//        _paginateDataUtility = paginateDataUtility;
-//        _bus = bus;
-//    }
+    public SearchRecipesCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IPaginateDataUtility<Recipe, CommonPaginatedMetadata> paginateDataUtility, IBus bus)
+    {
+        _context = context;
+        _paginateDataUtility = paginateDataUtility;
+        _bus = bus;
+    }
 
-//    public  async Task<Result<PaginatedSearchRecipeListResponse>> Handle(SearchRecipesCommand request, CancellationToken cancellationToken)
-//    {
-//        var tagValues = request.TagValues;
-//        var skip = request.Skip;
+    public  async Task<Result<PaginatedSearchRecipeListResponse>> Handle(SearchRecipesCommand request, CancellationToken cancellationToken)
+    {
+        var skip = request.Skip;
+        var tagValues = request.TagValues;
+        var keyword = request.Keyword;
 
-//        var recipesQuery = _context.Recipes.OrderByDescending(r => r.CreatedAt).AsQueryable();
+        var recipesQuery = _context.Recipes.OrderByDescending(r => r.CreatedAt).AsQueryable();
 
-//        if(tagValues != null && tagValues.Any())
-//        {
-//            recipesQuery = _context.Recipes.Where(r => tagValues.Any(tag =>
-//                r.Title.Contains(tag) ||
-//                r.Description.Contains(tag) ||
-//                r.Ingredients.Any(ingredient => ingredient.Contains(tag))
-//            )).OrderByDescending(r => r.CreatedAt).AsQueryable();
-//        }
+        if (tagValues != null && tagValues.Any())
+        {
+            recipesQuery = recipesQuery.Where(r => tagValues.Any(tag =>
+                r.Title.ToLower().Contains(tag.ToLower()) ||
+                r.Description.ToLower().Contains(tag.ToLower()) ||
+                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.ToLower()))
+            ));
+        }
 
-//        var totalPage = (await recipesQuery.CountAsync() + RECIPE_CONSTANTS.RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.RECIPE_LIMIT;
+        if (keyword != null && keyword != "")
+        {
+            recipesQuery = recipesQuery.Where(r =>
+                r.Title.ToLower().Contains(keyword.ToLower()) ||
+                r.Description.ToLower().Contains(keyword.ToLower()) ||
+                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(keyword.ToLower()))
+            );
+        }
 
-//        if(skip >= totalPage) skip = totalPage - 1;
+        var result = await recipesQuery.ToListAsync();
 
-//        recipesQuery = _paginateDataUtility.PaginateQuery(recipesQuery, new PaginateParam
-//        {
-//            Offset = skip * RECIPE_CONSTANTS.RECIPE_LIMIT,
-//            Limit = RECIPE_CONSTANTS.RECIPE_LIMIT
-//        });
 
-//        var recipeList = await recipesQuery.Select(r =>
-//        new RecipeFeedResponse
-//        {
-//            AuthorAvtUrl = "",
-//            AuthorDisplayName = "",
-//            AuthorId = r.AuthorId,
-//            Description = r.Description,
-//            Id = r.Id,
-//            Title = r.Title,
-//            NumberOfComment = r.NumberOfComment,
-//            VoteDiff = r.VoteDiff,
-//        }).ToListAsync();
+        var totalPage = (await recipesQuery.CountAsync() + RECIPE_CONSTANTS.RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.RECIPE_LIMIT;
 
-//        var authorIds = recipesQuery
-//        .Select(r => r.AuthorId)
-//        .Distinct()
-//        .ToHashSet();
 
-//        if(recipeList == null || !recipeList.Any())
-//        {
-//            return Result<PaginatedSearchRecipeListResponse>.Success(new PaginatedSearchRecipeListResponse
-//            {
-//                Metadata = new CommonPaginatedMetadata
-//                {
-//                    TotalPage = 0
-//                },
-//                PaginatedData = []
-//            });
-//        }
+        recipesQuery = _paginateDataUtility.PaginateQuery(recipesQuery, new PaginateParam
+        {
+            Offset = skip * RECIPE_CONSTANTS.RECIPE_LIMIT,
+            Limit = RECIPE_CONSTANTS.RECIPE_LIMIT
+        });
 
-//        var requestClient = _bus.CreateRequestClient<GetRecipesEvent>();
+        var recipeList = await recipesQuery.Select(r =>
+        new SearchRecipesResponse
+        {
+            AuthorAvtUrl = "",
+            AuthorDisplayName = "",
+            AuthorId = r.AuthorId,
+            Description = r.Description,
+            Id = r.Id,
+            Title = r.Title,
+        }).ToListAsync();
 
-//        var response = await requestClient.GetResponse<GetUsersForDisplayRecipeDTO>(new GetRecipesEvent
-//        {
-//            UserIds = authorIds,
-//        });
+        if (recipeList == null || !recipeList.Any())
+        {
+            return Result<PaginatedSearchRecipeListResponse>.Success(new PaginatedSearchRecipeListResponse
+            {
+                Metadata = new CommonPaginatedMetadata
+                {
+                    TotalPage = 0
+                },
+                PaginatedData = []
+            });
+        }
 
-//        if (response == null || response.Message.Users.Count != authorIds.Count)
-//        {
-//            throw new Exception("Invalid response");
-//        }
+        var authorIds = recipesQuery
+        .Select(r => r.AuthorId)
+        .Distinct()
+        .ToHashSet();
 
-//        var mapUser = response.Message.Users;
+        var requestClient = _bus.CreateRequestClient<GetRecipesEvent>();
 
-//        foreach(var recipe in recipeList)
-//        {
-//            recipe.AuthorDisplayName = mapUser[recipe.AuthorId].DisplayName;
-//            recipe.AuthorAvtUrl = mapUser[recipe.AuthorId].AvtUrl;
-//        }
+        var response = await requestClient.GetResponse<GetUsersForDisplayRecipeDTO>(new GetRecipesEvent
+        {
+            UserIds = authorIds,
+        });
 
-//        var paginatedResponse = new PaginatedSearchRecipeListResponse
-//        {
-//            PaginatedData = recipeList,
-//            Metadata = new CommonPaginatedMetadata
-//            {
-//                TotalPage = totalPage,
-//            }
-//        };
-//        return Result<PaginatedSearchRecipeListResponse>.Success(paginatedResponse);
-//    }
-//}
+        if (response == null || response.Message.Users.Count != authorIds.Count)
+        {
+            throw new Exception("Invalid response");
+        }
+
+        var mapUser = response.Message.Users;
+
+        foreach(var recipe in recipeList)
+        {
+            recipe.AuthorDisplayName = mapUser[recipe.AuthorId].DisplayName;
+            recipe.AuthorAvtUrl = mapUser[recipe.AuthorId].AvtUrl;
+        }
+
+        var paginatedResponse = new PaginatedSearchRecipeListResponse
+        {
+            PaginatedData = recipeList,
+            Metadata = new CommonPaginatedMetadata
+            {
+                TotalPage = totalPage,
+            }
+        };
+        return Result<PaginatedSearchRecipeListResponse>.Success(paginatedResponse);
+    }
+}
