@@ -15,26 +15,43 @@ public class CustomResourceOwnerPasswordValidator : IResourceOwnerPasswordValida
         _userManager = userManager;
         _signInManager = signInManager;
     }
-
+    // User name can be username or email or phone
     public async Task ValidateAsync(ResourceOwnerPasswordValidationContext context)
     {
-        var result = await _signInManager.PasswordSignInAsync(context.UserName, context.Password, isPersistent: true, lockoutOnFailure: true);
-
-        if (result.Succeeded)
+        ApplicationAccount? user;
+        if (context.UserName.Contains("@"))
         {
-            var user = await _userManager.FindByNameAsync(context.UserName);
-            if (user != null)
-            {
-                var claims = await _userManager.GetClaimsAsync(user);
-                context.Result = new GrantValidationResult(
-                        subject: user.Id.ToString(),
-                        authenticationMethod: AuthenticationMethods.Password,
-                        claims: claims
-                    );
-                return;
-            }
+            user = await _userManager.FindByEmailAsync(context.UserName);
+        }
+        else if (context.UserName.All(char.IsDigit))
+        {
+            user = _userManager.Users.FirstOrDefault(u => u.PhoneNumber == context.UserName);
+        }
+        else
+        {
+            user = await _userManager.FindByNameAsync(context.UserName);
         }
 
-        context.Result = new GrantValidationResult(TokenRequestErrors.UnauthorizedClient, "Invalid Credentials");
+        if (user == null)
+        {
+            context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant, "Invalid credentials");
+            return;
+        }
+
+
+        var result = await _signInManager.PasswordSignInAsync(user, context.Password, isPersistent: true, lockoutOnFailure: true);
+
+        if (!result.Succeeded)
+        {
+            context.Result = new GrantValidationResult(TokenRequestErrors.UnauthorizedClient, "Invalid Credentials");
+            return;
+        }
+
+        var claims = await _userManager.GetClaimsAsync(user);
+        context.Result = new GrantValidationResult(
+                subject: user.Id.ToString(),
+                authenticationMethod: AuthenticationMethods.Password,
+                claims: claims
+            );
     }
 }

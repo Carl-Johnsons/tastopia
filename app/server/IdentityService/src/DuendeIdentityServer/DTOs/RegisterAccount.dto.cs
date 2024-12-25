@@ -6,9 +6,7 @@ namespace DuendeIdentityServer.DTOs;
 public class RegisterAccountDTO
 {
     [Required]
-    public string Email { get; set; } = null!;
-    [Required]
-    public string Phone { get; set; } = null!;
+    public string Identifier { get; set; } = null!;
     [Required]
     public string FullName { get; set; } = null!;
     [Required]

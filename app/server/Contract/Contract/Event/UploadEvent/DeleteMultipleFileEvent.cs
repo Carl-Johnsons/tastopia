@@ -1,5 +1,4 @@
-﻿using Contract.Event.UploadEvent.EventModel;
-using MassTransit;
+﻿using MassTransit;
 
 namespace Contract.Event.UploadEvent;
 

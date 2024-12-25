@@ -1,5 +1,4 @@
-﻿
-namespace NotificationService.Infrastructure.Services;
+﻿namespace EmailWorker.Interfaces;
 
 public interface IEmailService
 {

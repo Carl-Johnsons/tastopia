@@ -13,8 +13,15 @@ namespace IdentityService.Domain.Entities;
 public class ApplicationAccount : IdentityUser
 {
     [MaxLength(6)]
-    public string? EmailConfirmationOTP { get; set; } = null!;
-    public DateTime EmailConfirmationExpiry { get; set; } = DateTime.UtcNow;
+    public string? EmailOTP { get; set; } = null!;
+    public DateTime? EmailOTPCreated { get; set; }
+    public DateTime? EmailOTPExpiry { get; set; }
+    [MaxLength(6)]
+    public string? PhoneOTP { get; set; } = null!;
+    public DateTime? PhoneOTPCreated { get; set; }
+    public DateTime? PhoneOTPExpiry { get; set; }
+
+    public int RequestOTPCount { get; set; } = 0;
 
     [Required]
     public bool Active { get; set; }
