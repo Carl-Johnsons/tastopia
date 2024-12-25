@@ -11,9 +11,8 @@ import {
   ScrollView,
   RefreshControl,
   Image,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,SafeAreaView,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const Community = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +35,7 @@ const Community = () => {
     console.log("show modal create recipe");
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{backgroundColor: globalStyles.color.light}}>
       <ScrollView
         refreshControl={
           <RefreshControl
@@ -44,10 +43,11 @@ const Community = () => {
             refreshing={isLoading}
             tintColor={"#fff"}
             onRefresh={onRefresh}
+            
           />
         }
       >
-        <View className='size-full gap-8 px-4'>
+        <View className='gap-8 px-4 size-full'>
           <View className='flex-center'>
             <LogoIcon
               isActive={isLoading}
@@ -56,7 +56,7 @@ const Community = () => {
             />
           </View>
 
-          <View className='flex-start flex-row px-6'>
+          <View className='flex-row px-6 flex-start'>
             <View className='flex-row gap-3'>
               <Image
                 source={require("../../assets/images/avatar.png")}

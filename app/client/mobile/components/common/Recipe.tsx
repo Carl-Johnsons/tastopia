@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   Button,
   TouchableWithoutFeedback,
-  TouchableHighlight
+  TouchableHighlight,
+  TouchableNativeFeedback
 } from "react-native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import Vote from "./Vote";
@@ -38,15 +39,15 @@ const Recipe = ({
   const handleTouchMenu = () => {};
   return (
     <TouchableWithoutFeedback onPress={onPress}>
-      <View className='bg-white_black rounded-3xl pb-4'>
-        <View className='flex-between flex-row px-4 py-2'>
+      <View className='pb-4 bg-white_black rounded-3xl'>
+        <View className='flex-row px-4 py-2 flex-between'>
           {username && avatar && (
             <TouchableWithoutFeedback
               onPress={() => {
                 console.log("go to user detail");
               }}
             >
-              <View className='flex-center flex-row gap-2'>
+              <View className='flex-row gap-2 flex-center'>
                 <Image
                   source={require("../../assets/images/logo-icon.png")}
                   className='size-[30px] rounded-full'
@@ -72,11 +73,11 @@ const Recipe = ({
 
           <View className='gap-3 px-4'>
             <View className='gap-1'>
-              <Text className='font-bold text-2xl'>Chicken Hawaiian</Text>
+              <Text className='text-2xl font-bold'>Chicken Hawaiian</Text>
               <Text className=''>Chicken, Cheese and pineapple</Text>
             </View>
 
-            <View className='flex-start flex-row'>
+            <View className='flex-row flex-start'>
               <Vote />
             </View>
           </View>

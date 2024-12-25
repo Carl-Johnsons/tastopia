@@ -55,18 +55,18 @@ cd "$project_root"
 source .env
 
 if [[ "$PLATFORM" != "windows" ]]; then
-  sudo chmod 777 app/server/IdentityService/src/DuendeIdentityServer -R && \
-  echo -e "${GREEN}Run chmod 777 for DuendeIdentityServer directory successfully${NC}"
+        sudo chmod 777 app/server/IdentityService/src/DuendeIdentityServer -R &&
+                echo -e "${GREEN}Run chmod 777 for DuendeIdentityServer directory successfully${NC}"
 fi
 
 docker compose up -d postgres rabbitmq
 
 run_service() {
-    local scheme=$1
-    local port=$2
-    local project=$3
-    local color=$4
-    local name=$5
+        local scheme=$1
+        local port=$2
+        local project=$3
+        local color=$4
+        local name=$5
 
     env NUGET_PACKAGES="$project_root/data/nuget" \
         ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
