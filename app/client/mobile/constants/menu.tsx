@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import CameraIconSvg from "@/components/common/SVG";
+import { CameraIconSvg } from "@/components/common/SVG";
 import React, { ReactElement, ReactNode } from "react";
 import { View, Text, TouchableHighlight } from "react-native";
 import { globalStyles } from "@/components/common/GlobalStyles";
