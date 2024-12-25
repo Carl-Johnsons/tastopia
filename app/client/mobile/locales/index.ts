@@ -1,0 +1,15 @@
+import communityEn from "../locales/en/community.json";
+import communityVi from "../locales/vi/community.json";
+import menuEn from "../locales/en/menu.json";
+import menuVi from "../locales/vi/menu.json";
+import errorEn from "../locales/en/error.json";
+import errorVi from "../locales/vi/error.json";
+
+export default {
+  communityEn,
+  communityVi,
+  menuEn,
+  menuVi,
+  errorEn,
+  errorVi
+};

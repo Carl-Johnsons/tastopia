@@ -1,8 +1,8 @@
 #!/bin/sh
 
-if ! docker info > /dev/null 2>&1; then
-    printf "\n\t${LIGHT_RED}*** Docker is not running ❌${NC} *** . Exiting the script.\n\n"
-    exit 1
+if ! docker info >/dev/null 2>&1; then
+        printf "\n\t${LIGHT_RED}*** Docker is not running ❌${NC} *** . Exiting the script.\n\n"
+        exit 1
 fi
 
 # Common color
@@ -59,32 +59,33 @@ source .env
 docker compose up -d postgres rabbitmq
 
 run_service() {
-    local port=$1
-    local project=$2
-    local color=$3
-    local name=$4
+        local scheme=$1
+        local port=$2
+        local project=$3
+        local color=$4
+        local name=$5
 
-    env NUGET_PACKAGES="$project_root/data/nuget" \
-        ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
-        ASPNETCORE_URLS="http://0.0.0.0:$port" \
-        dotnet watch run --non-interactive \
-        --no-launch-profile \
-        --project "$project" \
-        2>&1 | sed -E \
-        -e "/(warning|warn|wrn)/I s/.*/$(printf "${WARNING}&${NC}")/" \
-        -e "/(error|err)/I s/.*/$(printf "${DANGER}&${NC}")/" \
-        -e "/(information|info|inf)/I s/.*/$(printf "${INFO}&${NC}")/" \
-        -e "/ is listening on/I s/.*/$(printf "${SUCCESS}&${NC}")/" \
-        -e "s/^/$(printf "${color}[${name}]${NC} ")/"
+        env NUGET_PACKAGES="$project_root/data/nuget" \
+                ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
+                ASPNETCORE_URLS="http://0.0.0.0:$port" \
+                dotnet watch run \
+                --no-launch-profile \
+                --project "$project" \
+                2>&1 | sed -E \
+                -e "/(warning|warn|wrn)/I s/.*/$(printf "${WARNING}&${NC}")/" \
+                -e "/(error|err)/I s/.*/$(printf "${DANGER}&${NC}")/" \
+                -e "/(information|info|inf)/I s/.*/$(printf "${INFO}&${NC}")/" \
+                -e "/ is listening on/I s/.*/$(printf "${SUCCESS}&${NC}")/" \
+                -e "s/^/$(printf "${color}[${name}]${NC} ")/"
 }
 
 # Run each service
-run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" & \ 
-run_service 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" & \
-run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" & \
-run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" & \
-run_service 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
-run_service 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" & \
-run_service 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification"
+run_service http 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" &
+\ 
+run_service http 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" &
+run_service http 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" &
+run_service http 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" &
+run_service http 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" &
+run_service http 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification"
 
 wait
