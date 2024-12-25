@@ -1,15 +1,17 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Search = () => {
+const Capture = () => {
   return (
     <SafeAreaView>
       <View>
-        <Text>Search page</Text>
+        <Text>Capture</Text>
       </View>
     </SafeAreaView>
   );
 };
 
-export default Search;
+export default Capture;
+
+const styles = StyleSheet.create({});
