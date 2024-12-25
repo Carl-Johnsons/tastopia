@@ -25,8 +25,9 @@ public class Recipe : BaseAuditableEntity
     public string? CookTime { get; set; }
 
     public int? Serves { get; set; }
+    public int VoteDiff { get; set; } = 0;
+    public int NumberOfComment { get; set; } = 0;
 
-    public int? VoteDiff { get; set; }
 
     [Required]
     public bool IsActive { get; set; } = true;

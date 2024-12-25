@@ -36,7 +36,7 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
         var tagValues = request.TagValues;
         var skip = request.Skip;
 
-        var recipesQuery = _context.Recipes.AsQueryable();
+        var recipesQuery = _context.Recipes.OrderByDescending(r => r.CreatedAt).AsQueryable();
 
         if(tagValues != null && tagValues.Any())
         {
@@ -44,7 +44,7 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
                 r.Title.Contains(tag) ||
                 r.Description.Contains(tag) ||
                 r.Ingredients.Any(ingredient => ingredient.Contains(tag))
-            )).AsQueryable();
+            )).OrderByDescending(r => r.CreatedAt).AsQueryable();
         }
 
         var totalPage = (await recipesQuery.CountAsync() + RECIPE_CONSTANTS.RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.RECIPE_LIMIT;
@@ -66,8 +66,8 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
             Description = r.Description,
             Id = r.Id,
             Title = r.Title,
-            NumberOfComment = 0,
-            VoteDiff = r.VoteDiff ?? 0,
+            NumberOfComment = r.NumberOfComment,
+            VoteDiff = r.VoteDiff,
         }).ToListAsync();
 
         var authorIds = recipesQuery

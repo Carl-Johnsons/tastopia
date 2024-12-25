@@ -15,6 +15,8 @@ public class RecipeData
             CookTime = "10m",
             IsActive = true,
             Ingredients = ["2 Eggs", "2 tbsp Milk", "1 tbsp Butter", "Salt", "Pepper"],
+            CreatedAt = DateTime.Parse("2024-07-29 05:11:18"),
+            UpdatedAt = DateTime.Parse("2024-07-29 05:11:18"),
         },
         new Recipe{
             Id = Guid.Parse("c8362fc3-5cff-4171-a78d-40613c748596"),
@@ -26,6 +28,8 @@ public class RecipeData
             CookTime = "40m",
             IsActive = true,
             Ingredients = ["4 Ripe Tomatoes", "1 Onion", "2 Garlic Cloves", "2 cups Vegetable Stock", "Salt", "Pepper"],
+            CreatedAt = DateTime.Parse("2023-12-25 02:01:34"),
+            UpdatedAt = DateTime.Parse("2023-12-25 02:01:34"),
         },
         new Recipe{
             Id = Guid.Parse("068be5ad-dc4d-4a7b-bce7-24b4ed9fec57"),
@@ -37,6 +41,8 @@ public class RecipeData
             CookTime = "30m",
             IsActive = true,
             Ingredients = ["200g Spaghetti", "100g Bacon", "2 Eggs", "50g Parmesan Cheese", "Salt", "Pepper"],
+            CreatedAt = DateTime.Parse("2023-05-31 19:06:57"),
+            UpdatedAt = DateTime.Parse("2023-05-31 19:06:57"),
         },
         new Recipe{
             Id = Guid.Parse("0a1ff224-99eb-442f-b043-0d00bf9fb1c2"),
@@ -48,6 +54,8 @@ public class RecipeData
             CookTime = "20m",
             IsActive = true,
             Ingredients = ["1 Bell Pepper", "1 Carrot", "1 Broccoli Head", "2 tbsp Soy Sauce", "1 tbsp Olive Oil", "1 Garlic Clove"],
+            CreatedAt = DateTime.Parse("2023-02-19 06:28:09"),
+            UpdatedAt = DateTime.Parse("2023-02-19 06:28:09"),
         },
         new Recipe{
             Id = Guid.Parse("057aa844-742a-4952-8162-dbfbd7e493ac"),
@@ -59,6 +67,8 @@ public class RecipeData
             CookTime = "15m",
             IsActive = true,
             Ingredients = ["1 Baguette", "50g Butter", "2 Garlic Cloves", "1 tbsp Parsley", "Salt"],
+            CreatedAt = DateTime.Parse("2023-10-01 01:09:19"),
+            UpdatedAt = DateTime.Parse("2023-10-01 01:09:19"),
         },
     ];
 
