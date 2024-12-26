@@ -24,5 +24,5 @@ public class ApplicationAccount : IdentityUser
     public int RequestOTPCount { get; set; } = 0;
 
     [Required]
-    public bool Active { get; set; }
+    public bool IsActive { get; set; }
 }
