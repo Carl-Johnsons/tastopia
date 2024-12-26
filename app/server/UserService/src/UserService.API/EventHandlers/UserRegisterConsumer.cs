@@ -15,18 +15,7 @@ public sealed class UserRegisterConsumer : IConsumer<UserRegisterEvent>
     {
         _sender = sender;
     }
-    private static string GenerateRandomDisplayName()
-    {
-        string[] firstNames = { "John", "Jane", "Michael", "Emily", "Chris", "Emma", "James", "Olivia" };
-        string[] lastNames = { "Doe", "Smith", "Johnson", "Brown", "Williams", "Taylor", "Davis", "Wilson" };
 
-        Random random = new Random();
-
-        string firstName = firstNames[random.Next(firstNames.Length)];
-        string lastName = lastNames[random.Next(lastNames.Length)];
-
-        return $"{firstName} {lastName}";
-    }
 
     public async Task Consume(ConsumeContext<UserRegisterEvent> context)
     {
@@ -38,7 +27,7 @@ public sealed class UserRegisterConsumer : IConsumer<UserRegisterEvent>
             Id = accountId,
             AvatarUrl = defaultAvatar,
             BackgroundUrl = defaultBackground,
-            DisplayName = GenerateRandomDisplayName(),
+            DisplayName = context.Message.FullName,
         };
 
         var response = await _sender.Send(new CreateUserCommand
