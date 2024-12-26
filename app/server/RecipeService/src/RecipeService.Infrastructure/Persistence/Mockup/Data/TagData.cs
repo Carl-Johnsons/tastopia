@@ -13,7 +13,7 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/3NovRt2.png",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/pkain4xbzohdhv7aeeng.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/pkain4xbzohdhv7aeeng.png",
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         },
@@ -25,7 +25,7 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/BAT5qyL.png",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/gcogeajch6fpvqohribk.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/gcogeajch6fpvqohribk.png",
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         },
@@ -37,7 +37,7 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/C4nNmU1.png",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/jendg3sl9ptvhgow2jrx.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/jendg3sl9ptvhgow2jrx.png",
             CreatedAt= DateTime.Now,
             UpdatedAt = DateTime.Now
         },
@@ -49,7 +49,7 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/m8wBuYO.png",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/bgbyg81zcbdjpijcn8ep.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/bgbyg81zcbdjpijcn8ep.png",
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         },
@@ -62,7 +62,7 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/Rk3MwdQ.jpg",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/mepnrydhtvbsjqw8c0ht.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/mepnrydhtvbsjqw8c0ht.png",
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         },
@@ -74,7 +74,7 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/Z8y4Hsr.jpg",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/te5yyfu8xlldcxygov08.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/te5yyfu8xlldcxygov08.png",
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         },
@@ -86,7 +86,7 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/feglS7k.jpg",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/pxx8vnkcs3ibwqubvpa1.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/pxx8vnkcs3ibwqubvpa1.png",
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         },
@@ -98,7 +98,7 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/lyYgVRi.jpg",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/cm7vdqacstnodzodzx0o.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/cm7vdqacstnodzodzx0o.png",
             CreatedAt= DateTime.Now,
             UpdatedAt = DateTime.Now
         },
@@ -110,7 +110,7 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/oLwdHvx.jpg",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/eyy3xy151cyv660ezq1w.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/eyy3xy151cyv660ezq1w.png",
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         },
@@ -122,7 +122,7 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/DZEq7TK.jpg",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/bqnsia9cjejk24bma2sl.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/bqnsia9cjejk24bma2sl.png",
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         },
@@ -134,7 +134,7 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/8nDcffy.png",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/dcinjpqufvrlanwqyj4g.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/dcinjpqufvrlanwqyj4g.png",
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         },
@@ -146,7 +146,63 @@ public class TagData
             Category = "INGREDIENT",
             IsActive = true,
             ImageUrl = "https://i.imgur.com/2QiWJWH.jpg",
-            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/xc8zoiy2brchcuqgyxhq.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/xc8zoiy2brchcuqgyxhq.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        },
+        //Category tag
+        new Tag
+        {
+            Id = Guid.Parse("71676633-493e-46c5-86a0-21773f196035"),
+            Code = "ALL",
+            Value = "All",
+            Category = "DISHTYPE",
+            IsActive = true,
+            ImageUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735196328/default_storage/tag/dishtype/hivalxshuvx5nnlfp5t1.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        },
+        new Tag
+        {
+            Id = Guid.Parse("6c91b894-d6dd-4c9b-a106-bfd029ce9e16"),
+            Code = "NOODLES",
+            Value = "Noodles",
+            Category = "DISHTYPE",
+            IsActive = true,
+            ImageUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735196327/default_storage/tag/dishtype/ingre9ficyzq0iitiwmd.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        },
+        new Tag
+        {
+            Id = Guid.Parse("de3698bf-ad8b-4cc6-8ed0-662bd7eca486"),
+            Code = "SPICE",
+            Value = "Spice",
+            Category = "DISHTYPE",
+            IsActive = true,
+            ImageUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735196323/default_storage/tag/dishtype/frgtox8kb4edsvmutmez.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        },
+        new Tag
+        {
+            Id = Guid.Parse("d8b74fc2-f848-41af-a53f-20170aa453cd"),
+            Code = "BBQ",
+            Value = "BBQ",
+            Category = "DISHTYPE",
+            IsActive = true,
+            ImageUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735196328/default_storage/tag/dishtype/zl1f9g0dxxbtw2f4jiel.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        },
+        new Tag
+        {
+            Id = Guid.Parse("042dd338-3338-45a1-96c6-a1e2d0ca71ff"),
+            Code = "SEAFOOD",
+            Value = "Seafood",
+            Category = "DISHTYPE",
+            IsActive = true,
+            ImageUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735196329/default_storage/tag/dishtype/jhxdroetbjq9f57cixwj.png",
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         }

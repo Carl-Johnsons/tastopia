@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
+using RecipeService.API.ValidationAttributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.API.DTOs;
-
 public class GetTagsDTO
 {
     [Required]
@@ -15,5 +15,9 @@ public class GetTagsDTO
 
     [JsonProperty("tagCodes")]
     public List<string>? TagCodes { get; set; }
+
+    [JsonProperty("category")]
+    [CategoryValidation]
+    public string? Category { get; set; }
 
 }

@@ -21,7 +21,4 @@ public class Tag : BaseAuditableEntity
 
     [Required]
     public string ImageUrl { get; set; } = null!;
-
-    [Required]
-    public string IconUrl { get; set; } = null!;
 }

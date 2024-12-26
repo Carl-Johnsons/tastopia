@@ -78,6 +78,7 @@ namespace RecipeService.API.Controllers
                 Skip = getTagsDTO.Skip,
                 TagCodes = getTagsDTO.TagCodes,
                 Keyword = getTagsDTO.Keyword,
+                Category = getTagsDTO.Category
             });
             result.ThrowIfFailure();
             return Ok(result.Value);

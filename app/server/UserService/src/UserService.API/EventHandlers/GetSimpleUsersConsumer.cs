@@ -17,7 +17,7 @@ public class GetSimpleUsersConsumer : IConsumer<GetSimpleUsersEvent>
     }
     public async Task Consume(ConsumeContext<GetSimpleUsersEvent> context)
     {
-        var response = await _sender.Send(new GetUsersForRecipesCommand
+        var response = await _sender.Send(new GetSimpleUsersCommand
         {
             UserIds = context.Message.UserIds,
         });

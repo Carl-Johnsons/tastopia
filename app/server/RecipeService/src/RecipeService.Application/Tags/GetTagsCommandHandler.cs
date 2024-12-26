@@ -16,6 +16,9 @@ public class GetTagsCommand : IRequest<Result<PaginatedTagListResponse>>
 
     [Required]
     public List<string>? TagCodes { get; init; }
+
+    [Required]
+    public string? Category { get; init; }
 }
 
 public class GetTagsCommandHandler : IRequestHandler<GetTagsCommand, Result<PaginatedTagListResponse>>
@@ -33,9 +36,16 @@ public class GetTagsCommandHandler : IRequestHandler<GetTagsCommand, Result<Pagi
     {
         var tagCodes = request.TagCodes;
         var keyword = request.Keyword;
+        var category = request.Category;
         var skip = request.Skip;
 
-        var tagsQuery = _context.Tags.AsQueryable();
+
+        var tagsQuery = _context.Tags.OrderByDescending(t => t.CreatedAt).AsQueryable();
+
+        if(category != null && category != "")
+        {
+            tagsQuery = tagsQuery.Where(t => t.Category == category);
+        }
 
         if(tagCodes != null && tagCodes.Any())
         {
