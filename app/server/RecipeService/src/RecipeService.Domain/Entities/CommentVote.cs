@@ -17,4 +17,5 @@ public class CommentVote
     public bool IsUpvote { get; set; } = true;
 
     public virtual Comment? Comment { get; set; }
+
 }

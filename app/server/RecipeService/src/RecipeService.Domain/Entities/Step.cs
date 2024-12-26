@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecipeService.Domain.Entities;
@@ -15,6 +16,8 @@ public class Step : BaseAuditableEntity
     public string Content { get; set; } = null!;
 
     //Json string url array object
-    public string? AttachedFiles { get; set; } 
+    public List<string>? AttachedImageUrls { get; set; }
+
+    [JsonIgnore]
     public virtual Recipe? Recipe { get; set; }
 }

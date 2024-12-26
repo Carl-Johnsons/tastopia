@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.API.DTOs;
 
-public class GetRecipeDetail
+public class GetRecipeDetailDTO
 {
     [Required]
     [JsonProperty("recipeId")]
-    public string RecipeId { get; set; } = null!;
+    public Guid RecipeId { get; set; }
 }

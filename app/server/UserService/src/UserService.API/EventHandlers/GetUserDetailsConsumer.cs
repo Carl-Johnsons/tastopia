@@ -29,8 +29,17 @@ public class GetUserDetailsConsumer : IConsumer<GetUserDetailsEvent>
             throw new Exception("Users not found");
         }
 
-        var result = new GetSimpleUsersDTO { 
-            Users = mapUser,
+        var result = new UserDTO { 
+            Address = user.Address,
+            AvatarUrl = user.AvatarUrl,
+            BackgroundUrl = user.BackgroundUrl,
+            Bio = user.Bio,
+            DisplayName = user.DisplayName,
+            Dob = user.Dob,
+            Gender = user.Gender,
+            TotalFollowing = user.TotalFollowing ?? 0,
+            TotalFollwer = user.TotalFollwer ?? 0,
+            TotalRecipe = user.TotalRecipe ?? 0,
         };
 
         await context.RespondAsync(result);

@@ -109,7 +109,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
                         listUrl.Add(response.Message.Files[imageIndex[$"Step{step.OrdinalNumber}|{i}"]].Url);
                     }
 
-                    s.AttachedFiles = JsonConvert.SerializeObject(listUrl);
+                    s.AttachedImageUrls = listUrl;
                 }
                 listSteps.Add(s);
             }
