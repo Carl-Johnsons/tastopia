@@ -6,9 +6,9 @@ using RecipeService.Application.Tags;
 
 namespace RecipeService.API.Controllers;
 
-[Authorize]
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class RecipeController : BaseApiController
 {
     public RecipeController(ISender sender, IHttpContextAccessor httpContextAccessor) : base(sender, httpContextAccessor)

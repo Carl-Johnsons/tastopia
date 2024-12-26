@@ -14,4 +14,6 @@ public record UserRegisterEvent
     public string OTP { get; set; } = null!;
     [Required]
     public AccountMethod Method { get; set; }
+    [Required]
+    public string FullName { get; set; } = null!;
 }

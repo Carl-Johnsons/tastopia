@@ -40,29 +40,31 @@ public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailComm
 
         var requestClient = _bus.CreateRequestClient<GetUserDetailsEvent>();
 
-        var response = await requestClient.GetResponse<UserDTO>(new GetUserDetailsEvent
+        var responseUser = await requestClient.GetResponse<UserDTO>(new GetUserDetailsEvent
         {
             UserId = recipe.AuthorId,
         });
 
-  
 
-        var account = new AccountDTO
+        var responseAccout = await requestClient.GetResponse<AccountDTO>(new GetUserDetailsEvent
         {
-            Email = "",
-            IsActive = true,
-            PhoneNumber = "",
-            Username = "alice123"
-        };
+            UserId = recipe.AuthorId,
+        });
 
-        var user = response.Message;
+        if(responseAccout == null || responseUser == null) {
+
+            return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound);
+
+        }
+
+
 
         var result = new RecipeDetailsResponse
         {
             Recipe = recipe,
-            AuthorAvtUrl = user.AvatarUrl,
-            AuthorUsername = account.Username,
-            AuthorNumberOfFollower = user.TotalFollwer ?? 0
+            AuthorAvtUrl = responseUser.Message.AvatarUrl!,
+            AuthorUsername = responseAccout.Message.Username!,
+            AuthorNumberOfFollower = responseUser.Message.TotalFollwer! ?? 0
         };
 
         return Result<RecipeDetailsResponse?>.Success(result);
