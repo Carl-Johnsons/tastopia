@@ -1,5 +1,5 @@
 ﻿using Contract.DTOs.UserDTO;
-using Contract.Event.RecipeEvent;
+using Contract.Event.UserEvent;
 using MassTransit;
 using MassTransit.Initializers;
 using Microsoft.EntityFrameworkCore;
@@ -85,9 +85,9 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
         .Distinct()
         .ToHashSet();
 
-        var requestClient = _bus.CreateRequestClient<GetRecipesEvent>();
+        var requestClient = _bus.CreateRequestClient<GetSimpleUsersEvent>();
 
-        var response = await requestClient.GetResponse<GetUsersForDisplayRecipeDTO>(new GetRecipesEvent
+        var response = await requestClient.GetResponse<GetSimpleUsersDTO>(new GetSimpleUsersEvent
         {
             UserIds = authorIds,
         });

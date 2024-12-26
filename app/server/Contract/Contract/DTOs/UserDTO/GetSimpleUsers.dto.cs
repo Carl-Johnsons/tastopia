@@ -1,11 +1,11 @@
 ﻿namespace Contract.DTOs.UserDTO;
 
-public class GetUsersForDisplayRecipeDTO
+public class GetSimpleUsersDTO
 {
-    public Dictionary<Guid, UserForDisplayRecipe> Users { get; set; } = null!;
+    public Dictionary<Guid, SimpleUser> Users { get; set; } = null!;
 }
 
-public class UserForDisplayRecipe
+public class SimpleUser
 {
     public Guid UserId { get; set; }
     public string AvtUrl { get; set; } = null!;

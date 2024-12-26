@@ -21,7 +21,6 @@ public class GetTagsCommand : IRequest<Result<PaginatedTagListResponse>>
 public class GetTagsCommandHandler : IRequestHandler<GetTagsCommand, Result<PaginatedTagListResponse>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IBus _bus;
     private readonly IPaginateDataUtility<Tag, CommonPaginatedMetadata> _paginateDataUtility;
 
     public GetTagsCommandHandler(IApplicationDbContext context, IPaginateDataUtility<Tag, CommonPaginatedMetadata> paginateDataUtility)

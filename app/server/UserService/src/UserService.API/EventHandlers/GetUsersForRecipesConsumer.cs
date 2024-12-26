@@ -1,21 +1,21 @@
 ﻿using Contract.Common;
 using Contract.DTOs.UserDTO;
-using Contract.Event.RecipeEvent;
+using Contract.Event.UserEvent;
 using MassTransit;
 using UserService.Application.Users.Commands;
 
 namespace UserService.API.EventHandlers;
 
-[QueueName("get-recipes-event")]
-public class GetUsersForRecipesConsumer : IConsumer<GetRecipesEvent>
+[QueueName("get-simple-users-event")]
+public class GetSimpleUsersConsumer : IConsumer<GetSimpleUsersEvent>
 {
     private readonly ISender _sender;
 
-    public GetUsersForRecipesConsumer(ISender sender)
+    public GetSimpleUsersConsumer(ISender sender)
     {
         _sender = sender;
     }
-    public async Task Consume(ConsumeContext<GetRecipesEvent> context)
+    public async Task Consume(ConsumeContext<GetSimpleUsersEvent> context)
     {
         var response = await _sender.Send(new GetUsersForRecipesCommand
         {
@@ -29,11 +29,11 @@ public class GetUsersForRecipesConsumer : IConsumer<GetRecipesEvent>
             throw new Exception("Users not found");
         }
 
-        var mapUser = new Dictionary<Guid ,UserForDisplayRecipe>();
+        var mapUser = new Dictionary<Guid ,SimpleUser>();
 
         foreach(var user in users)
         {
-            mapUser.Add(user.Id, new UserForDisplayRecipe
+            mapUser.Add(user.Id, new SimpleUser
             {
                 UserId = user.Id,
                 AvtUrl = user.AvatarUrl,
@@ -41,7 +41,7 @@ public class GetUsersForRecipesConsumer : IConsumer<GetRecipesEvent>
             });
         }
 
-        var result = new GetUsersForDisplayRecipeDTO { 
+        var result = new GetSimpleUsersDTO { 
             Users = mapUser,
         };
 
