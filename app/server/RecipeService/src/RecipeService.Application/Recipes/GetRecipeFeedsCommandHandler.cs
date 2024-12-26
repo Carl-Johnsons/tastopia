@@ -61,6 +61,7 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
             AuthorAvtUrl = "",
             AuthorDisplayName = "",
             AuthorId = r.AuthorId,
+            RecipeImgUrl = r.ImageUrl,
             Description = r.Description,
             Id = r.Id,
             Title = r.Title,

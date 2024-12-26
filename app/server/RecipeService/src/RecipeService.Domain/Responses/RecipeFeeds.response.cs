@@ -13,6 +13,9 @@ public class RecipeFeedResponse
     [JsonProperty("authorId")]
     public Guid AuthorId { get; set; }
     [Required]
+    [JsonProperty("recipeImgUrl")]
+    public string RecipeImgUrl { get; set; } = null!;
+    [Required]
     [JsonProperty("title")]
     public string Title { get; set; } = null!;
     [Required]
