@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RecipeService.API.DTOs;
 using RecipeService.Application.Recipes;
+using RecipeService.Application.Tags;
 
 namespace RecipeService.API.Controllers
 {
@@ -64,6 +65,19 @@ namespace RecipeService.API.Controllers
                 TagValues = searchRecipesDTO.TagValues,
                 Keyword = searchRecipesDTO.Keyword,
                 UserId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
+            });
+            result.ThrowIfFailure();
+            return Ok(result.Value);
+        }
+
+        [HttpGet("get-tag")]
+        public async Task<IActionResult> GetTag([FromBody] GetTagsDTO getTagsDTO)
+        {
+            var result = await _sender.Send(new GetTagsCommand
+            {
+                Skip = getTagsDTO.Skip,
+                TagCodes = getTagsDTO.TagCodes,
+                Keyword = getTagsDTO.Keyword,
             });
             result.ThrowIfFailure();
             return Ok(result.Value);

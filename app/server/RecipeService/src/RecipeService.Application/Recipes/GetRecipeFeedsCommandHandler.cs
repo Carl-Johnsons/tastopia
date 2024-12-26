@@ -18,13 +18,13 @@ public class GetRecipeFeedsCommand : IRequest<Result<PaginatedRecipeFeedsListRes
     public List<string>? TagValues { get; init; }
 }
 
-public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Result<PaginatedRecipeFeedsListResponse>>
+public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Result<PaginatedRecipeFeedsListResponse>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IBus _bus;
     private readonly IPaginateDataUtility<Recipe, CommonPaginatedMetadata> _paginateDataUtility;
 
-    public GetRecipeFeedsCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IPaginateDataUtility<Recipe, CommonPaginatedMetadata> paginateDataUtility, IBus bus)
+    public GetTagsCommandHandler(IApplicationDbContext context, IPaginateDataUtility<Recipe, CommonPaginatedMetadata> paginateDataUtility, IBus bus)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;

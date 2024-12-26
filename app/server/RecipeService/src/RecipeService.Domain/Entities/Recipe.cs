@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecipeService.Domain.Entities;
 
+[Table("Recipe")]
 public class Recipe : BaseAuditableEntity
 {
     [Required]

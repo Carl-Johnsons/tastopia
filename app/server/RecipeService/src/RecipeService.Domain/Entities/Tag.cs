@@ -17,10 +17,11 @@ public class Tag : BaseAuditableEntity
     public string Category { get; set; } = null!;
 
     [Required]
-    public string Status { get; set; } = "Pending";
-
-    [Required]
     public bool IsActive { get; set; } = false;
 
-    public string? ImageUrl { get; set; }
+    [Required]
+    public string ImageUrl { get; set; } = null!;
+
+    [Required]
+    public string IconUrl { get; set; } = null!;
 }

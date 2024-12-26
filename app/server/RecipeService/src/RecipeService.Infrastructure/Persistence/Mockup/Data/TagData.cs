@@ -12,7 +12,10 @@ public class TagData
             Value = "Tomato",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/3NovRt2.png"
+            ImageUrl = "https://i.imgur.com/3NovRt2.png",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/pkain4xbzohdhv7aeeng.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         },
         new Tag
         {
@@ -21,7 +24,10 @@ public class TagData
             Value = "Egg",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/BAT5qyL.png"
+            ImageUrl = "https://i.imgur.com/BAT5qyL.png",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/gcogeajch6fpvqohribk.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         },
         new Tag
         {
@@ -30,16 +36,22 @@ public class TagData
             Value = "Rice",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/C4nNmU1.png"
+            ImageUrl = "https://i.imgur.com/C4nNmU1.png",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/jendg3sl9ptvhgow2jrx.png",
+            CreatedAt= DateTime.Now,
+            UpdatedAt = DateTime.Now
         },
         new Tag
         {
             Id = Guid.Parse("a7a1953d-027e-43b6-ad0d-d10312a3064d"),
-            Code = "MUSKROOM",
+            Code = "MUSHROOM",
             Value = "Mushroom",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/m8wBuYO.png"
+            ImageUrl = "https://i.imgur.com/m8wBuYO.png",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/bgbyg81zcbdjpijcn8ep.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         },
         // Additional Tags for Recipes
         new Tag
@@ -49,7 +61,10 @@ public class TagData
             Value = "Milk",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/Rk3MwdQ.jpg"
+            ImageUrl = "https://i.imgur.com/Rk3MwdQ.jpg",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/mepnrydhtvbsjqw8c0ht.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         },
         new Tag
         {
@@ -58,7 +73,10 @@ public class TagData
             Value = "Butter",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/Z8y4Hsr.jpg"
+            ImageUrl = "https://i.imgur.com/Z8y4Hsr.jpg",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/te5yyfu8xlldcxygov08.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         },
         new Tag
         {
@@ -67,7 +85,10 @@ public class TagData
             Value = "Cheese",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/feglS7k.jpg"
+            ImageUrl = "https://i.imgur.com/feglS7k.jpg",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188128/default_storage/tag/pxx8vnkcs3ibwqubvpa1.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         },
         new Tag
         {
@@ -76,7 +97,10 @@ public class TagData
             Value = "Bacon",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/lyYgVRi.jpg"
+            ImageUrl = "https://i.imgur.com/lyYgVRi.jpg",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/cm7vdqacstnodzodzx0o.png",
+            CreatedAt= DateTime.Now,
+            UpdatedAt = DateTime.Now
         },
         new Tag
         {
@@ -85,7 +109,10 @@ public class TagData
             Value = "Garlic",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/oLwdHvx.jpg"
+            ImageUrl = "https://i.imgur.com/oLwdHvx.jpg",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/eyy3xy151cyv660ezq1w.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         },
         new Tag
         {
@@ -94,7 +121,10 @@ public class TagData
             Value = "Carrot",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/DZEq7TK.jpg"
+            ImageUrl = "https://i.imgur.com/DZEq7TK.jpg",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/bqnsia9cjejk24bma2sl.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         },
         new Tag
         {
@@ -103,7 +133,10 @@ public class TagData
             Value = "Broccoli",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/8nDcffy.png"
+            ImageUrl = "https://i.imgur.com/8nDcffy.png",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/dcinjpqufvrlanwqyj4g.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         },
         new Tag
         {
@@ -112,7 +145,10 @@ public class TagData
             Value = "Soy Sauce",
             Category = "INGREDIENT",
             IsActive = true,
-            ImageUrl = "https://i.imgur.com/2QiWJWH.jpg"
+            ImageUrl = "https://i.imgur.com/2QiWJWH.jpg",
+            IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/xc8zoiy2brchcuqgyxhq.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
         }
     ];
 
