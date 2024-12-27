@@ -64,7 +64,11 @@ const RootLayout = () => {
           <I18nextProvider i18n={i18n}>
             <SafeAreaProvider>
               <StatusBar backgroundColor={bgColor} />
-              <Stack screenOptions={{ headerShown: false }}>
+              <Stack
+                screenOptions={{
+                  headerShown: false
+                }}
+              >
                 <Stack.Screen name='(public)' />
                 <Stack.Screen name='(protected)' />
                 <Stack.Screen name='+not-found' />
