@@ -79,7 +79,16 @@ public class GetTagsCommandHandler : IRequestHandler<GetTagsCommand, Result<Pagi
 
         if (tagList == null || !tagList.Any())
         {
-            return Result<PaginatedTagListResponse?>.Failure(TagError.NotFound);
+            return Result<PaginatedTagListResponse?>.Success(new PaginatedTagListResponse
+            {
+                PaginatedData = [],
+                Metadata = new AdvancePaginatedMetadata
+                {
+                    TotalPage = 0,
+                    HasNextPage = false,
+                }
+            });
+
         }
 
         var hasNextPage = true;
