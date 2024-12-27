@@ -2,7 +2,7 @@
 
 namespace RecipeService.Domain.Responses;
 
-public class PaginatedRecipeFeedsListResponse : BasePaginatedResponse<RecipeFeedResponse, CommonPaginatedMetadata>;
+public class PaginatedRecipeFeedsListResponse : BasePaginatedResponse<RecipeFeedResponse, AdvancePaginatedMetadata>;
 
 public class PaginatedSearchRecipeListResponse : BasePaginatedResponse<SearchRecipesResponse, CommonPaginatedMetadata>;
 

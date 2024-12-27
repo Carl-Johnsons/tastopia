@@ -22,9 +22,9 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
 {
     private readonly IApplicationDbContext _context;
     private readonly IBus _bus;
-    private readonly IPaginateDataUtility<Recipe, CommonPaginatedMetadata> _paginateDataUtility;
+    private readonly IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public GetTagsCommandHandler(IApplicationDbContext context, IPaginateDataUtility<Recipe, CommonPaginatedMetadata> paginateDataUtility, IBus bus)
+    public GetTagsCommandHandler(IApplicationDbContext context, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility, IBus bus)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;
@@ -73,9 +73,10 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
         {
             return Result<PaginatedRecipeFeedsListResponse>.Success(new PaginatedRecipeFeedsListResponse
             {
-                Metadata = new CommonPaginatedMetadata
+                Metadata = new AdvancePaginatedMetadata
                 {
-                    TotalPage = 0
+                    TotalPage = totalPage,
+                    HasNextPage = false,
                 },
                 PaginatedData = []
             });
@@ -106,12 +107,20 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
             recipe.AuthorAvtUrl = mapUser[recipe.AuthorId].AvtUrl;
         }
 
+        var hasNextPage = true;
+
+        if(skip == totalPage - 1)
+        {
+            hasNextPage = false;
+        }
+
         var paginatedResponse = new PaginatedRecipeFeedsListResponse
         {
             PaginatedData = recipeList,
-            Metadata = new CommonPaginatedMetadata
+            Metadata = new AdvancePaginatedMetadata
             {
                 TotalPage = totalPage,
+                HasNextPage = hasNextPage,
             }
         };
         return Result<PaginatedRecipeFeedsListResponse>.Success(paginatedResponse);
