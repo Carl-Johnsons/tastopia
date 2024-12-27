@@ -22,7 +22,9 @@ pull_env_file "./" global && \
 pull_production_env_file "./" global_production && \
 pull_env_file "./app/server/ApiGateway" apigateway && \
 pull_env_file "./app/server/IdentityService" identity && \
+pull_production_env_file "./app/server/IdentityService" identity_production && \
 pull_env_file "./app/server/UploadFileService" upload && \
 pull_env_file "./app/server/UserService" user && \
 pull_env_file "./app/server/NotificationService" notification && \
+pull_production_env_file "./app/server/NotificationService" notification_production && \
 pull_env_file "./app/server/SignalRService" signalR 

@@ -123,6 +123,21 @@ services:
                   target: /src
                   ignore:
                       - Contract/
+
+    email-worker:
+        build:
+            context: .
+            dockerfile: ./dockerfiles/email-worker/Dockerfile
+        container_name: email-worker
+        depends_on:
+            rabbitmq:
+                condition: service_healthy
+        networks:
+            - back-end
+        env_file:
+            - .env.production
+            - ./app/server/NotificationService/.env
+
 networks:
     back-end:
     front-end:
