@@ -8,7 +8,7 @@ namespace RecipeService.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+//[Authorize]
 public class RecipeController : BaseApiController
 {
     public RecipeController(ISender sender, IHttpContextAccessor httpContextAccessor) : base(sender, httpContextAccessor)
@@ -46,7 +46,7 @@ public class RecipeController : BaseApiController
     }
 
 
-    [HttpGet("get-recipe-feed")]
+    [HttpPost("get-recipe-feed")]
     public async Task<IActionResult> GetRecipeFeed([FromBody] GetRecipeFeedsDTO getRecipeFeedsDTO)
     {
         var result = await _sender.Send(new GetRecipeFeedsCommand
@@ -58,7 +58,7 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("search-recipe")]
+    [HttpPost("search-recipe")]
     public async Task<IActionResult> SearchRecipe([FromBody] SearchRecipesDTO searchRecipesDTO)
     {
         var result = await _sender.Send(new SearchRecipesCommand
@@ -72,7 +72,7 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("get-tag")]
+    [HttpPost("get-tag")]
     public async Task<IActionResult> GetTag([FromBody] GetTagsDTO getTagsDTO)
     {
         var result = await _sender.Send(new GetTagsCommand
@@ -86,7 +86,7 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("get-recipe-details")]
+    [HttpPost("get-recipe-details")]
     public async Task<IActionResult> GetRecipeDetails([FromBody] GetRecipeDetailDTO getRecipeDetailDTO)
     {
         var result = await _sender.Send(new GetRecipeDetailCommand
