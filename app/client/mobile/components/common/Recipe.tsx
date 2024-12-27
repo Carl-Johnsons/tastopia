@@ -13,35 +13,24 @@ import {
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import Vote from "./Vote";
 
-interface RecipeProps {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  username: string;
-  avatar: string;
-  votes: number;
-  comments: number;
-  onPress?: () => void;
-}
-
 const Recipe = ({
   id,
+  authorId,
   title,
   description,
-  imageUrl,
-  username,
-  avatar,
-  votes,
-  comments,
-  onPress
-}: RecipeProps) => {
+  authorDisplayName,
+  authorAvtUrl,
+  voteDiff,
+  numberOfComment
+}: RecipeType) => {
   const handleTouchMenu = () => {};
+  const handleOnPress = () => {};
+
   return (
-    <TouchableWithoutFeedback onPress={onPress}>
+    <TouchableWithoutFeedback onPress={handleOnPress}>
       <View className='pb-4 bg-white_black rounded-3xl'>
         <View className='flex-row px-4 py-2 flex-between'>
-          {username && avatar && (
+          {authorId && authorDisplayName && authorAvtUrl && (
             <TouchableWithoutFeedback
               onPress={() => {
                 console.log("go to user detail");
@@ -49,10 +38,10 @@ const Recipe = ({
             >
               <View className='flex-row gap-2 flex-center'>
                 <Image
-                  source={require("../../assets/images/logo-icon.png")}
+                  source={{ uri: authorAvtUrl }}
                   className='size-[30px] rounded-full'
                 />
-                <Text>Vuong</Text>
+                <Text>{authorDisplayName}</Text>
               </View>
             </TouchableWithoutFeedback>
           )}
@@ -73,8 +62,8 @@ const Recipe = ({
 
           <View className='gap-3 px-4'>
             <View className='gap-1'>
-              <Text className='text-2xl font-bold'>Chicken Hawaiian</Text>
-              <Text className=''>Chicken, Cheese and pineapple</Text>
+              <Text className='text-2xl font-bold'>{title}</Text>
+              <Text className=''>{description}</Text>
             </View>
 
             <View className='flex-row flex-start'>
