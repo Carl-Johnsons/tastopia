@@ -11,15 +11,15 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["./solutions/APIGatewaySolution/src/APIGateway/APIGateway.csproj", "./APIGateway/"]
+COPY ["./app/server/APIGateway/src/APIGateway/APIGateway.csproj", "./APIGateway/"]
 WORKDIR "/src/APIGateway"
-RUN dotnet restore "./APIGateway.csproj" --packages "./nuget" --verbosity normal
-COPY ["./solutions/APIGatewaySolution/src/APIGateway","."]
-RUN dotnet build "./APIGateway.csproj" --packages "./nuget" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet restore "./APIGateway.csproj" --packages "../nuget" --verbosity normal
+COPY ["./app/server/APIGateway/src/APIGateway","."]
+RUN dotnet build "./APIGateway.csproj" --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./APIGateway.csproj" --packages "./nuget" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./APIGateway.csproj" --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

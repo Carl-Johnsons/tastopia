@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+# Common color
+DANGER='\033[0;31m'
+WARNING='\033[1;33m'
+INFO='\033[0;32m'
+DEBUG='\033[1;36m'
+FATAL='\033[1;35m'
+SUCCESS='\033[1;32m'
+
 # Define color
 RED='\033[0;31m'
 RED_OCT='\o033[0;31m'
