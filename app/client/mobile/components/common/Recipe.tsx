@@ -1,16 +1,7 @@
 // components/DishCard.tsx
 import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Button,
-  TouchableWithoutFeedback,
-  TouchableHighlight,
-  TouchableNativeFeedback
-} from "react-native";
-import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import { View, Text, Image, TouchableWithoutFeedback, Touchable } from "react-native";
+import { Ionicons, Feather } from "@expo/vector-icons";
 import Vote from "./Vote";
 
 const Recipe = ({
@@ -66,8 +57,19 @@ const Recipe = ({
               <Text className=''>{description}</Text>
             </View>
 
-            <View className='flex-row flex-start'>
-              <Vote />
+            <View className='flex-row gap-2 flex-start'>
+              <Vote voteDiff={voteDiff} />
+
+              <TouchableWithoutFeedback>
+                <View className='flex-center flex-row gap-2 rounded-3xl border-[0.5px] border-gray-300 px-3 py-2.5'>
+                  <Ionicons
+                    name='chatbubble-outline'
+                    size={20}
+                    color='black'
+                  />
+                  <Text>{numberOfComment}</Text>
+                </View>
+              </TouchableWithoutFeedback>
             </View>
           </View>
         </View>
