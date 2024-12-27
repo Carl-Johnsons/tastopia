@@ -86,7 +86,16 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
 
         if (recipeList == null || !recipeList.Any())
         {
-            return Result<PaginatedRecipeFeedsListResponse?>.Failure(RecipeError.NotFound);
+            return Result<PaginatedRecipeFeedsListResponse?>.Success(new PaginatedRecipeFeedsListResponse
+            {
+                PaginatedData = [],
+                Metadata = new AdvancePaginatedMetadata
+                {
+                    HasNextPage = false,
+                    TotalPage = 0,
+                }
+            });
+
         }
 
         var authorIds = recipesQuery

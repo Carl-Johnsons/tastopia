@@ -93,7 +93,15 @@ public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand,
 
         if (recipeList == null || !recipeList.Any())
         {
-            return Result<PaginatedSearchRecipeListResponse?>.Failure(RecipeError.NotFound);
+            return Result<PaginatedSearchRecipeListResponse?>.Success(new PaginatedSearchRecipeListResponse
+            {
+                PaginatedData = [],
+                Metadata = new AdvancePaginatedMetadata
+                {
+                    HasNextPage = false,
+                    TotalPage = 0,
+                }
+            });
         }
 
         var authorIds = recipesQuery
