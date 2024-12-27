@@ -54,10 +54,21 @@ const Filter = ({ handleSelect }: FilterProps) => {
             >
               <View
                 className={`rounded-full p-[0.5px] ${itemSelected === item.value ? "bg-white" : ""}`}
+                style={{
+                  elevation: itemSelected === item.value ? 5 : 0,
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.4,
+                  shadowRadius: 2
+                }}
               >
                 <Image
                   source={item.imageUrl}
-                  style={{ width: 50, height: 50, borderRadius: 50 }}
+                  style={{
+                    width: 50,
+                    height: 50,
+                    borderRadius: 50
+                  }}
                 />
               </View>
               <Text
