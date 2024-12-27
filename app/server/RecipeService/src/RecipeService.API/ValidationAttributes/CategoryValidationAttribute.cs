@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 public class CategoryValidationAttribute : ValidationAttribute
 {
-    private static readonly string[] AllowedValues = { "DISHTYPE", "INGREDIENT" };
+    private static readonly string[] AllowedValues = { "DISHTYPE", "INGREDIENT", "ALL" };
 
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {

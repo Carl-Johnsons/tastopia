@@ -4,15 +4,16 @@ using MassTransit;
 using MassTransit.Initializers;
 using Microsoft.EntityFrameworkCore;
 using RecipeService.Domain.Entities;
+using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.Application.Recipes;
 
-public class SearchRecipesCommand : IRequest<Result<PaginatedSearchRecipeListResponse>>
+public class SearchRecipesCommand : IRequest<Result<PaginatedSearchRecipeListResponse?>>
 {
     [Required]
-    public int Skip {  get; init; }
+    public int? Skip {  get; init; }
 
     [Required]
     public List<string>? TagValues { get; init; }
@@ -24,24 +25,28 @@ public class SearchRecipesCommand : IRequest<Result<PaginatedSearchRecipeListRes
     public Guid UserId { get; init; }
 }
 
-public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand, Result<PaginatedSearchRecipeListResponse>>
+public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand, Result<PaginatedSearchRecipeListResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IBus _bus;
-    private readonly IPaginateDataUtility<Recipe, CommonPaginatedMetadata> _paginateDataUtility;
+    private readonly IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public SearchRecipesCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IPaginateDataUtility<Recipe, CommonPaginatedMetadata> paginateDataUtility, IBus bus)
+    public SearchRecipesCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility, IBus bus)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;
         _bus = bus;
     }
 
-    public  async Task<Result<PaginatedSearchRecipeListResponse>> Handle(SearchRecipesCommand request, CancellationToken cancellationToken)
+    public  async Task<Result<PaginatedSearchRecipeListResponse?>> Handle(SearchRecipesCommand request, CancellationToken cancellationToken)
     {
         var skip = request.Skip;
         var tagValues = request.TagValues;
         var keyword = request.Keyword;
+
+        if(skip == null) {
+            return Result<PaginatedSearchRecipeListResponse?>.Failure(RecipeError.NotFound);
+        }
 
         var recipesQuery = _context.Recipes.OrderByDescending(r => r.CreatedAt).AsQueryable();
 
@@ -54,7 +59,7 @@ public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand,
             ));
         }
 
-        if (keyword != null && keyword != "")
+        if (!string.IsNullOrEmpty(keyword))
         {
             recipesQuery = recipesQuery.Where(r =>
                 r.Title.ToLower().Contains(keyword.ToLower()) ||
@@ -71,7 +76,7 @@ public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand,
 
         recipesQuery = _paginateDataUtility.PaginateQuery(recipesQuery, new PaginateParam
         {
-            Offset = skip * RECIPE_CONSTANTS.RECIPE_LIMIT,
+            Offset = skip ?? 0 * RECIPE_CONSTANTS.RECIPE_LIMIT,
             Limit = RECIPE_CONSTANTS.RECIPE_LIMIT
         });
 
@@ -88,14 +93,7 @@ public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand,
 
         if (recipeList == null || !recipeList.Any())
         {
-            return Result<PaginatedSearchRecipeListResponse>.Success(new PaginatedSearchRecipeListResponse
-            {
-                Metadata = new CommonPaginatedMetadata
-                {
-                    TotalPage = 0
-                },
-                PaginatedData = []
-            });
+            return Result<PaginatedSearchRecipeListResponse?>.Failure(RecipeError.NotFound);
         }
 
         var authorIds = recipesQuery
@@ -123,14 +121,22 @@ public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand,
             recipe.AuthorAvtUrl = mapUser[recipe.AuthorId].AvtUrl;
         }
 
+        var hasNextPage = true;
+
+        if(skip >= totalPage - 1)
+        {
+            hasNextPage = false;
+        }
+
         var paginatedResponse = new PaginatedSearchRecipeListResponse
         {
             PaginatedData = recipeList,
-            Metadata = new CommonPaginatedMetadata
+            Metadata = new AdvancePaginatedMetadata
             {
                 TotalPage = totalPage,
+                HasNextPage = hasNextPage
             }
         };
-        return Result<PaginatedSearchRecipeListResponse>.Success(paginatedResponse);
+        return Result<PaginatedSearchRecipeListResponse?>.Success(paginatedResponse);
     }
 }

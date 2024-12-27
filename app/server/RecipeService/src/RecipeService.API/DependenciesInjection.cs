@@ -4,6 +4,7 @@ using Serilog;
 using RecipeService.Application;
 using RecipeService.Infrastructure;
 using RecipeService.API.Middleware;
+using Newtonsoft.Json;
 
 namespace RecipeService.API;
 
@@ -31,6 +32,11 @@ public static class DependenciesInjection
                 {
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     options.JsonSerializerOptions.WriteIndented = true;
+                });
+        services.AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
                 });
 
         services.AddHttpContextAccessor();
