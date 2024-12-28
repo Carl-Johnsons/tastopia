@@ -28,14 +28,14 @@ public class SearchRecipesCommand : IRequest<Result<PaginatedSearchRecipeListRes
 public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand, Result<PaginatedSearchRecipeListResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IBus _bus;
+    private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public SearchRecipesCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility, IBus bus)
+    public SearchRecipesCommandHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
+        _serviceBus = serviceBus;
         _paginateDataUtility = paginateDataUtility;
-        _bus = bus;
     }
 
     public  async Task<Result<PaginatedSearchRecipeListResponse?>> Handle(SearchRecipesCommand request, CancellationToken cancellationToken)
@@ -106,7 +106,7 @@ public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand,
         .Distinct()
         .ToHashSet();
 
-        var requestClient = _bus.CreateRequestClient<GetSimpleUsersEvent>();
+        var requestClient = _serviceBus.CreateRequestClient<GetSimpleUsersEvent>();
 
         var response = await requestClient.GetResponse<GetSimpleUsersDTO>(new GetSimpleUsersEvent
         {

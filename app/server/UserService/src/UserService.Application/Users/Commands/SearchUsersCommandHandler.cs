@@ -1,5 +1,4 @@
-﻿using MassTransit;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
 using UserService.Domain.Entities;
@@ -23,13 +22,13 @@ public class SearchUsersCommand : IRequest<Result<PaginatedSearchUserListRespons
 public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Result<PaginatedSearchUserListResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IBus _bus;
+    private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<User, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public SearchUsersCommandHandler(IApplicationDbContext context, IBus bus, IPaginateDataUtility<User, AdvancePaginatedMetadata> paginateDataUtility)
+    public SearchUsersCommandHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<User, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
-        _bus = bus;
+        _serviceBus = serviceBus;
         _paginateDataUtility = paginateDataUtility;
     }
 

@@ -31,6 +31,8 @@ public class User : BaseEntity
 
         public virtual int? TotalRecipe { get; set; }
 
-
+        // Clone Attribute
+        public bool IsActive { get; set; } = true;
+        public string Username { get; set; } = null!;
 
 }

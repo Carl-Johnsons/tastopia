@@ -1,7 +1,6 @@
 ﻿using Contract.DTOs;
 using Contract.Event.UploadEvent;
 using Contract.Event.UploadEvent.EventModel;
-using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
@@ -53,13 +52,13 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IBus _bus;
+    private readonly IServiceBus _serviceBus;
 
-    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IBus bus)
+    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus)
     {
         _context = context;
         _unitOfWork = unitOfWork;
-        _bus = bus;
+        _serviceBus = serviceBus;
     }
 
     public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
@@ -68,7 +67,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         try {
             var steps = request.Steps;
             var imageIndex = GetImageIndexMap(steps);
-            var requestClient = _bus.CreateRequestClient<UploadMultipleImageFileEvent>();
+            var requestClient = _serviceBus.CreateRequestClient<UploadMultipleImageFileEvent>();
 
             var response = await requestClient.GetResponse<UploadMultipleImageFileEventResponseDTO>(new UploadMultipleImageFileEvent
             {
@@ -141,7 +140,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         {
             listUrls.Add(file.Url);
         }
-        var requestClient = _bus.CreateRequestClient<DeleteMultipleFileEvent>();
+        var requestClient = _serviceBus.CreateRequestClient<DeleteMultipleFileEvent>();
         await requestClient.GetResponse<DeleteMultipleFileEventResponseDTO>(new DeleteMultipleFileEvent
         {
             DeleteUrl = listUrls,
