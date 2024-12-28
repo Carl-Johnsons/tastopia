@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RecipeService.API.DTOs;
 using RecipeService.Application.Recipes;
 using RecipeService.Application.Tags;
 
 namespace RecipeService.API.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/recipe")]
 [ApiController]
 //[Authorize]
 public class RecipeController : BaseApiController
