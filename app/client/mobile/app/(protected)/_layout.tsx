@@ -5,32 +5,22 @@ import {
   Text,
   View,
   StyleSheet,
-  Keyboard
+  Keyboard,
+  ActivityIndicator
 } from "react-native";
-import { Tabs } from "expo-router";
+import { Redirect, Tabs, useRootNavigationState } from "expo-router";
 import { menuList } from "@/constants/menu";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
+import { ROLE, selectAccessToken, selectRole } from "@/slices/auth.slice";
 
 const ProtectedLayout = () => {
   const { t } = useTranslation("menu");
 
   const [isKeyBoardVisible, setIsKeyBoardVisible] = useState(false);
-  // const jwtToken = selectJwtToken();
-  // const navigationState = useRootNavigationState();
-
-  // if (!jwtToken) {
-  //   return !navigationState?.key ? (
-  //     <View className='justify-center h-full'>
-  //       <ActivityIndicator
-  //         size={"large"}
-  //         color={"black"}
-  //       />
-  //     </View>
-  //   ) : (
-  //     <Redirect href={"/sign-in"} />
-  //   );
-  // }
+  const accessToken = selectAccessToken();
+  const role = selectRole();
+  const navigationState = useRootNavigationState();
 
   // Handle bottom tabs bar visibility when keyboard is shown
   const sortedMenuItems = menuList?.[0].menuItems.sort(
@@ -52,6 +42,20 @@ const ProtectedLayout = () => {
       KeyboardDidHide.remove();
     };
   }, []);
+
+  if (role != ROLE.GUEST && !accessToken) {
+    return !navigationState?.key ? (
+      <View className='h-full justify-center'>
+        <ActivityIndicator
+          size={"large"}
+          color={"black"}
+        />
+      </View>
+    ) : (
+      <Redirect href={"/welcome"} />
+    );
+  }
+
   return (
     <>
       <Tabs
