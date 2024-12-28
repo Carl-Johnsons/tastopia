@@ -1,0 +1,19 @@
+{
+  "Routes": [
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5005
+        }
+      ],
+      "DownstreamPathTemplate": "/api/recipe/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/recipe/{everything}"
+    }
+  ]
+}

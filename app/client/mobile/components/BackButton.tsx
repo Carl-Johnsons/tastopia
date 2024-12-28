@@ -1,0 +1,40 @@
+import { View } from "react-native";
+import Button, { CustomizedButtonProps } from "./Button";
+import { Path, Svg, SvgProps } from "react-native-svg";
+import { LegacyRef, forwardRef } from "react";
+import Animated from "react-native-reanimated";
+
+export const BackButton = Animated.createAnimatedComponent(
+  forwardRef((props: CustomizedButtonProps, ref: LegacyRef<View>) => {
+    return (
+      <Button
+        {...props}
+        ref={ref}
+      >
+        <View className='flex items-center justify-center'>
+          <LeftRoundedIcon />
+        </View>
+      </Button>
+    );
+  })
+);
+
+export const LeftRoundedIcon = (props: SvgProps) => (
+  <Svg
+    width={7}
+    height={12}
+    viewBox='0 0 7 12'
+    fill='none'
+    {...props}
+  >
+    <Path
+      d='M6 1L1 5.68393L6 10.6839'
+      stroke='black'
+      strokeWidth={2}
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
+  </Svg>
+);
+
+export default BackButton;

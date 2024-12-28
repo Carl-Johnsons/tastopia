@@ -148,8 +148,15 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
     private async Task<TokenResponse> RequestTokenAsync(string username, string password)
     {
         var client = new HttpClient();
-        var baseUrl = DotNetEnv.Env.GetString("ASPNETCORE_URLS", "Not Found").Replace("0.0.0.0", "localhost");
-        var discovery = await client.GetDiscoveryDocumentAsync(baseUrl);
+        var baseUrl = $"http://{DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "Not Found")}";
+        var discovery = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
+        {
+            Address = baseUrl,
+            Policy = new DiscoveryPolicy
+            {
+                RequireHttps = false
+            }
+        });
         if (discovery.IsError)
         {
             throw new Exception(discovery.Error);

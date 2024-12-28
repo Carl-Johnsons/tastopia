@@ -10,6 +10,9 @@ var builder = Host.CreateDefaultBuilder(args)
     {
         services.AddTransient<IEmailService, GmailEmailService>();
 
+        Console.WriteLine(DotNetEnv.Env.GetString("RABBITMQ_HOST", "Not Found Host"));
+
+
         services.AddSingleton(provider => new RabbitMQProvider(new RabbitMQ.Client.ConnectionFactory
         {
             HostName = DotNetEnv.Env.GetString("RABBITMQ_HOST", "localhost"),

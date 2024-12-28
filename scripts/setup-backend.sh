@@ -1,8 +1,7 @@
 #!/bin/bash
 
-. ./scripts/lib.sh
+. ./scripts/lib.sh && check_docker
 
-check_docker
 dotnet tool install --global dotnet-ef --version 9.0.0
 echo "Install dotnet-ef successfully"
 
