@@ -10,7 +10,6 @@ public class SearchUser
     [Range(0, int.MaxValue)]
     public int? Skip { get; set; } = null!;
 
-    [Required]
     [JsonProperty("keyword")]
     public string Keyword { get; set; } = null!;
 }

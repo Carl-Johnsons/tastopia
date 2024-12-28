@@ -72,7 +72,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
             entity.HasOne(e => e.User)
                 .WithMany()
-                .HasForeignKey(e => e.UserId)
+                .HasForeignKey(e => e.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -93,7 +93,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         {
             entity.HasOne(e => e.User)
                 .WithMany()
-                .HasForeignKey(e => e.UserId)
+                .HasForeignKey(e => e.AccountId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasOne(e => e.Reported)

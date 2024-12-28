@@ -9,7 +9,7 @@ namespace UserService.Application.Users.Commands;
 public record GetSimpleUsersCommand : IRequest<Result<List<User>?>>
 {
     [Required]
-    public HashSet<Guid> UserIds { get; init; } = null!;
+    public HashSet<Guid> AccountIds { get; init; } = null!;
 }
 public class GetSimpleUsersCommandHandler : IRequestHandler<GetSimpleUsersCommand, Result<List<User>?>>
 {
@@ -22,17 +22,17 @@ public class GetSimpleUsersCommandHandler : IRequestHandler<GetSimpleUsersComman
 
     public async Task<Result<List<User>?>> Handle(GetSimpleUsersCommand request, CancellationToken cancellationToken)
     {
-        var userIds = request.UserIds;
-        if(userIds == null || !userIds.Any())
+        var accountIds = request.AccountIds;
+        if(accountIds == null || !accountIds.Any())
         {
             return Result<List<User>?>.Failure(UserError.NotFound);
         }
 
         var users = await _context.Users
-            .Where(user => userIds.Contains(user.Id))
+            .Where(user => accountIds.Contains(user.AccountId))
             .Select(user => new User
             {
-                Id = user.Id,
+                AccountId = user.AccountId,
                 DisplayName = user.DisplayName,
                 AvatarUrl = user.AvatarUrl
             }).ToListAsync();

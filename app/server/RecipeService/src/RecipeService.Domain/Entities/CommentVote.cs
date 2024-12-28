@@ -4,14 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace RecipeService.Domain.Entities;
 
 [Table("CommentVote")]
-[PrimaryKey(nameof(CommentId), nameof(UserId))]
+[PrimaryKey(nameof(CommentId), nameof(AccountId))]
 public class CommentVote
 {
     [Required]
     public Guid CommentId { get; set; }
 
     [Required]
-    public Guid UserId { get; set; }
+    public Guid AccountId { get; set; }
 
     [Required]
     public bool IsUpvote { get; set; } = true;

@@ -7,7 +7,7 @@ namespace RecipeService.Domain.Entities;
 public class UserReportComment : BaseAuditableEntity
 {
     [Required]
-    public Guid UserId { get; set; }
+    public Guid AccountId { get; set; }
 
     [Required]
     public Guid CommentId { get; set; }

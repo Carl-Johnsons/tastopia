@@ -16,19 +16,17 @@ public class SearchUsersCommand : IRequest<Result<PaginatedSearchUserListRespons
     public string? Keyword { get; init; }
 
     [Required]
-    public Guid? UserId { get; init; }
+    public Guid? AccountId { get; init; }
 }
 
 public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Result<PaginatedSearchUserListResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<User, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public SearchUsersCommandHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<User, AdvancePaginatedMetadata> paginateDataUtility)
+    public SearchUsersCommandHandler(IApplicationDbContext context, IPaginateDataUtility<User, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
-        _serviceBus = serviceBus;
         _paginateDataUtility = paginateDataUtility;
     }
 
@@ -36,37 +34,55 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
     {
         var skip = request.Skip;
         var keyword = request.Keyword;
-        var userId = request.UserId;
+        var accountId = request.AccountId;
 
-        if(skip == null || string.IsNullOrEmpty(keyword) || userId == null)
+        if(skip == null || keyword == null || accountId == null)
         {
             return Result<PaginatedSearchUserListResponse?>.Failure(UserError.NotFound);
         }
 
+        keyword = keyword.ToLower();
+
+        if(keyword == "")
+        {
+            return Result<PaginatedSearchUserListResponse?>.Success(new PaginatedSearchUserListResponse
+            {
+                PaginatedData = [],
+                Metadata = new AdvancePaginatedMetadata
+                {
+                    HasNextPage = false,
+                    TotalPage = 0,
+                }
+            });
+        }
+
         var userQuery = _context.Users.OrderByDescending(u => u.DisplayName).AsQueryable();
 
-        userQuery = userQuery.Where(u => u.DisplayName.ToLower().Contains(keyword.ToLower()));
+        userQuery = userQuery.Where(u => u.IsAccountActive == true &&
+                                        (u.DisplayName.ToLower().Contains(keyword) ||
+                                         u.AccountUsername.ToLower().Contains(keyword)
+                                        ));
 
         var totalPage = (await userQuery.CountAsync() + USER_CONSTANTS.USER_LIMIT - 1) / USER_CONSTANTS.USER_LIMIT;
 
         userQuery = _paginateDataUtility.PaginateQuery(userQuery, new PaginateParam
         {
-            Offset = skip ?? 0 * USER_CONSTANTS.USER_LIMIT,
+            Offset = (skip ?? 0) * USER_CONSTANTS.USER_LIMIT,
             Limit = USER_CONSTANTS.USER_LIMIT
         });
 
         var isFollowingMap = new Dictionary<Guid, bool>();
 
-        var currentUserFollowings = await _context.UserFollows.Where(uf => uf.FollowerId == userId).ToDictionaryAsync(uf => uf.FollowingId);
+        var currentUserFollowings = await _context.UserFollows.Where(uf => uf.FollowerId == accountId).ToDictionaryAsync(uf => uf.FollowingId);
 
         var userList = await userQuery.Select(u => new SearchUserResponse
         {
-            Id = u.Id,
+            Id = u.AccountId,
             AvtUrl = u.AvatarUrl,
-            Username = "",
+            Username = u.AccountUsername,
             DisplayName = u.DisplayName,
             NumberOfRecipe = u.TotalRecipe ?? 0,
-            IsFollowing = currentUserFollowings != null && currentUserFollowings.ContainsKey(u.Id),
+            IsFollowing = currentUserFollowings != null && currentUserFollowings.ContainsKey(u.AccountId),
         }).ToListAsync();
 
         if (userList == null || !userList.Any())
