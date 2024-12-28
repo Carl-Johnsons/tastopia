@@ -3,8 +3,8 @@ import { Alert, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import LoginForm, { LoginFormFields } from "@/components/LoginForm";
-import { login } from "@/api/user";
-import { saveAuthData } from "@/slices/auth.slice";
+import { IDENTIFIER_TYPE, login } from "@/api/user";
+import { ROLE, saveAuthData } from "@/slices/auth.slice";
 import { ZodError } from "zod";
 import { useAppDispatch } from "@/store/hooks";
 import GoogleButton from "@/components/GoogleButton";
@@ -25,9 +25,15 @@ const Login = () => {
     console.log("Begin login");
 
     try {
-      const identifierChecker = new RegExp(".*[a-z,A-Z,@].*");
+      const identifierChecker = /[a-zA-Z@]/;
 
-      if (identifierChecker.test(data.identifier)) {
+      const loginType = identifierChecker.test(data.identifier)
+        ? IDENTIFIER_TYPE.EMAIL
+        : IDENTIFIER_TYPE.PHONE_NUMBER;
+
+      console.log("Login type", loginType);
+
+      if (loginType === IDENTIFIER_TYPE.EMAIL) {
         loginWithEmailSchema.parse(data);
       } else {
         loginWithPhoneNumberSchema.parse(data);
@@ -36,8 +42,9 @@ const Login = () => {
       const res = await login(data);
       const accessToken = res.access_token;
       const refreshToken = res.refresh_token;
+      const role = ROLE.USER;
 
-      dispatch(saveAuthData({ accessToken, refreshToken }));
+      dispatch(saveAuthData({ accessToken, refreshToken, role }));
       console.log("Saved tokens");
 
       // Need to get user's info as well
