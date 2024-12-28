@@ -17,4 +17,7 @@ public record UserRegisterEvent
     public AccountMethod Method { get; set; }
     [Required]
     public string FullName { get; set; } = null!;
+
+    [Required]
+    public string AccountUsername { get; set; } = null!;
 }
