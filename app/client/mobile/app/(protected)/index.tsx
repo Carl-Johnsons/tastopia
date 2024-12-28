@@ -1,18 +1,13 @@
+import { Image } from "expo-image";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import Recipe from "@/components/common/Recipe";
 import { LogoIcon } from "@/components/common/SVG";
 import Filter from "@/components/screen/community/Filter";
+import { getAPIUrl } from "@/utils/fetch";
 import i18next from "i18next";
-import React, { Fragment, useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  ScrollView,
-  RefreshControl,
-  Image,
-  TouchableWithoutFeedback,
-  SafeAreaView
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, View, RefreshControl, SafeAreaView, FlatList } from "react-native";
+import Header from "@/components/screen/community/Header";
 
 const Community = () => {
   const [skip, setSkip] = useState<number>(0);
@@ -32,7 +27,10 @@ const Community = () => {
       return;
     }
 
-    const url = "http://localhost:5005/api/recipe/get-recipe-feed";
+    console.log("skip", skip);
+    console.log("total recipes", recipes.length);
+
+    const url = getAPIUrl("api/recipe/get-recipe-feed");
 
     const headers = {
       "Content-Type": "application/json"
@@ -64,6 +62,7 @@ const Community = () => {
           const newRecipes = data.paginatedData.filter(
             (newRecipe: RecipeType) => !existingIds.has(newRecipe.id)
           );
+
           return [...prev, ...newRecipes];
         });
       } else {
@@ -86,6 +85,8 @@ const Community = () => {
 
   const handleFilter = (key: string) => {
     setFilterSelected(key);
+    setSkip(0);
+    setRecipes([]);
   };
 
   const toggleLanguage = () => {
@@ -98,8 +99,6 @@ const Community = () => {
     setIsRefreshing(true);
     setSkip(0);
     setRecipes([]);
-    await fetchFeed(false);
-    setIsRefreshing(false);
   };
 
   const handleLoadMore = () => {
@@ -118,9 +117,24 @@ const Community = () => {
     }
   }, [skip]);
 
+  useEffect(() => {
+    if (isRefreshing) {
+      fetchFeed(false);
+      setIsRefreshing(false);
+    }
+  }, [isRefreshing]);
+
   return (
-    <SafeAreaView style={{ backgroundColor: globalStyles.color.light, height: "100%" }}>
-      <ScrollView
+    <SafeAreaView
+      style={{
+        backgroundColor: globalStyles.color.light,
+        height: "100%"
+      }}
+    >
+      <FlatList
+        style={{ paddingHorizontal: 16 }}
+        data={recipes}
+        keyExtractor={item => item.id.toString()}
         refreshControl={
           <RefreshControl
             refreshing={isRefreshing}
@@ -128,82 +142,34 @@ const Community = () => {
             onRefresh={onRefresh}
           />
         }
-        onScroll={({ nativeEvent }) => {
-          const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-          const isEndReached =
-            layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
-          if (isEndReached && !isLoading && !isRefreshing) {
-            handleLoadMore();
-          }
-        }}
-        scrollEventThrottle={400}
-      >
-        <View className='gap-8 px-4 pt-2 size-full'>
-          <View className='flex-center'>
-            <LogoIcon
-              isActive={isRefreshing}
-              width={60}
-              height={60}
-            />
-          </View>
-
-          <Filter handleSelect={handleFilter} />
-
-          {/* Check user exist right there */}
-          <View className='flex-row px-6 mt-2 flex-start'>
-            <View className='flex-row gap-3'>
-              <Image
-                source={require("../../assets/images/avatar.png")}
-                className='size-[50px] rounded-full'
-              />
-              <View className='gap-2'>
-                <Text className='paragraph-bold'>Vuong</Text>
-                <TouchableWithoutFeedback onPress={handleCreateRecipe}>
-                  <View className='rounded-2xl border-[1px] border-gray-600 px-4 py-3'>
-                    <Text className='text-gray-600'>
-                      What's cooking? Share your recipe
-                    </Text>
-                  </View>
-                </TouchableWithoutFeedback>
-              </View>
-            </View>
-          </View>
-
-          <View className='gap-4'>
-            {recipes && recipes.length > 0 ? (
-              recipes.map((recipe, index) => {
-                return (
-                  <Fragment key={recipe.id}>
-                    <Recipe
-                      id={recipe.id}
-                      authorId={recipe.authorId}
-                      title={recipe.title}
-                      description={recipe.description}
-                      authorDisplayName={recipe.authorDisplayName}
-                      authorAvtUrl={recipe.authorAvtUrl}
-                      voteDiff={recipe.voteDiff}
-                      numberOfComment={recipe.numberOfComment}
-                    />
-                    {index !== recipes.length - 1 && (
-                      <View className='h-[1px] w-full bg-gray-300' />
-                    )}
-                  </Fragment>
-                );
-              })
-            ) : (
-              <View className='flex-center h-[70%] gap-2'>
-                <Image
-                  source={require("../../assets/icons/noResult.png")}
-                  style={{ width: 130, height: 130 }}
-                />
-                <Text className='text-center paragraph-medium'>
-                  No recipes found! {"\n"}Time to create your own masterpiece!
-                </Text>
-              </View>
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
+        ListHeaderComponent={Header({
+          isRefreshing,
+          handleFilter,
+          filterSelected,
+          handleCreateRecipe
+        })}
+        renderItem={({ item, index }) => (
+          <>
+            <Recipe {...item} />
+            {index !== recipes.length - 1 && (
+              <View className='my-4 h-[1px] w-full bg-gray-300' />
             )}
+          </>
+        )}
+        ListEmptyComponent={() => (
+          <View className='flex-center h-[70%] gap-2'>
+            <Image
+              source={require("../../assets/icons/noResult.png")}
+              style={{ width: 130, height: 130 }}
+            />
+            <Text className='text-center paragraph-medium'>
+              No recipes found! {"\n"}Time to create your own masterpiece!
+            </Text>
           </View>
-        </View>
-      </ScrollView>
+        )}
+      />
     </SafeAreaView>
   );
 };

@@ -7,6 +7,7 @@ import Vote from "./Vote";
 const Recipe = ({
   id,
   authorId,
+  recipeImgUrl,
   title,
   description,
   authorDisplayName,
@@ -32,7 +33,7 @@ const Recipe = ({
                   source={{ uri: authorAvtUrl }}
                   className='size-[30px] rounded-full'
                 />
-                <Text>{authorDisplayName}</Text>
+                <Text className='paragraph-medium'>{authorDisplayName}</Text>
               </View>
             </TouchableWithoutFeedback>
           )}
@@ -47,8 +48,8 @@ const Recipe = ({
         </View>
         <View className='flex gap-3'>
           <Image
-            source={require("../../assets/images/recipe.png")}
-            className='h=[350px] w-full'
+            source={{ uri: recipeImgUrl }}
+            style={{ width: "100%", height: 240, borderRadius: 10 }}
           />
 
           <View className='gap-3 px-4'>
