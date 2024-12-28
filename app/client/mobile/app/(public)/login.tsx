@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Alert, Pressable, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import LoginForm, { LoginFormFields } from "@/components/LoginForm";
 import { IDENTIFIER_TYPE, login } from "@/api/user";
@@ -13,6 +12,7 @@ import BackButton from "@/components/BackButton";
 import { UseLoginWithGoogle } from "@/hooks/useLoginWithGoogle";
 import useBounce from "@/hooks/animation/useBounce";
 import { loginWithEmailSchema, loginWithPhoneNumberSchema } from "@/lib/validation/auth";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -85,11 +85,8 @@ const Login = () => {
             onSubmit={onSubmit}
             isLoading={isSubmitting}
           />
-          <Pressable>
-            <Text
-              className='text-center font-medium text-sm text-gray-300'
-              onPress={navigateToSignUpScreen}
-            >
+          <Pressable onPress={navigateToSignUpScreen}>
+            <Text className='text-center font-medium text-sm text-gray-300'>
               Don’t have an account?{" "}
               <Text className='font-medium text-primary'>Sign Up</Text>
             </Text>

@@ -7,9 +7,8 @@ import Animated, {
   withDelay,
   withTiming
 } from "react-native-reanimated";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, SafeAreaView, Text, View } from "react-native";
 import GoogleButton from "@/components/GoogleButton";
 import { UseLoginWithGoogle } from "@/hooks/useLoginWithGoogle";
 import Button from "@/components/Button";
@@ -80,74 +79,70 @@ const Welcome = () => {
         style={imageBackgroundStyles}
         source={require("@/assets/images/welcome_bg.png")}
       >
-        <LinearGradient
-          colors={["transparent", "#191b2f"]}
-          className='relative h-full w-full px-8'
-        >
-          <Button
-            onPress={browseAsGuest}
-            className='absolute right-[26px] top-[26px] rounded-full bg-white px-5 py-3'
-          >
-            <Text className='font-sans text-primary'>Skip</Text>
-          </Button>
-
-          <Animated.View className='mt-[20vh] flex gap-3.5'>
-            <Animated.Text
-              style={textStyles[0]}
-              className='font-bold text-5xl text-black'
-            >
-              Welcome to
-            </Animated.Text>
-
-            <Animated.Text
-              style={textStyles[1]}
-              className='font-bold text-4xl text-primary'
-            >
-              Tastopia
-            </Animated.Text>
-
-            <Animated.Text
-              style={textStyles[2]}
-              className='font-sans text-lg text-white'
-            >
-              Where Flavors Unite
-            </Animated.Text>
-          </Animated.View>
-
-          <View className='absolute bottom-[6vh] left-8 flex w-full gap-4'>
-            <View className='flex-row items-center justify-center gap-5'>
-              <View className='h-[1px] grow bg-gray-300' />
-              <Animated.Text className='text-center font-medium text-sm text-gray-300'>
-                Sign in with
-              </Animated.Text>
-              <View className='h-[1px] grow bg-gray-300' />
-            </View>
-
-            <View className='flex items-center'>
-              <GoogleButton
-                onPress={loginWithGoogle}
-                className='rounded-full border border-gray-300 bg-white p-3'
-              />
-            </View>
-
+        <LinearGradient colors={["transparent", "#191b2f"]}>
+          <View className='relative h-full px-3.5'>
             <Button
-              onPress={navigateToRegisterScreen}
-              className='flex rounded-full border border-white bg-white/20 py-4'
+              onPress={browseAsGuest}
+              className='absolute right-[26px] top-[26px] rounded-full bg-white px-5 py-3'
             >
-              <Text className='text-center font-medium text-lg text-white'>
-                Start with email or phone
-              </Text>
+              <Text className='font-sans text-primary'>Skip</Text>
             </Button>
 
-            <Pressable>
-              <Text
-                className='text-center font-medium text-sm text-gray-300'
-                onPress={navigateToLoginScreen}
+            <Animated.View className='mt-[20vh] flex gap-3.5'>
+              <Animated.Text
+                style={textStyles[0]}
+                className='font-bold text-5xl text-black'
               >
-                Already have an account?{" "}
-                <Text className='font-medium text-white underline'>Sign In</Text>
-              </Text>
-            </Pressable>
+                Welcome to
+              </Animated.Text>
+
+              <Animated.Text
+                style={textStyles[1]}
+                className='font-bold text-4xl text-primary'
+              >
+                Tastopia
+              </Animated.Text>
+
+              <Animated.Text
+                style={textStyles[2]}
+                className='font-sans text-lg text-white'
+              >
+                Where Flavors Unite
+              </Animated.Text>
+            </Animated.View>
+
+            <View className='absolute bottom-[6vh] left-3.5 flex w-full gap-4'>
+              <View className='flex-row items-center justify-center gap-5'>
+                <View className='h-[1px] grow bg-gray-300' />
+                <Animated.Text className='text-center font-medium text-sm text-gray-300'>
+                  Sign in with
+                </Animated.Text>
+                <View className='h-[1px] grow bg-gray-300' />
+              </View>
+
+              <View className='flex items-center'>
+                <GoogleButton
+                  onPress={loginWithGoogle}
+                  className='rounded-full border border-gray-300 bg-white p-3'
+                />
+              </View>
+
+              <Button
+                onPress={navigateToRegisterScreen}
+                className='flex rounded-full border border-white bg-white/20 py-4'
+              >
+                <Text className='text-center font-medium text-lg text-white'>
+                  Start with email or phone
+                </Text>
+              </Button>
+
+              <Pressable onPress={navigateToLoginScreen}>
+                <Text className='text-center font-medium text-sm text-gray-300'>
+                  Already have an account?{" "}
+                  <Text className='font-medium text-white underline'>Sign In</Text>
+                </Text>
+              </Pressable>
+            </View>
           </View>
         </LinearGradient>
       </ImageBackground>

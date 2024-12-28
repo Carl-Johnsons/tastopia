@@ -78,11 +78,8 @@ const Register = () => {
             onSubmit={signUp}
             isLoading={isSubmitting}
           />
-          <Pressable>
-            <Text
-              className='text-center font-medium text-sm text-gray-300'
-              onPress={navigateToSignInScreen}
-            >
+          <Pressable onPress={navigateToSignInScreen}>
+            <Text className='text-center font-medium text-sm text-gray-300'>
               Already have an account?{" "}
               <Text className='font-medium text-primary'>Login</Text>
             </Text>
