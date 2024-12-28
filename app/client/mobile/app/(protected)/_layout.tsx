@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Keyboard,
-  ActivityIndicator
-} from "react-native";
+import { View, StyleSheet, Keyboard, ActivityIndicator } from "react-native";
 import { Redirect, Tabs, useRootNavigationState } from "expo-router";
 import { menuList } from "@/constants/menu";
 import { globalStyles } from "@/components/common/GlobalStyles";
