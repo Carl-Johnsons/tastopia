@@ -58,6 +58,6 @@ public class ProfileService : IProfileService
     {
         var sub = context.Subject.GetSubjectId();
         var user = await _userManager.FindByIdAsync(sub);
-        context.IsActive = user?.Active ?? false;
+        context.IsActive = user?.IsActive ?? false;
     }
 }

@@ -30,11 +30,6 @@ namespace IdentityService.Infrastructure.Persistence.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("Active")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValueSql("True");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -57,6 +52,11 @@ namespace IdentityService.Infrastructure.Persistence.Migrations
 
                     b.Property<DateTime?>("EmailOTPExpiry")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValueSql("True");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");

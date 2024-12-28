@@ -83,7 +83,7 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
             var returnUrl = result.Properties.Items["returnUrl"] ?? "~/";
 
             // Check if the user is banned
-            if (user != null && !user.Active)
+            if (user != null && !user.IsActive)
             {
                 // Sign out the user
                 await HttpContext.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);

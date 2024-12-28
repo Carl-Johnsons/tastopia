@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Contract.DTOs.UserDTO;
 using IdentityService.Application.Account;
 
 namespace DuendeIdentityServer.DTOs;
@@ -12,6 +13,7 @@ public class MappingConfig
             config.CreateMap<RegisterAccountDTO, RegisterAccountCommand>().ReverseMap();
             config.CreateMap<ApplicationAccount, ApplicationUserResponseDTO>().ReverseMap();
             config.CreateMap<VerifyAccountDTO, VerifyAccountCommand>().ReverseMap();
+            config.CreateMap<ApplicationAccount, AccountDTO>().ReverseMap();
         });
 
 

@@ -12,7 +12,7 @@ using UploadFileService.Infrastructure.Persistence;
 namespace UploadFileService.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241110090305_Init")]
+    [Migration("20241216115812_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace UploadFileService.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.3")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -45,6 +45,9 @@ namespace UploadFileService.Infrastructure.Persistence.Migrations
 
                     b.Property<long>("Size")
                         .HasColumnType("bigint");
+
+                    b.Property<Guid?>("TransactionId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Url")
                         .IsRequired()

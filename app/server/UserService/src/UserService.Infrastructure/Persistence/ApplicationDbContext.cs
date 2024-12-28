@@ -17,12 +17,12 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     }
 
     public DbContext Instance => this;
-
     public DbSet<User> Users { get; set; }
-    public DbSet<UserSearchTracking> UserSearchTrackings { get; set; }
-    public DbSet<UserTimeTracking> UserTimeTrackings { get; set; }
+    public DbSet<UserFollow> UserFollows { get; set; }
+    public DbSet<UserReport> UserReports { get; set; }
     public DbSet<Setting> Settings { get; set; }
     public DbSet<UserSetting> UserSettings { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -63,22 +63,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             }
         }
 
-        modelBuilder.Entity<UserSearchTracking>(entity =>
-        {
-            entity.HasOne(e => e.User)
-                .WithMany()
-                .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
-        modelBuilder.Entity<UserTimeTracking>(entity =>
-        {
-            entity.HasOne(e => e.User)
-                .WithMany()
-                .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
         modelBuilder.Entity<UserSetting>(entity =>
         {
             entity.HasOne(e => e.Setting)
@@ -92,6 +76,32 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
+        modelBuilder.Entity<UserFollow>(entity =>
+        {
+            entity.HasOne(e => e.Follower)
+                .WithMany()
+                .HasForeignKey(e => e.FollowerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Following)
+                .WithMany()
+                .HasForeignKey(e => e.FollowingId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<UserReport>(entity =>
+        {
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Reported)
+                .WithMany()
+                .HasForeignKey(e => e.ReportedId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
         modelBuilder.Entity<Setting>(entity =>
         {
             entity.Property(e => e.DataType)
@@ -101,5 +111,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         // Seed data
 
         modelBuilder.Entity<Setting>().HasData(SettingData.Data);
+        modelBuilder.Entity<User>().HasData(UserData.Data);
+
     }
 }
