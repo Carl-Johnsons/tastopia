@@ -6,7 +6,9 @@
         "build_all_service": "./scripts/build-all-services.sh",
         "restore_all_services": "./scripts/restore-all-services.sh",
         "migrations_apply_all": "./scripts/apply-all-migrations.sh",
+        "rebuild_docker_service": "./scripts/rebuild-service.sh",
         "k8s_deploy": "./scripts/k8s-deploy.sh",
-        "generate_identity_key": "./scripts/generate_identity_key.sh"
+        "generate_identity_key": "./scripts/generate_identity_key.sh",
+        "clear_local_dependencies": "./scripts/clear-local-dependencies.sh"
     }
 }

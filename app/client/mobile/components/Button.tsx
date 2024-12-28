@@ -2,7 +2,7 @@ import { forwardRef } from "react";
 import { Pressable, PressableProps, View } from "react-native";
 import Animated from "react-native-reanimated";
 
-type CustomizedButtonProps = {
+export type CustomizedButtonProps = {
   isLoading?: boolean;
   spinner?: React.ReactNode;
 } & PressableProps;

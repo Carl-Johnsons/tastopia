@@ -1,42 +1,32 @@
 #!/bin/bash
 
-# Colors
-PURPLE="\e[95m"
-YELLOW="\033[1;33m"
-RED="\e[31m"
-RESET="\e[0m"
+. ./scripts/lib.sh
 
 project_root=$(pwd)
 
 build_service() {
   local service_path=$1
   local service_name=$2
-  echo -e "\e[95mBuilding $service_name service ...\e[0m"
+  echo -e "${PURPLE}Building $service_name service ...${NC}"
 
-  output=$(cd "$service_path" && dotnet build --packages "$project_root/data/nuget" 2>&1)
-
-  echo "$output" | while IFS= read -r line; do
-    if [[ $line == *"Warning"* ]]; then
-      echo -e "${YELLOW}${line}${RESET}"
-    elif [[ $line == *"Error"* ]]; then
-      echo -e "${RED}${line}${RESET}"
-    else
-      echo "$line"
-    fi
-  done
-
-  cd "$project_root"
+  dotnet build --packages "$project_root/data/nuget" $service_path 2>&1 |
+    sed -E \
+      -e "/(warning|warn|wrn)/I s/.*/$(printf "${WARNING}&${NC}")/" \
+      -e "/(error|err)/I s/.*/$(printf "${DANGER}&${NC}")/"
 }
 
 # Publishing Contract solution
-echo -e "\e[95mPublishing Contract solution ...\e[0m"
-(cd ./app/server/Contract/Contract && dotnet publish -o ./Published)
-cd "$project_root"
+echo -e "${PURPLE}Publishing Contract solution ...${NC}"
+dotnet publish --packages "$project_root/data/nuget" -o ./app/server/Contract/Contract/Published ./app/server/Contract/Contract
 
-build_service "./app/server/APIGateway/src/APIGateway" "api gateway" && \
-build_service "./app/server/IdentityService/src/DuendeIdentityServer" "identity" && \
-build_service "./app/server/UploadFileService/src/UploadFileService.API" "upload" && \
-build_service "./app/server/UserService/src/UserService.API" "user" && \
-build_service "./app/server/RecipeService/src/RecipeService.API" "recipe" && \
-build_service "./app/server/NotificationService/src/NotificationService.API" notification && \
-build_service "./app/server/SignalRService/src/SignalRHub" "signalR"
+# copy refresh_token and access_token connect to gmail api
+cp -r ./app/server/NotificationService/src/EmailWorker/bin/*/Debug/net8.0/Auth.Store ./data
+
+build_service "./app/server/APIGateway/src/APIGateway" "api gateway" &&
+  build_service "./app/server/IdentityService/src/DuendeIdentityServer" "identity" &&
+  build_service "./app/server/UploadFileService/src/UploadFileService.API" "upload" &&
+  build_service "./app/server/UserService/src/UserService.API" "user" &&
+  build_service "./app/server/RecipeService/src/RecipeService.API" "recipe" &&
+  build_service "./app/server/NotificationService/src/NotificationService.API" notification &&
+  build_service "./app/server/NotificationService/src/EmailWorker" email_worker &&
+  build_service "./app/server/SignalRService/src/SignalRHub" "signalR"

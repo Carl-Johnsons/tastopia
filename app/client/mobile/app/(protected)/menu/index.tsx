@@ -1,5 +1,6 @@
+import LogoutButton from "@/components/LogoutButton";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Menu = () => {
@@ -8,6 +9,7 @@ const Menu = () => {
       <View>
         <Text>Menu</Text>
       </View>
+      <LogoutButton/>
     </SafeAreaView>
   );
 };

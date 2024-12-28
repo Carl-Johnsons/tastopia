@@ -56,8 +56,6 @@ internal static class HostingExtensions
 
                 // see https://docs.duendesoftware.com/identityserver/v6/fundamentals/resources/
                 options.EmitStaticAudienceClaim = true;
-                options.Discovery.CustomEntries.Add("user-api", "~/api/users");
-                options.Discovery.CustomEntries.Add("friend-request-api", "~/api/users/friend-request");
 
                 // Automatic key management
                 options.KeyManagement.RotationInterval = TimeSpan.FromDays(30);
