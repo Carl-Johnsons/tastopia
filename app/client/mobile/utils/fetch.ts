@@ -40,16 +40,16 @@ export const fetchApi = async (route: string, init?: RequestInit) => {
   return fetch(`${API_URL}${route}`, init || DEFAULT_OPTIONS);
 };
 
-const getBaseUrl = () => {
+const getBaseUrl = (port: string) => {
   const isAndroid = Platform.OS === "android";
 
-  if (isAndroid) return "http://10.0.2.2:5005/";
-  else return "http://localhost:5005/";
+  if (isAndroid) return `http://10.0.2.2:${port}/`;
+  else return `http://localhost:${port}/`;
 };
 
 // http://10.0.2.2:5005/api/recipe/get-recipe-feed
-export const getAPIUrl = (endpoint: string) => {
-  const baseUrl = getBaseUrl();
+export const getAPIUrl = (port: string | number, endpoint: string) => {
+  const baseUrl = getBaseUrl(port.toString());
 
   return baseUrl + endpoint;
 };
