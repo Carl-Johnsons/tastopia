@@ -64,9 +64,10 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
 
         var totalPage = (await recipesQuery.CountAsync() + RECIPE_CONSTANTS.RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.RECIPE_LIMIT;
 
+
         recipesQuery = _paginateDataUtility.PaginateQuery(recipesQuery, new PaginateParam
         {
-            Offset = skip ?? 0 * RECIPE_CONSTANTS.RECIPE_LIMIT,
+            Offset = (skip ?? 0) * RECIPE_CONSTANTS.RECIPE_LIMIT,
             Limit = RECIPE_CONSTANTS.RECIPE_LIMIT
         });
 

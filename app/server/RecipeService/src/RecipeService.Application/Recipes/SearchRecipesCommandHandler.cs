@@ -73,7 +73,7 @@ public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand,
 
         recipesQuery = _paginateDataUtility.PaginateQuery(recipesQuery, new PaginateParam
         {
-            Offset = skip ?? 0 * RECIPE_CONSTANTS.RECIPE_LIMIT,
+            Offset = (skip ?? 0) * RECIPE_CONSTANTS.RECIPE_LIMIT,
             Limit = RECIPE_CONSTANTS.RECIPE_LIMIT
         });
 
