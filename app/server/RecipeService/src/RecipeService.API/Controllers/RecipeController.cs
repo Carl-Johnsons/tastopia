@@ -6,7 +6,7 @@ using RecipeService.Application.Tags;
 
 namespace RecipeService.API.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/recipe")]
 [ApiController]
 //[Authorize]
 public class RecipeController : BaseApiController
@@ -53,6 +53,7 @@ public class RecipeController : BaseApiController
         {
             Skip = getRecipeFeedsDTO.Skip,
             TagValues = getRecipeFeedsDTO.TagValues,
+            AccountId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

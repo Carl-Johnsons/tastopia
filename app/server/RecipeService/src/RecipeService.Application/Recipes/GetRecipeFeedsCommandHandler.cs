@@ -16,6 +16,9 @@ public class GetRecipeFeedsCommand : IRequest<Result<PaginatedRecipeFeedsListRes
 
     [Required]
     public List<string>? TagValues { get; init; }
+
+    [Required]
+    public Guid AccountId { get; init;}
 }
 
 public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Result<PaginatedRecipeFeedsListResponse?>>
@@ -70,6 +73,19 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
             Limit = RECIPE_CONSTANTS.RECIPE_LIMIT
         });
 
+        var groupedRecipes = _context.RecipeVotes
+            .Where(rv => rv.AccountId == request.AccountId)
+            .GroupBy(rv => rv.IsUpvote)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(rv => rv.RecipeId).ToHashSet()
+             );
+
+        var upvoteRecipes = groupedRecipes.TryGetValue(true, out var upvotes) ? upvotes : new HashSet<Guid>();
+        var downvoteRecipes = groupedRecipes.TryGetValue(false, out var downvotes) ? downvotes : new HashSet<Guid>();
+
+
+
         var recipeList = await recipesQuery.Select(r =>
         new RecipeFeedResponse
         {
@@ -82,6 +98,8 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
             Title = r.Title,
             NumberOfComment = r.NumberOfComment,
             VoteDiff = r.VoteDiff,
+            Vote = upvoteRecipes.Contains(r.Id) ? Vote.Upvote.ToString() : 
+                  (downvoteRecipes.Contains(r.Id) ? Vote.Downvote.ToString() : Vote.None.ToString()),
         }).ToListAsync();
 
         if (recipeList == null || !recipeList.Any())
