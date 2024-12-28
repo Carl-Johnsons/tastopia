@@ -41,7 +41,7 @@ public class CreateCloudinaryRawFileCommandHandler : IRequestHandler<CreateCloud
         string fileName = formFile.FileName;
         Stream fileStream = formFile.OpenReadStream();
 
-        if (_fileUtility.getFileType(fileName) != "Raw")
+        if (_fileUtility.GetFileType(fileName) != IFileUtility.FileType.RAW)
         {
             return Result<CloudinaryFile?>.Failure(CloudinaryFileError.InvalidFile("Raw", Path.GetExtension(fileName)));
         }
@@ -69,7 +69,7 @@ public class CreateCloudinaryRawFileCommandHandler : IRequestHandler<CreateCloud
                 {
                     Value = extensionValue,
                     Code = extensionValue.Replace(".", "").ToUpper(),
-                    Type = _fileUtility.getFileType(fileName).ToUpper(),
+                    Type = _fileUtility.GetFileType(fileName).ToString(),
                 };
                 _context.ExtensionTypes.Add(extensionType);
             }

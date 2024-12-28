@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
 using UploadFileService.API;
 
-UploadFileService.Infrastructure.Utilities.EnvUtility.LoadEnvFile();
-
 var builder = WebApplication.CreateBuilder(args);
 
 var app = builder.AddAPIServices()

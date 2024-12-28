@@ -3,8 +3,12 @@ import { View, Text, Animated, Pressable } from "react-native";
 import { DownvoteIcon, UpvoteIcon } from "./SVG";
 import { globalStyles } from "./GlobalStyles";
 
-const Vote = () => {
-  const [votes, setVotes] = useState(-10);
+type VoteProps = {
+  voteDiff: number;
+};
+
+const Vote = ({ voteDiff }: VoteProps) => {
+  const [votes, setVotes] = useState(voteDiff);
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
 

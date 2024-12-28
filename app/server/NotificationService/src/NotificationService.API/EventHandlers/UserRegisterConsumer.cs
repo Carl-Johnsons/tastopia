@@ -6,7 +6,7 @@ using NotificationService.Application.Emails;
 
 namespace NotificationService.API.EventHandlers;
 
-[QueueName("user-register-event-queue")]
+[QueueName("user-register-event")]
 public class UserRegisterConsumer : IConsumer<UserRegisterEvent>
 {
     private readonly ISender _sender;

@@ -43,9 +43,8 @@ public class UpdateCloudinaryImageFileCommandHandler : IRequestHandler<UpdateClo
         string fileName = formFile.FileName;
         Stream fileStream = formFile.OpenReadStream();
 
-        if (_fileUtility.getFileType(fileName) != "Image")
+        if (_fileUtility.GetFileType(fileName) != IFileUtility.FileType.IMAGE)
         {
-            await Console.Out.WriteLineAsync("okkkkkkkkkkkkkkkkkkkkkkkkkkkkk if going:" + _fileUtility.getFileType(fileName));
             return Result<CloudinaryFile?>.Failure(CloudinaryFileError.InvalidFile("Image", Path.GetExtension(fileName)));
         }
 
@@ -80,7 +79,7 @@ public class UpdateCloudinaryImageFileCommandHandler : IRequestHandler<UpdateClo
                 {
                     Value = extensionValue,
                     Code = extensionValue.Replace(".", "").ToUpper(),
-                    Type = _fileUtility.getFileType(fileName).ToUpper(),
+                    Type = _fileUtility.GetFileType(fileName).ToString(),
                 };
                 _context.ExtensionTypes.Add(extensionType);
             }

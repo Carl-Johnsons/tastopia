@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Contract.Event.IdentityEvent;
 
+[EntityName("user-register-event")]
 public record UserRegisterEvent
 {
     [Required]
@@ -14,4 +15,6 @@ public record UserRegisterEvent
     public string OTP { get; set; } = null!;
     [Required]
     public AccountMethod Method { get; set; }
+    [Required]
+    public string FullName { get; set; } = null!;
 }

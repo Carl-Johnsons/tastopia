@@ -6,7 +6,7 @@ using NotificationService.Application.Emails;
 
 namespace NotificationService.API.EventHandlers;
 
-[QueueName("user-resend-otp-event-queue")]
+[QueueName("user-resend-otp-event")]
 public class UserResendOTPConsumer : IConsumer<UserResendOTPEvent>
 {
     private readonly ISender _sender;

@@ -2,7 +2,6 @@
 using MassTransit;
 
 namespace Contract.Event.UploadEvent;
-
 [EntityName("update-file-event")]
 public record UpdateFileEvent
 {

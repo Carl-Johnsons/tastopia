@@ -34,7 +34,8 @@ namespace UploadFileService.Infrastructure.Persistence.Migrations
                     Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     ExtensionTypeId = table.Column<Guid>(type: "uuid", nullable: false),
                     Size = table.Column<long>(type: "bigint", nullable: false),
-                    Url = table.Column<string>(type: "text", nullable: false)
+                    Url = table.Column<string>(type: "text", nullable: false),
+                    TransactionId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {

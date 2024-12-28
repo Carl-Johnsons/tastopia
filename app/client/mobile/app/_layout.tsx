@@ -35,7 +35,7 @@ const RootLayout = () => {
     "Sofia-Pro-UltraLight": require("../assets/fonts/Sofia-Pro-UltraLight-Az.otf"),
     "Sofia-Pro-UltraLight-Italic": require("../assets/fonts/Sofia-Pro-UltraLight-Italic-Az.otf")
   });
-  const statusBarStyle = useColorModeValue("light-content", "dark-content");
+  const bgColor = useColorModeValue("white", "black");
 
   useEffect(() => {
     if (error) throw error;
@@ -54,8 +54,12 @@ const RootLayout = () => {
         >
           <I18nextProvider i18n={i18n}>
             <SafeAreaProvider>
-              <StatusBar barStyle={statusBarStyle} />
-              <Stack screenOptions={{ headerShown: false }}>
+              <StatusBar backgroundColor={bgColor} />
+              <Stack
+                screenOptions={{
+                  headerShown: false
+                }}
+              >
                 <Stack.Screen name='(public)' />
                 <Stack.Screen name='(protected)' />
                 <Stack.Screen name='+not-found' />

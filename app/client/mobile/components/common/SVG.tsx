@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import Svg, { Path, Rect, SvgProps } from "react-native-svg";
 import { globalStyles } from "./GlobalStyles";
 
@@ -64,7 +64,6 @@ type CustomSvgProps = SvgProps & {
 
 function LogoIcon(props: CustomSvgProps) {
   const { isActive, ...rest } = props;
-
   return (
     <Svg
       width={93}
@@ -115,15 +114,43 @@ function LogoIcon(props: CustomSvgProps) {
   );
 }
 
+function Filter(props: SvgProps) {
+  return (
+    <Svg
+      width={26}
+      height={26}
+      viewBox='0 0 26 26'
+      fill='none'
+      {...props}
+    >
+      <Path
+        d='M1 5.5h4m0 0c0-1.398 0-2.097.203-2.647a3.05 3.05 0 01.578-.974c.248-.28.542-.5.866-.651C7.136 1 7.757 1 9 1s1.864 0 2.353.228c.324.15.618.372.866.65.248.28.444.61.578.975C13 3.402 13 4.101 13 5.5c0 1.398 0 2.097-.203 2.648-.134.364-.33.695-.578.973-.248.28-.542.5-.866.651C10.864 10 10.243 10 9 10s-1.864 0-2.353-.228a2.67 2.67 0 01-.866-.65 3.05 3.05 0 01-.578-.974C5 7.597 5 6.898 5 5.5zm-4 15h8m12 0h4m-4 0c0-1.398 0-2.097-.203-2.648a3.048 3.048 0 00-.578-.973 2.668 2.668 0 00-.866-.651C18.864 16 18.243 16 17 16s-1.864 0-2.353.228c-.324.15-.618.372-.866.65-.248.28-.444.61-.578.974C13 18.403 13 19.102 13 20.5c0 1.398 0 2.097.203 2.648.134.364.33.695.578.973.248.28.542.5.866.651C15.136 25 15.757 25 17 25s1.864 0 2.353-.228c.324-.15.618-.372.866-.65.248-.28.444-.61.578-.974.203-.551.203-1.25.203-2.648zm-4-15h8'
+        stroke='#000'
+        strokeWidth={1.5}
+        strokeLinecap='round'
+        strokeLinejoin='round'
+      />
+    </Svg>
+  );
+}
+
 const styles = StyleSheet.create({
   svg: {},
   active: {
-    shadowColor: globalStyles.color.primary,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 5
+    ...Platform.select({
+      ios: {
+        shadowColor: globalStyles.color.primary,
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.3,
+        shadowRadius: 20
+      },
+      android: {
+        backgroundColor: "transparent",
+        elevation: 40,
+        shadowColor: globalStyles.color.primary
+      }
+    })
   }
 });
 
-export { CameraIconSvg, UpvoteIcon, DownvoteIcon, LogoIcon };
+export { CameraIconSvg, UpvoteIcon, DownvoteIcon, LogoIcon, Filter };
