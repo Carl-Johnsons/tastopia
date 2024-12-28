@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
+import { Platform } from "react-native";
 
 const { expoConfig } = Constants;
 const host: string = expoConfig?.hostUri?.split(":")[0] || "10.0.2.2";
@@ -37,4 +38,18 @@ export const fetchApi = async (route: string, init?: RequestInit) => {
   }
 
   return fetch(`${API_URL}${route}`, init || DEFAULT_OPTIONS);
+};
+
+const getBaseUrl = () => {
+  const isAndroid = Platform.OS === "android";
+
+  if (isAndroid) return "http://10.0.2.2:5005/";
+  else return "http://localhost:5005/";
+};
+
+// http://10.0.2.2:5005/api/recipe/get-recipe-feed
+export const getAPIUrl = (endpoint: string) => {
+  const baseUrl = getBaseUrl();
+
+  return baseUrl + endpoint;
 };
