@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UserService.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using UserService.Infrastructure.Persistence;
 namespace UserService.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241228053757_AddMoreUser")]
+    partial class AddMoreUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -197,28 +200,6 @@ namespace UserService.Infrastructure.Persistence.Migrations
                     b.HasIndex("FollowingId");
 
                     b.ToTable("UserFollow");
-
-                    b.HasData(
-                        new
-                        {
-                            FollowerId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
-                            FollowingId = new Guid("bb06e4ec-f371-45d5-804e-22c65c77f67d")
-                        },
-                        new
-                        {
-                            FollowerId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
-                            FollowingId = new Guid("76346f0e-a52c-4d94-a909-4a8cc59c8ede")
-                        },
-                        new
-                        {
-                            FollowerId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
-                            FollowingId = new Guid("e797952f-1b76-4db9-81a4-8e2f5f9152ea")
-                        },
-                        new
-                        {
-                            FollowerId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
-                            FollowingId = new Guid("50e00c7f-39da-48d1-b273-3562225a5972")
-                        });
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.UserReport", b =>

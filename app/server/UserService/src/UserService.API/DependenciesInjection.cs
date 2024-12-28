@@ -4,6 +4,7 @@ using Serilog;
 using UserService.API.Middleware;
 using UserService.Application;
 using UserService.Infrastructure;
+using Newtonsoft.Json;
 
 namespace UserService.API;
 
@@ -32,6 +33,11 @@ public static class DependenciesInjection
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     options.JsonSerializerOptions.WriteIndented = true;
                 });
+        services.AddControllers()
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
+            });
 
         services.AddHttpContextAccessor();
 

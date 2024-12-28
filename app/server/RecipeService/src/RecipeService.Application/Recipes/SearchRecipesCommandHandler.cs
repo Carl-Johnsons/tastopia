@@ -68,9 +68,6 @@ public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand,
             );
         }
 
-        var result = await recipesQuery.ToListAsync();
-
-
         var totalPage = (await recipesQuery.CountAsync() + RECIPE_CONSTANTS.RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.RECIPE_LIMIT;
 
 

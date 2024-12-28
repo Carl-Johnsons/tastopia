@@ -112,6 +112,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
         modelBuilder.Entity<Setting>().HasData(SettingData.Data);
         modelBuilder.Entity<User>().HasData(UserData.Data);
-
+        modelBuilder.Entity<UserFollow>().HasData(UserData.UserFollowData);
     }
 }
