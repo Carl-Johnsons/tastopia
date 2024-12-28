@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-     "dev": "npx expo start",
+    "dev": "npx expo start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -27,11 +27,14 @@
     "axios": "^1.7.9",
     "date-fns": "^3.6.0",
     "expo": "~52.0.18",
+    "expo-auth-session": "~6.0.1",
     "expo-av": "^15.0.1",
     "expo-blur": "~14.0.1",
     "expo-clipboard": "~7.0.0",
     "expo-constants": "~17.0.3",
+    "expo-crypto": "~14.0.1",
     "expo-font": "~13.0.1",
+    "expo-image": "~2.0.3",
     "expo-image-picker": "~16.0.3",
     "expo-linear-gradient": "~14.0.1",
     "expo-linking": "~7.0.3",
@@ -60,10 +63,7 @@
     "react-redux": "^9.1.2",
     "redux-persist": "^6.0.0",
     "yup": "^1.6.1",
-    "zod": "^3.23.8",
-    "expo-image": "~2.0.3",
-    "expo-auth-session": "~6.0.1",
-    "expo-crypto": "~14.0.1"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
