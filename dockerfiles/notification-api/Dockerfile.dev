@@ -20,6 +20,6 @@ COPY ["./app/server/Contract/Contract/Published", "Contract/"]
 # Building the services
 WORKDIR "/src/NotificationService.API"
 RUN dotnet restore --packages "../nuget" --verbosity normal
-COPY ["./solutions/NotificationSolution/src","/src"]
+COPY ["./app/server/NotificationService/src","/src"]
 
 ENTRYPOINT ["dotnet", "watch", "run", "--no-restore"]

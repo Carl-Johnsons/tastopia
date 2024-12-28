@@ -99,6 +99,31 @@ services:
                   ignore:
                       - Contract/
 
+    recipe-api:
+        build:
+            context: .
+            dockerfile: ./dockerfiles/recipe-api/Dockerfile.${DOCKERFILE_IDENTITY_ENV:-prod}
+        container_name: recipe-service
+        ports:
+            - "${RECIPE_SERVICE_PORT}:80"
+        depends_on:
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+        networks:
+            - back-end
+        env_file:
+            - .env.production
+            - ./app/server/RecipeService/.env
+        develop:
+            watch:
+                - path: ./app/server/RecipeService/src
+                  action: sync
+                  target: /src
+                  ignore:
+                      - Contract/
+
     notification-api:
         build:
             context: .

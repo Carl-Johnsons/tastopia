@@ -8,10 +8,12 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS dev
 WORKDIR /src
+# Copy pre-build lib
+COPY ["./data/nuget", "./nuget"]
 
 COPY ["./app/server/APIGateway/src/APIGateway/APIGateway.csproj", "./APIGateway/"]
 WORKDIR "/src/APIGateway"
-RUN dotnet restore "./APIGateway.csproj" --packages "../nuget" --verbosity normal
+RUN dotnet restore --packages "../nuget" --verbosity normal
 COPY ["./app/server/APIGateway/src/APIGateway","."]
 
 ENTRYPOINT ["dotnet", "watch","run","--no-restore"]

@@ -71,7 +71,7 @@ public class GetTagsCommandHandler : IRequestHandler<GetTagsCommand, Result<Pagi
 
         tagsQuery = _paginateDataUtility.PaginateQuery(tagsQuery, new PaginateParam
         {
-            Offset = skip ?? 0 * TAG_CONSTANTS.TAG_LIMIT,
+            Offset = (skip ?? 0) * TAG_CONSTANTS.TAG_LIMIT,
             Limit = TAG_CONSTANTS.TAG_LIMIT
         });
 
