@@ -22,7 +22,7 @@ public class GetUserDetailsConsumer : IConsumer<GetUserDetailsEvent>
     {
         var result = await _sender.Send(new GetAccountDetailCommand
         {
-            Id = context.Message.UserId 
+            Ids = new HashSet<Guid> { context.Message.AccountId }
         });
         result.ThrowIfFailure();
 

@@ -28,6 +28,8 @@ public sealed class UserRegisterConsumer : IConsumer<UserRegisterEvent>
             AvatarUrl = defaultAvatar,
             BackgroundUrl = defaultBackground,
             DisplayName = context.Message.FullName,
+            IsAccountActive = true,
+            AccountUsername = context.Message.AccountUsername,
         };
 
         var response = await _sender.Send(new CreateUserCommand

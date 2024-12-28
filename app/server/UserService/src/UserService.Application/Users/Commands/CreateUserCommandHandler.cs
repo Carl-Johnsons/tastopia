@@ -38,6 +38,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Resul
             Address = request.User.Address,
             DisplayName = request.User.DisplayName,
             Bio = request.User.Bio,
+            AccountUsername = request.User.AccountUsername,
+            IsAccountActive = request.User.IsAccountActive,
         };
 
         _context.Users.Add(user);
