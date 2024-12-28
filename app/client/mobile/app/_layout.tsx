@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { persistor, store } from "@/store";
 import { I18nextProvider } from "react-i18next";
 import { SplashScreen, Stack } from "expo-router";
-import { StatusBar, StyleSheet } from "react-native";
+import { StatusBar } from "react-native";
 import { useColorModeValue } from "@/hooks/alternator";
 import { PersistGate } from "redux-persist/integration/react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
@@ -44,15 +44,6 @@ const RootLayout = () => {
   }, [fontsLoaded, error]);
 
   if (!fontsLoaded && !error) return null;
-
-  const styles = StyleSheet.create({
-    statusBar: {
-      backgroundColor: bgColor
-    },
-    header: {
-      backgroundColor: bgColor
-    }
-  });
 
   return (
     <GestureHandlerRootView>
