@@ -22,14 +22,14 @@ public class GetRecipeFeedsCommand : IRequest<Result<PaginatedRecipeFeedsListRes
 public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Result<PaginatedRecipeFeedsListResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IBus _bus;
+    private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public GetTagsCommandHandler(IApplicationDbContext context, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility, IBus bus)
+    public GetTagsCommandHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
+        _serviceBus = serviceBus;
         _paginateDataUtility = paginateDataUtility;
-        _bus = bus;
     }
 
     public  async Task<Result<PaginatedRecipeFeedsListResponse?>> Handle(GetRecipeFeedsCommand request, CancellationToken cancellationToken)
@@ -104,7 +104,7 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
         .Distinct()
         .ToHashSet();
 
-        var requestClient = _bus.CreateRequestClient<GetSimpleUsersEvent>();
+        var requestClient = _serviceBus.CreateRequestClient<GetSimpleUsersEvent>();
 
         var response = await requestClient.GetResponse<GetSimpleUsersDTO>(new GetSimpleUsersEvent
         {
