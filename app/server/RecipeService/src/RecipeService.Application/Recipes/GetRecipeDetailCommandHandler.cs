@@ -18,12 +18,12 @@ public class GetRecipeDetailCommand : IRequest<Result<RecipeDetailsResponse?>>
 public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailCommand, Result<RecipeDetailsResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IBus _bus;
+    private readonly IServiceBus _serviceBus;
 
-    public GetRecipeDetailCommandHandler(IApplicationDbContext context, IBus bus)
+    public GetRecipeDetailCommandHandler(IApplicationDbContext context, IServiceBus serviceBus)
     {
         _context = context;
-        _bus = bus;
+        _serviceBus = serviceBus;
     }
 
     public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailCommand request, CancellationToken cancellationToken)
@@ -38,7 +38,7 @@ public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailComm
             return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound);
         }
 
-        var requestClient = _bus.CreateRequestClient<GetUserDetailsEvent>();
+        var requestClient = _serviceBus.CreateRequestClient<GetUserDetailsEvent>();
 
         var responseUser = await requestClient.GetResponse<UserDTO>(new GetUserDetailsEvent
         {

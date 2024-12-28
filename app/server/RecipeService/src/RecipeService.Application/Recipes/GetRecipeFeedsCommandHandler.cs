@@ -22,14 +22,14 @@ public class GetRecipeFeedsCommand : IRequest<Result<PaginatedRecipeFeedsListRes
 public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Result<PaginatedRecipeFeedsListResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IBus _bus;
+    private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public GetTagsCommandHandler(IApplicationDbContext context, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility, IBus bus)
+    public GetTagsCommandHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
+        _serviceBus = serviceBus;
         _paginateDataUtility = paginateDataUtility;
-        _bus = bus;
     }
 
     public  async Task<Result<PaginatedRecipeFeedsListResponse?>> Handle(GetRecipeFeedsCommand request, CancellationToken cancellationToken)
@@ -64,9 +64,10 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
 
         var totalPage = (await recipesQuery.CountAsync() + RECIPE_CONSTANTS.RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.RECIPE_LIMIT;
 
+
         recipesQuery = _paginateDataUtility.PaginateQuery(recipesQuery, new PaginateParam
         {
-            Offset = skip ?? 0 * RECIPE_CONSTANTS.RECIPE_LIMIT,
+            Offset = (skip ?? 0) * RECIPE_CONSTANTS.RECIPE_LIMIT,
             Limit = RECIPE_CONSTANTS.RECIPE_LIMIT
         });
 
@@ -103,7 +104,7 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
         .Distinct()
         .ToHashSet();
 
-        var requestClient = _bus.CreateRequestClient<GetSimpleUsersEvent>();
+        var requestClient = _serviceBus.CreateRequestClient<GetSimpleUsersEvent>();
 
         var response = await requestClient.GetResponse<GetSimpleUsersDTO>(new GetSimpleUsersEvent
         {
