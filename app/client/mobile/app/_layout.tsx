@@ -35,9 +35,7 @@ const RootLayout = () => {
     "Sofia-Pro-UltraLight": require("../assets/fonts/Sofia-Pro-UltraLight-Az.otf"),
     "Sofia-Pro-UltraLight-Italic": require("../assets/fonts/Sofia-Pro-UltraLight-Italic-Az.otf")
   });
-  const bgColor = useColorModeValue("white", "black");
-  const textColor = useColorModeValue("black", "white");
-  const statusBarStyle = useColorModeValue("dark-content", "light-content");
+  const statusBarStyle = useColorModeValue("light-content", "dark-content");
 
   useEffect(() => {
     if (error) throw error;
@@ -46,15 +44,6 @@ const RootLayout = () => {
   }, [fontsLoaded, error]);
 
   if (!fontsLoaded && !error) return null;
-
-  const styles = StyleSheet.create({
-    statusBar: {
-      backgroundColor: bgColor
-    },
-    header: {
-      backgroundColor: bgColor
-    }
-  });
 
   return (
     <GestureHandlerRootView>
