@@ -1,17 +1,10 @@
 import { SignUpParams } from "@/api/user";
 import { useState } from "react";
-import { ActivityIndicator, Platform, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { AuthFormProps } from "./LoginForm";
-import {
-  useAnimatedStyle,
-  useSharedValue,
-  withReanimatedTimer,
-  withSequence,
-  withTiming
-} from "react-native-reanimated";
-
 import Input from "./Input";
 import Button from "./Button";
+import useBounce from "@/hooks/animation/useBounce";
 
 export interface SignUpFormFields extends SignUpParams {}
 
@@ -22,59 +15,47 @@ type SignUpFormProps = {
 export const SignUpForm = (props: SignUpFormProps) => {
   const { onSubmit, isLoading } = props;
   const [formValues, setFormValues] = useState<SignUpFormFields>({
-    name: "",
-    username: "",
-    email: "",
+    fullName: "",
+    identifier: "",
     password: ""
   });
-
-  const buttonScale = useSharedValue(1);
-  const buttonOpacity = useSharedValue(1);
-
-  const animate = () => {
-    buttonScale.value = withSequence(withTiming(0.96), withTiming(1));
-    buttonOpacity.value = withSequence(withTiming(0.7), withTiming(1));
-  };
-
-  const animatedStyles = useAnimatedStyle(() => ({
-    transform: [{ scale: buttonScale.value }],
-    opacity: buttonOpacity.value
-  }));
+  const { animate, animatedStyles } = useBounce();
 
   return (
-    <View className={`gap-3 ${props.className}`}>
-      <View className='flex-row gap-3'>
+    <View className={`gap-[2vh] ${props.className}`}>
+      <View>
+        <Text className='mb-3 font-sans text-gray-600'>Full name</Text>
         <Input
           autoCapitalize='none'
-          placeholder='username'
-          className={`grow basis-0 dark:text-white ${Platform.OS === "ios" ? "p-3.5" : ""}`}
+          placeholder='Your full name'
+          className={`border-gray-300 p-5 focus:border-primary`}
           placeholderTextColor={"gray"}
-          onChangeText={username => setFormValues({ ...formValues, username })}
-          autoFocus
-        />
-        <Input
-          autoCapitalize='none'
-          placeholder='name'
-          className={`grow basis-0 dark:text-white ${Platform.OS === "ios" ? "p-3.5" : ""}`}
-          placeholderTextColor={"gray"}
-          onChangeText={name => setFormValues({ ...formValues, name })}
+          onChangeText={fullName => setFormValues({ ...formValues, fullName })}
         />
       </View>
-      <Input
-        autoCapitalize='none'
-        placeholder='email'
-        className={`dark:text-white ${Platform.OS === "ios" ? "p-3.5" : ""}`}
-        placeholderTextColor={"gray"}
-        onChangeText={email => setFormValues({ ...formValues, email })}
-      />
-      <Input
-        autoCapitalize='none'
-        placeholder='password'
-        className={`dark:text-white ${Platform.OS === "ios" ? "p-3.5" : ""}`}
-        placeholderTextColor={"gray"}
-        onChangeText={password => setFormValues({ ...formValues, password })}
-        secureTextEntry
-      />
+
+      <View>
+        <Text className='mb-3 font-sans text-gray-600'>E-mail or phone number</Text>
+        <Input
+          autoCapitalize='none'
+          placeholder='Your email or phone number'
+          className={`border-gray-300 p-5 focus:border-primary`}
+          placeholderTextColor={"gray"}
+          onChangeText={identifier => setFormValues({ ...formValues, identifier })}
+        />
+      </View>
+
+      <View>
+        <Text className='mb-3 font-sans text-gray-600'>Password</Text>
+        <Input
+          autoCapitalize='none'
+          placeholder='Password'
+          className={`border-gray-300 p-5 focus:border-primary`}
+          placeholderTextColor={"gray"}
+          onChangeText={password => setFormValues({ ...formValues, password })}
+          secureTextEntry
+        />
+      </View>
 
       <Button
         onPress={() => {
@@ -82,11 +63,18 @@ export const SignUpForm = (props: SignUpFormProps) => {
           onSubmit(formValues);
         }}
         style={[animatedStyles]}
-        className='w-100 rounded-full bg-black p-3 text-white'
+        className='rounded-full bg-primary p-3 px-16 py-6 text-white'
         isLoading={isLoading}
-        spinner={<ActivityIndicator animating={isLoading} />}
+        spinner={
+          <ActivityIndicator
+            animating={isLoading}
+            color={"white"}
+          />
+        }
       >
-        <Text className='text-center text-white'>Sign up</Text>
+        <Text className='text-center font-sans font-semibold uppercase text-white'>
+          Register
+        </Text>
       </Button>
     </View>
   );
