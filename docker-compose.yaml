@@ -66,7 +66,7 @@ services:
             - back-end
         env_file:
             - .env.production
-            - ./app/server/APIGateway/.env
+            - ./app/server/APIGateway/.env.production
         develop:
             watch:
                 - path: ./app/server/APIGateway/src
@@ -90,7 +90,7 @@ services:
             - back-end
         env_file:
             - .env.production
-            - ./app/server/IdentityService/.env
+            - ./app/server/IdentityService/.env.production
         develop:
             watch:
                 - path: ./app/server/IdentityService/src
@@ -115,7 +115,7 @@ services:
             - back-end
         env_file:
             - .env.production
-            - ./app/server/RecipeService/.env
+            - ./app/server/RecipeService/.env.production
         develop:
             watch:
                 - path: ./app/server/RecipeService/src
@@ -140,7 +140,7 @@ services:
             - back-end
         env_file:
             - .env.production
-            - ./app/server/NotificationService/.env
+            - ./app/server/NotificationService/.env.production
         develop:
             watch:
                 - path: ./app/server/NotificationService/src

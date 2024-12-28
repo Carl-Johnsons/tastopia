@@ -3,17 +3,17 @@
     {
       "DownstreamHostAndPorts": [
         {
-          "Host": "upload-api",
+          "Host": "recipe-api",
           "Port": 80
         }
       ],
-      "DownstreamPathTemplate": "/api/Upload/{everything}",
+      "DownstreamPathTemplate": "/api/recipe/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
       ],
-      "UpstreamPathTemplate": "/api/Upload/{everything}"
+      "UpstreamPathTemplate": "/api/recipe/{everything}"
     }
   ]
 }
