@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Image,
-  ImageSourcePropType,
-  Text,
   View,
   StyleSheet,
   Keyboard,
