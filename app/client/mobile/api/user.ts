@@ -1,69 +1,139 @@
-import { loginSchema, signUpSchema } from "@/lib/validation/auth";
-import { fetchApi } from "@/utils/fetch";
+import {
+  loginWithEmailSchema,
+  registerWithEmailSchema,
+  verifySchema
+} from "@/lib/validation/auth";
 import { z } from "zod";
+import Constants from "expo-constants";
 
-export type LoginParams = z.infer<typeof loginSchema>;
+export type LoginParams = z.infer<typeof loginWithEmailSchema>;
 
 export type User = {
-    _id: string;
-    name: string;
-    email: string;
-    username: string;
-    bio: string;
-    profilePic: string;
-    followers: string[];
-    following: string[];
+  _id: string;
+  name: string;
+  email: string;
+  username: string;
+  bio: string;
+  profilePic: string;
+  followers: string[];
+  following: string[];
 };
 
 type LoginResponse = {
-    jwtToken: string;
-    user: User;
+  access_token: string;
+  refresh_token: string;
 };
 
-export const signIn = async (inputs: LoginParams): Promise<LoginResponse> => {
-    const parsedInputs = loginSchema.parse(inputs);
+const host: string =
+  process.env.API_HOST || Constants.expoConfig?.hostUri?.split(":")[0] || "10.0.2.2";
 
-    const res = await fetchApi("/api/users/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(parsedInputs),
-    });
+export enum IDENTIFIER_TYPE {
+  EMAIL,
+  PHONE_NUMBER
+}
 
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
+export const login = async (inputs: LoginParams): Promise<LoginResponse> => {
+  const body = new URLSearchParams({
+    client_id: "react.native",
+    scope: "openid profile phone email offline_access IdentityServerApi",
+    grant_type: "password",
+    username: inputs.identifier,
+    password: inputs.password
+  }).toString();
 
-    return data;
+  const res = await fetch(`http://${host}:5001/connect/token`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body
+  });
+
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+
+  return data;
 };
 
-export type SignUpParams = z.infer<typeof signUpSchema>;
+export type SignUpParams = z.infer<typeof registerWithEmailSchema>;
 
-type SignUpResponse = {
-    jwtToken: string;
-    user: {
-        _id: string;
-        name: string;
-        email: string;
-        username: string;
-        bio: string;
-        profilePic: string;
-    };
+type SignUpResponse = {} & LoginResponse;
+
+export const register = async (
+  inputs: SignUpParams,
+  type: IDENTIFIER_TYPE
+): Promise<SignUpResponse> => {
+  const REGISTER_TYPE = type == IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+
+  const res = await fetch(`http://${host}:5001/api/account/register/${REGISTER_TYPE}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(inputs)
+  });
+
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  if (!res.ok && data.Message) throw new Error(data.Message);
+
+  return data;
 };
 
-export const register = async (inputs: SignUpParams): Promise<SignUpResponse> => {
-    const parsedInputs = signUpSchema.parse(inputs);
+export type VerifyParams = z.infer<typeof verifySchema>;
+export type VerifyResponse = VerifyResponseSuccess | VerifyResponseError;
+type VerifyResponseSuccess = 0;
+type VerifyResponseError = {
+  Status: number;
+  Code: string;
+  Message: string;
+};
 
-    const res = await fetchApi("/api/users/signup", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(parsedInputs),
-    });
+export const verify = async (inputs: VerifyParams): Promise<VerifyResponse> => {
+  const parsedInputs = verifySchema.parse(inputs);
+  const { OTP, accessToken } = parsedInputs;
 
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
+  const res = await fetch(`http://${host}:5001/api/account/verify/email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`
+    },
+    body: JSON.stringify({ OTP })
+  });
 
-    return data;
+  if (!res.ok) {
+    const data = (await res.json()) as VerifyResponseError;
+    throw new Error(data.Message);
+  }
+
+  return 0;
+};
+
+type ResendVerifyCodeResponseSuccess = 0;
+type ResendVerifyCodeResponseError = {
+  Status: number;
+  Code: string;
+  Message: string;
+};
+
+type ResendVerifyCode = ResendVerifyCodeResponseSuccess | ResendVerifyCodeResponseError;
+
+export const resendVerifyCode = async (
+  accessToken: string
+): Promise<ResendVerifyCode> => {
+  const res = await fetch(`http://${host}:5001/api/account/resend/email`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`
+    }
+  });
+
+  if (!res.ok) {
+    const data = (await res.json()) as VerifyResponseError;
+    throw new Error(data.Message);
+  }
+
+  return 0;
 };

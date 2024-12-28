@@ -1,5 +1,5 @@
 import { useAppSelector } from "@/store/hooks";
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { PURGE } from "redux-persist";
 
 export type UserState = {

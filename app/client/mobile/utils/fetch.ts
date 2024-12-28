@@ -1,21 +1,30 @@
+import { AuthState } from "@/slices/auth.slice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
 
 const { expoConfig } = Constants;
-const host: string = expoConfig?.hostUri?.split(":")[0] || "10.0.2.2";
+const host: string =
+  process.env.API_HOST || expoConfig?.hostUri?.split(":")[0] || "10.0.2.2";
+console.log("Host config", host);
 
-const API_URL = `http://${host}:5050`;
+const API_URL = `http://${host}:5000`;
 
 /**
  * A helper function that retrieves the user's JWT token from the Redux store.
  *
- * @returns The JWT token if it exists, otherwise null
+ * @returns The Access token if it exists, otherwise null
  */
-const getAuthToken = async (): Promise<string | null> => {
+export const getAccessToken = async (): Promise<string | null> => {
   const item = await AsyncStorage.getItem("persist:root");
-  const jwtToken = item ? JSON.parse(JSON.parse(item).auth).jwtToken : null;
-  return jwtToken ? `Bearer ${jwtToken}` : null;
+  let accessToken = null;
+
+  if (item) {
+    const authState = JSON.parse(JSON.parse(item).auth) as AuthState;
+    accessToken = authState.accessToken;
+  }
+
+  return accessToken ? `Bearer ${accessToken}` : null;
 };
 
 /**
@@ -29,7 +38,7 @@ export const fetchApi = async (route: string, init?: RequestInit) => {
   const DEFAULT_OPTIONS = {
     headers: {
       "Content-Type": "application/json",
-      Authorization: await getAuthToken()
+      Authorization: await getAccessToken()
     }
   } as RequestInit;
 

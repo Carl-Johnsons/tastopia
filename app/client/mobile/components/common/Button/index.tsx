@@ -17,7 +17,6 @@ import Loader from "../Loader";
 
 type ButtonProps = {
   title: string;
-  handlePress?: () => void;
   isLoading?: boolean;
   disabled?: boolean;
   type?:
@@ -31,7 +30,7 @@ type ButtonProps = {
   leftIcon?: ReactElement;
   rightIcon?: ReactElement;
   iconButton?: boolean;
-  onPress?: any;
+  onPress?: () => void;
   buttonStyle?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
   textStyles?: StyleProp<TextStyle>;
@@ -40,7 +39,6 @@ type ButtonProps = {
 
 const Button = ({
   title,
-  handlePress,
   type = "button",
   width,
   color,

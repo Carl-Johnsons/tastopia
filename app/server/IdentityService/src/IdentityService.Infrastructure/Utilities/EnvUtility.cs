@@ -28,7 +28,7 @@ public class EnvUtility
     public static string GetConnectionString()
     {
         LoadEnvFile();
-        var host = DotNetEnv.Env.GetString("HOST", "localhost").Trim();
+        var host = DotNetEnv.Env.GetString("DB_HOST", "localhost").Trim();
 
         var port = DotNetEnv.Env.GetString("DB_PORT", "2001").Trim();
         var db = DotNetEnv.Env.GetString("DB", "Not found").Trim();

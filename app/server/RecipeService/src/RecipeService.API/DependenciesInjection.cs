@@ -32,9 +32,7 @@ public static class DependenciesInjection
                 {
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     options.JsonSerializerOptions.WriteIndented = true;
-                });
-        services.AddControllers()
-                .AddNewtonsoftJson(options =>
+                }).AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
                 });
