@@ -7,7 +7,7 @@ using UploadFileService.Application.CloudinaryFiles.Commands;
 
 
 namespace UploadFileService.API.EventHandlers;
-[QueueName("upload-multiple-file-event-queue")]
+[QueueName("upload-multiple-file-event")]
 public sealed class UploadMultipleFileConsumer : IConsumer<UploadMultipleFileEvent>
 {
     private readonly ISender _sender;
@@ -71,7 +71,7 @@ public sealed class UploadMultipleFileConsumer : IConsumer<UploadMultipleFileEve
                 Size = response.Value[i].Size,
                 Url = response.Value[i].Url,
                 ExtensionTypeCode = extensionTypeCode,
-                FileType = _fileUtility.getFileType(response.Value[i].Name)
+                FileType = _fileUtility.GetFileType(response.Value[i].Name).ToString(),
             };
             result.Files.Add(fileDTO);
         }

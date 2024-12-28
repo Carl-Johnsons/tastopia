@@ -55,7 +55,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationAccount>, IAppl
         builder.Entity<ApplicationAccount>(
                 e =>
                 {
-                    e.Property(a => a.Active)
+                    e.Property(a => a.IsActive)
                         .HasDefaultValueSql("True")
                         .HasSentinel(false);
 

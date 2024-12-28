@@ -42,7 +42,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Settings");
+                    b.ToTable("Setting");
 
                     b.HasData(
                         new
@@ -67,13 +67,22 @@ namespace UserService.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
 
                     b.Property<string>("AvatarUrl")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("BackgroundUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("Dob")
@@ -82,12 +91,52 @@ namespace UserService.Infrastructure.Persistence.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("text");
 
+                    b.Property<int?>("TotalFollowing")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TotalFollwer")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TotalRecipe")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Alice"
+                        },
+                        new
+                        {
+                            Id = new Guid("d47cb12a-2a20-4151-97c9-d0b85b668799"),
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Kian"
+                        });
                 });
 
-            modelBuilder.Entity("UserService.Domain.Entities.UserSearchTracking", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.UserFollow", b =>
+                {
+                    b.Property<Guid>("FollowerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FollowingId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("FollowerId", "FollowingId");
+
+                    b.HasIndex("FollowingId");
+
+                    b.ToTable("UserFollow");
+                });
+
+            modelBuilder.Entity("UserService.Domain.Entities.UserReport", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -96,9 +145,18 @@ namespace UserService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("KeyWord")
+                    b.Property<string>("Reason")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<Guid>("ReportedId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -108,19 +166,17 @@ namespace UserService.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ReportedId");
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSearchTracking");
+                    b.ToTable("UserReport");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.UserSetting", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("SettingId")
                         .HasColumnType("uuid");
@@ -129,53 +185,47 @@ namespace UserService.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
+                    b.HasKey("UserId", "SettingId");
 
                     b.HasIndex("SettingId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserSettings");
+                    b.ToTable("UserSetting");
                 });
 
-            modelBuilder.Entity("UserService.Domain.Entities.UserTimeTracking", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.UserFollow", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.HasOne("UserService.Domain.Entities.User", "Follower")
+                        .WithMany()
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("ActiveSecond")
-                        .HasColumnType("integer");
+                    b.HasOne("UserService.Domain.Entities.User", "Following")
+                        .WithMany()
+                        .HasForeignKey("FollowingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Navigation("Follower");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserTimeTracking");
+                    b.Navigation("Following");
                 });
 
-            modelBuilder.Entity("UserService.Domain.Entities.UserSearchTracking", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.UserReport", b =>
                 {
+                    b.HasOne("UserService.Domain.Entities.User", "Reported")
+                        .WithMany()
+                        .HasForeignKey("ReportedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("UserService.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Reported");
 
                     b.Navigation("User");
                 });
@@ -195,17 +245,6 @@ namespace UserService.Infrastructure.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Setting");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("UserService.Domain.Entities.UserTimeTracking", b =>
-                {
-                    b.HasOne("UserService.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("User");
                 });

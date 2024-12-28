@@ -1,0 +1,50 @@
+﻿using Contract.Common;
+using Contract.DTOs.UserDTO;
+using Contract.Event.UserEvent;
+using MassTransit;
+using UserService.Application.Users.Commands;
+
+namespace UserService.API.EventHandlers;
+
+[QueueName("get-simple-users-event")]
+public class GetSimpleUsersConsumer : IConsumer<GetSimpleUsersEvent>
+{
+    private readonly ISender _sender;
+
+    public GetSimpleUsersConsumer(ISender sender)
+    {
+        _sender = sender;
+    }
+    public async Task Consume(ConsumeContext<GetSimpleUsersEvent> context)
+    {
+        var response = await _sender.Send(new GetSimpleUsersCommand
+        {
+            UserIds = context.Message.UserIds,
+        });
+        response.ThrowIfFailure();
+
+        var users = response.Value;
+
+        if(users == null || !users.Any()) {
+            throw new Exception("Users not found");
+        }
+
+        var mapUser = new Dictionary<Guid ,SimpleUser>();
+
+        foreach(var user in users)
+        {
+            mapUser.Add(user.Id, new SimpleUser
+            {
+                UserId = user.Id,
+                AvtUrl = user.AvatarUrl,
+                DisplayName = user.DisplayName,
+            });
+        }
+
+        var result = new GetSimpleUsersDTO { 
+            Users = mapUser,
+        };
+
+        await context.RespondAsync(result);
+    }
+}

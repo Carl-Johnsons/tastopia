@@ -78,7 +78,8 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
             AccountId = Guid.Parse(acc.Id),
             Identifier = request.Identifier,
             Method = AccountMethod.Email,
-            OTP = OTP
+            OTP = OTP,
+            FullName = request.FullName,
         });
 
         var tokenIssued = await RequestTokenAsync(username, request.Password);
@@ -118,7 +119,8 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
             AccountId = Guid.Parse(acc.Id),
             Identifier = request.Identifier,
             Method = AccountMethod.Phone,
-            OTP = OTP
+            OTP = OTP,
+            FullName = request.FullName,
         });
 
         var tokenIssued = await RequestTokenAsync(username, request.Password);

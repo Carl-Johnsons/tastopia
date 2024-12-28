@@ -113,7 +113,7 @@ public class Index : PageModel
             {
                 var user = await _userManager.FindByNameAsync(Input.Username!);
 
-                if (!user!.Active)
+                if (!user!.IsActive)
                 {
                     ModelState.AddModelError(string.Empty, RegisterOptions.AccountDisabledErrorMessage);
                     // account disabled, show form with error

@@ -41,7 +41,7 @@ public class CreateCloudinaryVideoFileCommandHandler : IRequestHandler<CreateClo
         string fileName = formFile.FileName;
         Stream fileStream = formFile.OpenReadStream();
 
-        if (_fileUtility.getFileType(fileName) != "Video")
+        if (_fileUtility.GetFileType(fileName) != IFileUtility.FileType.VIDEO)
         {
             return Result<CloudinaryFile?>.Failure(CloudinaryFileError.InvalidFile("Video", Path.GetExtension(fileName)));
         }
@@ -69,7 +69,7 @@ public class CreateCloudinaryVideoFileCommandHandler : IRequestHandler<CreateClo
                 {
                     Value = extensionValue,
                     Code = extensionValue.Replace(".", "").ToUpper(),
-                    Type = _fileUtility.getFileType(fileName).ToUpper(),
+                    Type = _fileUtility.GetFileType(fileName).ToString(),
                 };
                 _context.ExtensionTypes.Add(extensionType);
             }
