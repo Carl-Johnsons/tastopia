@@ -5,5 +5,5 @@ namespace Contract.Event.UserEvent;
 [EntityName("get-user-details-event")]
 public record GetUserDetailsEvent
 {
-    public Guid UserId { get; set; }
+    public Guid AccountId { get; set; }
 }

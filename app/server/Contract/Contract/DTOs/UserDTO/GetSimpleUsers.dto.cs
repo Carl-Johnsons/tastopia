@@ -7,7 +7,7 @@ public class GetSimpleUsersDTO
 
 public class SimpleUser
 {
-    public Guid UserId { get; set; }
+    public Guid AccountId { get; set; }
     public string AvtUrl { get; set; } = null!;
     public string DisplayName { get; set; } = null!;
 

@@ -19,7 +19,7 @@ public class GetUserDetailsConsumer : IConsumer<GetUserDetailsEvent>
     {
         var response = await _sender.Send(new GetUserDetailsCommand
         {
-            UserId = context.Message.UserId,
+            AccountId = context.Message.AccountId,
         });
         response.ThrowIfFailure();
 

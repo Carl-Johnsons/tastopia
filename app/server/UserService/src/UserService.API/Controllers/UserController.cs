@@ -12,14 +12,12 @@ namespace UserService.API.Controllers
         {
         }
 
-        [HttpPost("search-user")]
+        [HttpPost("search")]
         public async Task<IActionResult> SearchUser([FromBody] SearchUser searchUser)
         {
-    
-
             var result = await _sender.Send(new SearchUsersCommand
             {
-                UserId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
+                AccountId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
                 Skip = searchUser.Skip,
                 Keyword = searchUser.Keyword,
             });

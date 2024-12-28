@@ -1,6 +1,5 @@
 ﻿using Contract.DTOs.UserDTO;
 using Contract.Event.UserEvent;
-using MassTransit;
 using MassTransit.Initializers;
 using Microsoft.EntityFrameworkCore;
 using RecipeService.Domain.Entities;
@@ -108,7 +107,7 @@ public class GetTagsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Resu
 
         var response = await requestClient.GetResponse<GetSimpleUsersDTO>(new GetSimpleUsersEvent
         {
-            UserIds = authorIds,
+            AccountIds = authorIds,
         });
 
         if (response == null || response.Message.Users.Count != authorIds.Count)

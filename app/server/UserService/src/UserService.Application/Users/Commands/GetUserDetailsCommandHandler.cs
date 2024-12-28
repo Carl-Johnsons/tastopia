@@ -9,7 +9,7 @@ namespace UserService.Application.Users.Commands;
 public record GetUserDetailsCommand : IRequest<Result<User?>>
 {
     [Required]
-    public Guid UserId { get; init; }
+    public Guid AccountId { get; init; }
 }
 public class GetUserDetailsCommandHandler : IRequestHandler<GetUserDetailsCommand, Result<User?>>
 {
@@ -22,9 +22,9 @@ public class GetUserDetailsCommandHandler : IRequestHandler<GetUserDetailsComman
 
     public async Task<Result<User?>> Handle(GetUserDetailsCommand request, CancellationToken cancellationToken)
     {
-        var userId = request.UserId;
+        var accountId = request.AccountId;
         var user = await _context.Users
-            .Where(user => user.Id == userId)
+            .Where(user => user.AccountId == accountId)
             .FirstOrDefaultAsync();
         if (user == null) { 
             return Result<User?>.Failure(UserError.NotFound);

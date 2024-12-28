@@ -12,7 +12,7 @@ public class Comment : BaseAuditableEntity
     public string Content { get; set; } = null!;
 
     [Required]
-    public Guid UserId { get; set; }
+    public Guid AccountId { get; set; }
 
     [Required]
     public Guid RecipeId { get; set; }

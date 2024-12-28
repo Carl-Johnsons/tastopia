@@ -1,6 +1,5 @@
 ﻿using Contract.DTOs.UserDTO;
 using Contract.Event.UserEvent;
-using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RecipeService.Domain.Errors;
@@ -42,13 +41,13 @@ public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailComm
 
         var responseUser = await requestClient.GetResponse<UserDTO>(new GetUserDetailsEvent
         {
-            UserId = recipe.AuthorId,
+            AccountId = recipe.AuthorId,
         });
 
 
         var responseAccout = await requestClient.GetResponse<AccountDTO>(new GetUserDetailsEvent
         {
-            UserId = recipe.AuthorId,
+            AccountId = recipe.AuthorId,
         });
 
         if(responseAccout == null || responseUser == null) {

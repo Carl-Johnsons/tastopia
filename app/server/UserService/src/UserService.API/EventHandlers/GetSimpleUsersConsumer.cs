@@ -19,7 +19,7 @@ public class GetSimpleUsersConsumer : IConsumer<GetSimpleUsersEvent>
     {
         var response = await _sender.Send(new GetSimpleUsersCommand
         {
-            UserIds = context.Message.UserIds,
+            AccountIds = context.Message.AccountIds,
         });
         response.ThrowIfFailure();
 
@@ -33,9 +33,9 @@ public class GetSimpleUsersConsumer : IConsumer<GetSimpleUsersEvent>
 
         foreach(var user in users)
         {
-            mapUser.Add(user.Id, new SimpleUser
+            mapUser.Add(user.AccountId, new SimpleUser
             {
-                UserId = user.Id,
+                AccountId = user.AccountId,
                 AvtUrl = user.AvatarUrl,
                 DisplayName = user.DisplayName,
             });

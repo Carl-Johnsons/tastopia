@@ -7,7 +7,7 @@ namespace UserService.Domain.Entities;
 public class UserReport : BaseAuditableEntity
 {
     [Required]
-    public Guid UserId { get; set; }
+    public Guid AccountId { get; set; }
 
     [Required]
     public Guid ReportedId { get; set; }
