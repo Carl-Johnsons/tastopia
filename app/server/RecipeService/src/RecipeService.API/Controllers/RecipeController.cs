@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RecipeService.API.DTOs;
 using RecipeService.Application.Recipes;
 using RecipeService.Application.Tags;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace RecipeService.API.Controllers;
 
 [Route("api/recipe")]
 [ApiController]
-//[Authorize]
+[Authorize]
 public class RecipeController : BaseApiController
 {
     public RecipeController(ISender sender, IHttpContextAccessor httpContextAccessor) : base(sender, httpContextAccessor)
@@ -19,7 +21,6 @@ public class RecipeController : BaseApiController
     {
         var listStep = new List<Application.Recipes.StepDTO>();
         foreach (var step in createRecipeDTO.Steps) {
-            await Console.Out.WriteLineAsync("******************************"+step.OrdinalNumber);
             listStep.Add(new Application.Recipes.StepDTO
             {
                 Content = step.Content,
@@ -28,9 +29,13 @@ public class RecipeController : BaseApiController
             });
         }
 
+
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new CreateRecipeCommand
         {
-           AuthorId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
+           AuthorId = Guid.Parse(subjectId!),
            Title = createRecipeDTO.Title,
            CookTime = createRecipeDTO.CookTime,
            Description = createRecipeDTO.Description,
@@ -48,11 +53,14 @@ public class RecipeController : BaseApiController
     [HttpPost("get-recipe-feed")]
     public async Task<IActionResult> GetRecipeFeed([FromBody] GetRecipeFeedsDTO getRecipeFeedsDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new GetRecipeFeedsCommand
         {
             Skip = getRecipeFeedsDTO.Skip,
             TagValues = getRecipeFeedsDTO.TagValues,
-            AccountId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
+            AccountId = Guid.Parse(subjectId!),
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -61,12 +69,14 @@ public class RecipeController : BaseApiController
     [HttpPost("search-recipe")]
     public async Task<IActionResult> SearchRecipe([FromBody] SearchRecipesDTO searchRecipesDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new SearchRecipesCommand
         {
             Skip = searchRecipesDTO.Skip,
             TagValues = searchRecipesDTO.TagValues,
             Keyword = searchRecipesDTO.Keyword,
-            AccountId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
+            AccountId = Guid.Parse(subjectId!),
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
