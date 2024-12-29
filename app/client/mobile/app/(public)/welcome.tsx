@@ -83,7 +83,7 @@ const Welcome = () => {
         <View className='relative h-full px-3.5'>
           <Button
             onPress={browseAsGuest}
-            className={`absolute right-[26px] top-[${isAndroid ? "2%" : "6%"}] rounded-full bg-white px-5 py-3`}
+            className={`absolute right-[26px] ${isAndroid ? "top-[2%]" : "top-[6%]"} rounded-full bg-white px-5 py-3`}
           >
             <Text className='font-sans text-primary'>Skip</Text>
           </Button>

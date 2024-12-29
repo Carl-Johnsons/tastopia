@@ -58,7 +58,7 @@ const Verify = () => {
       <CircleBg />
 
       <View
-        className={`absolute top-[${isAndroid ? "2%" : "6%"}] flex w-full justify-center gap-[4vh] px-6`}
+        className={`absolute ${isAndroid ? "top-[2%]" : "top-[6%]"} flex w-full justify-center gap-[4vh] px-6`}
       >
         <BackButton
           onPress={router.back}

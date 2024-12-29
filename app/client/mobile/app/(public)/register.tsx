@@ -68,19 +68,19 @@ const Register = () => {
     <View className='relative h-full'>
       <CircleBg />
       <View
-        className={`absolute top-[${isAndroid ? "2%" : "6%"}] flex w-full justify-center gap-[4vh] px-6`}
+        className={`absolute ${isAndroid ? "top-[2%]" : "top-[6%]"} flex w-full justify-center gap-[4vh] px-6`}
       >
         <BackButton
           onPress={router.back}
           className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
         />
-        <Text className='font-sans text-4xl font-semibold text-black'>Register</Text>
+        <Text className='font-sans font-semibold text-4xl text-black'>Register</Text>
         <SignUpForm
           onSubmit={signUp}
           isLoading={isSubmitting}
         />
         <Pressable onPress={navigateToSignInScreen}>
-          <Text className='text-sm font-medium text-center text-gray-300'>
+          <Text className='text-center font-medium text-sm text-gray-300'>
             Already have an account?{" "}
             <Text className='font-medium text-primary'>Login</Text>
           </Text>
@@ -88,7 +88,7 @@ const Register = () => {
 
         <View className='flex-row items-center justify-center gap-5'>
           <View className='h-[1px] grow bg-gray-300' />
-          <Text className='text-sm font-medium text-center text-gray-300'>
+          <Text className='text-center font-medium text-sm text-gray-300'>
             Sign in with
           </Text>
           <View className='h-[1px] grow bg-gray-300' />

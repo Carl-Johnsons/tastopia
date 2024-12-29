@@ -74,20 +74,20 @@ const Login = () => {
     <View className='relative h-full'>
       <CircleBg />
       <View
-        className={`absolute top-[${isAndroid ? "2%" : "6%"}] flex w-full justify-center gap-[4vh] px-6`}
+        className={`absolute ${isAndroid ? "top-[2%]" : "top-[6%]"} flex w-full justify-center gap-[4vh] px-6`}
       >
         <BackButton
           onPress={router.back}
           style={animatedStyles}
           className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
         />
-        <Text className='font-sans text-4xl font-semibold text-black'>Login</Text>
+        <Text className='font-sans font-semibold text-4xl text-black'>Login</Text>
         <LoginForm
           onSubmit={onSubmit}
           isLoading={isSubmitting}
         />
         <Pressable onPress={navigateToSignUpScreen}>
-          <Text className='text-sm font-medium text-center text-gray-300'>
+          <Text className='text-center font-medium text-sm text-gray-300'>
             Don’t have an account?{" "}
             <Text className='font-medium text-primary'>Sign Up</Text>
           </Text>
@@ -95,7 +95,7 @@ const Login = () => {
 
         <View className='flex-row items-center justify-center gap-5'>
           <View className='h-[1px] grow bg-gray-300' />
-          <Text className='text-sm font-medium text-center text-gray-300'>
+          <Text className='text-center font-medium text-sm text-gray-300'>
             Sign in with
           </Text>
           <View className='h-[1px] grow bg-gray-300' />
