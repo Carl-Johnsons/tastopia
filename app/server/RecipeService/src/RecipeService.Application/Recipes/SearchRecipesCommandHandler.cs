@@ -114,7 +114,7 @@ public class SearchRecipesCommandHandler : IRequestHandler<SearchRecipesCommand,
 
         if (response == null || response.Message.Users.Count != authorIds.Count)
         {
-            throw new Exception("Invalid response");
+            return Result<PaginatedSearchRecipeListResponse?>.Failure(RecipeError.NotFound);
         }
 
         var mapUser = response.Message.Users;

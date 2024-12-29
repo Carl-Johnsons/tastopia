@@ -56,7 +56,7 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
             });
         }
 
-        var userQuery = _context.Users.OrderByDescending(u => u.DisplayName).AsQueryable();
+        var userQuery = _context.Users.Where(u => u.AccountId != accountId).OrderByDescending(u => u.DisplayName).AsQueryable();
 
         userQuery = userQuery.Where(u => u.IsAccountActive == true &&
                                         (u.DisplayName.ToLower().Contains(keyword) ||
