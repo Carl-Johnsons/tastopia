@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace DuendeIdentityServer.Pages.Diagnostics
 {
     [SecurityHeaders]
-    [Authorize]
+    //[Authorize]
     public class Index : PageModel
     {
         public ViewModel View { get; set; } = default!;

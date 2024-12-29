@@ -4,7 +4,7 @@
 
 project_root=$(pwd)
 
-[[ "$PLATFORM" != "windows" ]] && sudo chmod 755 data/db -R && echo -e "${GREEN}Run chmod 755 for data/db directory successfully${NC}"
+[[ "$PLATFORM" != "windows" ]] && sudo chmod 777 data/db -R && echo -e "${GREEN}Run chmod 777 for data/db directory successfully${NC}"
 
 update_database() {
     local service_path=$1

@@ -12,25 +12,44 @@ export interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   role: ROLE | null;
+  isVerifyingAccount: boolean;
+  verifyIdentifier: string | null;
 }
 
 const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
-  role: ROLE.GUEST
+  role: null,
+  isVerifyingAccount: false,
+  verifyIdentifier: null
+};
+
+type SaveAuthDataAction = {
+  type: string;
+  payload: Partial<AuthState>;
 };
 
 export const selectAccessToken = () => useAppSelector(state => state.auth.accessToken);
 export const selectRefreshToken = () => useAppSelector(state => state.auth.refreshToken);
 export const selectRole = () => useAppSelector(state => state.auth.role);
+export const selectIsVerifyingAccount = () =>
+  useAppSelector(state => state.auth.isVerifyingAccount);
+export const selectVerifyIdentifier = () =>
+  useAppSelector(state => state.auth.verifyIdentifier);
 
 export const AuthSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    saveAuthData: (state, action) => {
+    saveAuthData: (state, action: SaveAuthDataAction) => {
       Object.assign(state, action.payload);
-    }
+    },
+    logout: state => ({
+      ...initialState,
+      accessToken: state.accessToken,
+      isVerifyingAccount: state.isVerifyingAccount,
+      verifyIdentifier: state.verifyIdentifier
+    })
   },
   extraReducers: builder => {
     builder.addCase(PURGE, () => {
@@ -39,6 +58,6 @@ export const AuthSlice = createSlice({
   }
 });
 
-export const { saveAuthData } = AuthSlice.actions;
+export const { saveAuthData, logout } = AuthSlice.actions;
 
 export default AuthSlice.reducer;

@@ -11,8 +11,7 @@ import {
 import Input from "./Input";
 import Button from "./Button";
 import { VerifyParams } from "@/api/user";
-import { useAuthContext } from "./AuthProvider";
-import { AuthState } from "@/slices/auth.slice";
+import { selectAccessToken } from "@/slices/auth.slice";
 
 type VerifyFormProps = {
   onSubmit: (data: VerifyParams) => Promise<void>;
@@ -22,7 +21,7 @@ type VerifyFormFields = Array<string>;
 
 export const VerifyForm = (props: VerifyFormProps) => {
   const { onSubmit, isLoading } = props;
-  const { accessToken } = useAuthContext().tokens as AuthState;
+  const accessToken = selectAccessToken();
   const [formValues, setFormValues] = useState<VerifyFormFields>([
     "",
     "",
@@ -55,17 +54,15 @@ export const VerifyForm = (props: VerifyFormProps) => {
   };
 
   const handleTextChange = (value: string, index: number) => {
-    if (value.length < 2) {
-      setFormValues(
-        formValues.map((char, idx) => (idx === index ? value.toUpperCase() : char))
-      );
-    }
+    const firstChar = value.charAt(0).toUpperCase();
 
-    if (value.length === 0) {
-      if (index !== 0) {
-        inputRefs[index - 1].current?.focus();
-      }
-    } else if (index !== inputRefs.length - 1) {
+    setFormValues(
+      formValues.map((currentChar, idx) => (idx === index ? firstChar : currentChar))
+    );
+
+    if (value?.length === 0 && index > 0) {
+      inputRefs[index - 1].current?.focus();
+    } else if (value.length > 0 && index < inputRefs.length - 1) {
       inputRefs[index + 1].current?.focus();
     }
   };
@@ -85,10 +82,11 @@ export const VerifyForm = (props: VerifyFormProps) => {
             key={index}
             ref={ref}
             autoCapitalize='characters'
-            className={`aspect-square w-[53px] border-gray-300 text-center text-primary focus:border-primary`}
+            className={`aspect-square w-[53px] shrink grow border-gray-300 text-center text-primary focus:border-primary`}
             value={formValues[index]}
             onChangeText={value => handleTextChange(value, index)}
             onKeyPress={({ nativeEvent }) => resolvePos(nativeEvent.key, index)}
+            autoFocus={index === 0}
           />
         ))}
       </View>

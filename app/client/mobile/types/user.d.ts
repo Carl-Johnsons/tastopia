@@ -1,8 +1,8 @@
 type SearchUserResultProps = {
   id: string;
+  avtUrl: string;
   displayName: string;
   username: string;
-  totalRecipe: string;
-  userAvtUrl: string;
-  followerId: string[];
+  numberOfRecipe: number;
+  isFollowing: boolean;
 };

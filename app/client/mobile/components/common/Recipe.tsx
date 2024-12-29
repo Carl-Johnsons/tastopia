@@ -1,8 +1,8 @@
 // components/DishCard.tsx
 import React from "react";
-import { View, Text, Image, TouchableWithoutFeedback, Touchable } from "react-native";
-import { Ionicons, Feather } from "@expo/vector-icons";
 import Vote from "./Vote";
+import { Ionicons, Feather } from "@expo/vector-icons";
+import { View, Text, Image, TouchableWithoutFeedback } from "react-native";
 
 const Recipe = ({
   id,
@@ -54,8 +54,20 @@ const Recipe = ({
 
           <View className='gap-3 px-4'>
             <View className='gap-1'>
-              <Text className='text-2xl font-bold'>{title}</Text>
-              <Text className=''>{description}</Text>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode='tail'
+                className='text-2xl font-bold'
+              >
+                {title}
+              </Text>
+              <Text
+                numberOfLines={4}
+                ellipsizeMode='tail'
+                className='body-regular'
+              >
+                {description}
+              </Text>
             </View>
 
             <View className='flex-row gap-2 flex-start'>

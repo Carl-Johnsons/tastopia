@@ -5,7 +5,7 @@ import {
 } from "@/lib/validation/auth";
 import { z } from "zod";
 import Constants from "expo-constants";
-import axios from 'axios';
+import axios from "axios";
 
 export type LoginParams = z.infer<typeof loginWithEmailSchema>;
 
@@ -35,35 +35,35 @@ export enum IDENTIFIER_TYPE {
 
 export const login = async (inputs: LoginParams): Promise<LoginResponse> => {
   const body = new URLSearchParams({
-    client_id: 'react.native',
-    scope: 'openid profile phone email offline_access IdentityServerApi',
-    grant_type: 'password',
+    client_id: "react.native",
+    scope: "openid profile phone email offline_access IdentityServerApi",
+    grant_type: "password",
     username: inputs.identifier,
-    password: inputs.password,
+    password: inputs.password
   }).toString();
 
-  console.log('Sending request');
+  console.log("Sending request");
 
   try {
     const res = await axios.post(`http://${host}:5000/connect/token`, body, {
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+        "Content-Type": "application/x-www-form-urlencoded"
+      }
     });
 
-    console.log('Got response');
-    console.log('response', res);
+    console.log("Got response");
+    console.log("response", res);
 
     const data = res.data;
-    console.log('data', data);
-
-    if (data.error) throw new Error(data.error);
-
-    console.log('Return data');
+    console.log("data", data);
     return data;
   } catch (error: any) {
-    console.error('Error during login request:', error);
-    throw new Error(error.response?.data?.error || 'Login request failed');
+    console.log("error", JSON.stringify(error, null, 2));
+    if (error.message) {
+      throw new Error(error.message);
+    }
+
+    throw new Error("An error has occured.");
   }
 };
 
@@ -75,28 +75,28 @@ export const register = async (
   inputs: SignUpParams,
   type: IDENTIFIER_TYPE
 ): Promise<SignUpResponse> => {
-  const REGISTER_TYPE = type === IDENTIFIER_TYPE.EMAIL ? 'email' : 'phone';
+  const REGISTER_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
   const url = `http://${host}:5000/api/account/register/${REGISTER_TYPE}`;
 
-  console.log('Sending request');
+  console.log("Sending request");
 
   try {
     const { data } = await axios.post(url, inputs, {
       headers: {
-        'Content-Type': 'application/json',
-      },
+        "Content-Type": "application/json"
+      }
     });
 
-    console.log('Got response');
+    console.log("Got response");
 
     if (data.error) throw new Error(data.error);
     if (data.Message) throw new Error(data.Message);
 
-    console.log('Check data ok, return data');
+    console.log("Check data ok, return data");
     return data;
   } catch (error: any) {
-    console.error('Error during registration:', error);
-    throw new Error(error.response?.data?.Message || 'Registration failed');
+    console.log("Error during registration:", error);
+    throw new Error(error.response?.data?.Message || "Registration failed");
   }
 };
 
@@ -120,20 +120,20 @@ export const verify = async (inputs: VerifyParams): Promise<VerifyResponse> => {
       { OTP },
       {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        }
       }
     );
 
     if (status !== 200) {
-      throw new Error(data.Message || 'Verification failed');
+      throw new Error(data.Message || "Verification failed");
     }
 
     return 0;
   } catch (error: any) {
-    console.error('Error during verification:', error);
-    throw new Error(error.response?.data?.Message || 'Verification failed');
+    console.log("Error during verification:", error);
+    throw new Error(error.response?.data?.Message || "Verification failed");
   }
 };
 
@@ -157,20 +157,19 @@ export const resendVerifyCode = async (
       {},
       {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        }
       }
     );
 
     if (status !== 200) {
-      throw new Error(data.Message || 'Resend verification code failed');
+      throw new Error(data.Message || "Resend verification code failed");
     }
 
     return 0;
   } catch (error: any) {
-    console.error('Error during resending verification code:', error);
-    throw new Error(error.response?.data?.Message || 'Resend verification code failed');
+    console.log("Error during resending verification code:", error);
+    throw new Error(error.response?.data?.Message || "Resend verification code failed");
   }
 };
-
