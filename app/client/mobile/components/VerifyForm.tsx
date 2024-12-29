@@ -11,8 +11,7 @@ import {
 import Input from "./Input";
 import Button from "./Button";
 import { VerifyParams } from "@/api/user";
-import { useAuthContext } from "./AuthProvider";
-import { AuthState } from "@/slices/auth.slice";
+import { selectAccessToken } from "@/slices/auth.slice";
 
 type VerifyFormProps = {
   onSubmit: (data: VerifyParams) => Promise<void>;
@@ -22,7 +21,7 @@ type VerifyFormFields = Array<string>;
 
 export const VerifyForm = (props: VerifyFormProps) => {
   const { onSubmit, isLoading } = props;
-  const { accessToken } = useAuthContext().tokens as AuthState;
+  const accessToken = selectAccessToken();
   const [formValues, setFormValues] = useState<VerifyFormFields>([
     "",
     "",

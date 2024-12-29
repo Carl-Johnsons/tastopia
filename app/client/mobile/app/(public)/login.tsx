@@ -42,6 +42,7 @@ const Login = () => {
       const res = await login(data);
       const accessToken = res.access_token;
       const refreshToken = res.refresh_token;
+      // Check role here
       const role = ROLE.USER;
 
       dispatch(saveAuthData({ accessToken, refreshToken, role }));

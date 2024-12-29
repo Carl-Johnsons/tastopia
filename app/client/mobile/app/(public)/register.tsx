@@ -1,27 +1,54 @@
 import { Alert, Platform, Pressable, Text, View } from "react-native";
-import React, { useState } from "react";
-import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { router, useNavigation } from "expo-router";
 import SignUpForm, { SignUpFormFields } from "@/components/SignUpForm";
 import { ZodError } from "zod";
 import { IDENTIFIER_TYPE, register } from "@/api/user";
 import GoogleButton from "@/components/GoogleButton";
-import { useAuthContext } from "@/components/AuthProvider";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
 import { UseLoginWithGoogle } from "@/hooks/useLoginWithGoogle";
-import { ROLE } from "@/slices/auth.slice";
+import {
+  ROLE,
+  saveAuthData,
+  selectIsVerifyingAccount,
+  selectVerifyIdentifier
+} from "@/slices/auth.slice";
 import {
   registerWithEmailSchema,
   registerWithPhoneNumberSchema
 } from "@/lib/validation/auth";
+import { useDispatch } from "react-redux";
 
 const Register = () => {
   const isAndroid = Platform.OS === "android";
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const { setTokens, setIdentifier } = useAuthContext();
   const { loginWithGoogle } = UseLoginWithGoogle();
+  const dispatch = useDispatch();
+  const isVerifyingAccount = selectIsVerifyingAccount();
+  const verifyIdentifier = selectVerifyIdentifier();
+  const navigation = useNavigation();
+  const currentRouteName = navigation.getState().routes[navigation.getState().index].name;
 
-  const signUp = async (data: SignUpFormFields) => {
+  useEffect(() => {
+    if (isVerifyingAccount && currentRouteName === "register") {
+      Alert.alert(
+        "Verifying account in pending",
+        `You have an account (${verifyIdentifier}) that is in the verifying process. Do you want to continue the process?`,
+        [
+          {
+            text: "Yes",
+            onPress: () => router.navigate("/verify")
+          },
+          {
+            text: "No"
+          }
+        ]
+      );
+    }
+  }, [isVerifyingAccount, currentRouteName]);
+
+  const onSubmit = async (data: SignUpFormFields) => {
     setIsSubmitting(true);
 
     try {
@@ -38,12 +65,30 @@ const Register = () => {
 
       const res = await register(data, registerType);
 
-      setIdentifier(data.identifier);
-      setTokens({
-        accessToken: res.access_token,
-        refreshToken: res.refresh_token,
-        role: ROLE.USER
-      });
+      console.log(
+        "data after register",
+        JSON.stringify(
+          {
+            accessToken: res.access_token,
+            refreshToken: res.refresh_token,
+            role: ROLE.USER,
+            isVerifyingAccount: true,
+            verifyIdentifier: data.identifier
+          },
+          null,
+          2
+        )
+      );
+
+      dispatch(
+        saveAuthData({
+          accessToken: res.access_token,
+          refreshToken: res.refresh_token,
+          role: ROLE.USER,
+          isVerifyingAccount: true,
+          verifyIdentifier: data.identifier
+        })
+      );
 
       const route = "/verify";
       router.push(route);
@@ -68,7 +113,7 @@ const Register = () => {
     <View className='relative h-full'>
       <CircleBg />
       <View
-        className={`absolute ${isAndroid ? "top-[2%]" : "top-[6%]"} flex w-full justify-center gap-[4vh] px-6`}
+        className={`absolute ${isAndroid ? "top-[5%]" : "top-[6%]"} flex w-full justify-center gap-[4vh] px-4`}
       >
         <BackButton
           onPress={router.back}
@@ -76,7 +121,7 @@ const Register = () => {
         />
         <Text className='font-sans font-semibold text-4xl text-black'>Register</Text>
         <SignUpForm
-          onSubmit={signUp}
+          onSubmit={onSubmit}
           isLoading={isSubmitting}
         />
         <Pressable onPress={navigateToSignInScreen}>

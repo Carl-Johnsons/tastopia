@@ -4,13 +4,14 @@ import { Redirect, Tabs, useRootNavigationState } from "expo-router";
 import { menuList } from "@/constants/menu";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
-import { ROLE, selectAccessToken, selectRole } from "@/slices/auth.slice";
+import {
+  selectRole
+} from "@/slices/auth.slice";
 
 const ProtectedLayout = () => {
   const { t } = useTranslation("menu");
 
   const [isKeyBoardVisible, setIsKeyBoardVisible] = useState(false);
-  const accessToken = selectAccessToken();
   const role = selectRole();
   const navigationState = useRootNavigationState();
 
@@ -35,7 +36,7 @@ const ProtectedLayout = () => {
     };
   }, []);
 
-  if (role != ROLE.GUEST && !accessToken) {
+  if (!role) {
     return !navigationState?.key ? (
       <View className='h-full justify-center'>
         <ActivityIndicator

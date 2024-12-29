@@ -1,10 +1,13 @@
-import { persistor } from "@/store";
 import { router } from "expo-router";
 import { Button } from "react-native";
+import { useDispatch } from "react-redux";
+import { logout as logoutAction } from "@/slices/auth.slice";
 
 export const LogoutButton = () => {
+  const dispatch = useDispatch();
+
   const logout = async () => {
-    await persistor.purge();
+    dispatch(logoutAction());
     router.replace("/welcome");
   };
 

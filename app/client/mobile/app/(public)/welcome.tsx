@@ -13,6 +13,8 @@ import GoogleButton from "@/components/GoogleButton";
 import { UseLoginWithGoogle } from "@/hooks/useLoginWithGoogle";
 import Button from "@/components/Button";
 import { router } from "expo-router";
+import { useDispatch } from "react-redux";
+import { ROLE, saveAuthData } from "@/slices/auth.slice";
 
 const Welcome = () => {
   const isAndroid = Platform.OS === "android";
@@ -21,12 +23,9 @@ const Welcome = () => {
   const textTranslateY = Array.from({ length: 3 }, () => useSharedValue(100));
   const textOpacity = Array.from({ length: 3 }, () => useSharedValue(0));
   const imageBgOpacity = useSharedValue(0);
+  const dispatch = useDispatch();
   const DELAY_MARGIN = 900;
   const TEXT_DELAY = 500;
-
-  useEffect(() => {
-    animate();
-  }, []);
 
   const textStyles = Array.from({ length: 3 }, (_value, index) =>
     useAnimatedStyle(() => ({
@@ -38,6 +37,10 @@ const Welcome = () => {
   const imageBackgroundStyles = useAnimatedStyle(() => ({
     opacity: imageBgOpacity.value
   }));
+
+  useEffect(() => {
+    animate();
+  }, []);
 
   const animate = () => {
     textScale.value = withDelay(1000, withTiming(1));
@@ -70,6 +73,7 @@ const Welcome = () => {
   };
 
   const browseAsGuest = () => {
+    dispatch(saveAuthData({ role: ROLE.GUEST }));
     router.replace("/(protected)");
   };
 
