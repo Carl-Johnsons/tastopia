@@ -49,12 +49,25 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
-
+    [AllowAnonymous]
     [HttpPost("get-recipe-feed")]
     public async Task<IActionResult> GetRecipeFeed([FromBody] GetRecipeFeedsDTO getRecipeFeedsDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        await Console.Out.WriteLineAsync("subjectId:"+ string.IsNullOrEmpty(subjectId));
+
+        if (string.IsNullOrEmpty(subjectId))
+        {
+            var resultGuest = await _sender.Send(new GetRecipeFeedsForGuestCommand
+            {
+                TagValues = getRecipeFeedsDTO.TagValues
+            });
+            resultGuest.ThrowIfFailure();
+            return Ok(resultGuest.Value);
+        }
+     
 
         var result = await _sender.Send(new GetRecipeFeedsCommand
         {

@@ -9,37 +9,31 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.Application.Recipes;
 
-public class GetRecipeFeedsCommand : IRequest<Result<PaginatedRecipeFeedsListResponse?>>
+public class GetRecipeFeedsForGuestCommand : IRequest<Result<PaginatedRecipeFeedsListResponse?>>
 {
     [Required]
-    public int? Skip {  get; init; }
-
-    [Required]
     public List<string>? TagValues { get; init; }
-
-    [Required]
-    public Guid AccountId { get; init;}
 }
 
-public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Result<PaginatedRecipeFeedsListResponse?>>
+public class GetRecipeFeedsForGuestCommandHandler : IRequestHandler<GetRecipeFeedsForGuestCommand, Result<PaginatedRecipeFeedsListResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public GetRecipeFeedsCommandHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility)
+    public GetRecipeFeedsForGuestCommandHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
         _serviceBus = serviceBus;
         _paginateDataUtility = paginateDataUtility;
     }
 
-    public  async Task<Result<PaginatedRecipeFeedsListResponse?>> Handle(GetRecipeFeedsCommand request, CancellationToken cancellationToken)
+    public  async Task<Result<PaginatedRecipeFeedsListResponse?>> Handle(GetRecipeFeedsForGuestCommand request, CancellationToken cancellationToken)
     {
         var tagValues = request.TagValues;
-        var skip = request.Skip;
+        var skip = 0;
 
-        if (skip == null || tagValues == null || !tagValues.Any())
+        if (tagValues == null || !tagValues.Any())
         {
             return Result<PaginatedRecipeFeedsListResponse>.Failure(RecipeError.NotFound);
         }
@@ -69,21 +63,11 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
 
         recipesQuery = _paginateDataUtility.PaginateQuery(recipesQuery, new PaginateParam
         {
-            Offset = (skip ?? 0) * RECIPE_CONSTANTS.RECIPE_LIMIT,
+            Offset = skip * RECIPE_CONSTANTS.RECIPE_LIMIT,
             Limit = RECIPE_CONSTANTS.RECIPE_LIMIT
         });
 
-        var groupedRecipes = _context.RecipeVotes
-            .Where(rv => rv.AccountId == request.AccountId)
-            .GroupBy(rv => rv.IsUpvote)
-            .ToDictionary(
-                g => g.Key,
-                g => g.Select(rv => rv.RecipeId).ToHashSet()
-             );
-
-        var upvoteRecipes = groupedRecipes.TryGetValue(true, out var upvotes) ? upvotes : new HashSet<Guid>();
-        var downvoteRecipes = groupedRecipes.TryGetValue(false, out var downvotes) ? downvotes : new HashSet<Guid>();
-
+   
 
 
         var recipeList = await recipesQuery.Select(r =>
@@ -98,9 +82,8 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
             Title = r.Title,
             NumberOfComment = r.NumberOfComment,
             VoteDiff = r.VoteDiff,
-            Vote = upvoteRecipes.Contains(r.Id) ? Vote.Upvote.ToString() : 
-                  (downvoteRecipes.Contains(r.Id) ? Vote.Downvote.ToString() : Vote.None.ToString()),
-        }).ToListAsync();
+            Vote = Vote.None.ToString(),
+        }).Take(5).ToListAsync();
 
         if (recipeList == null || !recipeList.Any())
         {
@@ -141,20 +124,13 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
             recipe.AuthorAvtUrl = mapUser[recipe.AuthorId].AvtUrl;
         }
 
-        var hasNextPage = true;
-
-        if(skip >= totalPage - 1)
-        {
-            hasNextPage = false;
-        }
-
         var paginatedResponse = new PaginatedRecipeFeedsListResponse
         {
             PaginatedData = recipeList,
             Metadata = new AdvancePaginatedMetadata
             {
                 TotalPage = totalPage,
-                HasNextPage = hasNextPage,
+                HasNextPage = false,
             }
         };
         return Result<PaginatedRecipeFeedsListResponse?>.Success(paginatedResponse);
