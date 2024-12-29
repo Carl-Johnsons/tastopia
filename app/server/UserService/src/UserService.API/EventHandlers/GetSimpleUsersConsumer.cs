@@ -1,4 +1,5 @@
 ﻿using Contract.Common;
+using Contract.Constants;
 using Contract.DTOs.UserDTO;
 using Contract.Event.UserEvent;
 using MassTransit;
@@ -6,7 +7,8 @@ using UserService.Application.Users.Commands;
 
 namespace UserService.API.EventHandlers;
 
-[QueueName("get-simple-users-event")]
+[QueueName(RabbitMQConstant.QUEUE.NAME.GET_SIMPLE_USERS,
+    exchangeName: RabbitMQConstant.EXCHANGE.NAME.GET_SIMPLE_USERS)]
 public class GetSimpleUsersConsumer : IConsumer<GetSimpleUsersEvent>
 {
     private readonly ISender _sender;
@@ -25,13 +27,14 @@ public class GetSimpleUsersConsumer : IConsumer<GetSimpleUsersEvent>
 
         var users = response.Value;
 
-        if(users == null || !users.Any()) {
+        if (users == null || !users.Any())
+        {
             throw new Exception("Users not found");
         }
 
-        var mapUser = new Dictionary<Guid ,SimpleUser>();
+        var mapUser = new Dictionary<Guid, SimpleUser>();
 
-        foreach(var user in users)
+        foreach (var user in users)
         {
             mapUser.Add(user.AccountId, new SimpleUser
             {
@@ -41,7 +44,8 @@ public class GetSimpleUsersConsumer : IConsumer<GetSimpleUsersEvent>
             });
         }
 
-        var result = new GetSimpleUsersDTO { 
+        var result = new GetSimpleUsersDTO
+        {
             Users = mapUser,
         };
 

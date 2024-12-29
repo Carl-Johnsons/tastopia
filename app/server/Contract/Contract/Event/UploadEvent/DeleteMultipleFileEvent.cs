@@ -2,7 +2,7 @@
 
 namespace Contract.Event.UploadEvent;
 
-[EntityName("delete-multiple-file-event")]
+[EntityName("DeleteMultipleFileEvent")]
 public record DeleteMultipleFileEvent
 {
     public List<string> DeleteUrl { get; set; } = null!;

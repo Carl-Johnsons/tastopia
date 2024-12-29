@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Contract.Event.NotificationEvent;
 
-[EntityName("email-worker-exchange")]
+[EntityName("SendEmailEvent")]
 public class SendEmailEvent
 {
     [Required]

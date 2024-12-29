@@ -6,7 +6,8 @@ using NotificationService.Application.Emails;
 
 namespace NotificationService.API.EventHandlers;
 
-[QueueName("user-resend-otp-event")]
+[QueueName(RabbitMQConstant.QUEUE.NAME.USER_RESEND_OTP,
+    exchangeName: RabbitMQConstant.EXCHANGE.NAME.USER_RESEND_OTP)]
 public class UserResendOTPConsumer : IConsumer<UserResendOTPEvent>
 {
     private readonly ISender _sender;

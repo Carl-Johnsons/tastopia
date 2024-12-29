@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Contract.Event.IdentityEvent;
 
-[EntityName("user-register-event")]
+[EntityName("UserRegisterEvent")]
 public record UserRegisterEvent
 {
     [Required]
