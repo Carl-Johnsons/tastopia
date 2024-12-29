@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace DuendeIdentityServer.Pages.Ciba
 {
     [SecurityHeaders]
-    [Authorize]
+    //[Authorize]
     public class AllModel : PageModel
     {
         public IEnumerable<BackchannelUserLoginRequest> Logins { get; set; } = default!;

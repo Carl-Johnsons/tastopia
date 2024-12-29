@@ -16,7 +16,7 @@ using Microsoft.Extensions.Options;
 namespace DuendeIdentityServer.Pages.Device
 {
     [SecurityHeaders]
-    [Authorize]
+    //[Authorize]
     public class Index : PageModel
     {
         private readonly IDeviceFlowInteractionService _interaction;

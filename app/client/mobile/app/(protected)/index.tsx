@@ -30,7 +30,7 @@ const Community = () => {
     console.log("skip", skip);
     console.log("total recipes", recipes.length);
 
-    const url = getAPIUrl("api/recipe/get-recipe-feed");
+    const url = getAPIUrl(5005, "api/recipe/get-recipe-feed");
 
     const headers = {
       "Content-Type": "application/json"

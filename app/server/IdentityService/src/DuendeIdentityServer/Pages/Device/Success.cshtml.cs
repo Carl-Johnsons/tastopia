@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace DuendeIdentityServer.Pages.Device
 {
     [SecurityHeaders]
-    [Authorize]
+    //[Authorize]
     public class SuccessModel : PageModel
     {
         public void OnGet()

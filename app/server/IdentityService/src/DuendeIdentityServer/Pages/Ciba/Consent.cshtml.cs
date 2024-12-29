@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DuendeIdentityServer.Pages.Ciba
 {
-    [Authorize]
+    //[Authorize]
     [SecurityHeaders]
     public class Consent : PageModel
     {
