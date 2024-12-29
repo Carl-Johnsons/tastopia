@@ -36,7 +36,7 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
         var keyword = request.Keyword;
         var accountId = request.AccountId;
 
-        if(skip == null || keyword == null || accountId == null)
+        if(skip == null || keyword == null)
         {
             return Result<PaginatedSearchUserListResponse?>.Failure(UserError.NotFound);
         }
