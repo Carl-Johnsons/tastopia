@@ -13,6 +13,8 @@ import GoogleButton from "@/components/GoogleButton";
 import { UseLoginWithGoogle } from "@/hooks/useLoginWithGoogle";
 import Button from "@/components/Button";
 import { router } from "expo-router";
+import { useDispatch } from "react-redux";
+import { ROLE, saveAuthData } from "@/slices/auth.slice";
 
 const Welcome = () => {
   const isAndroid = Platform.OS === "android";
@@ -21,12 +23,9 @@ const Welcome = () => {
   const textTranslateY = Array.from({ length: 3 }, () => useSharedValue(100));
   const textOpacity = Array.from({ length: 3 }, () => useSharedValue(0));
   const imageBgOpacity = useSharedValue(0);
+  const dispatch = useDispatch();
   const DELAY_MARGIN = 900;
   const TEXT_DELAY = 500;
-
-  useEffect(() => {
-    animate();
-  }, []);
 
   const textStyles = Array.from({ length: 3 }, (_value, index) =>
     useAnimatedStyle(() => ({
@@ -38,6 +37,10 @@ const Welcome = () => {
   const imageBackgroundStyles = useAnimatedStyle(() => ({
     opacity: imageBgOpacity.value
   }));
+
+  useEffect(() => {
+    animate();
+  }, []);
 
   const animate = () => {
     textScale.value = withDelay(1000, withTiming(1));
@@ -70,6 +73,7 @@ const Welcome = () => {
   };
 
   const browseAsGuest = () => {
+    dispatch(saveAuthData({ role: ROLE.GUEST }));
     router.replace("/(protected)");
   };
 
@@ -83,7 +87,7 @@ const Welcome = () => {
         <View className='relative h-full px-3.5'>
           <Button
             onPress={browseAsGuest}
-            className={`absolute right-[26px] top-[${isAndroid ? "2%" : "6%"}] rounded-full bg-white px-5 py-3`}
+            className={`absolute right-[26px] ${isAndroid ? "top-[2%]" : "top-[6%]"} rounded-full bg-white px-4 py-3`}
           >
             <Text className='font-sans text-primary'>Skip</Text>
           </Button>
@@ -91,14 +95,14 @@ const Welcome = () => {
           <Animated.View className='mt-[20vh] flex gap-3.5'>
             <Animated.Text
               style={textStyles[0]}
-              className='text-5xl font-bold text-black'
+              className='font-bold text-5xl text-black'
             >
               Welcome to
             </Animated.Text>
 
             <Animated.Text
               style={textStyles[1]}
-              className='text-4xl font-bold text-primary'
+              className='font-bold text-4xl text-primary'
             >
               Tastopia
             </Animated.Text>
@@ -114,7 +118,7 @@ const Welcome = () => {
           <View className='absolute bottom-[6vh] left-3.5 flex w-full gap-4'>
             <View className='flex-row items-center justify-center gap-5'>
               <View className='h-[1px] grow bg-gray-300' />
-              <Animated.Text className='text-sm font-medium text-center text-gray-300'>
+              <Animated.Text className='text-center font-medium text-sm text-gray-300'>
                 Sign in with
               </Animated.Text>
               <View className='h-[1px] grow bg-gray-300' />
@@ -123,21 +127,21 @@ const Welcome = () => {
             <View className='flex items-center'>
               <GoogleButton
                 onPress={loginWithGoogle}
-                className='p-3 bg-white border border-gray-300 rounded-full'
+                className='rounded-full border border-gray-300 bg-white p-3'
               />
             </View>
 
             <Button
               onPress={navigateToRegisterScreen}
-              className='flex py-4 border border-white rounded-full bg-white/20'
+              className='flex rounded-full border border-white bg-white/20 py-4'
             >
-              <Text className='text-lg font-medium text-center text-white'>
+              <Text className='text-center font-medium text-lg text-white'>
                 Start with email or phone
               </Text>
             </Button>
 
             <Pressable onPress={navigateToLoginScreen}>
-              <Text className='text-sm font-medium text-center text-gray-300'>
+              <Text className='text-center font-medium text-sm text-gray-300'>
                 Already have an account?{" "}
                 <Text className='font-medium text-white underline'>Sign In</Text>
               </Text>

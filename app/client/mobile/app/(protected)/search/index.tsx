@@ -6,9 +6,9 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Alert,
-  Button,
   TouchableOpacity,
-  Touchable
+  FlatList,
+  RefreshControl
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
@@ -17,19 +17,71 @@ import { globalStyles } from "@/components/common/GlobalStyles";
 import useDebounce from "@/hooks/useDebounce";
 import { AntDesign } from "@expo/vector-icons";
 import useDarkMode from "@/hooks/useDarkMode";
+import { getAPIUrl } from "@/utils/fetch";
+import User from "@/components/common/User";
+import { Image } from "expo-image";
+import { selectAccessToken } from "@/slices/auth.slice";
 
 const Search = () => {
+  const [skip, setSkip] = useState<number>(0);
+  const [onFocus, setOnFocus] = useState<boolean>(false);
+  const [hasNextPage, setHasNextPage] = useState<boolean>();
   const [searchValue, setSearchValue] = useState<string>("");
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [searchResults, setSearchResults] = useState<SearchUserResultProps[]>();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchUserResultProps[]>([]);
   const [doneSearching, setDoneSearching] = useState<boolean>(false);
-  const [onFocus, setOnFocus] = useState<boolean>(false);
 
   const textInputRef = useRef<TextInput>(null);
 
   const isDarkMode = useDarkMode();
 
   const debouncedValue = useDebounce(searchValue, 800);
+  const accessToken = selectAccessToken();
+
+  const fetchSearchResults = async (isFetchMore: boolean) => {
+    if (isFetchMore && !hasNextPage) return;
+
+    setIsSearching(true);
+    const url = getAPIUrl(5003, "api/user/search");
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`
+    };
+
+    console.log("keyword", searchValue);
+    console.log("skip", skip);
+    const body = JSON.stringify({
+      keyword: debouncedValue,
+      skip: parseInt(skip.toString())
+    });
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: body
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      console.log("result", data.paginatedData);
+
+      setSearchResults(data.paginatedData);
+      setHasNextPage(data.metadata.hasNextPage);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setIsSearching(false);
+      setDoneSearching(true);
+    }
+  };
+
   const handleFilter = () => {};
 
   const handleFocus = (isFocus: boolean) => {
@@ -42,6 +94,7 @@ const Search = () => {
 
   const handleCancel = () => {
     setOnFocus(false);
+    setDoneSearching(false);
     setSearchValue("");
     setSearchResults([]);
     Keyboard.dismiss();
@@ -51,25 +104,17 @@ const Search = () => {
     setSearchValue(text);
   };
 
+  const onRefresh = () => {};
+
+  const handleLoadMore = () => {};
+
   useEffect(() => {
     if (!debouncedValue.trim()) {
       setSearchResults([]);
       return;
     }
 
-    const fetchSearchResults = async () => {
-      setIsSearching(true);
-      try {
-        await new Promise(resolve => setTimeout(resolve, 500));
-      } catch (error) {
-        Alert.alert("Error", "Something went wrong while searching.");
-      } finally {
-        setIsSearching(false);
-        setDoneSearching(true);
-      }
-    };
-
-    fetchSearchResults();
+    fetchSearchResults(false);
   }, [debouncedValue]);
 
   useEffect(() => {
@@ -78,15 +123,20 @@ const Search = () => {
 
   const handleFollowUnFollow = () => {};
 
-  console.log("isSearching", isSearching);
-
   return (
     <TouchableWithoutFeedback onPress={() => handleFocus(false)}>
-      <SafeAreaView>
+      <SafeAreaView
+        style={{
+          paddingHorizontal: 16,
+          backgroundColor: globalStyles.color.light,
+          height: "100%"
+        }}
+      >
         <View>
-          <Text className='base-medium text-center'>Search Users</Text>
+          <Text className='text-center base-medium'>Search Users</Text>
 
-          <View className='mt-4 flex-row items-center gap-5 px-6'>
+          {/* Search input */}
+          <View className='flex-row items-center gap-5 mt-4'>
             <TouchableWithoutFeedback onPress={() => handleFocus(true)}>
               <View className='relative h-[40px] flex-1 flex-row items-center gap-2 rounded-3xl border-[0.5px] border-gray-300 px-3'>
                 <Feather
@@ -95,8 +145,9 @@ const Search = () => {
                   color='black'
                 />
                 <TextInput
+                  autoCapitalize='none'
                   ref={textInputRef}
-                  className='h-full flex-1'
+                  className='flex-1 h-full'
                   value={searchValue}
                   onPress={() => handleFocus(true)}
                   onChangeText={handleSearch}
@@ -132,6 +183,54 @@ const Search = () => {
             <TouchableWithoutFeedback onPress={handleFilter}>
               <Filter />
             </TouchableWithoutFeedback>
+          </View>
+
+          {/* Result section */}
+          <View className='mt-6'>
+            <Text className='mb-2 h3-bold'>Users</Text>
+
+            <FlatList
+              data={searchResults}
+              keyExtractor={item => item.username}
+              refreshControl={
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  tintColor={"#fff"}
+                  onRefresh={onRefresh}
+                />
+              }
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.1}
+              renderItem={({ item, index }) => (
+                <>
+                  <User {...item} />
+                  {index !== searchResults.length - 1 && (
+                    <View className='my-4 h-[1px] w-full bg-gray-300' />
+                  )}
+                </>
+              )}
+              ListEmptyComponent={() => {
+                return doneSearching ? (
+                  <View className='gap-2 flex-center'>
+                    <Image
+                      source={require("../../../assets/icons/noResult.png")}
+                      style={{ width: 130, height: 130 }}
+                    />
+                    <Text className='text-center paragraph-medium'>No users found!</Text>
+                  </View>
+                ) : (
+                  <View></View>
+                );
+              }}
+            />
+            {/* <User
+              id='asdf'
+              avtUrl='https://imgcdn.stablediffusionweb.com/2024/3/4/97bf4ec3-8c92-4f5a-992c-18bc59e35bd5.jpg'
+              displayName='Vuong'
+              username='quoczuong'
+              numberOfRecipe={1}
+              isFollowing={true}
+            /> */}
           </View>
         </View>
       </SafeAreaView>

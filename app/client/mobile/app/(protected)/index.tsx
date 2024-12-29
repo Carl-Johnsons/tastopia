@@ -8,6 +8,7 @@ import i18next from "i18next";
 import React, { useEffect, useState } from "react";
 import { Text, View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import Header from "@/components/screen/community/Header";
+import { selectAccessToken } from "@/slices/auth.slice";
 
 const Community = () => {
   const [skip, setSkip] = useState<number>(0);
@@ -16,6 +17,7 @@ const Community = () => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
   const [hasNextPage, setHasNextPage] = useState<boolean>();
+  const accessToken = selectAccessToken();
 
   const fetchFeed = async (isFetchMore: boolean) => {
     if (!isLoading) {
@@ -30,10 +32,11 @@ const Community = () => {
     console.log("skip", skip);
     console.log("total recipes", recipes.length);
 
-    const url = getAPIUrl("api/recipe/get-recipe-feed");
+    const url = getAPIUrl(5005, "api/recipe/get-recipe-feed");
 
     const headers = {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`
     };
 
     const body = JSON.stringify({
@@ -164,7 +167,7 @@ const Community = () => {
               source={require("../../assets/icons/noResult.png")}
               style={{ width: 130, height: 130 }}
             />
-            <Text className='text-center paragraph-medium'>
+            <Text className='paragraph-medium text-center'>
               No recipes found! {"\n"}Time to create your own masterpiece!
             </Text>
           </View>

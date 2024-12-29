@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace DuendeIdentityServer.Pages.Grants
 {
     [SecurityHeaders]
-    [Authorize]
+    //[Authorize]
     public class Index : PageModel
     {
         private readonly IIdentityServerInteractionService _interaction;

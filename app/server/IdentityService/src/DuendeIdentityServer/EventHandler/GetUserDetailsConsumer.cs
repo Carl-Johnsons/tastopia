@@ -1,4 +1,5 @@
 ﻿using Contract.Common;
+using Contract.Constants;
 using Contract.DTOs.UserDTO;
 using Contract.Event.UserEvent;
 using IdentityService.Application.Account;
@@ -6,7 +7,9 @@ using MassTransit;
 
 namespace DuendeIdentityServer.EventHandler;
 
-[QueueName("get-user-details-event")]
+[QueueName(RabbitMQConstant.QUEUE.NAME.GET_USER_DETAILS,
+    exchangeName: RabbitMQConstant.EXCHANGE.NAME.GET_USER_DETAILS,
+    type: RabbitMQConstant.EXCHANGE.TYPE.Fanout)]
 public class GetUserDetailsConsumer : IConsumer<GetUserDetailsEvent>
 {
     private readonly ISender _sender;

@@ -2,7 +2,7 @@
 
 namespace Contract.Event.UserEvent;
 
-[EntityName("search-users-event")]
+[EntityName("SearchUsersEvent")]
 public class SearchUsersEvent
 {
     public HashSet<Guid>? AccountIds { get; set; }

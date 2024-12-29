@@ -3,7 +3,8 @@ using MassTransit;
 using System.ComponentModel.DataAnnotations;
 
 namespace Contract.Event.IdentityEvent;
-[EntityName("user-resend-otp-event")]
+
+[EntityName("UserResendOTPEvent")]
 public record UserResendOTPEvent
 {
     [Required]
