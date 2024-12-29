@@ -8,13 +8,14 @@ import Animated, {
   withTiming
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { Pressable, SafeAreaView, Text, View } from "react-native";
+import { Platform, Pressable, Text, View } from "react-native";
 import GoogleButton from "@/components/GoogleButton";
 import { UseLoginWithGoogle } from "@/hooks/useLoginWithGoogle";
 import Button from "@/components/Button";
 import { router } from "expo-router";
 
 const Welcome = () => {
+  const isAndroid = Platform.OS === "android";
   const { loginWithGoogle } = UseLoginWithGoogle();
   const textScale = useSharedValue(0.5);
   const textTranslateY = Array.from({ length: 3 }, () => useSharedValue(100));
@@ -73,80 +74,78 @@ const Welcome = () => {
   };
 
   return (
-    <SafeAreaView>
-      <ImageBackground
-        className='h-full'
-        style={imageBackgroundStyles}
-        source={require("@/assets/images/welcome_bg.png")}
-      >
-        <LinearGradient colors={["transparent", "#191b2f"]}>
-          <View className='relative h-full px-3.5'>
-            <Button
-              onPress={browseAsGuest}
-              className='absolute right-[26px] top-[26px] rounded-full bg-white px-5 py-3'
+    <ImageBackground
+      className='h-full'
+      style={imageBackgroundStyles}
+      source={require("@/assets/images/welcome_bg.png")}
+    >
+      <LinearGradient colors={["transparent", "#191b2f"]}>
+        <View className='relative h-full px-3.5'>
+          <Button
+            onPress={browseAsGuest}
+            className={`absolute right-[26px] top-[${isAndroid ? "2%" : "6%"}] rounded-full bg-white px-5 py-3`}
+          >
+            <Text className='font-sans text-primary'>Skip</Text>
+          </Button>
+
+          <Animated.View className='mt-[20vh] flex gap-3.5'>
+            <Animated.Text
+              style={textStyles[0]}
+              className='text-5xl font-bold text-black'
             >
-              <Text className='font-sans text-primary'>Skip</Text>
+              Welcome to
+            </Animated.Text>
+
+            <Animated.Text
+              style={textStyles[1]}
+              className='text-4xl font-bold text-primary'
+            >
+              Tastopia
+            </Animated.Text>
+
+            <Animated.Text
+              style={textStyles[2]}
+              className='font-sans text-lg text-white'
+            >
+              Where Flavors Unite
+            </Animated.Text>
+          </Animated.View>
+
+          <View className='absolute bottom-[6vh] left-3.5 flex w-full gap-4'>
+            <View className='flex-row items-center justify-center gap-5'>
+              <View className='h-[1px] grow bg-gray-300' />
+              <Animated.Text className='text-sm font-medium text-center text-gray-300'>
+                Sign in with
+              </Animated.Text>
+              <View className='h-[1px] grow bg-gray-300' />
+            </View>
+
+            <View className='flex items-center'>
+              <GoogleButton
+                onPress={loginWithGoogle}
+                className='p-3 bg-white border border-gray-300 rounded-full'
+              />
+            </View>
+
+            <Button
+              onPress={navigateToRegisterScreen}
+              className='flex py-4 border border-white rounded-full bg-white/20'
+            >
+              <Text className='text-lg font-medium text-center text-white'>
+                Start with email or phone
+              </Text>
             </Button>
 
-            <Animated.View className='mt-[20vh] flex gap-3.5'>
-              <Animated.Text
-                style={textStyles[0]}
-                className='font-bold text-5xl text-black'
-              >
-                Welcome to
-              </Animated.Text>
-
-              <Animated.Text
-                style={textStyles[1]}
-                className='font-bold text-4xl text-primary'
-              >
-                Tastopia
-              </Animated.Text>
-
-              <Animated.Text
-                style={textStyles[2]}
-                className='font-sans text-lg text-white'
-              >
-                Where Flavors Unite
-              </Animated.Text>
-            </Animated.View>
-
-            <View className='absolute bottom-[6vh] left-3.5 flex w-full gap-4'>
-              <View className='flex-row items-center justify-center gap-5'>
-                <View className='h-[1px] grow bg-gray-300' />
-                <Animated.Text className='text-center font-medium text-sm text-gray-300'>
-                  Sign in with
-                </Animated.Text>
-                <View className='h-[1px] grow bg-gray-300' />
-              </View>
-
-              <View className='flex items-center'>
-                <GoogleButton
-                  onPress={loginWithGoogle}
-                  className='rounded-full border border-gray-300 bg-white p-3'
-                />
-              </View>
-
-              <Button
-                onPress={navigateToRegisterScreen}
-                className='flex rounded-full border border-white bg-white/20 py-4'
-              >
-                <Text className='text-center font-medium text-lg text-white'>
-                  Start with email or phone
-                </Text>
-              </Button>
-
-              <Pressable onPress={navigateToLoginScreen}>
-                <Text className='text-center font-medium text-sm text-gray-300'>
-                  Already have an account?{" "}
-                  <Text className='font-medium text-white underline'>Sign In</Text>
-                </Text>
-              </Pressable>
-            </View>
+            <Pressable onPress={navigateToLoginScreen}>
+              <Text className='text-sm font-medium text-center text-gray-300'>
+                Already have an account?{" "}
+                <Text className='font-medium text-white underline'>Sign In</Text>
+              </Text>
+            </Pressable>
           </View>
-        </LinearGradient>
-      </ImageBackground>
-    </SafeAreaView>
+        </View>
+      </LinearGradient>
+    </ImageBackground>
   );
 };
 

@@ -1,6 +1,5 @@
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, Platform, Pressable, Text, View } from "react-native";
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useAppDispatch } from "@/store/hooks";
 import { saveAuthData } from "@/slices/auth.slice";
@@ -12,6 +11,7 @@ import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
 
 const Verify = () => {
+  const isAndroid = Platform.OS === "android";
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const { tokens, identifier } = useAuthContext();
@@ -54,37 +54,37 @@ const Verify = () => {
   };
 
   return (
-    <SafeAreaView>
-      <View className='relative h-full'>
-        <CircleBg />
+    <View className='relative h-full'>
+      <CircleBg />
 
-        <View className='absolute top-[38px] flex w-full justify-center gap-[4vh] px-6'>
-          <BackButton
-            onPress={router.back}
-            className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
-          />
+      <View
+        className={`absolute top-[${isAndroid ? "2%" : "6%"}] flex w-full justify-center gap-[4vh] px-6`}
+      >
+        <BackButton
+          onPress={router.back}
+          className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
+        />
 
-          <Text className='font-sans font-semibold text-4xl text-black'>
-            Verification Code
+        <Text className='font-sans text-4xl font-semibold text-black'>
+          Verification Code
+        </Text>
+        <Text className='font-sans text-sm text-gray-300'>
+          Please type the verification code sent to {identifier}
+        </Text>
+
+        <VerifyForm
+          onSubmit={onSubmit}
+          isLoading={isSubmitting}
+          className='mt-10'
+        />
+
+        <Pressable onPress={resendCode}>
+          <Text className='text-center'>
+            I don’t recevie a code! <Text className='text-primary'>Please resend</Text>
           </Text>
-          <Text className='font-sans text-sm text-gray-300'>
-            Please type the verification code sent to {identifier}
-          </Text>
-
-          <VerifyForm
-            onSubmit={onSubmit}
-            isLoading={isSubmitting}
-            className='mt-10'
-          />
-
-          <Pressable onPress={resendCode}>
-            <Text className='text-center'>
-              I don’t recevie a code! <Text className='text-primary'>Please resend</Text>
-            </Text>
-          </Pressable>
-        </View>
+        </Pressable>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
