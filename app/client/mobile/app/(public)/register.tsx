@@ -1,6 +1,5 @@
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, Platform, Pressable, Text, View } from "react-native";
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import SignUpForm, { SignUpFormFields } from "@/components/SignUpForm";
 import { ZodError } from "zod";
@@ -17,6 +16,7 @@ import {
 } from "@/lib/validation/auth";
 
 const Register = () => {
+  const isAndroid = Platform.OS === "android";
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const { setTokens, setIdentifier } = useAuthContext();
   const { loginWithGoogle } = UseLoginWithGoogle();
@@ -65,46 +65,43 @@ const Register = () => {
   };
 
   return (
-    <SafeAreaView>
-      <View className='relative h-full'>
-        <CircleBg />
-        <View className='absolute top-[38px] flex w-full justify-center gap-[4vh] px-6'>
-          <BackButton
-            onPress={router.back}
-            className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
-          />
-          <Text className='font-sans font-semibold text-4xl text-black'>Register</Text>
-          <SignUpForm
-            onSubmit={signUp}
-            isLoading={isSubmitting}
-          />
-          <Pressable>
-            <Text
-              className='text-center font-medium text-sm text-gray-300'
-              onPress={navigateToSignInScreen}
-            >
-              Already have an account?{" "}
-              <Text className='font-medium text-primary'>Login</Text>
-            </Text>
-          </Pressable>
+    <View className='relative h-full'>
+      <CircleBg />
+      <View
+        className={`absolute top-[${isAndroid ? "2%" : "6%"}] flex w-full justify-center gap-[4vh] px-6`}
+      >
+        <BackButton
+          onPress={router.back}
+          className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
+        />
+        <Text className='font-sans text-4xl font-semibold text-black'>Register</Text>
+        <SignUpForm
+          onSubmit={signUp}
+          isLoading={isSubmitting}
+        />
+        <Pressable onPress={navigateToSignInScreen}>
+          <Text className='text-sm font-medium text-center text-gray-300'>
+            Already have an account?{" "}
+            <Text className='font-medium text-primary'>Login</Text>
+          </Text>
+        </Pressable>
 
-          <View className='flex-row items-center justify-center gap-5'>
-            <View className='h-[1px] grow bg-gray-300' />
-            <Text className='text-center font-medium text-sm text-gray-300'>
-              Sign in with
-            </Text>
-            <View className='h-[1px] grow bg-gray-300' />
-          </View>
+        <View className='flex-row items-center justify-center gap-5'>
+          <View className='h-[1px] grow bg-gray-300' />
+          <Text className='text-sm font-medium text-center text-gray-300'>
+            Sign in with
+          </Text>
+          <View className='h-[1px] grow bg-gray-300' />
+        </View>
 
-          <View className='flex items-center'>
-            <GoogleButton
-              onPress={loginWithGoogle}
-              className='rounded-full border border-gray-300 p-3.5'
-            />
-          </View>
+        <View className='flex items-center'>
+          <GoogleButton
+            onPress={loginWithGoogle}
+            className='rounded-full border border-gray-300 p-3.5'
+          />
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 

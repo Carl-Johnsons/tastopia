@@ -61,8 +61,10 @@ export const VerifyForm = (props: VerifyFormProps) => {
       );
     }
 
-    if (value.length === 0 && index !== 0) {
-      inputRefs[index - 1].current?.focus();
+    if (value.length === 0) {
+      if (index !== 0) {
+        inputRefs[index - 1].current?.focus();
+      }
     } else if (index !== inputRefs.length - 1) {
       inputRefs[index + 1].current?.focus();
     }
@@ -70,20 +72,20 @@ export const VerifyForm = (props: VerifyFormProps) => {
 
   const resolvePos = (key: string, index: number) => {
     //if (key === "Backspace") {
-      //console.log("Delete/Backspace key pressed");
-      // Additional logic for handling backspace
+    //console.log("Delete/Backspace key pressed");
+    // Additional logic for handling backspace
     //}
   };
 
   return (
-    <View className={`gap-3 ${props.className}`}>
-      <View className='flex-row gap-2'>
+    <View className={`gap-[2vh] ${props.className}`}>
+      <View className='flex-row justify-center gap-3.5'>
         {inputRefs.map((ref, index) => (
           <Input
             key={index}
             ref={ref}
             autoCapitalize='characters'
-            className={`text-primary `}
+            className={`aspect-square w-[53px] border-gray-300 text-center text-primary focus:border-primary`}
             value={formValues[index]}
             onChangeText={value => handleTextChange(value, index)}
             onKeyPress={({ nativeEvent }) => resolvePos(nativeEvent.key, index)}

@@ -1,6 +1,5 @@
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, Platform, Pressable, Text, View } from "react-native";
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { useAppDispatch } from "@/store/hooks";
 import { saveAuthData } from "@/slices/auth.slice";
@@ -8,8 +7,11 @@ import { ZodError } from "zod";
 import { VerifyParams, resendVerifyCode, verify } from "@/api/user";
 import VerifyForm from "@/components/VerifyForm";
 import { useAuthContext } from "@/components/AuthProvider";
+import CircleBg from "@/components/CircleBg";
+import BackButton from "@/components/BackButton";
 
 const Verify = () => {
+  const isAndroid = Platform.OS === "android";
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const { tokens, identifier } = useAuthContext();
@@ -42,7 +44,7 @@ const Verify = () => {
 
   const resendCode = async () => {
     console.log("Requesting for new OTP");
-    
+
     try {
       await resendVerifyCode(tokens?.accessToken as string);
       Alert.alert("Success", "New OTP is sent.");
@@ -52,26 +54,37 @@ const Verify = () => {
   };
 
   return (
-    <SafeAreaView>
-      <View className='flex h-full justify-center gap-2 p-4 dark:bg-black-200'>
-        <Text className=''>Verification Code</Text>
-        <Text>Please type the verification code sent to {identifier}</Text>
+    <View className='relative h-full'>
+      <CircleBg />
+
+      <View
+        className={`absolute top-[${isAndroid ? "2%" : "6%"}] flex w-full justify-center gap-[4vh] px-6`}
+      >
+        <BackButton
+          onPress={router.back}
+          className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
+        />
+
+        <Text className='font-sans text-4xl font-semibold text-black'>
+          Verification Code
+        </Text>
+        <Text className='font-sans text-sm text-gray-300'>
+          Please type the verification code sent to {identifier}
+        </Text>
+
         <VerifyForm
           onSubmit={onSubmit}
           isLoading={isSubmitting}
           className='mt-10'
         />
-        <Pressable>
-          <Text
-            className='text-center active:underline active:opacity-50 dark:text-white'
-            onPress={resendCode}
-          >
-            I don’t recevie a code!{" "}
-            <Text className='text-primary active:opacity-50'>Please resend</Text>
+
+        <Pressable onPress={resendCode}>
+          <Text className='text-center'>
+            I don’t recevie a code! <Text className='text-primary'>Please resend</Text>
           </Text>
         </Pressable>
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
