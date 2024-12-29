@@ -24,10 +24,12 @@ public sealed class UserRegisterConsumer : IConsumer<UserRegisterEvent>
         var defaultBackground = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png";
 
         var user = new User {
-            Id = accountId,
+            AccountId = accountId,
             AvatarUrl = defaultAvatar,
             BackgroundUrl = defaultBackground,
             DisplayName = context.Message.FullName,
+            IsAccountActive = true,
+            AccountUsername = context.Message.AccountUsername,
         };
 
         var response = await _sender.Send(new CreateUserCommand

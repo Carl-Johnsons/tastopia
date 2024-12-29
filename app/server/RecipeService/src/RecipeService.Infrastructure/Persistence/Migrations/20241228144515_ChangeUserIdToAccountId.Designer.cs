@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using RecipeService.Infrastructure.Persistence;
@@ -12,9 +13,11 @@ using RecipeService.Infrastructure.Persistence;
 namespace RecipeService.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241228144515_ChangeUserIdToAccountId")]
+    partial class ChangeUserIdToAccountId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -583,44 +586,6 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                     b.HasKey("RecipeId", "AccountId");
 
                     b.ToTable("RecipeVote");
-
-                    b.HasData(
-                        new
-                        {
-                            RecipeId = new Guid("aa626791-ee53-4390-a5a5-94c5b8096f87"),
-                            AccountId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
-                            IsUpvote = true
-                        },
-                        new
-                        {
-                            RecipeId = new Guid("c8362fc3-5cff-4171-a78d-40613c748596"),
-                            AccountId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
-                            IsUpvote = true
-                        },
-                        new
-                        {
-                            RecipeId = new Guid("068be5ad-dc4d-4a7b-bce7-24b4ed9fec57"),
-                            AccountId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
-                            IsUpvote = true
-                        },
-                        new
-                        {
-                            RecipeId = new Guid("057aa844-742a-4952-8162-dbfbd7e493ac"),
-                            AccountId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
-                            IsUpvote = true
-                        },
-                        new
-                        {
-                            RecipeId = new Guid("9e9b3a16-42f1-40a3-9f60-e704e632b609"),
-                            AccountId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
-                            IsUpvote = true
-                        },
-                        new
-                        {
-                            RecipeId = new Guid("8e607e5c-8dbf-455b-9f5b-9c56e2d79a63"),
-                            AccountId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
-                            IsUpvote = true
-                        });
                 });
 
             modelBuilder.Entity("RecipeService.Domain.Entities.Step", b =>
@@ -658,7 +623,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("c25e127b-eb48-43a5-a3a2-9d7b8f1ea2d7"),
+                            Id = new Guid("dea08f11-bd48-4ea2-9aeb-455190a800c5"),
                             Content = "Crack the eggs into a bowl and whisk with milk, salt, and pepper.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -667,7 +632,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("3a6adb14-cd35-49e2-926f-425db60e9c17"),
+                            Id = new Guid("75b398b0-81c3-44e0-94df-e9757564f642"),
                             Content = "Melt butter in a non-stick pan over medium heat.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -676,7 +641,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("25209f08-cb5d-46d3-bedb-037c67caa32b"),
+                            Id = new Guid("8d1d27bc-c9b1-4ad1-9436-1ece7dd79ef2"),
                             Content = "Pour the egg mixture into the pan and gently stir until softly set.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -685,7 +650,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("42701515-43b0-44aa-b955-d8b82c0074f2"),
+                            Id = new Guid("913d7fc0-1d74-4177-a4f2-c0c82bcc7355"),
                             Content = "Chop the tomatoes, onion, and garlic.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -694,7 +659,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("b863ee9d-c2f1-4f53-8ae1-b00db6d15a78"),
+                            Id = new Guid("b0e04240-e971-4a90-a11c-013bb6f30637"),
                             Content = "Sauté onion and garlic in olive oil until soft.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -703,7 +668,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("932b1513-a637-476c-b313-d2314ecf0f82"),
+                            Id = new Guid("5f28f055-6913-46b2-abaf-5d9cca50e1ce"),
                             Content = "Add tomatoes and vegetable stock, then simmer for 30 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -712,7 +677,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("8bc8a0fe-4853-4260-a04e-08c805a77b21"),
+                            Id = new Guid("f7370ed0-db1b-4ab0-8528-8d524868ce78"),
                             Content = "Blend the soup until smooth and season with salt and pepper.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -721,7 +686,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("785af5c1-9c79-4b6d-a047-30a06da11844"),
+                            Id = new Guid("757d55d4-ee19-49f3-ac13-429350df1bb6"),
                             Content = "Cook spaghetti in salted boiling water until al dente.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -730,7 +695,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("cecfbde6-e37a-479d-8c63-8944d7394dd9"),
+                            Id = new Guid("59b96c52-02e9-48da-91d6-9682922f7fed"),
                             Content = "Fry bacon until crispy.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -739,7 +704,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("63be1739-41c2-4a8f-aa78-8cf5601c05a3"),
+                            Id = new Guid("8848b057-0334-4084-aef3-7c97a1b805ab"),
                             Content = "Mix eggs and grated parmesan in a bowl.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -748,7 +713,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("040ab8e6-34ca-4dff-8b2e-9a0084bf80fa"),
+                            Id = new Guid("35d958cf-1fd3-4aa0-9918-d7c3b0840a34"),
                             Content = "Toss cooked spaghetti with bacon and remove from heat.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -757,7 +722,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("b4257b44-4016-4c28-baf9-4ddfd1edef78"),
+                            Id = new Guid("8b843c24-812b-45e1-aa77-b48016404945"),
                             Content = "Add the egg mixture and stir until creamy.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -766,7 +731,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("1f09e933-c044-4443-b865-855c138473bf"),
+                            Id = new Guid("2610e701-7e58-4d9e-be86-0070e13b5b31"),
                             Content = "Chop all vegetables into bite-sized pieces.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -775,7 +740,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("5888f92c-1c95-4db0-ba46-5b3cf60fe720"),
+                            Id = new Guid("f62c7c28-0856-48ba-a211-b3e772243bc5"),
                             Content = "Heat olive oil in a wok or large pan.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -784,7 +749,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("ed3934b3-3ca5-4aee-ab47-fcbea9810740"),
+                            Id = new Guid("13a06b09-d639-444d-9563-8a4183694590"),
                             Content = "Add vegetables and stir-fry for 5-7 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -793,7 +758,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("99f7df90-1271-4a9f-b6c6-bd57f8be04d1"),
+                            Id = new Guid("48406ef2-d95b-4844-a168-22382567e63c"),
                             Content = "Add soy sauce and stir well.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -802,7 +767,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("712a9bd4-7e4f-4b3e-8ecc-2f807d0fd443"),
+                            Id = new Guid("1ff24cee-5b3a-4a05-9402-27e7305608bc"),
                             Content = "Preheat the oven to 180°C (350°F).",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -811,7 +776,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("1a8b527b-305c-4a53-af6c-8ea0c435cffa"),
+                            Id = new Guid("17625349-cf5d-45eb-a363-9fd8c6c0af7f"),
                             Content = "Mix softened butter with minced garlic and parsley.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -820,7 +785,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f6e6bfcd-bbca-45ce-9ed6-f76ce85246f0"),
+                            Id = new Guid("9eb43d6e-cd57-45e3-a515-654b13249ac4"),
                             Content = "Spread the mixture onto sliced baguette.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -829,7 +794,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("bf6444d3-ac0a-4a4a-8efa-b6a5ff05a585"),
+                            Id = new Guid("7ff5ff68-87ae-4e63-8d9b-e6a7f0af9204"),
                             Content = "Bake in the oven for 10-12 minutes until golden.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -838,7 +803,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("d2b604ef-2dd4-46a7-ac00-9d53cf249a84"),
+                            Id = new Guid("c8f1f302-e2d4-4576-b324-a9f55e21605e"),
                             Content = "Crack the eggs into a bowl and whisk with salt, pepper, and cheese.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -847,7 +812,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f92bcb45-a3d4-4316-abc4-94e5554db040"),
+                            Id = new Guid("8911b285-febd-4c57-9525-a53e222c0c9d"),
                             Content = "Melt butter in a pan over medium heat.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -856,7 +821,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("dd086d3b-911e-47f2-a4a1-a52caa62053b"),
+                            Id = new Guid("81922d82-24f8-4b7a-84ee-7f878968738c"),
                             Content = "Pour the egg mixture into the pan and cook until set, gently folding the edges.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -865,7 +830,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("11c07ea9-9a85-4671-a83c-af214c720a5a"),
+                            Id = new Guid("af7b5571-90b1-4771-b538-68eaa8440475"),
                             Content = "Chop the mushrooms, onion, and garlic.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -874,7 +839,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("61dbd790-c881-45e9-a570-344a1ff70765"),
+                            Id = new Guid("b2eef28b-405d-4970-8687-53c8bb1bf450"),
                             Content = "Sauté the onions and garlic in a pot with some oil until soft.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -883,7 +848,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("caa27b5e-ebc9-4941-b7e3-ca0304bb1f75"),
+                            Id = new Guid("92ff87ba-b256-4644-b052-fd3bb576d1b8"),
                             Content = "Add the chopped mushrooms and cook until they release their juices.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -892,7 +857,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("0a61e3a1-8482-4d5e-a290-f8258418081a"),
+                            Id = new Guid("fdc26186-c983-4f06-a1a3-16b2a7559000"),
                             Content = "Pour in the vegetable stock and let the soup simmer for 20 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -901,7 +866,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("e60c0c6a-d281-44be-8079-dfb48a149a41"),
+                            Id = new Guid("525d6d3d-3336-4131-b297-c5f1629a6ecd"),
                             Content = "Season with salt and pepper, then blend the soup until smooth.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -910,7 +875,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("7608e24b-037b-497e-847f-1861562fe23c"),
+                            Id = new Guid("7ebcf384-be57-43b5-8a72-6d92c48c7d44"),
                             Content = "Cook rice according to package instructions.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -919,7 +884,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("2aafe2f2-1440-44f2-86a5-2098b199fdaa"),
+                            Id = new Guid("a2fc334d-fe58-4703-a810-f1bf966ab061"),
                             Content = "Scramble the eggs in a pan with some oil or butter.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -928,7 +893,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("04858259-3b4b-4dc0-bfba-0248464083bb"),
+                            Id = new Guid("1319e595-95ec-426f-82f3-e3d1055e1365"),
                             Content = "Add chopped carrots and garlic to the pan, and cook until soft.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -937,7 +902,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f6601717-905f-4b0a-ad05-c876b179d367"),
+                            Id = new Guid("d7ff8adc-6da6-4863-9b54-d9152b86b520"),
                             Content = "Add the cooked rice to the pan and stir-fry with soy sauce.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -946,7 +911,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("7b08e741-ce7f-4e85-9de3-b968a5ed9f5a"),
+                            Id = new Guid("e342782f-6a62-4f14-a662-d8f503e1714f"),
                             Content = "Preheat the oven to 180°C (350°F).",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -955,7 +920,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("c7875981-c944-4cf3-b323-05a7b834353e"),
+                            Id = new Guid("ac861c10-caf9-4c59-849d-e6de7e9adda6"),
                             Content = "Steam the broccoli until tender.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -964,7 +929,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("09b2ec3e-512a-41e1-b858-6b91b0a73d04"),
+                            Id = new Guid("e39e354f-d6dd-4148-8261-bc98d21acef8"),
                             Content = "Sauté the onion in butter until soft.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -973,7 +938,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("b6db1adc-83c8-489f-ac07-e26909c478d5"),
+                            Id = new Guid("10e7faf6-8936-415c-b8e8-9a536a5d1ef2"),
                             Content = "Combine steamed broccoli, sautéed onion, and cheese in a casserole dish.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -982,7 +947,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("fa210d3f-43b5-4751-b088-57e87ca22660"),
+                            Id = new Guid("9f1df930-2a52-4607-b60c-d295ffd10071"),
                             Content = "Bake in the oven for 20-25 minutes, until cheese is melted and bubbly.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -991,7 +956,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("0b6958c0-c626-4b0b-824f-1f7db3d4314f"),
+                            Id = new Guid("86f27aa3-eefc-4006-aae3-7534f07754f2"),
                             Content = "Fry the bacon in a pan until crispy.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1000,7 +965,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("2f8ad875-8b00-4205-9dbe-0e820dbfc065"),
+                            Id = new Guid("4fe1def3-b77b-470f-9f63-811154d362b5"),
                             Content = "Crack the eggs into the pan and cook to your desired doneness.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1009,7 +974,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("816e9a93-60dc-42e4-9143-b7d9c59a7ecb"),
+                            Id = new Guid("c2f3c543-451e-4934-a245-4174351b0ba1"),
                             Content = "Season the eggs with salt and pepper, then serve with the crispy bacon.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1018,7 +983,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("830c8bff-7dab-4c8e-bf08-0f7fa0ca2e97"),
+                            Id = new Guid("baa85653-eab0-45b4-852b-f2e55fa633b5"),
                             Content = "Peel and devein the shrimp.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1027,7 +992,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("490cb50a-ea08-491f-8b86-63a6cee1cf08"),
+                            Id = new Guid("d3156ec6-2a9e-4ec2-9b73-2e74a5b5187a"),
                             Content = "Melt butter in a pan and sauté garlic until fragrant.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1036,7 +1001,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("fdae81ac-1555-4754-a6fd-c35a8b5c873c"),
+                            Id = new Guid("b108df5d-3157-4873-b83f-f6ffb2cf6d41"),
                             Content = "Add the shrimp to the pan and cook until pink and opaque.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1045,7 +1010,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("5e49e794-be76-44ef-b701-065fd2536ca4"),
+                            Id = new Guid("240e594b-d309-4e0d-8ceb-04a2859d3cc8"),
                             Content = "Season with salt, pepper, and parsley before serving.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -1054,7 +1019,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("c8189483-7e19-4e94-8fa3-251f026bee23"),
+                            Id = new Guid("14252c2d-c2bf-4b21-9abb-f00f29e4bf41"),
                             Content = "Chop the tomatoes, onion, and garlic.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1063,7 +1028,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("aa17ef0c-b89a-4079-ade3-00ea9dc6a807"),
+                            Id = new Guid("2aecf86e-c6f5-46fa-bd9e-929347923240"),
                             Content = "Sauté the onion and garlic in a pot with some oil until soft.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1072,7 +1037,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("faea22b5-8fb0-4ae8-a60a-200ec1d9385e"),
+                            Id = new Guid("6f69cd43-ad9e-4009-acbe-b3bc38eed4a4"),
                             Content = "Add chopped tomatoes and vegetable stock to the pot and simmer for 20 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1081,7 +1046,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a6633adc-b3dd-40fa-a13e-5d33b27312cf"),
+                            Id = new Guid("bb407d20-42b1-41c8-a3e4-b98af92f6994"),
                             Content = "Season with salt, pepper, and fresh basil.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -1090,7 +1055,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("695e1903-bbed-4dbb-8980-212779faae86"),
+                            Id = new Guid("b5269a11-01ee-4304-b5bf-714ec56d27d8"),
                             Content = "Blend the soup until smooth, then serve hot.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -1099,7 +1064,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("ed5db2c9-90b7-4c7c-96f7-158be3907998"),
+                            Id = new Guid("d6331b8a-3ff1-4791-97c1-1c53297e15db"),
                             Content = "Peel and chop the carrots, onion, and garlic.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1108,7 +1073,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("2413e613-c9cb-47c1-8673-03320035bec2"),
+                            Id = new Guid("fecf20b0-9487-4362-827a-6f523227a122"),
                             Content = "Sauté the onion and garlic in a pot with some oil until soft.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1117,7 +1082,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("92879786-5083-4d41-9545-da17309de427"),
+                            Id = new Guid("39d0faae-b955-4fc8-9dfb-2de54e765fbc"),
                             Content = "Add chopped carrots and vegetable stock, and simmer for 30 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1126,7 +1091,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("6a016ab2-144d-4e74-adb7-f03939dd8d98"),
+                            Id = new Guid("8ec5ba37-ecbd-4e14-9363-e61a4de9ff95"),
                             Content = "Season with salt and pepper to taste.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -1135,7 +1100,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("0c155164-c75b-40bf-8547-0d9c6827bea8"),
+                            Id = new Guid("c54ad6a0-5609-4ad0-9f4e-ba4d0a0bd9ca"),
                             Content = "Blend the soup until smooth and serve hot.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -1144,7 +1109,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("921596eb-f652-407d-916d-8c328cdbf722"),
+                            Id = new Guid("e757e4d8-81b5-4ab2-9632-42810c749558"),
                             Content = "Chop the onion, garlic, and carrot.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1153,7 +1118,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("6cdfde37-7b26-4cfd-9d86-925ef57f98bb"),
+                            Id = new Guid("5b1d8b19-d575-43d8-813d-89fe93750bfc"),
                             Content = "Sauté the onion, garlic, and carrot in a pot with some oil until soft.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1162,7 +1127,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("2ffe2f8b-ae56-46a6-8d29-daa45737f6e3"),
+                            Id = new Guid("fbc5f504-e106-40da-bdc6-cf8aa6f626cd"),
                             Content = "Add the rice and soy sauce, then cook for 1-2 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1171,7 +1136,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("9776db18-a09c-4522-b6e1-ac1a71a6fe21"),
+                            Id = new Guid("04a8abe0-a83f-4f1e-b2a0-d697b5b833c8"),
                             Content = "Add 2 cups of water and bring to a boil, then reduce the heat to low and cover.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -1180,7 +1145,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("7b5031bc-5d5c-4bb6-962c-0be2670d2825"),
+                            Id = new Guid("924eb182-50b7-43c1-82ae-bbd6539986f0"),
                             Content = "Cook for 20 minutes, or until rice is tender and water is absorbed.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -1189,7 +1154,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("21520076-e5e8-43b6-b8f7-706fdb80e676"),
+                            Id = new Guid("6f98168c-4c81-4d33-b0a5-a6e55dc61184"),
                             Content = "Preheat the oven to 180°C (350°F).",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1198,7 +1163,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("8c6d94f5-d0d8-46cf-9875-94321614815a"),
+                            Id = new Guid("c978e9ab-24ab-4485-b5b0-5627d0ae2c66"),
                             Content = "Remove the stems from the mushrooms and chop them finely.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1207,7 +1172,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("7bd6d43b-bba2-4349-b406-3514356ee13b"),
+                            Id = new Guid("35eda4de-d807-4991-9c47-720a93626223"),
                             Content = "Sauté the chopped mushroom stems and garlic in butter until soft.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1216,7 +1181,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("7b44ef67-040f-4bfa-bcce-2dce3b80ebe3"),
+                            Id = new Guid("ffa56e86-8e9f-46de-926a-00a71a50ec7c"),
                             Content = "Mix the sautéed mushrooms with cheese and season with salt and pepper.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -1225,7 +1190,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("882247d8-6c67-4720-8aa3-aa0de77b617f"),
+                            Id = new Guid("dace5a19-37df-4224-a3b9-2be16f03c514"),
                             Content = "Stuff the mushroom caps with the cheese mixture and place on a baking sheet.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -1234,7 +1199,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("6a04f1ce-9fc1-4629-9ee0-fe88e4ceff85"),
+                            Id = new Guid("8a0b88c8-0482-4c45-86f5-bf6d8b6a6b98"),
                             Content = "Bake in the oven for 20 minutes, or until the mushrooms are tender and the cheese is melted.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 6,
@@ -1243,7 +1208,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("0737eddc-641d-4808-b609-1f561f750287"),
+                            Id = new Guid("a9ff8555-0a99-43fa-9aa0-a9d8f4683fcd"),
                             Content = "Cook the spaghetti according to the package instructions.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1252,7 +1217,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("391414d0-f4ae-418f-93cd-9ebe6d675c3f"),
+                            Id = new Guid("aa266b72-d001-4c54-9517-072b39592428"),
                             Content = "Fry the bacon in a pan until crispy, then remove and chop.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1261,7 +1226,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("268f6612-4ebf-4912-84f8-bac35b3eb08b"),
+                            Id = new Guid("2bb52b6e-5538-43ca-9876-ea257390e629"),
                             Content = "In a bowl, whisk together the eggs and Parmesan cheese.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1270,7 +1235,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("c854738e-9b1b-4ef2-b680-bad8aadc1afe"),
+                            Id = new Guid("20a467a9-9c9a-4920-b4b3-f308439aa163"),
                             Content = "Drain the cooked spaghetti and toss with the crispy bacon.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -1279,7 +1244,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("03cc2a01-fdc4-4a27-b3ee-9cdec7373eda"),
+                            Id = new Guid("c6e70d69-91ed-4ff3-8d5c-afed7522a1a6"),
                             Content = "Pour the egg and cheese mixture over the pasta and toss quickly to coat.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -1288,7 +1253,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("9a7921dd-4b0a-46fa-9abe-046c7236dd02"),
+                            Id = new Guid("44571fc7-ee20-4624-a51f-a005e4bc61d5"),
                             Content = "Season with salt and pepper to taste, and serve immediately.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 6,
@@ -1297,7 +1262,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("0783f01b-30af-413c-9e13-56d92914e2ff"),
+                            Id = new Guid("0e76726e-2518-4de3-9187-80fb702c86f9"),
                             Content = "Peel and chop the potatoes into chunks.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1306,7 +1271,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("7a1b7dc9-723e-4e11-b14c-cd8d362a289c"),
+                            Id = new Guid("319c34d7-eb97-4df1-9419-1fe95fadf0fc"),
                             Content = "Roast the garlic cloves in the oven for 10 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1315,7 +1280,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a0f57102-b2a0-485b-bea8-a4bef35f6599"),
+                            Id = new Guid("7323ae81-cdd2-41f3-a219-96badbb3ca7e"),
                             Content = "Boil the potatoes in salted water until tender, about 15 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1324,7 +1289,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("1c99a68a-f7ab-4f6a-a06a-187a7ae9b75f"),
+                            Id = new Guid("cda48341-3744-4364-b6f2-01ce8161b081"),
                             Content = "Mash the potatoes with butter, roasted garlic, salt, and pepper.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -1333,7 +1298,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f246a6b5-4639-4faa-8a2b-4d449ee2b747"),
+                            Id = new Guid("36a915cb-bf8f-48cd-b62b-0dbb165c291b"),
                             Content = "Serve hot.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -1342,7 +1307,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("409d7156-de4c-41a7-992f-9e891d366139"),
+                            Id = new Guid("aa0245fe-d16c-4503-bc9a-233a5207e38f"),
                             Content = "Chop the onion, garlic, and tomatoes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1351,7 +1316,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("1dfa1819-24a4-49e5-9d7e-f3557f3bb526"),
+                            Id = new Guid("722a2415-e3be-43bd-bd17-f7bc2a118fb1"),
                             Content = "Cook the minced beef in a pan until browned.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1360,7 +1325,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("88325b80-409b-4257-900d-1af8e964574f"),
+                            Id = new Guid("bbee573b-e5f2-47ec-abc9-5aaf592c3e5a"),
                             Content = "Sauté the onion and garlic in a separate pan until softened.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1369,7 +1334,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f6cd5add-3502-4d69-a15e-6c0d2228656e"),
+                            Id = new Guid("cc70e9f5-0fe2-4208-b0e1-16f080562ec1"),
                             Content = "Add chopped tomatoes to the pan with the onions and garlic, and cook for 10 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -1378,7 +1343,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("970a66b2-ca1c-4e8f-a38a-de35f056dbc5"),
+                            Id = new Guid("764def37-c227-4928-9ec4-bacbf01a5909"),
                             Content = "Combine the browned beef with the tomato sauce, and simmer for 15 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -1387,7 +1352,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("6c2472a1-feb8-4ccb-9cc0-33e0ac19fe52"),
+                            Id = new Guid("0204be9f-51a2-4657-86ce-99ce96210a99"),
                             Content = "Cook the spaghetti according to package instructions and drain.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 6,
@@ -1396,7 +1361,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f09b9840-642e-4cb1-a5ed-8bbeb6eb55af"),
+                            Id = new Guid("ef2a4a97-62ec-4c3f-8a0e-ba636084830a"),
                             Content = "Serve the Bolognese sauce over the cooked spaghetti.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 7,
@@ -1405,7 +1370,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("dc79ec03-c8df-4ba2-ae75-c368050d2cc8"),
+                            Id = new Guid("c94c0f34-93a5-429d-80c2-818964493997"),
                             Content = "Chop the carrot and broccoli into bite-sized pieces.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1414,7 +1379,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("a6a2178f-762f-4c5b-8aa1-29539af3a02c"),
+                            Id = new Guid("c0a06261-e8fe-4e2d-8359-6af3825293ad"),
                             Content = "Heat the olive oil in a pan over medium-high heat.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1423,7 +1388,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("47e4410c-f3b1-4bb0-a071-88167cf2c5cf"),
+                            Id = new Guid("85bb1391-f3e9-4f0c-93b5-1ad43b37f154"),
                             Content = "Add the carrots and stir-fry for 3-4 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1432,7 +1397,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("19cd4571-c619-4676-83a2-c5be8f72b77c"),
+                            Id = new Guid("f2e884d3-fce5-4168-b0c1-ee7ea50119d1"),
                             Content = "Add the broccoli and continue stir-frying for another 5 minutes.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -1441,7 +1406,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("f48e0348-d0ee-473d-8954-be9cddbbf7d9"),
+                            Id = new Guid("96dc8279-7d7b-416d-b56d-51015775c7ab"),
                             Content = "Season with soy sauce, salt, and pepper.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -1450,7 +1415,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("995daf79-11a2-48ae-ab34-4a6bc8ac5a60"),
+                            Id = new Guid("1221f9d2-0047-4282-9800-df9d61e45dfb"),
                             Content = "Serve immediately.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 6,
@@ -1459,7 +1424,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("d06cd4fa-c1d0-43fa-8450-1d33595ec30b"),
+                            Id = new Guid("d83adeb4-e144-41cf-b680-28b6bd1b2971"),
                             Content = "Add milk, ice cream, and sugar to a blender.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1468,7 +1433,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("cbb1bd78-8a35-4f87-8228-5e6f817190dd"),
+                            Id = new Guid("e579b0f5-2583-463e-b16f-9eaf4c97f37d"),
                             Content = "Blend until smooth.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1477,7 +1442,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("b2bc5524-c4d8-4241-8c24-5aa72f177e9d"),
+                            Id = new Guid("28488ca1-c0e3-4716-9df2-d293d45c5b0b"),
                             Content = "Serve immediately.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1486,7 +1451,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("8ca3a023-9a26-44bb-a860-c859799d4391"),
+                            Id = new Guid("b84c1c85-47cb-412b-8555-9d75cd489585"),
                             Content = "Preheat the grill to medium-high heat.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 1,
@@ -1495,7 +1460,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("1af73087-d4f2-4547-8af2-9770bd0108db"),
+                            Id = new Guid("78ab49eb-d509-4708-9343-626185e5f895"),
                             Content = "Season the chicken breasts with salt and pepper.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 2,
@@ -1504,7 +1469,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("11ff2085-eeb2-454a-8c86-180237a9f62e"),
+                            Id = new Guid("a2404fcc-2f3c-4941-90ca-ca403f1be0d2"),
                             Content = "Grill the chicken for 6-7 minutes on each side.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 3,
@@ -1513,7 +1478,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("ae433bd7-4bc5-4993-9e8c-049b51689f5a"),
+                            Id = new Guid("87ec98a6-34c8-4f2b-9b59-3a3bbf1af80d"),
                             Content = "Brush the chicken with BBQ sauce during the last 2 minutes of grilling.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 4,
@@ -1522,7 +1487,7 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                         },
                         new
                         {
-                            Id = new Guid("043363bd-bf99-4b42-85bd-d83bd4cceadb"),
+                            Id = new Guid("dc9d99bb-6a28-4ff3-b74a-39a273634d91"),
                             Content = "Serve with additional BBQ sauce on the side.",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             OdinalNumber = 5,
@@ -1572,10 +1537,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("df3f6301-3cae-480a-87da-c7b8f6150292"),
                             Category = "INGREDIENT",
                             Code = "TOMATO",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(289),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1031),
                             ImageUrl = "https://i.imgur.com/3NovRt2.png",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(309),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1043),
                             Value = "Tomato"
                         },
                         new
@@ -1583,10 +1548,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("2bf7f026-e745-4bd9-8701-a9519742d0f7"),
                             Category = "INGREDIENT",
                             Code = "EGG",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(314),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1045),
                             ImageUrl = "https://i.imgur.com/BAT5qyL.png",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(315),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1046),
                             Value = "Egg"
                         },
                         new
@@ -1594,10 +1559,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("92316e11-fd87-4c0f-aac7-bde4f19c2b38"),
                             Category = "INGREDIENT",
                             Code = "RICE",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(318),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1048),
                             ImageUrl = "https://i.imgur.com/C4nNmU1.png",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(319),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1049),
                             Value = "Rice"
                         },
                         new
@@ -1605,10 +1570,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("a7a1953d-027e-43b6-ad0d-d10312a3064d"),
                             Category = "INGREDIENT",
                             Code = "MUSHROOM",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(323),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1051),
                             ImageUrl = "https://i.imgur.com/m8wBuYO.png",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(324),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1052),
                             Value = "Mushroom"
                         },
                         new
@@ -1616,10 +1581,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("f92b7c2e-d2f0-4b7f-b5d5-9d3a41b718c3"),
                             Category = "INGREDIENT",
                             Code = "MILK",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(327),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1055),
                             ImageUrl = "https://i.imgur.com/Rk3MwdQ.jpg",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(328),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1056),
                             Value = "Milk"
                         },
                         new
@@ -1627,10 +1592,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("6f229db7-e0d7-4fd8-83d6-4f8b9c3ef5c1"),
                             Category = "INGREDIENT",
                             Code = "BUTTER",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(332),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1058),
                             ImageUrl = "https://i.imgur.com/Z8y4Hsr.jpg",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(333),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1059),
                             Value = "Butter"
                         },
                         new
@@ -1638,10 +1603,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("3e084d1f-4dd1-42dc-9a15-9f8fbb4b8495"),
                             Category = "INGREDIENT",
                             Code = "CHEESE",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(336),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1061),
                             ImageUrl = "https://i.imgur.com/feglS7k.jpg",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(338),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1062),
                             Value = "Cheese"
                         },
                         new
@@ -1649,10 +1614,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("9c5d4e5f-3c44-4bde-a5a6-7a1d3e1b67d6"),
                             Category = "INGREDIENT",
                             Code = "BACON",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(341),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1064),
                             ImageUrl = "https://i.imgur.com/lyYgVRi.jpg",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(342),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1065),
                             Value = "Bacon"
                         },
                         new
@@ -1660,10 +1625,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("8db97f13-4ff0-4a0e-9c5c-b2c1d4e1b78e"),
                             Category = "INGREDIENT",
                             Code = "GARLIC",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(345),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1067),
                             ImageUrl = "https://i.imgur.com/oLwdHvx.jpg",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(346),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1067),
                             Value = "Garlic"
                         },
                         new
@@ -1671,10 +1636,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("ad7dca4b-9ae8-44d3-b4c3-7d4c9e9b6f8e"),
                             Category = "INGREDIENT",
                             Code = "CARROT",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(350),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1070),
                             ImageUrl = "https://i.imgur.com/DZEq7TK.jpg",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(351),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1070),
                             Value = "Carrot"
                         },
                         new
@@ -1682,10 +1647,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("63af97d6-9fc0-4c5b-b6b1-d5e5e8b8a0a6"),
                             Category = "INGREDIENT",
                             Code = "BROCCOLI",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(358),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1072),
                             ImageUrl = "https://i.imgur.com/8nDcffy.png",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(359),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1073),
                             Value = "Broccoli"
                         },
                         new
@@ -1693,10 +1658,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("4a6fc1f9-7f8d-49de-85b4-b6b9f8d1c4a8"),
                             Category = "INGREDIENT",
                             Code = "SOY_SAUCE",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(363),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1075),
                             ImageUrl = "https://i.imgur.com/2QiWJWH.jpg",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(364),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1076),
                             Value = "Soy Sauce"
                         },
                         new
@@ -1704,10 +1669,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("71676633-493e-46c5-86a0-21773f196035"),
                             Category = "DISHTYPE",
                             Code = "ALL",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(367),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1078),
                             ImageUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735196328/default_storage/tag/dishtype/hivalxshuvx5nnlfp5t1.png",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(368),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1079),
                             Value = "All"
                         },
                         new
@@ -1715,10 +1680,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("6c91b894-d6dd-4c9b-a106-bfd029ce9e16"),
                             Category = "DISHTYPE",
                             Code = "NOODLES",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(372),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1081),
                             ImageUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735196327/default_storage/tag/dishtype/ingre9ficyzq0iitiwmd.png",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(373),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1081),
                             Value = "Noodles"
                         },
                         new
@@ -1726,10 +1691,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("de3698bf-ad8b-4cc6-8ed0-662bd7eca486"),
                             Category = "DISHTYPE",
                             Code = "SPICE",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(377),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1084),
                             ImageUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735196323/default_storage/tag/dishtype/frgtox8kb4edsvmutmez.png",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(378),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1084),
                             Value = "Spice"
                         },
                         new
@@ -1737,10 +1702,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("d8b74fc2-f848-41af-a53f-20170aa453cd"),
                             Category = "DISHTYPE",
                             Code = "BBQ",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(381),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1086),
                             ImageUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735196328/default_storage/tag/dishtype/zl1f9g0dxxbtw2f4jiel.png",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(382),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1087),
                             Value = "BBQ"
                         },
                         new
@@ -1748,10 +1713,10 @@ namespace RecipeService.Infrastructure.Persistence.Migrations
                             Id = new Guid("042dd338-3338-45a1-96c6-a1e2d0ca71ff"),
                             Category = "DISHTYPE",
                             Code = "SEAFOOD",
-                            CreatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(391),
+                            CreatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1089),
                             ImageUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735196329/default_storage/tag/dishtype/jhxdroetbjq9f57cixwj.png",
                             IsActive = true,
-                            UpdatedAt = new DateTime(2024, 12, 28, 16, 18, 57, 939, DateTimeKind.Utc).AddTicks(392),
+                            UpdatedAt = new DateTime(2024, 12, 28, 14, 45, 15, 479, DateTimeKind.Utc).AddTicks(1090),
                             Value = "Seafood"
                         });
                 });

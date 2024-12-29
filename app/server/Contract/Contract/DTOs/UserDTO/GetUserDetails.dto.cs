@@ -1,7 +1,7 @@
 ﻿namespace Contract.DTOs.UserDTO;
 public class GetUserDetailsDTO
 {
-    public Guid UserId { get; set; }
+    public Guid AccountId { get; set; }
     public UserDTO User { get; set; } = null!;
     public AccountDTO Account { get; set; } = null!;
 }

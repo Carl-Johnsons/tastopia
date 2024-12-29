@@ -52,6 +52,7 @@ public class RecipeController : BaseApiController
         {
             Skip = getRecipeFeedsDTO.Skip,
             TagValues = getRecipeFeedsDTO.TagValues,
+            AccountId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -65,7 +66,7 @@ public class RecipeController : BaseApiController
             Skip = searchRecipesDTO.Skip,
             TagValues = searchRecipesDTO.TagValues,
             Keyword = searchRecipesDTO.Keyword,
-            UserId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
+            AccountId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

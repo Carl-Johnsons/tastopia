@@ -33,4 +33,7 @@ public class RecipeFeedResponse
     [Required]
     [JsonProperty("numberOfComment")]
     public int NumberOfComment { get; set; } = 0;
+    [Required]
+    [JsonProperty("vote")]
+    public string Vote { get; set; } = null!;
 }

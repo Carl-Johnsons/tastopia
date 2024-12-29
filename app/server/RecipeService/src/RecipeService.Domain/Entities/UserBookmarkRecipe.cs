@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace RecipeService.Domain.Entities;
 
 [Table("UserBookmarkRecipe")]
-[PrimaryKey(nameof(UserId), nameof(RecipeId))]
+[PrimaryKey(nameof(AccountId), nameof(RecipeId))]
 public class UserBookmarkRecipe
 {
     [Required]
-    public Guid UserId { get; set; }
+    public Guid AccountId { get; set; }
 
     [Required]
     public Guid RecipeId { get; set; }

@@ -23,14 +23,14 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Resul
 
     public async Task<Result<User?>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = _context.Users.FirstOrDefault(us => us.Id == request.User.Id);
+        var user = _context.Users.FirstOrDefault(us => us.AccountId == request.User.AccountId);
 
         if(user != null) {
             return Result<User?>.Failure(UserError.AlreadyExistUser);
         }
 
         user = new User {
-            Id = request.User.Id,
+            AccountId = request.User.AccountId,
             AvatarUrl = request.User.AvatarUrl,
             BackgroundUrl = request.User.BackgroundUrl,
             Gender = request.User.Gender,
@@ -38,6 +38,8 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Resul
             Address = request.User.Address,
             DisplayName = request.User.DisplayName,
             Bio = request.User.Bio,
+            AccountUsername = request.User.AccountUsername,
+            IsAccountActive = request.User.IsAccountActive,
         };
 
         _context.Users.Add(user);

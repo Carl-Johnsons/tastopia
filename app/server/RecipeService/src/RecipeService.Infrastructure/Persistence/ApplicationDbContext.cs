@@ -162,5 +162,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.Entity<Recipe>().HasData(RecipeData.Recipe);
         modelBuilder.Entity<Step>().HasData(RecipeData.Step);
         modelBuilder.Entity<RecipeTag>().HasData(RecipeTagData.Data);
+        modelBuilder.Entity<RecipeVote>().HasData(RecipeVoteData.Data);
+
     }
 }

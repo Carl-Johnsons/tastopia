@@ -6,7 +6,7 @@ namespace UserService.Domain.Responses;
 public class SearchUserResponse
 {
     [Required]
-    [JsonProperty("Id")]
+    [JsonProperty("id")]
     public Guid Id { get; set; }
 
     [Required]

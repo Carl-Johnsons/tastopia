@@ -4,8 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace UserService.Domain.Entities;
 
 [Table("User")]
-public class User : BaseEntity
+[PrimaryKey(nameof(AccountId))] 
+public class User
 {
+        [Required]
+        public Guid AccountId { get; set; }
         [Required]
         public string DisplayName { get; set; } = null!;
 
@@ -32,7 +35,7 @@ public class User : BaseEntity
         public virtual int? TotalRecipe { get; set; }
 
         // Clone Attribute
-        public bool IsActive { get; set; } = true;
-        public string Username { get; set; } = null!;
+        public bool IsAccountActive { get; set; } = true;
+        public string AccountUsername { get; set; } = null!;
 
 }
