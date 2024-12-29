@@ -1,6 +1,6 @@
 import { LoginParams } from "@/api/user";
 import { useState } from "react";
-import { ActivityIndicator, Platform, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import Input from "./Input";
 import Button from "./Button";
 import useBounce from "@/hooks/animation/useBounce";
@@ -61,7 +61,7 @@ export const LoginForm = (props: LoginFormProps) => {
           onSubmit(formValues);
         }}
         style={[animatedStyles]}
-        className='rounded-full bg-primary p-3 px-16 py-6 text-white'
+        className='rounded-full bg-primary p-3 py-6 text-white'
         isLoading={isLoading}
         spinner={
           <ActivityIndicator
