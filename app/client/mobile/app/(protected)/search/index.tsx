@@ -20,6 +20,7 @@ import useDarkMode from "@/hooks/useDarkMode";
 import { getAPIUrl } from "@/utils/fetch";
 import User from "@/components/common/User";
 import { Image } from "expo-image";
+import { selectAccessToken } from "@/slices/auth.slice";
 
 const Search = () => {
   const [skip, setSkip] = useState<number>(0);
@@ -36,6 +37,7 @@ const Search = () => {
   const isDarkMode = useDarkMode();
 
   const debouncedValue = useDebounce(searchValue, 800);
+  const accessToken = selectAccessToken();
 
   const fetchSearchResults = async (isFetchMore: boolean) => {
     if (isFetchMore && !hasNextPage) return;
@@ -43,7 +45,8 @@ const Search = () => {
     setIsSearching(true);
     const url = getAPIUrl(5003, "api/user/search");
     const headers = {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`
     };
 
     console.log("keyword", searchValue);
