@@ -65,10 +65,7 @@ public static class DependencyInjection
             {
                 endpoint.ConfigureConsumer(context, consumerType);
 
-                if (!string.IsNullOrEmpty(queueNameAttribute.ExchangeName))
-                {
-                    endpoint.Bind(queueNameAttribute.ExchangeName);
-                }
+                endpoint.Bind(queueNameAttribute.ExchangeName);
             });
         }
     }

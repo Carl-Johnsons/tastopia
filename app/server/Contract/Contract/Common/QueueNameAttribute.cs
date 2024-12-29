@@ -1,14 +1,33 @@
-﻿namespace Contract.Common;
+﻿using Contract.Constants;
+
+namespace Contract.Common;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
 public sealed class QueueNameAttribute : Attribute
 {
-    public string QueueName { get; }
-    public string ExchangeName { get; }
-
-    public QueueNameAttribute(string queueName, string exchangeName = null)
+    public string QueueName { get; init; }
+    public string ExchangeName { get; init; }
+    public bool AutoDelete { get; init; }
+    public bool Durable { get; init; }
+    public string Type { get; init; }
+    public QueueNameAttribute(
+        string queueName,
+        string exchangeName = "",
+        bool durable = false,
+        string type = RabbitMQConstant.EXCHANGE.TYPE.Direct,
+        bool autoDelete = true)
     {
         QueueName = queueName;
-        ExchangeName = exchangeName;
+        Durable = durable;
+        Type = type;
+        AutoDelete = autoDelete;
+        if (string.IsNullOrEmpty(exchangeName))
+        {
+            ExchangeName = queueName;
+        }
+        else
+        {
+            ExchangeName = exchangeName;
+        }
     }
 }

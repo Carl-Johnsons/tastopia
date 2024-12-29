@@ -1,4 +1,5 @@
 ﻿using Contract.Common;
+using Contract.Constants;
 using Contract.Event.IdentityEvent;
 using MassTransit;
 using UserService.Application.Users.Commands;
@@ -6,7 +7,9 @@ using UserService.Domain.Entities;
 
 namespace UserService.API.EventHandlers;
 
-[QueueName("user-register-event")]
+[QueueName(RabbitMQConstant.QUEUE.NAME.USER_REGISTER_USER,
+    exchangeName: RabbitMQConstant.EXCHANGE.NAME.USER_REGISTER,
+    type: RabbitMQConstant.EXCHANGE.TYPE.Fanout)]
 public sealed class UserRegisterConsumer : IConsumer<UserRegisterEvent>
 {
     private readonly ISender _sender;
@@ -23,7 +26,8 @@ public sealed class UserRegisterConsumer : IConsumer<UserRegisterEvent>
         var defaultAvatar = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png";
         var defaultBackground = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png";
 
-        var user = new User {
+        var user = new User
+        {
             AccountId = accountId,
             AvatarUrl = defaultAvatar,
             BackgroundUrl = defaultBackground,

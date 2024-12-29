@@ -1,26 +1,15 @@
 ﻿
+using Contract.Common;
 using MassTransit;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace NotificationService.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddWorkerServices(this IServiceCollection services)
     {
-        services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
-        // MediatR require repository scope dependency injection
-        services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
-        services.AddScoped<MockupData>();
         services.AddMassTransitService();
-
-        using (var serviceProvider = services.BuildServiceProvider())
-        {
-            var mockupData = serviceProvider.GetRequiredService<MockupData>();
-            mockupData.SeedAllData().Wait();
-        }
 
         return services;
     }
@@ -31,7 +20,7 @@ public static class DependencyInjection
         {
             busConfig.SetKebabCaseEndpointNameFormatter();
 
-            var applicationAssembly = AppDomain.CurrentDomain.Load("NotificationService.API");
+            var applicationAssembly = AppDomain.CurrentDomain.Load("EmailWorker");
             busConfig.AddConsumers(applicationAssembly);
 
             busConfig.UsingRabbitMq((context, config) =>
@@ -50,7 +39,6 @@ public static class DependencyInjection
                 config.ConfigureEndpoints(context);
             });
         });
-        services.AddScoped<IServiceBus, MassTransitServiceBus>();
         return services;
     }
 

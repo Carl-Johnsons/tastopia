@@ -2,7 +2,7 @@
 
 namespace Contract.Event.UserEvent;
 
-[EntityName("get-user-details-event")]
+[EntityName("GetUserDetailsEvent")]
 public record GetUserDetailsEvent
 {
     public Guid AccountId { get; set; }

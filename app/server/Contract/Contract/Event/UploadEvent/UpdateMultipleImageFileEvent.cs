@@ -3,7 +3,7 @@ using MassTransit;
 
 namespace Contract.Event.UploadEvent;
 
-[EntityName("update-multiple-image-file-event")]
+[EntityName("UpdateMultipleImageFileEvent")]
 public record UpdateMultipleImageFileEvent
 {
     public List<FileStreamEvent>? FileStreamEvents { get; set; } 

@@ -6,7 +6,9 @@ using NotificationService.Application.Emails;
 
 namespace NotificationService.API.EventHandlers;
 
-[QueueName("user-register-event")]
+[QueueName(RabbitMQConstant.QUEUE.NAME.USER_REGISTER_NOTIFICATION,
+    exchangeName: RabbitMQConstant.EXCHANGE.NAME.USER_REGISTER,
+    type: RabbitMQConstant.EXCHANGE.TYPE.Fanout)]
 public class UserRegisterConsumer : IConsumer<UserRegisterEvent>
 {
     private readonly ISender _sender;
