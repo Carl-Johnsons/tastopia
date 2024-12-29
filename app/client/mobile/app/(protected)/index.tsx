@@ -164,7 +164,7 @@ const Community = () => {
               source={require("../../assets/icons/noResult.png")}
               style={{ width: 130, height: 130 }}
             />
-            <Text className='text-center paragraph-medium'>
+            <Text className='paragraph-medium text-center'>
               No recipes found! {"\n"}Time to create your own masterpiece!
             </Text>
           </View>
