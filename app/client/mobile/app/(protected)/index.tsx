@@ -30,7 +30,7 @@ const Community = () => {
     }
 
     console.log("skip", skip);
-    console.log("total recipes", recipes.length);
+    console.log("total recipes", recipes?.length);
 
     const url = getAPIUrl(5005, "api/recipe/get-recipe-feed");
 
@@ -134,45 +134,47 @@ const Community = () => {
         height: "100%"
       }}
     >
-      <FlatList
-        style={{ paddingHorizontal: 16 }}
-        data={recipes}
-        keyExtractor={item => item.id.toString()}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            tintColor={"#fff"}
-            onRefresh={onRefresh}
-          />
-        }
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.1}
-        ListHeaderComponent={Header({
-          isRefreshing,
-          handleFilter,
-          filterSelected,
-          handleCreateRecipe
-        })}
-        renderItem={({ item, index }) => (
-          <>
-            <Recipe {...item} />
-            {index !== recipes.length - 1 && (
-              <View className='my-4 h-[1px] w-full bg-gray-300' />
-            )}
-          </>
-        )}
-        ListEmptyComponent={() => (
-          <View className='flex-center h-[70%] gap-2'>
-            <Image
-              source={require("../../assets/icons/noResult.png")}
-              style={{ width: 130, height: 130 }}
+      {recipes?.length > 0 && (
+        <FlatList
+          style={{ paddingHorizontal: 16 }}
+          data={recipes}
+          keyExtractor={item => item.id.toString()}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefreshing}
+              tintColor={"#fff"}
+              onRefresh={onRefresh}
             />
-            <Text className='paragraph-medium text-center'>
-              No recipes found! {"\n"}Time to create your own masterpiece!
-            </Text>
-          </View>
-        )}
-      />
+          }
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.1}
+          ListHeaderComponent={Header({
+            isRefreshing,
+            handleFilter,
+            filterSelected,
+            handleCreateRecipe
+          })}
+          renderItem={({ item, index }) => (
+            <>
+              <Recipe {...item} />
+              {index !== recipes.length - 1 && (
+                <View className='my-4 h-[1px] w-full bg-gray-300' />
+              )}
+            </>
+          )}
+          ListEmptyComponent={() => (
+            <View className='flex-center h-[70%] gap-2'>
+              <Image
+                source={require("../../assets/icons/noResult.png")}
+                style={{ width: 130, height: 130 }}
+              />
+              <Text className='text-center paragraph-medium'>
+                No recipes found! {"\n"}Time to create your own masterpiece!
+              </Text>
+            </View>
+          )}
+        />
+      )}
     </SafeAreaView>
   );
 };
