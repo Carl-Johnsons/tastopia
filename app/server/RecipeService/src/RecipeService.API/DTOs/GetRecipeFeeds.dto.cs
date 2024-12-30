@@ -1,18 +1,15 @@
 ﻿using Newtonsoft.Json;
-using RecipeService.API.ValidationAttributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.API.DTOs;
 
-public class GetRecipeFeedsDTO
+public class VoteRecipeDTO
 {
     [Required]
-    [JsonProperty("skip")]
-    [Range(0, int.MaxValue)]
-    public int? Skip { get; set; } = null;
+    [JsonProperty("isUpvote")]
+    public bool? IsUpvote { get; set; } = null!;
 
     [Required]
-    [NonEmptyList]
-    [JsonProperty("tagValues")]
-    public List<string> TagValues { get; set; } = null!;
+    [JsonProperty("recipeId")]
+    public Guid? RecipeId { get; set; } = null!;
 }
