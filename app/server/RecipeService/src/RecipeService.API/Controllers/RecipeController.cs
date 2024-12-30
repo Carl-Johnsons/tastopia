@@ -120,4 +120,20 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
+    [HttpPost("vote-recipe")]
+    public async Task<IActionResult> VoteRecipe([FromBody] VoteRecipeDTO voteRecipeDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new VoteRecipeCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            IsUpvote = voteRecipeDTO.IsUpvote,
+            RecipeId = voteRecipeDTO.RecipeId
+        });
+        result.ThrowIfFailure();
+        return Ok();
+    }
+
 }
