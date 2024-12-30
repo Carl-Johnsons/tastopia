@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 PRIVATE_KEY="private_key.pem"
 PUBLIC_KEY="public_key.pem"

@@ -26,6 +26,7 @@ pull_env_file "./app/server/IdentityService" identity && \
 pull_production_env_file "./app/server/IdentityService" identity_production && \
 pull_env_file "./app/server/UploadFileService" upload && \
 pull_env_file "./app/server/UserService" user && \
+pull_production_env_file "./app/server/UserService" user_production && \
 pull_env_file "./app/server/RecipeService" recipe && \
 pull_production_env_file "./app/server/RecipeService" recipe_production && \
 pull_env_file "./app/server/NotificationService" notification && \

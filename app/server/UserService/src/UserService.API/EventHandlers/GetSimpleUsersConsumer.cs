@@ -3,6 +3,7 @@ using Contract.Constants;
 using Contract.DTOs.UserDTO;
 using Contract.Event.UserEvent;
 using MassTransit;
+using Newtonsoft.Json;
 using UserService.Application.Users.Commands;
 
 namespace UserService.API.EventHandlers;
@@ -19,6 +20,9 @@ public class GetSimpleUsersConsumer : IConsumer<GetSimpleUsersEvent>
     }
     public async Task Consume(ConsumeContext<GetSimpleUsersEvent> context)
     {
+        Console.WriteLine(JsonConvert.SerializeObject(context.Message));
+
+
         var response = await _sender.Send(new GetSimpleUsersCommand
         {
             AccountIds = context.Message.AccountIds,

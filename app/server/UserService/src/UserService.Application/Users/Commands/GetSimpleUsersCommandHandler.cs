@@ -23,7 +23,7 @@ public class GetSimpleUsersCommandHandler : IRequestHandler<GetSimpleUsersComman
     public async Task<Result<List<User>?>> Handle(GetSimpleUsersCommand request, CancellationToken cancellationToken)
     {
         var accountIds = request.AccountIds;
-        if(accountIds == null || !accountIds.Any())
+        if(accountIds == null || accountIds.Count == 0)
         {
             return Result<List<User>?>.Failure(UserError.NotFound);
         }

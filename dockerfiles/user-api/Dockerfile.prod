@@ -2,6 +2,7 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
+WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
@@ -21,5 +22,13 @@ COPY ["./app/server/Contract/Contract/Published", "Contract/"]
 WORKDIR "/src/UserService.API"
 RUN dotnet restore --packages "../nuget" --verbosity normal
 COPY ["./app/server/UserService/src","/src"]
+RUN dotnet build --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/build
 
-ENTRYPOINT ["dotnet", "watch", "run", "--no-restore"]
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "UserService.API.dll"]

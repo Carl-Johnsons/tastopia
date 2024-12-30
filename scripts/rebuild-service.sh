@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
+. ./scripts/lib.sh && check_docker
+
 # Define color
 RED='\033[0;31m'
 RED_OCT='\o033[0;31m'
@@ -57,7 +60,7 @@ display_services() {
     done
 }
 # Get list of services
-SERVICES=$(docker-compose -f "$DOCKER_COMPOSE_FILE" config --services)
+SERVICES=$($SUDO_PREFIX docker-compose -f "$DOCKER_COMPOSE_FILE" config --services)
 COUNT=$(echo "$SERVICES" | wc -l | tr -d ' ')
 
 # Function to colorize docker-compose output
@@ -85,9 +88,6 @@ fi
 # Main loop
 while :
 do
-
-
-
     # Check if any services were found
     if [ "$COUNT" -eq 0 ]; then
       echo -e "${RED}No services found in $DOCKER_COMPOSE_FILE${NC}"
@@ -114,7 +114,6 @@ do
       continue
     fi
 
-
     # Check if the input is a valid number
     if ! echo "$INPUT" | grep -qE '^[0-9]+$'; then
       echo -e "${RED}Invalid input. Please enter a ${LIGHT_CYAN}number.${NC}"
@@ -133,7 +132,7 @@ do
       # Rebuild the selected service
       SELECTED_SERVICE=$(echo "$SERVICES" | sed -n "${INDEX}p")
       echo -e "${LIGHT_BLUE}Rebuilding service: ${LIGHT_CYAN}$SELECTED_SERVICE${NC}"
-      docker-compose -f "$DOCKER_COMPOSE_FILE" up --force-recreate --no-deps -d --build "$SELECTED_SERVICE" 2>&1 | colorize_output
+      $SUDO_PREFIX docker-compose -f "$DOCKER_COMPOSE_FILE" up --force-recreate --no-deps -d --build "$SELECTED_SERVICE" 2>&1 | colorize_output
       echo -e "Service ${LIGHT_BLUE}$SELECTED_SERVICE${NC} has been rebuilt."
 
       read -p "Press Enter to continue..."

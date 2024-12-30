@@ -102,7 +102,7 @@ services:
     recipe-api:
         build:
             context: .
-            dockerfile: ./dockerfiles/recipe-api/Dockerfile.${DOCKERFILE_IDENTITY_ENV:-prod}
+            dockerfile: ./dockerfiles/recipe-api/Dockerfile.${DOCKERFILE_RECIPE_ENV:-prod}
         container_name: recipe-service
         ports:
             - "${RECIPE_SERVICE_PORT}:80"
@@ -119,6 +119,31 @@ services:
         develop:
             watch:
                 - path: ./app/server/RecipeService/src
+                  action: sync
+                  target: /src
+                  ignore:
+                      - Contract/
+
+    user-api:
+        build:
+            context: .
+            dockerfile: ./dockerfiles/user-api/Dockerfile.${DOCKERFILE_USER_ENV:-prod}
+        container_name: user-service
+        ports:
+            - "${USER_SERVICE_PORT}:80"
+        depends_on:
+            postgres:
+                condition: service_healthy
+            rabbitmq:
+                condition: service_healthy
+        networks:
+            - back-end
+        env_file:
+            - .env.production
+            - ./app/server/UserService/.env.production
+        develop:
+            watch:
+                - path: ./app/server/UserService/src
                   action: sync
                   target: /src
                   ignore:
