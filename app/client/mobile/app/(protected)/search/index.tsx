@@ -187,7 +187,9 @@ const Search = () => {
 
           {/* Result section */}
           <View className='mt-6'>
-            <Text className='mb-2 h3-bold'>Users</Text>
+            {searchResults?.length !== 0 && doneSearching && (
+              <Text className='mb-2 h3-bold'>Users</Text>
+            )}
 
             <FlatList
               data={searchResults}

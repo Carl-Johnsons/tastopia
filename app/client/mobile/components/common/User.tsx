@@ -69,7 +69,7 @@ const User = ({
           <TouchableWithoutFeedback onPress={handleFollowUnFollow}>
             <View className='px-6 py-2 rounded-3xl bg-primary'>
               <Text className='text-center paragraph-bold text-white_black'>
-                {followed ? "Follow" : "Unfollow"}
+                {followed ? "Unfollow" : "Follow"}
               </Text>
             </View>
           </TouchableWithoutFeedback>
