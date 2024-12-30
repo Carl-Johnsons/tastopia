@@ -16,7 +16,7 @@
       "UpstreamPathTemplate": "/api/recipe/{everything}",
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [ "Bearer" ],
-        "AllowedScopes": [ "" ]
+        "AllowedScopes": [ "openid" ]
       }
     },
     {

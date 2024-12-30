@@ -17,7 +17,7 @@ public class RecipeController : BaseApiController
     }
 
     [HttpPost("create-recipe")]
-    public async Task<IActionResult> UpdateImage([FromForm] CreateRecipeDTO createRecipeDTO)
+    public async Task<IActionResult> CreateRecipe([FromForm] CreateRecipeDTO createRecipeDTO)
     {
         var listStep = new List<Application.Recipes.StepDTO>();
         foreach (var step in createRecipeDTO.Steps) {
