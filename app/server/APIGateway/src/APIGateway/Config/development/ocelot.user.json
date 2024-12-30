@@ -7,13 +7,32 @@
           "Port": 5003
         }
       ],
+      "DownstreamPathTemplate": "/api/user/search",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/user/search"
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5003
+        }
+      ],
       "DownstreamPathTemplate": "/api/user/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
       ],
-      "UpstreamPathTemplate": "/api/user/{everything}"
+      "UpstreamPathTemplate": "/api/user/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      }
     }
   ]
 }
