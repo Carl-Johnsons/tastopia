@@ -34,9 +34,9 @@ const Login = () => {
       console.log("Login type", loginType);
 
       if (loginType === IDENTIFIER_TYPE.EMAIL) {
-        loginWithEmailSchema.parse(data);
+        // loginWithEmailSchema.parse(data);
       } else {
-        loginWithPhoneNumberSchema.parse(data);
+        // loginWithPhoneNumberSchema.parse(data);
       }
 
       const res = await login(data);

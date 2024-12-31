@@ -32,7 +32,7 @@ const Register = () => {
     if (isVerifyingAccount && currentRouteName === "/register") {
       Alert.alert(
         "Verifying account in pending",
-        `You have an account (${verifyIdentifier}) that is in the verifying process. Do you want to continue the process?`,
+        `You have an account ${verifyIdentifier} that is in the verifying process. Do you want to continue the process?`,
         [
           {
             text: "Yes",

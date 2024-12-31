@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 if ! docker info > /dev/null 2>&1; then
     printf "\n\t${LIGHT_RED}*** Docker is not running ❌${NC} *** . Exiting the script.\n\n"
@@ -12,4 +12,4 @@ echo "Pruning dangling image ..."
 docker image prune -a -f
 
 echo "Pruning docker build cache ..."
-docker buildx prune -f
+docker build prune -f

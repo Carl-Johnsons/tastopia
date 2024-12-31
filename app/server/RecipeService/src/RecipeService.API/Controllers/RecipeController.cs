@@ -17,7 +17,7 @@ public class RecipeController : BaseApiController
     }
 
     [HttpPost("create-recipe")]
-    public async Task<IActionResult> UpdateImage([FromForm] CreateRecipeDTO createRecipeDTO)
+    public async Task<IActionResult> CreateRecipe([FromForm] CreateRecipeDTO createRecipeDTO)
     {
         var listStep = new List<Application.Recipes.StepDTO>();
         foreach (var step in createRecipeDTO.Steps) {
@@ -118,6 +118,22 @@ public class RecipeController : BaseApiController
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
+    }
+
+    [HttpPost("vote-recipe")]
+    public async Task<IActionResult> VoteRecipe([FromBody] VoteRecipeDTO voteRecipeDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new VoteRecipeCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            IsUpvote = voteRecipeDTO.IsUpvote,
+            RecipeId = voteRecipeDTO.RecipeId
+        });
+        result.ThrowIfFailure();
+        return Ok();
     }
 
 }

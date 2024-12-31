@@ -89,7 +89,6 @@ internal class MockupData
         }
     }
 
-
     public async Task SeedUserDataAsync()
     {
         foreach (var user in ApplicationAccountData.Data)
