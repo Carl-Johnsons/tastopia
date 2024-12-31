@@ -1,7 +1,15 @@
-# appId: com.tastopia.app
 appId: host.exp.exponent
 ---
-- runFlow: ./expo/init.yml
+- runFlow:
+    file: ./expo/init-android.yml
+    when:
+      platform: "Android"
+
+- runFlow:
+    file: ./expo/init-ios.yml
+    when:
+      platform: "iOS"
+
 - assertVisible: "Tìm Kiếm"
 - tapOn: "Tìm Kiếm"
 - tapOn: "Enter name or username"
