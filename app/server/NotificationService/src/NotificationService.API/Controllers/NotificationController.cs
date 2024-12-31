@@ -4,7 +4,7 @@ namespace NotificationService.API.Controllers;
 
 [Route("api/notification")]
 [ApiController]
-[Authorize]
+//[Authorize]
 public partial class NotificationController : BaseApiController
 {
     public NotificationController(

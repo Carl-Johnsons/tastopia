@@ -1,22 +1,24 @@
-import { persistor } from "@/store";
-import { fetchApi } from "@/utils/fetch";
 import { router } from "expo-router";
 import { Button } from "react-native";
+import { useDispatch } from "react-redux";
+import { ROLE, logout as logoutAction } from "@/slices/auth.slice";
+import Protected from "./Protected";
 
 export const LogoutButton = () => {
+  const dispatch = useDispatch();
+
   const logout = async () => {
-    await fetchApi("/api/users/logout", {
-      method: "POST"
-    });
-    await persistor.purge();
-    router.navigate("/sign-in");
+    dispatch(logoutAction());
+    router.replace("/welcome");
   };
 
   return (
-    <Button
-      title='Logout'
-      onPress={() => logout()}
-    />
+    <Protected excludedRoles={[ROLE.GUEST]}>
+      <Button
+        title='Logout'
+        onPress={logout}
+      />
+    </Protected>
   );
 };
 

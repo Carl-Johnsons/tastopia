@@ -1,6 +1,9 @@
-﻿using IdentityService.Infrastructure.Utilities;
+﻿using IdentityModel;
+using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Linq.Expressions;
 
 namespace IdentityService.Infrastructure.Persistence;
 
@@ -52,13 +55,22 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationAccount>, IAppl
         builder.Entity<ApplicationAccount>(
                 e =>
                 {
-                    e.Property(u => u.Active)
+                    e.Property(a => a.IsActive)
                         .HasDefaultValueSql("True")
                         .HasSentinel(false);
 
-                    e.Property(u => u.EmailConfirmationExpiry)
-                          .HasConversion(v => v.ToUniversalTime(),
-                                         v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+                    e.Property(a => a.EmailConfirmed)
+                        .HasDefaultValueSql("False")
+                        .HasSentinel(false);
+
+                    e.Property(a => a.PhoneNumberConfirmed)
+                       .HasDefaultValueSql("False")
+                       .HasSentinel(false);
+
+                    ApplyUtcConversionForDateTimeNullable(e, a => a.EmailOTPCreated);
+                    ApplyUtcConversionForDateTimeNullable(e, a => a.EmailOTPExpiry);
+                    ApplyUtcConversionForDateTimeNullable(e, a => a.PhoneOTPCreated);
+                    ApplyUtcConversionForDateTimeNullable(e, a => a.PhoneOTPExpiry);
                 });
 
         builder.Entity<RoleGroupPermission>(e =>
@@ -79,4 +91,15 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationAccount>, IAppl
                 .OnDelete(DeleteBehavior.Cascade);
         });
     }
+
+
+    private void ApplyUtcConversionForDateTimeNullable<T>(EntityTypeBuilder<T> e, Expression<Func<T, DateTime?>> propertyExpression) where T : class
+    {
+        e.Property(propertyExpression)
+         .HasConversion(
+             v => v.HasValue ? v.Value.ToUniversalTime() : (DateTime?)null,
+             v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null
+         );
+    }
+
 }

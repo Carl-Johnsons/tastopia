@@ -9,68 +9,63 @@ namespace UploadFileService.Application.CloudinaryFiles.Commands;
 public record DeleteMultipleCloudinaryImageFileCommand : IRequest<Result>
 {
     [Required]
-    public List<Guid?> FileIds { get; init; } = null!;
+    public List<string> DeleteUrls { get; init; } = null!;
 }
 public class DeleteMultipleCloudinaryImageFileCommandHandler : IRequestHandler<DeleteMultipleCloudinaryImageFileCommand, Result>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly Cloudinary _cloudinary;
+    private readonly IFileUtility _fileUtility;
 
-    public DeleteMultipleCloudinaryImageFileCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, Cloudinary cloudinary)
+    public DeleteMultipleCloudinaryImageFileCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, Cloudinary cloudinary, IFileUtility fileUtility)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _cloudinary = cloudinary;
+        _fileUtility = fileUtility;
     }
 
     public async Task<Result> Handle(DeleteMultipleCloudinaryImageFileCommand request, CancellationToken cancellationToken)
     {
 
-        var fileIds = request.FileIds;
+        var deleteUrls = request.DeleteUrls;
 
-        if (fileIds == null || !fileIds.Any())
+        if (deleteUrls == null || !deleteUrls.Any())
         {
-            await Console.Out.WriteLineAsync("The file list cannot be null or empty.command");
-            await Console.Out.WriteLineAsync("form file count:" + fileIds?.Count);
             return CloudinaryFileError.NotFound;
         }
-        if (fileIds.Any(Id => Id == null)) return CloudinaryFileError.FileListContainNull;
-        var deleteResults = Enumerable.Repeat(new DeletionResult(), fileIds.Count).ToList();
-        var cloudinaryFiles = new List<CloudinaryFile?>();
-        foreach (var Id in fileIds)
+
+        var listPublicId = new List<string?>();
+        foreach (var url in deleteUrls)
         {
-            var cloudinaryFile = await _context.CloudinaryFiles.Where(cf => cf.Id == Id).Include(cf => cf.ExtensionType).SingleOrDefaultAsync();
+            listPublicId.Add(_fileUtility.GetPublicIdByUrl(url));
+        }
+
+        if(listPublicId.Count != deleteUrls.Count)
+        {
+            return CloudinaryFileError.FileListContainNull;
+        }
+
+        var deleteResults = Enumerable.Repeat(new DeletionResult(), listPublicId.Count).ToList();
+        var cloudinaryFiles = new List<CloudinaryFile?>();
+        foreach (var PublicId in listPublicId)
+        {
+            var cloudinaryFile = await _context.CloudinaryFiles.Where(cf => cf.PublicId == PublicId).Include(cf => cf.ExtensionType).SingleOrDefaultAsync();
             cloudinaryFiles.Add(cloudinaryFile);
         }
-        await Console.Out.WriteLineAsync("FormFile count command:" + fileIds.Count);
         Result? cloudinaryFileError = null;
-        var tasks = cloudinaryFiles.Select((cloudinaryFile, index) =>
+        var tasks = listPublicId.Select((publicId, index) =>
         {
-            if (cloudinaryFile == null || cloudinaryFile.PublicId == null)
+            if (publicId == null)
             {
                 cloudinaryFileError = CloudinaryFileError.NotFound;
                 return Task.CompletedTask;
             }
-            ResourceType rst;
-            switch (cloudinaryFile.ExtensionType.Type)
+    
+            var deleteParams = new DeletionParams(publicId)
             {
-                case "IMAGE":
-                    rst = ResourceType.Image;
-                    break;
-                case "VIDEO":
-                    rst = ResourceType.Video;
-                    break;
-                case "RAW":
-                    rst = ResourceType.Raw;
-                    break;
-                default:
-                    cloudinaryFileError = CloudinaryFileError.InvalidFile("Image, Video, Raw", Path.GetExtension(cloudinaryFile.Name));
-                    return Task.CompletedTask;
-            }
-            var deleteParams = new DeletionParams(cloudinaryFile.PublicId)
-            {
-                ResourceType = rst,
+                ResourceType = ResourceType.Image,
             };
             var deleteResult = _cloudinary.Destroy(deleteParams);
             deleteResults[index] = deleteResult;
@@ -81,10 +76,8 @@ public class DeleteMultipleCloudinaryImageFileCommandHandler : IRequestHandler<D
         if (cloudinaryFileError != null) return cloudinaryFileError;
         //check if all image delete to cloud susscess
         if (deleteResults.Any(result => result.StatusCode != HttpStatusCode.OK)) return CloudinaryFileError.DeleteToCloudFail;
-        await Console.Out.WriteLineAsync("Upload result count:" + deleteResults.Count);
         for (int i = 0; i < deleteResults.Count; i++)
         {
-            await Console.Out.WriteLineAsync("deleteok!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             _context.CloudinaryFiles.Remove(cloudinaryFiles[i]!);
         }
         await _unitOfWork.SaveChangeAsync(cancellationToken);

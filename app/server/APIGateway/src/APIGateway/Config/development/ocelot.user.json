@@ -4,32 +4,34 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5001
+          "Port": 5003
         }
       ],
-      "DownstreamPathTemplate": "/api/users/{everything}",
+      "DownstreamPathTemplate": "/api/user/search",
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      "UpstreamPathTemplate": "/api/users/{everything}",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKeys": ["Bearer"],
-        "AllowedScopes": ["IdentityServerApi"]
-      }
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/user/search"
     },
     {
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5001
+          "Port": 5003
         }
       ],
-      "DownstreamPathTemplate": "/api/friend/{everything}",
+      "DownstreamPathTemplate": "/api/user/{everything}",
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      "UpstreamPathTemplate": "/api/friend/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/user/{everything}",
       "AuthenticationOptions": {
-        "AuthenticationProviderKeys": ["Bearer"],
-        "AllowedScopes": ["IdentityServerApi"]
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
       }
     }
   ]

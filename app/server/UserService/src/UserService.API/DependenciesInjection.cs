@@ -4,6 +4,7 @@ using Serilog;
 using UserService.API.Middleware;
 using UserService.Application;
 using UserService.Infrastructure;
+using Newtonsoft.Json;
 
 namespace UserService.API;
 
@@ -12,6 +13,7 @@ public static class DependenciesInjection
 {
     public static WebApplicationBuilder AddAPIServices(this WebApplicationBuilder builder)
     {
+        UserService.Infrastructure.Utilities.EnvUtility.LoadEnvFile();
         var services = builder.Services;
         var config = builder.Configuration;
         var host = builder.Host;
@@ -31,6 +33,11 @@ public static class DependenciesInjection
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     options.JsonSerializerOptions.WriteIndented = true;
                 });
+        services.AddControllers()
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
+            });
 
         services.AddHttpContextAccessor();
 
@@ -86,15 +93,15 @@ public static class DependenciesInjection
 
         app.UseAuthorization();
 
-        try
-        {
-            var signalRService = app.Services.GetService<ISignalRService>();
-            await signalRService!.StartConnectionAsync();
-        }
-        catch (Exception ex)
-        {
-            app.Logger.LogError($"Error connecting to SignalR: {ex.Message}");
-        }
+        //try
+        //{
+        //    var signalRService = app.Services.GetService<ISignalRService>();
+        //    await signalRService!.StartConnectionAsync();
+        //}
+        //catch (Exception ex)
+        //{
+        //    app.Logger.LogError($"Error connecting to SignalR: {ex.Message}");
+        //}
         return app;
     }
 }

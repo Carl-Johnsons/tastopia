@@ -8,12 +8,24 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
-		<PackageReference Include="RabbitMQ.Client" Version="7.0.0" />
-		<PackageReference Include="DotNetEnv" Version="3.0.0" />
+		<None Include="credentials.json" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\NotificationService.Domain\NotificationService.Domain.csproj" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+		<PackageReference Include="DotNetEnv" Version="3.0.0" />
+		<PackageReference Include="Google.Apis.Auth" Version="1.68.0" />
+		<PackageReference Include="Google.Apis.Gmail.v1" Version="1.68.0.3427" />
+		<PackageReference Include="MimeKit" Version="4.9.0" />
+		<PackageReference Include="MassTransit" Version="8.2.2" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Contract">
+			<HintPath Condition="Exists('..\..\..\Contract\Contract\bin\Release\net8.0\Contract.dll')">..\..\..\Contract\Contract\bin\Release\net8.0\Contract.dll</HintPath>
+			<HintPath Condition="Exists('..\..\..\Contract\Contract\Published\Contract.dll')">..\..\..\Contract\Contract\Published\Contract.dll</HintPath>
+			<HintPath Condition="Exists('..\Contract\Contract.dll')">..\Contract\Contract.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 </Project>

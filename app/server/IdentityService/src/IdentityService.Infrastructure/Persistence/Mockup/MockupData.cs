@@ -37,7 +37,7 @@ internal class MockupData
             PhoneNumber = "0111111119",
             PhoneNumberConfirmed = true,
             /* Custom attribute */
-            Active = true,
+            IsActive = true,
         };
 
         string userPassword = "Pass123$";
@@ -88,7 +88,6 @@ internal class MockupData
             await Console.Out.WriteLineAsync("================================================");
         }
     }
-
 
     public async Task SeedUserDataAsync()
     {

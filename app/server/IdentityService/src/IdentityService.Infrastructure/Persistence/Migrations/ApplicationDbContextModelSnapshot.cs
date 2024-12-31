@@ -30,11 +30,6 @@ namespace IdentityService.Infrastructure.Persistence.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("Active")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValueSql("True");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
@@ -43,15 +38,25 @@ namespace IdentityService.Infrastructure.Persistence.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
-                    b.Property<DateTime>("EmailConfirmationExpiry")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<bool>("EmailConfirmed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValueSql("False");
 
-                    b.Property<string>("EmailConfirmationOTP")
+                    b.Property<string>("EmailOTP")
                         .HasMaxLength(6)
                         .HasColumnType("character varying(6)");
 
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
+                    b.Property<DateTime?>("EmailOTPCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("EmailOTPExpiry")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValueSql("True");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -74,7 +79,22 @@ namespace IdentityService.Infrastructure.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValueSql("False");
+
+                    b.Property<string>("PhoneOTP")
+                        .HasMaxLength(6)
+                        .HasColumnType("character varying(6)");
+
+                    b.Property<DateTime?>("PhoneOTPCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("PhoneOTPExpiry")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("RequestOTPCount")
+                        .HasColumnType("integer");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");

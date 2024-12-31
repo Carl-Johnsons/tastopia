@@ -1,36 +1,17 @@
 import React, { useEffect, useState } from "react";
-import {
-  Image,
-  ImageSourcePropType,
-  Text,
-  View,
-  StyleSheet,
-  Keyboard
-} from "react-native";
-import { Tabs } from "expo-router";
+import { View, StyleSheet, Keyboard, ActivityIndicator } from "react-native";
+import { Redirect, Tabs, useRootNavigationState } from "expo-router";
 import { menuList } from "@/constants/menu";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
+import { selectRole } from "@/slices/auth.slice";
 
 const ProtectedLayout = () => {
   const { t } = useTranslation("menu");
 
   const [isKeyBoardVisible, setIsKeyBoardVisible] = useState(false);
-  // const jwtToken = selectJwtToken();
-  // const navigationState = useRootNavigationState();
-
-  // if (!jwtToken) {
-  //   return !navigationState?.key ? (
-  //     <View className='justify-center h-full'>
-  //       <ActivityIndicator
-  //         size={"large"}
-  //         color={"black"}
-  //       />
-  //     </View>
-  //   ) : (
-  //     <Redirect href={"/sign-in"} />
-  //   );
-  // }
+  const role = selectRole();
+  const navigationState = useRootNavigationState();
 
   // Handle bottom tabs bar visibility when keyboard is shown
   const sortedMenuItems = menuList?.[0].menuItems.sort(
@@ -52,6 +33,20 @@ const ProtectedLayout = () => {
       KeyboardDidHide.remove();
     };
   }, []);
+
+  if (!role) {
+    return !navigationState?.key ? (
+      <View className='h-full justify-center'>
+        <ActivityIndicator
+          size={"large"}
+          color={"black"}
+        />
+      </View>
+    ) : (
+      <Redirect href={"/welcome"} />
+    );
+  }
+
   return (
     <>
       <Tabs
@@ -60,7 +55,7 @@ const ProtectedLayout = () => {
           tabBarActiveTintColor: globalStyles.color.light,
           tabBarInactiveTintColor: globalStyles.color.primary,
           tabBarStyle: [styles.tabBar, { bottom: isKeyBoardVisible ? -50 : 0 }],
-          tabBarHideOnKeyboard: true
+          tabBarHideOnKeyboard: false
         }}
       >
         {sortedMenuItems.map(menuItem => {
@@ -111,9 +106,13 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 10,
     paddingHorizontal: 10,
-    borderTopColor: globalStyles.color.light,
-    elevation: 10,
-    zIndex: 2
+    zIndex: 2,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 10
   },
 
   tabItem: {

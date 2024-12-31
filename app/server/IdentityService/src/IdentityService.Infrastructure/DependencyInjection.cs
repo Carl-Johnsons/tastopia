@@ -59,6 +59,7 @@ public static class DependencyInjection
                     h.Username(username);
                     h.Password(password);
                 });
+
                 RegisterEndpointsFromAttributes(context, config, applicationAssembly);
 
                 config.ConfigureEndpoints(context);
@@ -83,12 +84,8 @@ public static class DependencyInjection
             {
                 endpoint.ConfigureConsumer(context, consumerType);
 
-                if (!string.IsNullOrEmpty(queueNameAttribute.ExchangeName))
-                {
-                    endpoint.Bind(queueNameAttribute.ExchangeName);
-                }
+                endpoint.Bind(queueNameAttribute.ExchangeName);
             });
         }
     }
-
 }

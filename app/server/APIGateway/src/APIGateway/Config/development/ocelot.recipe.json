@@ -1,0 +1,54 @@
+{
+  "Routes": [
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5005
+        }
+      ],
+      "DownstreamPathTemplate": "/api/recipe/get-recipe-feed",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/recipe/get-recipe-feed"
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5005
+        }
+      ],
+      "DownstreamPathTemplate": "/api/recipe/search-recipe",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/recipe/search-recipe"
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5005
+        }
+      ],
+      "DownstreamPathTemplate": "/api/recipe/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/recipe/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      }
+    }
+
+  ]
+}

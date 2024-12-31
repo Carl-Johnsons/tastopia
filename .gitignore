@@ -414,3 +414,10 @@ data/*
 
 # doc
 doc/**/*.svg
+
+# credentials
+**/credentials.json
+app/server/NotificationService/src/EmailWorker/Tokens
+
+# Contract published
+/app/server/Contract/Contract/Published/*

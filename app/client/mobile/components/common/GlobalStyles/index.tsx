@@ -17,7 +17,8 @@ export const globalStyles = {
     bgLight: "#2c2c2c0a",
     bsBodyColor: "#424242",
     disable: "#939393",
-    disableOpacity: "#9393933d"
+    disableOpacity: "#9393933d",
+    gray400: "#C4C7D0"
   },
   heading: {}
 };

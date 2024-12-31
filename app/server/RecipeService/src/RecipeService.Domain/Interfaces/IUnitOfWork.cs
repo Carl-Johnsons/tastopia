@@ -1,0 +1,6 @@
+﻿namespace RecipeService.Domain.Interfaces;
+
+public interface IUnitOfWork
+{
+    Task SaveChangeAsync(CancellationToken cancellationToken = default);
+}

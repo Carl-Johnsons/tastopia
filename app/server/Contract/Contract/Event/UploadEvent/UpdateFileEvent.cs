@@ -3,7 +3,7 @@ using MassTransit;
 
 namespace Contract.Event.UploadEvent;
 
-[EntityName("update-file-event")]
+[EntityName("UpdateFileEvent")]
 public record UpdateFileEvent
 {
     public string Url { get; set; } = null!;

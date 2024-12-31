@@ -1,10 +1,9 @@
-﻿using Contract.Event.UploadEvent.EventModel;
-using MassTransit;
+﻿using MassTransit;
 
 namespace Contract.Event.UploadEvent;
 
-[EntityName("delete-multiple-file-event")]
+[EntityName("DeleteMultipleFileEvent")]
 public record DeleteMultipleFileEvent
 {
-    public List<Guid?> FileIds { get; set; } = null!;
+    public List<string> DeleteUrl { get; set; } = null!;
 }

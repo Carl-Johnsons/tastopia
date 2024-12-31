@@ -11,6 +11,7 @@ public static class DependenciesInjection
 {
     public static WebApplicationBuilder AddAPIServices(this WebApplicationBuilder builder)
     {
+        UploadFileService.Infrastructure.Utilities.EnvUtility.LoadEnvFile();
         var services = builder.Services;
         var config = builder.Configuration;
         var host = builder.Host;

@@ -1,14 +1,9 @@
 import { LoginParams } from "@/api/user";
 import { useState } from "react";
-import { ActivityIndicator, Platform, Text, View } from "react-native";
-import {
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withTiming
-} from "react-native-reanimated";
+import { ActivityIndicator, Text, View } from "react-native";
 import Input from "./Input";
 import Button from "./Button";
+import useBounce from "@/hooks/animation/useBounce";
 
 export interface LoginFormFields extends LoginParams {}
 
@@ -24,48 +19,49 @@ type LoginFormProps = {
 export const LoginForm = (props: LoginFormProps) => {
   const { onSubmit, isLoading } = props;
   const [formValues, setFormValues] = useState<LoginFormFields>({
-    username: "",
+    identifier: "",
     password: ""
   });
-
-  const buttonScale = useSharedValue(1);
-  const buttonOpacity = useSharedValue(1);
-
-  const animate = () => {
-    buttonScale.value = withSequence(withTiming(0.96), withTiming(1));
-    buttonOpacity.value = withSequence(withTiming(0.7), withTiming(1));
-  };
-
-  const animatedStyles = useAnimatedStyle(() => ({
-    transform: [{ scale: buttonScale.value }],
-    opacity: buttonOpacity.value
-  }));
+  const { animate, animatedStyles } = useBounce();
 
   return (
-    <View className={`gap-3 ${props.className}`}>
-      <Input
-        autoCapitalize='none'
-        placeholder='Username'
-        className={`dark:text-white ${Platform.OS === "ios" ? "p-3.5" : ""}`}
-        placeholderTextColor={"gray"}
-        onChangeText={username => setFormValues({ ...formValues, username })}
-        autoFocus
-      ></Input>
-      <Input
-        autoCapitalize='none'
-        placeholder='Password'
-        className={`dark:text-white ${Platform.OS === "ios" ? "p-3.5" : ""}`}
-        placeholderTextColor={"gray"}
-        onChangeText={password => setFormValues({ ...formValues, password })}
-        secureTextEntry
-      ></Input>
+    <View className={`gap-[2vh] ${props.className}`}>
+      <View>
+        <Text className='mb-3 font-sans text-gray-600'>E-mail or phone number</Text>
+        <Input
+          defaultValue={formValues.identifier}
+          autoCapitalize='none'
+          placeholder='Your email or phone number'
+          className={`border-gray-300 p-5 focus:border-primary`}
+          placeholderTextColor={"gray"}
+          onChangeText={identifier => setFormValues({ ...formValues, identifier })}
+        />
+      </View>
+
+      <View>
+        <Text className='mb-3 font-sans text-gray-600'>Password</Text>
+        <Input
+          defaultValue={formValues.password}
+          autoCapitalize='none'
+          placeholder='Password'
+          className={`border-gray-300 p-5 focus:border-primary`}
+          placeholderTextColor={"gray"}
+          onChangeText={password => setFormValues({ ...formValues, password })}
+          secureTextEntry
+        />
+      </View>
+
+      <Text className='text-center font-medium text-sm text-primary'>
+        Forgot password?
+      </Text>
+
       <Button
         onPress={() => {
           animate();
           onSubmit(formValues);
         }}
         style={[animatedStyles]}
-        className='w-100 rounded-full bg-black p-3 text-white'
+        className='rounded-full bg-primary p-3 py-6 text-white'
         isLoading={isLoading}
         spinner={
           <ActivityIndicator
@@ -74,7 +70,9 @@ export const LoginForm = (props: LoginFormProps) => {
           />
         }
       >
-        <Text className='text-center text-white'>Log in</Text>
+        <Text className='text-center font-sans font-semibold uppercase text-white'>
+          Log in
+        </Text>
       </Button>
     </View>
   );

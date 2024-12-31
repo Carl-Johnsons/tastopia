@@ -1,11 +1,10 @@
 #!/bin/bash
 
-if ! docker info > /dev/null 2>&1; then
-    printf "\n\t${LIGHT_RED}*** Docker is not running ❌${NC} *** . Exiting the script.\n\n"
-    exit 1
-fi
+. ./scripts/lib.sh && check_docker
 
 project_root=$(pwd)
+
+[[ "$PLATFORM" != "windows" ]] && sudo chmod 777 data/db -R && echo -e "${GREEN}Run chmod 777 for data/db directory successfully${NC}"
 
 update_database() {
     local service_path=$1
@@ -19,3 +18,4 @@ update_database() {
 update_database "./app/server/IdentityService/src/IdentityService.Infrastructure" "Identity"
 update_database "./app/server/UploadFileService/src/UploadFileService.Infrastructure" "Upload"
 update_database "./app/server/UserService/src/UserService.Infrastructure" "User"
+update_database "./app/server/RecipeService/src/RecipeService.Infrastructure" "Recipe"

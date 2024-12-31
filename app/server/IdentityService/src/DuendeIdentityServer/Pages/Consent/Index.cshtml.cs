@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace DuendeIdentityServer.Pages.Consent
 {
-    [Authorize]
+    //[Authorize]
     [SecurityHeaders]
     public class Index : PageModel
     {

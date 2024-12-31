@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UserService.Domain.Entities;
 
-public class UserSetting : BaseAuditableEntity
+[Table("UserSetting")]
+[PrimaryKey(nameof(AccountId), nameof(SettingId))]
+public class UserSetting
 {
     [Required]
-    public Guid UserId { get; set; }
+    public Guid AccountId { get; set; }
     [Required]
     public Guid SettingId { get; set; }
     public string SettingValue { get; set; } = null!;

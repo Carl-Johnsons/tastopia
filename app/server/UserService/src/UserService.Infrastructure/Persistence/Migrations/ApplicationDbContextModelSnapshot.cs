@@ -42,7 +42,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Settings");
+                    b.ToTable("Setting");
 
                     b.HasData(
                         new
@@ -63,17 +63,30 @@ namespace UserService.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("UserService.Domain.Entities.User", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("AccountId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid");
+                    b.Property<string>("AccountUsername")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Address")
+                        .HasColumnType("text");
 
                     b.Property<string>("AvatarUrl")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("BackgroundUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Bio")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("Dob")
@@ -82,45 +95,428 @@ namespace UserService.Infrastructure.Persistence.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.Property<bool>("IsAccountActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("TotalFollowing")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TotalFollwer")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TotalRecipe")
+                        .HasColumnType("integer");
+
+                    b.HasKey("AccountId");
 
                     b.ToTable("User");
+
+                    b.HasData(
+                        new
+                        {
+                            AccountId = new Guid("f9a8c16e-610a-49f5-aac0-82183d8c3a16"),
+                            AccountUsername = "admin1234",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Admin",
+                            IsAccountActive = true
+                        },
+                        new
+                        {
+                            AccountId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
+                            AccountUsername = "alice1234",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Alice",
+                            IsAccountActive = true,
+                            TotalFollowing = 4,
+                            TotalRecipe = 21
+                        },
+                        new
+                        {
+                            AccountId = new Guid("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
+                            AccountUsername = "kian1234",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Kian",
+                            IsAccountActive = true,
+                            TotalFollwer = 1
+                        },
+                        new
+                        {
+                            AccountId = new Guid("078ecc42-7643-4cff-b851-eeac5ba1bb29"),
+                            AccountUsername = "bob1234",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Bob",
+                            IsAccountActive = true
+                        },
+                        new
+                        {
+                            AccountId = new Guid("1cfb7c40-cccc-4a87-88a9-ff967d8dcddb"),
+                            AccountUsername = "duc1234",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Duc",
+                            IsAccountActive = true
+                        },
+                        new
+                        {
+                            AccountId = new Guid("50e00c7f-39da-48d1-b273-3562225a5972"),
+                            AccountUsername = "an1234",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "An",
+                            IsAccountActive = true,
+                            TotalFollwer = 1
+                        },
+                        new
+                        {
+                            AccountId = new Guid("594a3fc8-3d24-4305-a9d7-569586d0604e"),
+                            AccountUsername = "kara1234",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Kara",
+                            IsAccountActive = true
+                        },
+                        new
+                        {
+                            AccountId = new Guid("03e4b46e-b84a-43a9-a421-1b19e02023bb"),
+                            AccountUsername = "raina1234",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Raina",
+                            IsAccountActive = true
+                        },
+                        new
+                        {
+                            AccountId = new Guid("cd1c7fe9-3308-4afb-83f4-23fa1e9efba8"),
+                            AccountUsername = "mac1234",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Mac",
+                            IsAccountActive = true
+                        },
+                        new
+                        {
+                            AccountId = new Guid("76346f0e-a52c-4d94-a909-4a8cc59c8ede"),
+                            AccountUsername = "lainey1234",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Lainey",
+                            IsAccountActive = true,
+                            TotalFollwer = 1
+                        },
+                        new
+                        {
+                            AccountId = new Guid("e797952f-1b76-4db9-81a4-8e2f5f9152ea"),
+                            AccountUsername = "willa1234",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Willa",
+                            IsAccountActive = true,
+                            TotalFollwer = 1
+                        },
+                        new
+                        {
+                            AccountId = new Guid("5d02ff8b-62a6-425a-9828-6033112b54e0"),
+                            AccountUsername = "lily",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Lily",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("8edf9219-7ba6-4259-a7e5-cd95b2e29ca2"),
+                            AccountUsername = "james",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "James",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("6e411b44-26d3-490e-b4e5-8012e2cfd897"),
+                            AccountUsername = "emma",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Emma",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("bb18d21b-985b-4a54-bc04-f6cf6ac0a32e"),
+                            AccountUsername = "noah",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Noah",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("9f23334a-1148-4b6e-b636-40cf448735dd"),
+                            AccountUsername = "ava",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Ava",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("6e898d72-52d0-4de8-a784-5bb1f1a4eda5"),
+                            AccountUsername = "logan",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Logan",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("6f37441a-92d8-4d27-aa1a-e50ab1a2b4b7"),
+                            AccountUsername = "sophia",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Sophia",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("9baca8d6-38d7-451e-bf2c-48652ddd7fca"),
+                            AccountUsername = "lucas",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Lucas",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("69a36c05-c7ff-4411-a283-fa801cbba5ee"),
+                            AccountUsername = "mia",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Mia",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("e67ac48b-9dd0-42a4-9fa3-a243b00ca5dd"),
+                            AccountUsername = "ethan",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Ethan",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("7201a43a-6a1d-4634-bc27-9cd71f90a11a"),
+                            AccountUsername = "isabella",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Isabella",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("0ee35f28-21bf-49f9-ad89-b6a450c41908"),
+                            AccountUsername = "aiden",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Aiden",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("0f368db8-84f3-499d-be8b-2daf685c6f5e"),
+                            AccountUsername = "amelia",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Amelia",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("e6333cb5-7008-4fa2-b835-364e304180a3"),
+                            AccountUsername = "grayson",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Grayson",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("866a7cd5-da2a-46e4-abe3-8efe6bd6a1d0"),
+                            AccountUsername = "ella",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Ella",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("28fb3b5f-d2a3-4456-a6b5-dbf75cea4e0a"),
+                            AccountUsername = "jackson",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Jackson",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("2155d0ed-b998-416c-adaf-19f68a0a5b34"),
+                            AccountUsername = "scarlett",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Scarlett",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("936c85f2-6958-40fd-a201-74485ac917e0"),
+                            AccountUsername = "alex",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Alex",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("dff9a8f3-c6c4-4d97-98f9-bd9a9a18b0cf"),
+                            AccountUsername = "chloe",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Chloe",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("b1ccb0c7-34eb-4545-859d-d7307aa42ff7"),
+                            AccountUsername = "carter",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Carter",
+                            IsAccountActive = true,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        });
                 });
 
-            modelBuilder.Entity("UserService.Domain.Entities.UserSearchTracking", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.UserFollow", b =>
+                {
+                    b.Property<Guid>("FollowerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("FollowingId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("FollowerId", "FollowingId");
+
+                    b.HasIndex("FollowingId");
+
+                    b.ToTable("UserFollow");
+
+                    b.HasData(
+                        new
+                        {
+                            FollowerId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
+                            FollowingId = new Guid("bb06e4ec-f371-45d5-804e-22c65c77f67d")
+                        },
+                        new
+                        {
+                            FollowerId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
+                            FollowingId = new Guid("76346f0e-a52c-4d94-a909-4a8cc59c8ede")
+                        },
+                        new
+                        {
+                            FollowerId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
+                            FollowingId = new Guid("e797952f-1b76-4db9-81a4-8e2f5f9152ea")
+                        },
+                        new
+                        {
+                            FollowerId = new Guid("61c61ac7-291e-4075-9689-666ef05547ed"),
+                            FollowingId = new Guid("50e00c7f-39da-48d1-b273-3562225a5972")
+                        });
+                });
+
+            modelBuilder.Entity("UserService.Domain.Entities.UserReport", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("KeyWord")
+                    b.Property<string>("Reason")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<Guid>("ReportedId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("AccountId");
 
-                    b.ToTable("UserSearchTracking");
+                    b.HasIndex("ReportedId");
+
+                    b.ToTable("UserReport");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.UserSetting", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("AccountId")
                         .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("SettingId")
                         .HasColumnType("uuid");
@@ -129,83 +525,66 @@ namespace UserService.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
+                    b.HasKey("AccountId", "SettingId");
 
                     b.HasIndex("SettingId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserSettings");
+                    b.ToTable("UserSetting");
                 });
 
-            modelBuilder.Entity("UserService.Domain.Entities.UserTimeTracking", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.UserFollow", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.HasOne("UserService.Domain.Entities.User", "Follower")
+                        .WithMany()
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<int>("ActiveSecond")
-                        .HasColumnType("integer");
+                    b.HasOne("UserService.Domain.Entities.User", "Following")
+                        .WithMany()
+                        .HasForeignKey("FollowingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Navigation("Follower");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserTimeTracking");
+                    b.Navigation("Following");
                 });
 
-            modelBuilder.Entity("UserService.Domain.Entities.UserSearchTracking", b =>
+            modelBuilder.Entity("UserService.Domain.Entities.UserReport", b =>
                 {
                     b.HasOne("UserService.Domain.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("UserService.Domain.Entities.User", "Reported")
+                        .WithMany()
+                        .HasForeignKey("ReportedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Reported");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.UserSetting", b =>
                 {
+                    b.HasOne("UserService.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("UserService.Domain.Entities.Setting", "Setting")
                         .WithMany()
                         .HasForeignKey("SettingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("UserService.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Setting");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("UserService.Domain.Entities.UserTimeTracking", b =>
-                {
-                    b.HasOne("UserService.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("User");
                 });
