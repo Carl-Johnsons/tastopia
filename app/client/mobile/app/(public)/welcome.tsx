@@ -10,15 +10,15 @@ import Animated, {
 import { LinearGradient } from "expo-linear-gradient";
 import { Platform, Pressable, Text, View } from "react-native";
 import GoogleButton from "@/components/GoogleButton";
-import { UseLoginWithGoogle } from "@/hooks/useLoginWithGoogle";
 import Button from "@/components/Button";
 import { router } from "expo-router";
 import { useDispatch } from "react-redux";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
+import { useLoginWithGoogle } from "@/hooks";
 
 const Welcome = () => {
   const isAndroid = Platform.OS === "android";
-  const { loginWithGoogle } = UseLoginWithGoogle();
+  const { loginWithGoogle } = useLoginWithGoogle();
   const textScale = useSharedValue(0.5);
   const textTranslateY = Array.from({ length: 3 }, () => useSharedValue(100));
   const textOpacity = Array.from({ length: 3 }, () => useSharedValue(0));

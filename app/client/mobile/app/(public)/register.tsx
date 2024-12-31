@@ -17,6 +17,7 @@ import {
   registerWithPhoneNumberSchema
 } from "@/lib/validation/auth";
 import { useDispatch } from "react-redux";
+import { useLoginWithGoogle } from "@/hooks";
 
 const Register = () => {
   const isAndroid = Platform.OS === "android";
