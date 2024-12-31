@@ -109,9 +109,11 @@ type VerifyResponseError = {
   Message: string;
 };
 
-export const verify = async (inputs: VerifyParams): Promise<VerifyResponse> => {
-  const parsedInputs = verifySchema.parse(inputs);
-  const { OTP, accessToken } = parsedInputs;
+export const verify = async (
+  input: VerifyParams,
+  accessToken: string
+): Promise<VerifyResponse> => {
+  const { OTP } = input;
   const url = `http://${host}:5000/api/account/verify/email`;
 
   try {
@@ -149,7 +151,7 @@ type ResendVerifyCode = ResendVerifyCodeResponseSuccess | ResendVerifyCodeRespon
 export const resendVerifyCode = async (
   accessToken: string
 ): Promise<ResendVerifyCode> => {
-  const url = `http://${host}:5001/api/account/resend/email`;
+  const url = `http://${host}:5000/api/account/resend/email`;
 
   try {
     const { status, data } = await axios.post(

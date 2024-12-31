@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { router } from "expo-router";
 import { useAppDispatch } from "@/store/hooks";
 import {
-    ROLE,
+  ROLE,
   saveAuthData,
   selectAccessToken,
   selectVerifyIdentifier
@@ -13,21 +13,23 @@ import { VerifyParams, resendVerifyCode, verify } from "@/api/user";
 import VerifyForm from "@/components/VerifyForm";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
+import { verifySchema } from "@/lib/validation/auth";
 
 const Verify = () => {
   const isAndroid = Platform.OS === "android";
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const identifier = selectVerifyIdentifier();
-  const accessToken = selectAccessToken();
-  
+  const accessToken = selectAccessToken() as string;
+
   const onSubmit = async (data: VerifyParams) => {
     setIsSubmitting(true);
 
     try {
       console.log("VerifyParams", JSON.stringify(data, null, 2));
 
-      await verify(data);
+      verifySchema.parse(data);
+      await verify(data, accessToken);
 
       dispatch(saveAuthData({ isVerifyingAccount: false, role: ROLE.USER }));
       console.log("saved auth data");

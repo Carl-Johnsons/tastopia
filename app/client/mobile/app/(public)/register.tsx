@@ -1,15 +1,13 @@
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { router, useNavigation } from "expo-router";
+import { router, usePathname } from "expo-router";
 import SignUpForm, { SignUpFormFields } from "@/components/SignUpForm";
 import { ZodError } from "zod";
 import { IDENTIFIER_TYPE, register } from "@/api/user";
 import GoogleButton from "@/components/GoogleButton";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
-import { UseLoginWithGoogle } from "@/hooks/useLoginWithGoogle";
 import {
-  ROLE,
   saveAuthData,
   selectIsVerifyingAccount,
   selectVerifyIdentifier
@@ -23,15 +21,14 @@ import { useDispatch } from "react-redux";
 const Register = () => {
   const isAndroid = Platform.OS === "android";
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const { loginWithGoogle } = UseLoginWithGoogle();
+  const { loginWithGoogle } = useLoginWithGoogle();
   const dispatch = useDispatch();
   const isVerifyingAccount = selectIsVerifyingAccount();
   const verifyIdentifier = selectVerifyIdentifier();
-  const navigation = useNavigation();
-  const currentRouteName = navigation.getState().routes[navigation.getState().index].name;
+  const currentRouteName = usePathname();
 
   useEffect(() => {
-    if (isVerifyingAccount && currentRouteName === "register") {
+    if (isVerifyingAccount && currentRouteName === "/register") {
       Alert.alert(
         "Verifying account in pending",
         `You have an account (${verifyIdentifier}) that is in the verifying process. Do you want to continue the process?`,
@@ -65,26 +62,10 @@ const Register = () => {
 
       const res = await register(data, registerType);
 
-      console.log(
-        "data after register",
-        JSON.stringify(
-          {
-            accessToken: res.access_token,
-            refreshToken: res.refresh_token,
-            role: ROLE.USER,
-            isVerifyingAccount: true,
-            verifyIdentifier: data.identifier
-          },
-          null,
-          2
-        )
-      );
-
       dispatch(
         saveAuthData({
           accessToken: res.access_token,
           refreshToken: res.refresh_token,
-          role: ROLE.USER,
           isVerifyingAccount: true,
           verifyIdentifier: data.identifier
         })
