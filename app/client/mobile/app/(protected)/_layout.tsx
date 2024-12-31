@@ -4,9 +4,7 @@ import { Redirect, Tabs, useRootNavigationState } from "expo-router";
 import { menuList } from "@/constants/menu";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
-import {
-  selectRole
-} from "@/slices/auth.slice";
+import { selectRole } from "@/slices/auth.slice";
 
 const ProtectedLayout = () => {
   const { t } = useTranslation("menu");

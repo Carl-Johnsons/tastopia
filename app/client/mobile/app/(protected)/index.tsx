@@ -34,9 +34,14 @@ const Community = () => {
 
     const url = transformPlatformURI("http://localhost:5000/api/recipe/get-recipe-feed");
 
+    console.log("accessToken", accessToken);
+
     const headers = {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`
     };
+
+    console.log("filterSelected", filterSelected);
 
     const body = JSON.stringify({
       skip: parseInt(skip.toString()),
@@ -50,12 +55,16 @@ const Community = () => {
         body: body
       });
 
+      console.log("response", response);
+
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
 
       const data = await response.json();
+
+      console.log("done", data);
 
       if (isFetchMore) {
         setRecipes(prev => {
@@ -133,47 +142,45 @@ const Community = () => {
         height: "100%"
       }}
     >
-      {recipes?.length > 0 && (
-        <FlatList
-          style={{ paddingHorizontal: 16 }}
-          data={recipes}
-          keyExtractor={item => item.id.toString()}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              tintColor={"#fff"}
-              onRefresh={onRefresh}
+      <FlatList
+        style={{ paddingHorizontal: 16 }}
+        data={recipes}
+        keyExtractor={item => item.id.toString()}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            tintColor={"#fff"}
+            onRefresh={onRefresh}
+          />
+        }
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
+        ListHeaderComponent={Header({
+          isRefreshing,
+          handleFilter,
+          filterSelected,
+          handleCreateRecipe
+        })}
+        renderItem={({ item, index }) => (
+          <>
+            <Recipe {...item} />
+            {index !== recipes.length - 1 && (
+              <View className='my-4 h-[1px] w-full bg-gray-300' />
+            )}
+          </>
+        )}
+        ListEmptyComponent={() => (
+          <View className='flex-center h-[70%] gap-2'>
+            <Image
+              source={require("../../assets/icons/noResult.png")}
+              style={{ width: 130, height: 130 }}
             />
-          }
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.1}
-          ListHeaderComponent={Header({
-            isRefreshing,
-            handleFilter,
-            filterSelected,
-            handleCreateRecipe
-          })}
-          renderItem={({ item, index }) => (
-            <>
-              <Recipe {...item} />
-              {index !== recipes.length - 1 && (
-                <View className='my-4 h-[1px] w-full bg-gray-300' />
-              )}
-            </>
-          )}
-          ListEmptyComponent={() => (
-            <View className='flex-center h-[70%] gap-2'>
-              <Image
-                source={require("../../assets/icons/noResult.png")}
-                style={{ width: 130, height: 130 }}
-              />
-              <Text className='paragraph-medium text-center'>
-                No recipes found! {"\n"}Time to create your own masterpiece!
-              </Text>
-            </View>
-          )}
-        />
-      )}
+            <Text className='paragraph-medium text-center'>
+              No recipes found! {"\n"}Time to create your own masterpiece!
+            </Text>
+          </View>
+        )}
+      />
     </SafeAreaView>
   );
 };
