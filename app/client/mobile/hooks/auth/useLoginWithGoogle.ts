@@ -1,5 +1,10 @@
 import { useApiHost } from "@/hooks";
-import { AuthSessionResult, makeRedirectUri, useAuthRequest, useAutoDiscovery } from "expo-auth-session";
+import {
+  AuthSessionResult,
+  makeRedirectUri,
+  useAuthRequest,
+  useAutoDiscovery
+} from "expo-auth-session";
 import { maybeCompleteAuthSession } from "expo-web-browser";
 
 interface UseLoginWithGoogleResult {

@@ -11,7 +11,7 @@ import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
 import useBounce from "@/hooks/animation/useBounce";
 import { loginWithEmailSchema, loginWithPhoneNumberSchema } from "@/lib/validation/auth";
-import { useLoginWithGoogle } from "@/hooks";
+import useLoginWithGoogle from "../../hooks/auth/useLoginWithGoogle";
 
 const Login = () => {
   const isAndroid = Platform.OS === "android";
@@ -82,13 +82,13 @@ const Login = () => {
           style={animatedStyles}
           className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
         />
-        <Text className='font-sans font-semibold text-4xl text-black'>Login</Text>
+        <Text className='font-sans text-4xl font-semibold text-black'>Login</Text>
         <LoginForm
           onSubmit={onSubmit}
           isLoading={isSubmitting}
         />
         <Pressable onPress={navigateToSignUpScreen}>
-          <Text className='text-center font-medium text-sm text-gray-300'>
+          <Text className='text-sm font-medium text-center text-gray-300'>
             Don’t have an account?{" "}
             <Text className='font-medium text-primary'>Sign Up</Text>
           </Text>
@@ -96,7 +96,7 @@ const Login = () => {
 
         <View className='flex-row items-center justify-center gap-5'>
           <View className='h-[1px] grow bg-gray-300' />
-          <Text className='text-center font-medium text-sm text-gray-300'>
+          <Text className='text-sm font-medium text-center text-gray-300'>
             Sign in with
           </Text>
           <View className='h-[1px] grow bg-gray-300' />
