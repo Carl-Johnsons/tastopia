@@ -17,10 +17,10 @@ import { globalStyles } from "@/components/common/GlobalStyles";
 import useDebounce from "@/hooks/useDebounce";
 import { AntDesign } from "@expo/vector-icons";
 import useDarkMode from "@/hooks/useDarkMode";
-import { getAPIUrl } from "@/utils/fetch";
 import User from "@/components/common/User";
 import { Image } from "expo-image";
 import { selectAccessToken } from "@/slices/auth.slice";
+import { transformPlatformURI } from "@/utils/functions";
 
 const Search = () => {
   const [skip, setSkip] = useState<number>(0);
@@ -43,10 +43,9 @@ const Search = () => {
     if (isFetchMore && !hasNextPage) return;
 
     setIsSearching(true);
-    const url = getAPIUrl(5003, "api/user/search");
+    const url = transformPlatformURI("http://localhost:5000/api/user/search");
     const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`
+      "Content-Type": "application/json"
     };
 
     console.log("keyword", searchValue);
@@ -133,10 +132,10 @@ const Search = () => {
         }}
       >
         <View>
-          <Text className='text-center base-medium'>Search Users</Text>
+          <Text className='base-medium text-center'>Search Users</Text>
 
           {/* Search input */}
-          <View className='flex-row items-center gap-5 mt-4'>
+          <View className='mt-4 flex-row items-center gap-5'>
             <TouchableWithoutFeedback onPress={() => handleFocus(true)}>
               <View className='relative h-[40px] flex-1 flex-row items-center gap-2 rounded-3xl border-[0.5px] border-gray-300 px-3'>
                 <Feather
@@ -147,7 +146,7 @@ const Search = () => {
                 <TextInput
                   autoCapitalize='none'
                   ref={textInputRef}
-                  className='flex-1 h-full'
+                  className='h-full flex-1'
                   value={searchValue}
                   onPress={() => handleFocus(true)}
                   onChangeText={handleSearch}
@@ -188,7 +187,7 @@ const Search = () => {
           {/* Result section */}
           <View className='mt-6'>
             {searchResults?.length !== 0 && doneSearching && (
-              <Text className='mb-2 h3-bold'>Users</Text>
+              <Text className='h3-bold mb-2'>Users</Text>
             )}
 
             <FlatList
@@ -203,6 +202,7 @@ const Search = () => {
               }
               onEndReached={handleLoadMore}
               onEndReachedThreshold={0.1}
+              showsVerticalScrollIndicator={false}
               renderItem={({ item, index }) => (
                 <>
                   <User {...item} />
@@ -213,26 +213,18 @@ const Search = () => {
               )}
               ListEmptyComponent={() => {
                 return doneSearching ? (
-                  <View className='gap-2 flex-center'>
+                  <View className='flex-center gap-2'>
                     <Image
                       source={require("../../../assets/icons/noResult.png")}
                       style={{ width: 130, height: 130 }}
                     />
-                    <Text className='text-center paragraph-medium'>No users found!</Text>
+                    <Text className='paragraph-medium text-center'>No users found!</Text>
                   </View>
                 ) : (
                   <View></View>
                 );
               }}
             />
-            {/* <User
-              id='asdf'
-              avtUrl='https://imgcdn.stablediffusionweb.com/2024/3/4/97bf4ec3-8c92-4f5a-992c-18bc59e35bd5.jpg'
-              displayName='Vuong'
-              username='quoczuong'
-              numberOfRecipe={1}
-              isFollowing={true}
-            /> */}
           </View>
         </View>
       </SafeAreaView>

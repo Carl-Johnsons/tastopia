@@ -60,7 +60,7 @@ display_services() {
     done
 }
 # Get list of services
-SERVICES=$($SUDO_PREFIX docker-compose -f "$DOCKER_COMPOSE_FILE" config --services)
+SERVICES=$($SUDO_PREFIX docker compose -f "$DOCKER_COMPOSE_FILE" config --services)
 COUNT=$(echo "$SERVICES" | wc -l | tr -d ' ')
 
 # Function to colorize docker-compose output
@@ -132,7 +132,7 @@ do
       # Rebuild the selected service
       SELECTED_SERVICE=$(echo "$SERVICES" | sed -n "${INDEX}p")
       echo -e "${LIGHT_BLUE}Rebuilding service: ${LIGHT_CYAN}$SELECTED_SERVICE${NC}"
-      $SUDO_PREFIX docker-compose -f "$DOCKER_COMPOSE_FILE" up --force-recreate --no-deps -d --build "$SELECTED_SERVICE" 2>&1 | colorize_output
+      $SUDO_PREFIX docker compose -f "$DOCKER_COMPOSE_FILE" up --force-recreate --no-deps -d --build "$SELECTED_SERVICE" 2>&1 | colorize_output
       echo -e "Service ${LIGHT_BLUE}$SELECTED_SERVICE${NC} has been rebuilt."
 
       read -p "Press Enter to continue..."

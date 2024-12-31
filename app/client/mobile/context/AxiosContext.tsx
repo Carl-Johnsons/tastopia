@@ -14,26 +14,18 @@ interface Props {
 
 const AxiosContext = createContext<AxiosContextType | null>(null);
 
+const axiosInstance = axios.create({
+  baseURL: API_HOST,
+  withCredentials: true
+});
+
+const protectedAxiosInstance = axios.create({
+  baseURL: API_HOST,
+  withCredentials: true
+});
+
 const AxiosProvider = ({ children }: Props) => {
   const accessToken = useAppSelector(selectAccessToken);
-
-  const [axiosInstance] = useState(() =>
-    axios.create({
-      baseURL: API_HOST,
-      withCredentials: true
-    })
-  );
-
-  const [protectedAxiosInstance] = useState(() =>
-    axios.create({
-      baseURL: API_HOST,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`
-      },
-      withCredentials: true
-    })
-  );
 
   useEffect(() => {
     const requestInterceptor = protectedAxiosInstance.interceptors.request.use(

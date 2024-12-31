@@ -7,6 +7,7 @@ import { z } from "zod";
 import Constants from "expo-constants";
 import axios from "axios";
 import { API_HOST } from "@/constants/host";
+import { transformPlatformURI } from "@/utils/functions";
 
 export type LoginParams = z.infer<typeof loginWithEmailSchema>;
 
@@ -27,7 +28,9 @@ type LoginResponse = {
 };
 
 const host: string =
-  API_HOST || Constants.expoConfig?.hostUri?.split(":")[0] || "10.0.2.2";
+  transformPlatformURI(API_HOST) ||
+  Constants.expoConfig?.hostUri?.split(":")[0] ||
+  "10.0.2.2";
 
 export enum IDENTIFIER_TYPE {
   EMAIL,
@@ -80,6 +83,8 @@ export const register = async (
   const url = `http://${host}:5000/api/account/register/${REGISTER_TYPE}`;
 
   console.log("url", url);
+  console.log("data", JSON.stringify(inputs, null, 2));
+  console.log("type", type);
 
   console.log("Sending request");
 

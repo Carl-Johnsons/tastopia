@@ -54,20 +54,20 @@ const RootLayout = () => {
           persistor={persistor}
         >
           <I18nextProvider i18n={i18n}>
-            <AxiosProvider>
-              <SafeAreaProvider>
-                <StatusBar backgroundColor={bgColor} />
-                <Stack
-                  screenOptions={{
-                    headerShown: false
-                  }}
-                >
-                  <Stack.Screen name='(public)' />
-                  <Stack.Screen name='(protected)' />
-                  <Stack.Screen name='+not-found' />
-                </Stack>
-              </SafeAreaProvider>
-            </AxiosProvider>
+            {/* <AxiosProvider> */}
+            <SafeAreaProvider>
+              <StatusBar backgroundColor={bgColor} />
+              <Stack
+                screenOptions={{
+                  headerShown: false
+                }}
+              >
+                <Stack.Screen name='(public)' />
+                <Stack.Screen name='(protected)' />
+                <Stack.Screen name='+not-found' />
+              </Stack>
+            </SafeAreaProvider>
+            {/* </AxiosProvider> */}
           </I18nextProvider>
         </PersistGate>
       </Provider>

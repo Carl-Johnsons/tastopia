@@ -1,6 +1,6 @@
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
-import { router, useNavigation } from "expo-router";
+import { router, useNavigation, usePathname, useRouter } from "expo-router";
 import SignUpForm, { SignUpFormFields } from "@/components/SignUpForm";
 import { ZodError } from "zod";
 import { IDENTIFIER_TYPE, register } from "@/api/user";
@@ -19,6 +19,7 @@ import {
   registerWithPhoneNumberSchema
 } from "@/lib/validation/auth";
 import { useDispatch } from "react-redux";
+import { NavigationState } from "@react-navigation/native";
 
 const Register = () => {
   const isAndroid = Platform.OS === "android";
@@ -27,14 +28,13 @@ const Register = () => {
   const dispatch = useDispatch();
   const isVerifyingAccount = selectIsVerifyingAccount();
   const verifyIdentifier = selectVerifyIdentifier();
-  const navigation = useNavigation();
-  const currentRouteName = navigation.getState().routes[navigation.getState().index].name;
+  const currentRouteName = usePathname();
 
   useEffect(() => {
-    if (isVerifyingAccount && currentRouteName === "register") {
+    if (isVerifyingAccount && currentRouteName === "/register") {
       Alert.alert(
         "Verifying account in pending",
-        `You have an account (${verifyIdentifier}) that is in the verifying process. Do you want to continue the process?`,
+        `You have an account ${verifyIdentifier} that is in the verifying process. Do you want to continue the process?`,
         [
           {
             text: "Yes",

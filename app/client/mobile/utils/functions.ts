@@ -22,11 +22,11 @@ export const transformListWithIndex = <T>(objectList: T[], startWith: number = 0
           }) as T & { index: number }
       );
 
-export const transformPlatformURI = (uri: string | undefined) => {
+export const transformPlatformURI = (uri: string) => {
   return Platform.select({
     ios: uri,
     android: uri?.replace("localhost", "10.0.2.2")
-  });
+  }) as string;
 };
 
 export const isFalsy = (

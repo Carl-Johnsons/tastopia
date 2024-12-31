@@ -3,12 +3,12 @@ import { globalStyles } from "@/components/common/GlobalStyles";
 import Recipe from "@/components/common/Recipe";
 import { LogoIcon } from "@/components/common/SVG";
 import Filter from "@/components/screen/community/Filter";
-import { getAPIUrl } from "@/utils/fetch";
 import i18next from "i18next";
 import React, { useEffect, useState } from "react";
 import { Text, View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import Header from "@/components/screen/community/Header";
 import { selectAccessToken } from "@/slices/auth.slice";
+import { transformPlatformURI } from "@/utils/functions";
 
 const Community = () => {
   const [skip, setSkip] = useState<number>(0);
@@ -32,11 +32,10 @@ const Community = () => {
     console.log("skip", skip);
     console.log("total recipes", recipes?.length);
 
-    const url = getAPIUrl(5005, "api/recipe/get-recipe-feed");
+    const url = transformPlatformURI("http://localhost:5000/api/recipe/get-recipe-feed");
 
     const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`
+      "Content-Type": "application/json"
     };
 
     const body = JSON.stringify({
@@ -168,7 +167,7 @@ const Community = () => {
                 source={require("../../assets/icons/noResult.png")}
                 style={{ width: 130, height: 130 }}
               />
-              <Text className='text-center paragraph-medium'>
+              <Text className='paragraph-medium text-center'>
                 No recipes found! {"\n"}Time to create your own masterpiece!
               </Text>
             </View>
