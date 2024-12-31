@@ -50,7 +50,7 @@ export const Protected = ({
       );
     }
 
-    return <>children</>;
+    return <>{children}</>;
   })();
 
   if (forceDisplay) return content;
