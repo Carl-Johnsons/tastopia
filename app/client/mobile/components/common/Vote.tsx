@@ -2,6 +2,8 @@ import React, { useState, useRef } from "react";
 import { View, Text, Animated, Pressable } from "react-native";
 import { DownvoteIcon, UpvoteIcon } from "./SVG";
 import { globalStyles } from "./GlobalStyles";
+import { ROLE } from "@/slices/auth.slice";
+import { useProtected, useProtectedExclude } from "@/hooks";
 
 type VoteProps = {
   voteDiff: number;
@@ -15,7 +17,7 @@ const Vote = ({ voteDiff }: VoteProps) => {
   const upvoteBounceValue = useRef(new Animated.Value(1)).current;
   const downvoteBounceValue = useRef(new Animated.Value(1)).current;
 
-  const handleUpvote = () => {
+  const handleUpvote = useProtectedExclude(() => {
     let newVotes = votes;
     if (upvoted) {
       newVotes -= 1;
@@ -30,9 +32,9 @@ const Vote = ({ voteDiff }: VoteProps) => {
       bounceAnimation(upvoteBounceValue);
     }
     setVotes(newVotes);
-  };
+  }, [ROLE.GUEST]);
 
-  const handleDownvote = () => {
+  const handleDownvote = useProtected(() => {
     let newVotes = votes;
     if (downvoted) {
       newVotes += 1;
@@ -47,7 +49,7 @@ const Vote = ({ voteDiff }: VoteProps) => {
       bounceAnimation(downvoteBounceValue);
     }
     setVotes(newVotes);
-  };
+  }, [ROLE.USER]);
 
   const bounceAnimation = (value: any) => {
     Animated.sequence([
