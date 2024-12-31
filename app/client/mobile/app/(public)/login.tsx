@@ -9,15 +9,15 @@ import { useAppDispatch } from "@/store/hooks";
 import GoogleButton from "@/components/GoogleButton";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
-import { UseLoginWithGoogle } from "@/hooks/useLoginWithGoogle";
 import useBounce from "@/hooks/animation/useBounce";
 import { loginWithEmailSchema, loginWithPhoneNumberSchema } from "@/lib/validation/auth";
+import { useLoginWithGoogle } from "@/hooks";
 
 const Login = () => {
   const isAndroid = Platform.OS === "android";
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const dispatch = useAppDispatch();
-  const { loginWithGoogle } = UseLoginWithGoogle();
+  const { loginWithGoogle } = useLoginWithGoogle();
   const { animate, animatedStyles } = useBounce();
 
   const onSubmit = async (data: LoginFormFields) => {

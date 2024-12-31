@@ -1,4 +1,4 @@
-import { useApiHost } from "@/hooks/useApiHost";
+import { useApiHost } from "@/hooks";
 import { AuthSessionResult, makeRedirectUri, useAuthRequest, useAutoDiscovery } from "expo-auth-session";
 import { maybeCompleteAuthSession } from "expo-web-browser";
 
@@ -14,7 +14,7 @@ interface UseLoginWithGoogleResult {
  *
  * @param initialValue The initial image data object
  */
-export const UseLoginWithGoogle = (): UseLoginWithGoogleResult => {
+export const useLoginWithGoogle = (): UseLoginWithGoogleResult => {
   const { host } = useApiHost();
   const discoveryUrl = `http://${host}:5001`;
   const discovery = useAutoDiscovery(discoveryUrl);
@@ -46,3 +46,5 @@ export const UseLoginWithGoogle = (): UseLoginWithGoogleResult => {
 
   return { loginWithGoogle, response };
 };
+
+export default useLoginWithGoogle;
