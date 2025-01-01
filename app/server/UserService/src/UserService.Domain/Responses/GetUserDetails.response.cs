@@ -1,13 +1,9 @@
-﻿namespace Contract.DTOs.UserDTO;
-public class GetUserDetailsDTO
+﻿
+namespace UserService.Domain.Responses;
+
+public class GetUserDetailsResponse
 {
     public Guid AccountId { get; set; }
-    public UserDTO User { get; set; } = null!;
-    public AccountDTO Account { get; set; } = null!;
-}
-
-public class UserDTO
-{
     public string DisplayName { get; set; } = null!;
 
     public string AvatarUrl { get; set; } = null!;
@@ -27,16 +23,10 @@ public class UserDTO
     public virtual int? TotalFollowing { get; set; }
 
     public virtual int? TotalRecipe { get; set; }
-}
+    public bool IsAccountActive { get; set; } = true;
+    public string AccountUsername { get; set; } = null!;
 
-public class AccountDTO
-{
-    public bool IsActive { get; set; }
-
-    public string? UserName { get; set; }
-
-    public string? Email { get; set;}
-
-    public string? PhoneNumber { get; set; }
-
+    //Account
+    public string? AccountEmail { get; set; }
+    public string? AccountPhoneNumber { get; set; }
 }

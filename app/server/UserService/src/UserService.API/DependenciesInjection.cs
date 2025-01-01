@@ -5,6 +5,8 @@ using UserService.API.Middleware;
 using UserService.Application;
 using UserService.Infrastructure;
 using Newtonsoft.Json;
+using AutoMapper;
+using UserService.API.Configs;
 
 namespace UserService.API;
 
@@ -22,6 +24,11 @@ public static class DependenciesInjection
         {
             config.ReadFrom.Configuration(context.Configuration);
         });
+
+        // Register automapper
+        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+        services.AddSingleton(mapper);
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddApplicationServices();
         services.AddInfrastructureServices(config);
@@ -93,15 +100,15 @@ public static class DependenciesInjection
 
         app.UseAuthorization();
 
-        //try
-        //{
-        //    var signalRService = app.Services.GetService<ISignalRService>();
-        //    await signalRService!.StartConnectionAsync();
-        //}
-        //catch (Exception ex)
-        //{
-        //    app.Logger.LogError($"Error connecting to SignalR: {ex.Message}");
-        //}
+        try
+        {
+            var signalRService = app.Services.GetService<ISignalRService>();
+            await signalRService!.StartConnectionAsync();
+        }
+        catch (Exception ex)
+        {
+            app.Logger.LogError($"Error connecting to SignalR: {ex.Message}");
+        }
         return app;
     }
 }
