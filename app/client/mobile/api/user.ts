@@ -27,11 +27,6 @@ type LoginResponse = {
   refresh_token: string;
 };
 
-const host: string =
-  transformPlatformURI(API_HOST) ||
-  Constants.expoConfig?.hostUri?.split(":")[0] ||
-  "10.0.2.2";
-
 export enum IDENTIFIER_TYPE {
   EMAIL,
   PHONE_NUMBER
@@ -49,7 +44,7 @@ export const login = async (inputs: LoginParams): Promise<LoginResponse> => {
   console.log("Sending request");
 
   try {
-    const res = await axios.post(`http://${host}:5000/connect/token`, body, {
+    const res = await axios.post(`${API_HOST}/connect/token`, body, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded"
       }
@@ -80,7 +75,7 @@ export const register = async (
   type: IDENTIFIER_TYPE
 ): Promise<SignUpResponse> => {
   const REGISTER_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
-  const url = `http://${host}:5000/api/account/register/${REGISTER_TYPE}`;
+  const url = `${API_HOST}/api/account/register/${REGISTER_TYPE}`;
 
   console.log("url", url);
   console.log("data", JSON.stringify(inputs, null, 2));
@@ -122,7 +117,7 @@ export const verify = async (
   accessToken: string
 ): Promise<VerifyResponse> => {
   const { OTP } = input;
-  const url = `http://${host}:5000/api/account/verify/email`;
+  const url = `${API_HOST}/api/account/verify/email`;
 
   try {
     const { status, data } = await axios.post(
@@ -159,7 +154,7 @@ type ResendVerifyCode = ResendVerifyCodeResponseSuccess | ResendVerifyCodeRespon
 export const resendVerifyCode = async (
   accessToken: string
 ): Promise<ResendVerifyCode> => {
-  const url = `http://${host}:5000/api/account/resend/email`;
+  const url = `${API_HOST}/api/account/resend/email`;
 
   try {
     const { status, data } = await axios.post(

@@ -4,91 +4,28 @@ import Recipe from "@/components/common/Recipe";
 import { LogoIcon } from "@/components/common/SVG";
 import Filter from "@/components/screen/community/Filter";
 import i18next from "i18next";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Text, View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import Header from "@/components/screen/community/Header";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { transformPlatformURI } from "@/utils/functions";
+import { useRecipesFeed } from "@/api/recipe";
 
 const Community = () => {
-  const [skip, setSkip] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
-  const [hasNextPage, setHasNextPage] = useState<boolean>();
-  const accessToken = selectAccessToken();
 
-  const fetchFeed = async (isFetchMore: boolean) => {
-    if (!isLoading) {
-      setIsLoading(true);
-    }
-
-    if (isFetchMore && !hasNextPage) {
-      console.log("can't fetch more");
-      return;
-    }
-
-    console.log("skip", skip);
-    console.log("total recipes", recipes?.length);
-
-    const url = transformPlatformURI("http://localhost:5000/api/recipe/get-recipe-feed");
-
-    console.log("accessToken", accessToken);
-
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`
-    };
-
-    console.log("filterSelected", filterSelected);
-
-    const body = JSON.stringify({
-      skip: parseInt(skip.toString()),
-      tagValues: [filterSelected]
-    });
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: headers,
-        body: body
-      });
-
-      console.log("response", response);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-      }
-
-      const data = await response.json();
-
-      console.log("done", data);
-
-      if (isFetchMore) {
-        setRecipes(prev => {
-          console.log("fetch more", body);
-          const existingIds = new Set(prev.map(recipe => recipe.id));
-          const newRecipes = data.paginatedData.filter(
-            (newRecipe: RecipeType) => !existingIds.has(newRecipe.id)
-          );
-
-          return [...prev, ...newRecipes];
-        });
-      } else {
-        setRecipes(data.paginatedData);
-      }
-
-      setHasNextPage(data.metadata.hasNextPage);
-    } catch (error) {
-      console.error("Error fetching recipe feed:", error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }
-  };
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isLoading,
+    isFetchingNextPage,
+    refetch,
+    isRefetching
+  } = useRecipesFeed(filterSelected);
+  const recipes = useMemo(() => {
+    return data?.pages.flatMap(page => page.paginatedData) ?? [];
+  }, [data]);
 
   const handleCreateRecipe = () => {
     console.log("show modal create recipe");
@@ -96,8 +33,6 @@ const Community = () => {
 
   const handleFilter = (key: string) => {
     setFilterSelected(key);
-    setSkip(0);
-    setRecipes([]);
   };
 
   const toggleLanguage = () => {
@@ -106,34 +41,15 @@ const Community = () => {
     i18next.changeLanguage(newLang);
   };
 
-  const onRefresh = async () => {
-    setIsRefreshing(true);
-    setSkip(0);
-    setRecipes([]);
+  const onRefresh = () => {
+    refetch();
   };
 
   const handleLoadMore = () => {
-    if (!isLoading && !isRefreshing) {
-      setSkip(prev => prev + 1);
+    if (!isFetchingNextPage && hasNextPage) {
+      fetchNextPage();
     }
   };
-
-  useEffect(() => {
-    fetchFeed(false);
-  }, [filterSelected]);
-
-  useEffect(() => {
-    if (skip > 0) {
-      fetchFeed(true);
-    }
-  }, [skip]);
-
-  useEffect(() => {
-    if (isRefreshing) {
-      fetchFeed(false);
-      setIsRefreshing(false);
-    }
-  }, [isRefreshing]);
 
   return (
     <SafeAreaView
@@ -148,7 +64,7 @@ const Community = () => {
         keyExtractor={item => item.id.toString()}
         refreshControl={
           <RefreshControl
-            refreshing={isRefreshing}
+            refreshing={isRefetching}
             tintColor={"#fff"}
             onRefresh={onRefresh}
           />
@@ -156,7 +72,7 @@ const Community = () => {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
         ListHeaderComponent={Header({
-          isRefreshing,
+          isRefreshing: isRefetching,
           handleFilter,
           filterSelected,
           handleCreateRecipe

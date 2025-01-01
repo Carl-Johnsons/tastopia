@@ -10,7 +10,7 @@ import { useColorModeValue } from "@/hooks/alternator";
 import { PersistGate } from "redux-persist/integration/react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { AxiosProvider } from "@/context/AxiosContext";
+import { QueryClient, QueryClientProvider } from "react-query";
 // import { GlobalProvider } from "@/context/GlobalProvider";
 
 import("./global.css");
@@ -18,6 +18,7 @@ import("./global.css");
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
+  const queryClient = new QueryClient();
   const [fontsLoaded, error] = useFonts({
     "Sofia-Pro-Black": require("../assets/fonts/Sofia-Pro-Black-Az.otf"),
     "Sofia-Pro-Black-Italic": require("../assets/fonts/Sofia-Pro-Black-Italic-Az.otf"),
@@ -53,22 +54,22 @@ const RootLayout = () => {
           loading={null}
           persistor={persistor}
         >
-          <I18nextProvider i18n={i18n}>
-            {/* <AxiosProvider> */}
-            <SafeAreaProvider>
-              <StatusBar backgroundColor={bgColor} />
-              <Stack
-                screenOptions={{
-                  headerShown: false
-                }}
-              >
-                <Stack.Screen name='(public)' />
-                <Stack.Screen name='(protected)' />
-                <Stack.Screen name='+not-found' />
-              </Stack>
-            </SafeAreaProvider>
-            {/* </AxiosProvider> */}
-          </I18nextProvider>
+          <QueryClientProvider client={queryClient}>
+            <I18nextProvider i18n={i18n}>
+              <SafeAreaProvider>
+                <StatusBar backgroundColor={bgColor} />
+                <Stack
+                  screenOptions={{
+                    headerShown: false
+                  }}
+                >
+                  <Stack.Screen name='(public)' />
+                  <Stack.Screen name='(protected)' />
+                  <Stack.Screen name='+not-found' />
+                </Stack>
+              </SafeAreaProvider>
+            </I18nextProvider>
+          </QueryClientProvider>
         </PersistGate>
       </Provider>
     </GestureHandlerRootView>
