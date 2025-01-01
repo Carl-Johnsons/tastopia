@@ -4,10 +4,8 @@ import {
   verifySchema
 } from "@/lib/validation/auth";
 import { z } from "zod";
-import Constants from "expo-constants";
 import axios from "axios";
 import { API_HOST, axiosInstance } from "@/constants/host";
-import { transformPlatformURI } from "@/utils/functions";
 import { useMutation } from "react-query";
 
 export type LoginParams = z.infer<typeof loginWithEmailSchema>;
@@ -116,34 +114,41 @@ type VerifyResponseError = {
   Message: string;
 };
 
-export const verify = async (
-  input: VerifyParams,
-  accessToken: string
-): Promise<VerifyResponse> => {
-  const { OTP } = input;
-  const url = `${API_HOST}/api/account/verify/email`;
-
-  try {
-    const { status, data } = await axios.post(
-      url,
-      { OTP },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
-        }
-      }
-    );
-
-    if (status !== 200) {
-      throw new Error(data.Message || "Verification failed");
+const useVerify = () => {
+  return useMutation<
+    VerifyResponse,
+    Error,
+    {
+      input: VerifyParams;
+      accessToken: string;
     }
+  >({
+    mutationKey: ["verify"],
+    mutationFn: async ({ input, accessToken }) => {
+      const { OTP } = input;
+      const url = `${API_HOST}/api/account/verify/email`;
 
-    return 0;
-  } catch (error: any) {
-    console.log("Error during verification:", error);
-    throw new Error(error.response?.data?.Message || "Verification failed");
-  }
+      try {
+        const { status, data } = await axiosInstance.post(
+          url,
+          { OTP },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          }
+        );
+
+        if (status !== 200) {
+          throw new Error(data.Message || "Verification failed");
+        }
+
+        return 0;
+      } catch (error: any) {
+        throw new Error(error.response?.data?.Message || "Verification failed");
+      }
+    }
+  });
 };
 
 type ResendVerifyCodeResponseSuccess = 0;
@@ -155,32 +160,35 @@ type ResendVerifyCodeResponseError = {
 
 type ResendVerifyCode = ResendVerifyCodeResponseSuccess | ResendVerifyCodeResponseError;
 
-export const resendVerifyCode = async (
-  accessToken: string
-): Promise<ResendVerifyCode> => {
-  const url = `${API_HOST}/api/account/resend/email`;
+const useResendVerifyCode = () => {
+  return useMutation<ResendVerifyCode, Error, string>({
+    mutationKey: ["resendVerifyCode"],
+    mutationFn: async accessToken => {
+      const url = `${API_HOST}/api/account/resend/email`;
 
-  try {
-    const { status, data } = await axios.post(
-      url,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
+      try {
+        const { status, data } = await axiosInstance.post(
+          url,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          }
+        );
+
+        if (status !== 200) {
+          throw new Error(data.Message || "Resend verification code failed");
         }
+
+        return 0;
+      } catch (error: any) {
+        throw new Error(
+          error.response?.data?.Message || "Resend verification code failed"
+        );
       }
-    );
-
-    if (status !== 200) {
-      throw new Error(data.Message || "Resend verification code failed");
     }
-
-    return 0;
-  } catch (error: any) {
-    console.log("Error during resending verification code:", error);
-    throw new Error(error.response?.data?.Message || "Resend verification code failed");
-  }
+  });
 };
 
-export { useLogin, useRegister };
+export { useLogin, useRegister, useVerify, useResendVerifyCode };
