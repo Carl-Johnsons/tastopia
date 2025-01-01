@@ -4,12 +4,13 @@ import Recipe from "@/components/common/Recipe";
 import { LogoIcon } from "@/components/common/SVG";
 import Filter from "@/components/screen/community/Filter";
 import i18next from "i18next";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Text, View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import Header from "@/components/screen/community/Header";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { transformPlatformURI } from "@/utils/functions";
 import { useRecipesFeed } from "@/api/recipe";
+import Empty from "@/components/screen/community/Empty";
 
 const Community = () => {
   const [filterSelected, setFilterSelected] = useState<string>("All");
@@ -51,6 +52,20 @@ const Community = () => {
     }
   };
 
+  const renderItem = useCallback(
+    ({ item, index }: { item: RecipeType; index: number }) => (
+      <>
+        <Recipe {...item} />
+        {index !== recipes.length - 1 && (
+          <View className='my-4 h-[1px] w-full bg-gray-300' />
+        )}
+      </>
+    ),
+    [recipes.length]
+  );
+
+  const keyExtractor = useCallback((item: RecipeType) => item.id.toString(), []);
+
   return (
     <SafeAreaView
       style={{
@@ -59,9 +74,10 @@ const Community = () => {
       }}
     >
       <FlatList
+        removeClippedSubviews
         style={{ paddingHorizontal: 16 }}
         data={recipes}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={keyExtractor}
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
@@ -77,25 +93,8 @@ const Community = () => {
           filterSelected,
           handleCreateRecipe
         })}
-        renderItem={({ item, index }) => (
-          <>
-            <Recipe {...item} />
-            {index !== recipes.length - 1 && (
-              <View className='my-4 h-[1px] w-full bg-gray-300' />
-            )}
-          </>
-        )}
-        ListEmptyComponent={() => (
-          <View className='flex-center h-[70%] gap-2'>
-            <Image
-              source={require("../../assets/icons/noResult.png")}
-              style={{ width: 130, height: 130 }}
-            />
-            <Text className='paragraph-medium text-center'>
-              No recipes found! {"\n"}Time to create your own masterpiece!
-            </Text>
-          </View>
-        )}
+        renderItem={renderItem}
+        ListEmptyComponent={() => <Empty />}
       />
     </SafeAreaView>
   );
