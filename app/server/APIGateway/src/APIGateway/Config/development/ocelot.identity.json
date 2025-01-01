@@ -16,7 +16,8 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [ "Bearer" ],
         "AllowedScopes": [ "IdentityServerApi" ]
-      }
+      },
+      "SwaggerKey": "identity"
     },
     {
       "DownstreamHostAndPorts": [
@@ -30,7 +31,8 @@
       "UpstreamHttpMethod": [
         "POST"
       ],
-      "UpstreamPathTemplate": "/connect/token"
+      "UpstreamPathTemplate": "/connect/token",
+      "SwaggerKey": "identity"
     },
     {
       "DownstreamHostAndPorts": [
@@ -45,7 +47,8 @@
         "GET",
         "POST"
       ],
-      "UpstreamPathTemplate": "/api/account/register/{everything}"
+      "UpstreamPathTemplate": "/api/account/register/{everything}",
+      "SwaggerKey": "identity"
     },
     {
       "DownstreamHostAndPorts": [
@@ -64,7 +67,8 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [ "Bearer" ],
         "AllowedScopes": [ "IdentityServerApi" ]
-      }
+      },
+      "SwaggerKey": "identity"
     }
   ]
 }

@@ -38,13 +38,10 @@ services.AddLogging(options =>
 
 
 // Configure service
-services.AddEndpointsApiExplorer(); // This require for swagger to launch
-services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API Gateway", Version = "v1" });
-});
+services.AddEndpointsApiExplorer(); // This require for swaggerForOcelot to launch
 
 services.AddOcelot();
+services.AddSwaggerForOcelot(config);
 
 services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
@@ -89,6 +86,9 @@ services.AddSignalR();
 
 // Start
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerForOcelotUI();
 
 app.UseCors("AllowAnyOriginPolicy");
 

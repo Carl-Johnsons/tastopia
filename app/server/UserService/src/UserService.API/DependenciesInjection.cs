@@ -6,6 +6,7 @@ using UserService.Application;
 using UserService.Infrastructure;
 using Newtonsoft.Json;
 using UserService.Infrastructure.Utilities;
+using Microsoft.OpenApi.Models;
 
 namespace UserService.API;
 
@@ -38,14 +39,40 @@ public static class DependenciesInjection
             });
 
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(c =>
+        {
+            var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:5001").Replace("\"", "");
+            var IdentityServerEndpoint = $"http://{IdentityDNS}";
+
+            c.AddSecurityDefinition("OAuth2", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.OAuth2,
+                Flows = new OpenApiOAuthFlows
+                {
+                    Password = new OpenApiOAuthFlow
+                    {
+                        TokenUrl = new Uri($"{IdentityServerEndpoint}/connect/token"),
+                        Scopes = new Dictionary<string, string>
+                        {
+                            { "openid", "Required to sign in" },
+                            { "profile", "Get the profile of the user" },
+                            { "phone", "Get phone claim" },
+                            { "email", "Get email claim" },
+                            { "offline_access", "Required for refresh token" },
+                            { "IdentityServerApi", "Required for access to identity api" },
+                        }
+                    }
+                },
+                Description = "OAuth2 Password Grant"
+            });
+        });
 
         services.AddHttpContextAccessor();
 
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
-                var IdentityDNS = (Environment.GetEnvironmentVariable("IDENTITY_SERVER_HOST") ?? "localhost:5001").Replace("\"", "");
+                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:5001").Replace("\"", "");
                 var IdentityServerEndpoint = $"http://{IdentityDNS}";
                 Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
 
