@@ -58,6 +58,13 @@ public static class DependencyInjection
                 {
                     h.Username(username);
                     h.Password(password);
+
+                    h.Heartbeat(TimeSpan.FromSeconds(10));
+                });
+
+                config.UseMessageRetry(retryConfig =>
+                {
+                    retryConfig.Incremental(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2));
                 });
 
                 RegisterEndpointsFromAttributes(context, config, applicationAssembly);

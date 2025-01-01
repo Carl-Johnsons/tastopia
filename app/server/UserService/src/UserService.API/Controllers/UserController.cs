@@ -14,6 +14,7 @@ public class UserController : BaseApiController
     public UserController(ISender sender, IHttpContextAccessor httpContextAccessor) : base(sender, httpContextAccessor)
     {
     }
+
     [AllowAnonymous]
     [HttpPost("search")]
     public async Task<IActionResult> SearchUser([FromBody] SearchUser searchUser)

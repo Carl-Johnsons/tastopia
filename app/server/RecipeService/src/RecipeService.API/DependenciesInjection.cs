@@ -37,6 +37,9 @@ public static class DependenciesInjection
                     options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
                 });
 
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+
         services.AddHttpContextAccessor();
 
         services.AddAuthentication("Bearer")
@@ -78,6 +81,9 @@ public static class DependenciesInjection
 
             await next(); // Call the next middleware
         });
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         app.UseSerilogRequestLogging();
 

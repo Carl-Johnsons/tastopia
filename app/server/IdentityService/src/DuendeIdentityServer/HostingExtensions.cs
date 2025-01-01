@@ -24,6 +24,9 @@ internal static class HostingExtensions
         services.AddApplicationServices();
         services.AddInfrastructureServices(builder.Configuration);
 
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+
         host.UseSerilog((context, config) =>
         {
             config.ReadFrom.Configuration(context.Configuration);
@@ -123,6 +126,9 @@ internal static class HostingExtensions
         {
             app.UseDeveloperExceptionPage();
         }
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
