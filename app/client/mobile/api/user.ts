@@ -71,39 +71,40 @@ const useLogin = () => {
 
 export type SignUpParams = z.infer<typeof registerWithEmailSchema>;
 
-type SignUpResponse = {} & LoginResponse;
+type SignUpResponse = LoginResponse & {
+  // TODO: check these types
+  error: string;
+  Message: string;
+  identifier: string;
+};
 
-export const register = async (
-  inputs: SignUpParams,
-  type: IDENTIFIER_TYPE
-): Promise<SignUpResponse> => {
-  const REGISTER_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
-  const url = `${API_HOST}/api/account/register/${REGISTER_TYPE}`;
+const useRegister = () => {
+  return useMutation<
+    SignUpResponse,
+    Error,
+    { data: SignUpParams; type: IDENTIFIER_TYPE }
+  >({
+    mutationKey: ["register"],
+    mutationFn: async ({ data, type }) => {
+      const REGISTER_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `${API_HOST}/api/account/register/${REGISTER_TYPE}`;
 
-  console.log("url", url);
-  console.log("data", JSON.stringify(inputs, null, 2));
-  console.log("type", type);
+      try {
+        const { data: response } = await axiosInstance.post<SignUpResponse>(url, data, {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        });
 
-  console.log("Sending request");
+        if (response.error) throw new Error(response.error);
+        if (response.Message) throw new Error(response.Message);
 
-  try {
-    const { data } = await axios.post(url, inputs, {
-      headers: {
-        "Content-Type": "application/json"
+        return response;
+      } catch (error: any) {
+        throw new Error(error.response?.data?.Message || "Registration failed");
       }
-    });
-
-    console.log("Got response");
-
-    if (data.error) throw new Error(data.error);
-    if (data.Message) throw new Error(data.Message);
-
-    console.log("Check data ok, return data");
-    return data;
-  } catch (error: any) {
-    console.log("Error during registration:", error);
-    throw new Error(error.response?.data?.Message || "Registration failed");
-  }
+    }
+  });
 };
 
 export type VerifyParams = z.infer<typeof verifySchema>;
@@ -182,4 +183,4 @@ export const resendVerifyCode = async (
   }
 };
 
-export { useLogin };
+export { useLogin, useRegister };
