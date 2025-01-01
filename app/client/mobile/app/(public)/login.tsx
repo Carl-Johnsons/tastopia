@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
 import LoginForm, { LoginFormFields } from "@/components/LoginForm";
-import { IDENTIFIER_TYPE, login } from "@/api/user";
+import { IDENTIFIER_TYPE, useLogin } from "@/api/user";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
 import { ZodError } from "zod";
 import { useAppDispatch } from "@/store/hooks";
@@ -19,52 +19,50 @@ const Login = () => {
   const dispatch = useAppDispatch();
   const { loginWithGoogle } = useLoginWithGoogle();
   const { animate, animatedStyles } = useBounce();
+  const loginMutation = useLogin();
 
   const onSubmit = async (data: LoginFormFields) => {
     setIsSubmitting(true);
     console.log("Begin login");
 
-    try {
-      const identifierChecker = /[a-zA-Z@]/;
+    const identifierChecker = /[a-zA-Z@]/;
 
-      const loginType = identifierChecker.test(data.identifier)
-        ? IDENTIFIER_TYPE.EMAIL
-        : IDENTIFIER_TYPE.PHONE_NUMBER;
+    const loginType = identifierChecker.test(data.identifier)
+      ? IDENTIFIER_TYPE.EMAIL
+      : IDENTIFIER_TYPE.PHONE_NUMBER;
 
-      console.log("Login type", loginType);
+    console.log("Login type", loginType);
 
-      if (loginType === IDENTIFIER_TYPE.EMAIL) {
-        // loginWithEmailSchema.parse(data);
-      } else {
-        // loginWithPhoneNumberSchema.parse(data);
-      }
-
-      const res = await login(data);
-      const accessToken = res.access_token;
-      const refreshToken = res.refresh_token;
-      // Check role here
-      const role = ROLE.USER;
-
-      dispatch(saveAuthData({ accessToken, refreshToken, role }));
-      console.log("Saved tokens");
-
-      // Need to get user's info as well
-      // dispatch(saveUserData(user));
-
-      const route = "/(protected)";
-      router.navigate(route);
-    } catch (error: any) {
-      console.log("Error", error);
-
-      if (error instanceof ZodError) {
-        const firstErr = error.issues[0];
-        return Alert.alert("Error", firstErr.message);
-      }
-
-      Alert.alert("Error", error.message);
-    } finally {
-      setIsSubmitting(false);
+    if (loginType === IDENTIFIER_TYPE.EMAIL) {
+      // loginWithEmailSchema.parse(data);
+    } else {
+      // loginWithPhoneNumberSchema.parse(data);
     }
+
+    loginMutation.mutateAsync(data, {
+      onSuccess: data => {
+        const accessToken = data.access_token;
+        const refreshToken = data.refresh_token;
+        const role = ROLE.USER;
+        dispatch(saveAuthData({ accessToken, refreshToken, role }));
+        console.log("Saved tokens");
+        const route = "/(protected)";
+        router.navigate(route);
+      },
+      onError: error => {
+        console.log("Error", error);
+
+        if (error instanceof ZodError) {
+          const firstErr = error.issues[0];
+          return Alert.alert("Error", firstErr.message);
+        }
+
+        Alert.alert("Error", error.message);
+      },
+      onSettled: () => {
+        setIsSubmitting(false);
+      }
+    });
   };
 
   const navigateToSignUpScreen = () => {

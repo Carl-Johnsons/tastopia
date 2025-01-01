@@ -6,8 +6,9 @@ import {
 import { z } from "zod";
 import Constants from "expo-constants";
 import axios from "axios";
-import { API_HOST } from "@/constants/host";
+import { API_HOST, axiosInstance } from "@/constants/host";
 import { transformPlatformURI } from "@/utils/functions";
+import { useMutation } from "react-query";
 
 export type LoginParams = z.infer<typeof loginWithEmailSchema>;
 
@@ -32,38 +33,40 @@ export enum IDENTIFIER_TYPE {
   PHONE_NUMBER
 }
 
-export const login = async (inputs: LoginParams): Promise<LoginResponse> => {
-  const body = new URLSearchParams({
-    client_id: "react.native",
-    scope: "openid profile phone email offline_access IdentityServerApi",
-    grant_type: "password",
-    username: inputs.identifier,
-    password: inputs.password
-  }).toString();
+const useLogin = () => {
+  return useMutation<LoginResponse, Error, LoginParams>({
+    mutationKey: ["login"],
+    mutationFn: async (inputs: LoginParams) => {
+      const body = new URLSearchParams({
+        client_id: "react.native",
+        scope: "openid profile phone email offline_access IdentityServerApi",
+        grant_type: "password",
+        username: inputs.identifier,
+        password: inputs.password
+      }).toString();
 
-  console.log("Sending request");
-
-  try {
-    const res = await axios.post(`${API_HOST}/connect/token`, body, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+      try {
+        const { data } = await axiosInstance.post<LoginResponse>(
+          `${API_HOST}/connect/token`,
+          body,
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            }
+          }
+        );
+        return data;
+      } catch (error: any) {
+        if (error.response?.data?.error_description) {
+          throw new Error(error.response.data.error_description);
+        }
+        if (error.message) {
+          throw new Error(error.message);
+        }
+        throw new Error("An error has occurred.");
       }
-    });
-
-    console.log("Got response");
-    console.log("response", res);
-
-    const data = res.data;
-    console.log("data", data);
-    return data;
-  } catch (error: any) {
-    console.log("error", JSON.stringify(error, null, 2));
-    if (error.message) {
-      throw new Error(error.message);
     }
-
-    throw new Error("An error has occured.");
-  }
+  });
 };
 
 export type SignUpParams = z.infer<typeof registerWithEmailSchema>;
@@ -178,3 +181,5 @@ export const resendVerifyCode = async (
     throw new Error(error.response?.data?.Message || "Resend verification code failed");
   }
 };
+
+export { useLogin };
