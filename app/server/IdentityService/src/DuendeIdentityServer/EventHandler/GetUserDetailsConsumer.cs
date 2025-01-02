@@ -29,6 +29,6 @@ public class GetUserDetailsConsumer : IConsumer<GetUserDetailsEvent>
         });
         result.ThrowIfFailure();
 
-        context.Respond(_mapper.Map<AccountDTO>(result.Value));
+        context.Respond(_mapper.Map<AccountDTO>(result.Value![0]));
     }
 }
