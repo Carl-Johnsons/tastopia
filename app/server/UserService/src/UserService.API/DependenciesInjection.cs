@@ -7,6 +7,9 @@ using UserService.Infrastructure;
 using Newtonsoft.Json;
 using AutoMapper;
 using UserService.API.Configs;
+using Microsoft.OpenApi.Models;
+using UserService.Infrastructure.Utilities;
+using UserService.Domain.Interfaces;
 
 namespace UserService.API;
 

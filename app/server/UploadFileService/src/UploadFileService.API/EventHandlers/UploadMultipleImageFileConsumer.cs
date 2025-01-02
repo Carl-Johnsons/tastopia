@@ -5,7 +5,7 @@ using MassTransit;
 using UploadFileService.Application.CloudinaryFiles.Commands;
 
 namespace UploadFileService.API.EventHandlers;
-[QueueName("upload-multiple-image-file-event")]
+[QueueName("upload-multiple-image-file-event")] 
 public sealed class UploadMultipleImageFileConsumer : IConsumer<UploadMultipleImageFileEvent>
 {
     private readonly ISender _sender;

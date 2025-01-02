@@ -7,6 +7,7 @@ using RecipeService.API.Middleware;
 using Newtonsoft.Json;
 using AutoMapper;
 using RecipeService.API.Configs;
+using Microsoft.OpenApi.Models;
 
 namespace RecipeService.API;
 
