@@ -14,15 +14,17 @@
     },
     "ios": {
       "supportsTablet": true,
-      "package": "com.tastopia.app"
+      "package": "com.tastopia.app",
+      "bundleIdentifier": "com.tastopia.app"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/splash.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.tastopia.app",
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "bundler": "metro",
@@ -42,6 +44,15 @@
     "experiments": {
       "typedRoutes": true
     },
-    "newArchEnabled": true
+    "newArchEnabled": true,
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "fea3bdfc-96cf-4eda-b1d4-66bd8bd3b7e3"
+      }
+    },
+    "owner": "quoczuong"
   }
 }
