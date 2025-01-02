@@ -5,6 +5,7 @@ using DuendeIdentityServer.Services;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 namespace DuendeIdentityServer;
@@ -23,6 +24,35 @@ internal static class HostingExtensions
 
         services.AddApplicationServices();
         services.AddInfrastructureServices(builder.Configuration);
+
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(c =>
+        {
+            var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:5001").Replace("\"", "");
+            var IdentityServerEndpoint = $"http://{IdentityDNS}";
+
+            c.AddSecurityDefinition("OAuth2", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.OAuth2,
+                Flows = new OpenApiOAuthFlows
+                {
+                    Password = new OpenApiOAuthFlow
+                    {
+                        TokenUrl = new Uri($"{IdentityServerEndpoint}/connect/token"),
+                        Scopes = new Dictionary<string, string>
+                        {
+                            { "openid", "Required to sign in" },
+                            { "profile", "Get the profile of the user" },
+                            { "phone", "Get phone claim" },
+                            { "email", "Get email claim" },
+                            { "offline_access", "Required for refresh token" },
+                            { "IdentityServerApi", "Required for access to identity api" },
+                        }
+                    }
+                },
+                Description = "OAuth2 Password Grant"
+            });
+        });
 
         host.UseSerilog((context, config) =>
         {
@@ -123,6 +153,9 @@ internal static class HostingExtensions
         {
             app.UseDeveloperExceptionPage();
         }
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });

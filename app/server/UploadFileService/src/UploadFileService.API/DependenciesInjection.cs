@@ -31,18 +31,18 @@ public static class DependenciesInjection
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     options.JsonSerializerOptions.WriteIndented = true;
                 });
-        // Add services to the container.
 
-        builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
 
         return builder;
     }
 
     public static WebApplication UseAPIServices(this WebApplication app)
     {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
         app.UseSerilogRequestLogging();
 
         app.UseHttpsRedirection();

@@ -44,12 +44,57 @@ public static class DependenciesInjection
                     options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
                 });
 
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(c =>
+        {
+            var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:5001").Replace("\"", "");
+            var IdentityServerEndpoint = $"http://{IdentityDNS}";
+
+            c.AddSecurityDefinition("OAuth2", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.OAuth2,
+                Flows = new OpenApiOAuthFlows
+                {
+                    Password = new OpenApiOAuthFlow
+                    {
+                        TokenUrl = new Uri($"{IdentityServerEndpoint}/connect/token"),
+                        Scopes = new Dictionary<string, string>
+                        {
+                            { "openid", "Required to sign in" },
+                            { "profile", "Get the profile of the user" },
+                            { "phone", "Get phone claim" },
+                            { "email", "Get email claim" },
+                            { "offline_access", "Required for refresh token" },
+                            { "IdentityServerApi", "Required for access to identity api" },
+                        }
+                    }
+                },
+                Description = "OAuth2 Password Grant"
+            });
+
+            // Apply the security scheme globally
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "OAuth2"
+                        }
+                    },
+                    new List<string> { "openid", "profile", "phone", "email", "offline_access", "IdentityServerApi" }
+                }
+            });
+        });
+
         services.AddHttpContextAccessor();
 
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
-                var IdentityDNS = (Environment.GetEnvironmentVariable("IDENTITY_SERVER_HOST") ?? "localhost:5001").Replace("\"", "");
+                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:5001").Replace("\"", "");
                 var IdentityServerEndpoint = $"http://{IdentityDNS}";
                 Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
 
@@ -85,6 +130,9 @@ public static class DependenciesInjection
 
             await next(); // Call the next middleware
         });
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
 
         app.UseSerilogRequestLogging();
 
