@@ -46,35 +46,18 @@ public static class DependenciesInjection
                 });
 
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(c =>
+        services.AddSwaggerGen(config =>
         {
-            var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:5001").Replace("\"", "");
-            var IdentityServerEndpoint = $"http://{IdentityDNS}";
-
-            c.AddSecurityDefinition("OAuth2", new OpenApiSecurityScheme
+            config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Type = SecuritySchemeType.OAuth2,
-                Flows = new OpenApiOAuthFlows
-                {
-                    Password = new OpenApiOAuthFlow
-                    {
-                        TokenUrl = new Uri($"{IdentityServerEndpoint}/connect/token"),
-                        Scopes = new Dictionary<string, string>
-                        {
-                            { "openid", "Required to sign in" },
-                            { "profile", "Get the profile of the user" },
-                            { "phone", "Get phone claim" },
-                            { "email", "Get email claim" },
-                            { "offline_access", "Required for refresh token" },
-                            { "IdentityServerApi", "Required for access to identity api" },
-                        }
-                    }
-                },
-                Description = "OAuth2 Password Grant"
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Input your Bearer token in the following format: `Bearer {your_token}`"
             });
 
-            // Apply the security scheme globally
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            config.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
                     new OpenApiSecurityScheme
@@ -82,10 +65,10 @@ public static class DependenciesInjection
                         Reference = new OpenApiReference
                         {
                             Type = ReferenceType.SecurityScheme,
-                            Id = "OAuth2"
+                            Id = "Bearer"
                         }
                     },
-                    new List<string> { "openid", "profile", "phone", "email", "offline_access", "IdentityServerApi" }
+                    Array.Empty<string>()
                 }
             });
         });
@@ -133,7 +116,11 @@ public static class DependenciesInjection
         });
 
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(c =>
+        {
+            c.ConfigObject.PersistAuthorization = true;
+            c.InjectJavascript("/Swagger/inject-access-token.js");
+        });
 
         app.UseSerilogRequestLogging();
 
