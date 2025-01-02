@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Text,
   View,
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert,
   TouchableOpacity,
   FlatList,
   RefreshControl
@@ -19,67 +18,32 @@ import { AntDesign } from "@expo/vector-icons";
 import useDarkMode from "@/hooks/useDarkMode";
 import User from "@/components/common/User";
 import { Image } from "expo-image";
-import { selectAccessToken } from "@/slices/auth.slice";
-import { transformPlatformURI } from "@/utils/functions";
+import { useSearchUsers } from "@/api/search";
 
 const Search = () => {
-  const [skip, setSkip] = useState<number>(0);
   const [onFocus, setOnFocus] = useState<boolean>(false);
-  const [hasNextPage, setHasNextPage] = useState<boolean>();
   const [searchValue, setSearchValue] = useState<string>("");
-  const [isSearching, setIsSearching] = useState<boolean>(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [searchResults, setSearchResults] = useState<SearchUserResultProps[]>([]);
-  const [doneSearching, setDoneSearching] = useState<boolean>(false);
 
   const textInputRef = useRef<TextInput>(null);
-
   const isDarkMode = useDarkMode();
-
   const debouncedValue = useDebounce(searchValue, 800);
-  const accessToken = selectAccessToken();
 
-  const fetchSearchResults = async (isFetchMore: boolean) => {
-    if (isFetchMore && !hasNextPage) return;
+  const {
+    data,
+    isFetched,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isSearching,
+    refetch,
+    fetchNextPage
+  } = useSearchUsers(debouncedValue);
 
-    setIsSearching(true);
-    const url = transformPlatformURI("http://localhost:5000/api/user/search");
-    const headers = {
-      "Content-Type": "application/json"
-    };
-
-    console.log("keyword", searchValue);
-    console.log("skip", skip);
-    const body = JSON.stringify({
-      keyword: debouncedValue,
-      skip: parseInt(skip.toString())
-    });
-
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: headers,
-        body: body
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-      }
-
-      const data = await response.json();
-
-      console.log("result", data.paginatedData);
-
-      setSearchResults(data.paginatedData);
-      setHasNextPage(data.metadata.hasNextPage);
-    } catch (error) {
-      console.log("error", error);
-    } finally {
-      setIsSearching(false);
-      setDoneSearching(true);
-    }
-  };
+  const searchResults = data?.pages.flatMap(page => page.paginatedData) ?? [];
+  const [doneSearching, setDoneSearching] = useState(
+    !isSearching || searchResults.length > 0
+  );
+  const shouldShowNoResults = isFetched && doneSearching;
 
   const handleFilter = () => {};
 
@@ -93,9 +57,9 @@ const Search = () => {
 
   const handleCancel = () => {
     setOnFocus(false);
-    setDoneSearching(false);
     setSearchValue("");
-    setSearchResults([]);
+    setDoneSearching(false);
+    setIsRefreshing(false);
     Keyboard.dismiss();
   };
 
@@ -103,24 +67,17 @@ const Search = () => {
     setSearchValue(text);
   };
 
-  const onRefresh = () => {};
+  const onRefresh = async () => {
+    setIsRefreshing(true);
+    await refetch();
+    setIsRefreshing(false);
+  };
 
-  const handleLoadMore = () => {};
-
-  useEffect(() => {
-    if (!debouncedValue.trim()) {
-      setSearchResults([]);
-      return;
+  const handleLoadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
     }
-
-    fetchSearchResults(false);
-  }, [debouncedValue]);
-
-  useEffect(() => {
-    setDoneSearching(false);
-  }, [searchValue]);
-
-  const handleFollowUnFollow = () => {};
+  };
 
   return (
     <TouchableWithoutFeedback onPress={() => handleFocus(false)}>
@@ -146,7 +103,7 @@ const Search = () => {
                 <TextInput
                   autoCapitalize='none'
                   ref={textInputRef}
-                  className='h-full flex-1'
+                  className='h-full w-[86%]'
                   value={searchValue}
                   onPress={() => handleFocus(true)}
                   onChangeText={handleSearch}
@@ -185,8 +142,8 @@ const Search = () => {
           </View>
 
           {/* Result section */}
-          <View className='mt-6'>
-            {searchResults?.length !== 0 && doneSearching && (
+          <View className='mt-6 pb-[200px]'>
+            {searchResults.length > 0 && doneSearching && (
               <Text className='h3-bold mb-2'>Users</Text>
             )}
 
@@ -212,8 +169,8 @@ const Search = () => {
                 </>
               )}
               ListEmptyComponent={() => {
-                return doneSearching ? (
-                  <View className='flex-center gap-2'>
+                return shouldShowNoResults ? (
+                  <View className='flex-center mt-10 gap-2'>
                     <Image
                       source={require("../../../assets/icons/noResult.png")}
                       style={{ width: 130, height: 130 }}

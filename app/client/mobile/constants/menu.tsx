@@ -8,6 +8,7 @@ import { Feather, Ionicons, Octicons } from "@expo/vector-icons";
 import {
   CAPTURE_PATH,
   COMMUNITY_PATH,
+  MAIN_PATH,
   MENU_PATH,
   NOTIFICATION_PATH,
   SEARCH_PATH
@@ -103,6 +104,28 @@ export const menuList: Menu[] = [
     menuItems: [
       /* ================= MAIN TABS ================= */
       {
+        path: MAIN_PATH,
+        icon: ({ color, focused }) => (
+          <TabIcon
+            icon={
+              <Octicons
+                name='people'
+                size={24}
+                color={focused ? globalStyles.color.primary : globalStyles.color.dark}
+              />
+            }
+            color={color}
+            translateCode='community'
+            focused={focused}
+          />
+        ),
+        code: "COMMUNITY",
+        translateCode: "community",
+        includeInMainTab: {
+          position: 1
+        }
+      },
+      {
         path: COMMUNITY_PATH,
         icon: ({ color, focused }) => (
           <TabIcon
@@ -119,10 +142,7 @@ export const menuList: Menu[] = [
           />
         ),
         code: "COMMUNITY",
-        translateCode: "community",
-        includeInMainTab: {
-          position: 1
-        }
+        translateCode: "community"
       },
       {
         path: SEARCH_PATH,

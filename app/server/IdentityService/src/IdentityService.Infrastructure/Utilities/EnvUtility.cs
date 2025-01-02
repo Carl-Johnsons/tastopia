@@ -14,15 +14,23 @@ public class EnvUtility
 
         string solutionPath = Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.FullName ?? "";
 
-
-        if (DotNetEnv.Env.GetString("ASPNETCORE_ENVIRONMENT", "") == "Production")
+        if (IsProduction())
         {
             DotNetEnv.Env.Load(Path.Combine(solutionPath, ".env.production"));
         }
-        else
+        else if (IsDevelopment())
         {
             DotNetEnv.Env.Load(Path.Combine(solutionPath, ".env"));
         }
+    }
+
+    public static bool IsDevelopment()
+    {
+        return DotNetEnv.Env.GetString("ASPNETCORE_ENVIRONMENT", "") == "Development";
+    }
+    public static bool IsProduction()
+    {
+        return DotNetEnv.Env.GetString("ASPNETCORE_ENVIRONMENT", "") == "Production";
     }
 
     public static string GetConnectionString()
@@ -38,7 +46,6 @@ public class EnvUtility
         Console.WriteLine(connectionString);
         return connectionString;
     }
-
 
     private static string? GetEnvFilePath(string folderName, string envFileName)
     {

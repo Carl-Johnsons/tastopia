@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { View, StyleSheet, Keyboard, ActivityIndicator } from "react-native";
-import { Redirect, Tabs, useRootNavigationState } from "expo-router";
+import { Redirect, Tabs, usePathname, useRootNavigationState } from "expo-router";
 import { menuList } from "@/constants/menu";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
 import { selectRole } from "@/slices/auth.slice";
+import { COMMUNITY_PATH, MAIN_PATH } from "@/constants/paths";
 
 const ProtectedLayout = () => {
   const { t } = useTranslation("menu");
+  const pathname = usePathname();
 
   const [isKeyBoardVisible, setIsKeyBoardVisible] = useState(false);
   const role = selectRole();
@@ -77,7 +79,9 @@ const ProtectedLayout = () => {
                   <View style={styles.tabItem}>
                     {typeof icon === "function"
                       ? icon({
-                          focused,
+                          focused:
+                            focused ||
+                            (path === MAIN_PATH && pathname.includes(COMMUNITY_PATH)),
                           color: focused
                             ? globalStyles.color.primary
                             : globalStyles.color.dark,
