@@ -5,6 +5,8 @@ using RecipeService.Application;
 using RecipeService.Infrastructure;
 using RecipeService.API.Middleware;
 using Newtonsoft.Json;
+using AutoMapper;
+using RecipeService.API.Configs;
 
 namespace RecipeService.API;
 
@@ -25,6 +27,11 @@ public static class DependenciesInjection
 
         services.AddApplicationServices();
         services.AddInfrastructureServices(config);
+
+        // Register automapper
+        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+        services.AddSingleton(mapper);
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddControllers()
                 // Prevent circular JSON reach max depth of the object when serialization
