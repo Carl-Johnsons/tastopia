@@ -857,18 +857,27 @@ public class RecipeData
             RecipeId = Guid.Parse("3e7ff177-b9d9-4789-b1b2-bce1c1b7955e"),
             Content = "Add milk, ice cream, and sugar to a blender.",
             OdinalNumber = 1,
+            AttachedImageUrls = new List<string>{
+                "https://itdoesnttastelikechicken.com/wp-content/uploads/2022/07/how-to-make-ice-cream-in-a-blender-no-churn-without-ice-cream-maker-02.jpg"
+            }
         },
         new Step{
             Id = Guid.NewGuid(),
             RecipeId = Guid.Parse("3e7ff177-b9d9-4789-b1b2-bce1c1b7955e"),
             Content = "Blend until smooth.",
             OdinalNumber = 2,
+            AttachedImageUrls = new List<string>{
+                "https://itdoesnttastelikechicken.com/wp-content/uploads/2022/07/how-to-make-ice-cream-in-a-blender-no-churn-without-ice-cream-maker-03.jpg"
+            }
         },
         new Step{
             Id = Guid.NewGuid(),
             RecipeId = Guid.Parse("3e7ff177-b9d9-4789-b1b2-bce1c1b7955e"),
             Content = "Serve immediately.",
             OdinalNumber = 3,
+            AttachedImageUrls = new List<string>{
+                "https://itdoesnttastelikechicken.com/wp-content/uploads/2022/07/how-to-make-ice-cream-in-a-blender-no-churn-without-ice-cream-maker-04.jpg"
+            }
         },
         // Steps for BBQ Chicken (Id: d2189f90-6991-4901-8195-f0c12d24d900)
         new Step{
@@ -876,30 +885,51 @@ public class RecipeData
             RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
             Content = "Preheat the grill to medium-high heat.",
             OdinalNumber = 1,
+            AttachedImageUrls = new List<string>{
+                "https://www.eatingwell.com/thmb/uIS7xz8ZcT6WLalfYHxEvpLJF9Y=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/Hot-Grill-98dc8b55c76b427b9a026cf509ec7c48.jpg",
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXHzHjU_DYlhDHtkb3zr_f28KMRHIH-7Lgkg&s",
+                "https://blog.zgrills.com/wp-content/uploads/2022/09/what-temperature-is-medium-heat-on-a-grill.jpg"
+            }
         },
         new Step{
             Id = Guid.NewGuid(),
             RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
             Content = "Season the chicken breasts with salt and pepper.",
             OdinalNumber = 2,
+            AttachedImageUrls = new List<string>{
+                "https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fill,g_auto,w_1690,h_1128/k%2Farchive%2Fa0d25ce80ff3b94487b4df0f5bd83fb943b7d0b2",
+                "https://healthyrecipesblogs.com/wp-content/uploads/2024/03/baked-skin-on-chicken-breast-ingredients.jpg",
+                "https://healthyrecipesblogs.com/wp-content/uploads/2024/03/salt-and-pepper.jpg"
+
+            }
         },
         new Step{
             Id = Guid.NewGuid(),
             RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
             Content = "Grill the chicken for 6-7 minutes on each side.",
             OdinalNumber = 3,
+            AttachedImageUrls = new List<string>{
+                "https://s3.festivalfoods.net/blog/uploads/2022/05/IMG_0864.jpeg",
+                "https://cdn.shopify.com/s/files/1/0271/5287/5653/files/20240512131902-holychicken.jpg?v=1715519944&width=1600&height=900"
+            }
         },
         new Step{
             Id = Guid.NewGuid(),
             RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
             Content = "Brush the chicken with BBQ sauce during the last 2 minutes of grilling.",
             OdinalNumber = 4,
+            AttachedImageUrls = new List<string>{
+                "https://i2.wp.com/www.downshiftology.com/wp-content/uploads/2022/06/BBQ-Chicken-11.jpg"
+            }
         },
         new Step{
             Id = Guid.NewGuid(),
             RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
             Content = "Serve with additional BBQ sauce on the side.",
             OdinalNumber = 5,
+            AttachedImageUrls = new List<string>{
+                "https://thewholeserving.com/wp-content/uploads/2024/04/Platter-of-prepared-drumsticks-with-a-glass-container-of-extra-barbecue-sauce-on-the-right-side-of-the-platter.jpg"
+            }
         },
     ];
 }

@@ -9,7 +9,7 @@ import {
   selectVerifyIdentifier
 } from "@/slices/auth.slice";
 import { ZodError } from "zod";
-import { VerifyParams, resendVerifyCode, verify } from "@/api/user";
+import { VerifyParams, useVerify, useResendVerifyCode } from "@/api/user";
 import VerifyForm from "@/components/VerifyForm";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
@@ -17,50 +17,51 @@ import { verifySchema } from "@/lib/validation/auth";
 
 const Verify = () => {
   const isAndroid = Platform.OS === "android";
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const dispatch = useAppDispatch();
   const identifier = selectVerifyIdentifier();
   const accessToken = selectAccessToken() as string;
+  const { mutateAsync: verify, isLoading: isVerifyLoading } = useVerify();
+  const { mutateAsync: resendVerifyCode, isLoading: isResendVerifyCodeLoading } =
+    useResendVerifyCode();
 
   const onSubmit = async (data: VerifyParams) => {
-    setIsSubmitting(true);
+    verifySchema.parse(data);
 
-    try {
-      console.log("VerifyParams", JSON.stringify(data, null, 2));
+    verify(
+      { input: data, accessToken },
+      {
+        onSuccess: data => {
+          dispatch(saveAuthData({ isVerifyingAccount: false, role: ROLE.USER }));
+          console.log("saved auth data");
 
-      verifySchema.parse(data);
-      await verify(data, accessToken);
+          // Set user's data here
+          // dispatch(saveUserData(user));
+          //
+          const route = "/(protected)";
+          router.navigate(route);
+        },
+        onError: error => {
+          if (error instanceof ZodError) {
+            const firstErr = error.issues[0];
+            console.log("Error", error);
+            return Alert.alert("Error", firstErr.message);
+          }
 
-      dispatch(saveAuthData({ isVerifyingAccount: false, role: ROLE.USER }));
-      console.log("saved auth data");
-
-      // Set user's data here
-      // dispatch(saveUserData(user));
-      //
-      const route = "/(protected)";
-      router.navigate(route);
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        const firstErr = error.issues[0];
-        console.log("Error", error);
-        return Alert.alert("Error", firstErr.message);
+          Alert.alert("Error", error.message);
+        }
       }
-
-      Alert.alert("Error", error.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    );
   };
 
   const resendCode = async () => {
-    console.log("Requesting for new OTP");
-
-    try {
-      await resendVerifyCode(accessToken as string);
-      Alert.alert("Success", "New OTP is sent.");
-    } catch (error: any) {
-      Alert.alert("Error", error.message);
-    }
+    resendVerifyCode(accessToken, {
+      onSuccess: () => {
+        Alert.alert("Success", "New OTP is sent.");
+      },
+      onError: error => {
+        Alert.alert("Error", error.message);
+      }
+    });
   };
 
   return (
@@ -85,7 +86,7 @@ const Verify = () => {
 
         <VerifyForm
           onSubmit={onSubmit}
-          isLoading={isSubmitting}
+          isLoading={isVerifyLoading || isResendVerifyCodeLoading}
           className='mt-[5vh]'
         />
 

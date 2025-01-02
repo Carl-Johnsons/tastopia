@@ -62,7 +62,7 @@ public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailComm
         {
             Recipe = recipe,
             AuthorAvtUrl = responseUser.Message.AvatarUrl!,
-            AuthorUsername = responseAccout.Message.Username!,
+            AuthorUsername = responseAccout.Message.UserName!,
             AuthorNumberOfFollower = responseUser.Message.TotalFollwer! ?? 0
         };
 

@@ -1,8 +1,7 @@
-// components/DishCard.tsx
-import React from "react";
 import Vote from "./Vote";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { View, Text, Image, TouchableWithoutFeedback } from "react-native";
+import { useRouter } from "expo-router";
 
 const Recipe = ({
   id,
@@ -15,20 +14,26 @@ const Recipe = ({
   voteDiff,
   numberOfComment
 }: RecipeType) => {
+  const router = useRouter();
+  const handleOnPress = () => {
+    router.push({
+      pathname: "/(protected)/community/[id]",
+      params: { id }
+    });
+  };
   const handleTouchMenu = () => {};
-  const handleOnPress = () => {};
 
   return (
     <TouchableWithoutFeedback onPress={handleOnPress}>
-      <View className='pb-4 bg-white_black rounded-3xl'>
-        <View className='flex-row px-4 py-2 flex-between'>
+      <View className='bg-white_black rounded-3xl pb-4'>
+        <View className='flex-between flex-row px-4 py-2'>
           {authorId && authorDisplayName && authorAvtUrl && (
             <TouchableWithoutFeedback
               onPress={() => {
                 console.log("go to user detail");
               }}
             >
-              <View className='flex-row gap-2 flex-center'>
+              <View className='flex-center flex-row gap-2'>
                 <Image
                   source={{ uri: authorAvtUrl }}
                   className='size-[30px] rounded-full'
@@ -57,7 +62,7 @@ const Recipe = ({
               <Text
                 numberOfLines={1}
                 ellipsizeMode='tail'
-                className='text-2xl font-bold'
+                className='font-bold text-2xl'
               >
                 {title}
               </Text>
@@ -70,7 +75,7 @@ const Recipe = ({
               </Text>
             </View>
 
-            <View className='flex-row gap-2 flex-start'>
+            <View className='flex-start flex-row gap-2'>
               <Vote voteDiff={voteDiff} />
 
               <TouchableWithoutFeedback>
