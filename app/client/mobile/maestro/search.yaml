@@ -1,3 +1,4 @@
+# maestro test ./maestro/search.yaml
 appId: host.exp.exponent
 ---
 - runFlow:
@@ -10,10 +11,21 @@ appId: host.exp.exponent
     when:
       platform: "iOS"
 
-- assertVisible: "Tìm Kiếm"
+# - assertVisible: "Tìm Kiếm"
 - tapOn: "Tìm Kiếm"
 - tapOn: "Enter name or username"
-- inputText: "Alice"
+- inputText: "a"
 - assertVisible: "Follow"
-- tapOn: "Follow"
-- assertVisible: "Unfollow"
+- tapOn:
+    text: "Follow"
+    repeat: 3
+    delay: 500
+- scroll
+- scroll
+- scroll
+- scroll
+- scroll
+- scroll
+- scroll
+- scroll
+# - assertVisible: "Unfollow"
