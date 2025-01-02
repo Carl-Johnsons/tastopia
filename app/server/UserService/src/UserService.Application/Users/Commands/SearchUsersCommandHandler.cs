@@ -58,7 +58,7 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
 
         var userQuery = _context.Users.Where(u => u.AccountId != accountId).OrderByDescending(u => u.DisplayName).AsQueryable();
 
-        userQuery = userQuery.Where(u => u.IsAccountActive == true &&
+        userQuery = userQuery.Where(u => u.IsAccountActive && !u.IsAdmin &&
                                         (u.DisplayName.ToLower().Contains(keyword) ||
                                          u.AccountUsername.ToLower().Contains(keyword)
                                         ));
