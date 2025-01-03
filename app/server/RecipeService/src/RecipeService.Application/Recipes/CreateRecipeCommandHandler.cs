@@ -76,7 +76,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
             if (response == null || response.Message.Files.Count != imageIndex.Count)
             {
-                throw new Exception("Invalid upload file response");
+                return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
             }
 
             rollBackFiles = response.Message.Files;

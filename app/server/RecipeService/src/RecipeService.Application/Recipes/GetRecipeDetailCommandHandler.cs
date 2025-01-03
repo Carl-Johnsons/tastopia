@@ -44,9 +44,22 @@ public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailComm
             AccountId = recipe.AuthorId,
         });
 
+        var listString = recipe.Title.ToLower().Split(' ');
 
+        var similarRecipes = _context.Recipes.Where(
+            r => r.Id != recipe.Id &&
+                (
+                 listString.Any(word => r.Title.ToLower().Contains(word)) ||
+                 listString.Any(word => r. Description.ToLower().Contains(word)) ||
+                 listString.Any(word => r.Ingredients.Any(i => i.ToLower().Contains(word)))
+                )
+        ).OrderByDescending(r => r.CreatedAt).Select(r => new SimilarRecipe
+        {
+            ImageUrl = r.ImageUrl,
+            RecipeId = r.Id,
+            Title = r.Title
+        }).Take(6).ToList();
 
-        var recipeComments = await _context.Comments.Where(c => c.RecipeId == request.RecipeId).ToListAsync();
 
 
         var result = new RecipeDetailsResponse
@@ -55,7 +68,8 @@ public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailComm
             AuthorUsername = response.Message.AccountUsername!,
             AuthorAvtUrl = response.Message.AvatarUrl!,
             AuthorDisplayName = response.Message.DisplayName,
-            AuthorNumberOfFollower = response.Message.TotalFollwer! ?? 0
+            AuthorNumberOfFollower = response.Message.TotalFollwer! ?? 0,
+            similarRecipes = similarRecipes
         };
 
         return Result<RecipeDetailsResponse?>.Success(result);
