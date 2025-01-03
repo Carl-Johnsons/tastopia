@@ -163,6 +163,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.Entity<Step>().HasData(RecipeData.Step);
         modelBuilder.Entity<RecipeTag>().HasData(RecipeTagData.Data);
         modelBuilder.Entity<RecipeVote>().HasData(RecipeVoteData.Data);
+        modelBuilder.Entity<Comment>().HasData(CommentData.Data);
 
     }
 }
