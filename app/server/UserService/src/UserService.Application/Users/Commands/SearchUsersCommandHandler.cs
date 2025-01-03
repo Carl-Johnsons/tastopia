@@ -61,7 +61,7 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
         userQuery = userQuery.Where(u => u.IsAccountActive && !u.IsAdmin &&
                                         (u.DisplayName.ToLower().Contains(keyword) ||
                                          u.AccountUsername.ToLower().Contains(keyword)
-                                        ));
+                                        )); 
 
         var totalPage = (await userQuery.CountAsync() + USER_CONSTANTS.USER_LIMIT - 1) / USER_CONSTANTS.USER_LIMIT;
 

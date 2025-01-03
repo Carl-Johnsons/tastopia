@@ -1,4 +1,5 @@
-﻿using Contract.Common;
+﻿using AutoMapper;
+using Contract.Common;
 using Contract.Constants;
 using Contract.DTOs.UserDTO;
 using Contract.Event.UserEvent;
@@ -12,13 +13,16 @@ namespace UserService.API.EventHandlers;
 public class GetUserDetailsConsumer : IConsumer<GetUserDetailsEvent>
 {
     private readonly ISender _sender;
+    private readonly IMapper _mapper;
 
-    public GetUserDetailsConsumer(ISender sender)
+    public GetUserDetailsConsumer(ISender sender, IMapper mapper)
     {
         _sender = sender;
+        _mapper = mapper;
     }
     public async Task Consume(ConsumeContext<GetUserDetailsEvent> context)
     {
+        await Console.Out.WriteLineAsync("user consumer");
         var response = await _sender.Send(new GetUserDetailsCommand
         {
             AccountId = context.Message.AccountId,
@@ -27,25 +31,8 @@ public class GetUserDetailsConsumer : IConsumer<GetUserDetailsEvent>
 
         var user = response.Value;
 
-        if (user == null)
-        {
-            throw new Exception("Users not found");
-        }
+        var userResponse = _mapper.Map<UserDetailsDTO>(user);
 
-        var result = new UserDTO
-        {
-            Address = user.Address,
-            AvatarUrl = user.AvatarUrl,
-            BackgroundUrl = user.BackgroundUrl,
-            Bio = user.Bio,
-            DisplayName = user.DisplayName,
-            Dob = user.Dob,
-            Gender = user.Gender,
-            TotalFollowing = user.TotalFollowing ?? 0,
-            TotalFollwer = user.TotalFollwer ?? 0,
-            TotalRecipe = user.TotalRecipe ?? 0,
-        };
-
-        await context.RespondAsync(result);
+        await context.RespondAsync(userResponse);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Contract.DTOs.UserDTO;
 using UserService.Domain.Entities;
 using UserService.Domain.Responses;
 
@@ -11,6 +12,8 @@ public class MappingConfig
         var mappingConfig = new MapperConfiguration(config =>
         {
             config.CreateMap<User, GetUserDetailsResponse>().ReverseMap();
+            config.CreateMap<UserDetailsDTO, GetUserDetailsResponse>().ReverseMap();
+
         });
 
 
