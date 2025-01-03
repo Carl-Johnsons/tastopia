@@ -96,7 +96,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             foreach (var step in steps)
             {
                 var s = new Step();
-                s.OdinalNumber = step.OrdinalNumber;
+                s.OrdinalNumber = step.OrdinalNumber;
                 s.Content = step.Content;
                 s.CreatedAt = DateTime.Now;
 

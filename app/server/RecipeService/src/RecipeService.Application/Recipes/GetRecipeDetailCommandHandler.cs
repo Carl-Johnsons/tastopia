@@ -26,9 +26,9 @@ public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailComm
     }
 
     public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailCommand request, CancellationToken cancellationToken)
-    {      
+    {
         var recipe = await _context.Recipes
-        .Include(r => r.Steps!.OrderBy(s=>s.OdinalNumber))
+        .Include(r => r.Steps!.OrderBy(s => s.OrdinalNumber))
         .FirstOrDefaultAsync(r => r.Id == request.RecipeId);
 
 
@@ -50,7 +50,7 @@ public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailComm
             r => r.Id != recipe.Id &&
                 (
                  listString.Any(word => r.Title.ToLower().Contains(word)) ||
-                 listString.Any(word => r. Description.ToLower().Contains(word)) ||
+                 listString.Any(word => r.Description.ToLower().Contains(word)) ||
                  listString.Any(word => r.Ingredients.Any(i => i.ToLower().Contains(word)))
                 )
         ).OrderByDescending(r => r.CreatedAt).Select(r => new SimilarRecipe

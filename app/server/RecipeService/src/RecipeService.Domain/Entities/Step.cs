@@ -1,16 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecipeService.Domain.Entities;
 
-[Table("Step")]
+[Collection("Step")]
 public class Step : BaseAuditableEntity
 {
     [Required]
     public Guid RecipeId { get; set; }
     [Required]
-    public int OdinalNumber { get; set; }
+    public int OrdinalNumber { get; set; }
     [Required]
     [MaxLength(500)]
     public string Content { get; set; } = null!;

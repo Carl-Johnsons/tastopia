@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using MongoDB.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.Domain.Entities;
 
-[Table("RecipeVote")]
-[PrimaryKey(nameof(RecipeId), nameof(AccountId))]
-public class RecipeVote
+[Collection("RecipeVote")]
+public class RecipeVote : BaseEntity
 {
     [Required]
     public Guid RecipeId { get; set; }

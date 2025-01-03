@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace RecipeService.Domain.Common;
 
 public class BaseEntity
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [BsonId]
     public Guid Id { get; set; }
 }

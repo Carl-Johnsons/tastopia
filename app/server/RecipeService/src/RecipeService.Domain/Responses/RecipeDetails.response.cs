@@ -1,4 +1,5 @@
-﻿using RecipeService.Domain.Entities;
+﻿using MongoDB.Bson;
+using RecipeService.Domain.Entities;
 
 namespace RecipeService.Domain.Responses;
 
@@ -17,5 +18,4 @@ public class SimilarRecipe
     public Guid RecipeId { get; set; }
     public string ImageUrl { get; set; } = null!;
     public string Title { get; set; } = null!;
-
 }
