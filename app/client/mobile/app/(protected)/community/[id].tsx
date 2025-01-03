@@ -1,15 +1,236 @@
-import React from "react";
-import { View, Text, SafeAreaView } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  TouchableWithoutFeedback,
+  ActivityIndicator,
+  ScrollView
+} from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { globalStyles } from "@/components/common/GlobalStyles";
+import { useRecipeDetail } from "@/api/recipe";
+import { Image } from "expo-image";
+import BackButton from "@/components/BackButton";
+import Vote from "@/components/common/Vote";
+import { Entypo, Feather } from "@expo/vector-icons";
+import Bookmark from "@/components/common/Bookmark";
+import { Suspense, useMemo, useState } from "react";
+import Ingredient from "@/components/screen/community/Ingredient";
+import Step from "@/components/screen/community/Step";
+import { useGetRecipeComment } from "@/api/comment";
+import Comment from "@/components/screen/community/Comment";
 
 const RecipeDetail = () => {
+  const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const {
+    data: recipeDetailData,
+    isLoading: isLoadingRecipeDetail,
+    refetch: refetchRecipeDetail,
+    isRefetching: isRefetchingRecipeDetail
+  } = useRecipeDetail(id);
+  const sortedSteps = useMemo(() => {
+    return recipeDetailData?.recipe.steps.sort((a, b) => a.odinalNumber - b.odinalNumber);
+  }, [recipeDetailData?.recipe.steps]);
 
+  const {
+    data: commentData,
+    fetchNextPage,
+    hasNextPage,
+    isLoading: isLoadingGetRecipeComment,
+    isFetchingNextPage,
+    refetch: refetchGetRecipeComment,
+    isRefetching: isRefetchingGetRecipeComment
+  } = useGetRecipeComment(id);
+  const comments = useMemo(() => {
+    return commentData?.pages.flatMap(page => page.paginatedData) ?? [];
+  }, [commentData]);
+
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+
+  const handleTouchMenu = () => {};
+  const handleOpenCookMode = () => {};
+  const handleTouchUser = () => {};
+  const handleToggleBookmark = () => {
+    setIsBookmarked(prev => !prev);
+  };
   return (
-    <SafeAreaView>
-      <View>
-        <Text>Recipe Detail Screen - ID: {id}</Text>
-      </View>
+    <SafeAreaView
+      style={{
+        backgroundColor: globalStyles.color.light,
+        height: "100%"
+      }}
+    >
+      {!isLoadingRecipeDetail && !isRefetchingRecipeDetail && recipeDetailData ? (
+        <ScrollView>
+          <View className='px-4'>
+            <Suspense
+              fallback={
+                <ActivityIndicator
+                  size='large'
+                  color={globalStyles.color.primary}
+                />
+              }
+            >
+              <View className='relative'>
+                <View className='absolute left-3 top-3 z-10'>
+                  <BackButton
+                    onPress={router.back}
+                    style={{
+                      backgroundColor: globalStyles.color.light,
+                      padding: 12,
+                      borderRadius: 12,
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 3.84,
+                      elevation: 5
+                    }}
+                  />
+                </View>
+                <Image
+                  source={recipeDetailData.recipe.imageUrl}
+                  style={{ height: 200, borderRadius: 10 }}
+                />
+              </View>
+
+              <View className='mt-6 gap-3'>
+                <View className='flex-between flex-row'>
+                  <Text className='h3-bold'>{recipeDetailData.recipe.title}</Text>
+                  <TouchableWithoutFeedback onPress={handleTouchMenu}>
+                    <Feather
+                      name='more-horizontal'
+                      size={24}
+                      color='black'
+                    />
+                  </TouchableWithoutFeedback>
+                </View>
+
+                <View className='flex-between flex-row'>
+                  <View className='flex-start flex-row gap-3'>
+                    <Vote voteDiff={recipeDetailData.recipe.voteDiff!} />
+                    <Bookmark
+                      isBookmarked={isBookmarked}
+                      handleToggleBookmark={handleToggleBookmark}
+                    />
+                  </View>
+                  <TouchableWithoutFeedback onPress={handleOpenCookMode}>
+                    <View className='rounded-3xl bg-primary px-5 py-2'>
+                      <Text className='body-semibold text-white_black'>Cook</Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </View>
+
+                <View className='gap-6'>
+                  <TouchableWithoutFeedback onPress={handleTouchUser}>
+                    <View className='flex-row items-center gap-1'>
+                      <Image
+                        source={{ uri: recipeDetailData.authorAvtUrl }}
+                        style={{ width: 36, height: 36, borderRadius: 100 }}
+                      />
+                      <Text className='base-medium'>
+                        {recipeDetailData.authorDisplayName}
+                      </Text>
+                      <Text className='body-regular'>
+                        @{recipeDetailData.authorUsername}
+                      </Text>
+                      <Entypo
+                        name='dot-single'
+                        size={16}
+                        color={globalStyles.color.gray400}
+                      />
+                      <Text className='body-regular'>
+                        {recipeDetailData.authorNumberOfFollower}{" "}
+                        {recipeDetailData.authorNumberOfFollower === 1
+                          ? "follower"
+                          : "followers"}
+                      </Text>
+                    </View>
+                  </TouchableWithoutFeedback>
+
+                  <Text className='body-paragraph text-black_white'>
+                    {recipeDetailData.recipe.description}
+                  </Text>
+
+                  <View className='gap-3'>
+                    <View className='h-[1.4px] w-full bg-black'></View>
+                    <View className='flex-center'>
+                      <Text className='body-semibold'>
+                        {recipeDetailData.recipe.cookTime}
+                      </Text>
+                    </View>
+                    <View className='h-[1.4px] w-full bg-black'></View>
+                  </View>
+
+                  <View>
+                    <Text className='base-semibold'>Ingredients</Text>
+                    <Text className='body-regular'>
+                      For {recipeDetailData.recipe.serves}{" "}
+                      {recipeDetailData.recipe.serves === 1 ? "Serving" : "Servings"}
+                    </Text>
+                    <View className='mt-4 gap-3'>
+                      {recipeDetailData.recipe.ingredients.map((ingredient, index) => {
+                        return (
+                          <Ingredient
+                            key={ingredient + index}
+                            ingredient={ingredient}
+                          />
+                        );
+                      })}
+                    </View>
+                  </View>
+
+                  <View>
+                    <Text className='base-semibold'>Steps</Text>
+                    <Text className='body-regular'>
+                      For {recipeDetailData.recipe.serves}{" "}
+                      {recipeDetailData.recipe.serves === 1 ? "Serving" : "Servings"}
+                    </Text>
+                    <View className='mt-4 gap-3'>
+                      {sortedSteps?.map(step => {
+                        return (
+                          <Step
+                            key={step.id}
+                            content={step.content}
+                            odinalNumber={step.odinalNumber}
+                            attachedImageUrls={step.attachedImageUrls}
+                          />
+                        );
+                      })}
+                    </View>
+                  </View>
+
+                  <View className='h-[1px] w-full bg-primary'></View>
+
+                  <View className='gap-4'>
+                    <Text className='base-semibold'>Comments</Text>
+                    <View className='gap-4'>
+                      {comments.map(comment => {
+                        return (
+                          comment.isActive && (
+                            <Comment
+                              avatarUrl={comment.avatarUrl}
+                              displayName={comment.displayName}
+                              content={comment.content}
+                            />
+                          )
+                        );
+                      })}
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </Suspense>
+          </View>
+        </ScrollView>
+      ) : (
+        <View className='flex-center h-full'>
+          <ActivityIndicator
+            size='large'
+            color={globalStyles.color.primary}
+          />
+        </View>
+      )}
     </SafeAreaView>
   );
 };

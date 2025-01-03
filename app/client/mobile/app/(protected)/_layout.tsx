@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, Keyboard, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Keyboard, ActivityIndicator, Platform } from "react-native";
 import { Redirect, Tabs, usePathname, useRootNavigationState } from "expo-router";
 import { menuList } from "@/constants/menu";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
 import { selectRole } from "@/slices/auth.slice";
 import { COMMUNITY_PATH, MAIN_PATH } from "@/constants/paths";
+
+const isAndroid = Platform.OS === "android";
 
 const ProtectedLayout = () => {
   const { t } = useTranslation("menu");
@@ -106,7 +108,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     backgroundColor: globalStyles.color.light,
     borderTopWidth: 1,
-    height: 80,
+    height: isAndroid ? 64 : 80,
     paddingTop: 10,
     paddingBottom: 10,
     paddingHorizontal: 10,

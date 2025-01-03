@@ -10,6 +10,7 @@ import { View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 const Community = () => {
   const [filterSelected, setFilterSelected] = useState<string>("All");
 
+  //TODO: apply loading later
   const {
     data,
     fetchNextPage,

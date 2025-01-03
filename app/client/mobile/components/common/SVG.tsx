@@ -10,7 +10,6 @@ type CameraIconProps = {
 } & React.ComponentProps<typeof Svg>;
 
 function CameraIconSvg({ color, fill, ...props }: CameraIconProps) {
-  // Use either color or fill prop, with color taking precedence
   const finalColor = color || fill || "black";
 
   return (
@@ -134,7 +133,7 @@ function Filter(props: SvgProps) {
   );
 }
 
-function Bookmark(props: SvgProps) {
+function BookmarkIcon(props: SvgProps) {
   return (
     <Svg
       width={28}
@@ -156,7 +155,7 @@ function Bookmark(props: SvgProps) {
   );
 }
 
-function Bookmarked(props: SvgProps) {
+function BookmarkedIcon(props: SvgProps) {
   return (
     <Svg
       width={28}
@@ -202,6 +201,6 @@ export {
   DownvoteIcon,
   LogoIcon,
   Filter,
-  Bookmark,
-  Bookmarked
+  BookmarkIcon,
+  BookmarkedIcon
 };
