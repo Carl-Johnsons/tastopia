@@ -10,8 +10,12 @@ public class MappingConfig
     {
         var mappingConfig = new MapperConfiguration(config =>
         {
-            config.CreateMap<Comment, RecipeCommentResponse>().ReverseMap();
+            config.CreateMap<Comment, RecipeCommentResponse>()
+                .ForMember(dest => dest.DisplayName, opt => opt.Ignore())  // Bỏ qua ánh xạ cho DisplayName
+                .ForMember(dest => dest.AvatarUrl, opt => opt.Ignore())   // Bỏ qua ánh xạ cho AvatarUrl
+                .ReverseMap();
         });
+
 
 
         return mappingConfig;

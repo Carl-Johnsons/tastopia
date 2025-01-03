@@ -154,4 +154,21 @@ public class RecipeController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+
+    [HttpPost("comment-recipe")]
+    public async Task<IActionResult> CommentRecipe([FromBody] CommentRecipeDTO commentRecipeDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new CommentRecipeCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            RecipeId = commentRecipeDTO.RecipeId,
+            Content = commentRecipeDTO.Content,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
 }

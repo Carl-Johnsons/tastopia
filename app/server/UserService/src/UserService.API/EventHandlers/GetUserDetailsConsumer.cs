@@ -22,7 +22,6 @@ public class GetUserDetailsConsumer : IConsumer<GetUserDetailsEvent>
     }
     public async Task Consume(ConsumeContext<GetUserDetailsEvent> context)
     {
-        await Console.Out.WriteLineAsync("user consumer");
         var response = await _sender.Send(new GetUserDetailsCommand
         {
             AccountId = context.Message.AccountId,
