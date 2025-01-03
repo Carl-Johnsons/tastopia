@@ -2,13 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.API.DTOs;
-public class VoteRecipeDTO
+public class CommentRecipeDTO
 {
-    [Required]
-    [JsonProperty("isUpvote")]
-    public bool? IsUpvote { get; set; } = null!;
-
     [Required]
     [JsonProperty("recipeId")]
     public Guid? RecipeId { get; set; } = null!;
+    [Required]
+    [JsonProperty("content")]
+    public string? Content { get; set; } = null!;
 }

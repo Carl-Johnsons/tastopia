@@ -21,6 +21,9 @@ public class Comment : BaseAuditableEntity
     public bool IsActive { get; set; } = true;
 
     [JsonIgnore]
+    [NotMapped]
     public virtual Recipe? Recipe { get; set; }
+    [JsonIgnore]
+    [NotMapped]
     public virtual List<CommentVote>? CommentVotes { get; set; }
 }
