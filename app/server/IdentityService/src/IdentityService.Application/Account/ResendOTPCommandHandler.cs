@@ -50,7 +50,7 @@ public class ResendOTPCommandHandler : IRequestHandler<ResendOTPCommand, Result>
             return Result.Failure(AccountError.EmailNotFound);
         }
 
-        var OTP = OTPUtility.GenerateAlphanumericOTP();
+        var OTP = OTPUtility.GenerateNumericOTP();
         acc.RequestOTPCount += 1;
         acc.EmailOTP = OTP;
         acc.EmailOTPCreated = DateTime.UtcNow;
@@ -86,7 +86,7 @@ public class ResendOTPCommandHandler : IRequestHandler<ResendOTPCommand, Result>
             return Result.Failure(AccountError.PhoneNotFound);
         }
 
-        var OTP = OTPUtility.GenerateAlphanumericOTP();
+        var OTP = OTPUtility.GenerateNumericOTP();
         acc.RequestOTPCount += 1;
         acc.PhoneOTP = OTP;
         acc.PhoneOTPCreated = DateTime.UtcNow;

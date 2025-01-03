@@ -53,7 +53,7 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
             return Result<TokenResponse>.Failure(AccountError.EmailAlreadyExisted);
         }
 
-        var OTP = OTPUtility.GenerateAlphanumericOTP();
+        var OTP = OTPUtility.GenerateNumericOTP();
 
         // Generate unique username
         var username = GenerateUsername(request.FullName);
@@ -95,7 +95,7 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
             return Result<TokenResponse>.Failure(AccountError.PhoneAlreadyExisted);
         }
 
-        var OTP = OTPUtility.GenerateAlphanumericOTP();
+        var OTP = OTPUtility.GenerateNumericOTP();
 
         // Generate unique username
         var username = GenerateUsername(request.FullName);
