@@ -12,8 +12,8 @@ using UserService.Infrastructure.Persistence;
 namespace UserService.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241228143821_AddUserCloneAttribute")]
-    partial class AddUserCloneAttribute
+    [Migration("20250103125847_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -101,6 +101,9 @@ namespace UserService.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsAccountActive")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("boolean");
+
                     b.Property<int?>("TotalFollowing")
                         .HasColumnType("integer");
 
@@ -122,7 +125,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Admin",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = true
                         },
                         new
                         {
@@ -132,6 +136,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Alice",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 4,
                             TotalRecipe = 21
                         },
@@ -143,6 +148,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Kian",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollwer = 1
                         },
                         new
@@ -152,7 +158,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Bob",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = false
                         },
                         new
                         {
@@ -161,7 +168,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Duc",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = false
                         },
                         new
                         {
@@ -171,6 +179,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "An",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollwer = 1
                         },
                         new
@@ -180,7 +189,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Kara",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = false
                         },
                         new
                         {
@@ -189,7 +199,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Raina",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = false
                         },
                         new
                         {
@@ -198,7 +209,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Mac",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = false
                         },
                         new
                         {
@@ -208,6 +220,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Lainey",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollwer = 1
                         },
                         new
@@ -218,7 +231,248 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Willa",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollwer = 1
+                        },
+                        new
+                        {
+                            AccountId = new Guid("5d02ff8b-62a6-425a-9828-6033112b54e0"),
+                            AccountUsername = "lily",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Lily",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("8edf9219-7ba6-4259-a7e5-cd95b2e29ca2"),
+                            AccountUsername = "james",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "James",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("6e411b44-26d3-490e-b4e5-8012e2cfd897"),
+                            AccountUsername = "emma",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Emma",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("bb18d21b-985b-4a54-bc04-f6cf6ac0a32e"),
+                            AccountUsername = "noah",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Noah",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("9f23334a-1148-4b6e-b636-40cf448735dd"),
+                            AccountUsername = "ava",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Ava",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("6e898d72-52d0-4de8-a784-5bb1f1a4eda5"),
+                            AccountUsername = "logan",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Logan",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("6f37441a-92d8-4d27-aa1a-e50ab1a2b4b7"),
+                            AccountUsername = "sophia",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Sophia",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("9baca8d6-38d7-451e-bf2c-48652ddd7fca"),
+                            AccountUsername = "lucas",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Lucas",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("69a36c05-c7ff-4411-a283-fa801cbba5ee"),
+                            AccountUsername = "mia",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Mia",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("e67ac48b-9dd0-42a4-9fa3-a243b00ca5dd"),
+                            AccountUsername = "ethan",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Ethan",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("7201a43a-6a1d-4634-bc27-9cd71f90a11a"),
+                            AccountUsername = "isabella",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Isabella",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("0ee35f28-21bf-49f9-ad89-b6a450c41908"),
+                            AccountUsername = "aiden",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Aiden",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("0f368db8-84f3-499d-be8b-2daf685c6f5e"),
+                            AccountUsername = "amelia",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Amelia",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("e6333cb5-7008-4fa2-b835-364e304180a3"),
+                            AccountUsername = "grayson",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Grayson",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("866a7cd5-da2a-46e4-abe3-8efe6bd6a1d0"),
+                            AccountUsername = "ella",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Ella",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("28fb3b5f-d2a3-4456-a6b5-dbf75cea4e0a"),
+                            AccountUsername = "jackson",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Jackson",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("2155d0ed-b998-416c-adaf-19f68a0a5b34"),
+                            AccountUsername = "scarlett",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Scarlett",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("936c85f2-6958-40fd-a201-74485ac917e0"),
+                            AccountUsername = "alex",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Alex",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("dff9a8f3-c6c4-4d97-98f9-bd9a9a18b0cf"),
+                            AccountUsername = "chloe",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Chloe",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
+                        },
+                        new
+                        {
+                            AccountId = new Guid("b1ccb0c7-34eb-4545-859d-d7307aa42ff7"),
+                            AccountUsername = "carter",
+                            AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
+                            BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
+                            DisplayName = "Carter",
+                            IsAccountActive = true,
+                            IsAdmin = false,
+                            TotalFollowing = 0,
+                            TotalRecipe = 0
                         });
                 });
 

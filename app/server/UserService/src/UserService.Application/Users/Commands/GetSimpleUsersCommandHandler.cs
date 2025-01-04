@@ -36,6 +36,9 @@ public class GetSimpleUsersCommandHandler : IRequestHandler<GetSimpleUsersComman
                 DisplayName = user.DisplayName,
                 AvatarUrl = user.AvatarUrl
             }).ToListAsync();
+        if(users == null || users.Count == 0) { 
+            return Result<List<User>?>.Failure(UserError.NotFound);
+        }
         return Result<List<User>?>.Success(users);
     }
 }

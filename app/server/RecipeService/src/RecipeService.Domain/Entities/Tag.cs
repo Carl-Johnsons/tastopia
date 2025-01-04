@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecipeService.Domain.Entities;
 
-[Table("Tag")]
+[Collection("Tag")]
 public class Tag : BaseAuditableEntity
 {
     [Required]

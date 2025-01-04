@@ -10,7 +10,6 @@ type CameraIconProps = {
 } & React.ComponentProps<typeof Svg>;
 
 function CameraIconSvg({ color, fill, ...props }: CameraIconProps) {
-  // Use either color or fill prop, with color taking precedence
   const finalColor = color || fill || "black";
 
   return (
@@ -134,6 +133,49 @@ function Filter(props: SvgProps) {
   );
 }
 
+function BookmarkIcon(props: SvgProps) {
+  return (
+    <Svg
+      width={28}
+      height={28}
+      viewBox='0 0 28 28'
+      fill='none'
+      {...props}
+    >
+      <Path
+        d='M27.5 14c0 7.456-6.044 13.5-13.5 13.5S.5 21.456.5 14 6.544.5 14 .5 27.5 6.544 27.5 14z'
+        fill='#fff'
+        stroke='#FE724C'
+      />
+      <Path
+        d='M17.591 8.5a3.494 3.494 0 00-3.046 1.783A3.494 3.494 0 0011.498 8.5 3.698 3.698 0 008 12.224c0 4.852 6.545 8.237 6.545 8.237s6.545-3.383 6.545-8.237A3.698 3.698 0 0017.59 8.5z'
+        fill='#FE724C'
+      />
+    </Svg>
+  );
+}
+
+function BookmarkedIcon(props: SvgProps) {
+  return (
+    <Svg
+      width={28}
+      height={28}
+      viewBox='0 0 28 28'
+      fill='none'
+      {...props}
+    >
+      <Path
+        d='M27.5 14c0 7.456-6.044 13.5-13.5 13.5S.5 21.456.5 14 6.544.5 14 .5 27.5 6.544 27.5 14z'
+        fill='#FE724C'
+      />
+      <Path
+        d='M17.591 8.5a3.494 3.494 0 00-3.046 1.783A3.494 3.494 0 0011.498 8.5 3.698 3.698 0 008 12.224c0 4.852 6.545 8.237 6.545 8.237s6.545-3.383 6.545-8.237A3.698 3.698 0 0017.59 8.5z'
+        fill='#FFF'
+      />
+    </Svg>
+  );
+}
+
 const styles = StyleSheet.create({
   svg: {},
   active: {
@@ -153,4 +195,12 @@ const styles = StyleSheet.create({
   }
 });
 
-export { CameraIconSvg, UpvoteIcon, DownvoteIcon, LogoIcon, Filter };
+export {
+  CameraIconSvg,
+  UpvoteIcon,
+  DownvoteIcon,
+  LogoIcon,
+  Filter,
+  BookmarkIcon,
+  BookmarkedIcon
+};

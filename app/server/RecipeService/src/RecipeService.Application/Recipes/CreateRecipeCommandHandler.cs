@@ -76,7 +76,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
             if (response == null || response.Message.Files.Count != imageIndex.Count)
             {
-                throw new Exception("Invalid upload file response");
+                return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
             }
 
             rollBackFiles = response.Message.Files;
@@ -96,7 +96,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             foreach (var step in steps)
             {
                 var s = new Step();
-                s.OdinalNumber = step.OrdinalNumber;
+                s.OrdinalNumber = step.OrdinalNumber;
                 s.Content = step.Content;
                 s.CreatedAt = DateTime.Now;
 

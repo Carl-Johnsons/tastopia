@@ -18,4 +18,3 @@ update_database() {
 update_database "./app/server/IdentityService/src/IdentityService.Infrastructure" "Identity"
 update_database "./app/server/UploadFileService/src/UploadFileService.Infrastructure" "Upload"
 update_database "./app/server/UserService/src/UserService.Infrastructure" "User"
-update_database "./app/server/RecipeService/src/RecipeService.Infrastructure" "Recipe"

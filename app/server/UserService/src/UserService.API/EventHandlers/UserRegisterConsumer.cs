@@ -34,6 +34,7 @@ public sealed class UserRegisterConsumer : IConsumer<UserRegisterEvent>
             DisplayName = context.Message.FullName,
             IsAccountActive = true,
             AccountUsername = context.Message.AccountUsername,
+            IsAdmin = false,
         };
 
         var response = await _sender.Send(new CreateUserCommand

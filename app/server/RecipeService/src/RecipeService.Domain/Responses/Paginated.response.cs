@@ -8,5 +8,8 @@ public class PaginatedSearchRecipeListResponse : BasePaginatedResponse<SearchRec
 
 public class PaginatedTagListResponse : BasePaginatedResponse<Tag, AdvancePaginatedMetadata>;
 
+public class PaginatedRecipeCommentListResponse : BasePaginatedResponse<RecipeCommentResponse, AdvancePaginatedMetadata>;
+
+
 
 

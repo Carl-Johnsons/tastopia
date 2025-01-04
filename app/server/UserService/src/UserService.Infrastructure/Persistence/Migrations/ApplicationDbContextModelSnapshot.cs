@@ -98,6 +98,9 @@ namespace UserService.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsAccountActive")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("boolean");
+
                     b.Property<int?>("TotalFollowing")
                         .HasColumnType("integer");
 
@@ -119,7 +122,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Admin",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = true
                         },
                         new
                         {
@@ -129,6 +133,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Alice",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 4,
                             TotalRecipe = 21
                         },
@@ -140,6 +145,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Kian",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollwer = 1
                         },
                         new
@@ -149,7 +155,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Bob",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = false
                         },
                         new
                         {
@@ -158,7 +165,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Duc",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = false
                         },
                         new
                         {
@@ -168,6 +176,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "An",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollwer = 1
                         },
                         new
@@ -177,7 +186,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Kara",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = false
                         },
                         new
                         {
@@ -186,7 +196,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Raina",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = false
                         },
                         new
                         {
@@ -195,7 +206,8 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Mac",
-                            IsAccountActive = true
+                            IsAccountActive = true,
+                            IsAdmin = false
                         },
                         new
                         {
@@ -205,6 +217,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Lainey",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollwer = 1
                         },
                         new
@@ -215,6 +228,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Willa",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollwer = 1
                         },
                         new
@@ -225,6 +239,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Lily",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -236,6 +251,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "James",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -247,6 +263,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Emma",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -258,6 +275,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Noah",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -269,6 +287,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Ava",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -280,6 +299,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Logan",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -291,6 +311,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Sophia",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -302,6 +323,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Lucas",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -313,6 +335,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Mia",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -324,6 +347,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Ethan",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -335,6 +359,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Isabella",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -346,6 +371,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Aiden",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -357,6 +383,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Amelia",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -368,6 +395,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Grayson",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -379,6 +407,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Ella",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -390,6 +419,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Jackson",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -401,6 +431,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Scarlett",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -412,6 +443,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Alex",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -423,6 +455,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Chloe",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         },
@@ -434,6 +467,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                             BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                             DisplayName = "Carter",
                             IsAccountActive = true,
+                            IsAdmin = false,
                             TotalFollowing = 0,
                             TotalRecipe = 0
                         });

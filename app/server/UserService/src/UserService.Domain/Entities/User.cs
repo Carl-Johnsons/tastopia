@@ -37,5 +37,5 @@ public class User
         // Clone Attribute
         public bool IsAccountActive { get; set; } = true;
         public string AccountUsername { get; set; } = null!;
-
+        public bool IsAdmin { get; set; } = false;
 }
