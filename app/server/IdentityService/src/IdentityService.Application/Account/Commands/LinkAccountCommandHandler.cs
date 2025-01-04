@@ -3,7 +3,6 @@ using IdentityService.Domain.Common;
 using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace IdentityService.Application.Account.Commands;
 

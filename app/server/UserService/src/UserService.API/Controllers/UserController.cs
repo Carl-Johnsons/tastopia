@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json;
 using UserService.API.DTOs;
 using UserService.Application.Users.Commands;
+using UserService.Domain.Responses;
 
 namespace UserService.API.Controllers;
 
@@ -17,6 +20,9 @@ public class UserController : BaseApiController
 
     [AllowAnonymous]
     [HttpPost("search")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedSearchUserListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> SearchUser([FromBody] SearchUser searchUser)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
@@ -33,6 +39,9 @@ public class UserController : BaseApiController
     }
 
     [HttpGet("get-current-user-details")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(GetUserDetailsResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> GetCurrentUserDetails()
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
