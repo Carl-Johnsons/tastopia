@@ -35,7 +35,8 @@ public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailComm
             return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound);
         }
         recipe.Steps = recipe.Steps.OrderBy(s => s.OrdinalNumber).ToList();
-
+        recipe.Comments = [];
+        recipe.RecipeVotes = [];
 
         var requestClient = _serviceBus.CreateRequestClient<GetUserDetailsEvent>();
 

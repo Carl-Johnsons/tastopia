@@ -35,26 +35,37 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
             return Result<PaginatedRecipeCommentListResponse?>.Failure(RecipeError.NotFound);
         }
 
-        var commentsQuery = _context.Recipes.Where(r => r.Id == recipeId).SelectMany(r => r.Comments).OrderByDescending(c => c.CreatedAt).AsQueryable();
+        var recipe = _context.Recipes.Where(r => r.Id == recipeId).FirstOrDefault();
 
-        var totalPage = (await commentsQuery.CountAsync() + RECIPE_CONSTANTS.COMMENT_LIMIT - 1) / RECIPE_CONSTANTS.COMMENT_LIMIT;
-
-
-        commentsQuery = _paginateDataUtility.PaginateQuery(commentsQuery, new PaginateParam
+        if (recipe == null || recipe.Comments.Count == 0)
         {
-            Offset = (skip ?? 0) * RECIPE_CONSTANTS.COMMENT_LIMIT,
-            Limit = RECIPE_CONSTANTS.COMMENT_LIMIT
-        });
+            return Result<PaginatedRecipeCommentListResponse?>.Success(new PaginatedRecipeCommentListResponse
+            {
+                PaginatedData = [],
+                Metadata = new AdvancePaginatedMetadata
+                {
+                    HasNextPage = false,
+                    TotalPage = 0
+                }
+            });
+        }
+        var recipeComments = recipe.Comments;
 
-        var comments = await commentsQuery.Select(c => new RecipeCommentResponse
+        var totalPage = (recipeComments.Count + RECIPE_CONSTANTS.COMMENT_LIMIT - 1) / RECIPE_CONSTANTS.COMMENT_LIMIT;
+
+        recipeComments = recipeComments.Skip((skip ?? 0) * RECIPE_CONSTANTS.COMMENT_LIMIT).Take(RECIPE_CONSTANTS.COMMENT_LIMIT).ToList();
+
+
+        var comments = recipeComments.Select(c => new RecipeCommentResponse
         {
             Id = c.Id,
             AccountId = c.AccountId,
             Content = c.Content,
             CreatedAt = c.CreatedAt,
             UpdatedAt = c.UpdatedAt,
-            IsActive = c.IsActive 
-        }).ToListAsync();
+            IsActive = c.IsActive,
+            RecipeId = c.Id,
+        }).ToList();
 
         if(comments == null || comments.Count == 0) {
             return Result<PaginatedRecipeCommentListResponse?>.Success(new PaginatedRecipeCommentListResponse
@@ -68,7 +79,7 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
             });
         }
 
-        var accountIds = commentsQuery
+        var accountIds = recipeComments
         .Select(r => r.AccountId)
         .Distinct()
         .ToHashSet();

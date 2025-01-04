@@ -45,10 +45,7 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
                 return Result.Failure(RecipeError.NotFound);
             }
 
-            var recipeVote = await _context.Recipes.Where(r => r.Id == recipeId)
-                .SelectMany(r => r.RecipeVotes)
-                .Where(rv => rv.AccountId == accountId).FirstOrDefaultAsync();
-
+            var recipeVote = recipe.RecipeVotes.Where(rv => rv.AccountId == accountId).FirstOrDefault();
             if (recipeVote == null)
             {
                 recipeVote = new RecipeVote
