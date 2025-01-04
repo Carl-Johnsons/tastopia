@@ -1,7 +1,7 @@
 ﻿using Contract.Common;
 using Contract.Constants;
 using Contract.DTOs.UserDTO;
-using Contract.Event.UserEvent;
+using Contract.Event.IdentityEvent;
 using IdentityService.Application.Account.Queries;
 using MassTransit;
 
