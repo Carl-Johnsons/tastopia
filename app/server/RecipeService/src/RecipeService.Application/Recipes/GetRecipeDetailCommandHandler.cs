@@ -26,47 +26,53 @@ public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailComm
     }
 
     public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailCommand request, CancellationToken cancellationToken)
-    {      
+    {
         var recipe = await _context.Recipes
-        .Include(r => r.Steps!.OrderBy(s=>s.OdinalNumber))
         .FirstOrDefaultAsync(r => r.Id == request.RecipeId);
-
 
         if (recipe == null)
         {
             return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound);
         }
+        recipe.Steps = recipe.Steps.OrderBy(s => s.OrdinalNumber).ToList();
+        recipe.Comments = [];
+        recipe.RecipeVotes = [];
 
         var requestClient = _serviceBus.CreateRequestClient<GetUserDetailsEvent>();
 
-        var responseUser = await requestClient.GetResponse<UserDTO>(new GetUserDetailsEvent
+        var response = await requestClient.GetResponse<UserDetailsDTO>(new GetUserDetailsEvent
         {
             AccountId = recipe.AuthorId,
         });
 
+        var listString = recipe.Title.ToLower().Split(' ');
 
-        var responseAccout = await requestClient.GetResponse<AccountDTO>(new GetUserDetailsEvent
+        var similarRecipes = _context.Recipes.Where(
+            r => r.Id != recipe.Id &&
+                (
+                 listString.Any(word => r.Title.ToLower().Contains(word)) ||
+                 listString.Any(word => r.Description.ToLower().Contains(word)) ||
+                 listString.Any(word => r.Ingredients.Any(i => i.ToLower().Contains(word)))
+                )
+        ).OrderByDescending(r => r.CreatedAt).Select(r => new SimilarRecipe
         {
-            AccountId = recipe.AuthorId,
-        });
-
-        if(responseAccout == null || responseUser == null) {
-
-            return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound);
-
-        }
+            ImageUrl = r.ImageUrl,
+            RecipeId = r.Id,
+            Title = r.Title
+        }).Take(6).ToList();
 
 
 
         var result = new RecipeDetailsResponse
         {
             Recipe = recipe,
-            AuthorAvtUrl = responseUser.Message.AvatarUrl!,
-            AuthorUsername = responseAccout.Message.UserName!,
-            AuthorNumberOfFollower = responseUser.Message.TotalFollwer! ?? 0
+            AuthorUsername = response.Message.AccountUsername!,
+            AuthorAvtUrl = response.Message.AvatarUrl!,
+            AuthorDisplayName = response.Message.DisplayName,
+            AuthorNumberOfFollower = response.Message.TotalFollwer! ?? 0,
+            similarRecipes = similarRecipes
         };
 
         return Result<RecipeDetailsResponse?>.Success(result);
-
     }
 }

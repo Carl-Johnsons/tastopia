@@ -1,13 +1,5 @@
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery, useQuery } from "react-query";
 import { protectedAxiosInstance } from "@/constants/host";
-
-type RecipeResponse = {
-  paginatedData: RecipeType[];
-  metadata: {
-    hasNextPage: boolean;
-    totalPage: number;
-  };
-};
 
 const useRecipesFeed = (filterSelected: string) => {
   return useInfiniteQuery<RecipeResponse>({
@@ -31,4 +23,28 @@ const useRecipesFeed = (filterSelected: string) => {
   });
 };
 
-export { useRecipesFeed };
+type RecipeDetailResponse = {
+  recipe: RecipeDetailType;
+  authorUsername: string;
+  authorAvtUrl: string;
+  authorDisplayName: string;
+  authorNumberOfFollower: number;
+};
+
+const useRecipeDetail = (recipeId: string) => {
+  return useQuery<RecipeDetailResponse>({
+    queryKey: ["recipe", recipeId],
+    queryFn: async () => {
+      const { data } = await protectedAxiosInstance.post<RecipeDetailResponse>(
+        "/api/recipe/get-recipe-details",
+        {
+          recipeId
+        }
+      );
+      return data;
+    },
+    enabled: !!recipeId
+  });
+};
+
+export { useRecipesFeed, useRecipeDetail };

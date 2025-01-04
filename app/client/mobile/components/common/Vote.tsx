@@ -74,7 +74,7 @@ const Vote = ({ voteDiff }: VoteProps) => {
           onPress={handleUpvote}
           style={{ borderTopLeftRadius: 24, borderBottomLeftRadius: 24 }}
         >
-          <View className='flex-row py-2 pl-2 flex-center'>
+          <View className='flex-center flex-row py-2 pl-2'>
             <Animated.View
               style={{
                 transform: [{ scale: upvoteBounceValue }],
@@ -101,7 +101,7 @@ const Vote = ({ voteDiff }: VoteProps) => {
           onPress={handleDownvote}
           style={{ borderTopRightRadius: 24, borderBottomRightRadius: 24 }}
         >
-          <View className='flex-row px-2 py-2 flex-center'>
+          <View className='flex-center flex-row px-2 py-2'>
             <Animated.View
               style={{
                 transform: [{ scale: downvoteBounceValue }],

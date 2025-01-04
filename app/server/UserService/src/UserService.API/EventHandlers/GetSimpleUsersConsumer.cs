@@ -5,6 +5,7 @@ using Contract.Event.UserEvent;
 using MassTransit;
 using Newtonsoft.Json;
 using UserService.Application.Users.Commands;
+using UserService.Domain.Entities;
 
 namespace UserService.API.EventHandlers;
 
@@ -20,33 +21,20 @@ public class GetSimpleUsersConsumer : IConsumer<GetSimpleUsersEvent>
     }
     public async Task Consume(ConsumeContext<GetSimpleUsersEvent> context)
     {
-        Console.WriteLine(JsonConvert.SerializeObject(context.Message));
-
-
         var response = await _sender.Send(new GetSimpleUsersCommand
         {
             AccountIds = context.Message.AccountIds,
         });
         response.ThrowIfFailure();
 
-        var users = response.Value;
+        var users = response.Value!;
 
-        if (users == null || !users.Any())
+        var mapUser = users.Select(u => new SimpleUser
         {
-            throw new Exception("Users not found");
-        }
-
-        var mapUser = new Dictionary<Guid, SimpleUser>();
-
-        foreach (var user in users)
-        {
-            mapUser.Add(user.AccountId, new SimpleUser
-            {
-                AccountId = user.AccountId,
-                AvtUrl = user.AvatarUrl,
-                DisplayName = user.DisplayName,
-            });
-        }
+            AccountId = u.AccountId,
+            AvtUrl = u.AvatarUrl,
+            DisplayName = u.DisplayName,
+        }).ToDictionary(u => u.AccountId);
 
         var result = new GetSimpleUsersDTO
         {

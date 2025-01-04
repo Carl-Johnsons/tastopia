@@ -4,7 +4,7 @@ namespace RecipeService.Infrastructure.Persistence.Mockup.Data;
 
 public class TagData
 {
-    public static List<Tag> Data => [
+    public static List<Tag> Data = [
         new Tag
         {
             Id = Guid.Parse("df3f6301-3cae-480a-87da-c7b8f6150292"),

@@ -7,21 +7,21 @@ using MassTransit;
 
 namespace DuendeIdentityServer.EventHandler;
 
-[QueueName(RabbitMQConstant.QUEUE.NAME.GET_USER_DETAILS,
-    exchangeName: RabbitMQConstant.EXCHANGE.NAME.GET_USER_DETAILS,
+[QueueName(RabbitMQConstant.QUEUE.NAME.GET_ACCOUNT_DETAILS,
+    exchangeName: RabbitMQConstant.EXCHANGE.NAME.GET_ACCOUNT_DETAILS,
     type: RabbitMQConstant.EXCHANGE.TYPE.Fanout)]
-public class GetUserDetailsConsumer : IConsumer<GetUserDetailsEvent>
+public class GetAccountDetailsConsumer : IConsumer<GetAccountDetailsEvent>
 {
     private readonly ISender _sender;
     private readonly IMapper _mapper;
 
-    public GetUserDetailsConsumer(ISender sender, IMapper mapper)
+    public GetAccountDetailsConsumer(ISender sender, IMapper mapper)
     {
         _sender = sender;
         _mapper = mapper;
     }
 
-    public async Task Consume(ConsumeContext<GetUserDetailsEvent> context)
+    public async Task Consume(ConsumeContext<GetAccountDetailsEvent> context)
     {
         var result = await _sender.Send(new GetAccountDetailQuery
         {

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeService.API.DTOs;
+using RecipeService.Application.Comments;
 using RecipeService.Application.Recipes;
 using RecipeService.Application.Tags;
 using RecipeService.Domain.Responses;
@@ -158,5 +159,34 @@ public class RecipeController : BaseApiController
         });
         result.ThrowIfFailure();
         return NoContent();
+    }
+
+    [HttpPost("get-recipe-comments")]
+    public async Task<IActionResult> GetRecipeComments([FromBody] GetRecipeCommentsDTO getRecipeCommentsDTO)
+    {
+        var result = await _sender.Send(new GetRecipeCommentsCommand
+        {
+            RecipeId = getRecipeCommentsDTO.RecipeId,
+            Skip = getRecipeCommentsDTO.Skip
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+
+    [HttpPost("comment-recipe")]
+    public async Task<IActionResult> CommentRecipe([FromBody] CommentRecipeDTO commentRecipeDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new CommentRecipeCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            RecipeId = commentRecipeDTO.RecipeId,
+            Content = commentRecipeDTO.Content,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
     }
 }

@@ -49,7 +49,7 @@ public class UserController : BaseApiController
 
         var result = await _sender.Send(new GetUserDetailsCommand
         {
-            AccountId = subjectId != null ? Guid.Parse(subjectId) : null,
+            AccountId = subjectId != null ? Guid.Parse(subjectId) : Guid.Empty,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

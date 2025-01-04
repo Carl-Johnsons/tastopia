@@ -1,6 +1,7 @@
 ﻿using Contract.DTOs.UserDTO;
 using Contract.Event.UserEvent;
 using MassTransit.Initializers;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
@@ -18,7 +19,7 @@ public class GetRecipeFeedsCommand : IRequest<Result<PaginatedRecipeFeedsListRes
     public List<string>? TagValues { get; init; }
 
     [Required]
-    public Guid AccountId { get; init;}
+    public Guid? AccountId { get; init;}
 }
 
 public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Result<PaginatedRecipeFeedsListResponse?>>
@@ -38,8 +39,9 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
     {
         var tagValues = request.TagValues;
         var skip = request.Skip;
+        var accountId = request.AccountId;
 
-        if (skip == null || tagValues == null || !tagValues.Any())
+        if (skip == null || tagValues == null || !tagValues.Any() || accountId == null)
         {
             return Result<PaginatedRecipeFeedsListResponse>.Failure(RecipeError.NotFound);
         }
@@ -73,19 +75,6 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
             Limit = RECIPE_CONSTANTS.RECIPE_LIMIT
         });
 
-        var groupedRecipes = _context.RecipeVotes
-            .Where(rv => rv.AccountId == request.AccountId)
-            .GroupBy(rv => rv.IsUpvote)
-            .ToDictionary(
-                g => g.Key,
-                g => g.Select(rv => rv.RecipeId).ToHashSet()
-             );
-
-        var upvoteRecipes = groupedRecipes.TryGetValue(true, out var upvotes) ? upvotes : new HashSet<Guid>();
-        var downvoteRecipes = groupedRecipes.TryGetValue(false, out var downvotes) ? downvotes : new HashSet<Guid>();
-
-
-
         var recipeList = await recipesQuery.Select(r =>
         new RecipeFeedResponse
         {
@@ -98,8 +87,8 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
             Title = r.Title,
             NumberOfComment = r.NumberOfComment,
             VoteDiff = r.VoteDiff,
-            Vote = upvoteRecipes.Contains(r.Id) ? Vote.Upvote.ToString() : 
-                  (downvoteRecipes.Contains(r.Id) ? Vote.Downvote.ToString() : Vote.None.ToString()),
+            Vote = Vote.None.ToString(),
+
         }).ToListAsync();
 
         if (recipeList == null || !recipeList.Any())

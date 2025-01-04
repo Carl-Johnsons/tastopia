@@ -22,6 +22,27 @@ services:
             retries: 10
             start_period: 10s
 
+    mongo:
+        image: mongo
+        ports:
+            # MongoDB uses the default port 27017
+            - "${MONGODB_PORT}:27017"
+        restart: always
+        container_name: mongo
+        volumes:
+          - ./data/mongodb:/data/db
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+        networks:
+            - back-end
+        healthcheck:
+            test: ["CMD", "mongosh", "-u", "${MONGO_INITDB_ROOT_USERNAME}", "-p", "${MONGO_INITDB_ROOT_PASSWORD}", "--authenticationDatabase", "admin", "--quiet", "--eval", "db.runCommand('ping').ok"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 30s
+
     rabbitmq:
         # login guest:guest
         image: rabbitmq:4.0.2-management

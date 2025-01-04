@@ -59,7 +59,7 @@ if [[ "$PLATFORM" != "windows" ]]; then
                 echo -e "${GREEN}Run chmod 777 for DuendeIdentityServer directory successfully${NC}"
 fi
 
-docker compose up -d postgres rabbitmq
+docker compose up -d postgres rabbitmq mongo
 
 run_service() {
         local scheme=$1

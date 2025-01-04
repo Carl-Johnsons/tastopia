@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contract.DTOs.UserDTO;
+using Contract.Event.IdentityEvent;
 using Contract.Event.UserEvent;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -12,7 +13,7 @@ namespace UserService.Application.Users.Commands;
 public record GetUserDetailsCommand : IRequest<Result<GetUserDetailsResponse?>>
 {
     [Required]
-    public Guid? AccountId { get; init; }
+    public Guid AccountId { get; init; }
 }
 public class GetUserDetailsCommandHandler : IRequestHandler<GetUserDetailsCommand, Result<GetUserDetailsResponse?>>
 {
@@ -31,7 +32,7 @@ public class GetUserDetailsCommandHandler : IRequestHandler<GetUserDetailsComman
     {
         var accountId = request.AccountId;
 
-        if(accountId == null)
+        if(accountId == Guid.Empty)
         {
             return Result<GetUserDetailsResponse>.Failure(UserError.NotFound);
         }
@@ -43,21 +44,21 @@ public class GetUserDetailsCommandHandler : IRequestHandler<GetUserDetailsComman
             return Result<GetUserDetailsResponse?>.Failure(UserError.NotFound);
         }
 
-        //var requestClient = _serviceBus.CreateRequestClient<GetUserDetailsEvent>();
+        var requestClient = _serviceBus.CreateRequestClient<GetAccountDetailsEvent>();
 
-        //var response = await requestClient.GetResponse<AccountDTO>(new GetUserDetailsEvent
-        //{
-        //    AccountId = accountId.Value,
-        //});
+        var response = await requestClient.GetResponse<AccountDTO>(new GetAccountDetailsEvent
+        {
+            AccountId = accountId
+        });
 
-        //if (response == null || response.Message == null)
-        //{
-        //    return Result<GetUserDetailsResponse>.Failure(UserError.NotFound);
-        //}
+        if (response == null || response.Message == null)
+        {
+            return Result<GetUserDetailsResponse>.Failure(UserError.NotFound);
+        }
 
         var result = _mapper.Map<GetUserDetailsResponse>(user);
-        //result.AccountPhoneNumber = response.Message.PhoneNumber;
-        //result.AccountEmail = response.Message.Email;
+        result.AccountPhoneNumber = response.Message.PhoneNumber;
+        result.AccountEmail = response.Message.Email;
 
         return Result<GetUserDetailsResponse?>.Success(result);
     }

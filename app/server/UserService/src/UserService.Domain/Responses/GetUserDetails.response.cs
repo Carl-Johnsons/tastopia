@@ -23,8 +23,12 @@ public class GetUserDetailsResponse
     public virtual int? TotalFollowing { get; set; }
 
     public virtual int? TotalRecipe { get; set; }
+
     public bool IsAccountActive { get; set; } = true;
+
     public string AccountUsername { get; set; } = null!;
+
+    public bool IsAdmin { get; set; } = false;
 
     //Account
     public string? AccountEmail { get; set; }
