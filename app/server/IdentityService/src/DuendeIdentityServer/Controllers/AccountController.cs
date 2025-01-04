@@ -106,4 +106,49 @@ public class AccountController : BaseApiController
         result.ThrowIfFailure();
         return NoContent();
     }
+
+    [HttpPost("link/email")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> LinkEmailToAccount(LinkAccountDTO dto)
+    {
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+        var command = new LinkAccountCommand
+        {
+            Identifier = dto.Identifier,
+            Method = AccountMethod.Email,
+            Id = Guid.Parse(userId!)
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [HttpPost("link/phone")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> LinkPhoneToAccount(LinkAccountDTO dto)
+    {
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+        var command = new LinkAccountCommand
+        {
+            Identifier = dto.Identifier,
+            Method = AccountMethod.Phone,
+            Id = Guid.Parse(userId!)
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [HttpPost("link/google")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> LinkGoogleToAccount()
+    {
+
+        return NoContent();
+    }
 }
