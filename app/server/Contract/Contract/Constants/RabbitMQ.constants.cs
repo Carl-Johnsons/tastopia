@@ -9,6 +9,7 @@ public static class RabbitMQConstant
             // ======================= USER ============================
             public const string USER_REGISTER_NOTIFICATION = "user-register-notification-queue";
             public const string USER_REGISTER_USER = "user-register-user-queue";
+            public const string LINK_ACCOUNT = "link-account-queue";
             public const string USER_RESEND_OTP = "user-resend-otp-queue";
             public const string GET_SIMPLE_USERS = "get-simple-users-queue";
             public const string GET_USER_DETAILS = "get-user-details-queue";
@@ -26,6 +27,7 @@ public static class RabbitMQConstant
         {
             // ======================= USER ============================
             public const string USER_REGISTER = "user-register-event";
+            public const string LINK_ACCOUNT = "link-account-event";
             public const string USER_RESEND_OTP = "user-resend-otp-event";
             public const string GET_SIMPLE_USERS = "get-simple-users-event";
             public const string GET_USER_DETAILS = "get-user-details-event";

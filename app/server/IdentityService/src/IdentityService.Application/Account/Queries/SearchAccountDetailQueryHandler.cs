@@ -2,28 +2,29 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityService.Application.Account;
+namespace IdentityService.Application.Account.Queries;
 
-public record SearchAccountDetailCommand : IRequest<Result<List<ApplicationAccount>?>>
+public record SearchAccountDetailQuery : IRequest<Result<List<ApplicationAccount>?>>
 {
     public string Keyword { get; set; } = null!;
 }
 
 
-public class SearchAccountDetailCommandHandler : IRequestHandler<SearchAccountDetailCommand, Result<List<ApplicationAccount>?>>
+public class SearchAccountDetailQueryHandler : IRequestHandler<SearchAccountDetailQuery, Result<List<ApplicationAccount>?>>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
 
-    public SearchAccountDetailCommandHandler(UserManager<ApplicationAccount> userManager)
+    public SearchAccountDetailQueryHandler(UserManager<ApplicationAccount> userManager)
     {
         _userManager = userManager;
     }
 
-    public async Task<Result<List<ApplicationAccount>?>> Handle(SearchAccountDetailCommand request, CancellationToken cancellationToken)
+    public async Task<Result<List<ApplicationAccount>?>> Handle(SearchAccountDetailQuery request, CancellationToken cancellationToken)
     {
         var keyword = request.Keyword;
 
-        if(string.IsNullOrEmpty(keyword)) {
+        if (string.IsNullOrEmpty(keyword))
+        {
             return Result<List<ApplicationAccount>?>.Success([]);
         }
 

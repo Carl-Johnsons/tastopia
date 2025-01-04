@@ -2,7 +2,7 @@
 using Contract.Constants;
 using Contract.DTOs.UserDTO;
 using Contract.Event.IdentityEvent;
-using IdentityService.Application.Account;
+using IdentityService.Application.Account.Queries;
 using MassTransit;
 
 namespace DuendeIdentityServer.EventHandler;
@@ -23,8 +23,7 @@ public class GetAccountDetailsConsumer : IConsumer<GetAccountDetailsEvent>
 
     public async Task Consume(ConsumeContext<GetAccountDetailsEvent> context)
     {
-        await Console.Out.WriteLineAsync("call event");
-        var result = await _sender.Send(new GetAccountDetailCommand
+        var result = await _sender.Send(new GetAccountDetailQuery
         {
             Ids = new HashSet<Guid> { context.Message.AccountId }
         });

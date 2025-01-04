@@ -2,28 +2,29 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityService.Application.Account;
+namespace IdentityService.Application.Account.Queries;
 
-public record GetAccountDetailCommand : IRequest<Result<List<ApplicationAccount>?>>
+public record GetAccountDetailQuery : IRequest<Result<List<ApplicationAccount>?>>
 {
     public HashSet<Guid> Ids { get; set; } = null!;
 }
 
 
-public class GetAccountDetailCommandHandler : IRequestHandler<GetAccountDetailCommand, Result<List<ApplicationAccount>?>>
+public class GetAccountDetailQueryHandler : IRequestHandler<GetAccountDetailQuery, Result<List<ApplicationAccount>?>>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
 
-    public GetAccountDetailCommandHandler(UserManager<ApplicationAccount> userManager)
+    public GetAccountDetailQueryHandler(UserManager<ApplicationAccount> userManager)
     {
         _userManager = userManager;
     }
 
-    public async Task<Result<List<ApplicationAccount>?>> Handle(GetAccountDetailCommand request, CancellationToken cancellationToken)
+    public async Task<Result<List<ApplicationAccount>?>> Handle(GetAccountDetailQuery request, CancellationToken cancellationToken)
     {
         var ids = request.Ids;
 
-        if(ids == null || !ids.Any()) {
+        if (ids == null || !ids.Any())
+        {
             return Result<List<ApplicationAccount>>.Failure(AccountError.NotFound);
         }
         var idStrings = ids.Select(id => id.ToString()).ToHashSet();
