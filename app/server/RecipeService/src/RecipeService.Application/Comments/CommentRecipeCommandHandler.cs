@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contract.DTOs.UserDTO;
 using Contract.Event.UserEvent;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
@@ -42,15 +43,12 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
                 return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);
             }
 
-            var comment = new Comment
+            var recipe = await _context.Recipes.Where(r => r.Id == recipeId).FirstOrDefaultAsync();
+
+            if (recipe == null)
             {
-                AccountId = accountId.Value,
-                RecipeId = recipeId.Value,
-                Content = content,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-            };
+                return Result<RecipeCommentResponse?>.Failure(CommentError.NotFound);
+            }
 
             var requestClient = _serviceBus.CreateRequestClient<GetSimpleUsersEvent>();
 
@@ -64,9 +62,20 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
                 return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);
             }
 
+            var comment = new Comment
+            {
+                Id = Guid.NewGuid(),
+                AccountId = accountId.Value,
+                Content = content,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+            };
+
             var user = response.Message.Users[accountId.Value];
             var result = new RecipeCommentResponse
             {
+                Id = comment.Id,
                 AccountId = user.AccountId,
                 AvatarUrl = user.AvtUrl,
                 DisplayName = user.DisplayName,
@@ -74,10 +83,11 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
                 CreatedAt = comment.CreatedAt,
                 UpdatedAt = comment.UpdatedAt,
                 IsActive = comment.IsActive,
-                RecipeId = comment.RecipeId,
+                RecipeId = recipe.Id,
             };
 
-            _context.Comments.Add(comment);
+            recipe!.Comments.Add(comment);
+            _context.Recipes.Update(recipe);
             await _unitOfWork.SaveChangeAsync(cancellationToken);
 
             return Result<RecipeCommentResponse?>.Success(result);

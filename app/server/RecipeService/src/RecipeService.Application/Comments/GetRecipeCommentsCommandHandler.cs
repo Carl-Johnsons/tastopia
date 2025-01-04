@@ -35,7 +35,8 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
             return Result<PaginatedRecipeCommentListResponse?>.Failure(RecipeError.NotFound);
         }
 
-        var commentsQuery = _context.Comments.Where(c => c.RecipeId == recipeId && c.IsActive == true).OrderByDescending(c => c.CreatedAt).AsQueryable();
+        var commentsQuery = _context.Recipes.Where(r => r.Id == recipeId).SelectMany(r => r.Comments).OrderByDescending(c => c.CreatedAt).AsQueryable();
+
         var totalPage = (await commentsQuery.CountAsync() + RECIPE_CONSTANTS.COMMENT_LIMIT - 1) / RECIPE_CONSTANTS.COMMENT_LIMIT;
 
 
@@ -49,7 +50,6 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
         {
             Id = c.Id,
             AccountId = c.AccountId,
-            RecipeId = c.RecipeId,
             Content = c.Content,
             CreatedAt = c.CreatedAt,
             UpdatedAt = c.UpdatedAt,

@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using RecipeService.Domain.Entities;
 using RecipeService.Infrastructure.Persistence.Mockup.Data;
 using RecipeService.Infrastructure.Utilities;
 
@@ -50,6 +51,30 @@ internal class MockupData
             {
                 int randomIndex = random.Next(RecipeData.Authors.Count);
                 recipe.AuthorId = RecipeData.Authors[randomIndex];
+
+                foreach(var step in recipe.Steps)
+                {
+                    step.Id = Guid.NewGuid();
+                }
+
+                foreach(var comment in recipe.Comments)
+                {
+                    comment.Id = Guid.NewGuid();
+                }
+                recipe.NumberOfComment = recipe.Comments.Count;
+
+                var numberOfVote = random.Next(RecipeData.Authors.Count);
+                recipe.VoteDiff = numberOfVote;
+                for (int i = 0; i < numberOfVote; i++)
+                {
+                    var accountId = RecipeData.Authors[i];
+                    recipe.RecipeVotes.Add(new RecipeVote
+                    {
+                        AccountId = accountId,
+                        IsUpvote = true,
+                        Id = Guid.NewGuid()
+                    });
+                }
                 _context.Recipes.Add(recipe);
             }
 

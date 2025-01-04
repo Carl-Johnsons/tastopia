@@ -45,19 +45,20 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
                 return Result.Failure(RecipeError.NotFound);
             }
 
-            var recipeVote = await _context.RecipeVotes.Where(rv => rv.RecipeId == recipeId && rv.AccountId == accountId).FirstOrDefaultAsync();
+            var recipeVote = await _context.Recipes.Where(r => r.Id == recipeId)
+                .SelectMany(r => r.RecipeVotes)
+                .Where(rv => rv.AccountId == accountId).FirstOrDefaultAsync();
 
             if (recipeVote == null)
             {
                 recipeVote = new RecipeVote
                 {
                     AccountId = accountId.Value,
-                    RecipeId = recipeId.Value,
                     IsUpvote = isUpvote.Value,
                 };
                 var delta = isUpvote.Value ? 1 : -1;
                 recipe.VoteDiff += delta;
-                _context.RecipeVotes.Add(recipeVote);
+                recipe.RecipeVotes.Add(recipeVote);
                 _context.Recipes.Update(recipe);
             }
             else
@@ -65,13 +66,12 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
                 var delta = recipeVote.IsUpvote ? (isUpvote.Value ? -1 : -2) : (isUpvote.Value ? 2 : 1);
                 if(recipeVote.IsUpvote == isUpvote.Value)
                 {
-                    _context.RecipeVotes.Remove(recipeVote);
+                    recipe.RecipeVotes.Remove(recipeVote);
 
                 }
                 else
                 {
                     recipeVote.IsUpvote = isUpvote.Value;
-                    _context.RecipeVotes.Update(recipeVote);
                 }
                 recipe.VoteDiff += delta;
                 _context.Recipes.Update(recipe);

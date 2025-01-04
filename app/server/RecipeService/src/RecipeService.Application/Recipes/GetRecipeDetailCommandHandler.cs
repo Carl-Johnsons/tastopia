@@ -28,14 +28,14 @@ public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailComm
     public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailCommand request, CancellationToken cancellationToken)
     {
         var recipe = await _context.Recipes
-        .Include(r => r.Steps!.OrderBy(s => s.OrdinalNumber))
         .FirstOrDefaultAsync(r => r.Id == request.RecipeId);
-
 
         if (recipe == null)
         {
             return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound);
         }
+        recipe.Steps = recipe.Steps.OrderBy(s => s.OrdinalNumber).ToList();
+
 
         var requestClient = _serviceBus.CreateRequestClient<GetUserDetailsEvent>();
 
