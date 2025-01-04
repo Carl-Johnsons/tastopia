@@ -1,6 +1,6 @@
 ﻿using Contract.Constants;
 using Duende.IdentityServer.Extensions;
-using IdentityService.Application.Account;
+using IdentityService.Application.Account.Commands;
 using Microsoft.AspNetCore.Authorization;
 using static Duende.IdentityServer.IdentityServerConstants;
 

@@ -4,7 +4,7 @@ using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityService.Application.Account;
+namespace IdentityService.Application.Account.Commands;
 
 public class ResendOTPCommand : IRequest<Result>
 {

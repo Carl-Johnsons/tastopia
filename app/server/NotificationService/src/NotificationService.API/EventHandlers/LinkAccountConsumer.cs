@@ -6,19 +6,18 @@ using NotificationService.Application.Emails;
 
 namespace NotificationService.API.EventHandlers;
 
-[QueueName(RabbitMQConstant.QUEUE.NAME.USER_REGISTER_NOTIFICATION,
-    exchangeName: RabbitMQConstant.EXCHANGE.NAME.USER_REGISTER,
-    type: RabbitMQConstant.EXCHANGE.TYPE.Fanout)]
-public class UserRegisterConsumer : IConsumer<UserRegisterEvent>
+[QueueName(RabbitMQConstant.QUEUE.NAME.LINK_ACCOUNT,
+    exchangeName: RabbitMQConstant.EXCHANGE.NAME.LINK_ACCOUNT)]
+public class LinkAccountConsumer : IConsumer<LinkAccountEvent>
 {
     private readonly ISender _sender;
 
-    public UserRegisterConsumer(ISender sender)
+    public LinkAccountConsumer(ISender sender)
     {
         _sender = sender;
     }
 
-    public async Task Consume(ConsumeContext<UserRegisterEvent> context)
+    public async Task Consume(ConsumeContext<LinkAccountEvent> context)
     {
         switch (context.Message.Method)
         {
@@ -27,7 +26,7 @@ public class UserRegisterConsumer : IConsumer<UserRegisterEvent>
                 {
                     EmailTo = context.Message.Identifier,
                     Subject = "Verify your account",
-                    Body = $"Your <b>Tastopia</b> account is create. Your OTP to verify is <b>{context.Message.OTP}</b>",
+                    Body = $"You have linked your email to <b>Tastopia</b> account. Your OTP to verify is <b>{context.Message.OTP}</b>",
                     IsHTML = true,
                 });
                 break;

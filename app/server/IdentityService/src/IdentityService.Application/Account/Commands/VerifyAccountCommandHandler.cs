@@ -3,7 +3,7 @@ using IdentityService.Domain.Common;
 using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 
-namespace IdentityService.Application.Account;
+namespace IdentityService.Application.Account.Commands;
 
 public record VerifyAccountCommand : IRequest<Result>
 {
@@ -52,9 +52,6 @@ public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand,
         {
             return Result.Failure(AccountError.InvalidOTP);
         }
-
-        Console.WriteLine("Now:" + DateTime.Now);
-        Console.WriteLine("Expired:" + user.EmailOTPExpiry.ToString());
 
         // The expiry store in database in UTC time but when it return value it return local time
         if (user.EmailOTPExpiry < DateTime.Now)
