@@ -1,17 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
 import LoginForm, { LoginFormFields } from "@/components/LoginForm";
-import { IDENTIFIER_TYPE, useLogin } from "@/api/user";
+import { useLogin } from "@/api/user";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
-import { ZodError } from "zod";
 import { useAppDispatch } from "@/store/hooks";
 import GoogleButton from "@/components/GoogleButton";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
 import useBounce from "@/hooks/animation/useBounce";
-import { loginWithEmailSchema, loginWithPhoneNumberSchema } from "@/lib/validation/auth";
-import useLoginWithGoogle from "../../hooks/auth/useLoginWithGoogle";
+import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
 
 const Login = () => {
   const isAndroid = Platform.OS === "android";
@@ -25,39 +23,21 @@ const Login = () => {
     setIsSubmitting(true);
     console.log("Begin login");
 
-    const identifierChecker = /[a-zA-Z@]/;
-
-    const loginType = identifierChecker.test(data.identifier)
-      ? IDENTIFIER_TYPE.EMAIL
-      : IDENTIFIER_TYPE.PHONE_NUMBER;
-
-    console.log("Login type", loginType);
-
-    if (loginType === IDENTIFIER_TYPE.EMAIL) {
-      // loginWithEmailSchema.parse(data);
-    } else {
-      // loginWithPhoneNumberSchema.parse(data);
-    }
-
-    loginMutation.mutateAsync(data, {
+    await loginMutation.mutateAsync(data, {
       onSuccess: data => {
         const accessToken = data.access_token;
         const refreshToken = data.refresh_token;
         const role = ROLE.USER;
+
         dispatch(saveAuthData({ accessToken, refreshToken, role }));
         console.log("Saved tokens");
+
         const route = "/(protected)";
         router.navigate(route);
       },
       onError: error => {
         console.log("Error", error);
-
-        if (error instanceof ZodError) {
-          const firstErr = error.issues[0];
-          return Alert.alert("Error", firstErr.message);
-        }
-
-        Alert.alert("Error", error.message);
+        Alert.alert("Error", "Wrong email, phone number or password.");
       },
       onSettled: () => {
         setIsSubmitting(false);
@@ -80,13 +60,13 @@ const Login = () => {
           style={animatedStyles}
           className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
         />
-        <Text className='font-sans text-4xl font-semibold text-black'>Login</Text>
+        <Text className='font-sans font-semibold text-4xl text-black'>Login</Text>
         <LoginForm
           onSubmit={onSubmit}
           isLoading={isSubmitting}
         />
         <Pressable onPress={navigateToSignUpScreen}>
-          <Text className='text-sm font-medium text-center text-gray-300'>
+          <Text className='text-center font-medium text-sm text-gray-300'>
             Don’t have an account?{" "}
             <Text className='font-medium text-primary'>Sign Up</Text>
           </Text>
@@ -94,7 +74,7 @@ const Login = () => {
 
         <View className='flex-row items-center justify-center gap-5'>
           <View className='h-[1px] grow bg-gray-300' />
-          <Text className='text-sm font-medium text-center text-gray-300'>
+          <Text className='text-center font-medium text-sm text-gray-300'>
             Sign in with
           </Text>
           <View className='h-[1px] grow bg-gray-300' />
