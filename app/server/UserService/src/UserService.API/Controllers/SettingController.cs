@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
 using UserService.Application.Settings.Commands;
+using UserService.Application.Settings.Queries;
+using UserService.Domain.Entities;
 
 namespace UserService.API.Controllers;
 
@@ -30,5 +32,21 @@ public class SettingController : BaseApiController
         });
         result.ThrowIfFailure();
         return NoContent();
+    }
+
+    [HttpGet()]
+    [ProducesResponseType(typeof(List<UserSetting>), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetSetting()
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new GetUserSettingQuery
+        {
+            AccountId = Guid.Parse(subjectId!),
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
     }
 }
