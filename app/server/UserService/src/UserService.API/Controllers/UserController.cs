@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text.Json;
 using UserService.API.DTOs;
 using UserService.Application.Users.Commands;
 using UserService.Domain.Responses;

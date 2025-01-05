@@ -1,7 +1,6 @@
 ﻿using Contract.Common;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserService.Domain.Entities;
-using UserService.Infrastructure.Persistence.Mockup.Data;
 using UserService.Infrastructure.Utilities;
 
 namespace UserService.Infrastructure.Persistence;
@@ -107,11 +106,5 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             entity.Property(e => e.DataType)
                   .HasConversion(typeof(string));
         });
-
-        // Seed data
-
-        modelBuilder.Entity<Setting>().HasData(SettingData.Data);
-        modelBuilder.Entity<User>().HasData(UserData.Data);
-        modelBuilder.Entity<UserFollow>().HasData(UserData.UserFollowData);
     }
 }

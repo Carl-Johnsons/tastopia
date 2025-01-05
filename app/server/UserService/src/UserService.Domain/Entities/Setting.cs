@@ -9,4 +9,5 @@ public class Setting : BaseEntity
     public string Code { get; set; } = null!;
     public string Description { get; set; } = null!;
     public SettingDataType DataType { get; set; }
+    public string DefaultValue { get; set; } = null!;
 }

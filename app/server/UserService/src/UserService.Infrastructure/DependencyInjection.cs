@@ -26,6 +26,7 @@ public static class DependencyInjection
         using (var serviceProvider = services.BuildServiceProvider())
         {
             var mockupData = serviceProvider.GetRequiredService<MockupData>();
+            mockupData.SeedDataAsync().Wait();
         }
 
         return services;
