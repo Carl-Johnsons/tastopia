@@ -40,14 +40,14 @@ project_root=$(pwd)
 cd ./scripts
 
 # kill all ports
-./kill-port.sh 0.0.0.0:5000
-./kill-port.sh 0.0.0.0:5001
-./kill-port.sh 0.0.0.0:5002
-./kill-port.sh 0.0.0.0:5003
-./kill-port.sh 0.0.0.0:5004
-./kill-port.sh 0.0.0.0:5005
-./kill-port.sh 0.0.0.0:5006
-./kill-port.sh 0.0.0.0:6000
+./kill-port.sh 5000
+./kill-port.sh 5001
+./kill-port.sh 5002
+./kill-port.sh 5003
+./kill-port.sh 5004
+./kill-port.sh 5005
+./kill-port.sh 5006
+./kill-port.sh 6000
 
 cd "$project_root"
 
