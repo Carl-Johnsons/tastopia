@@ -14,7 +14,7 @@ import Button from "@/components/Button";
 import { router } from "expo-router";
 import { useDispatch } from "react-redux";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
-import useLoginWithGoogle from "../../hooks/auth/useLoginWithGoogle";
+import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
 
 const Welcome = () => {
   const isAndroid = Platform.OS === "android";

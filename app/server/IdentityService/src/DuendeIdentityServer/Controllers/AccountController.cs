@@ -142,13 +142,4 @@ public class AccountController : BaseApiController
         result.ThrowIfFailure();
         return NoContent();
     }
-
-    [HttpPost("link/google")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> LinkGoogleToAccount()
-    {
-
-        return NoContent();
-    }
 }

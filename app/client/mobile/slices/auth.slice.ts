@@ -44,12 +44,7 @@ export const AuthSlice = createSlice({
     saveAuthData: (state, action: SaveAuthDataAction) => {
       Object.assign(state, action.payload);
     },
-    logout: state => ({
-      ...initialState,
-      accessToken: state.accessToken,
-      isVerifyingAccount: state.isVerifyingAccount,
-      verifyIdentifier: state.verifyIdentifier
-    })
+    logout: () => initialState
   },
   extraReducers: builder => {
     builder.addCase(PURGE, () => {

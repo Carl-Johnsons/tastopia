@@ -95,6 +95,8 @@ public static class DependenciesInjection
                 {
                     ValidateAudience = false,
                     ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
                 // For development only
                 options.IncludeErrorDetails = true;

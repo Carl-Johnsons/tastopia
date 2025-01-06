@@ -1,5 +1,4 @@
 import { Alert, Platform, Pressable, Text, View } from "react-native";
-import React, { useState } from "react";
 import { router } from "expo-router";
 import { useAppDispatch } from "@/store/hooks";
 import {
@@ -8,7 +7,6 @@ import {
   selectAccessToken,
   selectVerifyIdentifier
 } from "@/slices/auth.slice";
-import { ZodError } from "zod";
 import { VerifyParams, useVerify, useResendVerifyCode } from "@/api/user";
 import VerifyForm from "@/components/VerifyForm";
 import CircleBg from "@/components/CircleBg";
@@ -19,18 +17,22 @@ const Verify = () => {
   const isAndroid = Platform.OS === "android";
   const dispatch = useAppDispatch();
   const identifier = selectVerifyIdentifier();
+  console.log("identifier", identifier);
+  
   const accessToken = selectAccessToken() as string;
   const { mutateAsync: verify, isLoading: isVerifyLoading } = useVerify();
   const { mutateAsync: resendVerifyCode, isLoading: isResendVerifyCodeLoading } =
     useResendVerifyCode();
 
   const onSubmit = async (data: VerifyParams) => {
-    verifySchema.parse(data);
+    verifySchema.validate(data).catch(error => {
+      Alert.alert("Error", error.message);
+    });
 
     verify(
       { input: data, accessToken },
       {
-        onSuccess: data => {
+        onSuccess: _data => {
           dispatch(saveAuthData({ isVerifyingAccount: false, role: ROLE.USER }));
           console.log("saved auth data");
 
@@ -41,12 +43,6 @@ const Verify = () => {
           router.navigate(route);
         },
         onError: error => {
-          if (error instanceof ZodError) {
-            const firstErr = error.issues[0];
-            console.log("Error", error);
-            return Alert.alert("Error", firstErr.message);
-          }
-
           Alert.alert("Error", error.message);
         }
       }
@@ -54,7 +50,7 @@ const Verify = () => {
   };
 
   const resendCode = async () => {
-    resendVerifyCode(accessToken, {
+    resendVerifyCode(undefined , {
       onSuccess: () => {
         Alert.alert("Success", "New OTP is sent.");
       },

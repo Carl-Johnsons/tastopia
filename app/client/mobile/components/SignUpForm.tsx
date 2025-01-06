@@ -1,66 +1,127 @@
 import { SignUpParams } from "@/api/user";
-import { useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { AuthFormProps } from "./LoginForm";
 import Input from "./Input";
 import Button from "./Button";
 import useBounce from "@/hooks/animation/useBounce";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { registerSchema } from "@/lib/validation/auth";
+import { useEffect } from "react";
 
-export interface SignUpFormFields extends SignUpParams {}
+export interface SignUpFormFields extends SignUpParams {
+  rePassword: string;
+}
 
 type SignUpFormProps = {
   onSubmit: (data: SignUpFormFields) => Promise<void>;
 } & AuthFormProps;
 
-export const SignUpForm = (props: SignUpFormProps) => {
-  const { onSubmit, isLoading } = props;
-  const [formValues, setFormValues] = useState<SignUpFormFields>({
-    fullName: "",
-    identifier: "",
-    password: ""
-  });
+export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) => {
   const { animate, animatedStyles } = useBounce();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: yupResolver(registerSchema),
+    mode: "onSubmit"
+  });
+
+  useEffect(() => {
+    console.log("Errors", JSON.stringify(errors, null, 2));
+  }, [errors]);
 
   return (
-    <View className={`gap-[2vh] ${props.className}`}>
+    <View className={`gap-[2vh] ${className}`}>
       <View>
         <Text className='mb-3 font-sans text-gray-600'>Full name</Text>
-        <Input
-          autoCapitalize='none'
-          placeholder='Your full name'
-          className={`border-gray-300 p-5 focus:border-primary`}
-          placeholderTextColor={"gray"}
-          onChangeText={fullName => setFormValues({ ...formValues, fullName })}
+        <Controller
+          name='fullName'
+          control={control}
+          render={({ field: { onBlur, onChange, value } }) => (
+            <Input
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              autoCapitalize='none'
+              placeholder='Your full name'
+              className={`border-gray-300 p-5 focus:border-primary`}
+              placeholderTextColor={"gray"}
+            />
+          )}
         />
+        {errors.fullName ? (
+          <Text className='font-sans text-red-400'>{errors.fullName.message}</Text>
+        ) : null}
       </View>
 
       <View>
         <Text className='mb-3 font-sans text-gray-600'>E-mail or phone number</Text>
-        <Input
-          autoCapitalize='none'
-          placeholder='Your email or phone number'
-          className={`border-gray-300 p-5 focus:border-primary`}
-          placeholderTextColor={"gray"}
-          onChangeText={identifier => setFormValues({ ...formValues, identifier })}
+        <Controller
+          name='identifier'
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              onChangeText={onChange}
+              value={value}
+              autoCapitalize='none'
+              placeholder='Your email or phone number'
+              className={`border-gray-300 p-5 focus:border-primary`}
+              placeholderTextColor={"gray"}
+            />
+          )}
         />
+        {errors.identifier ? (
+          <Text className='font-sans text-red-400'>{errors.identifier.message}</Text>
+        ) : null}
       </View>
 
       <View>
         <Text className='mb-3 font-sans text-gray-600'>Password</Text>
-        <Input
-          autoCapitalize='none'
-          placeholder='Password'
-          className={`border-gray-300 p-5 focus:border-primary`}
-          placeholderTextColor={"gray"}
-          onChangeText={password => setFormValues({ ...formValues, password })}
-          secureTextEntry
+        <Controller
+          name='password'
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              onChangeText={onChange}
+              value={value}
+              autoCapitalize='none'
+              placeholder='Password'
+              className={`border-gray-300 p-5 focus:border-primary`}
+              placeholderTextColor={"gray"}
+              secureTextEntry
+            />
+          )}
         />
+        {errors.password ? (
+          <Text className='font-sans text-red-400'>{errors.password.message}</Text>
+        ) : null}
+
+        <Controller
+          name='rePassword'
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Input
+              onChangeText={onChange}
+              value={value}
+              autoCapitalize='none'
+              placeholder='Confirm password'
+              className={`mt-3 border-gray-300 p-5 focus:border-primary`}
+              placeholderTextColor={"gray"}
+              secureTextEntry
+            />
+          )}
+        />
+        {errors.rePassword ? (
+          <Text className='font-sans text-red-400'>{errors.rePassword.message}</Text>
+        ) : null}
       </View>
 
       <Button
         onPress={() => {
           animate();
-          onSubmit(formValues);
+          handleSubmit(onSubmit)();
         }}
         style={[animatedStyles]}
         className='rounded-full bg-primary p-3 px-16 py-6 text-white'
