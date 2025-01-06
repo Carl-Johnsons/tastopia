@@ -30,4 +30,5 @@ restore_service "./app/server/APIGateway/src/APIGateway" "api gateway" &&
   restore_service "./app/server/RecipeService/src/RecipeService.API" "recipe" &&
   restore_service "./app/server/NotificationService/src/NotificationService.API" notification &&
   restore_service "./app/server/NotificationService/src/EmailWorker" email_worker &&
-  restore_service "./app/server/SignalRService/src/SignalRHub" "signalR"
+  restore_service "./app/server/SignalRService/src/SignalRHub" "signalR" &&
+  restore_service "./app/server/TrackingService/src/TrackingService.API" "tracking"

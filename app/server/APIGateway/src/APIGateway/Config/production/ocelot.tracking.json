@@ -1,0 +1,20 @@
+{
+  "Routes": [
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "tracking-api",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/tracking/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/tracking/{everything}",
+      "SwaggerKey": "tracking"
+    }
+  ]
+}

@@ -90,6 +90,8 @@ run_service http 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLU
 run_service http 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
 run_service http 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" & \
 run_service http 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification" & \
+run_service http 5008 "./app/server/TrackingService/src/TrackingService.API" "$LIGHT_YELLOW" "Tracking" & \
 run_service http 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker"
+
 
 wait

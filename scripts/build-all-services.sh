@@ -29,4 +29,6 @@ build_service "./app/server/APIGateway/src/APIGateway" "api gateway" &&
   build_service "./app/server/RecipeService/src/RecipeService.API" "recipe" &&
   build_service "./app/server/NotificationService/src/NotificationService.API" notification &&
   build_service "./app/server/NotificationService/src/EmailWorker" email_worker &&
-  build_service "./app/server/SignalRService/src/SignalRHub" "signalR"
+  build_service "./app/server/SignalRService/src/SignalRHub" "signalR" &&
+  build_service "./app/server/TrackingService/src/TrackingService.API" "tracking"
+
