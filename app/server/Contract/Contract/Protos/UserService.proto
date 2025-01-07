@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package UserProto;
+
+service GrpcUser {
+    rpc GetSimpleUser(GrpcGetSimpleUsersRequest) returns (GrpcGetSimpleUsersDTO);
+}
+
+message Empty {}
+
+message GrpcGetSimpleUsersRequest {
+    repeated string AccountId = 1; // HashSet<Guid> represented as repeated strings
+}
+
+message GrpcGetSimpleUsersDTO {
+    map<string, GrpcSimpleUser> Users = 1;
+}
+
+message GrpcSimpleUser {
+    string AccountId = 1;
+    string AvtUrl = 2;
+    string DisplayName = 3;
+}
+
