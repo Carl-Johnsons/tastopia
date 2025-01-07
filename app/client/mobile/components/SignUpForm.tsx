@@ -7,7 +7,6 @@ import useBounce from "@/hooks/animation/useBounce";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "@/lib/validation/auth";
-import { useEffect } from "react";
 
 export interface SignUpFormFields extends SignUpParams {
   rePassword: string;
@@ -27,10 +26,6 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
     resolver: yupResolver(registerSchema),
     mode: "onSubmit"
   });
-
-  useEffect(() => {
-    console.log("Errors", JSON.stringify(errors, null, 2));
-  }, [errors]);
 
   return (
     <View className={`gap-[2vh] ${className}`}>

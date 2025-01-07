@@ -62,7 +62,6 @@ const Register = () => {
           router.push(route);
         },
         onError: error => {
-          console.log("Error", error);
           Alert.alert("Error", error.message);
         }
       }
