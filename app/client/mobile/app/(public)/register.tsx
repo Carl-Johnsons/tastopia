@@ -43,7 +43,7 @@ const Register = () => {
   }, [isVerifyingAccount, currentRouteName]);
 
   const onSubmit = async (data: SignUpParams) => {
-    const registerType = getIdentifierType(data.identifier) as IDENTIFIER_TYPE;
+    const registerType = getIdentifierType(data.identifier as string) as IDENTIFIER_TYPE;
 
     register(
       { data, type: registerType },
