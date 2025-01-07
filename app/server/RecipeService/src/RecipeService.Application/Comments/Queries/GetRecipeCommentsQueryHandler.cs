@@ -5,33 +5,34 @@ using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 
-namespace RecipeService.Application.Comments;
-public class GetRecipeCommentsCommand : IRequest<Result<PaginatedRecipeCommentListResponse?>>
+namespace RecipeService.Application.Comments.Queries;
+public class GetRecipeCommentsQuery : IRequest<Result<PaginatedRecipeCommentListResponse?>>
 {
     public Guid? RecipeId { get; init; }
     public int? Skip { get; init; }
 }
 
-public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeCommentsCommand, Result<PaginatedRecipeCommentListResponse?>>
+public class GetRecipeCommentsQueryHandler : IRequestHandler<GetRecipeCommentsQuery, Result<PaginatedRecipeCommentListResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<Comment, AdvancePaginatedMetadata> _paginateDataUtility;
 
 
-    public GetRecipeCommentsCommandHandler(IServiceBus serviceBus, IApplicationDbContext context, IPaginateDataUtility<Comment, AdvancePaginatedMetadata> paginateDataUtility)
+    public GetRecipeCommentsQueryHandler(IServiceBus serviceBus, IApplicationDbContext context, IPaginateDataUtility<Comment, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _serviceBus = serviceBus;
         _context = context;
         _paginateDataUtility = paginateDataUtility;
     }
 
-    public async Task<Result<PaginatedRecipeCommentListResponse?>> Handle(GetRecipeCommentsCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedRecipeCommentListResponse?>> Handle(GetRecipeCommentsQuery request, CancellationToken cancellationToken)
     {
         var recipeId = request.RecipeId;
         var skip = request.Skip;
 
-        if (recipeId == null || skip == null) {
+        if (recipeId == null || skip == null)
+        {
             return Result<PaginatedRecipeCommentListResponse?>.Failure(RecipeError.NotFound);
         }
 
@@ -67,7 +68,8 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
             RecipeId = c.Id,
         }).ToList();
 
-        if(comments == null || comments.Count == 0) {
+        if (comments == null || comments.Count == 0)
+        {
             return Result<PaginatedRecipeCommentListResponse?>.Success(new PaginatedRecipeCommentListResponse
             {
                 PaginatedData = [],
@@ -98,7 +100,7 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
 
         var mapUser = response.Message.Users;
 
-        foreach(var comment in comments)
+        foreach (var comment in comments)
         {
             comment.AvatarUrl = mapUser[comment.AccountId].AvtUrl;
             comment.DisplayName = mapUser[comment.AccountId].DisplayName;

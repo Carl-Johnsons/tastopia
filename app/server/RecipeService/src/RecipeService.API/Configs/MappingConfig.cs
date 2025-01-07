@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using RecipeService.API.DTOs;
-using RecipeService.Application.Recipes;
+using RecipeService.Application.Recipes.Commands;
 
 namespace RecipeService.API.Configs;
 
@@ -14,7 +14,7 @@ public class MappingConfig
             config.CreateMap<CreateRecipeDTO, CreateRecipeCommand>()
             .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)).ReverseMap();
 
-            config.CreateMap<DTOs.StepDTO, Application.Recipes.StepDTO>().ReverseMap();
+            config.CreateMap<DTOs.StepDTO, Application.Recipes.Commands.StepDTO>().ReverseMap();
         });
 
         return mappingConfig;

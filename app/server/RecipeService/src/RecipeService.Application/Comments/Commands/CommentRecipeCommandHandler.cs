@@ -7,7 +7,7 @@ using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 
-namespace RecipeService.Application.Comments;
+namespace RecipeService.Application.Comments.Commands;
 public class CommentRecipeCommand : IRequest<Result<RecipeCommentResponse?>>
 {
     public Guid? RecipeId { get; init; }
@@ -33,7 +33,8 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
 
     public async Task<Result<RecipeCommentResponse?>> Handle(CommentRecipeCommand request, CancellationToken cancellationToken)
     {
-        try {
+        try
+        {
             var recipeId = request.RecipeId;
             var accountId = request.AccountId;
             var content = request.Content;
@@ -92,7 +93,7 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
 
             return Result<RecipeCommentResponse?>.Success(result);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex));
             return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);

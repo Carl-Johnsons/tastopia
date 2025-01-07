@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeService.API.DTOs;
-using RecipeService.Application.Comments;
-using RecipeService.Application.Recipes;
-using RecipeService.Application.Tags;
+using RecipeService.Application.Comments.Commands;
+using RecipeService.Application.Comments.Queries;
+using RecipeService.Application.Recipes.Commands;
+using RecipeService.Application.Recipes.Queries;
+using RecipeService.Application.Tags.Queries;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -74,7 +76,7 @@ public class RecipeController : BaseApiController
 
         if (string.IsNullOrEmpty(subjectId))
         {
-            var resultGuest = await _sender.Send(new GetRecipeFeedsForGuestCommand
+            var resultGuest = await _sender.Send(new GetRecipeFeedsForGuestQuery
             {
                 TagValues = getRecipeFeedsDTO.TagValues
             });
@@ -83,7 +85,7 @@ public class RecipeController : BaseApiController
         }
 
 
-        var result = await _sender.Send(new GetRecipeFeedsCommand
+        var result = await _sender.Send(new GetRecipeFeedsQuery
         {
             Skip = getRecipeFeedsDTO.Skip,
             TagValues = getRecipeFeedsDTO.TagValues,
@@ -101,7 +103,7 @@ public class RecipeController : BaseApiController
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-        var result = await _sender.Send(new SearchRecipesCommand
+        var result = await _sender.Send(new SearchRecipesQuery
         {
             Skip = searchRecipesDTO.Skip,
             TagValues = searchRecipesDTO.TagValues,
@@ -118,7 +120,7 @@ public class RecipeController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> GetTag([FromBody] GetTagsDTO getTagsDTO)
     {
-        var result = await _sender.Send(new GetTagsCommand
+        var result = await _sender.Send(new GetTagsQuery
         {
             Skip = getTagsDTO.Skip,
             TagCodes = getTagsDTO.TagCodes,
@@ -135,7 +137,7 @@ public class RecipeController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> GetRecipeDetails([FromBody] GetRecipeDetailDTO getRecipeDetailDTO)
     {
-        var result = await _sender.Send(new GetRecipeDetailCommand
+        var result = await _sender.Send(new GetRecipeDetailQuery
         {
             RecipeId = getRecipeDetailDTO.RecipeId,
         });
@@ -164,7 +166,7 @@ public class RecipeController : BaseApiController
     [HttpPost("get-recipe-comments")]
     public async Task<IActionResult> GetRecipeComments([FromBody] GetRecipeCommentsDTO getRecipeCommentsDTO)
     {
-        var result = await _sender.Send(new GetRecipeCommentsCommand
+        var result = await _sender.Send(new GetRecipeCommentsQuery
         {
             RecipeId = getRecipeCommentsDTO.RecipeId,
             Skip = getRecipeCommentsDTO.Skip
