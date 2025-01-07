@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
 import LoginForm, { LoginFormFields } from "@/components/LoginForm";
-import { useLogin } from "@/api/user";
+import { useGetUserDetails, useLogin } from "@/api/user";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
 import { useAppDispatch } from "@/store/hooks";
 import GoogleButton from "@/components/GoogleButton";
@@ -10,6 +10,8 @@ import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
 import useBounce from "@/hooks/animation/useBounce";
 import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
+import { stringify } from "@/utils/debug";
+import { saveUserData } from "@/slices/user.slice";
 
 const Login = () => {
   const isAndroid = Platform.OS === "android";
@@ -18,26 +20,30 @@ const Login = () => {
   const { loginWithGoogle } = useLoginWithGoogle();
   const { animate, animatedStyles } = useBounce();
   const loginMutation = useLogin();
+  const getUserDetails = useGetUserDetails();
 
   const onSubmit = async (data: LoginFormFields) => {
     setIsSubmitting(true);
-    console.log("Begin login");
+    console.info("Begin login");
 
     await loginMutation.mutateAsync(data, {
-      onSuccess: data => {
+      onSuccess: async data => {
         const accessToken = data.access_token;
         const refreshToken = data.refresh_token;
         const role = ROLE.USER;
 
         dispatch(saveAuthData({ accessToken, refreshToken, role }));
-        console.log("Saved tokens");
+
+        const { data: user } = await getUserDetails.refetch();
+        console.debug("login: user object after fetching", stringify(user));
+        dispatch(saveUserData({ ...user }));
 
         const route = "/(protected)";
         router.navigate(route);
       },
       onError: error => {
-        console.log("Error", error);
-        Alert.alert("Error", "Wrong email, phone number or password.");
+        console.log("Error", stringify(error));
+        Alert.alert("Error", error.message);
       },
       onSettled: () => {
         setIsSubmitting(false);
