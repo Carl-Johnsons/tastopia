@@ -4,60 +4,60 @@ import { useAppDispatch } from "@/store/hooks";
 import {
   ROLE,
   saveAuthData,
-  selectAccessToken,
   selectVerifyIdentifier
 } from "@/slices/auth.slice";
-import { VerifyParams, useVerify, useResendVerifyCode } from "@/api/user";
+import {
+  VerifyParams,
+  useVerify,
+  useResendVerifyCode,
+  IDENTIFIER_TYPE
+} from "@/api/user";
 import VerifyForm from "@/components/VerifyForm";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
-import { verifySchema } from "@/lib/validation/auth";
+import { getIdentifierType } from "@/utils/checker";
 
 const Verify = () => {
   const isAndroid = Platform.OS === "android";
   const dispatch = useAppDispatch();
-  const identifier = selectVerifyIdentifier();
-  console.log("identifier", identifier);
-  
-  const accessToken = selectAccessToken() as string;
+  const identifier = selectVerifyIdentifier() as string;
+  const type = getIdentifierType(identifier) as IDENTIFIER_TYPE;
+
   const { mutateAsync: verify, isLoading: isVerifyLoading } = useVerify();
   const { mutateAsync: resendVerifyCode, isLoading: isResendVerifyCodeLoading } =
     useResendVerifyCode();
 
   const onSubmit = async (data: VerifyParams) => {
-    verifySchema.validate(data).catch(error => {
-      Alert.alert("Error", error.message);
-    });
+    verify(data, {
+      onSuccess: _data => {
+        dispatch(saveAuthData({ isVerifyingAccount: false, role: ROLE.USER }));
+        console.log("saved auth data");
 
-    verify(
-      { input: data, accessToken },
-      {
-        onSuccess: _data => {
-          dispatch(saveAuthData({ isVerifyingAccount: false, role: ROLE.USER }));
-          console.log("saved auth data");
-
-          // Set user's data here
-          // dispatch(saveUserData(user));
-          //
-          const route = "/(protected)";
-          router.navigate(route);
-        },
-        onError: error => {
-          Alert.alert("Error", error.message);
-        }
-      }
-    );
-  };
-
-  const resendCode = async () => {
-    resendVerifyCode(undefined , {
-      onSuccess: () => {
-        Alert.alert("Success", "New OTP is sent.");
+        // Set user's data here
+        // dispatch(saveUserData(user));
+        //
+        const route = "/(protected)";
+        router.navigate(route);
       },
       onError: error => {
+        console.log("Verify error", JSON.stringify(error, null, 2));
         Alert.alert("Error", error.message);
       }
     });
+  };
+
+  const resendCode = () => {
+    resendVerifyCode(
+      { type },
+      {
+        onSuccess: () => {
+          Alert.alert("Success", "New OTP is sent.");
+        },
+        onError: () => {
+          Alert.alert("Error", "Resend verification code failed.");
+        }
+      }
+    );
   };
 
   return (
