@@ -21,4 +21,7 @@ public class Tag : BaseAuditableEntity
 
     [Required]
     public string ImageUrl { get; set; } = null!;
+
+    public virtual List<RecipeTag> RecipeTags { get; set; } = new();
+
 }

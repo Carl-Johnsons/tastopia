@@ -2,39 +2,36 @@
 using Contract.Event.UploadEvent;
 using Contract.Event.UploadEvent.EventModel;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
 
+
 namespace RecipeService.Application.Recipes.Commands;
 
 public record CreateRecipeCommand : IRequest<Result<Recipe?>>
 {
-    [Required]
     public Guid AuthorId { get; set; }
 
-    [Required]
     public IFormFile RecipeImage { get; init; } = null!;
 
-    [Required]
-    [MaxLength(50)]
     public string Title { get; init; } = null!;
 
-    [Required]
-    [MaxLength(500)]
     public string Description { get; init; } = null!;
 
     public int? Serves { get; init; }
 
     public string? CookTime { get; init; }
 
-    [Required]
     public List<string> Ingredients { get; init; } = null!;
 
-    [Required]
-    [JsonProperty("steps")]
     public List<StepDTO> Steps { get; init; } = null!;
+
+    public List<string>? TagCodes { get; set; }
+
+    public List<string>? AdditionTagValues { get; set; }
 }
 
 public class StepDTO
@@ -64,6 +61,26 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
     public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
     {
         List<UploadImageFileEventResponseDTO>? rollBackFiles = null;
+
+
+        //var id = Guid.Parse("057aa844-742a-4952-8162-dbfbd7e493ac");
+        //var recipeColection = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable();
+        //var tagsColection = _context.GetDatabase().GetCollection<Domain.Entities.Tag>(nameof(Domain.Entities.Tag)).AsQueryable();
+
+        //var result = recipeColection.SelectMany(r => r.Comments).ToList();
+
+        //await Console.Out.WriteLineAsync("**************************************************");
+
+        //foreach (var r in result)
+        //{
+        //    await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(r));
+
+        //}
+
+
+
+        //return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
+
         try
         {
             var steps = request.Steps;

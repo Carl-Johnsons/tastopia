@@ -1,4 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.EntityFrameworkCore.Extensions;
 using RecipeService.Domain.Entities;
 using RecipeService.Infrastructure.Utilities;
 
@@ -7,7 +12,7 @@ namespace RecipeService.Infrastructure.Persistence;
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public DbSet<Recipe> Recipes { get; set; }
-    public DbSet<Tag> Tags { get; set; }
+    public DbSet<Domain.Entities.Tag> Tags { get; set; }
 
     //Relationship
     public DbSet<RecipeTag> RecipeTags { get; set; }
@@ -24,11 +29,15 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     : base(options)
     {
     }
-
+    /**
+     * <summary>
+     * BsonSerializer use to make mongo driver understand guid
+     * </summary>
+     */
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
         EnvUtility.LoadEnvFile();
-
         var db = DotNetEnv.Env.GetString("DB", "RecipeDB").Trim();
         var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
 
@@ -61,15 +70,25 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 }
             }
         }
-        modelBuilder.Entity<Recipe>();
-        modelBuilder.Entity<Tag>();
+        modelBuilder.Entity<Recipe>().ToCollection("Recipe"); ;
+        modelBuilder.Entity<Domain.Entities.Tag>().ToCollection("Tag");
         modelBuilder.Entity<UserReportComment>();
         modelBuilder.Entity<UserReportRecipe>();
+        modelBuilder.Entity<RecipeTag>().ToCollection("RecipeTag");
+    }
 
-        modelBuilder.Entity<RecipeTag>()
-            .HasOne(ri => ri.Recipe)
-            .WithMany(r => r.RecipeTags)
-            .HasForeignKey(ri => ri.RecipeId);
+    /**
+     * <summary>
+     * This function used to get mongo database to get mongodb entity collection
+     * </summary>
+     */
+    public IMongoDatabase GetDatabase()
+    {
+        EnvUtility.LoadEnvFile();
 
+        var db = DotNetEnv.Env.GetString("DB", "RecipeDB").Trim();
+        var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
+        var client = new MongoClient(mongoConnectionString);
+        return client.GetDatabase(db);
     }
 }
