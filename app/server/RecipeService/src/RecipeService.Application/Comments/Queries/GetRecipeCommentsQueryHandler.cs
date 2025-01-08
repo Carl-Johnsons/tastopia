@@ -24,10 +24,8 @@ public class GetRecipeCommentsQueryHandler : IRequestHandler<GetRecipeCommentsQu
     private readonly IPaginateDataUtility<Comment, AdvancePaginatedMetadata> _paginateDataUtility;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
     private readonly IMapper _mapper;
-    public GetRecipeCommentsCommandHandler(IApplicationDbContext context,
-        IPaginateDataUtility<Comment, AdvancePaginatedMetadata> paginateDataUtility,
-        GrpcUser.GrpcUserClient grpcUserClient,
-        IMapper mapper)
+
+    public GetRecipeCommentsQueryHandler(IApplicationDbContext context, IPaginateDataUtility<Comment, AdvancePaginatedMetadata> paginateDataUtility, GrpcUser.GrpcUserClient grpcUserClient, IMapper mapper)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;
