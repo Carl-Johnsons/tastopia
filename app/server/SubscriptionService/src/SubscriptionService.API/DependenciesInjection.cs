@@ -6,10 +6,11 @@ using Serilog;
 using Newtonsoft.Json;
 using AutoMapper;
 using Microsoft.OpenApi.Models;
-using SubscriptionService.Infrastructure.Utilities;
 using SubscriptionService.API.Configs;
 using SubscriptionService.API.Middleware;
 using SubscriptionService.Domain.Interfaces;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Contract.Utilities;
 
 namespace SubscriptionService.API;
 
@@ -21,6 +22,27 @@ public static class DependenciesInjection
         var services = builder.Services;
         var config = builder.Configuration;
         var host = builder.Host;
+
+        var httpPort = DotNetEnv.Env.GetInt("PORT", 0);
+        var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
+        var certPath = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Path");
+        var certPassword = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Password");
+
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(httpPort, listenOption =>
+            {
+                listenOption.Protocols = HttpProtocols.Http1;
+            });
+
+            options.ListenAnyIP(httpsPort, listenOption =>
+            {
+                listenOption.Protocols = HttpProtocols.Http1AndHttp2;
+                // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
+                listenOption.UseHttps(certPath, certPassword);
+            });
+        });
+
 
         host.UseSerilog((context, config) =>
         {
@@ -79,12 +101,11 @@ public static class DependenciesInjection
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
-                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:5001").Replace("\"", "");
-                var IdentityServerEndpoint = $"http://{IdentityDNS}";
+                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
+                var IdentityServerEndpoint = $"https://{IdentityDNS}";
                 Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
 
                 options.Authority = IdentityServerEndpoint;
-                options.RequireHttpsMetadata = false;
                 // Clear default Microsoft's JWT claim mapping
                 // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
                 options.MapInboundClaims = false;

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
+using SubscriptionService.API.DTOs;
 using System.Net;
-using UserService.API.DTOs;
 
 namespace SubscriptionService.API.Middleware;
 

@@ -2,12 +2,10 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
 using RecipeService.API;
 
-var builder = WebApplication.CreateBuilder(args);
-
-var app = builder.AddAPIServices()
-                 .Build();
-
-await app.UseAPIServicesAsync();
+var app = await WebApplication.CreateBuilder(args)
+                 .AddAPIServices()
+                 .Build()
+                 .UseAPIServicesAsync();
 
 app.Start();
 

@@ -1,25 +1,27 @@
-var builder = WebApplication.CreateBuilder(args);
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Hosting.Server;
+using SubscriptionService.API;
 
-// Add services to the container.
+var app = await WebApplication.CreateBuilder(args)
+                 .AddAPIServices()
+                 .Build()
+                 .UseAPIServicesAsync();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+app.Start();
 
-var app = builder.Build();
+var server = app.Services.GetService<IServer>();
+var addresses = server?.Features.Get<IServerAddressesFeature>()?.Addresses;
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (addresses != null)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    foreach (var address in addresses)
+    {
+        Console.WriteLine($"API is listening on: {address}");
+    }
+}
+else
+{
+    Console.WriteLine("Could not retrieve server addresses.");
 }
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+app.WaitForShutdown();

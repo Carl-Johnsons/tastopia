@@ -4,11 +4,15 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 7003
+        },
+        {
+          "Host": "localhost",
           "Port": 5003
         }
       ],
       "DownstreamPathTemplate": "/api/user/search",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -20,16 +24,44 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 7003
+        },
+        {
+          "Host": "localhost",
           "Port": 5003
         }
       ],
       "DownstreamPathTemplate": "/api/user/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
       ],
       "UpstreamPathTemplate": "/api/user/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "SwaggerKey": "user"
+    },
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7003
+        },
+        {
+          "Host": "localhost",
+          "Port": 5003
+        }
+      ],
+      "DownstreamPathTemplate": "/api/setting/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/setting/{everything}",
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [ "Bearer" ],
         "AllowedScopes": [ "openid" ]

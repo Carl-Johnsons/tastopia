@@ -1,5 +1,5 @@
-﻿using EmailWorker.Interfaces;
-using EmailWorker.Utilities;
+﻿using Contract.Utilities;
+using EmailWorker.Interfaces;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Gmail.v1;
 using Google.Apis.Gmail.v1.Data;

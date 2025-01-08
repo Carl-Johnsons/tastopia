@@ -1,7 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using TrackingService.Domain.Common;
-using TrackingService.Domain.Interfaces;
-using TrackingService.Infrastructure.Utilities;
+﻿using Contract.Utilities;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace TrackingService.Infrastructure.Persistence;
 

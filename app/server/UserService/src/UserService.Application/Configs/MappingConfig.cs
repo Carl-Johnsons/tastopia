@@ -13,7 +13,6 @@ public class MappingConfig
         {
             config.CreateMap<User, GetUserDetailsResponse>().ReverseMap();
             config.CreateMap<UserDetailsDTO, GetUserDetailsResponse>().ReverseMap();
-
         });
 
 

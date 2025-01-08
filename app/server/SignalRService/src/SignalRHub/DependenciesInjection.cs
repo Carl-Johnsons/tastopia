@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Contract.Utilities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -15,10 +17,30 @@ public static class DependenciesInjection
     private static string HUB_ENDPOINT = "/tastopia-hub";
     public static WebApplicationBuilder AddChatHubServices(this WebApplicationBuilder builder)
     {
-        SignalRService.Infrastructure.Utilities.EnvUtility.LoadEnvFile();
+        EnvUtility.LoadEnvFile();
 
         var services = builder.Services;
         var host = builder.Host;
+
+        var httpPort = DotNetEnv.Env.GetInt("PORT", 0);
+        var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
+        var certPath = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Path");
+        var certPassword = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Password");
+
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(httpPort, listenOption =>
+            {
+                listenOption.Protocols = HttpProtocols.Http1;
+            });
+
+            options.ListenAnyIP(httpsPort, listenOption =>
+            {
+                listenOption.Protocols = HttpProtocols.Http1AndHttp2;
+                // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
+                listenOption.UseHttps(certPath, certPassword);
+            });
+        });
 
         services.AddInfrastructureServices(builder.Configuration);
 

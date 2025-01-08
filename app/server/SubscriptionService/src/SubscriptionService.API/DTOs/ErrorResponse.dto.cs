@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace UserService.API.DTOs;
+namespace SubscriptionService.API.DTOs;
 
 public class ErrorResponseDTO
 {

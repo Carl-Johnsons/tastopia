@@ -1,4 +1,4 @@
-﻿using UploadFileService.Infrastructure.Utilities;
+﻿using Contract.Utilities;
 
 namespace UploadFileService.Infrastructure.Persistence;
 

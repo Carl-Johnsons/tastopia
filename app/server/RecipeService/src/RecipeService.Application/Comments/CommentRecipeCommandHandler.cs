@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Contract.DTOs.UserDTO;
-using Contract.Event.UserEvent;
+using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
+using UserProto;
 
 namespace RecipeService.Application.Comments;
 public class CommentRecipeCommand : IRequest<Result<RecipeCommentResponse?>>
@@ -19,21 +20,25 @@ public class CommentRecipeCommand : IRequest<Result<RecipeCommentResponse?>>
 public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand, Result<RecipeCommentResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IServiceBus _serviceBus;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
-    public CommentRecipeCommandHandler(IApplicationDbContext context, IServiceBus serviceBus, IUnitOfWork unitOfWork, IMapper mapper)
+    public CommentRecipeCommandHandler(IApplicationDbContext context,
+        IUnitOfWork unitOfWork,
+        IMapper mapper,
+        GrpcUser.GrpcUserClient grpcUserClient)
     {
         _context = context;
-        _serviceBus = serviceBus;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _grpcUserClient = grpcUserClient;
     }
 
     public async Task<Result<RecipeCommentResponse?>> Handle(CommentRecipeCommand request, CancellationToken cancellationToken)
     {
-        try {
+        try
+        {
             var recipeId = request.RecipeId;
             var accountId = request.AccountId;
             var content = request.Content;
@@ -50,14 +55,25 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
                 return Result<RecipeCommentResponse?>.Failure(CommentError.NotFound);
             }
 
-            var requestClient = _serviceBus.CreateRequestClient<GetSimpleUsersEvent>();
+            List<string> accountList = [accountId.ToString()];
 
-            var response = await requestClient.GetResponse<GetSimpleUsersDTO>(new GetSimpleUsersEvent
+            var response = _grpcUserClient.GetSimpleUser(new GrpcGetSimpleUsersRequest
             {
-                AccountIds = new HashSet<Guid> { accountId.Value }
+                AccountId = { _mapper.Map<RepeatedField<string>>(accountList) }
             });
 
-            if (response == null || response.Message.Users[accountId.Value] == null)
+            var mapUsers = new Dictionary<Guid, SimpleUser>();
+            foreach (var (key, value) in response.Users)
+            {
+                mapUsers[Guid.Parse(key)] = new SimpleUser
+                {
+                    AccountId = Guid.Parse(value.AccountId),
+                    AvtUrl = value.AvtUrl,
+                    DisplayName = value.DisplayName,
+                };
+            }
+
+            if (response == null || mapUsers[accountId.Value] == null)
             {
                 return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);
             }
@@ -72,7 +88,7 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
                 UpdatedAt = DateTime.UtcNow,
             };
 
-            var user = response.Message.Users[accountId.Value];
+            var user = mapUsers[accountId.Value];
             var result = new RecipeCommentResponse
             {
                 Id = comment.Id,
@@ -92,7 +108,7 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
 
             return Result<RecipeCommentResponse?>.Success(result);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex));
             return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);

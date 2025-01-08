@@ -4,16 +4,20 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 7007
+        },
+        {
+          "Host": "localhost",
           "Port": 5007
         }
       ],
-      "DownstreamPathTemplate": "/api/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/api/subscription/{everything}",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
       ],
-      "UpstreamPathTemplate": "/api/{everything}",
+      "UpstreamPathTemplate": "/api/subscription/{everything}",
       "SwaggerKey": "subscription"
     }
   ]

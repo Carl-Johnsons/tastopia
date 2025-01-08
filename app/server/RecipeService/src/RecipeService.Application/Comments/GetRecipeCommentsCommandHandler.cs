@@ -1,9 +1,10 @@
-﻿using Contract.DTOs.UserDTO;
-using Contract.Event.UserEvent;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Contract.DTOs.UserDTO;
+using Google.Protobuf.Collections;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
+using UserProto;
 
 namespace RecipeService.Application.Comments;
 public class GetRecipeCommentsCommand : IRequest<Result<PaginatedRecipeCommentListResponse?>>
@@ -15,15 +16,18 @@ public class GetRecipeCommentsCommand : IRequest<Result<PaginatedRecipeCommentLi
 public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeCommentsCommand, Result<PaginatedRecipeCommentListResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<Comment, AdvancePaginatedMetadata> _paginateDataUtility;
-
-
-    public GetRecipeCommentsCommandHandler(IServiceBus serviceBus, IApplicationDbContext context, IPaginateDataUtility<Comment, AdvancePaginatedMetadata> paginateDataUtility)
+    private readonly GrpcUser.GrpcUserClient _grpcUserClient;
+    private readonly IMapper _mapper;
+    public GetRecipeCommentsCommandHandler(IApplicationDbContext context,
+        IPaginateDataUtility<Comment, AdvancePaginatedMetadata> paginateDataUtility,
+        GrpcUser.GrpcUserClient grpcUserClient,
+        IMapper mapper)
     {
-        _serviceBus = serviceBus;
         _context = context;
         _paginateDataUtility = paginateDataUtility;
+        _grpcUserClient = grpcUserClient;
+        _mapper = mapper;
     }
 
     public async Task<Result<PaginatedRecipeCommentListResponse?>> Handle(GetRecipeCommentsCommand request, CancellationToken cancellationToken)
@@ -31,7 +35,8 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
         var recipeId = request.RecipeId;
         var skip = request.Skip;
 
-        if (recipeId == null || skip == null) {
+        if (recipeId == null || skip == null)
+        {
             return Result<PaginatedRecipeCommentListResponse?>.Failure(RecipeError.NotFound);
         }
 
@@ -67,7 +72,8 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
             RecipeId = c.Id,
         }).ToList();
 
-        if(comments == null || comments.Count == 0) {
+        if (comments == null || comments.Count == 0)
+        {
             return Result<PaginatedRecipeCommentListResponse?>.Success(new PaginatedRecipeCommentListResponse
             {
                 PaginatedData = [],
@@ -80,28 +86,30 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
         }
 
         var accountIds = recipeComments
-        .Select(r => r.AccountId)
-        .Distinct()
-        .ToHashSet();
+            .Select(r => r.AccountId.ToString())
+            .Distinct()
+            .ToList();
 
-        var requestClient = _serviceBus.CreateRequestClient<GetSimpleUsersEvent>();
-
-        var response = await requestClient.GetResponse<GetSimpleUsersDTO>(new GetSimpleUsersEvent
+        var response = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
         {
-            AccountIds = accountIds,
-        });
+            AccountId = { _mapper.Map<RepeatedField<string>>(accountIds) }
+        }, cancellationToken: cancellationToken);
 
-        if (response == null || response.Message.Users.Count != accountIds.Count)
+        var mapUsers = new Dictionary<Guid, SimpleUser>();
+        foreach (var (key, value) in response.Users)
         {
-            return Result<PaginatedRecipeCommentListResponse>.Failure(RecipeError.NotFound);
+            mapUsers[Guid.Parse(key)] = new SimpleUser
+            {
+                AccountId = Guid.Parse(value.AccountId),
+                AvtUrl = value.AvtUrl,
+                DisplayName = value.DisplayName,
+            };
         }
 
-        var mapUser = response.Message.Users;
-
-        foreach(var comment in comments)
+        foreach (var comment in comments)
         {
-            comment.AvatarUrl = mapUser[comment.AccountId].AvtUrl;
-            comment.DisplayName = mapUser[comment.AccountId].DisplayName;
+            comment.AvatarUrl = mapUsers[comment.AccountId].AvtUrl;
+            comment.DisplayName = mapUsers[comment.AccountId].DisplayName;
         }
 
         var hasNextPage = true;

@@ -1,0 +1,68 @@
+﻿using AutoMapper;
+using Contract.DTOs.UserDTO;
+using Google.Protobuf.Collections;
+using Grpc.Core;
+using Newtonsoft.Json;
+using UserProto;
+using UserService.Application.Users.Commands;
+
+namespace UserService.API.GrpcServices;
+
+public class GrpcUserService : GrpcUser.GrpcUserBase
+{
+    private readonly ISender _sender;
+    private readonly IMapper _mapper;
+    private readonly ILogger<GrpcUserService> _logger;
+
+    public GrpcUserService(ISender sender, IMapper mapper, ILogger<GrpcUserService> logger)
+    {
+        _sender = sender;
+        _mapper = mapper;
+        _logger = logger;
+    }
+
+    public override async Task<GrpcGetSimpleUsersDTO> GetSimpleUser(GrpcGetSimpleUsersRequest request, ServerCallContext context)
+    {
+        if (request.AccountId == null || request.AccountId.Count == 0)
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "AccountId must not be null or empty."));
+        }
+
+        var accountIdSets = request.AccountId.Select(Guid.Parse).ToHashSet();
+
+        var response = await _sender.Send(new GetSimpleUsersCommand
+        {
+            AccountIds = accountIdSets,
+        });
+
+        response.ThrowIfFailure();
+
+        var users = response.Value!;
+
+        var mapUser = users.Select(u => new SimpleUser
+        {
+            AccountId = u.AccountId,
+            AvtUrl = u.AvatarUrl,
+            DisplayName = u.DisplayName,
+        }).ToDictionary(u => u.AccountId);
+
+
+        var mapField = new MapField<string, GrpcSimpleUser>();
+        foreach (var (key, value) in mapUser)
+        {
+            mapField[key.ToString()] = new GrpcSimpleUser
+            {
+                AccountId = value.AccountId.ToString(),
+                AvtUrl = value.AvtUrl,
+                DisplayName = value.DisplayName,
+            };
+        }
+
+        var grpcResult = new GrpcGetSimpleUsersDTO
+        {
+            Users = { mapField }
+        };
+        _logger.LogInformation(JsonConvert.SerializeObject(grpcResult, Formatting.Indented));
+        return grpcResult;
+    }
+}
