@@ -33,6 +33,11 @@ public class EnvUtility
         return DotNetEnv.Env.GetString("ASPNETCORE_ENVIRONMENT", "") == "Production";
     }
 
+    /**
+     * <summary>
+     *  Get postgresql connection string from environment
+     * </summary>
+     */
     public static string GetConnectionString()
     {
         LoadEnvFile();
@@ -43,6 +48,37 @@ public class EnvUtility
         var user = DotNetEnv.Env.GetString("POSTGRES_USER", "Not found").Trim();
         var pwd = DotNetEnv.Env.GetString("POSTGRES_PASSWORD", "Not found").Trim();
         var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={pwd};";
+        Console.WriteLine(connectionString);
+        return connectionString;
+    }
+
+    /**
+     * <summary>
+     *  Get mongodb connection string from environment
+     * </summary>
+     */
+    public static string GetMongoDBConnectionString()
+    {
+        LoadEnvFile();
+        var host = DotNetEnv.Env.GetString("MONGODB_HOST", "localhost").Trim();
+
+        var port = DotNetEnv.Env.GetString("MONGODB_PORT", "2001").Trim();
+        var user = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_USERNAME", "Not found").Trim();
+        var pwd = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_PASSWORD", "Not found").Trim();
+        var connectionString = $"mongodb://{user}:{pwd}@{host}:{port}?authSource=admin";
+        Console.WriteLine(connectionString);
+        return connectionString;
+    }
+
+    public static string GetMongoDBWithoutAdminConnectionString()
+    {
+        LoadEnvFile();
+        var host = DotNetEnv.Env.GetString("MONGODB_HOST", "localhost").Trim();
+
+        var port = DotNetEnv.Env.GetString("MONGODB_PORT", "2001").Trim();
+        var user = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_USERNAME", "Not found").Trim();
+        var pwd = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_PASSWORD", "Not found").Trim();
+        var connectionString = $"mongodb://{user}:{pwd}@{host}:{port}";
         Console.WriteLine(connectionString);
         return connectionString;
     }

@@ -33,10 +33,6 @@
 	  <ProjectReference Include="..\RecipeService.Application\RecipeService.Application.csproj" />
 	  <ProjectReference Include="..\RecipeService.Infrastructure\RecipeService.Infrastructure.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="EventHandlers\" />
-	</ItemGroup>
 	<PropertyGroup>
 		<DefaultItemExcludes>.git\**;$(DefaultItemExcludes)</DefaultItemExcludes>
 	</PropertyGroup>

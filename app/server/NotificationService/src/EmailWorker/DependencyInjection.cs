@@ -3,7 +3,7 @@ using Contract.Common;
 using MassTransit;
 using System.Reflection;
 
-namespace NotificationService.Infrastructure;
+namespace EmailWorker;
 
 public static class DependencyInjection
 {

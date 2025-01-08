@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
 using UserService.Domain.Entities;
 using UserService.Domain.Errors;

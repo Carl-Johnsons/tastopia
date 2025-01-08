@@ -1,17 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
 import LoginForm, { LoginFormFields } from "@/components/LoginForm";
-import { IDENTIFIER_TYPE, useLogin } from "@/api/user";
+import { useLogin } from "@/api/user";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
-import { ZodError } from "zod";
 import { useAppDispatch } from "@/store/hooks";
 import GoogleButton from "@/components/GoogleButton";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
 import useBounce from "@/hooks/animation/useBounce";
-import { loginWithEmailSchema, loginWithPhoneNumberSchema } from "@/lib/validation/auth";
-import { useLoginWithGoogle } from "@/hooks";
+import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
 
 const Login = () => {
   const isAndroid = Platform.OS === "android";
@@ -25,39 +23,21 @@ const Login = () => {
     setIsSubmitting(true);
     console.log("Begin login");
 
-    const identifierChecker = /[a-zA-Z@]/;
-
-    const loginType = identifierChecker.test(data.identifier)
-      ? IDENTIFIER_TYPE.EMAIL
-      : IDENTIFIER_TYPE.PHONE_NUMBER;
-
-    console.log("Login type", loginType);
-
-    if (loginType === IDENTIFIER_TYPE.EMAIL) {
-      // loginWithEmailSchema.parse(data);
-    } else {
-      // loginWithPhoneNumberSchema.parse(data);
-    }
-
-    loginMutation.mutateAsync(data, {
+    await loginMutation.mutateAsync(data, {
       onSuccess: data => {
         const accessToken = data.access_token;
         const refreshToken = data.refresh_token;
         const role = ROLE.USER;
+
         dispatch(saveAuthData({ accessToken, refreshToken, role }));
         console.log("Saved tokens");
+
         const route = "/(protected)";
         router.navigate(route);
       },
       onError: error => {
         console.log("Error", error);
-
-        if (error instanceof ZodError) {
-          const firstErr = error.issues[0];
-          return Alert.alert("Error", firstErr.message);
-        }
-
-        Alert.alert("Error", error.message);
+        Alert.alert("Error", "Wrong email, phone number or password.");
       },
       onSettled: () => {
         setIsSubmitting(false);

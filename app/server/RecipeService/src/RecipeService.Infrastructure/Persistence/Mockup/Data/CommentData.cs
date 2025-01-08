@@ -4,182 +4,61 @@ namespace RecipeService.Infrastructure.Persistence.Mockup.Data;
 
 public class CommentData
 {
-    public static List<Comment> Data => [
-        new Comment{
+    private static readonly List<string> Comments = new List<string>
+    {
+        "This recipe looks amazing! Can't wait to try it.",
+        "I tried this yesterday, and it turned out perfect. Thanks for sharing!",
+        "This is such a creative idea. Love it!",
+        "The instructions are so clear and easy to follow. Great job!",
+        "Can I make this ahead of time?",
+        "I'm excited to try this recipe—it looks delicious!",
+        "This reminds me of a dish my grandmother used to make. Thank you!",
+        "Looks delicious! Any tips for making it spicier?",
+        "This was a hit with my family! Thank you for the recipe.",
+        "Perfect for the weekend! Can't wait to serve it to my guests.",
+        "I love how simple and easy this is. Great for busy days!",
+        "The combination of flavors in this recipe is fantastic!",
+        "This is going to be my go-to dish for potlucks. Thanks!",
+        "Such a comforting and hearty meal. Exactly what I needed!",
+        "I appreciate the detailed steps—it made cooking this so much easier.",
+        "The presentation in the picture is stunning! Inspiring to try plating like this.",
+        "I've been looking for a recipe like this for ages. Thank you!",
+        "My kids absolutely loved this dish. It's going into our regular rotation!",
+        "Such a unique recipe! It was a fun challenge to make.",
+        "This recipe is so versatile. I can see myself using it in many variations!"
+    };
+
+    public static string GetRandomCommentContent()
+    {
+        Random random = new Random();
+        int index = random.Next(Comments.Count);
+        return Comments[index];
+    }
+
+    public static DateTime GetRandomDateTime()
+    {
+        Random random = new Random();
+        int year = random.Next(2023, 2025);
+        int month = random.Next(1, 13);
+        int day = random.Next(1, DateTime.DaysInMonth(year, month) + 1);
+        int hour = random.Next(0, 24);
+        int minute = random.Next(0, 60);
+        int second = random.Next(0, 60);
+        return new DateTime(year, month, day, hour, minute, second);
+    }
+
+    public static Comment GetRandomComment()
+    {
+        var time = GetRandomDateTime();
+        var comment = new Comment
+        {
             Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "This recipe is amazing! I tried it last night and it turned out great.",
-            CreatedAt = DateTime.Parse("2024-01-01T08:15:30"),
-            UpdatedAt = DateTime.Parse("2024-01-01T08:15:30"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("594a3fc8-3d24-4305-a9d7-569586d0604e"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "I found this recipe a bit challenging, but the result was worth it!",
-            CreatedAt = DateTime.Parse("2024-01-02T09:20:15"),
-            UpdatedAt = DateTime.Parse("2024-01-02T09:20:15"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "This recipe was okay, but I would tweak the seasoning next time.",
-            CreatedAt = DateTime.Parse("2024-01-03T11:10:45"),
-            UpdatedAt = DateTime.Parse("2024-01-03T11:10:45"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("594a3fc8-3d24-4305-a9d7-569586d0604e"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "Loved the simplicity of this recipe! Perfect for a quick meal.",
-            CreatedAt = DateTime.Parse("2024-01-04T13:45:20"),
-            UpdatedAt = DateTime.Parse("2024-01-04T13:45:20"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "My kids loved this recipe! Will definitely make it again.",
-            CreatedAt = DateTime.Parse("2024-01-05T14:35:10"),
-            UpdatedAt = DateTime.Parse("2024-01-05T14:35:10"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("594a3fc8-3d24-4305-a9d7-569586d0604e"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "The instructions were very clear and easy to follow. Thank you!",
-            CreatedAt = DateTime.Parse("2024-01-06T16:20:00"),
-            UpdatedAt = DateTime.Parse("2024-01-06T16:20:00"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "Not a fan of the flavor combination, but it was fun to try something new.",
-            CreatedAt = DateTime.Parse("2024-01-07T18:10:50"),
-            UpdatedAt = DateTime.Parse("2024-01-07T18:10:50"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("594a3fc8-3d24-4305-a9d7-569586d0604e"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "I made a vegan version of this recipe, and it turned out great!",
-            CreatedAt = DateTime.Parse("2024-01-08T19:25:40"),
-            UpdatedAt = DateTime.Parse("2024-01-08T19:25:40"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "I tried this recipe with a twist by adding some chili flakes, and it was a hit!",
-            CreatedAt = DateTime.Parse("2024-01-09T20:10:30"),
-            UpdatedAt = DateTime.Parse("2024-01-09T20:10:30"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("594a3fc8-3d24-4305-a9d7-569586d0604e"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "The texture of the dish was perfect. Definitely adding this to my recipe book.",
-            CreatedAt = DateTime.Parse("2024-01-10T08:45:50"),
-            UpdatedAt = DateTime.Parse("2024-01-10T08:45:50"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "I appreciate the detailed step-by-step instructions. Made cooking so much easier!",
-            CreatedAt = DateTime.Parse("2024-01-11T12:30:25"),
-            UpdatedAt = DateTime.Parse("2024-01-11T12:30:25"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("594a3fc8-3d24-4305-a9d7-569586d0604e"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "Tried this for a dinner party, and everyone asked for the recipe!",
-            CreatedAt = DateTime.Parse("2024-01-12T14:50:00"),
-            UpdatedAt = DateTime.Parse("2024-01-12T14:50:00"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "A bit salty for my taste, but overall a solid recipe.",
-            CreatedAt = DateTime.Parse("2024-01-13T17:15:40"),
-            UpdatedAt = DateTime.Parse("2024-01-13T17:15:40"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("594a3fc8-3d24-4305-a9d7-569586d0604e"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "This is now my go-to recipe for family gatherings. Thank you!",
-            CreatedAt = DateTime.Parse("2024-01-14T10:20:15"),
-            UpdatedAt = DateTime.Parse("2024-01-14T10:20:15"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "I added some lemon zest for extra flavor, and it worked perfectly!",
-            CreatedAt = DateTime.Parse("2024-01-15T19:10:25"),
-            UpdatedAt = DateTime.Parse("2024-01-15T19:10:25"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("594a3fc8-3d24-4305-a9d7-569586d0604e"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "A classic recipe that never fails to impress.",
-            CreatedAt = DateTime.Parse("2024-01-16T08:00:00"),
-            UpdatedAt = DateTime.Parse("2024-01-16T08:00:00"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "Tried it with fresh herbs, and it made a big difference!",
-            CreatedAt = DateTime.Parse("2024-01-17T15:45:50"),
-            UpdatedAt = DateTime.Parse("2024-01-17T15:45:50"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("594a3fc8-3d24-4305-a9d7-569586d0604e"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "A bit time-consuming, but the results were worth it!",
-            CreatedAt = DateTime.Parse("2024-01-18T11:30:00"),
-            UpdatedAt = DateTime.Parse("2024-01-18T11:30:00"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "I substituted some ingredients to fit my diet, and it still tasted great!",
-            CreatedAt = DateTime.Parse("2024-01-19T14:20:15"),
-            UpdatedAt = DateTime.Parse("2024-01-19T14:20:15"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("594a3fc8-3d24-4305-a9d7-569586d0604e"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "A wholesome and hearty meal for the whole family.",
-            CreatedAt = DateTime.Parse("2024-01-20T09:15:30"),
-            UpdatedAt = DateTime.Parse("2024-01-20T09:15:30"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("bb06e4ec-f371-45d5-804e-22c65c77f67d"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "Wonderful recipe!",
-            CreatedAt = DateTime.Parse("2024-01-19T14:19:15"),
-            UpdatedAt = DateTime.Parse("2024-01-19T14:19:15"),
-        },
-        new Comment{
-            Id = Guid.NewGuid(),
-            AccountId = Guid.Parse("594a3fc8-3d24-4305-a9d7-569586d0604e"),
-            RecipeId = Guid.Parse("d2189f90-6991-4901-8195-f0c12d24d900"),
-            Content = "It's realy delicious!",
-            CreatedAt = DateTime.Parse("2024-01-20T09:16:30"),
-            UpdatedAt = DateTime.Parse("2024-01-20T09:16:30"),
-        },
-    ];
+            Content = GetRandomCommentContent(),
+            CreatedAt = time,
+            UpdatedAt = time,
+            IsActive = true,
+        };
+        return comment;
+    }
+
 }

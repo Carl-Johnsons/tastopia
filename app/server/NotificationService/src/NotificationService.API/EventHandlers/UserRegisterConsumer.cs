@@ -20,7 +20,6 @@ public class UserRegisterConsumer : IConsumer<UserRegisterEvent>
 
     public async Task Consume(ConsumeContext<UserRegisterEvent> context)
     {
-        Console.WriteLine(JsonConvert.SerializeObject(context.Message));
         switch (context.Message.Method)
         {
             case AccountMethod.Email:

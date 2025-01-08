@@ -42,6 +42,7 @@ internal class UnitOfWork : IUnitOfWork
             }
         }
 
+        _context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Never;
 
         return _context.SaveChangesAsync(cancellationToken);
     }

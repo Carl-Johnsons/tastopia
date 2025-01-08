@@ -3,7 +3,7 @@ import { View, Text, Animated, Pressable } from "react-native";
 import { DownvoteIcon, UpvoteIcon } from "./SVG";
 import { globalStyles } from "./GlobalStyles";
 import { ROLE } from "@/slices/auth.slice";
-import { useProtected, useProtectedExclude } from "@/hooks";
+import useProtected, { useProtectedExclude } from "@/hooks/auth/useProtected";
 
 type VoteProps = {
   voteDiff: number;

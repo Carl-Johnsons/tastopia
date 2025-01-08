@@ -56,4 +56,8 @@ public class AccountError
         new("AccountError.ResendOTPFailed",
             StatusCode: (int)HttpStatusCode.InternalServerError,
             Message: "Resend OTP Failed");
+    public static Error LinkAccountFailed =>
+        new("AccountError.LinkAccountFailed",
+            StatusCode: (int)HttpStatusCode.InternalServerError,
+            Message: "Link Account Failed");
 }

@@ -47,31 +47,30 @@ public static class DependenciesInjection
             });
 
         services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(c =>
+        services.AddSwaggerGen(config =>
         {
-            var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:5001").Replace("\"", "");
-            var IdentityServerEndpoint = $"http://{IdentityDNS}";
-
-            c.AddSecurityDefinition("OAuth2", new OpenApiSecurityScheme
+            config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
-                Type = SecuritySchemeType.OAuth2,
-                Flows = new OpenApiOAuthFlows
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Description = "Input your Bearer token in the following format: `Bearer {your_token}`"
+            });
+
+            config.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
                 {
-                    Password = new OpenApiOAuthFlow
+                    new OpenApiSecurityScheme
                     {
-                        TokenUrl = new Uri($"{IdentityServerEndpoint}/connect/token"),
-                        Scopes = new Dictionary<string, string>
+                        Reference = new OpenApiReference
                         {
-                            { "openid", "Required to sign in" },
-                            { "profile", "Get the profile of the user" },
-                            { "phone", "Get phone claim" },
-                            { "email", "Get email claim" },
-                            { "offline_access", "Required for refresh token" },
-                            { "IdentityServerApi", "Required for access to identity api" },
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
                         }
-                    }
-                },
-                Description = "OAuth2 Password Grant"
+                    },
+                    Array.Empty<string>()
+                }
             });
         });
 
@@ -96,6 +95,8 @@ public static class DependenciesInjection
                 {
                     ValidateAudience = false,
                     ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
                 // For development only
                 options.IncludeErrorDetails = true;
@@ -116,7 +117,11 @@ public static class DependenciesInjection
         });
 
         app.UseSwagger();
-        app.UseSwaggerUI();
+        app.UseSwaggerUI(c =>
+        {
+            c.ConfigObject.PersistAuthorization = true;
+            c.InjectJavascript("/Swagger/inject-access-token.js");
+        });
 
         app.UseSerilogRequestLogging();
 

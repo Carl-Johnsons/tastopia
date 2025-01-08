@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Contract.DTOs.UserDTO;
-using IdentityService.Application.Account;
+using IdentityService.Application.Account.Commands;
 
 namespace DuendeIdentityServer.DTOs;
 

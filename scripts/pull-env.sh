@@ -31,4 +31,7 @@ pull_env_file "./app/server/RecipeService" recipe && \
 pull_production_env_file "./app/server/RecipeService" recipe_production && \
 pull_env_file "./app/server/NotificationService" notification && \
 pull_production_env_file "./app/server/NotificationService" notification_production && \
-pull_env_file "./app/server/SignalRService" signalR 
+pull_env_file "./app/server/SignalRService" signalR && \
+pull_production_env_file "./app/server/TrackingService" tracking_production && \
+pull_env_file "./app/server/TrackingService" tracking
+

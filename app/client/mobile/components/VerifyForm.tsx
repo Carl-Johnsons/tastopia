@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ActivityIndicator, Platform, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Platform, Text, TextInput, View } from "react-native";
 import { AuthFormProps } from "./LoginForm";
 import {
   useAnimatedStyle,
@@ -12,6 +12,7 @@ import Input from "./Input";
 import Button from "./Button";
 import { VerifyParams } from "@/api/user";
 import { selectAccessToken } from "@/slices/auth.slice";
+import { verifySchema } from "@/lib/validation/auth";
 
 type VerifyFormProps = {
   onSubmit: (data: VerifyParams) => Promise<void>;
@@ -46,9 +47,14 @@ export const VerifyForm = (props: VerifyFormProps) => {
   }));
 
   const sendCode = () => {
+    const OTP = formValues.join("").toString();
+
+    verifySchema.validate(OTP).catch(reason => {
+      return Alert.alert("Error", reason);
+    });
+
     const data: VerifyParams = {
-      OTP: formValues.join("").toString(),
-      accessToken: accessToken as string
+      OTP
     };
     onSubmit(data);
   };

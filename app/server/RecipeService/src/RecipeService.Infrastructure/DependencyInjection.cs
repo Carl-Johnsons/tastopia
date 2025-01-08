@@ -2,6 +2,9 @@
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson.Serialization.Serializers;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson;
 using RecipeService.Infrastructure.EventPublishing;
 using RecipeService.Infrastructure.Persistence;
 using RecipeService.Infrastructure.Persistence.Mockup;
@@ -14,6 +17,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
     {
+        if (!BsonClassMap.IsClassMapRegistered(typeof(Guid)))
+        {
+            BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+        }
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
 
         // MediatR require repository scope dependency injection
@@ -26,6 +33,7 @@ public static class DependencyInjection
         using (var serviceProvider = services.BuildServiceProvider())
         {
             var mockupData = serviceProvider.GetRequiredService<MockupData>();
+            mockupData.SeedAllData().Wait();
         }
 
         return services;

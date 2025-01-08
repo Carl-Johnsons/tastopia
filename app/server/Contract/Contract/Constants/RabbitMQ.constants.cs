@@ -9,15 +9,26 @@ public static class RabbitMQConstant
             // ======================= USER ============================
             public const string USER_REGISTER_NOTIFICATION = "user-register-notification-queue";
             public const string USER_REGISTER_USER = "user-register-user-queue";
+            public const string LINK_ACCOUNT = "link-account-queue";
             public const string USER_RESEND_OTP = "user-resend-otp-queue";
             public const string GET_SIMPLE_USERS = "get-simple-users-queue";
             public const string GET_USER_DETAILS = "get-user-details-queue";
             // ======================= ACCOUNT ============================
             public const string GET_ACCOUNT_DETAILS = "get-account-details-queue";
+            // ======================= Recipe ============================
+            public const string GET_RECIPE_DETAILS = "get-recipe-details-queue";
+            public const string UPDATE_RECIPE_TAGS = "update-recipe-tags-queue";
+            public const string REQUEST_ADD_TAGS = "request-add-tags-queue";
+            public const string GET_ALL_TAGS = "get-all-tags-queue";
+
 
 
             // ======================= OTHER ============================
             public const string SEND_EMAIL = "send-email-queue";
+            public const string VALIDATE_RECIPE = "validate-recipe-queue";
+
+
+
         }
     }
     public static class EXCHANGE
@@ -26,15 +37,22 @@ public static class RabbitMQConstant
         {
             // ======================= USER ============================
             public const string USER_REGISTER = "user-register-event";
+            public const string LINK_ACCOUNT = "link-account-event";
             public const string USER_RESEND_OTP = "user-resend-otp-event";
             public const string GET_SIMPLE_USERS = "get-simple-users-event";
             public const string GET_USER_DETAILS = "get-user-details-event";
             // ======================= Account ============================
             public const string GET_ACCOUNT_DETAILS = "get-account-details-event";
-
+            // ======================= Recipe ============================
+            public const string GET_RECIPE_DETAILS = "get-recipe-details-event";
+            public const string GET_ALL_TAGS = "get-all-tags-event";
+            public const string UPDATE_RECIPE_TAGS = "update-recipe-tags-event";
+            public const string REQUEST_ADD_TAGS = "request-add-tags-event";
 
             // ======================= OTHER ============================
             public const string SEND_EMAIL = "send-email-event";
+            public const string VALIDATE_RECIPE = "validate-recipe-event";
+
         }
 
         public static class TYPE

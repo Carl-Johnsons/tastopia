@@ -14,6 +14,8 @@ public static class DependencyInjection
         IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
         services.AddSingleton(mapper);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        //
+        
         return services;
     }
 }

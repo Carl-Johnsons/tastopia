@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
@@ -41,6 +40,7 @@ services.AddLogging(options =>
 services.AddEndpointsApiExplorer(); // This require for swaggerForOcelot to launch
 
 services.AddOcelot();
+
 services.AddSwaggerForOcelot(config);
 
 services.AddAuthentication("Bearer")

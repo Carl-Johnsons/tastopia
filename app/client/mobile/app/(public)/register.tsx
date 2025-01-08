@@ -1,8 +1,7 @@
-import { Alert, Platform, Pressable, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { useEffect } from "react";
 import { router, usePathname } from "expo-router";
-import SignUpForm, { SignUpFormFields } from "@/components/SignUpForm";
-import { ZodError } from "zod";
+import SignUpForm from "@/components/SignUpForm";
 import { IDENTIFIER_TYPE, SignUpParams, useRegister } from "@/api/user";
 import GoogleButton from "@/components/GoogleButton";
 import CircleBg from "@/components/CircleBg";
@@ -12,12 +11,10 @@ import {
   selectIsVerifyingAccount,
   selectVerifyIdentifier
 } from "@/slices/auth.slice";
-import {
-  registerWithEmailSchema,
-  registerWithPhoneNumberSchema
-} from "@/lib/validation/auth";
 import { useDispatch } from "react-redux";
-import { useLoginWithGoogle } from "@/hooks";
+import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
+import { getIdentifierType } from "@/utils/checker";
+
 const Register = () => {
   const isAndroid = Platform.OS === "android";
   const { loginWithGoogle } = useLoginWithGoogle();
@@ -46,25 +43,16 @@ const Register = () => {
   }, [isVerifyingAccount, currentRouteName]);
 
   const onSubmit = async (data: SignUpParams) => {
-    const identifierChecker = new RegExp(".*[a-z,A-Z,@].*");
-    const registerType = identifierChecker.test(data.identifier)
-      ? IDENTIFIER_TYPE.EMAIL
-      : IDENTIFIER_TYPE.PHONE_NUMBER;
-
-    if (registerType === IDENTIFIER_TYPE.EMAIL) {
-      registerWithEmailSchema.parse(data);
-    } else {
-      registerWithPhoneNumberSchema.parse(data);
-    }
+    const registerType = getIdentifierType(data.identifier) as IDENTIFIER_TYPE;
 
     register(
       { data, type: registerType },
       {
-        onSuccess: data => {
+        onSuccess: res => {
           dispatch(
             saveAuthData({
-              accessToken: data.access_token,
-              refreshToken: data.refresh_token,
+              accessToken: res.access_token,
+              refreshToken: res.refresh_token,
               isVerifyingAccount: true,
               verifyIdentifier: data.identifier
             })
@@ -74,12 +62,7 @@ const Register = () => {
           router.push(route);
         },
         onError: error => {
-          if (error instanceof ZodError) {
-            const firstErr = error.issues[0];
-            console.log("Error", error);
-            return Alert.alert("Error", firstErr.message);
-          }
-
+          console.log("Error", error);
           Alert.alert("Error", error.message);
         }
       }
@@ -91,10 +74,10 @@ const Register = () => {
   };
 
   return (
-    <View className='relative h-full'>
+    <ScrollView className='relative h-full'>
       <CircleBg />
       <View
-        className={`absolute ${isAndroid ? "top-[5%]" : "top-[6%]"} flex w-full justify-center gap-[4vh] px-4`}
+        className={`absolute ${isAndroid ? "top-[5%]" : "top-[6%]"} flex w-full justify-center gap-[3vh] px-4`}
       >
         <BackButton
           onPress={router.back}
@@ -127,7 +110,7 @@ const Register = () => {
           />
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

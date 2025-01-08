@@ -1,7 +1,8 @@
 ﻿using Contract.Constants;
 using Duende.IdentityServer.Extensions;
-using IdentityService.Application.Account;
+using IdentityService.Application.Account.Commands;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 using static Duende.IdentityServer.IdentityServerConstants;
 
 namespace DuendeIdentityServer.Controllers;
@@ -17,6 +18,9 @@ public class AccountController : BaseApiController
 
     [AllowAnonymous]
     [HttpPost("register/email")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(JsonElement), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> RegisterWithEmail(RegisterAccountDTO dto)
     {
         var command = _mapper.Map<RegisterAccountCommand>(dto);
@@ -28,6 +32,9 @@ public class AccountController : BaseApiController
 
     [AllowAnonymous]
     [HttpPost("register/phone")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(JsonElement), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> RegisterWithPhone(RegisterAccountDTO dto)
     {
         var command = _mapper.Map<RegisterAccountCommand>(dto);
@@ -37,8 +44,9 @@ public class AccountController : BaseApiController
         return Ok(result.Value?.Json);
     }
 
-
     [HttpPost("verify/email")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> VerifyEmail(VerifyAccountDTO dto)
     {
         var command = _mapper.Map<VerifyAccountCommand>(dto);
@@ -48,10 +56,12 @@ public class AccountController : BaseApiController
 
         var result = await _sender.Send(command);
         result.ThrowIfFailure();
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost("verify/phone")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> VerifyPhone(VerifyAccountDTO dto)
     {
         var command = _mapper.Map<VerifyAccountCommand>(dto);
@@ -62,10 +72,12 @@ public class AccountController : BaseApiController
 
         var result = await _sender.Send(command);
         result.ThrowIfFailure();
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost("resend/email")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> ResendEmailOTP()
     {
         var command = new ResendOTPCommand();
@@ -76,10 +88,12 @@ public class AccountController : BaseApiController
 
         var result = await _sender.Send(command);
         result.ThrowIfFailure();
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost("resend/phone")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
     public async Task<IActionResult> ResendPhoneOTP()
     {
         var command = new ResendOTPCommand();
@@ -90,6 +104,42 @@ public class AccountController : BaseApiController
 
         var result = await _sender.Send(command);
         result.ThrowIfFailure();
-        return Ok();
+        return NoContent();
+    }
+
+    [HttpPost("link/email")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> LinkEmailToAccount(LinkAccountDTO dto)
+    {
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+        var command = new LinkAccountCommand
+        {
+            Identifier = dto.Identifier,
+            Method = AccountMethod.Email,
+            Id = Guid.Parse(userId!)
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [HttpPost("link/phone")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> LinkPhoneToAccount(LinkAccountDTO dto)
+    {
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+        var command = new LinkAccountCommand
+        {
+            Identifier = dto.Identifier,
+            Method = AccountMethod.Phone,
+            Id = Guid.Parse(userId!)
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
     }
 }

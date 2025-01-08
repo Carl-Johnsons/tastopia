@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.EntityFrameworkCore;
+using Newtonsoft.Json;
+using RecipeService.Domain.Constants;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecipeService.Domain.Entities;
 
-[Table("Tag")]
+[Collection("Tag")]
 public class Tag : BaseAuditableEntity
 {
     [Required]
@@ -17,8 +18,11 @@ public class Tag : BaseAuditableEntity
     public string Category { get; set; } = null!;
 
     [Required]
-    public bool IsActive { get; set; } = false;
+    public TagStatus Status { get; set; } = TagStatus.Active;
 
     [Required]
     public string ImageUrl { get; set; } = null!;
+
+    public virtual List<RecipeTag> RecipeTags { get; set; } = new();
+
 }
