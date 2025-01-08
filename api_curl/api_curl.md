@@ -3,21 +3,21 @@
 **create recipe**
 curl --location 'http://localhost:5000/api/recipe/create-recipe' \
 --form 'title="title test 1"' \
---form 'recipeImage=@"/D:/Images/Anime Image/2e3321fce05a83cac5945d4283b573fe.jpg"' \
+--form 'recipeImage=@"/D:/Images/Anime Image/0baca657530fd9c5_9d9622b58f6f65a2_5617415044574976143215.jpg"' \
 --form 'description="desciription test 1"' \
 --form 'ingredients[0]="1 trai ca"' \
 --form 'ingredients[1]="1 muong cafe"' \
 --form 'ingredients[2]="2 qua dua leo"' \
 --form 'steps[0].ordinalNumber="1"' \
 --form 'steps[0].content="step 1 content"' \
---form 'steps[0].Images=@"/D:/Images/Anime Image/782d7c2feae060a902b153c4ea74cf84.jpg"' \
---form 'steps[0].Images=@"/D:/Images/Anime Image/994e3f8e431aea48\*26f2d191aca2738e\*8117815005402075154671.jpg"' \
---form 'steps[0].Images=@"/D:/Images/Anime Image/8457a7c8262253e2\*bfe824e8a0458260\*8606815044574201143215.jpg"' \
+--form 'steps[0].Images=@"/D:/Images/Anime Image/2e3321fce05a83cac5945d4283b573fe.jpg"' \
 --form 'steps[1].ordinalNumber="2"' \
 --form 'steps[1].content="step 2 content"' \
 --form 'steps[1].Images=@"/D:/Images/Anime Image/4caa520c43e4a189c0b0208a23ede849.jpg"' \
---form 'steps[1].Images=@"/D:/Images/Anime Image/8e15eca90980e6d0_7230eae9483348b9_12020415044569441143215.jpg"' \
---form 'steps[1].Images=@"/D:/Images/Anime Image/9e9b84bc8a7c43e3c22404d241577c27.jpg"'
+--form 'tagCodes[0]="code 0"' \
+--form 'tagCodes[1]="code 1"' \
+--form 'additionTagValues[0]="AdditionTagValues 0"' \
+--form 'AdditionTagValues[1]="AdditionTagValues 1"'
 **search recipe**
 curl --location 'http://localhost:5000/api/recipe/search-recipe' \
 --header 'Content-Type: application/json' \

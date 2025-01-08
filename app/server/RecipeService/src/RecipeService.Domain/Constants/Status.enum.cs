@@ -2,6 +2,7 @@
 
 public enum TagStatus
 {
+    Requested,
     Pending,
     Active,
     Inactive

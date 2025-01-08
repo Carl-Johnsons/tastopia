@@ -36,7 +36,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
      */
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+        
         EnvUtility.LoadEnvFile();
         var db = DotNetEnv.Env.GetString("DB", "RecipeDB").Trim();
         var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
@@ -72,6 +72,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         }
         modelBuilder.Entity<Recipe>().ToCollection("Recipe"); ;
         modelBuilder.Entity<Domain.Entities.Tag>().ToCollection("Tag");
+        modelBuilder.Entity<Domain.Entities.Tag>(entity =>
+            {
+                entity.Property(e => e.Status)
+                      .HasConversion(typeof(string));
+        });
         modelBuilder.Entity<UserReportComment>();
         modelBuilder.Entity<UserReportRecipe>();
         modelBuilder.Entity<RecipeTag>().ToCollection("RecipeTag");

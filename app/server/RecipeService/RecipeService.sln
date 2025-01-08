@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeService.Domain", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeService.Infrastructure", "src\RecipeService.Infrastructure\RecipeService.Infrastructure.csproj", "{2FF4AC9D-6F82-41A3-9E8E-A5EB6D64A820}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RecipeWorker", "src\RecipeWorker\RecipeWorker.csproj", "{A93FC849-FF57-462E-B975-A7E39B4214E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{2FF4AC9D-6F82-41A3-9E8E-A5EB6D64A820}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FF4AC9D-6F82-41A3-9E8E-A5EB6D64A820}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FF4AC9D-6F82-41A3-9E8E-A5EB6D64A820}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A93FC849-FF57-462E-B975-A7E39B4214E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A93FC849-FF57-462E-B975-A7E39B4214E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A93FC849-FF57-462E-B975-A7E39B4214E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A93FC849-FF57-462E-B975-A7E39B4214E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{6E97568D-5011-4EB4-AADE-1BCAD80882D1} = {D07F9C94-527B-486B-91D2-002098EF8BD0}
 		{FB3A9CC4-510C-44AD-9D2B-7A6D9BF57C39} = {D07F9C94-527B-486B-91D2-002098EF8BD0}
 		{2FF4AC9D-6F82-41A3-9E8E-A5EB6D64A820} = {D07F9C94-527B-486B-91D2-002098EF8BD0}
+		{A93FC849-FF57-462E-B975-A7E39B4214E7} = {D07F9C94-527B-486B-91D2-002098EF8BD0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C55098AE-9A7C-478B-9C83-06DF949540D2}

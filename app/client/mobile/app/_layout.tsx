@@ -65,6 +65,7 @@ const RootLayout = () => {
                 >
                   <Stack.Screen name='(public)' />
                   <Stack.Screen name='(protected)' />
+                  <Stack.Screen name='(modals)' />
                   <Stack.Screen name='+not-found' />
                 </Stack>
               </SafeAreaProvider>

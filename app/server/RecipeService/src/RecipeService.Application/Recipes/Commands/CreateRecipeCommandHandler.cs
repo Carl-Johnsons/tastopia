@@ -1,4 +1,5 @@
 ﻿using Contract.DTOs;
+using Contract.Event.RecipeEvent;
 using Contract.Event.UploadEvent;
 using Contract.Event.UploadEvent.EventModel;
 using Microsoft.AspNetCore.Http;
@@ -63,24 +64,6 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         List<UploadImageFileEventResponseDTO>? rollBackFiles = null;
 
 
-        //var id = Guid.Parse("057aa844-742a-4952-8162-dbfbd7e493ac");
-        //var recipeColection = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable();
-        //var tagsColection = _context.GetDatabase().GetCollection<Domain.Entities.Tag>(nameof(Domain.Entities.Tag)).AsQueryable();
-
-        //var result = recipeColection.SelectMany(r => r.Comments).ToList();
-
-        //await Console.Out.WriteLineAsync("**************************************************");
-
-        //foreach (var r in result)
-        //{
-        //    await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(r));
-
-        //}
-
-
-
-        //return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
-
         try
         {
             var steps = request.Steps;
@@ -101,6 +84,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
             var recipe = new Recipe();
 
+            recipe.Id = Guid.NewGuid();
             recipe.AuthorId = request.AuthorId;
             recipe.Serves = request.Serves;
             recipe.CookTime = request.CookTime;
@@ -114,6 +98,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             foreach (var step in steps)
             {
                 var s = new Step();
+                s.Id = Guid.NewGuid();
                 s.OrdinalNumber = step.OrdinalNumber;
                 s.Content = step.Content;
                 s.CreatedAt = DateTime.Now;
@@ -135,6 +120,13 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
             _context.Recipes.Add(recipe);
             await _unitOfWork.SaveChangeAsync(cancellationToken);
+
+            await _serviceBus.Publish(new ValidateRecipeEvent
+            {
+                RecipeId = recipe.Id,
+                TagCodes = request.TagCodes!,
+                AdditionTagValues = request.AdditionTagValues!
+            });
 
             return Result<Recipe?>.Success(recipe);
 
@@ -163,6 +155,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         {
             DeleteUrl = listUrls,
         });
+        await Console.Out.WriteLineAsync("***Roll back image success!***");
     }
 
     private Dictionary<string, int> GetImageIndexMap(List<StepDTO> steps)
