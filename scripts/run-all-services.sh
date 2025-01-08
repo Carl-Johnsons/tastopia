@@ -1,4 +1,5 @@
 #!/bin/bash
+trap "kill 0" SIGINT
 
 . ./scripts/lib.sh && check_docker
 

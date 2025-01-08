@@ -1,5 +1,6 @@
 ﻿using MongoDB.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using RecipeService.Domain.Constants;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,6 +19,7 @@ public class Tag : BaseAuditableEntity
     public string Category { get; set; } = null!;
 
     [Required]
+    [JsonConverter(typeof(StringEnumConverter))]
     public TagStatus Status { get; set; } = TagStatus.Active;
 
     [Required]
