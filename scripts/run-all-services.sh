@@ -48,6 +48,8 @@ cd ./scripts
 ./kill-port.sh 5005
 ./kill-port.sh 5006
 ./kill-port.sh 6000
+./kill-port.sh 6001
+
 
 cd "$project_root"
 
@@ -91,7 +93,9 @@ run_service http 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLO
 run_service http 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" & \
 run_service http 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification" & \
 run_service http 5008 "./app/server/TrackingService/src/TrackingService.API" "$LIGHT_YELLOW" "Tracking" & \
-run_service http 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker"
+run_service http 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker" & \
+run_service http 6001 "./app/server/RecipeService/src/RecipeWorker" "$LIGHT_BLUE" "Recipe Worker"
+
 
 
 wait
