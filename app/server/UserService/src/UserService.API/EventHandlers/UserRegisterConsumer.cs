@@ -25,7 +25,7 @@ public sealed class UserRegisterConsumer : IConsumer<UserRegisterEvent>
         var accountId = context.Message.AccountId;
         var defaultAvatar = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png";
         var defaultBackground = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png";
-
+        
         var user = new User
         {
             AccountId = accountId,

@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Contract.Utilities;
+using MongoDB.Driver;
 using RecipeService.Domain.Entities;
 using RecipeService.Infrastructure.Persistence.Mockup.Data;
 using RecipeService.Infrastructure.Utilities;

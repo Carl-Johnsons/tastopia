@@ -1,5 +1,4 @@
-﻿using IdentityModel;
-using IdentityService.Infrastructure.Utilities;
+﻿using Contract.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

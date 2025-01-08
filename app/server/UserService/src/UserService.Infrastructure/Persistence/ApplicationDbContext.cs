@@ -1,8 +1,7 @@
 ﻿using Contract.Common;
+using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserService.Domain.Entities;
-using UserService.Infrastructure.Utilities;
-
 namespace UserService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
@@ -21,8 +20,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserReport> UserReports { get; set; }
     public DbSet<Setting> Settings { get; set; }
     public DbSet<UserSetting> UserSettings { get; set; }
-
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(EnvUtility.GetConnectionString(), option =>

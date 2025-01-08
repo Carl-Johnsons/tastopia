@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Contract.DTOs.UserDTO;
 using Contract.Event.IdentityEvent;
-using Contract.Event.UserEvent;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;

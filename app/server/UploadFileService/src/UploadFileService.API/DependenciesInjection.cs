@@ -1,4 +1,6 @@
-﻿using Serilog;
+﻿using Contract.Utilities;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Serilog;
 using System.Text.Json.Serialization;
 using UploadFileService.API.Middleware;
 using UploadFileService.Application;
@@ -11,10 +13,30 @@ public static class DependenciesInjection
 {
     public static WebApplicationBuilder AddAPIServices(this WebApplicationBuilder builder)
     {
-        UploadFileService.Infrastructure.Utilities.EnvUtility.LoadEnvFile();
+        EnvUtility.LoadEnvFile();
         var services = builder.Services;
         var config = builder.Configuration;
         var host = builder.Host;
+
+        var httpPort = DotNetEnv.Env.GetInt("PORT", 0);
+        var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
+        var certPath = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Path");
+        var certPassword = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Password");
+
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(httpPort, listenOption =>
+            {
+                listenOption.Protocols = HttpProtocols.Http1;
+            });
+
+            options.ListenAnyIP(httpsPort, listenOption =>
+            {
+                listenOption.Protocols = HttpProtocols.Http1AndHttp2;
+                // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
+                listenOption.UseHttps(certPath, certPassword);
+            });
+        });
 
         host.UseSerilog((context, config) =>
         {

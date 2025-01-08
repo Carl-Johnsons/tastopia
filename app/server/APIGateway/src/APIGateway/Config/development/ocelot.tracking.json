@@ -4,11 +4,15 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 7008
+        },
+        {
+          "Host": "localhost",
           "Port": 5008
         }
       ],
       "DownstreamPathTemplate": "/api/tracking/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"

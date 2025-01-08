@@ -1,7 +1,7 @@
+using Contract.Utilities;
 using EmailWorker;
 using EmailWorker.Interfaces;
 using EmailWorker.Services;
-using EmailWorker.Utilities;
 
 EnvUtility.LoadEnvFile();
 

@@ -4,11 +4,15 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 7005
+        },
+        {
+          "Host": "localhost",
           "Port": 5005
         }
       ],
       "DownstreamPathTemplate": "/api/recipe/get-recipe-feed",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -20,11 +24,15 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 7005
+        },
+        {
+          "Host": "localhost",
           "Port": 5005
-        }
+        },
       ],
       "DownstreamPathTemplate": "/api/recipe/search-recipe",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -36,11 +44,15 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 7005
+        },
+        {
+          "Host": "localhost",
           "Port": 5005
         }
       ],
       "DownstreamPathTemplate": "/api/recipe/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"

@@ -4,11 +4,15 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 7001
+        },
+        {
+          "Host": "localhost",
           "Port": 5001
         }
       ],
       "DownstreamPathTemplate": "/connect/userinfo",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -23,11 +27,15 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
+          "Port": 7001
+        },
+        {
+          "Host": "localhost",
           "Port": 5001
-        }
+        },
       ],
       "DownstreamPathTemplate": "/connect/token",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "POST"
       ],
@@ -39,10 +47,14 @@
         {
           "Host": "localhost",
           "Port": 5001
+        },
+        {
+          "Host": "localhost",
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/account/register/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -55,10 +67,14 @@
         {
           "Host": "localhost",
           "Port": 5001
+        },
+        {
+          "Host": "localhost",
+          "Port": 7001
         }
       ],
       "DownstreamPathTemplate": "/api/account/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"

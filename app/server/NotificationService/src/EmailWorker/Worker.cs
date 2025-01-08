@@ -1,6 +1,3 @@
-using Contract.Constants;
-using Contract.Event.NotificationEvent;
-using EmailWorker.Interfaces;
 namespace EmailWorker;
 
 public class Worker : IHostedLifecycleService

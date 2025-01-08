@@ -1,5 +1,4 @@
-﻿
-using Contract.Common;
+﻿using Contract.Common;
 using MassTransit;
 using System.Reflection;
 

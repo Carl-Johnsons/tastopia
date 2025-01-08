@@ -2,8 +2,9 @@ using DuendeIdentityServer;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
 using Serilog;
+using Contract.Utilities;
 
-IdentityService.Infrastructure.Utilities.EnvUtility.LoadEnvFile();
+EnvUtility.LoadEnvFile();
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()

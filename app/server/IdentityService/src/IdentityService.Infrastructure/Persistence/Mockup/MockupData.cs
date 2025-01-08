@@ -105,7 +105,6 @@ internal class MockupData
 
                 Console.WriteLine($"{user.UserName} created");
             }
-            Console.WriteLine($"{user.UserName} already exists");
         }
     }
 }
