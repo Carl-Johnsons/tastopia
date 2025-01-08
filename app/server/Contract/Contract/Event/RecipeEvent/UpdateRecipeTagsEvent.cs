@@ -9,8 +9,8 @@ namespace Contract.Event.RecipeEvent;
 public class UpdateRecipeTagsEvent
 {
     [Required]
-    public Guid RecipeId;
+    public Guid RecipeId { get; set; }
 
     [Required]
-    public List<string> TagCodes = null!; 
+    public List<string> TagCodes { get; set; } = null!; 
 }

@@ -31,7 +31,7 @@ public class UpdateRecipeTagsCommandHandler : IRequestHandler<UpdateRecipeTagsCo
                 return Result.Failure(RecipeError.UpdateRecipeFail);
             }
 
-            var recipe = await _context.Recipes.Where(r => r.Id == recipeId).SingleOrDefaultAsync();
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
             var tags = await _context.Tags.Where(t => tagCodes.Contains(t.Code)).ToListAsync();
 
             if (recipe == null || tags == null || tags.Count == 0)

@@ -62,77 +62,81 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
     public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
     {
         List<UploadImageFileEventResponseDTO>? rollBackFiles = null;
-        await _serviceBus.Publish(new ValidateRecipeEvent
+
+
+        try
         {
-            RecipeId = Guid.Parse("aa626791-ee53-4390-a5a5-94c5b8096f87"),
-            TagCodes = request.TagCodes!,
-            AdditionTagValues = request.AdditionTagValues!
-        });
+            var steps = request.Steps;
+            var imageIndex = GetImageIndexMap(steps);
+            var requestClient = _serviceBus.CreateRequestClient<UploadMultipleImageFileEvent>();
 
-        //try
-        //{
-        //    var steps = request.Steps;
-        //    var imageIndex = GetImageIndexMap(steps);
-        //    var requestClient = _serviceBus.CreateRequestClient<UploadMultipleImageFileEvent>();
+            var response = await requestClient.GetResponse<UploadMultipleImageFileEventResponseDTO>(new UploadMultipleImageFileEvent
+            {
+                FileStreamEvents = GetFileSteamEvent(request.RecipeImage, steps),
+            });
 
-        //    var response = await requestClient.GetResponse<UploadMultipleImageFileEventResponseDTO>(new UploadMultipleImageFileEvent
-        //    {
-        //        FileStreamEvents = GetFileSteamEvent(request.RecipeImage, steps),
-        //    });
+            if (response == null || response.Message.Files.Count != imageIndex.Count)
+            {
+                return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
+            }
 
-        //    if (response == null || response.Message.Files.Count != imageIndex.Count)
-        //    {
-        //        return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
-        //    }
+            rollBackFiles = response.Message.Files;
 
-        //    rollBackFiles = response.Message.Files;
+            var recipe = new Recipe();
 
-        //    var recipe = new Recipe();
+            recipe.Id = Guid.NewGuid();
+            recipe.AuthorId = request.AuthorId;
+            recipe.Serves = request.Serves;
+            recipe.CookTime = request.CookTime;
+            recipe.Title = request.Title;
+            recipe.Ingredients = request.Ingredients;
+            recipe.Description = request.Description;
+            recipe.CreatedAt = DateTime.Now;
+            recipe.ImageUrl = response.Message.Files[imageIndex["RecipeImage"]].Url;
 
-        //    recipe.AuthorId = request.AuthorId;
-        //    recipe.Serves = request.Serves;
-        //    recipe.CookTime = request.CookTime;
-        //    recipe.Title = request.Title;
-        //    recipe.Ingredients = request.Ingredients;
-        //    recipe.Description = request.Description;
-        //    recipe.CreatedAt = DateTime.Now;
-        //    recipe.ImageUrl = response.Message.Files[imageIndex["RecipeImage"]].Url;
+            var listSteps = new List<Step>();
+            foreach (var step in steps)
+            {
+                var s = new Step();
+                s.Id = Guid.NewGuid();
+                s.OrdinalNumber = step.OrdinalNumber;
+                s.Content = step.Content;
+                s.CreatedAt = DateTime.Now;
 
-        //    var listSteps = new List<Step>();
-        //    foreach (var step in steps)
-        //    {
-        //        var s = new Step();
-        //        s.OrdinalNumber = step.OrdinalNumber;
-        //        s.Content = step.Content;
-        //        s.CreatedAt = DateTime.Now;
+                if (step.Images != null && step.Images.Any())
+                {
+                    var listUrl = new List<string>();
+                    for (int i = 0; i < step.Images.Count; i++)
+                    {
+                        listUrl.Add(response.Message.Files[imageIndex[$"Step{step.OrdinalNumber}|{i}"]].Url);
+                    }
 
-        //        if (step.Images != null && step.Images.Any())
-        //        {
-        //            var listUrl = new List<string>();
-        //            for (int i = 0; i < step.Images.Count; i++)
-        //            {
-        //                listUrl.Add(response.Message.Files[imageIndex[$"Step{step.OrdinalNumber}|{i}"]].Url);
-        //            }
+                    s.AttachedImageUrls = listUrl;
+                }
+                listSteps.Add(s);
+            }
 
-        //            s.AttachedImageUrls = listUrl;
-        //        }
-        //        listSteps.Add(s);
-        //    }
+            recipe.Steps = listSteps;
 
-        //    recipe.Steps = listSteps;
+            _context.Recipes.Add(recipe);
+            await _unitOfWork.SaveChangeAsync(cancellationToken);
 
-        //    _context.Recipes.Add(recipe);
-        //    await _unitOfWork.SaveChangeAsync(cancellationToken);
+            await _serviceBus.Publish(new ValidateRecipeEvent
+            {
+                RecipeId = recipe.Id,
+                TagCodes = request.TagCodes!,
+                AdditionTagValues = request.AdditionTagValues!
+            });
 
-        //    return Result<Recipe?>.Success(recipe);
+            return Result<Recipe?>.Success(recipe);
 
 
-        //}
-        //catch (Exception ex)
-        //{
-        //    await RollBackImage(rollBackFiles);
-        //    await Console.Out.WriteLineAsync(ex.Message);
-        //}
+        }
+        catch (Exception ex)
+        {
+            await RollBackImage(rollBackFiles);
+            await Console.Out.WriteLineAsync(ex.Message);
+        }
 
         return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
 

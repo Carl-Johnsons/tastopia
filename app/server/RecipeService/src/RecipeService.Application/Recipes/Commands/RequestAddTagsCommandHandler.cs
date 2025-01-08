@@ -1,5 +1,6 @@
 ﻿
-using MongoDB.Driver.Linq;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 
@@ -33,7 +34,7 @@ public class RequestAddTagsCommandHandler : IRequestHandler<RequestAddTagsComman
                 return Result.Failure(TagError.AddTagFail);
             }
 
-            var recipe = await _context.Recipes.Where(r => r.Id == recipeId).SingleOrDefaultAsync();
+            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipe == null)
             {
@@ -64,7 +65,6 @@ public class RequestAddTagsCommandHandler : IRequestHandler<RequestAddTagsComman
                     TagId = tag.Id
                 });
             }
-
             _context.Tags.AddRange(requestedTags);
             _context.RecipeTags.AddRange(recipeRequestedTags);
             await _unitOfWork.SaveChangeAsync();
@@ -73,6 +73,7 @@ public class RequestAddTagsCommandHandler : IRequestHandler<RequestAddTagsComman
         }
         catch (Exception ex)
         {
+            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented)+ex.StackTrace);
             return Result.Failure(TagError.AddTagFail);
 
         }
