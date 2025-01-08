@@ -208,6 +208,29 @@ services:
           ignore:
             - Contract/
 
+  upload-api:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/upload-api/Dockerfile.${DOCKERFILE_UPLOAD_ENV:-prod}
+    container_name: upload-service
+    ports:
+      - "${UPLOAD_SERVICE_PORT}:80"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/UploadFileService/.env.production
+    develop:
+      watch:
+        - path: ./app/server/UploadFileService/src
+          action: sync
+          target: /src
+          ignore:
+            - Contract/
+
   email-worker:
     build:
       context: .
@@ -220,7 +243,21 @@ services:
       - back-end
     env_file:
       - .env.production
-      - ./app/server/NotificationService/.env
+      - ./app/server/NotificationService/.env.production
+
+  recipe-worker:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/recipe-worker/Dockerfile
+    container_name: recipe-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/RecipeService/.env.production
 
 networks:
   back-end:
