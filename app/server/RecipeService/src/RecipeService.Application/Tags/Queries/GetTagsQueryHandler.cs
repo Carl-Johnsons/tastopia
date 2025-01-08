@@ -51,7 +51,7 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
             return Result<PaginatedTagListResponse>.Failure(TagError.NotFound);
         }
 
-        var tagsQuery = _context.Tags.OrderByDescending(t => t.CreatedAt).AsQueryable();
+        var tagsQuery = _context.Tags.Where(t => t.Status == TagStatus.Active).OrderByDescending(t => t.CreatedAt).AsQueryable();
 
         if (!string.IsNullOrEmpty(category) && category != "ALL")
         {
