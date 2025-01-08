@@ -1,8 +1,7 @@
 import { LoginParams } from "@/api/user";
-import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import Input from "./Input";
 import useBounce from "@/hooks/animation/useBounce";
-import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "@/lib/validation/auth";
@@ -29,11 +28,6 @@ export const LoginForm = (props: LoginFormProps) => {
   });
   const { onSubmit, isLoading } = props;
   const { animate, animatedStyles } = useBounce();
-
-  useEffect(() => {
-    console.log("errors", JSON.stringify(errors, null, 2));
-    
-  }, [errors]);
 
   return (
     <View className={`gap-[2vh] ${props.className}`}>

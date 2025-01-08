@@ -3,9 +3,7 @@ using Contract.Constants;
 using Contract.DTOs.UserDTO;
 using Contract.Event.UserEvent;
 using MassTransit;
-using Newtonsoft.Json;
 using UserService.Application.Users.Commands;
-using UserService.Domain.Entities;
 
 namespace UserService.API.EventHandlers;
 

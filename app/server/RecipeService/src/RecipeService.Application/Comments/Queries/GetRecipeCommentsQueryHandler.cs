@@ -1,3 +1,6 @@
+﻿using AutoMapper;
+using Contract.DTOs.UserDTO;
+using Google.Protobuf.Collections;
 ﻿using Contract.DTOs.UserDTO;
 using Contract.Event.UserEvent;
 using MassTransit.Saga;
@@ -6,6 +9,7 @@ using MongoDB.Driver;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
+using UserProto;
 
 namespace RecipeService.Application.Comments.Queries;
 public class GetRecipeCommentsQuery : IRequest<Result<PaginatedRecipeCommentListResponse?>>
@@ -17,15 +21,16 @@ public class GetRecipeCommentsQuery : IRequest<Result<PaginatedRecipeCommentList
 public class GetRecipeCommentsQueryHandler : IRequestHandler<GetRecipeCommentsQuery, Result<PaginatedRecipeCommentListResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<Comment, AdvancePaginatedMetadata> _paginateDataUtility;
+    private readonly GrpcUser.GrpcUserClient _grpcUserClient;
+    private readonly IMapper _mapper;
 
-
-    public GetRecipeCommentsQueryHandler(IServiceBus serviceBus, IApplicationDbContext context, IPaginateDataUtility<Comment, AdvancePaginatedMetadata> paginateDataUtility)
+    public GetRecipeCommentsQueryHandler(IApplicationDbContext context, IPaginateDataUtility<Comment, AdvancePaginatedMetadata> paginateDataUtility, GrpcUser.GrpcUserClient grpcUserClient, IMapper mapper)
     {
-        _serviceBus = serviceBus;
         _context = context;
         _paginateDataUtility = paginateDataUtility;
+        _grpcUserClient = grpcUserClient;
+        _mapper = mapper;
     }
 
     public async Task<Result<PaginatedRecipeCommentListResponse?>> Handle(GetRecipeCommentsQuery request, CancellationToken cancellationToken)
@@ -76,28 +81,30 @@ public class GetRecipeCommentsQueryHandler : IRequestHandler<GetRecipeCommentsQu
         }
 
         var accountIds = commentQuery
-        .Select(r => r.AccountId)
+        .Select(r => r.AccountId.ToString())
         .Distinct()
         .ToHashSet();
 
-        var requestClient = _serviceBus.CreateRequestClient<GetSimpleUsersEvent>();
-
-        var response = await requestClient.GetResponse<GetSimpleUsersDTO>(new GetSimpleUsersEvent
+        var response = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
         {
-            AccountIds = accountIds,
-        });
+            AccountId = { _mapper.Map<RepeatedField<string>>(accountIds) }
+        }, cancellationToken: cancellationToken);
 
-        if (response == null || response.Message.Users.Count != accountIds.Count)
+        var mapUsers = new Dictionary<Guid, SimpleUser>();
+        foreach (var (key, value) in response.Users)
         {
-            return Result<PaginatedRecipeCommentListResponse>.Failure(RecipeError.NotFound);
+            mapUsers[Guid.Parse(key)] = new SimpleUser
+            {
+                AccountId = Guid.Parse(value.AccountId),
+                AvtUrl = value.AvtUrl,
+                DisplayName = value.DisplayName,
+            };
         }
-
-        var mapUser = response.Message.Users;
 
         foreach (var comment in comments)
         {
-            comment.AvatarUrl = mapUser[comment.AccountId].AvtUrl;
-            comment.DisplayName = mapUser[comment.AccountId].DisplayName;
+            comment.AvatarUrl = mapUsers[comment.AccountId].AvtUrl;
+            comment.DisplayName = mapUsers[comment.AccountId].DisplayName;
         }
 
         var hasNextPage = true;

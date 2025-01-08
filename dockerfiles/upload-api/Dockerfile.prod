@@ -10,22 +10,22 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 # Copy pre-build lib
-COPY ["./data/nuget", "./UploadFileService.API/nuget"]
+COPY ["./data/nuget", "./nuget"]
 
-COPY ["./solutions/UploadFileSolution/src/UploadFileService.API/UploadFileService.API.csproj", "./UploadFileService.API/"]
-COPY ["./solutions/UploadFileSolution/src/UploadFileService.Application/UploadFileService.Application.csproj", "./UploadFileService.Application/"]
-COPY ["./solutions/UploadFileSolution/src/UploadFileService.Domain/UploadFileService.Domain.csproj", "./UploadFileService.Domain/"]
-COPY ["./solutions/UploadFileSolution/src/UploadFileService.Infrastructure/UploadFileService.Infrastructure.csproj", "./UploadFileService.Infrastructure/"]
-COPY ["./solutions/Contract/Contract/bin/Release/net8.0/Contract.dll", "Contract/"]
+COPY ["./app/server/UploadFileService/src/UploadFileService.API/UploadFileService.API.csproj", "./UploadFileService.API/"]
+COPY ["./app/server/UploadFileService/src/UploadFileService.Application/UploadFileService.Application.csproj", "./UploadFileService.Application/"]
+COPY ["./app/server/UploadFileService/src/UploadFileService.Domain/UploadFileService.Domain.csproj", "./UploadFileService.Domain/"]
+COPY ["./app/server/UploadFileService/src/UploadFileService.Infrastructure/UploadFileService.Infrastructure.csproj", "./UploadFileService.Infrastructure/"]
+COPY ["./app/server/Contract/Contract/Published", "Contract/"]
 
-WORKDIR /src/UploadFileService.API
-RUN dotnet restore "./UploadFileService.API.csproj" --packages "./nuget" --verbosity normal
-COPY ["./solutions/UploadFileSolution/src/", "/src/"]
-RUN dotnet build "./UploadFileService.API.csproj" --packages "./nuget" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/UploadFileService.API"
+RUN dotnet restore --packages "../nuget" --verbosity normal
+COPY ["./app/server/UploadFileService/src","/src"]
+RUN dotnet build --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./UploadFileService.API.csproj" --packages "./nuget" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

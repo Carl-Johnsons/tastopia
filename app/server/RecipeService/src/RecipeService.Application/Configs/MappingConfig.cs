@@ -1,6 +1,10 @@
 ﻿using AutoMapper;
+using Contract.DTOs.UserDTO;
+using Google.Protobuf.Collections;
+using RecipeService.Application.Configs.MapperConverters;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
+using UserProto;
 
 namespace RecipeService.Application.Configs;
 
@@ -11,12 +15,27 @@ public class MappingConfig
         var mappingConfig = new MapperConfiguration(config =>
         {
             config.CreateMap<Comment, RecipeCommentResponse>()
-                .ForMember(dest => dest.DisplayName, opt => opt.Ignore())  // Bỏ qua ánh xạ cho DisplayName
-                .ForMember(dest => dest.AvatarUrl, opt => opt.Ignore())   // Bỏ qua ánh xạ cho AvatarUrl
+                .ForMember(dest => dest.DisplayName, opt => opt.Ignore())
+                .ForMember(dest => dest.AvatarUrl, opt => opt.Ignore())
                 .ReverseMap();
+
+            // Grpc mapping
+            config.CreateMap(typeof(List<>), typeof(RepeatedField<>)).ConvertUsing(typeof(ListToRepeatedFieldConverter<,>));
+            config.CreateMap(typeof(RepeatedField<>), typeof(List<>)).ConvertUsing(typeof(RepeatedFieldToListConverter<,>));
+
+            config.CreateMap<GetSimpleUsersDTO, GrpcGetSimpleUsersDTO>()
+                .ForMember(dest => dest.Users,
+                    opt => opt.MapFrom(src => src.Users.ToDictionary(
+                        user => user.Key,
+                        user => new GrpcSimpleUser
+                        {
+                            AccountId = user.Value.AccountId.ToString(),
+                            AvtUrl = user.Value.AvtUrl,
+                            DisplayName = user.Value.DisplayName
+                        }))).ReverseMap();
+
         });
-
-
+        //mappingConfig.AssertConfigurationIsValid();
 
         return mappingConfig;
     }

@@ -8,8 +8,8 @@ using Newtonsoft.Json;
 using AutoMapper;
 using UserService.API.Configs;
 using Microsoft.OpenApi.Models;
-using UserService.Infrastructure.Utilities;
-using UserService.Domain.Interfaces;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Contract.Utilities;
 
 namespace UserService.API;
 
@@ -22,18 +22,37 @@ public static class DependenciesInjection
         var config = builder.Configuration;
         var host = builder.Host;
 
+        var httpPort = DotNetEnv.Env.GetInt("PORT", 0);
+        var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
+        var certPath = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Path");
+        var certPassword = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Password");
+
+        builder.WebHost.ConfigureKestrel(options =>
+        {
+            options.ListenAnyIP(httpPort, listenOption =>
+            {
+                listenOption.Protocols = HttpProtocols.Http1;
+            });
+
+            options.ListenAnyIP(httpsPort, listenOption =>
+            {
+                listenOption.Protocols = HttpProtocols.Http1AndHttp2;
+                // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
+                listenOption.UseHttps(certPath, certPassword);
+            });
+        });
+
         host.UseSerilog((context, config) =>
         {
             config.ReadFrom.Configuration(context.Configuration);
         });
 
-        // Register automapper
         IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
-        services.AddSingleton(mapper);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddApplicationServices();
         services.AddInfrastructureServices(config);
+        services.AddGrpcServices();
 
         services.AddControllers()
             .AddJsonOptions(options =>
@@ -79,12 +98,11 @@ public static class DependenciesInjection
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
-                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:5001").Replace("\"", "");
-                var IdentityServerEndpoint = $"http://{IdentityDNS}";
+                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
+                var IdentityServerEndpoint = $"https://{IdentityDNS}";
                 Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
 
                 options.Authority = IdentityServerEndpoint;
-                options.RequireHttpsMetadata = false;
                 // Clear default Microsoft's JWT claim mapping
                 // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
                 options.MapInboundClaims = false;
@@ -129,22 +147,23 @@ public static class DependenciesInjection
 
         app.MapControllers();
 
+        app.UseGrpcServices();
+
         app.UseGlobalHandlingErrorMiddleware();
 
         app.UseAuthentication();
 
         app.UseAuthorization();
 
-        try
-        {
-            var signalRService = app.Services.GetService<ISignalRService>();
-            await signalRService!.StartConnectionAsync();
-        }
-        catch (Exception ex)
-        {
-            app.Logger.LogError($"Error connecting to SignalR: {ex.Message}");
-        }
+        //try
+        //{
+        //    var signalRService = app.Services.GetService<ISignalRService>();
+        //    await signalRService!.StartConnectionAsync();
+        //}
+        //catch (Exception ex)
+        //{
+        //    app.Logger.LogError($"Error connecting to SignalR: {ex.Message}");
+        //}
         return app;
     }
 }
-

@@ -45,8 +45,7 @@ display
 # Prompt the user for input
 while true; do
     read -p "Enter the index of the script to run: " idx
-    selected_script=$(echo "$scripts" | awk -v idx="$idx" '{ if (NR-1 == idx) print $2 }')
-
+    selected_script=$(echo "$scripts" | awk -v idx="$idx" 'NR-1 == idx { sub(/^[^:]+: /, ""); print }')
     if [ -n "$selected_script" ]; then
         echo -e "${LIGHT_BLUE}Executing script: $selected_script${NC}"
         ($selected_script)

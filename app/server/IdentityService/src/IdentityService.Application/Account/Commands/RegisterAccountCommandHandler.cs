@@ -1,4 +1,5 @@
 ﻿using Contract.Constants;
+using Contract.Utilities;
 using IdentityModel.Client;
 using IdentityService.Domain.Common;
 using IdentityService.Infrastructure.Utilities;
@@ -149,11 +150,15 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
     // User name can be username or email or password
     private async Task<TokenResponse> RequestTokenAsync(string username, string password)
     {
+        EnvUtility.LoadEnvFile();
         var client = new HttpClient();
-        var baseUrl = $"http://{DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "Not Found")}";
+        var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
+        var IdentityServerEndpoint = $"https://{IdentityDNS}";
+
+        Console.WriteLine(IdentityServerEndpoint);
         var discovery = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
         {
-            Address = baseUrl,
+            Address = IdentityServerEndpoint,
             Policy = new DiscoveryPolicy
             {
                 RequireHttps = false

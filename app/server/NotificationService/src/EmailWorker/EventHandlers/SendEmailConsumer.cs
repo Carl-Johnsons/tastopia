@@ -4,7 +4,7 @@ using Contract.Event.NotificationEvent;
 using EmailWorker.Interfaces;
 using MassTransit;
 
-namespace NotificationService.API.EventHandlers;
+namespace EmailWorker.EventHandlers;
 
 [QueueName(RabbitMQConstant.QUEUE.NAME.SEND_EMAIL,
     exchangeName: RabbitMQConstant.EXCHANGE.NAME.SEND_EMAIL)]

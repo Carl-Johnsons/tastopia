@@ -5,9 +5,16 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Protos\User\**" />
+	  <EmbeddedResource Remove="Protos\User\**" />
+	  <None Remove="Protos\User\**" />
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="MassTransit" Version="8.2.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+		<PackageReference Include="DotNetEnv" Version="3.0.0" />
 	</ItemGroup>
 </Project>

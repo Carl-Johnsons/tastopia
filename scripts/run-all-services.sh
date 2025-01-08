@@ -47,9 +47,10 @@ cd ./scripts
 ./kill-port.sh 5004
 ./kill-port.sh 5005
 ./kill-port.sh 5006
+./kill-port.sh 5007
+./kill-port.sh 5008
 ./kill-port.sh 6000
 ./kill-port.sh 6001
-
 
 cd "$project_root"
 
@@ -63,16 +64,21 @@ fi
 
 docker compose up -d postgres rabbitmq mongo
 
+CertPath=$HOME$ASPNETCORE_Kestrel__Certificates__Default__Path
+echo "SSL certification is on '$CertPath'"
+
 run_service() {
-        local scheme=$1
-        local port=$2
-        local project=$3
-        local color=$4
-        local name=$5
+    local http_port=$1
+    local project=$2
+    local color=$3
+    local name=$4
+
 
     env NUGET_PACKAGES="$project_root/data/nuget" \
         ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
-        ASPNETCORE_URLS="$scheme://0.0.0.0:$port" \
+        PORT="$http_port" \
+        ASPNETCORE_Kestrel__Certificates__Default__Path=$CertPath \
+        ASPNETCORE_Kestrel__Certificates__Default__Password=$ASPNETCORE_Kestrel__Certificates__Default__Password \
         dotnet watch run --non-interactive \
         --no-launch-profile \
         --project "$project" \
@@ -85,17 +91,16 @@ run_service() {
 }
 
 # Run each service
-run_service http 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" & \ 
-run_service http 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" & \
-run_service http 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" & \
-run_service http 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" & \
-run_service http 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
-run_service http 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" & \
-run_service http 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification" & \
-run_service http 5008 "./app/server/TrackingService/src/TrackingService.API" "$LIGHT_YELLOW" "Tracking" & \
-run_service http 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker" & \
-run_service http 6001 "./app/server/RecipeService/src/RecipeWorker" "$LIGHT_BLUE" "Recipe Worker"
-
-
+run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" & \ 
+run_service 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" & \
+run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" & \
+run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" & \
+run_service 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
+run_service 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" & \
+run_service 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification" & \
+run_service 5007 "./app/server/SubscriptionService/src/SubscriptionService.API" "$DEBUG" "Subscription" & \
+run_service 5008 "./app/server/TrackingService/src/TrackingService.API" "$LIGHT_YELLOW" "Tracking" & \
+run_service 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker"
+run_service 6001 "./app/server/RecipeService/src/RecipeWorker" "$LIGHT_BLUE" "Recipe Worker"
 
 wait

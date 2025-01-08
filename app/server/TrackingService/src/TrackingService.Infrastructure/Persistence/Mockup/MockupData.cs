@@ -1,6 +1,5 @@
-﻿using MongoDB.Driver;
-using TrackingService.Domain.Interfaces;
-using TrackingService.Infrastructure.Utilities;
+﻿using Contract.Utilities;
+using MongoDB.Driver;
 
 namespace TrackingService.Infrastructure.Persistence.Mockup;
 
@@ -35,7 +34,4 @@ internal class MockupData
             Console.WriteLine($"Database '{db}' does not exist. It will be created when data is inserted.");
         }
     }
-
-    
-
 }

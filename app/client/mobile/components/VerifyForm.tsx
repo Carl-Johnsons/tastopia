@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ActivityIndicator, Alert, Platform, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, Alert, Text, TextInput, View } from "react-native";
 import { AuthFormProps } from "./LoginForm";
 import {
   useAnimatedStyle,
@@ -10,9 +10,11 @@ import {
 
 import Input from "./Input";
 import Button from "./Button";
-import { VerifyParams } from "@/api/user";
-import { selectAccessToken } from "@/slices/auth.slice";
+import { IDENTIFIER_TYPE, VerifyParams } from "@/api/user";
+import { selectVerifyIdentifier } from "@/slices/auth.slice";
 import { verifySchema } from "@/lib/validation/auth";
+import { ValidationError } from "yup";
+import { getIdentifierType } from "@/utils/checker";
 
 type VerifyFormProps = {
   onSubmit: (data: VerifyParams) => Promise<void>;
@@ -22,7 +24,8 @@ type VerifyFormFields = Array<string>;
 
 export const VerifyForm = (props: VerifyFormProps) => {
   const { onSubmit, isLoading } = props;
-  const accessToken = selectAccessToken();
+  const identifier = selectVerifyIdentifier() as string;
+  const type = getIdentifierType(identifier) as IDENTIFIER_TYPE;
   const [formValues, setFormValues] = useState<VerifyFormFields>([
     "",
     "",
@@ -46,17 +49,17 @@ export const VerifyForm = (props: VerifyFormProps) => {
     opacity: buttonOpacity.value
   }));
 
-  const sendCode = () => {
-    const OTP = formValues.join("").toString();
+  const sendCode = async () => {
+    const OTP = formValues.join("").toString().trim();
 
-    verifySchema.validate(OTP).catch(reason => {
-      return Alert.alert("Error", reason);
-    });
-
-    const data: VerifyParams = {
-      OTP
-    };
-    onSubmit(data);
+    try {
+      await verifySchema.validate({ OTP });
+      await onSubmit({ OTP, type });
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        Alert.alert("Error", error.message);
+      }
+    }
   };
 
   const handleTextChange = (value: string, index: number) => {
