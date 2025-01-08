@@ -1,19 +1,24 @@
 ﻿using AutoMapper;
 using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
+﻿using Contract.DTOs.UserDTO;
+using Contract.Event.UserEvent;
+using MassTransit.Saga;
+using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using UserProto;
 
-namespace RecipeService.Application.Comments;
-public class GetRecipeCommentsCommand : IRequest<Result<PaginatedRecipeCommentListResponse?>>
+namespace RecipeService.Application.Comments.Queries;
+public class GetRecipeCommentsQuery : IRequest<Result<PaginatedRecipeCommentListResponse?>>
 {
     public Guid? RecipeId { get; init; }
     public int? Skip { get; init; }
 }
 
-public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeCommentsCommand, Result<PaginatedRecipeCommentListResponse?>>
+public class GetRecipeCommentsQueryHandler : IRequestHandler<GetRecipeCommentsQuery, Result<PaginatedRecipeCommentListResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaginateDataUtility<Comment, AdvancePaginatedMetadata> _paginateDataUtility;
@@ -30,7 +35,7 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
         _mapper = mapper;
     }
 
-    public async Task<Result<PaginatedRecipeCommentListResponse?>> Handle(GetRecipeCommentsCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedRecipeCommentListResponse?>> Handle(GetRecipeCommentsQuery request, CancellationToken cancellationToken)
     {
         var recipeId = request.RecipeId;
         var skip = request.Skip;
@@ -40,28 +45,20 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
             return Result<PaginatedRecipeCommentListResponse?>.Failure(RecipeError.NotFound);
         }
 
-        var recipe = _context.Recipes.Where(r => r.Id == recipeId).FirstOrDefault();
+        var commentQuery = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable()
+                            .Where(r => r.Id == recipeId).SelectMany(r => r.Comments);
 
-        if (recipe == null || recipe.Comments.Count == 0)
+
+        var totalPage = (commentQuery.Count() + RECIPE_CONSTANTS.COMMENT_LIMIT - 1) / RECIPE_CONSTANTS.COMMENT_LIMIT;
+
+        commentQuery = _paginateDataUtility.PaginateQuery(commentQuery, new PaginateParam
         {
-            return Result<PaginatedRecipeCommentListResponse?>.Success(new PaginatedRecipeCommentListResponse
-            {
-                PaginatedData = [],
-                Metadata = new AdvancePaginatedMetadata
-                {
-                    HasNextPage = false,
-                    TotalPage = 0
-                }
-            });
-        }
-        var recipeComments = recipe.Comments;
-
-        var totalPage = (recipeComments.Count + RECIPE_CONSTANTS.COMMENT_LIMIT - 1) / RECIPE_CONSTANTS.COMMENT_LIMIT;
-
-        recipeComments = recipeComments.Skip((skip ?? 0) * RECIPE_CONSTANTS.COMMENT_LIMIT).Take(RECIPE_CONSTANTS.COMMENT_LIMIT).ToList();
+            Offset = (skip ?? 0) * RECIPE_CONSTANTS.COMMENT_LIMIT,
+            Limit = RECIPE_CONSTANTS.COMMENT_LIMIT
+        });
 
 
-        var comments = recipeComments.Select(c => new RecipeCommentResponse
+        var comments = commentQuery.Select(c => new RecipeCommentResponse
         {
             Id = c.Id,
             AccountId = c.AccountId,
@@ -85,10 +82,10 @@ public class GetRecipeCommentsCommandHandler : IRequestHandler<GetRecipeComments
             });
         }
 
-        var accountIds = recipeComments
-            .Select(r => r.AccountId.ToString())
-            .Distinct()
-            .ToList();
+        var accountIds = commentQuery
+        .Select(r => r.AccountId.ToString())
+        .Distinct()
+        .ToHashSet();
 
         var response = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
         {

@@ -3,7 +3,7 @@ using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
 
-namespace RecipeService.Application.Recipes;
+namespace RecipeService.Application.Recipes.Commands;
 
 public class VoteRecipeCommand : IRequest<Result>
 {
@@ -60,8 +60,8 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
             }
             else
             {
-                var delta = recipeVote.IsUpvote ? (isUpvote.Value ? -1 : -2) : (isUpvote.Value ? 2 : 1);
-                if(recipeVote.IsUpvote == isUpvote.Value)
+                var delta = recipeVote.IsUpvote ? isUpvote.Value ? -1 : -2 : isUpvote.Value ? 2 : 1;
+                if (recipeVote.IsUpvote == isUpvote.Value)
                 {
                     recipe.RecipeVotes.Remove(recipeVote);
 
@@ -77,7 +77,8 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
             return Result.Success();
 
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             throw new Exception(ex.Message, ex);
         }
     }

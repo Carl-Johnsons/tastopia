@@ -4,7 +4,8 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   ActivityIndicator,
-  ScrollView
+  ScrollView,
+  RefreshControl
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { globalStyles } from "@/components/common/GlobalStyles";
@@ -14,11 +15,13 @@ import BackButton from "@/components/BackButton";
 import Vote from "@/components/common/Vote";
 import { Entypo, Feather } from "@expo/vector-icons";
 import Bookmark from "@/components/common/Bookmark";
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Ingredient from "@/components/screen/community/Ingredient";
 import Step from "@/components/screen/community/Step";
 import { useGetRecipeComment } from "@/api/comment";
 import Comment from "@/components/screen/community/Comment";
+import Button from "@/components/Button";
+import AddCommentSection from "@/components/common/AddCommentSection";
 
 const RecipeDetail = () => {
   const router = useRouter();
@@ -42,18 +45,54 @@ const RecipeDetail = () => {
     refetch: refetchGetRecipeComment,
     isRefetching: isRefetchingGetRecipeComment
   } = useGetRecipeComment(id);
-  const comments = useMemo(() => {
-    return commentData?.pages.flatMap(page => page.paginatedData) ?? [];
-  }, [commentData]);
+
+  const [comments, setComments] = useState(
+    commentData?.pages.flatMap(page => page.paginatedData) ?? []
+  );
 
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
+  const handleRefresh = () => {
+    refetchRecipeDetail();
+    refetchGetRecipeComment();
+  };
   const handleTouchMenu = () => {};
   const handleOpenCookMode = () => {};
   const handleTouchUser = () => {};
   const handleToggleBookmark = () => {
     setIsBookmarked(prev => !prev);
   };
+
+  const handleLoadMoreComment = useCallback(() => {
+    if (!isFetchingNextPage && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [isFetchingNextPage, hasNextPage, fetchNextPage]);
+
+  const setParentState = useCallback((comment: CommentType) => {
+    setComments(prev => [comment, ...prev]);
+  }, []);
+
+  useEffect(() => {
+    if (commentData?.pages) {
+      const allComments = commentData.pages.flatMap(page => page.paginatedData);
+      const uniqueComments = Array.from(
+        new Map(allComments.map(comment => [comment.id, comment])).values()
+      );
+      setComments(uniqueComments);
+    }
+  }, [commentData]);
+
+  if (isLoadingRecipeDetail || isLoadingGetRecipeComment) {
+    return (
+      <View className='flex-1 items-center justify-center'>
+        <ActivityIndicator
+          size='large'
+          color={globalStyles.color.primary}
+        />
+      </View>
+    );
+  }
   return (
     <SafeAreaView
       style={{
@@ -62,7 +101,15 @@ const RecipeDetail = () => {
       }}
     >
       {!isLoadingRecipeDetail && !isRefetchingRecipeDetail && recipeDetailData ? (
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetchingGetRecipeComment || isRefetchingRecipeDetail}
+              onRefresh={handleRefresh}
+              colors={[globalStyles.color.primary]}
+            />
+          }
+        >
           <View className='px-4'>
             <Suspense
               fallback={
@@ -202,13 +249,18 @@ const RecipeDetail = () => {
 
                   <View className='h-[1px] w-full bg-primary'></View>
 
-                  <View className='gap-4'>
+                  <View className='justify-center gap-4'>
                     <Text className='base-semibold'>Comments</Text>
+                    <AddCommentSection
+                      recipeId={id}
+                      setParentState={setParentState}
+                    />
                     <View className='gap-4'>
                       {comments.map(comment => {
                         return (
                           comment.isActive && (
                             <Comment
+                              key={comment.id}
                               avatarUrl={comment.avatarUrl}
                               displayName={comment.displayName}
                               content={comment.content}
@@ -217,6 +269,27 @@ const RecipeDetail = () => {
                         );
                       })}
                     </View>
+
+                    {hasNextPage && (
+                      <View className='flex-center'>
+                        <Button
+                          onPress={handleLoadMoreComment}
+                          className='w-[180px] rounded-full bg-primary px-1 py-2 text-white'
+                          isLoading={isLoadingGetRecipeComment || isFetchingNextPage}
+                          disabled={isLoadingGetRecipeComment || isFetchingNextPage}
+                          spinner={
+                            <ActivityIndicator
+                              animating={isLoadingGetRecipeComment}
+                              color={"white"}
+                            />
+                          }
+                        >
+                          <Text className='text-white_black body-semibold text-center'>
+                            Load more comments
+                          </Text>
+                        </Button>
+                      </View>
+                    )}
                   </View>
                 </View>
               </View>

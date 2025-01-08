@@ -33,6 +33,12 @@ namespace RecipeService.API.DTOs
         [Required]
         [JsonProperty("steps")]
         public List<StepDTO> Steps { get; set; } = null!;
+
+        [JsonProperty("tagCodes")]
+        public List<string>? TagCodes { get; set; }
+
+        [JsonProperty("additionTagValues")]
+        public List<string>? AdditionTagValues { get; set; }
     }
 
     public class StepDTO

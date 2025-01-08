@@ -41,13 +41,12 @@ public class Recipe : BaseAuditableEntity
     [BsonElement("Steps")]
     public List<Step> Steps { get; set; } = [];
 
-    [BsonElement("Comments")]
     public List<Comment> Comments { get; set; } = [];
 
     [BsonElement("RecipeVotes")]
     public List<RecipeVote> RecipeVotes { get; set; } = [];
     //many to many
-    public virtual List<RecipeTag>? RecipeTags { get; set; }
+    public virtual List<RecipeTag> RecipeTags { get; set; } = [];
 
 
 }

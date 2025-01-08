@@ -8,34 +8,34 @@ using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
 
-namespace RecipeService.Application.Recipes;
+namespace RecipeService.Application.Recipes.Queries;
 
-public class GetRecipeFeedsCommand : IRequest<Result<PaginatedRecipeFeedsListResponse?>>
+public class GetRecipeFeedsQuery : IRequest<Result<PaginatedRecipeFeedsListResponse?>>
 {
     [Required]
-    public int? Skip {  get; init; }
+    public int? Skip { get; init; }
 
     [Required]
     public List<string>? TagValues { get; init; }
 
     [Required]
-    public Guid? AccountId { get; init;}
+    public Guid? AccountId { get; init; }
 }
 
-public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsCommand, Result<PaginatedRecipeFeedsListResponse?>>
+public class GetRecipeFeedsQueryHandler : IRequestHandler<GetRecipeFeedsQuery, Result<PaginatedRecipeFeedsListResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public GetRecipeFeedsCommandHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility)
+    public GetRecipeFeedsQueryHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
         _serviceBus = serviceBus;
         _paginateDataUtility = paginateDataUtility;
     }
 
-    public  async Task<Result<PaginatedRecipeFeedsListResponse?>> Handle(GetRecipeFeedsCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedRecipeFeedsListResponse?>> Handle(GetRecipeFeedsQuery request, CancellationToken cancellationToken)
     {
         var tagValues = request.TagValues;
         var skip = request.Skip;
@@ -124,7 +124,7 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
 
         var mapUser = response.Message.Users;
 
-        foreach(var recipe in recipeList)
+        foreach (var recipe in recipeList)
         {
             recipe.AuthorDisplayName = mapUser[recipe.AuthorId].DisplayName;
             recipe.AuthorAvtUrl = mapUser[recipe.AuthorId].AvtUrl;
@@ -132,7 +132,7 @@ public class GetRecipeFeedsCommandHandler : IRequestHandler<GetRecipeFeedsComman
 
         var hasNextPage = true;
 
-        if(skip >= totalPage - 1)
+        if (skip >= totalPage - 1)
         {
             hasNextPage = false;
         }

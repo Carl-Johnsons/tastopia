@@ -1,52 +1,50 @@
 ﻿using Contract.DTOs;
+using Contract.Event.RecipeEvent;
 using Contract.Event.UploadEvent;
 using Contract.Event.UploadEvent.EventModel;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
 
-namespace RecipeService.Application.Recipes;
 
-    public record CreateRecipeCommand : IRequest<Result<Recipe?>>
-    {
-        [Required]
-        public Guid AuthorId { get; set; }
+namespace RecipeService.Application.Recipes.Commands;
 
-        [Required]
-        public IFormFile RecipeImage { get; init; } = null!;
+public record CreateRecipeCommand : IRequest<Result<Recipe?>>
+{
+    public Guid AuthorId { get; set; }
 
-        [Required]
-        [MaxLength(50)]
-        public string Title { get; init; } = null!;
+    public IFormFile RecipeImage { get; init; } = null!;
 
-        [Required]
-        [MaxLength(500)]
-        public string Description { get; init; } = null!;
+    public string Title { get; init; } = null!;
 
-        public int? Serves { get; init; }
+    public string Description { get; init; } = null!;
 
-        public string? CookTime { get; init; }
+    public int? Serves { get; init; }
 
-        [Required]
-        public List<string> Ingredients { get; init; } = null!;
+    public string? CookTime { get; init; }
 
-        [Required]
-        [JsonProperty("steps")]
-        public List<StepDTO> Steps { get; init; } = null!;
-    }
+    public List<string> Ingredients { get; init; } = null!;
 
-    public class StepDTO
-    {
-        [Required]
-        public int OrdinalNumber { get; init; }
+    public List<StepDTO> Steps { get; init; } = null!;
 
-        [Required]
-        [MaxLength(500)]
-        public string Content { get; init; } = null!;
-        public List<IFormFile>? Images { get; init; } = null!;
-    }
+    public List<string>? TagCodes { get; set; }
+
+    public List<string>? AdditionTagValues { get; set; }
+}
+
+public class StepDTO
+{
+    [Required]
+    public int OrdinalNumber { get; init; }
+
+    [Required]
+    [MaxLength(500)]
+    public string Content { get; init; } = null!;
+    public List<IFormFile>? Images { get; init; } = null!;
+}
 
 public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, Result<Recipe?>>
 {
@@ -63,8 +61,11 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
     public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
     {
-        List <UploadImageFileEventResponseDTO>? rollBackFiles = null;
-        try {
+        List<UploadImageFileEventResponseDTO>? rollBackFiles = null;
+
+
+        try
+        {
             var steps = request.Steps;
             var imageIndex = GetImageIndexMap(steps);
             var requestClient = _serviceBus.CreateRequestClient<UploadMultipleImageFileEvent>();
@@ -83,6 +84,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
             var recipe = new Recipe();
 
+            recipe.Id = Guid.NewGuid();
             recipe.AuthorId = request.AuthorId;
             recipe.Serves = request.Serves;
             recipe.CookTime = request.CookTime;
@@ -96,6 +98,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             foreach (var step in steps)
             {
                 var s = new Step();
+                s.Id = Guid.NewGuid();
                 s.OrdinalNumber = step.OrdinalNumber;
                 s.Content = step.Content;
                 s.CreatedAt = DateTime.Now;
@@ -117,6 +120,13 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
             _context.Recipes.Add(recipe);
             await _unitOfWork.SaveChangeAsync(cancellationToken);
+
+            await _serviceBus.Publish(new ValidateRecipeEvent
+            {
+                RecipeId = recipe.Id,
+                TagCodes = request.TagCodes!,
+                AdditionTagValues = request.AdditionTagValues!
+            });
 
             return Result<Recipe?>.Success(recipe);
 
@@ -145,6 +155,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         {
             DeleteUrl = listUrls,
         });
+        await Console.Out.WriteLineAsync("***Roll back image success!***");
     }
 
     private Dictionary<string, int> GetImageIndexMap(List<StepDTO> steps)
@@ -153,18 +164,18 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         map.Add("RecipeImage", 0);
         int size = 1;
 
-        foreach(var step in steps)
+        foreach (var step in steps)
         {
             if (step.Images != null && step.Images.Any())
             {
-                for(int i = 0; i < step.Images.Count; i++)
+                for (int i = 0; i < step.Images.Count; i++)
                 {
                     map.Add($"Step{step.OrdinalNumber}|{i}", size);
                     size++;
                 }
             }
         }
-     
+
         return map;
     }
 
@@ -179,7 +190,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             Stream = new BinaryReader(recipeImage.OpenReadStream()).ReadBytes((int)recipeImage.Length)
         });
 
-        foreach(var step in steps)
+        foreach (var step in steps)
         {
             if (step.Images != null && step.Images.Any())
             {

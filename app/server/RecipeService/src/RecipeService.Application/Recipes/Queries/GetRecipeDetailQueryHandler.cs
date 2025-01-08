@@ -6,26 +6,26 @@ using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
 
-namespace RecipeService.Application.Recipes;
+namespace RecipeService.Application.Recipes.Queries;
 
-public class GetRecipeDetailCommand : IRequest<Result<RecipeDetailsResponse?>>
+public class GetRecipeDetailQuery : IRequest<Result<RecipeDetailsResponse?>>
 {
     [Required]
     public Guid RecipeId { get; init; }
 }
 
-public class GetRecipeDetailCommandHandler : IRequestHandler<GetRecipeDetailCommand, Result<RecipeDetailsResponse?>>
+public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery, Result<RecipeDetailsResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IServiceBus _serviceBus;
 
-    public GetRecipeDetailCommandHandler(IApplicationDbContext context, IServiceBus serviceBus)
+    public GetRecipeDetailQueryHandler(IApplicationDbContext context, IServiceBus serviceBus)
     {
         _context = context;
         _serviceBus = serviceBus;
     }
 
-    public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailCommand request, CancellationToken cancellationToken)
+    public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailQuery request, CancellationToken cancellationToken)
     {
         var recipe = await _context.Recipes
         .FirstOrDefaultAsync(r => r.Id == request.RecipeId);

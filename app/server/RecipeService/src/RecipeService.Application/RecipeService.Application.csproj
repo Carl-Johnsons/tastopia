@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -24,5 +23,9 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Protobuf Include="..\..\..\Contract\Contract\Protos\UserService.proto" Link="Protos\UserService.proto" GrpcServices="Client" />
+	</ItemGroup>
+
+	<ItemGroup>
+	    <Folder Include="Tags\Commands\" />
 	</ItemGroup>
 </Project>

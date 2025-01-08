@@ -4,12 +4,12 @@ using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
 
-namespace RecipeService.Application.Tags;
+namespace RecipeService.Application.Tags.Queries;
 
-public class GetTagsCommand : IRequest<Result<PaginatedTagListResponse?>>
+public class GetTagsQuery : IRequest<Result<PaginatedTagListResponse?>>
 {
     [Required]
-    public int? Skip {  get; init; }
+    public int? Skip { get; init; }
 
     [Required]
     public string? Keyword { get; init; }
@@ -21,25 +21,26 @@ public class GetTagsCommand : IRequest<Result<PaginatedTagListResponse?>>
     public string Category { get; init; } = null!;
 }
 
-public class GetTagsCommandHandler : IRequestHandler<GetTagsCommand, Result<PaginatedTagListResponse?>>
+public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<PaginatedTagListResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaginateDataUtility<Tag, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public GetTagsCommandHandler(IApplicationDbContext context, IPaginateDataUtility<Tag, AdvancePaginatedMetadata> paginateDataUtility)
+    public GetTagsQueryHandler(IApplicationDbContext context, IPaginateDataUtility<Tag, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;
     }
 
-    public  async Task<Result<PaginatedTagListResponse?>> Handle(GetTagsCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedTagListResponse?>> Handle(GetTagsQuery request, CancellationToken cancellationToken)
     {
         var tagCodes = request.TagCodes;
         var keyword = request.Keyword;
         var category = request.Category;
         var skip = request.Skip;
 
-        if(skip == null || tagCodes == null || !tagCodes.Any() || category == null) {
+        if (skip == null || tagCodes == null || !tagCodes.Any() || category == null)
+        {
             return Result<PaginatedTagListResponse?>.Failure(TagError.NotFound);
         }
 
@@ -52,17 +53,17 @@ public class GetTagsCommandHandler : IRequestHandler<GetTagsCommand, Result<Pagi
 
         var tagsQuery = _context.Tags.OrderByDescending(t => t.CreatedAt).AsQueryable();
 
-        if(!string.IsNullOrEmpty(category) && category != "ALL")
+        if (!string.IsNullOrEmpty(category) && category != "ALL")
         {
             tagsQuery = tagsQuery.Where(t => t.Category == category);
         }
 
-        if(!tagCodes.Contains("ALL"))
+        if (!tagCodes.Contains("ALL"))
         {
             tagsQuery = tagsQuery.Where(t => tagCodes.Any(tagCode => t.Code == tagCode));
         }
 
-        if(!string.IsNullOrEmpty(keyword))
+        if (!string.IsNullOrEmpty(keyword))
         {
             tagsQuery = tagsQuery.Where(t => t.Value.ToLower().Contains(keyword.ToLower()));
         }
@@ -92,7 +93,7 @@ public class GetTagsCommandHandler : IRequestHandler<GetTagsCommand, Result<Pagi
         }
 
         var hasNextPage = true;
-        if(skip >= totalPage - 1)
+        if (skip >= totalPage - 1)
         {
             hasNextPage = false;
         }

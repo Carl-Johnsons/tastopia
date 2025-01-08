@@ -50,6 +50,7 @@ cd ./scripts
 ./kill-port.sh 5007
 ./kill-port.sh 5008
 ./kill-port.sh 6000
+./kill-port.sh 6001
 
 cd "$project_root"
 
@@ -100,5 +101,6 @@ run_service 5006 "./app/server/NotificationService/src/NotificationService.API" 
 run_service 5007 "./app/server/SubscriptionService/src/SubscriptionService.API" "$DEBUG" "Subscription" & \
 run_service 5008 "./app/server/TrackingService/src/TrackingService.API" "$LIGHT_YELLOW" "Tracking" & \
 run_service 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker"
+run_service 6001 "./app/server/RecipeService/src/RecipeWorker" "$LIGHT_BLUE" "Recipe Worker"
 
 wait

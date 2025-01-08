@@ -21,6 +21,7 @@ internal class MockupData
         await EnsureDatabaseIsReady();
         await SeedRecipes();
         await SeedTags();
+        await SeedRecipeTags();
     }
     private async Task EnsureDatabaseIsReady()
     {
@@ -50,20 +51,28 @@ internal class MockupData
 
             foreach (var recipe in RecipeData.Recipes)
             {
+                //add author
                 int randomIndex = random.Next(RecipeData.Authors.Count);
                 recipe.AuthorId = RecipeData.Authors[randomIndex];
 
+                //add id for step
                 foreach(var step in recipe.Steps)
                 {
                     step.Id = Guid.NewGuid();
                 }
 
-                foreach(var comment in recipe.Comments)
+                //add comment
+                int numberOfComment = random.Next(35);
+                for(int i = 0; i <= numberOfComment; i++)
                 {
-                    comment.Id = Guid.NewGuid();
+                    var randomIndexAccount = GetRandomExcluding(RecipeData.Authors.Count, randomIndex);
+                    var comment = CommentData.GetRandomComment();
+                    comment.AccountId = RecipeData.Authors[randomIndexAccount];
+                    recipe.Comments.Add(comment);
                 }
                 recipe.NumberOfComment = recipe.Comments.Count;
 
+                //add vote
                 var numberOfVote = random.Next(RecipeData.Authors.Count);
                 recipe.VoteDiff = numberOfVote;
                 for (int i = 0; i < numberOfVote; i++)
@@ -100,6 +109,33 @@ internal class MockupData
             await _unitOfWork.SaveChangeAsync();
             Console.WriteLine("===================================================================================");
         }
+    }
+
+    public async Task SeedRecipeTags()
+    {
+        if (!_context.RecipeTags.Any())
+        {
+            Console.WriteLine("Begin seed recipe tag");
+            Console.WriteLine("===================================================================================");
+            foreach (var recipeTag in RecipeTagData.Data)
+            {
+                _context.RecipeTags.Add(recipeTag);
+            }
+            await _unitOfWork.SaveChangeAsync();
+            Console.WriteLine("===================================================================================");
+        }
+    }
+
+    public static int GetRandomExcluding(int range, int exclude)
+    {
+        Random random = new Random();
+        int result;
+        do
+        {
+            result = random.Next(range);
+        } while (result == exclude);
+
+        return result;
     }
 
 }
