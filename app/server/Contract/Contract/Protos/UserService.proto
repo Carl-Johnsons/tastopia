@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 package UserProto;
 
@@ -35,15 +36,15 @@ message GrpcUserDetailDTO {
     string AvatarUrl = 3;
     string BackgroundUrl = 4;
     google.protobuf.Timestamp Dob = 5; // DateTime <=> Timestamp
-    string Gender = 6;
-    string Bio = 7;
-    string Address = 8;
-    int32 TotalFollower = 9;
-    int32 TotalFollowing = 10;
-    int32 TotalRecipe = 11;
+    google.protobuf.StringValue Gender = 6;
+    google.protobuf.StringValue Bio = 7;
+    google.protobuf.StringValue Address = 8;
+    google.protobuf.Int32Value TotalFollower = 9;
+    google.protobuf.Int32Value TotalFollowing = 10;
+    google.protobuf.Int32Value TotalRecipe = 11;
     bool IsAccountActive = 12;
     string AccountUsername = 13;
     bool IsAdmin = 14;
-    string AccountEmail = 15;
-    string AccountPhoneNumber = 16;
+    google.protobuf.StringValue AccountEmail = 15;
+    google.protobuf.StringValue AccountPhoneNumber = 16;
 }

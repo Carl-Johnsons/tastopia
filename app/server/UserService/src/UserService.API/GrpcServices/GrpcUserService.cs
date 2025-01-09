@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Newtonsoft.Json;
 using UserProto;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
+using UserService.Domain.Responses;
 
 namespace UserService.API.GrpcServices;
 
@@ -75,8 +77,28 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         });
         response.ThrowIfFailure();
 
-        var grpcResponse = _mapper.Map<GrpcUserDetailDTO>(response.Value);
+        GetUserDetailsResponse user = response.Value!;
 
+        // TODO: Change this to automapper
+        var grpcResponse = new GrpcUserDetailDTO
+        {
+            AccountEmail = user.AccountEmail,
+            AccountId = user.AccountId.ToString(),
+            AccountPhoneNumber = user.AccountPhoneNumber,
+            AccountUsername = user.AccountUsername,
+            Address = user.Address,
+            AvatarUrl = user.AvatarUrl,
+            BackgroundUrl = user.BackgroundUrl,
+            Bio = user.Bio,
+            DisplayName = user.DisplayName,
+            Dob = user.Dob.HasValue ? Timestamp.FromDateTime(((DateTime)user.Dob).ToUniversalTime()) : null,
+            Gender = user.Gender,
+            IsAccountActive = user.IsAccountActive,
+            IsAdmin = user.IsAdmin,
+            TotalFollower = user.TotalFollwer ?? 0,
+            TotalFollowing = user.TotalFollowing ?? 0,
+            TotalRecipe = user.TotalRecipe ?? 0,
+        };
         return grpcResponse;
     }
 }
