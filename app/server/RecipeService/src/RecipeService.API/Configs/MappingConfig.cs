@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contract.DTOs.RecipeDTO;
+using RecipeProto;
 using RecipeService.API.DTOs;
 using RecipeService.Application.Recipes.Commands;
 using RecipeService.Domain.Entities;
@@ -21,6 +22,35 @@ public class MappingConfig
             config.CreateMap<RecipeDetailsDTO, Recipe>()
                 .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)).ReverseMap();
 
+            //Grpc mapping
+
+            config.CreateMap<GrpcRecipeDetailsDTO, Recipe>()
+                .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)).ReverseMap();
+
+            config.CreateMap<GrpcStepDTO, Step>().ReverseMap();
+
+            config.CreateMap<GrpcTagDTO, Tag>()
+                .ForMember(
+                    dest => dest.Status,
+                    opt => opt.MapFrom(src => Enum.Parse<TagStatus>(src.Status))
+                 )
+                 .ForMember(
+                    dest => dest.Category,
+                    opt => opt.MapFrom(src => Enum.Parse<TagCategory>(src.Category))
+                 )
+                .ReverseMap()
+                .ForMember(
+                    dest => dest.Status,
+                    opt => opt.MapFrom(src => src.Status.ToString())
+                )
+                .ForMember(
+                    dest => dest.Category,
+                    opt => opt.MapFrom(src => src.Category.ToString())
+                );
+
+            /////////////////////////////////////////////////////
+
+
             config.CreateMap<Contract.DTOs.RecipeDTO.StepDTO, Step>().ReverseMap();
 
             config.CreateMap<TagDTO, Tag>()
@@ -28,11 +58,21 @@ public class MappingConfig
                     dest => dest.Status,
                     opt => opt.MapFrom(src => Enum.Parse<TagStatus>(src.Status))
                  )
+                 .ForMember(
+                    dest => dest.Category,
+                    opt => opt.MapFrom(src => Enum.Parse<TagCategory>(src.Category))
+                 )
                 .ReverseMap()
                 .ForMember(
                     dest => dest.Status,
                     opt => opt.MapFrom(src => src.Status.ToString())
+                )
+                .ForMember(
+                    dest => dest.Category,
+                    opt => opt.MapFrom(src => src.Category.ToString())
                 );
+
+            
         });
 
         return mappingConfig;

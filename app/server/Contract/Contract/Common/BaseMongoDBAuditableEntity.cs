@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace RecipeService.Domain.Common;
+namespace Contract.Common;
 
-public class BaseAuditableEntity : BaseEntity
+public class BaseMongoDBAuditableEntity : BaseMongoDBEntity
 {
     [Column]
     public DateTime CreatedAt { get; set; }

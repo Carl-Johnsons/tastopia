@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace RecipeService.Domain.Entities;
 
 [Collection("Tag")]
-public class Tag : BaseAuditableEntity
+public class Tag : BaseMongoDBAuditableEntity
 {
     [Required]
     public string Value { get; set; } = null!;
@@ -16,7 +16,7 @@ public class Tag : BaseAuditableEntity
     public string Code { get; set; } = null!;
 
     [Required]
-    public string Category { get; set; } = null!;
+    public TagCategory Category { get; set; } = TagCategory.All;
 
     [Required]
     [JsonConverter(typeof(StringEnumConverter))]

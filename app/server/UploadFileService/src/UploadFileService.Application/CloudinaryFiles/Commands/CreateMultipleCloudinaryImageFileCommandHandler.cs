@@ -46,7 +46,7 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
             }
             if (file.Length > 10 * 1024 * 1024)
             {
-                return Result<List<CloudinaryFile>?>.Failure(CloudinaryFileError.FileListContainLarge(10*1024*1024, file.Length));
+                return Result<List<CloudinaryFile>?>.Failure(CloudinaryFileError.FileListTooLarge(10*1024*1024, file.Length));
             }
         }
 

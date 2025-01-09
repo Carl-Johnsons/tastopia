@@ -1,12 +1,8 @@
 using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.EntityFrameworkCore.Extensions;
 using RecipeService.Domain.Entities;
-using RecipeService.Infrastructure.Utilities;
 
 namespace RecipeService.Infrastructure.Persistence;
 
@@ -49,7 +45,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            if (typeof(BaseAuditableEntity).IsAssignableFrom(entityType.ClrType) || typeof(BaseAuditableEntityWithoutId).IsAssignableFrom(entityType.ClrType))
+            if (typeof(BaseAuditableEntity).IsAssignableFrom(entityType.ClrType))
             {
                 var createdAtProperty = entityType.FindProperty("CreatedAt");
                 var updatedAtProperty = entityType.FindProperty("UpdatedAt");

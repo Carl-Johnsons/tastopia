@@ -53,9 +53,9 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
 
         var tagsQuery = _context.Tags.Where(t => t.Status == TagStatus.Active).OrderByDescending(t => t.CreatedAt).AsQueryable();
 
-        if (!string.IsNullOrEmpty(category) && category != "ALL")
+        if (!string.IsNullOrEmpty(category) && category.ToLower() != TagCategory.All.ToString().ToLower())
         {
-            tagsQuery = tagsQuery.Where(t => t.Category == category);
+            tagsQuery = tagsQuery.Where(t => t.Category == TagCategory.All);
         }
 
         if (!tagCodes.Contains("ALL"))

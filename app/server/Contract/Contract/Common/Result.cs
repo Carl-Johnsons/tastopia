@@ -1,4 +1,4 @@
-﻿namespace RecipeService.Domain.Common;
+﻿namespace Contract.Common;
 
 public class Result
 {
@@ -36,6 +36,10 @@ public class Result
     public IEnumerable<Error> Errors { get; }
     public static Result Success() => new(true, Error.None);
     public static Result Failure(Error err) => new(false, err);
+    public static Result Failure(Error err, string customMessage)
+                                => new(false, new Error(err.Code,
+                                                        StatusCode: err.StatusCode,
+                                                        Message: customMessage));
     public static Result Failure(IEnumerable<Error> errs) => new(false, errs);
 }
 
@@ -54,5 +58,10 @@ public sealed class Result<T> : Result
 
     public static Result<T> Success(T value) => new(true, Error.None, value);
     public static new Result<T?> Failure(Error error) => new(false, error, default);
+    public static new Result<T?> Failure(Error err, string customMessage)
+                              => new(false, new Error(err.Code,
+                                                      StatusCode: err.StatusCode,
+                                                      Message: customMessage), default);
+
     public static new Result<T?> Failure(IEnumerable<Error> errs) => new(false, errs, default);
 }

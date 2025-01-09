@@ -50,7 +50,7 @@ public class RequestAddTagsCommandHandler : IRequestHandler<RequestAddTagsComman
                 {
                     Id = Guid.NewGuid(),
                     Value = value,
-                    Category = "ALL",
+                    Category = TagCategory.All,
                     Code = Guid.NewGuid().ToString(),
                     ImageUrl = "",
                     Status = TagStatus.Requested,

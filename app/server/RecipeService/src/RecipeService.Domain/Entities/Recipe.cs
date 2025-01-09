@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace RecipeService.Domain.Entities;
 
 [Collection("Recipe")]
-public class Recipe : BaseAuditableEntity
+public class Recipe : BaseMongoDBAuditableEntity
 {
     [Required]
     public Guid AuthorId { get; set; }

@@ -23,4 +23,7 @@ public class SearchRecipesResponse
     [Required]
     [JsonProperty("authorAvtUrl")]
     public string AuthorAvtUrl { get; set; } = null!;
+    [Required]
+    [JsonProperty("recipeImgUrl")]
+    public string RecipeImageUrl { get; set; } = null!;
 }

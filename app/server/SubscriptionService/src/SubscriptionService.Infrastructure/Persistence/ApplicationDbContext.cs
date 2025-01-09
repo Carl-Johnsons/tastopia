@@ -1,7 +1,6 @@
 ﻿using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SubscriptionService.Domain.Entities;
-using BaseAuditableEntity = SubscriptionService.Domain.Common.BaseAuditableEntity;
 
 namespace SubscriptionService.Infrastructure.Persistence;
 

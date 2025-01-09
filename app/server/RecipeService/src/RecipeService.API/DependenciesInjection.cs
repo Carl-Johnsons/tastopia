@@ -50,6 +50,7 @@ public static class DependenciesInjection
 
         services.AddApplicationServices();
         services.AddInfrastructureServices(config);
+        services.AddGrpcServices();
 
         // Register automapper
         IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
@@ -149,6 +150,8 @@ public static class DependenciesInjection
         app.UseHttpsRedirection();
 
         app.MapControllers();
+
+        app.UseGrpcServices();
 
         app.UseGlobalHandlingErrorMiddleware();
 

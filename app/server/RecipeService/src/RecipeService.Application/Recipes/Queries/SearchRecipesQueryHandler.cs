@@ -1,11 +1,14 @@
 ﻿using Contract.DTOs.UserDTO;
-using Contract.Event.UserEvent;
+using Google.Protobuf.Collections;
 using MassTransit.Initializers;
 using Microsoft.EntityFrameworkCore;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
+using static UserProto.GrpcUser;
+using UserProto;
+using AutoMapper;
 
 namespace RecipeService.Application.Recipes.Queries;
 
@@ -29,12 +32,16 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
     private readonly IApplicationDbContext _context;
     private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> _paginateDataUtility;
+    private readonly IMapper _mapper;
+    private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
-    public SearchRecipesQueryHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility)
+    public SearchRecipesQueryHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility, GrpcUserClient grpcUserClient, IMapper mapper)
     {
         _context = context;
         _serviceBus = serviceBus;
         _paginateDataUtility = paginateDataUtility;
+        _grpcUserClient = grpcUserClient;
+        _mapper = mapper;
     }
 
     public async Task<Result<PaginatedSearchRecipeListResponse?>> Handle(SearchRecipesQuery request, CancellationToken cancellationToken)
@@ -86,6 +93,7 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
             Description = r.Description,
             Id = r.Id,
             Title = r.Title,
+            RecipeImageUrl = r.ImageUrl
         }).ToListAsync();
 
         if (recipeList == null || !recipeList.Any())
@@ -106,24 +114,31 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
         .Distinct()
         .ToHashSet();
 
-        var requestClient = _serviceBus.CreateRequestClient<GetSimpleUsersEvent>();
-
-        var response = await requestClient.GetResponse<GetSimpleUsersDTO>(new GetSimpleUsersEvent
+        var response = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
         {
-            AccountIds = authorIds,
-        });
+            AccountId = { _mapper.Map<RepeatedField<string>>(authorIds) }
+        }, cancellationToken: cancellationToken);
 
-        if (response == null || response.Message.Users.Count != authorIds.Count)
+        var mapUsers = new Dictionary<Guid, SimpleUser>();
+        foreach (var (key, value) in response.Users)
+        {
+            mapUsers[Guid.Parse(key)] = new SimpleUser
+            {
+                AccountId = Guid.Parse(value.AccountId),
+                AvtUrl = value.AvtUrl,
+                DisplayName = value.DisplayName,
+            };
+        }
+
+        if (response == null || mapUsers.Count != authorIds.Count)
         {
             return Result<PaginatedSearchRecipeListResponse?>.Failure(RecipeError.NotFound);
         }
 
-        var mapUser = response.Message.Users;
-
         foreach (var recipe in recipeList)
         {
-            recipe.AuthorDisplayName = mapUser[recipe.AuthorId].DisplayName;
-            recipe.AuthorAvtUrl = mapUser[recipe.AuthorId].AvtUrl;
+            recipe.AuthorDisplayName = mapUsers[recipe.AuthorId].DisplayName;
+            recipe.AuthorAvtUrl = mapUsers[recipe.AuthorId].AvtUrl;
         }
 
         var hasNextPage = true;

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contract.DTOs.UserDTO;
+using Google.Protobuf.WellKnownTypes;
 using UserProto;
 using UserService.Domain.Entities;
 using UserService.Domain.Responses;
@@ -18,6 +19,16 @@ public class MappingConfig
             config.CreateMap<User, SimpleUser>().ReverseMap();
 
             // Map object to grpc object
+            config.CreateMap<UserDetailsDTO, GrpcUserDetailDTO>()
+                   .ForMember(dest => dest.Dob,
+                        opt => opt.MapFrom(src => src.Dob.HasValue ?
+                                           Timestamp.FromDateTime(((DateTime)src.Dob).ToUniversalTime())
+                                           : null))
+                   .ReverseMap()
+                   .ForMember(dest => dest.Dob,
+                        opt => opt.MapFrom(src => src.Dob.ToDateTime()));
+
+
             config.CreateMap<GetSimpleUsersDTO, GrpcGetSimpleUsersDTO>()
                     .ForMember(dest => dest.Users,
                         opt => opt.MapFrom(src => src.Users.ToDictionary(
