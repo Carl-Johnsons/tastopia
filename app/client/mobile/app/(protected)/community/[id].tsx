@@ -22,6 +22,7 @@ import { useGetRecipeComment } from "@/api/comment";
 import Comment from "@/components/screen/community/Comment";
 import Button from "@/components/Button";
 import AddCommentSection from "@/components/common/AddCommentSection";
+import { filterUniqueItems } from "@/utils/dataFilter";
 
 const RecipeDetail = () => {
   const router = useRouter();
@@ -75,10 +76,7 @@ const RecipeDetail = () => {
 
   useEffect(() => {
     if (commentData?.pages) {
-      const allComments = commentData.pages.flatMap(page => page.paginatedData);
-      const uniqueComments = Array.from(
-        new Map(allComments.map(comment => [comment.id, comment])).values()
-      );
+      const uniqueComments = filterUniqueItems(commentData.pages);
       setComments(uniqueComments);
     }
   }, [commentData]);

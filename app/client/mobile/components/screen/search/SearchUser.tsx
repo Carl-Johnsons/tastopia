@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Text,
   View,
@@ -20,6 +20,7 @@ import User from "@/components/common/User";
 import { Image } from "expo-image";
 import { useSearchUsers } from "@/api/search";
 import Tag from "@/components/common/Tag";
+import { filterUniqueItems } from "@/utils/dataFilter";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -29,6 +30,7 @@ type SearchUserProps = {
 const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchUserResultType[]>();
 
   const textInputRef = useRef<TextInput>(null);
   const isDarkMode = useDarkMode();
@@ -44,10 +46,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
     fetchNextPage
   } = useSearchUsers(debouncedValue);
 
-  const searchResults = data?.pages.flatMap(page => page.paginatedData) ?? [];
-  const [doneSearching, setDoneSearching] = useState(
-    !isSearching || searchResults.length > 0
-  );
+  const [doneSearching, setDoneSearching] = useState(!isSearching);
   const shouldShowNoResults = isFetched && doneSearching;
 
   const handleFilter = () => {};
@@ -85,6 +84,13 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
   };
 
   const handleOnPressTag = () => {};
+
+  useEffect(() => {
+    if (data?.pages) {
+      const uniqueData = filterUniqueItems(data.pages);
+      setSearchResults(uniqueData);
+    }
+  }, [data]);
 
   return (
     <View>
@@ -142,7 +148,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
       {/* Result section */}
       <View className='mt-6 pb-[200px]'>
-        {searchResults.length > 0 && doneSearching && (
+        {searchResults !== undefined && searchResults.length > 0 && doneSearching && (
           <Text className='h3-bold mb-2'>Users</Text>
         )}
 
@@ -162,7 +168,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
           renderItem={({ item, index }) => (
             <>
               <User {...item} />
-              {index !== searchResults.length - 1 && (
+              {searchResults !== undefined && index !== searchResults.length - 1 && (
                 <View className='my-4 h-[1px] w-full bg-gray-300' />
               )}
             </>

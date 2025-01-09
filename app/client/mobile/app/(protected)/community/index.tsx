@@ -1,13 +1,15 @@
 import i18next from "i18next";
 import { useRecipesFeed } from "@/api/recipe";
 import Recipe from "@/components/common/Recipe";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Empty from "@/components/screen/community/Empty";
 import Header from "@/components/screen/community/Header";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { View, RefreshControl, SafeAreaView, FlatList } from "react-native";
+import { filterUniqueItems } from "@/utils/dataFilter";
 
 const Community = () => {
+  const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
 
   //TODO: apply loading later
@@ -20,9 +22,6 @@ const Community = () => {
     refetch,
     isRefetching
   } = useRecipesFeed(filterSelected);
-  const recipes = useMemo(() => {
-    return data?.pages.flatMap(page => page.paginatedData) ?? [];
-  }, [data]);
 
   const handleCreateRecipe = () => {
     console.log("show modal create recipe");
@@ -61,6 +60,13 @@ const Community = () => {
   );
 
   const keyExtractor = useCallback((item: RecipeType) => item.id.toString(), []);
+
+  useEffect(() => {
+    if (data?.pages) {
+      const uniqueData = filterUniqueItems(data.pages);
+      setRecipes(uniqueData);
+    }
+  }, [data]);
 
   return (
     <SafeAreaView

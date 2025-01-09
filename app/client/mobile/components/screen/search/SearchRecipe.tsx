@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Text,
   View,
@@ -9,17 +9,18 @@ import {
   FlatList,
   RefreshControl
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
 import { Filter } from "@/components/common/SVG";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import useDebounce from "@/hooks/useDebounce";
 import { AntDesign } from "@expo/vector-icons";
 import useDarkMode from "@/hooks/useDarkMode";
-import User from "@/components/common/User";
 import { Image } from "expo-image";
-import { useSearchUsers } from "@/api/search";
+import { useSearchRecipes } from "@/api/search";
 import Ingredient from "./Ingredient";
+import { router } from "expo-router";
+import Recipe from "@/components/common/Recipe";
+import { filterUniqueItems } from "@/utils/dataFilter";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -28,7 +29,9 @@ type SearchUserProps = {
 
 const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const [searchValue, setSearchValue] = useState<string>("");
+  const [tagValues, setTagValues] = useState<string[]>([""]);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchRecipeType[]>();
 
   const textInputRef = useRef<TextInput>(null);
   const isDarkMode = useDarkMode();
@@ -42,15 +45,14 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
     isLoading: isSearching,
     refetch,
     fetchNextPage
-  } = useSearchUsers(debouncedValue);
+  } = useSearchRecipes(debouncedValue, tagValues);
 
-  const searchResults = data?.pages.flatMap(page => page.paginatedData) ?? [];
-  const [doneSearching, setDoneSearching] = useState(
-    !isSearching || searchResults.length > 0
-  );
+  const [doneSearching, setDoneSearching] = useState(!isSearching);
   const shouldShowNoResults = isFetched && doneSearching;
 
-  const handleFilter = () => {};
+  const handleFilter = () => {
+    router.navigate("/(modals)/SearchFilter");
+  };
 
   const handleFocus = (isFocus: boolean) => {
     textInputRef.current?.focus();
@@ -83,6 +85,13 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
       fetchNextPage();
     }
   };
+
+  useEffect(() => {
+    if (data?.pages) {
+      const uniqueData = filterUniqueItems(data.pages);
+      setSearchResults(uniqueData);
+    }
+  }, [data]);
 
   return (
     <View>
@@ -138,7 +147,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
       {/* Result section */}
       <View className='mt-6 pb-[200px]'>
-        <View className='flex-between flex-row gap-10'>
+        {/* <View className='flex-between flex-row gap-10'>
           <View className='flex-1'>
             <Ingredient
               name='TOMATO'
@@ -151,14 +160,14 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
               image='https://media.post.rvohealth.io/wp-content/uploads/2020/09/AN313-Tomatoes-732x549-Thumb.jpg'
             />
           </View>
-        </View>
-        {searchResults.length > 0 && doneSearching && (
-          <Text className='h3-bold mb-2'>Users</Text>
+        </View> */}
+        {searchResults !== undefined && searchResults.length > 0 && doneSearching && (
+          <Text className='h3-bold mb-2'>Recipes</Text>
         )}
 
         <FlatList
           data={searchResults}
-          keyExtractor={item => item.username}
+          keyExtractor={item => item.id}
           refreshControl={
             <RefreshControl
               refreshing={isRefreshing}
@@ -171,8 +180,8 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
           showsVerticalScrollIndicator={false}
           renderItem={({ item, index }) => (
             <>
-              <User {...item} />
-              {index !== searchResults.length - 1 && (
+              <Recipe {...item} />
+              {searchResults !== undefined && index !== searchResults.length - 1 && (
                 <View className='my-4 h-[1px] w-full bg-gray-300' />
               )}
             </>
@@ -184,7 +193,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
                   source={require("../../../assets/icons/noResult.png")}
                   style={{ width: 130, height: 130 }}
                 />
-                <Text className='paragraph-medium text-center'>No users found!</Text>
+                <Text className='paragraph-medium text-center'>No recipes found!</Text>
               </View>
             ) : (
               <View></View>
