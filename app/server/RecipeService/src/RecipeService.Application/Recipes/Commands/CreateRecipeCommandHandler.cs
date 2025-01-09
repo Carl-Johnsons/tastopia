@@ -1,13 +1,19 @@
 ﻿using Contract.DTOs;
+using Contract.DTOs.UploadFileDTO;
 using Contract.Event.RecipeEvent;
 using Contract.Event.UploadEvent;
-using Contract.Event.UploadEvent.EventModel;
+using Google.Protobuf;
+using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
+using UploadFileProto;
+using static UserProto.GrpcUser;
+using UserProto;
 
 
 namespace RecipeService.Application.Recipes.Commands;
@@ -51,36 +57,37 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
+    private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
 
-    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus)
+    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _serviceBus = serviceBus;
+        _grpcUploadFileClient = grpcUploadFileClient;
     }
 
     public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
     {
-        List<UploadImageFileEventResponseDTO>? rollBackFiles = null;
+        List<string>? rollbaclUrls = null;
 
 
         try
         {
             var steps = request.Steps;
             var imageIndex = GetImageIndexMap(steps);
-            var requestClient = _serviceBus.CreateRequestClient<UploadMultipleImageFileEvent>();
 
-            var response = await requestClient.GetResponse<UploadMultipleImageFileEventResponseDTO>(new UploadMultipleImageFileEvent
+            var response = await _grpcUploadFileClient.UploadMultipleImageAsync(new GrpcUploadMultipleImageRequest
             {
-                FileStreamEvents = GetFileSteamEvent(request.RecipeImage, steps),
-            });
+                FileStreams = { await GetGrpcFileStreamDTOsAsync(request.RecipeImage, steps) }
+            }, cancellationToken: cancellationToken);
 
-            if (response == null || response.Message.Files.Count != imageIndex.Count)
+            if (response == null || response.Files.Count != imageIndex.Count)
             {
                 return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
             }
 
-            rollBackFiles = response.Message.Files;
+            rollbaclUrls = response.Files.Select(f => f.Url).ToList();
 
             var recipe = new Recipe();
 
@@ -92,7 +99,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             recipe.Ingredients = request.Ingredients;
             recipe.Description = request.Description;
             recipe.CreatedAt = DateTime.Now;
-            recipe.ImageUrl = response.Message.Files[imageIndex["RecipeImage"]].Url;
+            recipe.ImageUrl = response.Files[imageIndex["RecipeImage"]].Url;
 
             var listSteps = new List<Step>();
             foreach (var step in steps)
@@ -108,7 +115,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
                     var listUrl = new List<string>();
                     for (int i = 0; i < step.Images.Count; i++)
                     {
-                        listUrl.Add(response.Message.Files[imageIndex[$"Step{step.OrdinalNumber}|{i}"]].Url);
+                        listUrl.Add(response.Files[imageIndex[$"Step{step.OrdinalNumber}|{i}"]].Url);
                     }
 
                     s.AttachedImageUrls = listUrl;
@@ -134,7 +141,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         }
         catch (Exception ex)
         {
-            await RollBackImage(rollBackFiles);
+            await RollBackImageGrpc(rollbaclUrls);
             await Console.Out.WriteLineAsync(ex.Message);
         }
 
@@ -154,6 +161,16 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         await requestClient.GetResponse<DeleteMultipleFileEventResponseDTO>(new DeleteMultipleFileEvent
         {
             DeleteUrl = listUrls,
+        });
+        await Console.Out.WriteLineAsync("***Roll back image success!***");
+    }
+
+    public async Task RollBackImageGrpc(List<string>? urls)
+    {
+        if (urls == null || urls.Count == 0) return;
+        await _serviceBus.Publish(new DeleteMultipleFileEvent
+        {
+            DeleteUrl = urls
         });
         await Console.Out.WriteLineAsync("***Roll back image success!***");
     }
@@ -179,11 +196,11 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         return map;
     }
 
-    private List<FileStreamEvent> GetFileSteamEvent(IFormFile recipeImage, List<StepDTO> steps)
+    private List<FileStreamDTO> GetFileStreamDTOs(IFormFile recipeImage, List<StepDTO> steps)
     {
-        var list = new List<FileStreamEvent>();
+        var list = new List<FileStreamDTO>();
 
-        list.Add(new FileStreamEvent
+        list.Add(new FileStreamDTO
         {
             FileName = recipeImage.FileName,
             ContentType = recipeImage.ContentType,
@@ -196,7 +213,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             {
                 foreach (var img in step.Images)
                 {
-                    list.Add(new FileStreamEvent
+                    list.Add(new FileStreamDTO
                     {
                         FileName = img.FileName,
                         ContentType = img.ContentType,
@@ -207,5 +224,49 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         }
         return list;
     }
+    private async Task<RepeatedField<GrpcFileStreamDTO>> GetGrpcFileStreamDTOsAsync(IFormFile recipeImage, List<StepDTO> steps)
+    {
+        var tasks = new List<Task<(int Index, GrpcFileStreamDTO StreamDto)>>();
+        tasks.Add(Task.Run(async () =>
+        {
+            var stream = await ByteString.FromStreamAsync(recipeImage.OpenReadStream());
+            return (Index: 0, StreamDto: new GrpcFileStreamDTO
+            {
+                FileName = recipeImage.FileName,
+                ContentType = recipeImage.ContentType,
+                Stream = stream
+            });
+        }));
+
+        int index = 1;
+        foreach (var step in steps)
+        {
+            if (step.Images != null && step.Images.Any())
+            {
+                foreach (var img in step.Images)
+                {
+                    var currentIndex = index++;
+                    tasks.Add(Task.Run(async () =>
+                    {
+                        var stream = await ByteString.FromStreamAsync(img.OpenReadStream());
+                        return (Index: currentIndex, StreamDto: new GrpcFileStreamDTO
+                        {
+                            FileName = img.FileName,
+                            ContentType = img.ContentType,
+                            Stream = stream
+                        });
+                    }));
+                }
+            }
+        }
+
+        var results = await Task.WhenAll(tasks);
+        var list = results.OrderBy(result => result.Index).Select(result => result.StreamDto).ToList();
+        RepeatedField<GrpcFileStreamDTO> repeatedField = new RepeatedField<GrpcFileStreamDTO>();
+        repeatedField.AddRange(list);
+        return repeatedField;
+    }
+
+
 }
 

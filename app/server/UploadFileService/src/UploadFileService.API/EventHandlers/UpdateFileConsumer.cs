@@ -1,9 +1,7 @@
-﻿using Contract.Common;
-using Contract.DTOs;
+﻿using Contract.DTOs;
 using Contract.Event.UploadEvent;
 using MassTransit;
 using UploadFileService.Application.CloudinaryFiles.Commands;
-
 
 namespace UploadFileService.API.EventHandlers;
 [QueueName("update-file-event")]
@@ -20,7 +18,7 @@ public sealed class UpdateFileConsumer : IConsumer<UpdateFileEvent>
     {
         await Console.Out.WriteLineAsync("======================================");
         await Console.Out.WriteLineAsync("UploadFile-service consume the message-queue");
-        var fileStreamEvent = context.Message.FileStreamEvent;
+        var fileStreamEvent = context.Message.FileStream;
         var url = context.Message.Url;
         if (fileStreamEvent == null || fileStreamEvent.Stream.Length == 0) throw new Exception("File stream is null to update");
        

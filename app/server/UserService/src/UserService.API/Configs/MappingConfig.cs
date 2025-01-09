@@ -19,14 +19,18 @@ public class MappingConfig
             config.CreateMap<User, SimpleUser>().ReverseMap();
 
             // Map object to grpc object
-            config.CreateMap<UserDetailsDTO, GrpcUserDetailDTO>()
+            config.CreateMap<GetUserDetailsResponse, GrpcUserDetailDTO>()
                    .ForMember(dest => dest.Dob,
                         opt => opt.MapFrom(src => src.Dob.HasValue ?
                                            Timestamp.FromDateTime(((DateTime)src.Dob).ToUniversalTime())
                                            : null))
+                   .ForMember(dest => dest.AccountId,
+                        opt => opt.MapFrom(src => src.AccountId.ToString()))
                    .ReverseMap()
                    .ForMember(dest => dest.Dob,
-                        opt => opt.MapFrom(src => src.Dob.ToDateTime()));
+                        opt => opt.MapFrom(src => src.Dob.ToDateTime()))
+                   .ForMember(dest => dest.AccountId,
+                        opt => opt.MapFrom(src => Guid.Parse(src.AccountId)));
 
 
             config.CreateMap<GetSimpleUsersDTO, GrpcGetSimpleUsersDTO>()

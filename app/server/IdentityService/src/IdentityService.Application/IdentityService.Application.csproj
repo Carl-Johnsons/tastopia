@@ -10,6 +10,8 @@
 		<PackageReference Include="MediatR" Version="12.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2" />
+		<!-- Grpc dependencies -->
+		<PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -23,6 +25,9 @@
 			<HintPath Condition="Exists('..\..\..\Contract\Contract\Published\Contract.dll')">..\..\..\Contract\Contract\Published\Contract.dll</HintPath>
 			<HintPath Condition="Exists('..\Contract\Contract.dll')">..\Contract\Contract.dll</HintPath>
 		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+		<Protobuf Include="..\..\..\Contract\Contract\Protos\UserService.proto" Link="Protos\UserService.proto" GrpcServices="Client" />
 	</ItemGroup>
 
 </Project>

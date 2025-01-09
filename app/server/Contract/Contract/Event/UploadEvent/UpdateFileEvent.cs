@@ -1,4 +1,4 @@
-﻿using Contract.Event.UploadEvent.EventModel;
+﻿using Contract.DTOs.UploadFileDTO;
 using MassTransit;
 
 namespace Contract.Event.UploadEvent;
@@ -7,5 +7,5 @@ namespace Contract.Event.UploadEvent;
 public record UpdateFileEvent
 {
     public string Url { get; set; } = null!;
-    public FileStreamEvent FileStreamEvent { get; set; } = null!;
+    public FileStreamDTO FileStream { get; set; } = null!;
 }

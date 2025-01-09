@@ -1,4 +1,4 @@
-﻿using Contract.Event.UploadEvent.EventModel;
+﻿using Contract.DTOs.UploadFileDTO;
 using MassTransit;
 
 namespace Contract.Event.UploadEvent;
@@ -6,6 +6,6 @@ namespace Contract.Event.UploadEvent;
 [EntityName("UpdateMultipleImageFileEvent")]
 public record UpdateMultipleImageFileEvent
 {
-    public List<FileStreamEvent>? FileStreamEvents { get; set; } 
+    public List<FileStreamDTO>? FileStreams { get; set; } 
     public List<string>? DeleteUrls { get; set; }
 }

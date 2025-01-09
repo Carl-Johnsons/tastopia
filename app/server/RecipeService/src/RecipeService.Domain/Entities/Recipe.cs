@@ -51,7 +51,7 @@ public class Recipe : BaseMongoDBAuditableEntity
 
 }
 
-public class Step : BaseAuditableEntity
+public class Step : BaseMongoDBAuditableEntity
 {
     [Required]
     public int OrdinalNumber { get; set; }
@@ -63,7 +63,7 @@ public class Step : BaseAuditableEntity
 
 }
 
-public class Comment : BaseAuditableEntity
+public class Comment : BaseMongoDBAuditableEntity
 {
     [Required]
     [MaxLength(1000)]
@@ -76,7 +76,7 @@ public class Comment : BaseAuditableEntity
     public bool IsActive { get; set; } = true;
 
 }
-public class RecipeVote : BaseEntity
+public class RecipeVote : BaseMongoDBEntity
 {
     [Required]
     public Guid AccountId { get; set; }
