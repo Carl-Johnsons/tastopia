@@ -19,6 +19,7 @@ import useDarkMode from "@/hooks/useDarkMode";
 import User from "@/components/common/User";
 import { Image } from "expo-image";
 import { useSearchUsers } from "@/api/search";
+import Ingredient from "./Ingredient";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -101,7 +102,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
               value={searchValue}
               onPress={() => handleFocus(true)}
               onChangeText={handleSearch}
-              placeholder='Enter name or username'
+              placeholder='Enter recipe name or ingredient'
               placeholderTextColor={globalStyles.color.gray400}
             />
             {onFocus && searchValue && isSearching && (
@@ -137,6 +138,20 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
       {/* Result section */}
       <View className='mt-6 pb-[200px]'>
+        <View className='flex-between flex-row gap-10'>
+          <View className='flex-1'>
+            <Ingredient
+              name='TOMATO'
+              image='https://media.post.rvohealth.io/wp-content/uploads/2020/09/AN313-Tomatoes-732x549-Thumb.jpg'
+            />
+          </View>
+          <View className='flex-1'>
+            <Ingredient
+              name='TOMATO'
+              image='https://media.post.rvohealth.io/wp-content/uploads/2020/09/AN313-Tomatoes-732x549-Thumb.jpg'
+            />
+          </View>
+        </View>
         {searchResults.length > 0 && doneSearching && (
           <Text className='h3-bold mb-2'>Users</Text>
         )}
