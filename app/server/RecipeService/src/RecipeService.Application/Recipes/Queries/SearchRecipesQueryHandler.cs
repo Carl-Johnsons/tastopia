@@ -93,6 +93,7 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
             Description = r.Description,
             Id = r.Id,
             Title = r.Title,
+            RecipeImageUrl = r.ImageUrl
         }).ToListAsync();
 
         if (recipeList == null || !recipeList.Any())
