@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace RecipeService.Domain.Entities;
 
 [Collection("CommentVote")]
-public class CommentVote : BaseEntity
+public class CommentVote : BaseMongoDBEntity
 {
     [Required]
     public Guid CommentId { get; set; }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace RecipeService.Domain.Entities;
 
 [Collection("UserReportComment")]
-public class UserReportComment : BaseAuditableEntity
+public class UserReportComment : BaseMongoDBAuditableEntity
 {
     [Required]
     public Guid AccountId { get; set; }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace RecipeService.Domain.Entities;
 
 [Collection("UserBookmarkRecipe")]
-public class UserBookmarkRecipe : BaseEntity
+public class UserBookmarkRecipe : BaseMongoDBEntity
 {
     [Required]
     public Guid AccountId { get; set; }

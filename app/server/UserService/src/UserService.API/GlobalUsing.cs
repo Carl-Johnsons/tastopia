@@ -1,2 +1,2 @@
-﻿global using UserService.Domain.Common;
-global using MediatR;
+﻿global using MediatR;
+global using Contract.Common;

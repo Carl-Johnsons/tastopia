@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace RecipeService.Domain.Entities;
 
 [Collection("Tag")]
-public class Tag : BaseAuditableEntity
+public class Tag : BaseMongoDBAuditableEntity
 {
     [Required]
     public string Value { get; set; } = null!;

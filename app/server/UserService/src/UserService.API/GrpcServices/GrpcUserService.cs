@@ -5,6 +5,7 @@ using Grpc.Core;
 using Newtonsoft.Json;
 using UserProto;
 using UserService.Application.Users.Commands;
+using UserService.Application.Users.Queries;
 
 namespace UserService.API.GrpcServices;
 
@@ -64,5 +65,18 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         };
         _logger.LogInformation(JsonConvert.SerializeObject(grpcResult, Formatting.Indented));
         return grpcResult;
+    }
+
+    public override async Task<GrpcUserDetailDTO> GetUserDetail(GrpcAccountIdRequest request, ServerCallContext context)
+    {
+        var response = await _sender.Send(new GetUserDetailsQuery
+        {
+            AccountId = Guid.Parse(request.AccountId),
+        });
+        response.ThrowIfFailure();
+
+        var grpcResponse = _mapper.Map<GrpcUserDetailDTO>(response.Value);
+
+        return grpcResponse;
     }
 }

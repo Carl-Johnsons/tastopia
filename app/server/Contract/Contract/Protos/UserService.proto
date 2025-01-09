@@ -6,20 +6,44 @@ package UserProto;
 
 service GrpcUser {
     rpc GetSimpleUser(GrpcGetSimpleUsersRequest) returns (GrpcGetSimpleUsersDTO);
+    rpc GetUserDetail(GrpcAccountIdRequest) returns (GrpcUserDetailDTO);
 }
 
 message GrpcEmpty {}
+
+message GrpcAccountIdRequest {
+    string AccountId = 1;
+}
 
 message GrpcGetSimpleUsersRequest {
     repeated string AccountId = 1; // HashSet<Guid> represented as repeated strings
 }
 
 message GrpcGetSimpleUsersDTO {
-    map<string, GrpcSimpleUser> Users = 1;
+    map<string, GrpcSimpleUser> Users = 1; // Dictionary <=> MapField
 }
 
 message GrpcSimpleUser {
     string AccountId = 1;
     string AvtUrl = 2;
     string DisplayName = 3;
+}
+
+message GrpcUserDetailDTO {
+    string AccountId = 1; // Need to parse to Guid
+    string DisplayName = 2;
+    string AvatarUrl = 3;
+    string BackgroundUrl = 4;
+    google.protobuf.Timestamp Dob = 5; // DateTime <=> Timestamp
+    string Gender = 6;
+    string Bio = 7;
+    string Address = 8;
+    int32 TotalFollower = 9;
+    int32 TotalFollowing = 10;
+    int32 TotalRecipe = 11;
+    bool IsAccountActive = 12;
+    string AccountUsername = 13;
+    bool IsAdmin = 14;
+    string AccountEmail = 15;
+    string AccountPhoneNumber = 16;
 }

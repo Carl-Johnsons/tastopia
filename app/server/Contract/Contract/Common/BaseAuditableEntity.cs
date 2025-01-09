@@ -1,5 +1,4 @@
-﻿
-namespace Contract.Common;
+﻿namespace Contract.Common;
 
 public class BaseAuditableEntity : BaseEntity
 {

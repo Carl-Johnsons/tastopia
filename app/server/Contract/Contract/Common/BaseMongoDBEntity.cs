@@ -1,8 +1,8 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace TrackingService.Domain.Common;
+namespace Contract.Common;
 
-public class BaseEntity
+public class BaseMongoDBEntity
 {
     [BsonId]
     public Guid Id { get; set; }

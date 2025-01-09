@@ -13,4 +13,9 @@ public class UserError
             Message: "They already have the user, abort adding addition user",
             StatusCode: (int)HttpStatusCode.Conflict);
 
+    public static Error NullParameters =>
+        new("UserError.NullParameters",
+            Message: "Some parameter is null check the server's log for full errors",
+            StatusCode: (int)HttpStatusCode.InternalServerError);
+
 }

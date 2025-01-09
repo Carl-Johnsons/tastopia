@@ -28,7 +28,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
-            if (typeof(BaseAuditableEntity).IsAssignableFrom(entityType.ClrType) || typeof(BaseAuditableEntityWithoutId).IsAssignableFrom(entityType.ClrType))
+            if (typeof(BaseMongoDBAuditableEntity).IsAssignableFrom(entityType.ClrType))
             {
                 var createdAtProperty = entityType.FindProperty("CreatedAt");
                 var updatedAtProperty = entityType.FindProperty("UpdatedAt");

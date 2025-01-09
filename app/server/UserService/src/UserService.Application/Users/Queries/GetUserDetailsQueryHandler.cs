@@ -35,7 +35,7 @@ public class GetUserDetailsQueryHandler : IRequestHandler<GetUserDetailsQuery, R
 
         if (accountId == Guid.Empty)
         {
-            return Result<GetUserDetailsResponse>.Failure(UserError.NotFound);
+            return Result<GetUserDetailsResponse>.Failure(UserError.NullParameters, "Account Id is null");
         }
 
         var user = await _context.Users
