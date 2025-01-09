@@ -1,4 +1,4 @@
-type SearchUserResultProps = {
+type SearchUserResultType = {
   id: string;
   avtUrl: string;
   displayName: string;

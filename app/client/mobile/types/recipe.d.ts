@@ -9,8 +9,8 @@ type SearchRecipeType = {
 };
 
 type RecipeType = SearchRecipeType & {
-  voteDiff: number;
-  numberOfComment: number;
+  voteDiff?: number;
+  numberOfComment?: number;
 };
 
 type RecipeStep = {

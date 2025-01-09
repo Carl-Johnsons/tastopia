@@ -20,6 +20,12 @@ export default function ModalLayout() {
           presentation: "modal"
         }}
       />
+      <Stack.Screen
+        name='SearchFilter'
+        options={{
+          presentation: "modal"
+        }}
+      />
     </Stack>
   );
 }
