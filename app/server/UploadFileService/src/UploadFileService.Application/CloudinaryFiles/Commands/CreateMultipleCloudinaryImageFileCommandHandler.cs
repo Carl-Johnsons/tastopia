@@ -131,6 +131,13 @@ public class CreateMultipleCloudinaryImageFileCommandHandler : IRequestHandler<C
             returnResult[i] = cloudinaryFile;
             extensionTypes[i] = extensionType!;
         }
+
+        if(returnResult == null || returnResult.Count != formFiles.Count)
+        {
+            RollBackCloudinary(uploadResults);
+            return Result<List<CloudinaryFile>?>.Failure(CloudinaryFileError.UploadToCloudFail);
+        }
+
         await _unitOfWork.SaveChangeAsync(cancellationToken);
         await Console.Out.WriteLineAsync("return result count:" + returnResult.Count);
         return Result<List<CloudinaryFile>?>.Success(returnResult);

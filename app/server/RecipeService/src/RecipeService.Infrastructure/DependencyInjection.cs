@@ -17,10 +17,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
     {
-        if (!BsonClassMap.IsClassMapRegistered(typeof(Guid)))
-        {
-            BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
-        }
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
 
         // MediatR require repository scope dependency injection

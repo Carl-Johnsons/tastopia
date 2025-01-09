@@ -1,7 +1,9 @@
-﻿using Contract.Utilities;
+﻿using AutoMapper;
+using Contract.Utilities;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Serilog;
 using System.Text.Json.Serialization;
+using UploadFileService.API.Configs;
 using UploadFileService.API.Middleware;
 using UploadFileService.Application;
 using UploadFileService.Infrastructure;
@@ -45,6 +47,12 @@ public static class DependenciesInjection
 
         services.AddApplicationServices();
         services.AddInfrastructureServices(config);
+        services.AddGrpcServices();
+
+        // Register automapper
+        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+        services.AddSingleton(mapper);
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddControllers()
                 // Prevent circular JSON reach max depth of the object when serialization
@@ -70,6 +78,8 @@ public static class DependenciesInjection
         app.UseHttpsRedirection();
 
         app.MapControllers();
+
+        app.UseGrpcServices();
 
         app.UseGlobalHandlingErrorMiddleware();
 
