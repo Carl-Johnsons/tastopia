@@ -6,7 +6,7 @@ service GrpcAccount {
     rpc GetAccountDetail (GrpcAccountIdRequest) returns (GrpcAccountDTO);
 }
 
-message Empty {}
+message GrpcEmpty {}
 
 message GrpcAccountIdRequest {
     string AccountId = 1;
