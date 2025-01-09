@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using UserProto;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
+using UserService.Domain.Entities;
 using UserService.Domain.Responses;
 
 namespace UserService.API.GrpcServices;
@@ -100,5 +101,36 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
             TotalRecipe = user.TotalRecipe ?? 0,
         };
         return grpcResponse;
+    }
+
+    public override async Task<GrpcEmpty> CreateUser(GrpcCreateUserRequest request, ServerCallContext context)
+    {
+        var accountId = Guid.Parse(request.AccountId);
+        var defaultAvatar = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png";
+        var defaultBackground = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png";
+        var fullName = request.FullName;
+        var username = request.AccountUsername;
+
+        var user = new User
+        {
+            AccountId = accountId,
+            AvatarUrl = defaultAvatar,
+            BackgroundUrl = defaultBackground,
+            DisplayName = fullName,
+            IsAccountActive = true,
+            AccountUsername = username,
+            IsAdmin = false
+        };
+
+        var response = await _sender.Send(new CreateUserCommand
+        {
+            User = user,
+        });
+
+        response.ThrowIfFailure();
+
+        Console.WriteLine("Create user successfully");
+        Console.WriteLine(JsonConvert.SerializeObject(user, Formatting.Indented));
+        return new GrpcEmpty();
     }
 }
