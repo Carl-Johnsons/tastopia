@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package RecipeProto;
+
+service GrpcRecipe {
+    rpc GetAllTags(GrpcEmpty) returns (GrpcListTagDTO);
+    rpc GetRecipeDetails(GrpcRecipeIdRequest) returns (GrpcRecipeDetailsDTO);
+}
+////////////////////////// COMMON
+message GrpcEmpty {}
+
+message GrpcRecipeIdRequest{
+    string RecipeId = 1;
+}
+///////////////////////// Entity DTO
+message GrpcRecipeDetailsDTO{
+    string Id = 1;
+    string AuthorId = 2;
+    string Title = 3;
+    string Description = 4;
+    string ImageUrl = 5;
+    string Ingredients = 6;
+    bool IsActive = 7;
+    int32 VoteDiff = 8;
+    int32 NumberOfComment = 9;
+    int32 TotalView = 10;
+    string CookTime = 11;
+    int32 Serves = 12;
+    repeated GrpcStepDTO Steps = 13;
+    repeated GrpcCommentDTO Comments = 14;
+}
+
+message GrpcStepDTO{
+    int32 OrdinalNumber = 1;
+    string Content = 2;
+    repeated string AttachedImageUrls = 3;
+}
+
+message GrpcCommentDTO {
+    string Id = 1;
+    string Content = 2;
+    string AccountId = 3;
+    bool IsActive = 4;
+}
+
+message GrpcListTagDTO{
+    repeated GrpcTagDTO Tags = 1;
+}
+
+message GrpcTagDTO{
+    string Id = 1;
+    string Value = 2;
+    string Code = 3;
+    string Category = 4;
+    string Status = 5;
+    string ImageUrl = 6;
+}
+
+message GrpcRecipeVoteDTO{
+    string Id = 1;
+    string AccountId = 2;
+    bool IsUpvote = 3;
+}
+
+message GrpcRecipeTagDTO{
+    string Id = 1;
+    string RecipeId = 2;
+    string TagId = 3;
+}

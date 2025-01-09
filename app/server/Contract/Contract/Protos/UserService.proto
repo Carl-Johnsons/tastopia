@@ -8,7 +8,7 @@ service GrpcUser {
     rpc GetSimpleUser(GrpcGetSimpleUsersRequest) returns (GrpcGetSimpleUsersDTO);
 }
 
-message Empty {}
+message GrpcEmpty {}
 
 message GrpcGetSimpleUsersRequest {
     repeated string AccountId = 1; // HashSet<Guid> represented as repeated strings

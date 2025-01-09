@@ -99,8 +99,6 @@ internal class MockupData
         {
             Console.WriteLine("Begin seed tag");
             Console.WriteLine("===================================================================================");
-            Random random = new Random();
-
             foreach (var tag in TagData.Data)
             {
                 _context.Tags.Add(tag);
