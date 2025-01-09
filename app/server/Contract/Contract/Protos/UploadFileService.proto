@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package UploadFileProto;
+
+service GrpcUploadFile {
+    rpc UploadMultipleImage (GrpcUploadMultipleImageRequest) returns (GrpcListFileDTO);
+    rpc DeleteMultipleImage (GrpcDeleteMultipleImageRequest) returns (GrpcEmpty);
+    rpc UpdateMultipleImage (GrpcUpdateMultipleImageRequest) returns (GrpcListFileDTO);
+}
+
+////////////////////////////////////Common
+message GrpcEmpty {}
+
+message GrpcUploadMultipleImageRequest{
+    repeated GrpcFileStreamDTO FileStreams = 1;
+}
+
+message GrpcDeleteMultipleImageRequest{
+    repeated string DeleteUrls = 1;
+}
+
+message GrpcUpdateMultipleImageRequest{
+    repeated GrpcFileStreamDTO FileStreams = 1;
+    repeated string DeleteUrls = 2;
+}
+////////////////////////////////////Entity DTO
+
+
+message GrpcListFileDTO{
+    repeated GrpcFileDTO Files = 1;
+}
+
+message GrpcFileDTO //User to response when upload
+{
+    string Name = 1;
+    string PublicId = 2;
+    int64 Size = 3;
+    string Url = 4;
+}
+
+message GrpcFileStreamDTO{
+    string FileName = 1;
+    string ContentType = 2;
+    bytes Stream = 3;
+}

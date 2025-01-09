@@ -19,7 +19,7 @@ public sealed class UploadMultipleImageFileConsumer : IConsumer<UploadMultipleIm
     {
         await Console.Out.WriteLineAsync("======================================");
         await Console.Out.WriteLineAsync("UploadFile-service consume the message-queue");
-        var fileStreamEvents = context.Message.FileStreamEvents;
+        var fileStreamEvents = context.Message.FileStreams;
         List<IFormFile> formFiles = new List<IFormFile>(fileStreamEvents.Count);
 
         for (int i = 0; i < fileStreamEvents.Count; i++)

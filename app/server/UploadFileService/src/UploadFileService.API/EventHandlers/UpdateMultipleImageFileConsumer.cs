@@ -1,5 +1,4 @@
-﻿using Contract.Common;
-using Contract.DTOs;
+﻿using Contract.DTOs;
 using Contract.Event.UploadEvent;
 using MassTransit;
 using UploadFileService.Application.CloudinaryFiles.Commands;
@@ -19,7 +18,7 @@ public sealed class UpdateMultipleImageFileConsumer : IConsumer<UpdateMultipleIm
     {
         await Console.Out.WriteLineAsync("======================================");
         await Console.Out.WriteLineAsync("UploadFile-service consume the message-queue");
-        var fileStreamEvents = context.Message.FileStreamEvents;
+        var fileStreamEvents = context.Message.FileStreams;
         var deleteUrls = context.Message.DeleteUrls;
         List<IFormFile>? formFiles = null;
 

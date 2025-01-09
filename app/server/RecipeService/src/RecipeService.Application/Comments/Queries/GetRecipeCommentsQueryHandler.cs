@@ -2,6 +2,7 @@
 using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
@@ -61,6 +62,10 @@ public class GetRecipeCommentsQueryHandler : IRequestHandler<GetRecipeCommentsQu
             UpdatedAt = c.UpdatedAt,
             IsActive = c.IsActive,
         }).ToList();
+        await Console.Out.WriteLineAsync("999999999999999999999999999999999999999999999999999999999");
+        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(comments, Formatting.Indented));
+        await Console.Out.WriteLineAsync("999999999999999999999999999999999999999999999999999999999");
+
 
         if (comments == null || comments.Count == 0)
         {
