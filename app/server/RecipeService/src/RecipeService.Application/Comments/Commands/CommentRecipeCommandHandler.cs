@@ -47,7 +47,7 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
             {
                 return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);
             }
-
+            await Console.Out.WriteLineAsync();
             var recipe = await _context.Recipes.Where(r => r.Id == recipeId).FirstOrDefaultAsync();
 
             if (recipe == null)
@@ -55,7 +55,7 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
                 return Result<RecipeCommentResponse?>.Failure(CommentError.NotFound);
             }
 
-            List<string> accountList = [accountId.ToString()];
+            List<string> accountList = [accountId.ToString()!];
 
             var response = _grpcUserClient.GetSimpleUser(new GrpcGetSimpleUsersRequest
             {
@@ -99,10 +99,10 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
                 CreatedAt = comment.CreatedAt,
                 UpdatedAt = comment.UpdatedAt,
                 IsActive = comment.IsActive,
-                RecipeId = recipe.Id,
             };
 
-            recipe!.Comments.Add(comment);
+            recipe.Comments.Add(comment);
+            recipe.NumberOfComment += 1;
             _context.Recipes.Update(recipe);
             await _unitOfWork.SaveChangeAsync(cancellationToken);
 
@@ -110,7 +110,7 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
         }
         catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex));
+            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);
         }
     }

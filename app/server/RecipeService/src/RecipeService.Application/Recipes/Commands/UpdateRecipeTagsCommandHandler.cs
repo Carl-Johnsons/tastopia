@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 
@@ -55,6 +56,7 @@ public class UpdateRecipeTagsCommandHandler : IRequestHandler<UpdateRecipeTagsCo
             return Result.Success();
         }
         catch (Exception ex) {
+            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result.Failure(RecipeError.UpdateRecipeFail);
         }
     }

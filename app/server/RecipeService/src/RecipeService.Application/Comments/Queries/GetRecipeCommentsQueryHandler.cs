@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
-﻿using Contract.DTOs.UserDTO;
-using Contract.Event.UserEvent;
-using MassTransit.Saga;
-using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
@@ -64,7 +60,6 @@ public class GetRecipeCommentsQueryHandler : IRequestHandler<GetRecipeCommentsQu
             CreatedAt = c.CreatedAt,
             UpdatedAt = c.UpdatedAt,
             IsActive = c.IsActive,
-            RecipeId = c.Id,
         }).ToList();
 
         if (comments == null || comments.Count == 0)
