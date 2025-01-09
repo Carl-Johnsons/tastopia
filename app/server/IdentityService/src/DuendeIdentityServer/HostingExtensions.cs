@@ -46,7 +46,7 @@ internal static class HostingExtensions
 
         services.AddApplicationServices();
         services.AddInfrastructureServices(builder.Configuration);
-        services.AddGrpc();
+        services.AddGrpcServices();
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(config =>
@@ -177,10 +177,8 @@ internal static class HostingExtensions
         }
 
         app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
-            c.ConfigObject.PersistAuthorization = true;
-        });
+        app.UseSwaggerUI();
+
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
@@ -198,6 +196,7 @@ internal static class HostingExtensions
         app.UseStaticFiles();
         app.UseRouting();
         // UseIdentityServer already call UseAuthenticate()
+        app.UseGrpcServices();
         app.UseIdentityServer();
         app.UseAuthorization();
         app.UseGlobalHandlingErrorMiddleware();

@@ -13,8 +13,6 @@ public static class RabbitMQConstant
             public const string USER_RESEND_OTP = "user-resend-otp-queue";
             public const string GET_SIMPLE_USERS = "get-simple-users-queue";
             public const string GET_USER_DETAILS = "get-user-details-queue";
-            // ======================= ACCOUNT ============================
-            public const string GET_ACCOUNT_DETAILS = "get-account-details-queue";
             // ======================= Recipe ============================
             public const string GET_RECIPE_DETAILS = "get-recipe-details-queue";
             public const string UPDATE_RECIPE_TAGS = "update-recipe-tags-queue";
@@ -41,8 +39,6 @@ public static class RabbitMQConstant
             public const string USER_RESEND_OTP = "user-resend-otp-event";
             public const string GET_SIMPLE_USERS = "get-simple-users-event";
             public const string GET_USER_DETAILS = "get-user-details-event";
-            // ======================= Account ============================
-            public const string GET_ACCOUNT_DETAILS = "get-account-details-event";
             // ======================= Recipe ============================
             public const string GET_RECIPE_DETAILS = "get-recipe-details-event";
             public const string GET_ALL_TAGS = "get-all-tags-event";

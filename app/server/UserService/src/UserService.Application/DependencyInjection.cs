@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using AccountProto;
+using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using UserService.Application.Configs;
@@ -14,6 +15,14 @@ public static class DependencyInjection
         IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
         services.AddSingleton(mapper);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddGrpcClientService();
         return services;
+    }
+    private static void AddGrpcClientService(this IServiceCollection services)
+    {
+        services.AddGrpcClient<GrpcAccount.GrpcAccountClient>(options =>
+        {
+            options.Address = new Uri("https://localhost:7001");
+        });
     }
 }

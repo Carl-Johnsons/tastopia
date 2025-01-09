@@ -133,7 +133,7 @@ public class EnvUtility
             }
         }
     }
-
+    
     private static Dictionary<string, string> ParseEnvFile(string envPath)
     {
         var envVariables = new Dictionary<string, string>();

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
 using UserService.Application.Users.Commands;
+using UserService.Application.Users.Queries;
 using UserService.Domain.Responses;
 
 namespace UserService.API.Controllers;
@@ -45,7 +46,7 @@ public class UserController : BaseApiController
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
-        var result = await _sender.Send(new GetUserDetailsCommand
+        var result = await _sender.Send(new GetUserDetailsQuery
         {
             AccountId = subjectId != null ? Guid.Parse(subjectId) : Guid.Empty,
         });

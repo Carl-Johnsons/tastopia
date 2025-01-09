@@ -4,7 +4,7 @@ using Contract.Constants;
 using Contract.DTOs.UserDTO;
 using Contract.Event.UserEvent;
 using MassTransit;
-using UserService.Application.Users.Commands;
+using UserService.Application.Users.Queries;
 
 namespace UserService.API.EventHandlers;
 
@@ -22,7 +22,7 @@ public class GetUserDetailsConsumer : IConsumer<GetUserDetailsEvent>
     }
     public async Task Consume(ConsumeContext<GetUserDetailsEvent> context)
     {
-        var response = await _sender.Send(new GetUserDetailsCommand
+        var response = await _sender.Send(new GetUserDetailsQuery
         {
             AccountId = context.Message.AccountId,
         });

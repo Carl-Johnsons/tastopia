@@ -135,11 +135,7 @@ public static class DependenciesInjection
         });
 
         app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
-            c.ConfigObject.PersistAuthorization = true;
-            c.InjectJavascript("/Swagger/inject-access-token.js");
-        });
+        app.UseSwaggerUI();
 
         app.UseSerilogRequestLogging();
 

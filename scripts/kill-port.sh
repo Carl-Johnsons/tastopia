@@ -18,7 +18,7 @@ if [ -z "$1" ]; then
 fi
 
 if [[ "$PLATFORM" == "windows" ]]; then
-  PORT=0.0.0.0:$1
+  PORT=\[::\]:$1
   PID=$(netstat -ano | findstr "$PORT" | awk '{print $5}' | cut -d':' -f2)
 else
   PORT=$1
