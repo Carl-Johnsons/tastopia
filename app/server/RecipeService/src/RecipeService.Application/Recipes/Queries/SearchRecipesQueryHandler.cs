@@ -57,7 +57,7 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
 
         var recipesQuery = _context.Recipes.OrderByDescending(r => r.CreatedAt).AsQueryable();
 
-        if (tagCodes != null && tagCodes.Any())
+        if (tagCodes != null && tagCodes.Any() && !tagCodes.Contains("ALL"))
         {
             var tagValues = _context.Tags.Where(t => tagCodes.Any(tc => tc == t.Code)).Select(t => t.Value).ToList();
             recipesQuery = recipesQuery.Where(r => tagValues.Any(tag =>
