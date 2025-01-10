@@ -83,6 +83,16 @@ services:
       start_period: 10s
       retries: 5
 
+  consul:
+    image: hashicorp/consul
+    container_name: consul
+    ports:
+      # Consul uses the default port 8500
+      - "${CONSUL_PORT}:8500"
+    networks:
+      - front-end
+      - back-end
+      
   redis:
     image: redis:8.0-M02-alpine
     container_name: redis

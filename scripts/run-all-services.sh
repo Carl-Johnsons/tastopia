@@ -1,5 +1,5 @@
 #!/bin/bash
-trap "kill 0" SIGINT
+# trap "kill 0" SIGINT
 
 . ./scripts/lib.sh && check_docker
 
@@ -63,7 +63,7 @@ if [[ "$PLATFORM" != "windows" ]]; then
                 echo -e "${GREEN}Run chmod 777 for DuendeIdentityServer directory successfully${NC}"
 fi
 
-docker compose up -d postgres rabbitmq mongo
+run_required_docker_services
 
 CertPath=$HOME$ASPNETCORE_Kestrel__Certificates__Default__Path
 echo "SSL certification is on '$CertPath'"
