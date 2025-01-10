@@ -55,7 +55,7 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
 
         if (!string.IsNullOrEmpty(category) && category.ToLower() != TagCategory.All.ToString().ToLower())
         {
-            tagsQuery = tagsQuery.Where(t => t.Category == TagCategory.All);
+            tagsQuery = tagsQuery.Where(t => t.Category == (TagCategory)Enum.Parse(typeof(TagCategory), category));
         }
 
         if (!tagCodes.Contains("ALL"))
