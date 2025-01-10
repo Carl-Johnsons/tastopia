@@ -1,10 +1,9 @@
-﻿using Contract.DTOs.UserDTO;
-using Contract.Event.UserEvent;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
+using UserProto;
 
 namespace RecipeService.Application.Recipes.Queries;
 
@@ -17,18 +16,19 @@ public class GetRecipeDetailQuery : IRequest<Result<RecipeDetailsResponse?>>
 public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery, Result<RecipeDetailsResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IServiceBus _serviceBus;
+    private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
-    public GetRecipeDetailQueryHandler(IApplicationDbContext context, IServiceBus serviceBus)
+    public GetRecipeDetailQueryHandler(IApplicationDbContext context,
+                        GrpcUser.GrpcUserClient grpcUserClient)
     {
         _context = context;
-        _serviceBus = serviceBus;
+        _grpcUserClient = grpcUserClient;
     }
 
     public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailQuery request, CancellationToken cancellationToken)
     {
         var recipe = await _context.Recipes
-        .FirstOrDefaultAsync(r => r.Id == request.RecipeId);
+                .SingleOrDefaultAsync(r => r.Id == request.RecipeId);
 
         if (recipe == null)
         {
@@ -38,12 +38,11 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
         recipe.Comments = [];
         recipe.RecipeVotes = [];
 
-        var requestClient = _serviceBus.CreateRequestClient<GetUserDetailsEvent>();
-
-        var response = await requestClient.GetResponse<UserDetailsDTO>(new GetUserDetailsEvent
+        var grpcResponse = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
         {
-            AccountId = recipe.AuthorId,
+            AccountId = recipe.AuthorId.ToString()
         });
+
 
         var listString = recipe.Title.ToLower().Split(' ');
 
@@ -54,22 +53,20 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
                  listString.Any(word => r.Description.ToLower().Contains(word)) ||
                  listString.Any(word => r.Ingredients.Any(i => i.ToLower().Contains(word)))
                 )
-        ).OrderByDescending(r => r.CreatedAt).Select(r => new SimilarRecipe
-        {
-            ImageUrl = r.ImageUrl,
-            RecipeId = r.Id,
-            Title = r.Title
-        }).Take(6).ToList();
-
-
+            ).OrderByDescending(r => r.CreatedAt).Select(r => new SimilarRecipe
+            {
+                ImageUrl = r.ImageUrl,
+                RecipeId = r.Id,
+                Title = r.Title
+            }).Take(6).ToList();
 
         var result = new RecipeDetailsResponse
         {
             Recipe = recipe,
-            AuthorUsername = response.Message.AccountUsername!,
-            AuthorAvtUrl = response.Message.AvatarUrl!,
-            AuthorDisplayName = response.Message.DisplayName,
-            AuthorNumberOfFollower = response.Message.TotalFollwer! ?? 0,
+            AuthorUsername = grpcResponse.AccountUsername,
+            AuthorAvtUrl = grpcResponse.AvatarUrl,
+            AuthorDisplayName = grpcResponse.DisplayName,
+            AuthorNumberOfFollower = grpcResponse.TotalFollower ?? 0,
             similarRecipes = similarRecipes
         };
 
