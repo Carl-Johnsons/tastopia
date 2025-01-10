@@ -2,6 +2,9 @@
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using Steeltoe.Discovery.Client;
+using Steeltoe.Common.Http.Discovery;
+using Steeltoe.Discovery;
 using UserService.Application.Configs;
 
 namespace UserService.Application;
@@ -20,9 +23,27 @@ public static class DependencyInjection
     }
     private static void AddGrpcClientService(this IServiceCollection services)
     {
-        services.AddGrpcClient<GrpcAccount.GrpcAccountClient>(options =>
         {
-            options.Address = new Uri("https://localhost:7001");
-        });
+            services.AddHttpClient("IdentityService", o => o.BaseAddress = new Uri("https://identity-service"))
+                    .AddServiceDiscovery()
+                    .AddRoundRobinLoadBalancer();
+
+            services.AddGrpcClient<GrpcAccount.GrpcAccountClient>(options =>
+            {
+                var serviceProvider = services.BuildServiceProvider();
+                var discoveryClient = serviceProvider.GetRequiredService<IDiscoveryClient>();
+                var serviceInstance = discoveryClient.GetInstances("identity-service").FirstOrDefault();
+
+                if (serviceInstance != null)
+                {
+                    options.Address = new Uri($"{serviceInstance.Uri}");
+                }
+                else
+                {
+                    throw new Exception("Identity service not found via service discovery.");
+                }
+            });
+
+        }
     }
 }

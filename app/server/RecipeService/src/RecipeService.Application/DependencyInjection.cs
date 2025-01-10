@@ -7,6 +7,8 @@ using RecipeService.Application.Configs;
 using System.Reflection;
 using UploadFileProto;
 using UserProto;
+using Steeltoe.Common.Http.Discovery;
+using Steeltoe.Discovery;
 
 namespace RecipeService.Application;
 
@@ -30,13 +32,44 @@ public static class DependencyInjection
     }
     private static void AddGrpcClientService(this IServiceCollection services)
     {
+        services.AddHttpClient("UserService", o => o.BaseAddress = new Uri("https://user-service"))
+            .AddServiceDiscovery()
+            .AddRoundRobinLoadBalancer();
+
+        services.AddHttpClient("UploadService", o => o.BaseAddress = new Uri("https://upload-service"))
+            .AddServiceDiscovery()
+            .AddRoundRobinLoadBalancer();
+
         services.AddGrpcClient<GrpcUser.GrpcUserClient>(options =>
         {
-            options.Address = new Uri("https://localhost:7003");
+            var serviceProvider = services.BuildServiceProvider();
+            var discoveryClient = serviceProvider.GetRequiredService<IDiscoveryClient>();
+            var serviceInstance = discoveryClient.GetInstances("user-service").FirstOrDefault();
+
+            if (serviceInstance != null)
+            {
+                options.Address = new Uri($"{serviceInstance.Uri}");
+            }
+            else
+            {
+                throw new Exception("User service not found via service discovery.");
+            }
         });
+
         services.AddGrpcClient<GrpcUploadFile.GrpcUploadFileClient>(options =>
         {
-            options.Address = new Uri("https://localhost:7002");
+            var serviceProvider = services.BuildServiceProvider();
+            var discoveryClient = serviceProvider.GetRequiredService<IDiscoveryClient>();
+            var serviceInstance = discoveryClient.GetInstances("upload-service").FirstOrDefault();
+
+            if (serviceInstance != null)
+            {
+                options.Address = new Uri($"{serviceInstance.Uri}");
+            }
+            else
+            {
+                throw new Exception("User service not found via service discovery.");
+            }
         });
     }
 }
