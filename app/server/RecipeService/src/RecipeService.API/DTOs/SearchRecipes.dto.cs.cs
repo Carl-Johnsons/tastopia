@@ -14,7 +14,6 @@ public class SearchRecipesDTO
     [JsonProperty("keyword")]
     public string? Keyword { get; set; }
 
-    [NonEmptyList]
     [JsonProperty("tagCodes")]
     public List<string>? TagCodes { get; set; }
 

@@ -39,17 +39,13 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
         var category = request.Category;
         var skip = request.Skip;
 
-        if (skip == null || tagCodes == null || !tagCodes.Any() || category == null)
+        if (skip == null || tagCodes == null || category == null)
         {
             return Result<PaginatedTagListResponse?>.Failure(TagError.NotFound);
         }
 
         tagCodes.RemoveAll(string.IsNullOrEmpty);
 
-        if (!tagCodes.Any())
-        {
-            return Result<PaginatedTagListResponse>.Failure(TagError.NotFound);
-        }
 
         var tagsQuery = _context.Tags.Where(t => t.Status == TagStatus.Active).OrderByDescending(t => t.CreatedAt).AsQueryable();
 
@@ -58,7 +54,7 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
             tagsQuery = tagsQuery.Where(t => t.Category == (TagCategory)Enum.Parse(typeof(TagCategory), category));
         }
 
-        if (!tagCodes.Contains("ALL"))
+        if (!tagCodes.Contains("ALL") && tagCodes.Count != 0)
         {
             tagsQuery = tagsQuery.Where(t => tagCodes.Any(tagCode => t.Code == tagCode));
         }
