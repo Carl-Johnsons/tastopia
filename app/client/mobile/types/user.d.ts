@@ -6,3 +6,11 @@ type SearchUserResultType = {
   numberOfRecipe: number;
   isFollowing: boolean;
 };
+
+type SearchUserResponse = {
+  paginatedData: SearchUserResultType[];
+  metadata: {
+    hasNextPage: boolean;
+    totalPage: number;
+  };
+};

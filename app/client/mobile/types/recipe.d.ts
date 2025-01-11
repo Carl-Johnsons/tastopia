@@ -8,6 +8,14 @@ type SearchRecipeType = {
   authorAvtUrl: string;
 };
 
+type SearchRecipeResponse = {
+  paginatedData: SearchRecipeType[];
+  metadata: {
+    hasNextPage: boolean;
+    totalPage: number;
+  };
+};
+
 type RecipeType = SearchRecipeType & {
   voteDiff?: number;
   numberOfComment?: number;
