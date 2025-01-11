@@ -17,6 +17,8 @@ import { globalStyles } from "../GlobalStyles";
 import { transformPlatformURI } from "@/utils/functions";
 import styles from "./UploadImage.style";
 import { extensionToMimeType } from "@/utils/file";
+import { AntDesign } from "@expo/vector-icons";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 type UploadImageProps = {
   /**
@@ -58,9 +60,11 @@ const UploadImage = ({
   imageStyle,
   props
 }: UploadImageProps) => {
+  const [startUploadImage, setStartUploadImage] = useState(false);
   const [imageCount, setImageCount] = useState(0);
   const [fileObjects, setFileObjects] = useState<FileObject[]>();
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
+  const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -110,9 +114,16 @@ const UploadImage = ({
       });
 
       const newFileObjects = [...(fileObjects || []), ...files];
+      setStartUploadImage(true);
       setFileObjects(newFileObjects);
       onFileChange(newFileObjects.map(file => file.file as ImageFileType));
       setImageCount(prev => prev + files.length);
+    }
+  };
+
+  const handleImagePress = (id: string) => {
+    if (!isDisabled) {
+      setSelectedImageId(selectedImageId === id ? null : id);
     }
   };
 
@@ -121,40 +132,55 @@ const UploadImage = ({
     setFileObjects(newFileObjects);
     onFileChange(newFileObjects!.map(file => file.file as ImageFileType));
     setImageCount(prev => prev - 1);
+    setSelectedImageId(null);
+  };
+
+  const handleDismiss = () => {
+    if (selectedImageId !== null) {
+      setSelectedImageId(null);
+    }
   };
 
   return (
-    <View
-      style={[styles.container, imageCount > 0 && styles.containerActive, containerStyle]}
-    >
-      {/* Preview images */}
-      <View style={styles.previewImage}>
-        {fileObjects?.map(fileObject => (
-          <View
-            style={[styles.uploadItem, imageCount <= 2 && styles.flexOne, imageStyle]}
-            key={fileObject.id}
-          >
+    <View style={[styles.container, containerStyle]}>
+      <View style={styles.wrapper}>
+        {/* Preview image */}
+        <View style={styles.previewImage}>
+          {fileObjects?.map(fileObject => (
             <TouchableHighlight
-              onPress={() => !isDisabled && handleRemoveImage(fileObject.id)}
-              disabled={isDisabled}
-              style={styles.removeItemButton}
-              underlayColor={"none"}
+              key={fileObject.id}
+              style={[styles.uploadItem, imageCount <= 2 && styles.flexOne, imageStyle]}
+              onPress={() => handleImagePress(fileObject.id)}
+              underlayColor='transparent'
             >
-              <MaterialIcons
-                style={styles.removeItemButtonIcon}
-                name='highlight-remove'
-                size={30}
-                color={globalStyles.color.primary}
-              />
+              <View>
+                <Image
+                  source={{ uri: transformPlatformURI(fileObject.previewPath)! }}
+                  style={styles.uploadItemImage}
+                />
+                {selectedImageId === fileObject.id && (
+                  <TouchableHighlight
+                    style={styles.removeOverlay}
+                    onPress={() => handleRemoveImage(fileObject.id)}
+                    underlayColor='transparent'
+                  >
+                    <View style={styles.removeIconWrapper}>
+                      <AntDesign
+                        name='closecircleo'
+                        size={24}
+                        color={globalStyles.color.light}
+                      />
+                    </View>
+                  </TouchableHighlight>
+                )}
+              </View>
             </TouchableHighlight>
-            <Image
-              source={{ uri: transformPlatformURI(fileObject.previewPath)! }}
-              style={styles.uploadItemImage}
-            />
-          </View>
-        ))}
+          ))}
+        </View>
 
-        {imageCount <= 4 && !isDisabled && (
+        {/* Upload image button */}
+        {((imageCount <= 4 && !isDisabled && isMultiple) ||
+          (imageCount === 0 && !startUploadImage)) && (
           <TouchableHighlight
             onPress={pickImage}
             style={styles.uploadButton}
