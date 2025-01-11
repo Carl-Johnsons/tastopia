@@ -1,16 +1,10 @@
 {
   "Routes": [
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7005
-        },
-        {
-          "Host": "localhost",
-          "Port": 5005
-        }
-      ],
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/recipe/get-recipe-feed",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
@@ -21,16 +15,10 @@
       "SwaggerKey": "recipe"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7005
-        },
-        {
-          "Host": "localhost",
-          "Port": 5005
-        },
-      ],
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/recipe/search-recipe",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
@@ -41,16 +29,10 @@
       "SwaggerKey": "recipe"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7005
-        },
-        {
-          "Host": "localhost",
-          "Port": 5005
-        }
-      ],
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/recipe/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [

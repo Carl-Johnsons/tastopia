@@ -1,16 +1,10 @@
 {
   "Routes": [
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7007
-        },
-        {
-          "Host": "localhost",
-          "Port": 5007
-        }
-      ],
+      "ServiceName": "subscription-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/subscription/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [

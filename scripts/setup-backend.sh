@@ -8,7 +8,8 @@ echo "Install dotnet-ef successfully"
 ./scripts/pull-env.sh
 printf "\n\t*** ${GREEN}DONE PULLING ENV${NC} ***\n\n"
 
-$SUDO_PREFIX docker compose up -d postgres rabbitmq mongo
+run_required_docker_services
+
 [[ "$PLATFORM" != "windows" ]] && sudo chown $(whoami) data -R && echo -e "${GREEN}Run chown for data directory successfully${NC}"
 printf "\n\t*** ${GREEN}DONE RUNNING CONTAINER${NC} ***\n\n"
 

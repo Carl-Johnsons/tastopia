@@ -1,16 +1,10 @@
 {
   "Routes": [
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7008
-        },
-        {
-          "Host": "localhost",
-          "Port": 5008
-        }
-      ],
+      "ServiceName": "tracking-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/tracking/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [

@@ -1,8 +1,8 @@
-﻿using UploadFileService.API.GrpcServices;
+﻿using UserService.API.GrpcServices;
 
-namespace UploadFileService.API;
+namespace UserService.API.Extensions;
 
-public static class GrpcInjection
+public static class GrpcExtension
 {
     public static IServiceCollection AddGrpcServices(this IServiceCollection services)
     {
@@ -13,7 +13,7 @@ public static class GrpcInjection
     public static WebApplication UseGrpcServices(this WebApplication app)
     {
         app.UseRouting();
-        app.MapGrpcService<GrpcUploadFileService>();
+        app.MapGrpcService<GrpcUserService>();
         return app;
     }
 }

@@ -32,9 +32,9 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
 
         var grpcResponse = new GrpcAccountDTO
         {
-            Email = result.Value![0].Email,
+            Email = result.Value![0].Email ?? "",
             IsActive = result.Value![0].IsActive,
-            PhoneNumber = result.Value![0].PhoneNumber,
+            PhoneNumber = result.Value![0].PhoneNumber ?? "",
             UserName = result.Value![0].UserName,
         };
 

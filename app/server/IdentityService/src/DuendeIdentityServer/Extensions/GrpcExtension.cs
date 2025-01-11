@@ -1,8 +1,8 @@
-﻿using UserService.API.GrpcServices;
+﻿using DuendeIdentityServer.GrpcServices;
 
-namespace UserService.API;
+namespace DuendeIdentityServer.Extensions;
 
-public static class GrpcInjection
+public static class GrpcExtension
 {
     public static IServiceCollection AddGrpcServices(this IServiceCollection services)
     {
@@ -13,7 +13,7 @@ public static class GrpcInjection
     public static WebApplication UseGrpcServices(this WebApplication app)
     {
         app.UseRouting();
-        app.MapGrpcService<GrpcUserService>();
+        app.MapGrpcService<GrpcAccountService>();
         return app;
     }
 }
