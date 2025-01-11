@@ -79,13 +79,6 @@ public static class DependenciesInjection
         app.UseSerilogServices();
         app.UseConsulServiceDiscovery();
 
-        app.Use(async (context, next) =>
-        {
-            // Log information about the incoming request
-            app.Logger.LogInformation($"Request: {context.Request.Method} {context.Request.Path}");
-
-            await next(); // Call the next middleware
-        });
 
         app.UseSwaggerServices();
 
