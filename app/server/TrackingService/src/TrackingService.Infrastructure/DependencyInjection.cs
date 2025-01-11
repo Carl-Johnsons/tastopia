@@ -1,19 +1,17 @@
-﻿using Contract.Common;
+﻿using Consul;
 using MassTransit;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using TrackingService.Domain.Interfaces;
-using TrackingService.Infrastructure.EventPublishing;
 using TrackingService.Infrastructure.Persistence;
 using TrackingService.Infrastructure.Persistence.Mockup;
+using TrackingService.Infrastructure.Services;
 using TrackingService.Infrastructure.Utilities;
 
 namespace TrackingService.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
 
@@ -22,6 +20,17 @@ public static class DependencyInjection
         services.AddScoped<MockupData>();
         services.AddScoped(typeof(IPaginateDataUtility<,>), typeof(PaginateDataUtility<,>));
         services.AddSingleton<ISignalRService, SignalRService>();
+        services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
+        {
+            return new ConsulClient(config =>
+            {
+                var scheme = DotNetEnv.Env.GetString("CONSUL_SCHEME", "Not found");
+                var host = DotNetEnv.Env.GetString("CONSUL_HOST", "Not found");
+                var port = DotNetEnv.Env.GetString("CONSUL_PORT", "Not found");
+                config.Address = new Uri($"{scheme}://{host}:{port}");
+            });
+        });
+        services.AddSingleton<IConsulRegistryService, ConsulRegistryService>();
         services.AddMassTransitService();
 
         using (var serviceProvider = services.BuildServiceProvider())

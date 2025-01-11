@@ -8,8 +8,6 @@ using AutoMapper;
 using UserService.API.Configs;
 using Contract.Utilities;
 using UserService.API.Extensions;
-using Steeltoe.Discovery.Client;
-using Steeltoe.Discovery.Consul;
 
 namespace UserService.API;
 
@@ -28,8 +26,8 @@ public static class DependenciesInjection
         IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+        services.AddInfrastructureServices();
         services.AddApplicationServices();
-        services.AddInfrastructureServices(config);
         services.AddGrpcServices();
         services.AddSwaggerServices();
 
@@ -43,8 +41,6 @@ public static class DependenciesInjection
             {
                 options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error; // Error on missing members
             });
-
-        services.AddServiceDiscovery(o => o.UseConsul());
 
         services.AddHttpContextAccessor();
 
@@ -79,6 +75,8 @@ public static class DependenciesInjection
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
         app.UseSerilogServices();
+        app.UseConsulServiceDiscovery();
+
         app.Use(async (context, next) =>
         {
             // Log information about the incoming request

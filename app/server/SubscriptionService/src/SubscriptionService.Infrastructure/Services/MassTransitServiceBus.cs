@@ -1,6 +1,6 @@
 ﻿using MassTransit;
 
-namespace IdentityService.Infrastructure.EventPublishing;
+namespace SubscriptionService.Infrastructure.Services;
 
 public class MassTransitServiceBus : IServiceBus
 {
@@ -15,5 +15,4 @@ public class MassTransitServiceBus : IServiceBus
     {
         await _bus.Publish(eventMessage);
     }
-
 }

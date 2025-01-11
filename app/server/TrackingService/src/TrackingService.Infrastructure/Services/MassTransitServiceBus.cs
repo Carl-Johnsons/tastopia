@@ -1,6 +1,7 @@
 ﻿using MassTransit;
+using TrackingService.Domain.Interfaces;
 
-namespace SubscriptionService.Infrastructure.EventPublishing;
+namespace TrackingService.Infrastructure.Services;
 
 public class MassTransitServiceBus : IServiceBus
 {

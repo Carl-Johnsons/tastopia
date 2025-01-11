@@ -1,6 +1,6 @@
 ﻿using MassTransit;
 
-namespace UploadFileService.Infrastructure.EventPublishing;
+namespace UploadFileService.Infrastructure.Services;
 
 public class MassTransitServiceBus : IServiceBus
 {

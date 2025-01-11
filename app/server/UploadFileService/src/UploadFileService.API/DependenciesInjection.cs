@@ -1,9 +1,5 @@
 ﻿using AutoMapper;
 using Contract.Utilities;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Serilog;
-using Steeltoe.Discovery.Client;
-using Steeltoe.Discovery.Consul;
 using System.Text.Json.Serialization;
 using UploadFileService.API.Configs;
 using UploadFileService.API.Extensions;
@@ -26,12 +22,10 @@ public static class DependenciesInjection
         builder.ConfigureKestrel();
         builder.ConfigureSerilog();
 
+        services.AddInfrastructureServices();
         services.AddApplicationServices();
-        services.AddInfrastructureServices(config);
         services.AddGrpcServices();
         services.AddSwaggerServices();
-
-        services.AddServiceDiscovery(o => o.UseConsul());
 
         // Register automapper
         IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
@@ -53,6 +47,7 @@ public static class DependenciesInjection
     public static WebApplication UseAPIServices(this WebApplication app)
     {
         app.UseSerilogServices();
+        app.UseConsulServiceDiscovery();
         app.UseSwaggerServices();
 
         app.UseHttpsRedirection();

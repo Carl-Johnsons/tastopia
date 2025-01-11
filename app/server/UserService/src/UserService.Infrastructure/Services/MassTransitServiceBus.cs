@@ -1,7 +1,6 @@
 ﻿using MassTransit;
-using TrackingService.Domain.Interfaces;
 
-namespace TrackingService.Infrastructure.EventPublishing;
+namespace UserService.Infrastructure.Services;
 
 public class MassTransitServiceBus : IServiceBus
 {
@@ -10,11 +9,6 @@ public class MassTransitServiceBus : IServiceBus
     public MassTransitServiceBus(IBus bus)
     {
         _bus = bus;
-    }
-
-    public IRequestClient<TRequest> CreateRequestClient<TRequest>() where TRequest : class
-    {
-        return _bus.CreateRequestClient<TRequest>();
     }
 
     public async Task Publish<T>(T eventMessage) where T : class

@@ -1,8 +1,5 @@
-﻿using MassTransit;
-
-namespace UserService.Domain.Interfaces;
+﻿namespace UserService.Domain.Interfaces;
 public interface IServiceBus
 {
     Task Publish<T>(T eventMessage) where T : class;
-    IRequestClient<TRequest> CreateRequestClient<TRequest>() where TRequest : class;
 }

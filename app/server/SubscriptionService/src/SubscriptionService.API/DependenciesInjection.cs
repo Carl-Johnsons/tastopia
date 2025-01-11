@@ -9,8 +9,6 @@ using SubscriptionService.API.Middleware;
 using SubscriptionService.Domain.Interfaces;
 using Contract.Utilities;
 using SubscriptionService.API.Extensions;
-using Steeltoe.Discovery.Client;
-using Steeltoe.Discovery.Consul;
 
 namespace SubscriptionService.API;
 
@@ -31,10 +29,9 @@ public static class DependenciesInjection
         services.AddSingleton(mapper);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+        services.AddInfrastructureServices();
         services.AddApplicationServices();
-        services.AddInfrastructureServices(config);
         services.AddSwaggerServices();
-        services.AddServiceDiscovery(o => o.UseConsul());
 
         services.AddControllers()
             .AddJsonOptions(options =>
@@ -80,6 +77,7 @@ public static class DependenciesInjection
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
         app.UseSerilogServices();
+        app.UseConsulServiceDiscovery();
 
         app.Use(async (context, next) =>
         {
