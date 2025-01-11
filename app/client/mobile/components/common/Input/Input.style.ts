@@ -54,5 +54,18 @@ export default StyleSheet.create({
     position: "absolute",
     top: "30%",
     right: 14
+  },
+  secondaryInput: {
+    backgroundColor: "transparent",
+    borderWidth: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: globalStyles.color.gray400,
+    borderRadius: 0,
+    paddingHorizontal: 0
+  },
+
+  secondaryInputFocused: {
+    borderBottomColor: globalStyles.color.primary,
+    borderBottomWidth: 2
   }
 });
