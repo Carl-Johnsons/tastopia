@@ -1,4 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using Contract.DTOs.UploadFileDTO;
+using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.AspNetCore.Http;
+using System.Text.RegularExpressions;
 
 namespace UploadFileService.Infrastructure.Utilities;
 
@@ -60,7 +63,6 @@ public class FileUtility : IFileUtility
 
         return null;
     }
-
     //public List<IFormFile> convertFileStreamsToIFormFile(List<FileStreamEvent> fileStreamEvents)
     //{
     //    List<IFormFile> formFiles = new List<IFormFile>(fileStreamEvents.Count);

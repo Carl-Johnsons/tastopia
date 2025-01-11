@@ -40,4 +40,8 @@
 		<Protobuf Include="..\..\..\Contract\Contract\Protos\UploadFileService.proto" Link="Protos\UploadFileService.proto" GrpcServices="Server" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="DTOs\" />
+	</ItemGroup>
+
 </Project>

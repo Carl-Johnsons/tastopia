@@ -77,9 +77,12 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             var steps = request.Steps;
             var imageIndex = GetImageIndexMap(steps);
 
-            var response = await _grpcUploadFileClient.UploadMultipleImageAsync(new GrpcUploadMultipleImageRequest
+            var response = await _grpcUploadFileClient.UpdateMultipleImageAsync(new GrpcUpdateMultipleImageRequest
             {
-                FileStreams = { await GetGrpcFileStreamDTOsAsync(request.RecipeImage, steps) }
+                FileStreams = { await GetGrpcFileStreamDTOsAsync(request.RecipeImage, steps) },
+                DeleteUrls = { new RepeatedField<string> {
+                    "https://res.cloudinary.com/dhphzuojz/image/upload/v1736621447/default_storage/gstkfpktw9mjfesrldsd.jpg"
+                } }
             }, cancellationToken: cancellationToken);
 
             if (response == null || response.Files.Count != imageIndex.Count)
@@ -149,7 +152,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
     }
 
-    public async Task RollBackImage(List<UploadImageFileEventResponseDTO>? files)
+    public async Task RollBackImage(List<FileDTO>? files)
     {
         if (files == null) return;
         var listUrls = new List<string>();
@@ -157,8 +160,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         {
             listUrls.Add(file.Url);
         }
-        var requestClient = _serviceBus.CreateRequestClient<DeleteMultipleFileEvent>();
-        await requestClient.GetResponse<DeleteMultipleFileEventResponseDTO>(new DeleteMultipleFileEvent
+        await _serviceBus.Publish(new DeleteMultipleFileEvent
         {
             DeleteUrl = listUrls,
         });

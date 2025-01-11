@@ -1,12 +1,12 @@
-﻿using Contract.Common;
-using Contract.DTOs;
+﻿using Contract.Constants;
 using Contract.Event.UploadEvent;
 using MassTransit;
 using UploadFileService.Application.CloudinaryFiles.Commands;
 
 
 namespace UploadFileService.API.EventHandlers;
-[QueueName("delete-multiple-file-event")]
+[QueueName(RabbitMQConstant.QUEUE.NAME.DELETE_MULTIPLE_IMAGE_FILE,
+exchangeName: RabbitMQConstant.EXCHANGE.NAME.DELETE_MULTIPLE_IMAGE_FILE)]
 public sealed class DeleteMultipleFileConsumer : IConsumer<DeleteMultipleFileEvent>
 {
     private readonly ISender _sender;
@@ -18,15 +18,11 @@ public sealed class DeleteMultipleFileConsumer : IConsumer<DeleteMultipleFileEve
 
     public async Task Consume(ConsumeContext<DeleteMultipleFileEvent> context)
     {
-        await Console.Out.WriteLineAsync("======================================");
-        await Console.Out.WriteLineAsync("UploadFile-service consume the message-queue");
-        var response = await _sender.Send(new DeleteMultipleCloudinaryImageFileCommand { DeleteUrls = context.Message.DeleteUrl });
-        var result = new DeleteMultipleFileEventResponseDTO();
+        var response = await _sender.Send(new DeleteMultipleImageFileCommand
+        {
+            DeleteUrls = context.Message.DeleteUrl 
+        });
         response.ThrowIfFailure();
-        result.Result = "Delete files success";
-        await Console.Out.WriteLineAsync("UploadFile-service done the request");
-        await Console.Out.WriteLineAsync("======================================");
-        await context.RespondAsync(result);
     }
 
 }

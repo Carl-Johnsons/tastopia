@@ -7,6 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="ExtensionTypes\**" />
+	  <EmbeddedResource Remove="ExtensionTypes\**" />
+	  <None Remove="ExtensionTypes\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="DotNetEnv" Version="3.0.0" />
 		<PackageReference Include="CloudinaryDotNet" Version="1.26.2" />
 		<PackageReference Include="MediatR" Version="12.2.0" />
@@ -22,16 +28,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="ExtensionTypes\Commands\" />
-		<Folder Include="ExtensionTypes\Queries\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Reference Include="Contract">
 			<HintPath Condition="Exists('..\..\..\Contract\Contract\bin\Release\net8.0\Contract.dll')">..\..\..\Contract\Contract\bin\Release\net8.0\Contract.dll</HintPath>
 			<HintPath Condition="Exists('..\..\..\Contract\Contract\Published\Contract.dll')">..\..\..\Contract\Contract\Published\Contract.dll</HintPath>
 			<HintPath Condition="Exists('..\Contract\Contract.dll')">..\Contract\Contract.dll</HintPath>
 		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="CloudinaryFiles\Queries\" />
 	</ItemGroup>
 
 </Project>

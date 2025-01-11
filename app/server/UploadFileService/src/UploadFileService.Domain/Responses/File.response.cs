@@ -1,18 +1,20 @@
-﻿using Contract.Common;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
-namespace Contract.DTOs;
 
-public class UploadImageFileEventResponseDTO : BaseEntity
+namespace UploadFileService.Domain.Responses;
+public class FileResponse
 {
     [Required]
-    [MaxLength(200)]
+    [JsonProperty("publicId")]
+    public string PublicId { get; set; } = null!;
+
+    [Required]
     [JsonProperty("name")]
     public string Name { get; set; } = null!;
 
     [Required]
-    [JsonProperty("publicId")]
-    public string PublicId { get; set; } = null!;
+    [JsonProperty("extension")]
+    public string Extension { get; set; } = null!;
 
     [Required]
     [JsonProperty("size")]

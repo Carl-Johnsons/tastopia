@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using UploadFileService.Application.Utilities;
 
 namespace UploadFileService.Application;
 
@@ -14,6 +15,7 @@ public static class DependencyInjection
             cloudinary.Api.Secure = true;
             return cloudinary;
         });
+        services.AddScoped<ApplicationFileUtility>();
         return services;
     }
 }
