@@ -7,6 +7,7 @@ import Header from "@/components/screen/community/Header";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
+import { router } from "expo-router";
 
 const Community = () => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
@@ -24,7 +25,7 @@ const Community = () => {
   } = useRecipesFeed(filterSelected);
 
   const handleCreateRecipe = () => {
-    console.log("show modal create recipe");
+    router.push("/(modals)/CreateRecipe");
   };
 
   const handleFilter = (key: string) => {

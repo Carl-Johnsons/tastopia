@@ -1,0 +1,279 @@
+import { useSearchTags } from "@/api/search";
+import { globalStyles } from "@/components/common/GlobalStyles";
+import Ingredient from "@/components/screen/search/Ingredient";
+import SelectedTag from "@/components/screen/search/SelectedTag";
+import useDarkMode from "@/hooks/useDarkMode";
+import useDebounce from "@/hooks/useDebounce";
+import {
+  clearTagValue,
+  removeTagValue,
+  selectSearchTagCodes,
+  selectSearchTags
+} from "@/slices/searchRecipe.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { filterUniqueItems } from "@/utils/dataFilter";
+import { AntDesign, Feather } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  FlatList,
+  Keyboard,
+  RefreshControl,
+  StatusBar,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+  Image,
+  Alert
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const SearchFilter = () => {
+  const dispatch = useAppDispatch();
+  const selectedTagsStore = useAppSelector(selectSearchTags);
+
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<SearchTagType[]>();
+  const [selectedTags, setSelectedTags] = useState<SelectedTag[]>(selectedTagsStore);
+
+  const textInputRef = useRef<TextInput>(null);
+  const isDarkMode = useDarkMode();
+  const debouncedValue = useDebounce(searchValue, 800);
+
+  const handleFocus = (isFocus: boolean) => {
+    textInputRef.current?.focus();
+    if (!isFocus) {
+      Keyboard.dismiss();
+    }
+  };
+
+  const {
+    data,
+    isFetched,
+    isRefetching,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isSearching,
+    refetch,
+    fetchNextPage
+  } = useSearchTags(debouncedValue, ["ALL"], "Ingredient");
+
+  const isDoneSearching =
+    searchValue !== "" &&
+    debouncedValue !== "" &&
+    isFetched &&
+    !isRefetching &&
+    !isSearching &&
+    !isFetchingNextPage;
+
+  const handleSearch = (text: string) => {
+    setSearchValue(text);
+  };
+
+  const handleCancel = useCallback(() => {
+    setSearchValue("");
+    setSearchResults([]);
+    Keyboard.dismiss();
+  }, [dispatch]);
+
+  const onRefresh = useCallback(async () => {
+    await refetch();
+  }, [refetch]);
+
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const handleRemoveTag = useCallback((code: string) => {
+    dispatch(removeTagValue(code));
+    setSelectedTags(prev => prev.filter(t => t.code !== code));
+  }, []);
+
+  console.log("selectedTags", selectedTags);
+
+  const handleCloseModal = () => {
+    selectedTags.length > 0
+      ? Alert.alert("Cancel Filter", "Your selected ingredients will be dismissed", [
+          {
+            text: "Cancel",
+            style: "cancel"
+          },
+          {
+            text: "OK",
+            onPress: () => {
+              setSelectedTags([]);
+              dispatch(clearTagValue());
+              router.back();
+            }
+          }
+        ])
+      : router.back();
+  };
+
+  const handleBackToSearchScreen = () => {
+    router.back();
+  };
+
+  useEffect(() => {
+    if (data?.pages) {
+      const uniqueData = filterUniqueItems(data.pages);
+      setSearchResults(uniqueData);
+    }
+  }, [data]);
+
+  return (
+    <SafeAreaView>
+      <View className={`bg-white_black size-full flex-col`}>
+        <View
+          style={{ marginTop: StatusBar.currentHeight }}
+          className='flex-between mb-4 h-[60px] flex-row items-center border-b-[0.6px] border-gray-400 px-6'
+        >
+          <TouchableWithoutFeedback onPress={handleCloseModal}>
+            <View>
+              <AntDesign
+                name='close'
+                size={20}
+                color='black'
+              />
+            </View>
+          </TouchableWithoutFeedback>
+
+          <View className='items-center'>
+            <Text className='text-black_white paragraph-medium'>Filter</Text>
+          </View>
+
+          <TouchableWithoutFeedback onPress={handleBackToSearchScreen}>
+            <View className='items-center'>
+              <Text className='paragraph-medium text-primary'>Done</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+
+        <View className='mt-2 px-6'>
+          <Text className='body-semibold'>Show me recipe with:</Text>
+
+          <View className='mt-4 flex-row items-center gap-5'>
+            <TouchableWithoutFeedback onPress={() => handleFocus(true)}>
+              <View className='relative h-[40px] flex-1 flex-row items-center gap-2 rounded-3xl border-[0.5px] border-gray-300 px-3'>
+                <Feather
+                  name='search'
+                  size={20}
+                  color='black'
+                />
+                <TextInput
+                  autoFocus
+                  autoCapitalize='none'
+                  ref={textInputRef}
+                  className='h-full w-[86%]'
+                  value={searchValue}
+                  onPress={() => handleFocus(true)}
+                  onChangeText={handleSearch}
+                  placeholder='Enter ingredient'
+                  placeholderTextColor={globalStyles.color.gray400}
+                />
+                {searchValue && isSearching && (
+                  <View className='absolute right-3 top-3.5'>
+                    <AntDesign
+                      className='animate-spin'
+                      name='loading2'
+                      size={16}
+                      color={isDarkMode ? "#A9A9A9" : "#6B7280"}
+                    />
+                  </View>
+                )}
+                {searchValue && !isSearching && (
+                  <View className='absolute right-3 top-3.5'>
+                    <TouchableOpacity
+                      onPress={handleCancel}
+                      activeOpacity={1}
+                    >
+                      <AntDesign
+                        name='closecircleo'
+                        size={16}
+                        color={isDarkMode ? "#A9A9A9" : "#6B7280"}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+
+          {/* Selected tags */}
+          <View>
+            <View className='mt-4 flex-row flex-wrap'>
+              {selectedTags.map((tag, index) => {
+                return (
+                  <SelectedTag
+                    key={`${tag}-${index}`}
+                    code={tag.code}
+                    value={tag.value}
+                    onRemove={handleRemoveTag}
+                  />
+                );
+              })}
+            </View>
+          </View>
+
+          {/* Result section */}
+          {searchValue !== "" && (
+            <View className='mt-3 pb-[200px]'>
+              <Text className='h3-bold mb-2'>Ingredients</Text>
+
+              <FlatList
+                data={searchResults}
+                keyExtractor={item => item.id}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={isRefetching}
+                    tintColor={globalStyles.color.primary}
+                    onRefresh={onRefresh}
+                  />
+                }
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.1}
+                showsVerticalScrollIndicator={false}
+                numColumns={2}
+                columnWrapperStyle={{
+                  justifyContent: "space-between",
+                  paddingHorizontal: 0
+                }}
+                renderItem={({ item, index }) => (
+                  <View className={`mb-4 w-[48%] ${index % 2 === 0 ? "mr-[4%]" : ""}`}>
+                    <Ingredient
+                      code={item.code}
+                      value={item.value}
+                      imageUrl={item.imageUrl}
+                      setSelectedTags={setSelectedTags}
+                    />
+                  </View>
+                )}
+                ListEmptyComponent={() => {
+                  return isDoneSearching && searchResults?.length === 0 ? (
+                    <View className='flex-center mt-10 gap-2'>
+                      <Image
+                        source={require("../../assets/icons/noResult.png")}
+                        style={{ width: 130, height: 130 }}
+                      />
+                      <Text className='paragraph-medium text-center'>
+                        No ingredients found!
+                      </Text>
+                    </View>
+                  ) : (
+                    <View></View>
+                  );
+                }}
+              />
+            </View>
+          )}
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+export default SearchFilter;

@@ -1,22 +1,76 @@
-import { Image, Text, View } from "react-native";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+  addTagValue,
+  removeTagValue,
+  selectSearchTagCodes
+} from "@/slices/searchRecipe.slice";
+import { Dispatch, SetStateAction } from "react";
+import { Text, View, Image, TouchableWithoutFeedback } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import Animated, {
+  useAnimatedStyle,
+  withSpring,
+  withTiming
+} from "react-native-reanimated";
 
-interface IngredientProps {
-  name: string;
-  image: string;
-}
+type IngredientProps = {
+  value: string;
+  code: string;
+  imageUrl: string;
+  setSelectedTags: Dispatch<SetStateAction<SelectedTag[]>>;
+};
 
-const Ingredient = ({ name, image }: IngredientProps) => {
+const Ingredient = ({ value, code, imageUrl, setSelectedTags }: IngredientProps) => {
+  const dispatch = useAppDispatch();
+  const selectedTagCodes = useAppSelector(selectSearchTagCodes);
+  const isSelected = selectedTagCodes.find(selectedTagCode => selectedTagCode === code);
+
+  const handleSelect = () => {
+    if (isSelected) {
+      setSelectedTags(prev => prev.filter(tag => tag.code !== code));
+      dispatch(removeTagValue(code));
+    } else {
+      setSelectedTags(prev => [...prev, { code, value }]);
+      dispatch(addTagValue({ code, value }));
+    }
+  };
+
+  const checkmarkStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: withSpring(isSelected ? 1 : 0) }],
+      opacity: withTiming(isSelected ? 1 : 0)
+    };
+  });
+
   return (
-    <View className='relative rounded-xl bg-black-100/10 shadow-sm'>
-      <Image
-        source={require("../../../assets/images/recipe.png")}
-        className='h-[120px] w-full rounded-xl'
-        resizeMode='cover'
-      />
-      <Text className='absolute bottom-2 left-2 font-medium uppercase text-black'>
-        {name}
-      </Text>
-    </View>
+    <TouchableWithoutFeedback onPress={handleSelect}>
+      <View className='relative rounded-xl'>
+        <Image
+          source={{ uri: imageUrl }}
+          className='h-[120px] w-full rounded-xl'
+          resizeMode='cover'
+        />
+        <View className='absolute inset-0 rounded-xl bg-black/30' />
+
+        {isSelected && (
+          <View className='absolute inset-0 flex-col items-center justify-center rounded-xl bg-black/60'>
+            <View className='rounded-full p-3'>
+              <Animated.View style={[checkmarkStyle]}>
+                <AntDesign
+                  name='check'
+                  size={44}
+                  color='#22C55E'
+                />
+              </Animated.View>
+            </View>
+          </View>
+        )}
+
+        <Text className='body-semibold absolute bottom-2 left-2 uppercase text-white'>
+          {value}
+        </Text>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

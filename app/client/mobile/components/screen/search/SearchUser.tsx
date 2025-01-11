@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Text,
   View,
@@ -7,7 +7,8 @@ import {
   Keyboard,
   TouchableOpacity,
   FlatList,
-  RefreshControl
+  RefreshControl,
+  ActivityIndicator
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
@@ -29,7 +30,6 @@ type SearchUserProps = {
 
 const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const [searchValue, setSearchValue] = useState<string>("");
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchResults, setSearchResults] = useState<SearchUserResultType[]>();
 
   const textInputRef = useRef<TextInput>(null);
@@ -40,48 +40,54 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
     data,
     isFetched,
     hasNextPage,
+    isRefetching,
     isFetchingNextPage,
     isLoading: isSearching,
     refetch,
     fetchNextPage
   } = useSearchUsers(debouncedValue);
 
-  const [doneSearching, setDoneSearching] = useState(!isSearching);
-  const shouldShowNoResults = isFetched && doneSearching;
+  const isDoneSearching =
+    searchValue !== "" &&
+    debouncedValue !== "" &&
+    isFetched &&
+    !isRefetching &&
+    !isSearching &&
+    !isFetchingNextPage;
 
   const handleFilter = () => {};
 
-  const handleFocus = (isFocus: boolean) => {
-    textInputRef.current?.focus();
-    setOnFocus(true);
-    if (!isFocus) {
-      Keyboard.dismiss();
-    }
-  };
+  const handleFocus = useCallback(
+    (isFocus: boolean) => {
+      textInputRef.current?.focus();
+      setOnFocus(true);
+      if (!isFocus) {
+        Keyboard.dismiss();
+      }
+    },
+    [setOnFocus]
+  );
 
-  const handleCancel = () => {
-    setOnFocus(false);
+  const handleCancel = useCallback(() => {
     setSearchValue("");
-    setDoneSearching(false);
-    setIsRefreshing(false);
+    setSearchResults([]);
+    setOnFocus(false);
     Keyboard.dismiss();
-  };
+  }, [setOnFocus]);
 
-  const handleSearch = (text: string) => {
+  const handleSearch = useCallback((text: string) => {
     setSearchValue(text);
-  };
+  }, []);
 
-  const onRefresh = async () => {
-    setIsRefreshing(true);
+  const onRefresh = useCallback(async () => {
     await refetch();
-    setIsRefreshing(false);
-  };
+  }, [refetch]);
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleOnPressTag = () => {};
 
@@ -139,55 +145,53 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
             )}
           </View>
         </TouchableWithoutFeedback>
-        <TouchableWithoutFeedback onPress={handleFilter}>
+        {/* <TouchableWithoutFeedback onPress={handleFilter}>
           <Filter />
-        </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback> */}
       </View>
-
-      {/* <Tag handleOnPress={handleOnPressTag} /> */}
 
       {/* Result section */}
-      <View className='mt-6 pb-[200px]'>
-        {searchResults !== undefined && searchResults.length > 0 && doneSearching && (
+      {searchValue !== "" && (
+        <View className='mt-6 pb-[200px]'>
           <Text className='h3-bold mb-2'>Users</Text>
-        )}
 
-        <FlatList
-          data={searchResults}
-          keyExtractor={item => item.username}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              tintColor={"#fff"}
-              onRefresh={onRefresh}
-            />
-          }
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.1}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item, index }) => (
-            <>
-              <User {...item} />
-              {searchResults !== undefined && index !== searchResults.length - 1 && (
-                <View className='my-4 h-[1px] w-full bg-gray-300' />
-              )}
-            </>
-          )}
-          ListEmptyComponent={() => {
-            return shouldShowNoResults ? (
-              <View className='flex-center mt-10 gap-2'>
-                <Image
-                  source={require("../../../assets/icons/noResult.png")}
-                  style={{ width: 130, height: 130 }}
-                />
-                <Text className='paragraph-medium text-center'>No users found!</Text>
-              </View>
-            ) : (
-              <View></View>
-            );
-          }}
-        />
-      </View>
+          <FlatList
+            data={searchResults}
+            keyExtractor={item => item.username}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefetching}
+                tintColor={globalStyles.color.primary}
+                onRefresh={onRefresh}
+              />
+            }
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.1}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item, index }) => (
+              <>
+                <User {...item} />
+                {searchResults !== undefined && index !== searchResults.length - 1 && (
+                  <View className='my-4 h-[1px] w-full bg-gray-300' />
+                )}
+              </>
+            )}
+            ListEmptyComponent={() => {
+              return isDoneSearching && searchResults?.length === 0 ? (
+                <View className='flex-center mt-10 gap-2'>
+                  <Image
+                    source={require("../../../assets/icons/noResult.png")}
+                    style={{ width: 130, height: 130 }}
+                  />
+                  <Text className='paragraph-medium text-center'>No users found!</Text>
+                </View>
+              ) : (
+                <View></View>
+              );
+            }}
+          />
+        </View>
+      )}
     </View>
   );
 };

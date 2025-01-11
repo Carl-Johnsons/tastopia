@@ -93,7 +93,7 @@ const CreatePost = () => {
                     style={{ color: textColor }}
                     className='font-bold'
                   >
-                    {user.username}
+                    {user.accountUsername}
                   </Text>
                   {text.length > 0 && (
                     <Entypo
