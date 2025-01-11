@@ -92,6 +92,8 @@ services:
     networks:
       - front-end
       - back-end
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # For using host.docker.internal in linux
       
   redis:
     image: redis:8.0-M02-alpine
