@@ -1,10 +1,10 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using Serilog;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Ocelot.DependencyInjection;
 using APIGateway.Middleware;
 using Ocelot.Middleware;
 using Contract.Utilities;
+using APIGateway.Extensions;
+using Ocelot.Provider.Consul;
 
 namespace APIGateway;
 
@@ -20,31 +20,8 @@ public static class DependenciesInjection
         var host = builder.Host;
         var env = builder.Environment;
 
-        var httpPort = DotNetEnv.Env.GetInt("PORT", 0);
-        var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
-        var certPath = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Path");
-        var certPassword = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Password");
-
-        builder.WebHost.ConfigureKestrel(options =>
-        {
-            options.ListenAnyIP(httpPort, listenOption =>
-            {
-                listenOption.Protocols = HttpProtocols.Http1;
-            });
-
-            options.ListenAnyIP(httpsPort, listenOption =>
-            {
-                listenOption.Protocols = HttpProtocols.Http1AndHttp2;
-                // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
-                listenOption.UseHttps(certPath, certPassword);
-            });
-        });
-
-        host.UseSerilog((context, config) =>
-        {
-            config.ReadFrom.Configuration(context.Configuration);
-        });
-
+        builder.ConfigureKestrel();
+        builder.ConfigureSerilog();
 
         config.SetBasePath(env.ContentRootPath)
               .AddEnvironmentVariables();
@@ -68,11 +45,11 @@ public static class DependenciesInjection
         });
 
         // Configure service
-        services.AddEndpointsApiExplorer(); // This require for swaggerForOcelot to launch
 
-        services.AddOcelot();
+        services.AddOcelot()
+                .AddConsul();
 
-        services.AddSwaggerForOcelot(config);
+        services.AddSwaggerServices(config);
 
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
@@ -120,11 +97,9 @@ public static class DependenciesInjection
 
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
-        app.UseSwagger();
-        app.UseSwaggerForOcelotUI();
+        app.UseSerilogServices();
 
         app.UseMiddleware<HttpsFallbackMiddleware>();
-        app.UseSerilogRequestLogging();
 
         app.UseCors("AllowAnyOriginPolicy");
 

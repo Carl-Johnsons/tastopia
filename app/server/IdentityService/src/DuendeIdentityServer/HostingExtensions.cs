@@ -1,14 +1,15 @@
 using Contract.Utilities;
 using Duende.IdentityServer;
 using Duende.IdentityServer.ResponseHandling;
+using DuendeIdentityServer.Extensions;
 using DuendeIdentityServer.Middleware;
 using DuendeIdentityServer.Services;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.OpenApi.Models;
-using Serilog;
+using Steeltoe.Common.Http.Discovery;
+using Steeltoe.Discovery.Client;
+using Steeltoe.Discovery.Consul;
 
 namespace DuendeIdentityServer;
 
@@ -16,70 +17,23 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
+
         EnvUtility.LoadEnvFile();
 
         var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
         var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");
-
         var services = builder.Services;
-        var host = builder.Host;
 
-        var httpPort = DotNetEnv.Env.GetInt("PORT", 0);
-        var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
-        var certPath = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Path");
-        var certPassword = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Password");
+        builder.ConfigureKestrel();
+        builder.ConfigureSerilog();
 
-        builder.WebHost.ConfigureKestrel(options =>
-        {
-            options.ListenAnyIP(httpPort, listenOption =>
-            {
-                listenOption.Protocols = HttpProtocols.Http1;
-            });
-
-            options.ListenAnyIP(httpsPort, listenOption =>
-            {
-                listenOption.Protocols = HttpProtocols.Http1AndHttp2;
-                // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
-                listenOption.UseHttps(certPath, certPassword);
-            });
-        });
+        services.AddServiceDiscovery(o => o.UseConsul());
 
         services.AddApplicationServices();
         services.AddInfrastructureServices(builder.Configuration);
+
         services.AddGrpcServices();
-
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen(config =>
-        {
-            config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Type = SecuritySchemeType.Http,
-                Scheme = "bearer",
-                BearerFormat = "JWT",
-                In = ParameterLocation.Header,
-                Description = "Input your Bearer token in the following format: `Bearer {your_token}`"
-            });
-
-            config.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
-            });
-        });
-
-        host.UseSerilog((context, config) =>
-        {
-            config.ReadFrom.Configuration(context.Configuration);
-        });
+        services.AddSwaggerServices();
 
         services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
@@ -93,8 +47,6 @@ internal static class HostingExtensions
 
         services.AddSingleton<ISignalRService, SignalRService>();
         services.AddScoped(typeof(IPaginateDataUtility<,>), typeof(PaginateDataUtility<,>));
-
-        services.AddScoped<IServiceBus, MassTransitServiceBus>();
 
         services
             .AddIdentityServer(options =>
@@ -169,16 +121,14 @@ internal static class HostingExtensions
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
-        app.UseSerilogRequestLogging();
+        app.UseSerilogServices();
 
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseSwagger();
-        app.UseSwaggerUI();
-
+        app.UseSwaggerServices();
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });

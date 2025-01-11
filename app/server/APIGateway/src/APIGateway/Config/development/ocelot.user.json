@@ -1,16 +1,10 @@
 {
   "Routes": [
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7003
-        },
-        {
-          "Host": "localhost",
-          "Port": 5003
-        }
-      ],
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/user/search",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
@@ -21,16 +15,10 @@
       "SwaggerKey": "user"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7003
-        },
-        {
-          "Host": "localhost",
-          "Port": 5003
-        }
-      ],
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/user/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
@@ -45,21 +33,16 @@
       "SwaggerKey": "user"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7003
-        },
-        {
-          "Host": "localhost",
-          "Port": 5003
-        }
-      ],
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/setting/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
-        "POST"
+        "POST",
+        "PUT"
       ],
       "UpstreamPathTemplate": "/api/setting/{everything}",
       "AuthenticationOptions": {

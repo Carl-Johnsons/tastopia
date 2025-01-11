@@ -106,7 +106,7 @@ public class RecipeController : BaseApiController
         var result = await _sender.Send(new SearchRecipesQuery
         {
             Skip = searchRecipesDTO.Skip,
-            TagValues = searchRecipesDTO.TagValues,
+            TagCodes = searchRecipesDTO.TagCodes,
             Keyword = searchRecipesDTO.Keyword,
             AccountId = Guid.Parse(subjectId!),
         });

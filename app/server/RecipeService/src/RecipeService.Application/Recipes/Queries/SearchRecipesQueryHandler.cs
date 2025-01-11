@@ -18,7 +18,7 @@ public class SearchRecipesQuery : IRequest<Result<PaginatedSearchRecipeListRespo
     public int? Skip { get; init; }
 
     [Required]
-    public List<string>? TagValues { get; init; }
+    public List<string>? TagCodes { get; init; }
 
     [Required]
     public string? Keyword { get; init; }
@@ -47,7 +47,7 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
     public async Task<Result<PaginatedSearchRecipeListResponse?>> Handle(SearchRecipesQuery request, CancellationToken cancellationToken)
     {
         var skip = request.Skip;
-        var tagValues = request.TagValues;
+        var tagCodes = request.TagCodes;
         var keyword = request.Keyword;
 
         if (skip == null)
@@ -57,8 +57,9 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
 
         var recipesQuery = _context.Recipes.OrderByDescending(r => r.CreatedAt).AsQueryable();
 
-        if (tagValues != null && tagValues.Any())
+        if (tagCodes != null && tagCodes.Any() && !tagCodes.Contains("ALL"))
         {
+            var tagValues = _context.Tags.Where(t => tagCodes.Any(tc => tc == t.Code)).Select(t => t.Value).ToList();
             recipesQuery = recipesQuery.Where(r => tagValues.Any(tag =>
                 r.Title.ToLower().Contains(tag.ToLower()) ||
                 r.Description.ToLower().Contains(tag.ToLower()) ||

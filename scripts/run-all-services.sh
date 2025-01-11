@@ -1,5 +1,5 @@
 #!/bin/bash
-trap "kill 0" SIGINT
+# trap "kill 0" SIGINT
 
 . ./scripts/lib.sh && check_docker
 
@@ -63,7 +63,7 @@ if [[ "$PLATFORM" != "windows" ]]; then
                 echo -e "${GREEN}Run chmod 777 for DuendeIdentityServer directory successfully${NC}"
 fi
 
-docker compose up -d postgres rabbitmq mongo
+run_required_docker_services
 
 CertPath=$HOME$ASPNETCORE_Kestrel__Certificates__Default__Path
 echo "SSL certification is on '$CertPath'"
@@ -96,12 +96,14 @@ run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGa
 run_service 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" & \
 run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" & \
 run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" & \
-run_service 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
 run_service 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" & \
 run_service 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification" & \
 run_service 5007 "./app/server/SubscriptionService/src/SubscriptionService.API" "$DEBUG" "Subscription" & \
 run_service 5008 "./app/server/TrackingService/src/TrackingService.API" "$LIGHT_YELLOW" "Tracking" & \
 run_service 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker" & \
 run_service 6001 "./app/server/RecipeService/src/RecipeWorker" "$LIGHT_BLUE" "Recipe Worker"
+
+# Not now
+# run_service 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
 
 wait
