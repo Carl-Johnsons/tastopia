@@ -11,8 +11,10 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import useDarkMode from "@/hooks/useDarkMode";
 
 const Search = () => {
+  const isDarkMode = useDarkMode();
   const [onFocus, setOnFocus] = useState<boolean>(false);
   const [isSearchingUser, setIsSearchingUser] = useState(true);
 
@@ -30,31 +32,29 @@ const Search = () => {
   return (
     <TouchableWithoutFeedback onPress={() => handleFocus(false)}>
       <SafeAreaView
-        // TODO: fix padding search result
         style={{
-          marginTop: 10,
           marginBottom: 90,
           paddingHorizontal: 16,
-          backgroundColor: globalStyles.color.light,
+          backgroundColor: isDarkMode
+            ? globalStyles.color.dark
+            : globalStyles.color.light,
           height: "100%"
         }}
       >
-        <TouchableOpacity
-          onPress={handleChangeSearch}
-          activeOpacity={1}
-          style={{ backgroundColor: "transparent" }}
-        >
-          <View className='flex-center flex-row gap-2'>
-            <Text className='base-medium text-black_white text-center'>
-              {isSearchingUser ? "Search Users" : "Search Recipe"}
-            </Text>
-            <AntDesign
-              name='caretdown'
-              size={10}
-              color={globalStyles.color.gray400}
-            />
-          </View>
-        </TouchableOpacity>
+        <View className='flex-center'>
+          <TouchableWithoutFeedback onPress={handleChangeSearch}>
+            <View className='flex-center flex-row gap-2'>
+              <Text className='base-medium text-black_white text-center'>
+                {isSearchingUser ? "Search Users" : "Search Recipe"}
+              </Text>
+              <AntDesign
+                name='caretdown'
+                size={10}
+                color={globalStyles.color.gray400}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
         {isSearchingUser ? (
           <SearchUser
             onFocus={onFocus}

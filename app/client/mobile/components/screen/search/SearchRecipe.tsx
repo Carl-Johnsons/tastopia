@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import {
   Text,
   View,
@@ -9,16 +9,23 @@ import {
   FlatList,
   RefreshControl
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
 import { Filter } from "@/components/common/SVG";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import useDebounce from "@/hooks/useDebounce";
 import { AntDesign } from "@expo/vector-icons";
 import useDarkMode from "@/hooks/useDarkMode";
-import User from "@/components/common/User";
 import { Image } from "expo-image";
-import { useSearchUsers } from "@/api/search";
+import { useSearchRecipes } from "@/api/search";
+import { router, useFocusEffect } from "expo-router";
+import Recipe from "@/components/common/Recipe";
+import { filterUniqueItems } from "@/utils/dataFilter";
+import {
+  addKeyword,
+  selectSearchKeyword,
+  selectSearchTagCodes
+} from "@/slices/searchRecipe.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -26,8 +33,12 @@ type SearchUserProps = {
 };
 
 const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
-  const [searchValue, setSearchValue] = useState<string>("");
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const dispatch = useAppDispatch();
+  const tagCodes = useAppSelector(selectSearchTagCodes);
+  const searchKeyword = useAppSelector(selectSearchKeyword);
+
+  const [searchValue, setSearchValue] = useState<string>(searchKeyword);
+  const [searchResults, setSearchResults] = useState<SearchRecipeType[]>();
 
   const textInputRef = useRef<TextInput>(null);
   const isDarkMode = useDarkMode();
@@ -36,52 +47,79 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const {
     data,
     isFetched,
+    isRefetching,
     hasNextPage,
     isFetchingNextPage,
     isLoading: isSearching,
     refetch,
     fetchNextPage
-  } = useSearchUsers(debouncedValue);
+  } = useSearchRecipes(debouncedValue, tagCodes);
 
-  const searchResults = data?.pages.flatMap(page => page.paginatedData) ?? [];
-  const [doneSearching, setDoneSearching] = useState(
-    !isSearching || searchResults.length > 0
+  const isDoneSearching =
+    searchValue !== "" &&
+    debouncedValue !== "" &&
+    isFetched &&
+    !isRefetching &&
+    !isSearching &&
+    !isFetchingNextPage;
+
+  const handleFilter = () => {
+    router.navigate("/(modals)/SearchFilter");
+  };
+
+  const handleFocus = useCallback(
+    (isFocus: boolean) => {
+      textInputRef.current?.focus();
+      setOnFocus(true);
+      if (!isFocus) {
+        Keyboard.dismiss();
+      }
+    },
+    [setOnFocus]
   );
-  const shouldShowNoResults = isFetched && doneSearching;
 
-  const handleFilter = () => {};
-
-  const handleFocus = (isFocus: boolean) => {
-    textInputRef.current?.focus();
-    setOnFocus(true);
-    if (!isFocus) {
-      Keyboard.dismiss();
-    }
-  };
-
-  const handleCancel = () => {
-    setOnFocus(false);
+  const handleCancel = useCallback(() => {
     setSearchValue("");
-    setDoneSearching(false);
-    setIsRefreshing(false);
+    dispatch(addKeyword(""));
+    setSearchResults([]);
+    setOnFocus(false);
     Keyboard.dismiss();
-  };
+  }, [dispatch, setOnFocus]);
 
-  const handleSearch = (text: string) => {
-    setSearchValue(text);
-  };
+  const handleSearch = useCallback(
+    (text: string) => {
+      setSearchValue(text);
+      dispatch(addKeyword(text));
+    },
+    [dispatch]
+  );
 
-  const onRefresh = async () => {
-    setIsRefreshing(true);
+  const onRefresh = useCallback(async () => {
     await refetch();
-    setIsRefreshing(false);
-  };
+  }, [refetch]);
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  useEffect(() => {
+    if (data?.pages && searchKeyword !== "" && searchValue !== "") {
+      const uniqueData = filterUniqueItems(data.pages);
+      setSearchResults(uniqueData);
+    }
+  }, [data]);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (searchKeyword !== "" && searchValue !== "") {
+        refetch();
+      }
+
+      return () => {};
+    }, [searchKeyword])
+  );
 
   return (
     <View>
@@ -101,7 +139,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
               value={searchValue}
               onPress={() => handleFocus(true)}
               onChangeText={handleSearch}
-              placeholder='Enter name or username'
+              placeholder='Enter recipe name or ingredient'
               placeholderTextColor={globalStyles.color.gray400}
             />
             {onFocus && searchValue && isSearching && (
@@ -136,49 +174,49 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
       </View>
 
       {/* Result section */}
-      <View className='mt-6 pb-[200px]'>
-        {searchResults.length > 0 && doneSearching && (
-          <Text className='h3-bold mb-2'>Users</Text>
-        )}
+      {searchValue !== "" && (
+        <View className='mt-6 pb-[200px]'>
+          <Text className='h3-bold mb-2'>Recipes</Text>
 
-        <FlatList
-          data={searchResults}
-          keyExtractor={item => item.username}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              tintColor={"#fff"}
-              onRefresh={onRefresh}
-            />
-          }
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.1}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item, index }) => (
-            <>
-              <User {...item} />
-              {index !== searchResults.length - 1 && (
-                <View className='my-4 h-[1px] w-full bg-gray-300' />
-              )}
-            </>
-          )}
-          ListEmptyComponent={() => {
-            return shouldShowNoResults ? (
-              <View className='flex-center mt-10 gap-2'>
-                <Image
-                  source={require("../../../assets/icons/noResult.png")}
-                  style={{ width: 130, height: 130 }}
-                />
-                <Text className='paragraph-medium text-center'>No users found!</Text>
-              </View>
-            ) : (
-              <View></View>
-            );
-          }}
-        />
-      </View>
+          <FlatList
+            data={searchResults}
+            keyExtractor={item => item.id}
+            refreshControl={
+              <RefreshControl
+                refreshing={isRefetching}
+                tintColor={globalStyles.color.primary}
+                onRefresh={onRefresh}
+              />
+            }
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.1}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item, index }) => (
+              <>
+                <Recipe {...item} />
+                {searchResults !== undefined && index !== searchResults.length - 1 && (
+                  <View className='my-4 h-[1px] w-full bg-gray-300' />
+                )}
+              </>
+            )}
+            ListEmptyComponent={() => {
+              return isDoneSearching && searchResults?.length === 0 ? (
+                <View className='flex-center mt-10 gap-2'>
+                  <Image
+                    source={require("../../../assets/icons/noResult.png")}
+                    style={{ width: 130, height: 130 }}
+                  />
+                  <Text className='paragraph-medium text-center'>No recipes found!</Text>
+                </View>
+              ) : (
+                <View></View>
+              );
+            }}
+          />
+        </View>
+      )}
     </View>
   );
 };
 
-export default SearchRecipe;
+export default memo(SearchRecipe);

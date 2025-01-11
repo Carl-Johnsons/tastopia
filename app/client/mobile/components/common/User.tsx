@@ -30,12 +30,13 @@ const User = ({
 
   return (
     <TouchableWithoutFeedback
+      key={id}
       onPress={() => {
         console.log("press user card");
       }}
     >
       <View className='flex-row items-start justify-between gap-16'>
-        <View className='flex-row flex-1 gap-2'>
+        <View className='flex-1 flex-row gap-2'>
           <Image
             source={avtUrl}
             style={{
@@ -67,8 +68,8 @@ const User = ({
         </View>
         <View>
           <TouchableWithoutFeedback onPress={handleFollowUnFollow}>
-            <View className='px-6 py-2 rounded-3xl bg-primary'>
-              <Text className='text-center paragraph-bold text-white_black'>
+            <View className='rounded-3xl bg-primary px-6 py-2'>
+              <Text className='paragraph-bold text-white_black text-center'>
                 {followed ? "Unfollow" : "Follow"}
               </Text>
             </View>

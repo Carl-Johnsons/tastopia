@@ -25,6 +25,7 @@ import { isFalsy, isNumeric as checkIfNumber } from "@/utils/functions";
  * - value: if value is Date type, must be in type string and in format "yyyy-MM-dd"
  */
 interface InputTypes {
+  variant?: "primary" | "secondary";
   name: string;
   control?: any;
   disabled?: boolean;
@@ -55,6 +56,7 @@ interface CustomProps {
 }
 
 const Input = ({
+  variant = "primary",
   name,
   control,
   disabled = false,
@@ -113,6 +115,27 @@ const Input = ({
     customProps.onChange?.(currentDate);
   };
 
+  const getInputStyles = () => {
+    const baseStyles = [
+      styles.input,
+      inputStyle && inputStyle,
+      isFocused && styles.inputFocused,
+      isPassword && styles.inputPassword,
+      {
+        backgroundColor: disabled ? "#e9ecef" : globalStyles.color.light
+      }
+    ];
+
+    if (variant === "secondary") {
+      baseStyles.push(styles.secondaryInput);
+      if (isFocused) {
+        baseStyles.push(styles.secondaryInputFocused);
+      }
+    }
+
+    return baseStyles;
+  };
+
   return (
     <HasFormGroupElement>
       {label && (
@@ -156,20 +179,11 @@ const Input = ({
                     <TextInput
                       ref={inputRef}
                       keyboardType={isNumeric ? "numeric" : "default"}
-                      style={[
-                        styles.input,
-                        inputStyle && inputStyle,
-                        isFocused && styles.inputFocused,
-                        isPassword && styles.inputPassword,
-                        {
-                          backgroundColor: disabled
-                            ? "#e9ecef"
-                            : globalStyles.color.light,
-                          width: "50%"
-                        }
-                      ]}
+                      style={getInputStyles()}
                       editable={!(disabled || isLoading)}
                       selectTextOnFocus={!(disabled || isLoading)}
+                      selectionColor={globalStyles.color.primary}
+                      cursorColor={globalStyles.color.primary}
                       {...restProps}
                       {...customProps}
                       onChangeText={value => {

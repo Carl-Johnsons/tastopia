@@ -3,6 +3,35 @@ import { Ionicons, Feather } from "@expo/vector-icons";
 import { View, Text, Image, TouchableWithoutFeedback } from "react-native";
 import { useRouter } from "expo-router";
 
+const InteractionSection = ({
+  voteDiff,
+  numberOfComment
+}: {
+  voteDiff: number | undefined;
+  numberOfComment: number | undefined;
+}) => {
+  if (!voteDiff && !numberOfComment) return null;
+
+  return (
+    <View className='flex-start flex-row gap-2'>
+      {voteDiff !== undefined && <Vote voteDiff={voteDiff} />}
+
+      {numberOfComment !== undefined && (
+        <TouchableWithoutFeedback>
+          <View className='flex-center flex-row gap-2 rounded-3xl border-[0.5px] border-gray-300 px-3 py-2.5'>
+            <Ionicons
+              name='chatbubble-outline'
+              size={20}
+              color='black'
+            />
+            <Text>{numberOfComment}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      )}
+    </View>
+  );
+};
+
 const Recipe = ({
   id,
   authorId,
@@ -75,20 +104,13 @@ const Recipe = ({
               </Text>
             </View>
 
-            <View className='flex-start flex-row gap-2'>
-              <Vote voteDiff={voteDiff} />
-
-              <TouchableWithoutFeedback>
-                <View className='flex-center flex-row gap-2 rounded-3xl border-[0.5px] border-gray-300 px-3 py-2.5'>
-                  <Ionicons
-                    name='chatbubble-outline'
-                    size={20}
-                    color='black'
-                  />
-                  <Text>{numberOfComment}</Text>
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
+            {voteDiff !== undefined ||
+              (numberOfComment !== undefined && (
+                <InteractionSection
+                  voteDiff={voteDiff}
+                  numberOfComment={numberOfComment}
+                />
+              ))}
           </View>
         </View>
       </View>
