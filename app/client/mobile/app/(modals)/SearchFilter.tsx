@@ -93,8 +93,6 @@ const SearchFilter = () => {
     setSelectedTags(prev => prev.filter(t => t.code !== code));
   }, []);
 
-  console.log("selectedTags", selectedTags);
-
   const handleCloseModal = () => {
     selectedTags.length > 0
       ? Alert.alert("Cancel Filter", "Your selected ingredients will be dismissed", [
