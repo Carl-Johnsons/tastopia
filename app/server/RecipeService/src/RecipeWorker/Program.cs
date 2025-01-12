@@ -1,4 +1,5 @@
 using RecipeWorker;
+using RecipeWorker.Extensions;
 using RecipeWorker.Interfaces;
 using RecipeWorker.Services;
 using RecipeWorker.Utilities;
@@ -6,6 +7,10 @@ using RecipeWorker.Utilities;
 EnvUtility.LoadEnvFile();
 
 var builder = Host.CreateDefaultBuilder(args)
+    .ConfigureWebHostDefaults(webBuilder =>
+    {
+        webBuilder.ConfigureKestrel();
+    })
     .ConfigureServices((context, services) =>
     {
         services.AddWorkerServices();
