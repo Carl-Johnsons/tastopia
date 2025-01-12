@@ -13,8 +13,7 @@ public static class ReinforcedTypingsExtension
         {
             config.CamelCaseForProperties()
                   .AutoOptionalProperties()
-                  .ExportPureTypings(typings: true)
-                  .UseModules(useModules: true, discardNamespaces: true); 
+                  .ExportPureTypings(typings: true); 
         });
 
         // Substitute C# type to typescript type
