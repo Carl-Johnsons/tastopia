@@ -6,8 +6,8 @@ import errorEn from "../locales/en/error.json";
 import errorVi from "../locales/vi/error.json";
 import menuEn from "../locales/en/menu/menu.json";
 import menuVi from "../locales/vi/menu/menu.json";
-import settingModalEn from "../locales/en/menu/setting_modal.json";
-import settingModalVi from "../locales/vi/menu/setting_modal.json";
+import settingModalEn from "../locales/en/menu/settingModal.json";
+import settingModalVi from "../locales/vi/menu/settingModal.json";
 import createRecipeEn from "../locales/en/createRecipe.json";
 import createRecipeVi from "../locales/vi/createRecipe.json";
 
