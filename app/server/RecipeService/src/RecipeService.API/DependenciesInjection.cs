@@ -8,8 +8,6 @@ using AutoMapper;
 using RecipeService.API.Configs;
 using Contract.Utilities;
 using RecipeService.API.Extensions;
-using Steeltoe.Discovery.Client;
-using Steeltoe.Discovery.Consul;
 
 namespace RecipeService.API;
 
@@ -26,12 +24,11 @@ public static class DependenciesInjection
         builder.ConfigureKestrel();
         builder.ConfigureSerilog();
 
+        services.AddInfrastructureServices();
         services.AddApplicationServices();
-        services.AddInfrastructureServices(config);
         services.AddGrpcServices();
         services.AddSwaggerServices();
 
-        services.AddServiceDiscovery(o => o.UseConsul());
         // Register automapper
         IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
         services.AddSingleton(mapper);
@@ -82,13 +79,7 @@ public static class DependenciesInjection
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
         app.UseSerilogServices();
-        app.Use(async (context, next) =>
-        {
-            // Log information about the incoming request
-            app.Logger.LogInformation($"Request: {context.Request.Method} {context.Request.Path}");
-
-            await next(); // Call the next middleware
-        });
+        app.UseConsulServiceDiscovery();
 
         app.UseSwaggerServices();
 
