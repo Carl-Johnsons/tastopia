@@ -137,9 +137,13 @@ public class RecipeController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> GetRecipeDetails([FromBody] GetRecipeDetailDTO getRecipeDetailDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new GetRecipeDetailQuery
         {
             RecipeId = getRecipeDetailDTO.RecipeId,
+            AccountId = Guid.Parse(subjectId!),
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

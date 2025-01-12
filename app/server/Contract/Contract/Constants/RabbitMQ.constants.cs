@@ -11,8 +11,6 @@ public static class RabbitMQConstant
             public const string USER_REGISTER_USER = "user-register-user-queue";
             public const string LINK_ACCOUNT = "link-account-queue";
             public const string USER_RESEND_OTP = "user-resend-otp-queue";
-            public const string GET_SIMPLE_USERS = "get-simple-users-queue";
-            public const string GET_USER_DETAILS = "get-user-details-queue";
             // ======================= Recipe ============================
             public const string GET_RECIPE_DETAILS = "get-recipe-details-queue";
             public const string UPDATE_RECIPE_TAGS = "update-recipe-tags-queue";
@@ -30,6 +28,9 @@ public static class RabbitMQConstant
             public const string DELETE_MULTIPLE_IMAGE_FILE = "delete-multiple-image-file-queue";
             public const string UPDATE_MULTIPLE_IMAGE_FILE = "update-multiple-image-file-queue";
 
+            // ======================= TRACKING ============================
+            public const string CREATE_USER_VIEW_RECIPE_DETAIL = "create-user-view-recipe-detail-queue";
+
 
 
 
@@ -45,8 +46,6 @@ public static class RabbitMQConstant
             public const string USER_REGISTER = "user-register-event";
             public const string LINK_ACCOUNT = "link-account-event";
             public const string USER_RESEND_OTP = "user-resend-otp-event";
-            public const string GET_SIMPLE_USERS = "get-simple-users-event";
-            public const string GET_USER_DETAILS = "get-user-details-event";
             // ======================= Recipe ============================
             public const string GET_RECIPE_DETAILS = "get-recipe-details-event";
             public const string GET_ALL_TAGS = "get-all-tags-event";
@@ -61,6 +60,9 @@ public static class RabbitMQConstant
             public const string UPLOAD_MULTIPLE_IMAGE_FILE = "upload-multiple-image-file-event";
             public const string DELETE_MULTIPLE_IMAGE_FILE = "delete-multiple-image-file-event";
             public const string UPDATE_MULTIPLE_IMAGE_FILE = "update-multiple-image-file-event";
+
+            // ======================= TRACKING ============================
+            public const string CREATE_USER_VIEW_RECIPE_DETAIL = "create-user-view-recipe-detail-event";
 
         }
 

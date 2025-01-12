@@ -5,6 +5,7 @@ using RecipeService.Application.Configs;
 using System.Reflection;
 using UploadFileProto;
 using UserProto;
+using TrackingProto;
 
 namespace RecipeService.Application;
 
@@ -35,6 +36,11 @@ public static class DependencyInjection
         services.AddGrpcClient<GrpcUploadFile.GrpcUploadFileClient>(options =>
         {
             options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_UPLOAD", "Not Found"));
+        });
+
+        services.AddGrpcClient<GrpcTracking.GrpcTrackingClient>(options =>
+        {
+            options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_TRACKING", "Not Found"));
         });
     }
 }

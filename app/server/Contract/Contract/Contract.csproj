@@ -11,6 +11,10 @@
 		<EmbeddedResource Remove="Protos\User\**" />
 		<None Remove="Protos\User\**" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Remove="Protos\TrackingService.proto" />
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="MassTransit" Version="8.2.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
@@ -28,6 +32,12 @@
 		<Protobuf Include="Protos\AccountService.proto" GrpcServices="Both" />
 		<Protobuf Include="Protos\RecipeService.proto" GrpcServices="Both" />
 		<Protobuf Include="Protos\UploadFileService.proto" GrpcServices="Both" />
+		<Protobuf Include="Protos\TrackingService.proto" GrpcServices="Both" />
 		<Protobuf Include="Protos\UserService.proto" GrpcServices="Both" />
+		<Protobuf Include="Protos\TrackingService.proto" GrpcServices="Both" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="DTOs\TrackingDTO\" />
 	</ItemGroup>
 </Project>
