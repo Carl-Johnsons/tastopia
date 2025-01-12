@@ -25,7 +25,7 @@ const Community = () => {
   } = useRecipesFeed(filterSelected);
 
   const handleCreateRecipe = () => {
-    router.push("/(modals)/CreateRecipe");
+    router.push("/(protected)/community/create-recipe");
   };
 
   const handleFilter = (key: string) => {
