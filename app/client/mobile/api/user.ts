@@ -7,6 +7,7 @@ import { AxiosError } from "axios";
 import { stringify } from "@/utils/debug";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { SETTING_KEY, SETTING_VALUE } from "@/slices/setting.slice";
+import { UserState } from "@/slices/user.slice";
 
 export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {
@@ -61,7 +62,7 @@ export const useGetUserSettings = () => {
         return data;
       } catch (error) {
         if (error instanceof AxiosError) {
-          const data = error.response?.data as ErrorResponseDTO;
+          const data = error.response?.data as IErrorResponseDTO;
           throw new Error(data.message);
         }
 
@@ -90,7 +91,7 @@ export const useGetUserDetails = () => {
         console.debug("useGetUserDetails", JSON.stringify(error));
 
         if (error instanceof AxiosError) {
-          const data = error.response?.data as ErrorResponseDTO;
+          const data = error.response?.data as IErrorResponseDTO;
           throw new Error(data.message);
         }
 
@@ -120,7 +121,7 @@ export const useRegister = () => {
         console.debug("useRegister", stringify(error));
 
         if (error instanceof AxiosError) {
-          const data = error.response?.data as ErrorResponseDTO;
+          const data = error.response?.data as IErrorResponseDTO;
           throw new Error(data.message);
         }
 
@@ -146,7 +147,7 @@ export const useVerify = () => {
         console.debug("useVerify", stringify(error));
 
         if (error instanceof AxiosError) {
-          const data = error.response?.data as ErrorResponseDTO;
+          const data = error.response?.data as IErrorResponseDTO;
           throw new Error(data.message);
         }
 
@@ -170,7 +171,7 @@ export const useResendVerifyCode = () => {
         console.debug("resendVerifyCode", stringify(error));
 
         if (error instanceof AxiosError) {
-          const data = error.response?.data as ErrorResponseDTO;
+          const data = error.response?.data as IErrorResponseDTO;
           throw new Error(data.message);
         }
 
@@ -181,7 +182,7 @@ export const useResendVerifyCode = () => {
 };
 
 export type UpdateSettingResponseSuccess = 0;
-export type UpdateSettingResponse = UpdateSettingResponseSuccess | ErrorResponseDTO;
+export type UpdateSettingResponse = UpdateSettingResponseSuccess | IErrorResponseDTO;
 export type UpdateSettingParams = {
   settings: Array<{
     key: SETTING_KEY;
@@ -221,7 +222,7 @@ export const useUpdateSetting = () => {
         console.debug("useUpdateSetting", stringify(error));
 
         if (error instanceof AxiosError) {
-          const data = error.response?.data as ErrorResponseDTO;
+          const data = error.response?.data as IErrorResponseDTO;
           throw new Error(data.message);
         }
 

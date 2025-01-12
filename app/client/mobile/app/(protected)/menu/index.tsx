@@ -96,14 +96,14 @@ const History = () => {
       <View className='flex-row justify-between'>
         <Text className='font-semibold text-4xl text-black'>{t("history")}</Text>
         <Button className='flex justify-center rounded-full border border-gray-200 px-4 py-1'>
-          <Text className='font-sans text-black'>{t("view_all")}</Text>
+          <Text className='font-sans text-black'>{t("viewAll")}</Text>
         </Button>
       </View>
       <View
         className='flex justify-center'
         style={{ height: 0.1 * height }}
       >
-        <Text className='text-center font-light text-gray-400'>{t("no_history")}</Text>
+        <Text className='text-center font-light text-gray-400'>{t("noHistory")}</Text>
       </View>
     </>
   );

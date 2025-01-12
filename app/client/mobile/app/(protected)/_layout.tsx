@@ -96,10 +96,6 @@ const ProtectedLayout = () => {
             />
           );
         })}
-        <Tabs.Screen
-          name='(modals)'
-          options={{ href: null, headerShown: false }}
-        />
       </Tabs>
     </>
   );

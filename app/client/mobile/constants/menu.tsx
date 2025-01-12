@@ -105,6 +105,10 @@ export const menuList: Menu[] = [
       /* ================= MAIN TABS ================= */
       {
         path: MAIN_PATH,
+        code: "COMMUNITY",
+      },
+      {
+        path: COMMUNITY_PATH,
         icon: ({ color, focused }) => (
           <TabIcon
             icon={
@@ -124,25 +128,6 @@ export const menuList: Menu[] = [
         includeInMainTab: {
           position: 1
         }
-      },
-      {
-        path: COMMUNITY_PATH,
-        icon: ({ color, focused }) => (
-          <TabIcon
-            icon={
-              <Octicons
-                name='people'
-                size={24}
-                color={color}
-              />
-            }
-            color={color}
-            translateCode='community'
-            focused={focused}
-          />
-        ),
-        code: "COMMUNITY",
-        translateCode: "community"
       },
       {
         path: SEARCH_PATH,
