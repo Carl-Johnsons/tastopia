@@ -4,7 +4,7 @@ using Grpc.Core;
 using Newtonsoft.Json;
 using UploadFileProto;
 using UploadFileService.API.Utilities;
-using UploadFileService.Application.CloudinaryFiles.Commands;
+using UploadFileService.Application.Files.Commands;
 using UploadFileService.Domain.Responses;
 
 namespace UploadFileService.API.GrpcServices;
@@ -37,7 +37,7 @@ public class GrpcUploadFileService : GrpcUploadFile.GrpcUploadFileBase
             var response = await _sender.Send(new UpdateMultipleImageFileCommand
             {
                 FormFiles = formFiles,
-                Urls = deleteUrls,
+                DeleteUrls = deleteUrls,
             });
             response.ThrowIfFailure();
             listFileResponse = response.Value;

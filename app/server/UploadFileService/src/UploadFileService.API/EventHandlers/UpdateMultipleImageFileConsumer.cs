@@ -4,7 +4,7 @@ using Contract.DTOs.UploadFileDTO;
 using Contract.Event.UploadEvent;
 using MassTransit;
 using UploadFileService.API.Utilities;
-using UploadFileService.Application.CloudinaryFiles.Commands;
+using UploadFileService.Application.Files.Commands;
 
 namespace UploadFileService.API.EventHandlers;
 [QueueName(RabbitMQConstant.QUEUE.NAME.UPDATE_MULTIPLE_IMAGE_FILE,
@@ -29,7 +29,7 @@ public sealed class UpdateMultipleImageFileConsumer : IConsumer<UpdateMultipleIm
         var response = await _sender.Send(new UpdateMultipleImageFileCommand
         {
             FormFiles = formFiles,
-            Urls = deleteUrls,
+            DeleteUrls = deleteUrls,
         });
 
         response.ThrowIfFailure();

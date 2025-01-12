@@ -1,7 +1,4 @@
-﻿using Contract.DTOs.UploadFileDTO;
-using Microsoft.AspNetCore.Http.Internal;
-using Microsoft.AspNetCore.Http;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace UploadFileService.Infrastructure.Utilities;
 
@@ -22,6 +19,8 @@ public class FileUtility : IFileUtility
             ".asf", ".swf", ".m2v",".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma", ".m4a",
             ".aiff", ".alac", ".opus", ".amr"
         };
+
+    private readonly string foler = Environment.GetEnvironmentVariable("Cloudinary_Folder") ?? "file_storage";
 
     public IFileUtility.FileType GetFileType(string fileName)
     {
@@ -51,6 +50,16 @@ public class FileUtility : IFileUtility
 
     public string? GetPublicIdByUrl(string url)
     {
+        if (string.IsNullOrEmpty(url))
+        {
+            return null;
+        }
+
+        if(!url.Contains(foler))
+        {
+            return null;
+        }
+
         string pattern = @"upload\/(?:v\d+\/)?(.+?)\.(\w+)$";
 
         Match match = Regex.Match(url, pattern);

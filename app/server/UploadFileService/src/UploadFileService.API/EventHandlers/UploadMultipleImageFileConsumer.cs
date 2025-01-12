@@ -4,7 +4,7 @@ using Contract.DTOs.UploadFileDTO;
 using Contract.Event.UploadEvent;
 using MassTransit;
 using UploadFileService.API.Utilities;
-using UploadFileService.Application.CloudinaryFiles.Commands;
+using UploadFileService.Application.Files.Commands;
 
 namespace UploadFileService.API.EventHandlers;
 [QueueName(RabbitMQConstant.QUEUE.NAME.UPLOAD_MULTIPLE_IMAGE_FILE,

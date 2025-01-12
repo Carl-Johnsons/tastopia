@@ -1,7 +1,7 @@
 ﻿using Contract.Constants;
 using Contract.Event.UploadEvent;
 using MassTransit;
-using UploadFileService.Application.CloudinaryFiles.Commands;
+using UploadFileService.Application.Files.Commands;
 
 
 namespace UploadFileService.API.EventHandlers;
