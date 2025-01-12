@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Net;
+using UploadFileService.API.DTOs;
 
 namespace UploadFileService.API.Middleware;
 
@@ -22,21 +23,37 @@ public class GlobalHandlingErrorMiddleware
         {
             await _next(context);
         }
-        catch (Exception ex)
+        catch (ResultException rex)
         {
-            _logger.LogError(ex, ex.Message);
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            ProblemDetails problem = new()
+            ErrorResponseDTO errorDTO = new()
             {
-                Status = (int)HttpStatusCode.InternalServerError,
-                Type = "Server Error",
-                Title = "Server Error",
-                Detail = ex.Message
+                Code = rex.Errors.First().Code,
+                Message = rex.Errors.First().Message ?? "",
+                Status = rex.Errors.First().StatusCode ?? (int)HttpStatusCode.InternalServerError
             };
-            string jsonResponse = JsonConvert.SerializeObject(problem);
+
+            string jsonResponse = JsonConvert.SerializeObject(errorDTO);
             context.Response.ContentType = "application/json";
+            context.Response.StatusCode = errorDTO.Status;
             await context.Response.WriteAsync(jsonResponse);
         }
+        catch (Exception ex)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            ErrorResponseDTO errorDTO = new()
+            {
+                Code = "General",
+                Message = ex.Message ?? "",
+                Status = (int)HttpStatusCode.InternalServerError
+            };
+
+            string jsonResponse = JsonConvert.SerializeObject(errorDTO);
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = errorDTO.Status;
+            await context.Response.WriteAsync(jsonResponse);
+        }
+    
     }
 }
 

@@ -6,8 +6,9 @@ public class CommentRecipeDTO
 {
     [Required]
     [JsonProperty("recipeId")]
-    public Guid? RecipeId { get; set; } = null!;
+    [RegularExpression("^((?!00000000-0000-0000-0000-000000000000).)*$", ErrorMessage = "Cannot use default Guid")]
+    public Guid RecipeId { get; set; } = Guid.Empty;
     [Required]
     [JsonProperty("content")]
-    public string? Content { get; set; } = null!;
+    public string Content { get; set; } = null!;
 }

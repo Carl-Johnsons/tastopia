@@ -1,13 +1,12 @@
 {
-    "scripts": {
-        "Pulling environment variables": "./scripts/pull-env.sh",
-        "Setup back-end": "./scripts/setup-backend.sh",
-        "Run all services": "./scripts/run-all-services.sh",
-        "Build all services": "./scripts/build-all-services.sh",
-        "Restore all services": "./scripts/restore-all-services.sh",
-        "Apply all migrations": "./scripts/apply-all-migrations.sh",
-        "Rebuild docker services": "./scripts/rebuild-service.sh",
-        "Generate SSL certificate": "./scripts/generate-cert.sh",
-        "Kill service-bus": "./scripts/kill-mq.sh"
-    }
+  "scripts": {
+    "Pulling environment variables": "./scripts/pull-env.sh",
+    "Setup back-end": "./scripts/setup-backend.sh",
+    "Run all services": "./scripts/run-all-services.sh",
+    "Build all services": "./scripts/build-all-services.sh",
+    "Restore all services": "./scripts/restore-all-services.sh",
+    "Apply all migrations": "./scripts/apply-all-migrations.sh",
+    "Rebuild docker services": "./scripts/rebuild-service.sh",
+    "Generate SSL certificate": "./scripts/generate-cert.sh"
+  }
 }

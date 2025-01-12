@@ -3,8 +3,7 @@ using Google.Protobuf.Collections;
 using Grpc.Core;
 using Newtonsoft.Json;
 using UploadFileProto;
-using UploadFileService.API.Utilities;
-using UploadFileService.Application.CloudinaryFiles.Commands;
+using UploadFileService.Application.Files.Commands;
 using UploadFileService.Domain.Responses;
 
 namespace UploadFileService.API.GrpcServices;
@@ -13,11 +12,13 @@ public class GrpcUploadFileService : GrpcUploadFile.GrpcUploadFileBase
 {
     private readonly ISender _sender;
     private readonly IMapper _mapper;
+    private readonly IFileUtility _fileUtility;
 
-    public GrpcUploadFileService(ISender sender, IMapper mapper)
+    public GrpcUploadFileService(ISender sender, IMapper mapper, IFileUtility fileUtility)
     {
         _sender = sender;
         _mapper = mapper;
+        _fileUtility = fileUtility;
     }
 
     public override Task<GrpcEmpty> DeleteMultipleImage(GrpcDeleteMultipleImageRequest request, ServerCallContext context)
@@ -27,7 +28,7 @@ public class GrpcUploadFileService : GrpcUploadFile.GrpcUploadFileBase
 
     public override async Task<GrpcListFileDTO> UpdateMultipleImage(GrpcUpdateMultipleImageRequest request, ServerCallContext context)
     {
-        var formFiles = await FileUtility.ConvertGrpcFileStreamToIFormFileAsync(request.FileStreams.ToList());
+        var formFiles = await _fileUtility.ConvertGrpcFileStreamToIFormFileAsync(request.FileStreams.ToList());
         var deleteUrls = request.DeleteUrls.ToList();
 
         var listFileResponse = new List<FileResponse>();
@@ -37,7 +38,7 @@ public class GrpcUploadFileService : GrpcUploadFile.GrpcUploadFileBase
             var response = await _sender.Send(new UpdateMultipleImageFileCommand
             {
                 FormFiles = formFiles,
-                Urls = deleteUrls,
+                DeleteUrls = deleteUrls,
             });
             response.ThrowIfFailure();
             listFileResponse = response.Value;
@@ -66,7 +67,7 @@ public class GrpcUploadFileService : GrpcUploadFile.GrpcUploadFileBase
 
     public override async Task<GrpcListFileDTO> UploadMultipleImage(GrpcUploadMultipleImageRequest request, ServerCallContext context)
     {
-        var formFiles = await FileUtility.ConvertGrpcFileStreamToIFormFileAsync(request.FileStreams.ToList());
+        var formFiles = await _fileUtility.ConvertGrpcFileStreamToIFormFileAsync(request.FileStreams.ToList());
         var response = await _sender.Send(new CreateMultipleImageFileCommand
         {
             FormFiles = formFiles

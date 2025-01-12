@@ -9,7 +9,7 @@ build_service() {
   local service_name=$2
   echo -e "${PURPLE}Building $service_name service ...${NC}"
 
-  dotnet build --packages "$project_root/data/nuget" $service_path 2>&1 |
+  dotnet build --no-incremental --packages "$project_root/data/nuget" $service_path 2>&1 |
     sed -E \
       -e "/(warning|warn|wrn)/I s/.*/$(printf "${WARNING}&${NC}")/" \
       -e "/(error|err)/I s/.*/$(printf "${DANGER}&${NC}")/"

@@ -12,6 +12,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
 		<PackageReference Include="DotNetEnv" Version="3.0.0" />
@@ -36,12 +37,8 @@
 		</Reference>
 	</ItemGroup>
 
-	<ItemGroup>
+	<!--<ItemGroup>
 		<Protobuf Include="..\..\..\Contract\Contract\Protos\UploadFileService.proto" Link="Protos\UploadFileService.proto" GrpcServices="Server" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="DTOs\" />
-	</ItemGroup>
+	</ItemGroup>-->
 
 </Project>

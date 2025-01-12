@@ -1,7 +1,7 @@
 ﻿using MassTransit;
 using RecipeService.Domain.Interfaces;
 
-namespace RecipeService.Infrastructure.EventPublishing;
+namespace RecipeService.Infrastructure.Services;
 
 public class MassTransitServiceBus : IServiceBus
 {

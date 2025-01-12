@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contract.Utilities;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
 using UploadFileService.API.Configs;
 using UploadFileService.API.Extensions;
@@ -40,6 +41,31 @@ public static class DependenciesInjection
                     options.JsonSerializerOptions.WriteIndented = true;
                 });
 
+        services.AddAuthentication("Bearer")
+            .AddJwtBearer("Bearer", options =>
+            {
+                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
+                var IdentityServerEndpoint = $"https://{IdentityDNS}";
+                Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
+
+                options.Authority = IdentityServerEndpoint;
+                // Clear default Microsoft's JWT claim mapping
+                // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
+                options.MapInboundClaims = false;
+
+                options.TokenValidationParameters.ValidTypes = ["at+jwt"];
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+                // For development only
+                options.IncludeErrorDetails = true;
+            });
+
 
         return builder;
     }
@@ -57,6 +83,10 @@ public static class DependenciesInjection
         app.UseGrpcServices();
 
         app.UseGlobalHandlingErrorMiddleware();
+
+        app.UseAuthentication();
+
+        app.UseAuthorization();
 
         return app;
     }

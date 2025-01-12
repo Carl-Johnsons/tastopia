@@ -3,7 +3,7 @@ using Google.Protobuf;
 using Microsoft.AspNetCore.Http;
 using UploadFileProto;
 
-namespace RecipeService.Application.Utilities;
+namespace Contract.Utilities;
 
 public static class FileUtility
 {

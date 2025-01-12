@@ -1,7 +1,7 @@
 ﻿using Contract.DTOs.UploadFileDTO;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Http;
 using System.Text.RegularExpressions;
+using UploadFileProto;
 
 namespace UploadFileService.Infrastructure.Utilities;
 
@@ -22,6 +22,8 @@ public class FileUtility : IFileUtility
             ".asf", ".swf", ".m2v",".mp3", ".wav", ".aac", ".flac", ".ogg", ".wma", ".m4a",
             ".aiff", ".alac", ".opus", ".amr"
         };
+
+    private readonly string foler = Environment.GetEnvironmentVariable("Cloudinary_Folder") ?? "file_storage";
 
     public IFileUtility.FileType GetFileType(string fileName)
     {
@@ -49,8 +51,20 @@ public class FileUtility : IFileUtility
         }
     }
 
+
+
     public string? GetPublicIdByUrl(string url)
     {
+        if (string.IsNullOrEmpty(url))
+        {
+            return null;
+        }
+
+        if(!url.Contains(foler))
+        {
+            return null;
+        }
+
         string pattern = @"upload\/(?:v\d+\/)?(.+?)\.(\w+)$";
 
         Match match = Regex.Match(url, pattern);
@@ -63,20 +77,36 @@ public class FileUtility : IFileUtility
 
         return null;
     }
-    //public List<IFormFile> convertFileStreamsToIFormFile(List<FileStreamEvent> fileStreamEvents)
-    //{
-    //    List<IFormFile> formFiles = new List<IFormFile>(fileStreamEvents.Count);
-    //    for (int i = 0; i < fileStreamEvents.Count; i++)
-    //    {
-    //        var fileStreamEvent = fileStreamEvents[i];
-    //        var fileStream = new MemoryStream(fileStreamEvent.Stream);
-    //        IFormFile formFile = new FormFile(fileStream, 0, fileStreamEvent.Stream.Length, fileStreamEvent.FileName, fileStreamEvent.FileName)
-    //        {
-    //            Headers = new HeaderDictionary(),
-    //            ContentType = fileStreamEvent.ContentType,
-    //        };
-    //        formFiles.Add(formFile);
-    //    }
-    //    return formFiles;
-    //}
+
+    public async Task<List<IFormFile>> ConvertGrpcFileStreamToIFormFileAsync(List<GrpcFileStreamDTO> streams)
+    {
+        var tasks = streams.Select((grpcFileStream, index) => Task.Run(async () => new
+        {
+            Index = index,
+            FormFile = (IFormFile)new FormFile(new MemoryStream(await Task.Run(() => grpcFileStream.Stream.ToByteArray())), 0, grpcFileStream.Stream.Length, grpcFileStream.FileName, grpcFileStream.FileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = grpcFileStream.ContentType,
+            }
+        }));
+
+        var results = await Task.WhenAll(tasks);
+        return results.OrderBy(result => result.Index).Select(result => result.FormFile).ToList();
+    }
+
+    public async Task<List<IFormFile>> ConvertFileStreamDTOToIFormFileAsync(List<FileStreamDTO> streams)
+    {
+        var tasks = streams.Select((grpcFileStream, index) => Task.Run(async () => new
+        {
+            Index = index,
+            FormFile = (IFormFile)new FormFile(new MemoryStream(await Task.Run(() => grpcFileStream.Stream)), 0, grpcFileStream.Stream.Length, grpcFileStream.FileName, grpcFileStream.FileName)
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = grpcFileStream.ContentType,
+            }
+        }));
+
+        var results = await Task.WhenAll(tasks);
+        return results.OrderBy(result => result.Index).Select(result => result.FormFile).ToList();
+    }
 }
