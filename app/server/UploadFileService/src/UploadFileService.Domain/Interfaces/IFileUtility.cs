@@ -1,4 +1,8 @@
-﻿namespace UploadFileService.Domain.Interfaces;
+﻿using Contract.DTOs.UploadFileDTO;
+using Microsoft.AspNetCore.Http;
+using UploadFileProto;
+
+namespace UploadFileService.Domain.Interfaces;
 
 public interface IFileUtility
 {
@@ -11,4 +15,8 @@ public interface IFileUtility
     }
     FileType GetFileType(string fileName);
     string? GetPublicIdByUrl(string url);
+
+    Task<List<IFormFile>> ConvertGrpcFileStreamToIFormFileAsync(List<GrpcFileStreamDTO> streams);
+    Task<List<IFormFile>> ConvertFileStreamDTOToIFormFileAsync(List<FileStreamDTO> streams);
+
 }

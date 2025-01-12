@@ -34,9 +34,9 @@
 		<ProjectReference Include="..\UserService.Infrastructure\UserService.Infrastructure.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
+	<!--<ItemGroup>
 		<Protobuf Include="..\..\..\Contract\Contract\Protos\UserService.proto" Link="Protos\UserService.proto" GrpcServices="Server" />
-	</ItemGroup>
+	</ItemGroup>-->
 
 	<PropertyGroup>
 		<DefaultItemExcludes>.git\**;$(DefaultItemExcludes)</DefaultItemExcludes>

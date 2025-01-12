@@ -1,5 +1,4 @@
-﻿using Contract.DTOs;
-using Contract.DTOs.UploadFileDTO;
+﻿using Contract.DTOs.UploadFileDTO;
 using Contract.Event.RecipeEvent;
 using Contract.Event.UploadEvent;
 using Google.Protobuf;
@@ -10,10 +9,7 @@ using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using UploadFileProto;
-using static UserProto.GrpcUser;
-using UserProto;
 
 
 namespace RecipeService.Application.Recipes.Commands;
@@ -77,12 +73,9 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             var steps = request.Steps;
             var imageIndex = GetImageIndexMap(steps);
 
-            var response = await _grpcUploadFileClient.UpdateMultipleImageAsync(new GrpcUpdateMultipleImageRequest
+            var response = await _grpcUploadFileClient.UploadMultipleImageAsync(new GrpcUploadMultipleImageRequest
             {
                 FileStreams = { await GetGrpcFileStreamDTOsAsync(request.RecipeImage, steps) },
-                DeleteUrls = { new RepeatedField<string> {
-                    "https://res.cloudinary.com/dhphzuojz/image/upload/v1736621447/default_storage/gstkfpktw9mjfesrldsd.jpg"
-                } }
             }, cancellationToken: cancellationToken);
 
             if (response == null || response.Files.Count != imageIndex.Count)

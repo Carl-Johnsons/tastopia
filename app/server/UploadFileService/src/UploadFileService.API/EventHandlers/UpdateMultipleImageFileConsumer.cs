@@ -3,7 +3,6 @@ using Contract.Constants;
 using Contract.DTOs.UploadFileDTO;
 using Contract.Event.UploadEvent;
 using MassTransit;
-using UploadFileService.API.Utilities;
 using UploadFileService.Application.Files.Commands;
 
 namespace UploadFileService.API.EventHandlers;
@@ -13,11 +12,13 @@ public sealed class UpdateMultipleImageFileConsumer : IConsumer<UpdateMultipleIm
 {
     private readonly ISender _sender;
     private readonly IMapper _mapper;
+    private readonly IFileUtility _fileUtility;
 
-    public UpdateMultipleImageFileConsumer(ISender sender, IApplicationDbContext context, IFileUtility fileUtility, IMapper mapper)
+    public UpdateMultipleImageFileConsumer(ISender sender, IMapper mapper, IFileUtility fileUtility)
     {
         _sender = sender;
         _mapper = mapper;
+        _fileUtility = fileUtility;
     }
 
     public async Task Consume(ConsumeContext<UpdateMultipleImageFileEvent> context)
@@ -25,7 +26,7 @@ public sealed class UpdateMultipleImageFileConsumer : IConsumer<UpdateMultipleIm
         var fileStreams = context.Message.FileStreams;
         var deleteUrls = context.Message.DeleteUrls;
 
-        var formFiles = fileStreams != null ? await FileUtility.ConvertFileStreamDTOToIFormFileAsync(fileStreams) : null;
+        var formFiles = fileStreams != null ? await _fileUtility.ConvertFileStreamDTOToIFormFileAsync(fileStreams) : null;
         var response = await _sender.Send(new UpdateMultipleImageFileCommand
         {
             FormFiles = formFiles,
