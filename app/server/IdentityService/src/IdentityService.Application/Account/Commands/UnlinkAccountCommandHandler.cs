@@ -1,24 +1,23 @@
 ﻿using Contract.Constants;
-using IdentityService.Domain.Common;
 using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Application.Account.Commands;
 
-public record LinkAccountCommand : IRequest<Result>
+public record UnlinkAccountCommand : IRequest<Result>
 {
     public Guid Id { get; set; }
     public string Identifier { get; set; } = null!;
     public AccountMethod Method { get; set; }
 }
 
-public class LinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, Result>
+public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, Result>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
     private readonly IServiceBus _serviceBus;
 
-    public LinkAccountCommandHandler(UserManager<ApplicationAccount> userManager, IServiceBus serviceBus)
+    public UnlinkAccountCommandHandler(UserManager<ApplicationAccount> userManager, IServiceBus serviceBus)
     {
         _userManager = userManager;
         _serviceBus = serviceBus;
@@ -29,15 +28,15 @@ public class LinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, Res
         switch (request.Method)
         {
             case AccountMethod.Email:
-                return await LinkEmail(request, cancellationToken);
+                return await UnlinkEmail(request, cancellationToken);
             case AccountMethod.Phone:
-                return await LinkPhone(request, cancellationToken);
+                return await UnlinkPhone(request, cancellationToken);
             default:
-                return Result.Failure(AccountError.LinkAccountFailed," Wrong account method");
+                return Result.Failure(AccountError.UnlinkAccountFailed, "Wrong account method");
         }
     }
 
-    public async Task<Result> LinkEmail(LinkAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Result> UnlinkEmail(LinkAccountCommand request, CancellationToken cancellationToken)
     {
         var account = await _userManager.Users.SingleOrDefaultAsync(a => a.Id == request.Id.ToString());
         if (account == null)
@@ -45,26 +44,18 @@ public class LinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, Res
             return Result.Failure(AccountError.NotFound);
         }
 
-        if (account.EmailConfirmed)
+        if (!account.EmailConfirmed)
         {
-            return Result.Failure(AccountError.EmailAlreadyConfirmed);
-        }
-
-        var isExistEmail = _userManager.Users.Any(a => a.Email == request.Identifier);
-
-        if (account.Email != null || isExistEmail)
-        {
-            return Result.Failure(AccountError.EmailAlreadyExisted);
+            return Result.Failure(AccountError.EmailNotConfirmed);
         }
 
         var OTP = OTPUtility.GenerateNumericOTP();
 
-        account.Email = request.Identifier;
-        account.EmailOTP = OTP;
+        account.UnlinkEmailOTP = OTP;
         account.EmailOTPCreated = DateTime.UtcNow;
         account.EmailOTPExpiry = DateTime.UtcNow.AddMinutes(5);
 
-        await _serviceBus.Publish(new LinkAccountEvent
+        await _serviceBus.Publish(new UnlinkAccountEvent
         {
             AccountId = request.Id,
             Identifier = request.Identifier,
@@ -75,7 +66,7 @@ public class LinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, Res
         return Result.Success();
     }
 
-    public async Task<Result> LinkPhone(LinkAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Result> UnlinkPhone(LinkAccountCommand request, CancellationToken cancellationToken)
     {
         var account = await _userManager.Users.SingleOrDefaultAsync(a => a.Id == request.Id.ToString());
         if (account == null)
@@ -83,26 +74,18 @@ public class LinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, Res
             return Result.Failure(AccountError.NotFound);
         }
 
-        if (account.PhoneNumberConfirmed)
+        if (!account.PhoneNumberConfirmed)
         {
-            return Result.Failure(AccountError.PhoneAlreadyConfirmed);
-        }
-
-        var isExistPhone = _userManager.Users.Any(a => a.PhoneNumber == request.Identifier);
-
-        if (account.PhoneNumber != null || isExistPhone)
-        {
-            return Result.Failure(AccountError.PhoneAlreadyExisted);
+            return Result.Failure(AccountError.PhoneNotConfirmed);
         }
 
         var OTP = OTPUtility.GenerateNumericOTP();
 
-        account.PhoneNumber = request.Identifier;
-        account.PhoneOTP = OTP;
+        account.UnlinkPhoneOTP = OTP;
         account.PhoneOTPCreated = DateTime.UtcNow;
         account.PhoneOTPExpiry = DateTime.UtcNow.AddMinutes(5);
 
-        await _serviceBus.Publish(new LinkAccountEvent
+        await _serviceBus.Publish(new UnlinkAccountEvent
         {
             AccountId = request.Id,
             Identifier = request.Identifier,

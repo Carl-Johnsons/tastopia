@@ -10,6 +10,7 @@ public static class RabbitMQConstant
             public const string USER_REGISTER_NOTIFICATION = "user-register-notification-queue";
             public const string USER_REGISTER_USER = "user-register-user-queue";
             public const string LINK_ACCOUNT = "link-account-queue";
+            public const string UNLINK_ACCOUNT = "unlink-account-queue";
             public const string USER_RESEND_OTP = "user-resend-otp-queue";
             public const string GET_SIMPLE_USERS = "get-simple-users-queue";
             public const string GET_USER_DETAILS = "get-user-details-queue";
@@ -18,9 +19,6 @@ public static class RabbitMQConstant
             public const string UPDATE_RECIPE_TAGS = "update-recipe-tags-queue";
             public const string REQUEST_ADD_TAGS = "request-add-tags-queue";
             public const string GET_ALL_TAGS = "get-all-tags-queue";
-
-
-
             // ======================= OTHER ============================
             public const string SEND_EMAIL = "send-email-queue";
             public const string VALIDATE_RECIPE = "validate-recipe-queue";
@@ -29,12 +27,6 @@ public static class RabbitMQConstant
             public const string UPLOAD_MULTIPLE_IMAGE_FILE = "upload-multiple-image-file-queue";
             public const string DELETE_MULTIPLE_IMAGE_FILE = "delete-multiple-image-file-queue";
             public const string UPDATE_MULTIPLE_IMAGE_FILE = "update-multiple-image-file-queue";
-
-
-
-
-
-
         }
     }
     public static class EXCHANGE
@@ -44,6 +36,7 @@ public static class RabbitMQConstant
             // ======================= USER ============================
             public const string USER_REGISTER = "user-register-event";
             public const string LINK_ACCOUNT = "link-account-event";
+            public const string UNLINK_ACCOUNT = "unlink-account-event";
             public const string USER_RESEND_OTP = "user-resend-otp-event";
             public const string GET_SIMPLE_USERS = "get-simple-users-event";
             public const string GET_USER_DETAILS = "get-user-details-event";
@@ -61,7 +54,6 @@ public static class RabbitMQConstant
             public const string UPLOAD_MULTIPLE_IMAGE_FILE = "upload-multiple-image-file-event";
             public const string DELETE_MULTIPLE_IMAGE_FILE = "delete-multiple-image-file-event";
             public const string UPDATE_MULTIPLE_IMAGE_FILE = "update-multiple-image-file-event";
-
         }
 
         public static class TYPE

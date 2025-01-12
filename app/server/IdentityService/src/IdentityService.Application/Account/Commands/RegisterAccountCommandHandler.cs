@@ -48,7 +48,7 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
             case AccountMethod.Phone:
                 return await RegisterByPhone(request, cancellationToken);
             default:
-                return Result<TokenResponse?>.Failure(AccountError.CreateAccountFailed);
+                return Result<TokenResponse?>.Failure(AccountError.CreateAccountFailed,"Wrong account method");
         }
     }
 

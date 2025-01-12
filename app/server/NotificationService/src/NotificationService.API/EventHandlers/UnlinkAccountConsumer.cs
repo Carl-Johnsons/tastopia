@@ -5,18 +5,18 @@ using NotificationService.Application.Emails;
 
 namespace NotificationService.API.EventHandlers;
 
-[QueueName(RabbitMQConstant.QUEUE.NAME.LINK_ACCOUNT,
-    exchangeName: RabbitMQConstant.EXCHANGE.NAME.LINK_ACCOUNT)]
-public class LinkAccountConsumer : IConsumer<LinkAccountEvent>
+[QueueName(RabbitMQConstant.QUEUE.NAME.UNLINK_ACCOUNT,
+    exchangeName: RabbitMQConstant.EXCHANGE.NAME.UNLINK_ACCOUNT)]
+public class UnlinkAccountConsumer : IConsumer<UnlinkAccountEvent>
 {
     private readonly ISender _sender;
 
-    public LinkAccountConsumer(ISender sender)
+    public UnlinkAccountConsumer(ISender sender)
     {
         _sender = sender;
     }
 
-    public async Task Consume(ConsumeContext<LinkAccountEvent> context)
+    public async Task Consume(ConsumeContext<UnlinkAccountEvent> context)
     {
         switch (context.Message.Method)
         {
@@ -24,8 +24,8 @@ public class LinkAccountConsumer : IConsumer<LinkAccountEvent>
                 await _sender.Send(new SendEmailCommand
                 {
                     EmailTo = context.Message.Identifier,
-                    Subject = "Verify your account",
-                    Body = $"You have linked your email to <b>Tastopia</b> account. Your OTP to verify is <b>{context.Message.OTP}</b>",
+                    Subject = "Verify to unlink email",
+                    Body = $"You have unlinked your email to <b>Tastopia</b> account. Your OTP to verify is <b>{context.Message.OTP}</b>",
                     IsHTML = true,
                 });
                 break;
