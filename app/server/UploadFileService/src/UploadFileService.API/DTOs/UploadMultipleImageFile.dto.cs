@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
-namespace UploadFileService.Domain.DTOs;
+namespace UploadFileService.API.DTOs;
 
-public class UploadMultipleFileDTO
+public class UploadMultipleImageFileDTO
 {
     [Required]
     [JsonProperty("files")]

@@ -25,6 +25,14 @@ public static class RabbitMQConstant
             public const string SEND_EMAIL = "send-email-queue";
             public const string VALIDATE_RECIPE = "validate-recipe-queue";
 
+            // ======================= FILE ============================
+            public const string UPLOAD_MULTIPLE_IMAGE_FILE = "upload-multiple-image-file-queue";
+            public const string DELETE_MULTIPLE_IMAGE_FILE = "delete-multiple-image-file-queue";
+            public const string UPDATE_MULTIPLE_IMAGE_FILE = "update-multiple-image-file-queue";
+
+
+
+
 
 
         }
@@ -48,6 +56,11 @@ public static class RabbitMQConstant
             // ======================= OTHER ============================
             public const string SEND_EMAIL = "send-email-event";
             public const string VALIDATE_RECIPE = "validate-recipe-event";
+
+            // ======================= FILE ============================
+            public const string UPLOAD_MULTIPLE_IMAGE_FILE = "upload-multiple-image-file-event";
+            public const string DELETE_MULTIPLE_IMAGE_FILE = "delete-multiple-image-file-event";
+            public const string UPDATE_MULTIPLE_IMAGE_FILE = "update-multiple-image-file-event";
 
         }
 

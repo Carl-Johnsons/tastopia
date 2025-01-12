@@ -40,7 +40,7 @@ public class GetRecipeCommentsQueryHandler : IRequestHandler<GetRecipeCommentsQu
         }
 
         var commentQuery = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable()
-                            .Where(r => r.Id == recipeId).SelectMany(r => r.Comments);
+                            .Where(r => r.Id == recipeId).SelectMany(r => r.Comments).OrderByDescending(c => c.CreatedAt).AsQueryable();
 
 
         var totalPage = (commentQuery.Count() + RECIPE_CONSTANTS.COMMENT_LIMIT - 1) / RECIPE_CONSTANTS.COMMENT_LIMIT;

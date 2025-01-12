@@ -20,6 +20,8 @@ public class FileUtility : IFileUtility
             ".aiff", ".alac", ".opus", ".amr"
         };
 
+    private readonly string foler = Environment.GetEnvironmentVariable("Cloudinary_Folder") ?? "file_storage";
+
     public IFileUtility.FileType GetFileType(string fileName)
     {
 
@@ -48,6 +50,16 @@ public class FileUtility : IFileUtility
 
     public string? GetPublicIdByUrl(string url)
     {
+        if (string.IsNullOrEmpty(url))
+        {
+            return null;
+        }
+
+        if(!url.Contains(foler))
+        {
+            return null;
+        }
+
         string pattern = @"upload\/(?:v\d+\/)?(.+?)\.(\w+)$";
 
         Match match = Regex.Match(url, pattern);
@@ -60,7 +72,6 @@ public class FileUtility : IFileUtility
 
         return null;
     }
-
     //public List<IFormFile> convertFileStreamsToIFormFile(List<FileStreamEvent> fileStreamEvents)
     //{
     //    List<IFormFile> formFiles = new List<IFormFile>(fileStreamEvents.Count);
