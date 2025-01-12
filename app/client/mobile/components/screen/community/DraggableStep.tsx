@@ -1,23 +1,36 @@
-import { StyleSheet, View, TextInput, TouchableOpacity, Alert } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
+import {
+  StyleSheet,
+  View,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Alert
+} from "react-native";
+import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
 import useDebounce from "@/hooks/useDebounce";
+import UploadImage from "@/components/common/UploadImage";
+import { ImageFileType } from "@/types/image";
 
-interface DraggableIngredientProps {
-  ingredientKey: string;
-  value: string;
-  setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
+interface DraggableStepProps {
+  stepKey: string;
+  content: string;
+  images: ImageFileType[];
+  drag: () => void;
+  setSteps: Dispatch<SetStateAction<CreateStepType[]>>;
 }
 
-const DraggableIngredient = ({
-  ingredientKey,
-  value,
-  setIngredients
-}: DraggableIngredientProps) => {
+const DraggableStep = ({
+  stepKey,
+  content,
+  images,
+  drag,
+  setSteps
+}: DraggableStepProps) => {
   const { t } = useTranslation("createRecipe");
-  const [inputValue, setInputValue] = useState(value);
+  const [inputValue, setInputValue] = useState(content);
   const [isFocused, setIsFocused] = useState(false);
   const debouncedValue = useDebounce(inputValue, 800);
 
@@ -26,9 +39,9 @@ const DraggableIngredient = ({
   };
 
   const handleRemoveItem = (key: string) => {
-    setIngredients(prev => {
+    setSteps(prev => {
       return prev.filter(item => {
-        return item.key !== key;
+        return item.key === key;
       });
     });
   };
@@ -46,27 +59,31 @@ const DraggableIngredient = ({
           {
             text: t("removeIngredientAlert.delete"),
             onPress: () => {
-              handleRemoveItem(ingredientKey);
+              handleRemoveItem(stepKey);
             }
           }
         ]
       );
     } else {
-      handleRemoveItem(ingredientKey);
+      handleRemoveItem(stepKey);
     }
   };
 
+  const onFileChange = (files: ImageFileType[]) => {
+    setSteps(prevSteps =>
+      prevSteps.map(step => (step.key === stepKey ? { ...step, images: files } : step))
+    );
+  };
+
   useEffect(() => {
-    if (debouncedValue !== value) {
-      setIngredients(prevIngredients =>
-        prevIngredients.map(ingredient =>
-          ingredient.key === ingredientKey
-            ? { ...ingredient, value: debouncedValue }
-            : ingredient
+    if (debouncedValue !== content) {
+      setSteps(prevSteps =>
+        prevSteps.map(step =>
+          step.key === stepKey ? { ...step, content: debouncedValue } : step
         )
       );
     }
-  }, [debouncedValue, ingredientKey, setIngredients]);
+  }, [debouncedValue, stepKey, setSteps]);
 
   return (
     <View style={styles.container}>
@@ -88,26 +105,42 @@ const DraggableIngredient = ({
           style={isFocused ? [styles.input, styles.inputFocused] : styles.input}
           value={inputValue}
           onChangeText={handleChangeText}
-          placeholder={t("formPlaceholder.ingredients")}
+          placeholder={t("formPlaceholder.steps")}
           placeholderTextColor='#9CA3AF'
         />
+
+        <UploadImage
+          onFileChange={onFileChange}
+          selectionLimit={3}
+          defaultImages={images}
+        />
       </View>
+
+      <TouchableWithoutFeedback onLongPress={drag}>
+        <View style={styles.dragHandle}>
+          <MaterialCommunityIcons
+            name='drag-vertical'
+            size={24}
+            color='#6B7280'
+          />
+        </View>
+      </TouchableWithoutFeedback>
     </View>
   );
 };
 
-export default DraggableIngredient;
+export default DraggableStep;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     backgroundColor: "white",
     borderRadius: 8,
     marginVertical: 4,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 10,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -124,7 +157,9 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flex: 1,
-    marginHorizontal: 8
+    gap: 10,
+    marginHorizontal: 8,
+    paddingBottom: 4
   },
   input: {
     padding: 4,
