@@ -1,8 +1,12 @@
-﻿using UserService.Application.Settings.Commands;
-
-namespace UserService.API.DTOs;
+﻿namespace UserService.API.DTOs;
 
 public class UpdateSettingDTO
 {
-    public List<SettingObject> Settings { get; set; } = [];
+    public List<SettingObjectDTO> Settings { get; set; } = [];
+}
+
+public class SettingObjectDTO
+{
+    public string Key { get; set; } = null!;
+    public string Value { get; set; } = null!;
 }

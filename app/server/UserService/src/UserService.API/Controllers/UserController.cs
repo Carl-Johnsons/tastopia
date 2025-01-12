@@ -22,7 +22,7 @@ public class UserController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedSearchUserListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> SearchUser([FromBody] SearchUser searchUser)
+    public async Task<IActionResult> SearchUser([FromBody] SearchUserDTO searchUser)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
