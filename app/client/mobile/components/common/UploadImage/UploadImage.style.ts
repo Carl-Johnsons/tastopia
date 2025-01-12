@@ -85,6 +85,11 @@ const styles = StyleSheet.create({
 
   flexOne: {
     flex: 1
+  },
+
+  sizeFull: {
+    width: "100%",
+    height: "100%"
   }
 });
 
