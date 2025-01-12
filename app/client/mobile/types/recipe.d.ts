@@ -23,7 +23,7 @@ type RecipeType = SearchRecipeType & {
 
 type RecipeStep = {
   recipeId: string;
-  odinalNumber: number;
+  ordinalNumber: number;
   content: string;
   attachedImageUrls: string[] | null;
   createdAt: string;

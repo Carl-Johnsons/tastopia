@@ -78,8 +78,6 @@ const UploadImage = ({
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
 
-  console.log("image count", imageCount);
-
   useEffect(() => {
     (async () => {
       if (!status?.granted) {

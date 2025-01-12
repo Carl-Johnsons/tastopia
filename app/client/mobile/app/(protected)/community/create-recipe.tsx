@@ -1,7 +1,10 @@
 import CreateRecipeDraggable from "@/components/screen/community/CreateRecipeDraggable";
 import Input from "@/components/common/Input";
 import UploadImage from "@/components/common/UploadImage";
-import { FormCreateRecipeType } from "@/schemas/create-recipe";
+import {
+  FormCreateRecipeType,
+  schema as createRecipeSchema
+} from "@/schemas/create-recipe";
 import { ImageFileType } from "@/types/image";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -20,6 +23,8 @@ import {
   SafeAreaView
 } from "react-native";
 import DraggableIngredient from "@/components/screen/community/DraggableIngredient";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { protectedAxiosInstance } from "@/constants/host";
 
 type renderIngredientItemProps = CreateIngredientType & {
   setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
@@ -41,6 +46,7 @@ const CreateRecipe = () => {
   };
 
   const formCreateRecipe = useForm<FormCreateRecipeType>({
+    resolver: yupResolver(createRecipeSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -61,11 +67,62 @@ const CreateRecipe = () => {
   } = formCreateRecipe;
 
   const onSubmit: SubmitHandler<FormCreateRecipeType> = async formData => {
-    console.log("go to submit", formData);
     const data = new FormData();
 
     data.append("title", formData.title);
     data.append("description", formData.description);
+    data.append("serves", formData.serves);
+    data.append("cookTime", formData.cookTime);
+
+    const image = images[0];
+    data.append(`recipeImage`, {
+      uri: image.uri,
+      name: image.name,
+      type: image.type || "image/jpeg"
+    } as any);
+
+    ingredients.forEach((ingredient, index) => {
+      data.append(`ingredients[${index}]`, ingredient.value);
+    });
+
+    steps.forEach((step, index) => {
+      data.append(`steps[${index}].ordinalNumber`, String(index + 1));
+      data.append(`steps[${index}].content`, step.content);
+      if (step.images.length > 0) {
+        step.images.forEach(image => {
+          data.append(`steps[${index}].Images`, {
+            uri: image.uri,
+            name: image.name,
+            type: image.type
+          } as any);
+        });
+      }
+    });
+
+    const tagCodes = ["code 0", "code 1"];
+    tagCodes.forEach((code, index) => {
+      data.append(`tagCodes[${index}]`, code);
+    });
+    const additionTagValues = ["AdditionTagValues 0", "AdditionTagValues 1"];
+    additionTagValues.forEach((value, index) => {
+      data.append(`additionTagValues[${index}]`, value);
+    });
+
+    try {
+      const { data: response } = await protectedAxiosInstance.post(
+        "http://localhost:5000/api/recipe/create-recipe",
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+
+      console.log("Response:", response);
+    } catch (error) {
+      console.error("Error submitting recipe:", error);
+    }
   };
 
   return (
@@ -138,26 +195,25 @@ const CreateRecipe = () => {
                     </View>
 
                     <View className='flex-center flex-row gap-6'>
-                      <View className='flex gap-9'>
+                      <View className='flex-1'>
                         <Text className='body-semibold'>{t("formTitle.serves")}</Text>
-                        <Text className='body-semibold'>{t("formTitle.cookTime")}</Text>
-                      </View>
-
-                      <View className='flex-1 gap-2'>
-                        <Input
-                          variant='secondary'
-                          control={formControl}
-                          name='cookTime'
-                          placeHolder={t("formPlaceholder.cookTime")}
-                          errors={[t(errors.cookTime?.message ?? "")]}
-                        />
-
                         <Input
                           variant='secondary'
                           control={formControl}
                           name='serves'
                           placeHolder={t("formPlaceholder.serves")}
                           errors={[t(errors.serves?.message ?? "")]}
+                        />
+                      </View>
+
+                      <View className='flex-1'>
+                        <Text className='body-semibold'>{t("formTitle.cookTime")}</Text>
+                        <Input
+                          variant='secondary'
+                          control={formControl}
+                          name='cookTime'
+                          placeHolder={t("formPlaceholder.cookTime")}
+                          errors={[t(errors.cookTime?.message ?? "")]}
                         />
                       </View>
                     </View>

@@ -34,7 +34,9 @@ const RecipeDetail = () => {
     isRefetching: isRefetchingRecipeDetail
   } = useRecipeDetail(id);
   const sortedSteps = useMemo(() => {
-    return recipeDetailData?.recipe.steps.sort((a, b) => a.odinalNumber - b.odinalNumber);
+    return recipeDetailData?.recipe.steps.sort(
+      (a, b) => a.ordinalNumber - b.ordinalNumber
+    );
   }, [recipeDetailData?.recipe.steps]);
 
   const {
@@ -237,7 +239,7 @@ const RecipeDetail = () => {
                           <Step
                             key={step.id}
                             content={step.content}
-                            odinalNumber={step.odinalNumber}
+                            ordinalNumber={step.ordinalNumber}
                             attachedImageUrls={step.attachedImageUrls}
                           />
                         );
