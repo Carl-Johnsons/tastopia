@@ -7,15 +7,17 @@ import {
   selectVerifyIdentifier
 } from "@/slices/auth.slice";
 import {
-  VerifyParams,
   useVerify,
   useResendVerifyCode,
-  IDENTIFIER_TYPE
+  useGetUserDetails,
+  useGetUserSettings
 } from "@/api/user";
 import VerifyForm from "@/components/VerifyForm";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
 import { getIdentifierType } from "@/utils/checker";
+import { saveUserData } from "@/slices/user.slice";
+import { saveSettingData } from "@/slices/setting.slice";
 
 const Verify = () => {
   const isAndroid = Platform.OS === "android";
@@ -26,16 +28,34 @@ const Verify = () => {
   const { mutateAsync: verify, isLoading: isVerifyLoading } = useVerify();
   const { mutateAsync: resendVerifyCode, isLoading: isResendVerifyCodeLoading } =
     useResendVerifyCode();
+  const getUserDetails = useGetUserDetails();
+  const getUserSettings = useGetUserSettings();
+
+    const fetchUserData = async () => {
+      const { data: user } = await getUserDetails.refetch();
+      dispatch(saveUserData({ ...user }));
+
+      const { data: settings } = await getUserSettings.refetch();
+      const UNION_SETTING: any = {};
+
+      settings?.map(item => {
+        const key = item.setting.code;
+        const value = item.settingValue;
+
+        UNION_SETTING[key] = value;
+      });
+
+      dispatch(saveSettingData(UNION_SETTING));
+    };
 
   const onSubmit = async (data: VerifyParams) => {
     verify(data, {
-      onSuccess: _data => {
+      onSuccess: async _data => {
         dispatch(saveAuthData({ isVerifyingAccount: false, role: ROLE.USER }));
         console.log("saved auth data");
 
-        // Set user's data here
-        // dispatch(saveUserData(user));
-        //
+        await fetchUserData();
+
         const route = "/(protected)";
         router.navigate(route);
       },

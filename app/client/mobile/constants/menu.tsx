@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { CameraIconSvg } from "@/components/common/SVG";
-import React, { ReactElement, ReactNode } from "react";
+import { ReactElement, ReactNode } from "react";
 import { View, Text, TouchableHighlight } from "react-native";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { Feather, Ionicons, Octicons } from "@expo/vector-icons";
@@ -24,7 +24,7 @@ type TabIconType = {
 };
 
 const TabIcon = ({ icon, translateCode, focused, hidden, hideTitle }: TabIconType) => {
-  const { t } = useTranslation("menu");
+  const { t } = useTranslation("navbar");
   return (
     <View
       style={{

@@ -12,6 +12,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { QueryClient, QueryClientProvider } from "react-query";
 // import { GlobalProvider } from "@/context/GlobalProvider";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 import("./global.css");
 
@@ -57,20 +58,22 @@ const RootLayout = () => {
           <QueryClientProvider client={queryClient}>
             <I18nextProvider i18n={i18n}>
               <SafeAreaProvider>
-                <StatusBar backgroundColor={bgColor} />
-                <Stack
-                  screenOptions={{
-                    headerShown: false
-                  }}
-                >
-                  <Stack.Screen name='(public)' />
-                  <Stack.Screen name='(protected)' />
-                  <Stack.Screen
+                <BottomSheetModalProvider>
+                  <StatusBar backgroundColor={bgColor} />
+                  <Stack
+                    screenOptions={{
+                      headerShown: false
+                    }}
+                  >
+                    <Stack.Screen name='(public)' />
+                    <Stack.Screen name='(protected)' />
+                    <Stack.Screen
                     name='(modals)'
                     options={{ presentation: "modal" }}
                   />
-                  <Stack.Screen name='+not-found' />
-                </Stack>
+                    <Stack.Screen name='+not-found' />
+                  </Stack>
+                </BottomSheetModalProvider>
               </SafeAreaProvider>
             </I18nextProvider>
           </QueryClientProvider>

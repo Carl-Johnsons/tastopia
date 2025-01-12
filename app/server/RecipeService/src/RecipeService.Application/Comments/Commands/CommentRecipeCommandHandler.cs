@@ -45,6 +45,7 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
 
             if (recipeId == null || accountId == null || string.IsNullOrEmpty(content))
             {
+                await Console.Out.WriteLineAsync("*AddCommentFail*********************");
                 return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);
             }
             await Console.Out.WriteLineAsync();
@@ -57,6 +58,7 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
 
             List<string> accountList = [accountId.ToString()!];
 
+            await Console.Out.WriteLineAsync("*GetSimpleUser*********************");
             var response = _grpcUserClient.GetSimpleUser(new GrpcGetSimpleUsersRequest
             {
                 AccountId = { _mapper.Map<RepeatedField<string>>(accountList) }

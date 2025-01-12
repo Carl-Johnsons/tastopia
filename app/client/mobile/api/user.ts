@@ -1,37 +1,14 @@
 import { loginSchema, registerSchema } from "@/lib/validation/auth";
-import { API_HOST, axiosInstance, protectedAxiosInstance } from "@/constants/host";
+import { axiosInstance, protectedAxiosInstance } from "@/constants/host";
 import { useMutation, useQuery } from "react-query";
 import { InferType } from "yup";
 import { CLIENT_ID, SCOPE } from "@/constants/api";
 import { AxiosError } from "axios";
 import { stringify } from "@/utils/debug";
 import { selectAccessToken } from "@/slices/auth.slice";
-import { UserState } from "@/slices/user.slice";
+import { SETTING_KEY, SETTING_VALUE } from "@/slices/setting.slice";
 
 export type LoginParams = InferType<typeof loginSchema>;
-
-export type User = {
-  _id: string;
-  name: string;
-  email: string;
-  username: string;
-  bio: string;
-  profilePic: string;
-  followers: string[];
-  following: string[];
-};
-
-type LoginResponse = {
-  access_token: string;
-  refresh_token: string;
-};
-
-type ErrorResponseDTO = {
-  status: number;
-  code: string;
-  message: string;
-};
-
 export enum IDENTIFIER_TYPE {
   EMAIL,
   PHONE_NUMBER
@@ -51,7 +28,7 @@ export const useLogin = () => {
 
       try {
         const { data } = await axiosInstance.post<LoginResponse>(
-          `${API_HOST}/connect/token`,
+          "/connect/token",
           body,
           { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
         );
@@ -70,6 +47,30 @@ export const useLogin = () => {
   });
 };
 
+export const useGetUserSettings = () => {
+  const accessToken = selectAccessToken();
+
+  return useQuery<GetUserSettingsResponse, Error>({
+    queryKey: "getUserSettings",
+    enabled: !!accessToken,
+    queryFn: async () => {
+      const url = "/api/setting";
+
+      try {
+        const { data } = await protectedAxiosInstance.get(url);
+        return data;
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as ErrorResponseDTO;
+          throw new Error(data.message);
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    }
+  });
+};
+
 export type GetUserDetailsResponse = UserState;
 
 export const useGetUserDetails = () => {
@@ -79,7 +80,7 @@ export const useGetUserDetails = () => {
     queryKey: "getUserDetails",
     enabled: !!accessToken,
     queryFn: async () => {
-      const url = `${API_HOST}/api/user/get-current-user-details`;
+      const url = "/api/user/get-current-user-details";
       console.debug("useGetUserDetails: Fetching data with access token", accessToken);
 
       try {
@@ -101,8 +102,6 @@ export const useGetUserDetails = () => {
 
 export type SignUpParams = InferType<typeof registerSchema>;
 
-type SignUpResponse = LoginResponse;
-
 export const useRegister = () => {
   return useMutation<
     SignUpResponse,
@@ -112,7 +111,7 @@ export const useRegister = () => {
     mutationKey: ["register"],
     mutationFn: async ({ data, type }) => {
       const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
-      const url = `${API_HOST}/api/account/register/${ENDPOINT_TYPE}`;
+      const url = `/api/account/register/${ENDPOINT_TYPE}`;
 
       try {
         const { data: response } = await axiosInstance.post<SignUpResponse>(url, data);
@@ -132,20 +131,13 @@ export const useRegister = () => {
 };
 
 export type VerifyParams = { OTP: string; type: IDENTIFIER_TYPE };
-export type VerifyResponse = VerifyResponseSuccess | VerifyResponseError;
-type VerifyResponseSuccess = 0;
-type VerifyResponseError = {
-  Status: number;
-  Code: string;
-  Message: string;
-};
 
 export const useVerify = () => {
   return useMutation<VerifyResponse, Error, VerifyParams>({
     mutationKey: ["verify"],
     mutationFn: async ({ OTP, type }) => {
       const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
-      const url = `${API_HOST}/api/account/verify/${ENDPOINT_TYPE}`;
+      const url = `/api/account/verify/${ENDPOINT_TYPE}`;
 
       try {
         const { data } = await protectedAxiosInstance.post(url, { OTP });
@@ -164,21 +156,12 @@ export const useVerify = () => {
   });
 };
 
-type ResendVerifyCodeResponseSuccess = 0;
-type ResendVerifyCodeResponseError = {
-  Status: number;
-  Code: string;
-  Message: string;
-};
-
-type ResendVerifyCode = ResendVerifyCodeResponseSuccess | ResendVerifyCodeResponseError;
-
 export const useResendVerifyCode = () => {
   return useMutation<ResendVerifyCode, Error, { type: IDENTIFIER_TYPE }>({
     mutationKey: ["resendVerifyCode"],
     mutationFn: async ({ type }) => {
       const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
-      const url = `${API_HOST}/api/account/resend/${ENDPOINT_TYPE}`;
+      const url = `/api/account/resend/${ENDPOINT_TYPE}`;
 
       try {
         const { data } = await protectedAxiosInstance.post(url);
@@ -197,34 +180,53 @@ export const useResendVerifyCode = () => {
   });
 };
 
-export const refreshAccessToken = async (refreshToken: string) => {
-  const body = new URLSearchParams({
-    client_id: CLIENT_ID,
-    scope: SCOPE,
-    grant_type: "refresh_token",
-    refresh_token: refreshToken
-  }).toString();
+export type UpdateSettingResponseSuccess = 0;
+export type UpdateSettingResponse = UpdateSettingResponseSuccess | ErrorResponseDTO;
+export type UpdateSettingParams = {
+  settings: Array<{
+    key: SETTING_KEY;
+    value: SETTING_VALUE.BOOLEAN | SETTING_VALUE.LANGUAGE;
+  }>;
+};
 
-  try {
-    const { data } = await axiosInstance.post<LoginResponse>(
-      `${API_HOST}/connect/token`,
-      body,
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
+type UserSetting = {
+  accountId: string;
+  settingId: string;
+  settingValue: SETTING_VALUE.LANGUAGE | SETTING_VALUE.BOOLEAN;
+  user: null;
+  setting: Setting;
+};
+
+type Setting = {
+  code: SETTING_KEY;
+  description: string;
+  dataType: number;
+  defaultValue: SETTING_VALUE.LANGUAGE | SETTING_VALUE.BOOLEAN;
+  id: string;
+};
+
+type GetUserSettingsResponse = Array<UserSetting>;
+
+
+export const useUpdateSetting = () => {
+  return useMutation<UpdateSettingResponse, Error, { data: UpdateSettingParams }>({
+    mutationKey: ["updateSetting"],
+    mutationFn: async ({ data }) => {
+      const url = "/api/setting";
+
+      try {
+        const { data: response } = await protectedAxiosInstance.put<UpdateSettingResponse>(url, data);
+        return response;
+      } catch (error) {
+        console.debug("useUpdateSetting", stringify(error));
+
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as ErrorResponseDTO;
+          throw new Error(data.message);
         }
+
+        throw new Error("An error has occurred.");
       }
-    );
-
-    return data;
-  } catch (error) {
-    console.debug("refreshAccessToken", stringify(error));
-
-    if (error instanceof AxiosError) {
-      const data = error.response?.data as ErrorResponseDTO;
-      throw new Error(data.message);
     }
-
-    throw new Error("An error has occurred.");
-  }
+  });
 };
