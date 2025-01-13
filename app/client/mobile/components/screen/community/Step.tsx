@@ -5,16 +5,16 @@ import { StyleSheet, Text, View } from "react-native";
 
 type StepProps = {
   content: string;
-  odinalNumber: number;
+  ordinalNumber: number;
   attachedImageUrls: string[] | null;
 };
 
-const Step = ({ content, odinalNumber, attachedImageUrls }: StepProps) => {
+const Step = ({ content, ordinalNumber, attachedImageUrls }: StepProps) => {
   return (
     <View>
       <View className='flex-row gap-3'>
         <View className='flex-center size-7 rounded-full bg-primary'>
-          <Text className='text-white_black'>{odinalNumber}</Text>
+          <Text className='text-white_black'>{ordinalNumber}</Text>
         </View>
         <View className='w-full max-w-[90%] flex-col gap-2'>
           <Text className='text-black_white'>{content}</Text>

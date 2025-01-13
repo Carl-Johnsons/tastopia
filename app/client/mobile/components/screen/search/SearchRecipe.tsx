@@ -26,6 +26,7 @@ import {
   selectSearchTagCodes
 } from "@/slices/searchRecipe.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useTranslation } from "react-i18next";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -33,6 +34,7 @@ type SearchUserProps = {
 };
 
 const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
+  const { t } = useTranslation("search");
   const dispatch = useAppDispatch();
   const tagCodes = useAppSelector(selectSearchTagCodes);
   const searchKeyword = useAppSelector(selectSearchKeyword);
@@ -139,7 +141,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
               value={searchValue}
               onPress={() => handleFocus(true)}
               onChangeText={handleSearch}
-              placeholder='Enter recipe name or ingredient'
+              placeholder={t("placeholder.recipe")}
               placeholderTextColor={globalStyles.color.gray400}
             />
             {onFocus && searchValue && isSearching && (
@@ -176,7 +178,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
       {/* Result section */}
       {searchValue !== "" && (
         <View className='mt-6 pb-[200px]'>
-          <Text className='h3-bold mb-2'>Recipes</Text>
+          <Text className='h3-bold mb-2'>{t("searchResultTitle.recipe")}</Text>
 
           <FlatList
             data={searchResults}
@@ -206,7 +208,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
                     source={require("../../../assets/icons/noResult.png")}
                     style={{ width: 130, height: 130 }}
                   />
-                  <Text className='paragraph-medium text-center'>No recipes found!</Text>
+                  <Text className='paragraph-medium text-center'>{t("notFound")}</Text>
                 </View>
               ) : (
                 <View></View>

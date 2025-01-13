@@ -44,10 +44,6 @@
 		<ProjectReference Include="..\RecipeService.Application\RecipeService.Application.csproj" />
 		<ProjectReference Include="..\RecipeService.Infrastructure\RecipeService.Infrastructure.csproj" />
 	</ItemGroup>
-
-	<!--<ItemGroup>
-		<Protobuf Include="..\..\..\Contract\Contract\Protos\RecipeService.proto" Link="Protos\RecipeService.proto" GrpcServices="Server" />
-	</ItemGroup>-->
 	
 	<PropertyGroup>
 		<DefaultItemExcludes>.git\**;$(DefaultItemExcludes)</DefaultItemExcludes>

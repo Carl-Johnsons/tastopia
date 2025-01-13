@@ -5,6 +5,7 @@ import { Text, View, TouchableWithoutFeedback } from "react-native";
 import { selectUser } from "@/slices/user.slice";
 import Protected from "@/components/Protected";
 import { ROLE } from "@/slices/auth.slice";
+import { useTranslation } from "react-i18next";
 
 type HeaderProps = {
   isRefreshing: boolean;
@@ -19,6 +20,7 @@ function Header({
   filterSelected,
   handleCreateRecipe
 }: HeaderProps) {
+  const { t } = useTranslation("community");
   const { avatarUrl, displayName } = selectUser();
 
   return (
@@ -50,8 +52,8 @@ function Header({
             <View className='gap-2'>
               <Text className='paragraph-bold'>{displayName}</Text>
               <TouchableWithoutFeedback onPress={handleCreateRecipe}>
-                <View className='rounded-2xl border-[1px] border-gray-600 px-4 py-3'>
-                  <Text className='text-gray-600'>What's cooking? Share your recipe</Text>
+                <View className='min-w-[250px] rounded-2xl border-[1px] border-gray-600 px-4 py-3'>
+                  <Text className='text-gray-600'>{t("headerCreateRecipe")}</Text>
                 </View>
               </TouchableWithoutFeedback>
             </View>

@@ -7,11 +7,13 @@ import Header from "@/components/screen/community/Header";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import useDarkMode from "@/hooks/useDarkMode";
 
 const Community = () => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
+  const isDarkMode = useDarkMode();
 
   //TODO: apply loading later
   const {
@@ -25,17 +27,11 @@ const Community = () => {
   } = useRecipesFeed(filterSelected);
 
   const handleCreateRecipe = () => {
-    router.push("/(modals)/CreateRecipe");
+    router.push("/(protected)/community/create-recipe");
   };
 
   const handleFilter = (key: string) => {
     setFilterSelected(key);
-  };
-
-  const toggleLanguage = () => {
-    const currentLang = i18next.language;
-    const newLang = currentLang === "en" ? "vi" : "en";
-    i18next.changeLanguage(newLang);
   };
 
   const onRefresh = () => {
@@ -72,7 +68,7 @@ const Community = () => {
   return (
     <SafeAreaView
       style={{
-        backgroundColor: globalStyles.color.light,
+        backgroundColor: isDarkMode ? globalStyles.color.dark : globalStyles.color.light,
         height: "100%"
       }}
     >

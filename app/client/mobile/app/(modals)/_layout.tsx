@@ -15,12 +15,6 @@ export default function ModalLayout() {
         }}
       />
       <Stack.Screen
-        name='CreateRecipe'
-        options={{
-          presentation: "modal"
-        }}
-      />
-      <Stack.Screen
         name='SearchFilter'
         options={{
           presentation: "modal"

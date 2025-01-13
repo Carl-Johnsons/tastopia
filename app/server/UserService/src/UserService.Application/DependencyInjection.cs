@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using UploadFileProto;
 using UserService.Application.Configs;
 
 namespace UserService.Application;
@@ -26,6 +27,11 @@ public static class DependencyInjection
         services.AddGrpcClient<GrpcAccount.GrpcAccountClient>(options =>
         {
             options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
+        });
+
+        services.AddGrpcClient<GrpcUploadFile.GrpcUploadFileClient>(options =>
+        {
+            options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_UPLOAD", "Not Found"));
         });
     }
 }

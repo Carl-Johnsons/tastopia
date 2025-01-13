@@ -1,18 +1,13 @@
 import axios from "axios";
-import { Platform } from "react-native";
 import { store } from "@/store";
-import { refreshAccessToken } from "@/api/user";
 import { saveAuthData } from "@/slices/auth.slice";
 import { stringify } from "@/utils/debug";
+import Constants from "expo-constants";
+import { refreshAccessToken } from "@/api/tokens";
 
-const IOS_API_HOST = "http://localhost:5000";
-const ANDROID_API_HOST = "http://10.0.2.2:5000";
-
-const API_HOST = Platform.select({
-  ios: IOS_API_HOST,
-  android: ANDROID_API_HOST,
-  default: IOS_API_HOST
-});
+const {expoConfig} = Constants;
+const HOST = expoConfig?.hostUri?.split(":")[0];
+const API_HOST = `http://${HOST}:5000`;
 
 const defaultHeaders = {
   "Content-Type": "application/json"
@@ -50,7 +45,7 @@ protectedAxiosInstance.interceptors.request.use(
 protectedAxiosInstance.interceptors.response.use(
   res => res,
   async error => {
-    console.error("Error", stringify(error));
+    console.debug("Error", stringify(error));
 
     if (error.status === 401) {
       const { refreshToken } = store.getState().auth;

@@ -33,7 +33,7 @@ public class LinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, Res
             case AccountMethod.Phone:
                 return await LinkPhone(request, cancellationToken);
             default:
-                return Result.Failure(AccountError.CreateAccountFailed);
+                return Result.Failure(AccountError.LinkAccountFailed," Wrong account method");
         }
     }
 
@@ -85,7 +85,7 @@ public class LinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, Res
 
         if (account.PhoneNumberConfirmed)
         {
-            return Result.Failure(AccountError.EmailAlreadyConfirmed);
+            return Result.Failure(AccountError.PhoneAlreadyConfirmed);
         }
 
         var isExistPhone = _userManager.Users.Any(a => a.PhoneNumber == request.Identifier);

@@ -39,7 +39,7 @@ public static class ConsulExtension
             Check = new AgentServiceCheck
             {
                 Timeout = TimeSpan.FromSeconds(10),
-                Interval = TimeSpan.FromSeconds(30),
+                Interval = TimeSpan.FromSeconds(20),
                 HTTP = healthCheckEndpoint,
                 TLSSkipVerify = true,
             }
@@ -51,7 +51,6 @@ public static class ConsulExtension
             consulClient.Agent.ServiceDeregister(registration.ID).ConfigureAwait(true);
             consulClient.Agent.ServiceRegister(registration).ConfigureAwait(true);
         });
-
 
         lifetime.ApplicationStopping.Register(() =>
         {

@@ -142,4 +142,40 @@ public class AccountController : BaseApiController
         result.ThrowIfFailure();
         return NoContent();
     }
+
+    [HttpPost("unlink/email")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> UnlinkEmailToAccount(LinkAccountDTO dto)
+    {
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+        var command = new UnlinkAccountCommand
+        {
+            Identifier = dto.Identifier,
+            Method = AccountMethod.Email,
+            Id = Guid.Parse(userId!)
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [HttpPost("unlink/phone")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> UnlinkPhoneToAccount(LinkAccountDTO dto)
+    {
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+        var command = new UnlinkAccountCommand
+        {
+            Identifier = dto.Identifier,
+            Method = AccountMethod.Phone,
+            Id = Guid.Parse(userId!)
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
+    }
 }

@@ -12,8 +12,10 @@ import {
   View
 } from "react-native";
 import useDarkMode from "@/hooks/useDarkMode";
+import { useTranslation } from "react-i18next";
 
 const Search = () => {
+  const { t } = useTranslation("search");
   const isDarkMode = useDarkMode();
   const [onFocus, setOnFocus] = useState<boolean>(false);
   const [isSearchingUser, setIsSearchingUser] = useState(true);
@@ -45,7 +47,7 @@ const Search = () => {
           <TouchableWithoutFeedback onPress={handleChangeSearch}>
             <View className='flex-center flex-row gap-2'>
               <Text className='base-medium text-black_white text-center'>
-                {isSearchingUser ? "Search Users" : "Search Recipe"}
+                {isSearchingUser ? t("header.user") : t("header.recipe")}
               </Text>
               <AntDesign
                 name='caretdown'

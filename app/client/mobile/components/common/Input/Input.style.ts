@@ -65,7 +65,6 @@ export default StyleSheet.create({
   },
 
   secondaryInputFocused: {
-    borderBottomColor: globalStyles.color.primary,
-    borderBottomWidth: 2
+    borderBottomColor: globalStyles.color.primary
   }
 });

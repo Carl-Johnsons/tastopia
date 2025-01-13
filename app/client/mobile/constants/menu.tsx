@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { CameraIconSvg } from "@/components/common/SVG";
-import React, { ReactElement, ReactNode } from "react";
+import { ReactElement, ReactNode } from "react";
 import { View, Text, TouchableHighlight } from "react-native";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { Feather, Ionicons, Octicons } from "@expo/vector-icons";
@@ -13,6 +13,8 @@ import {
   NOTIFICATION_PATH,
   SEARCH_PATH
 } from "@/constants/paths";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "./colors";
 
 type TabIconType = {
   icon: ReactElement | undefined;
@@ -24,7 +26,9 @@ type TabIconType = {
 };
 
 const TabIcon = ({ icon, translateCode, focused, hidden, hideTitle }: TabIconType) => {
-  const { t } = useTranslation("menu");
+  const { t } = useTranslation("navbar");
+  const { c } = useColorizer();
+  const { black, white, primary } = colors;
   return (
     <View
       style={{
@@ -37,7 +41,7 @@ const TabIcon = ({ icon, translateCode, focused, hidden, hideTitle }: TabIconTyp
       {!hideTitle && (
         <Text
           style={{
-            color: focused ? globalStyles.color.primary : globalStyles.color.dark,
+            color: focused ? primary : c(black.DEFAULT, white.DEFAULT),
             textAlign: "center",
             fontSize: 12,
             marginTop: 2
@@ -51,6 +55,9 @@ const TabIcon = ({ icon, translateCode, focused, hidden, hideTitle }: TabIconTyp
 };
 
 const MainTabIcon = ({ icon, color, translateCode, focused }: TabIconType) => {
+  const { c } = useColorizer();
+  const { black, white, primary } = colors;
+
   return (
     <TouchableHighlight
       underlayColor={"none"}
@@ -73,7 +80,7 @@ const MainTabIcon = ({ icon, color, translateCode, focused }: TabIconType) => {
       <CameraIconSvg
         width={40}
         height={40}
-        fill={focused ? globalStyles.color.primary : globalStyles.color.dark}
+        fill={focused ? primary : c(black.DEFAULT, white.DEFAULT)}
       />
     </TouchableHighlight>
   );
@@ -105,25 +112,7 @@ export const menuList: Menu[] = [
       /* ================= MAIN TABS ================= */
       {
         path: MAIN_PATH,
-        icon: ({ color, focused }) => (
-          <TabIcon
-            icon={
-              <Octicons
-                name='people'
-                size={24}
-                color={focused ? globalStyles.color.primary : globalStyles.color.dark}
-              />
-            }
-            color={color}
-            translateCode='community'
-            focused={focused}
-          />
-        ),
-        code: "COMMUNITY",
-        translateCode: "community",
-        includeInMainTab: {
-          position: 1
-        }
+        code: "COMMUNITY"
       },
       {
         path: COMMUNITY_PATH,
@@ -142,7 +131,10 @@ export const menuList: Menu[] = [
           />
         ),
         code: "COMMUNITY",
-        translateCode: "community"
+        translateCode: "community",
+        includeInMainTab: {
+          position: 1
+        }
       },
       {
         path: SEARCH_PATH,

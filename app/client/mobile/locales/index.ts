@@ -1,19 +1,39 @@
 import communityEn from "../locales/en/community.json";
 import communityVi from "../locales/vi/community.json";
-import menuEn from "../locales/en/menu.json";
-import menuVi from "../locales/vi/menu.json";
+import navbarEn from "../locales/en/navbar.json";
+import navbarVi from "../locales/vi/navbar.json";
 import errorEn from "../locales/en/error.json";
 import errorVi from "../locales/vi/error.json";
+import menuEn from "../locales/en/menu/menu.json";
+import menuVi from "../locales/vi/menu/menu.json";
+import settingModalEn from "../locales/en/menu/settingModal.json";
+import settingModalVi from "../locales/vi/menu/settingModal.json";
 import createRecipeEn from "../locales/en/createRecipe.json";
 import createRecipeVi from "../locales/vi/createRecipe.json";
+import searchEn from "../locales/en/search.json";
+import searchVi from "../locales/vi/search.json";
+import componentEn from "../locales/en/component.json";
+import componentVi from "../locales/vi/component.json";
+import recipeDetailEn from "../locales/en/recipeDetail.json";
+import recipeDetailVi from "../locales/vi/recipeDetail.json";
 
 export default {
   communityEn,
   communityVi,
+  navbarEn,
+  navbarVi,
   menuEn,
   menuVi,
   errorEn,
   errorVi,
+  settingModalEn,
+  settingModalVi,
   createRecipeEn,
-  createRecipeVi
+  createRecipeVi,
+  searchEn,
+  searchVi,
+  componentEn,
+  componentVi,
+  recipeDetailEn,
+  recipeDetailVi
 };

@@ -129,6 +129,10 @@ body * {
     @apply text-gray-300 dark:text-gray-600;
   }
 
+  .text-black_white {
+    @apply text-black dark:text-white;
+  }
+
   .text-white_black100 {
     @apply text-white dark:text-black-100;
   }

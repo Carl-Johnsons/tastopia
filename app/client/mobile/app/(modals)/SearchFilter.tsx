@@ -7,7 +7,6 @@ import useDebounce from "@/hooks/useDebounce";
 import {
   clearTagValue,
   removeTagValue,
-  selectSearchTagCodes,
   selectSearchTags
 } from "@/slices/searchRecipe.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -15,6 +14,7 @@ import { filterUniqueItems } from "@/utils/dataFilter";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   FlatList,
   Keyboard,
@@ -31,6 +31,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const SearchFilter = () => {
+  const { t } = useTranslation("search");
   const dispatch = useAppDispatch();
   const selectedTagsStore = useAppSelector(selectSearchTags);
 
@@ -93,14 +94,11 @@ const SearchFilter = () => {
     setSelectedTags(prev => prev.filter(t => t.code !== code));
   }, []);
 
-  console.log("selectedTags", selectedTags);
-
   const handleCloseModal = () => {
     selectedTags.length > 0
       ? Alert.alert("Cancel Filter", "Your selected ingredients will be dismissed", [
           {
-            text: "Cancel",
-            style: "cancel"
+            text: "Cancel"
           },
           {
             text: "OK",
@@ -143,18 +141,20 @@ const SearchFilter = () => {
           </TouchableWithoutFeedback>
 
           <View className='items-center'>
-            <Text className='text-black_white paragraph-medium'>Filter</Text>
+            <Text className='text-black_white paragraph-medium'>
+              {t("header.filter")}
+            </Text>
           </View>
 
           <TouchableWithoutFeedback onPress={handleBackToSearchScreen}>
             <View className='items-center'>
-              <Text className='paragraph-medium text-primary'>Done</Text>
+              <Text className='paragraph-medium text-primary'>{t("filter.action")}</Text>
             </View>
           </TouchableWithoutFeedback>
         </View>
 
         <View className='mt-2 px-6'>
-          <Text className='body-semibold'>Show me recipe with:</Text>
+          <Text className='body-semibold'>{t("filter.title")}</Text>
 
           <View className='mt-4 flex-row items-center gap-5'>
             <TouchableWithoutFeedback onPress={() => handleFocus(true)}>
@@ -172,7 +172,7 @@ const SearchFilter = () => {
                   value={searchValue}
                   onPress={() => handleFocus(true)}
                   onChangeText={handleSearch}
-                  placeholder='Enter ingredient'
+                  placeholder={t("placeholder.filter")}
                   placeholderTextColor={globalStyles.color.gray400}
                 />
                 {searchValue && isSearching && (
@@ -222,7 +222,7 @@ const SearchFilter = () => {
           {/* Result section */}
           {searchValue !== "" && (
             <View className='mt-3 pb-[200px]'>
-              <Text className='h3-bold mb-2'>Ingredients</Text>
+              <Text className='h3-bold mb-2'>{t("searchResultTitle.ingredient")}</Text>
 
               <FlatList
                 data={searchResults}
@@ -260,7 +260,7 @@ const SearchFilter = () => {
                         style={{ width: 130, height: 130 }}
                       />
                       <Text className='paragraph-medium text-center'>
-                        No ingredients found!
+                        {t("notFound")}
                       </Text>
                     </View>
                   ) : (

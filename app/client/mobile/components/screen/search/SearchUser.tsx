@@ -22,6 +22,7 @@ import { Image } from "expo-image";
 import { useSearchUsers } from "@/api/search";
 import Tag from "@/components/common/Tag";
 import { filterUniqueItems } from "@/utils/dataFilter";
+import { useTranslation } from "react-i18next";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -29,6 +30,7 @@ type SearchUserProps = {
 };
 
 const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
+  const { t } = useTranslation("search");
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchResults, setSearchResults] = useState<SearchUserResultType[]>();
 
@@ -116,7 +118,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
               value={searchValue}
               onPress={() => handleFocus(true)}
               onChangeText={handleSearch}
-              placeholder='Enter name or username'
+              placeholder={t("placeholder.user")}
               placeholderTextColor={globalStyles.color.gray400}
             />
             {onFocus && searchValue && isSearching && (
@@ -153,7 +155,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
       {/* Result section */}
       {searchValue !== "" && (
         <View className='mt-6 pb-[200px]'>
-          <Text className='h3-bold mb-2'>Users</Text>
+          <Text className='h3-bold mb-2'>{t("searchResultTitle.user")}</Text>
 
           <FlatList
             data={searchResults}
@@ -183,7 +185,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
                     source={require("../../../assets/icons/noResult.png")}
                     style={{ width: 130, height: 130 }}
                   />
-                  <Text className='paragraph-medium text-center'>No users found!</Text>
+                  <Text className='paragraph-medium text-center'>{t("notFound")}</Text>
                 </View>
               ) : (
                 <View></View>

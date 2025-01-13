@@ -16,6 +16,7 @@ CertPath="$HOME/.aspnet/https"
 if [[ "$PLATFORM" != "windows" ]]; then
   printf "${INFO}Generating SSL certification on ${SUCCESS}MacOS${NC} or ${SUCCESS}Linux${NC} ...\n"
   mkdir -p $CertPath
+  chmod 777 $CertPath
 else
   printf "${INFO}Generating SSL certification on ${SUCCESS}Window${NC} ...\n"
   mkdir -p ${CertPath////\\}
