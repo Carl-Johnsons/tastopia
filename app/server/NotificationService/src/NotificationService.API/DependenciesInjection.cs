@@ -89,14 +89,6 @@ public static class DependenciesInjection
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
 
-        app.Use(async (context, next) =>
-        {
-            // Log information about the incoming request
-            app.Logger.LogInformation($"Request: {context.Request.Method} {context.Request.Path}");
-
-            await next(); // Call the next middleware
-        });
-
         app.UseSerilogRequestLogging();
 
         app.UseHttpsRedirection();

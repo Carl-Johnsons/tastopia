@@ -1,60 +1,39 @@
-﻿using Contract.Common;
-using Contract.DTOs;
+﻿using AutoMapper;
+using Contract.Constants;
+using Contract.DTOs.UploadFileDTO;
 using Contract.Event.UploadEvent;
 using MassTransit;
-using UploadFileService.Application.CloudinaryFiles.Commands;
+using UploadFileService.Application.Files.Commands;
 
 namespace UploadFileService.API.EventHandlers;
-[QueueName("upload-multiple-image-file-event")] 
+[QueueName(RabbitMQConstant.QUEUE.NAME.UPLOAD_MULTIPLE_IMAGE_FILE,
+exchangeName: RabbitMQConstant.EXCHANGE.NAME.UPLOAD_MULTIPLE_IMAGE_FILE)]
 public sealed class UploadMultipleImageFileConsumer : IConsumer<UploadMultipleImageFileEvent>
 {
     private readonly ISender _sender;
+    private readonly IMapper _mapper;
+    private readonly IFileUtility _fileUtility;
 
-    public UploadMultipleImageFileConsumer(ISender sender, IApplicationDbContext context, IFileUtility fileUtility)
+    public UploadMultipleImageFileConsumer(ISender sender, IMapper mapper, IFileUtility fileUtility)
     {
         _sender = sender;
+        _mapper = mapper;
+        _fileUtility = fileUtility;
     }
 
     public async Task Consume(ConsumeContext<UploadMultipleImageFileEvent> context)
     {
-        await Console.Out.WriteLineAsync("======================================");
-        await Console.Out.WriteLineAsync("UploadFile-service consume the message-queue");
-        var fileStreamEvents = context.Message.FileStreams;
-        List<IFormFile> formFiles = new List<IFormFile>(fileStreamEvents.Count);
-
-        for (int i = 0; i < fileStreamEvents.Count; i++)
-        {
-            var fileStreamEvent = fileStreamEvents[i];
-            var fileStream = new MemoryStream(fileStreamEvent.Stream);
-            IFormFile formFile = new FormFile(fileStream, 0, fileStreamEvent.Stream.Length, fileStreamEvent.FileName, fileStreamEvent.FileName)
-            {
-                Headers = new HeaderDictionary(),
-                ContentType = fileStreamEvent.ContentType,
-            };
-            formFiles.Add(formFile);
-        }
-
-        var response = await _sender.Send(new CreateMultipleCloudinaryImageFileCommand
+        var fileStreams = context.Message.FileStreams;
+        var formFiles = await _fileUtility.ConvertFileStreamDTOToIFormFileAsync(fileStreams);
+        var response = await _sender.Send(new CreateMultipleImageFileCommand
         {
             FormFiles = formFiles
         });
-
-        var result = new UploadMultipleImageFileEventResponseDTO();
-        result.Files = new List<UploadImageFileEventResponseDTO>(fileStreamEvents.Count);
         response.ThrowIfFailure();
-        for (int i = 0; i < response.Value!.Count; i++)
-        {
-            var fileDTO = new UploadImageFileEventResponseDTO
-            {
-                PublicId = response.Value[i].PublicId,
-                Name = response.Value[i].Name,
-                Size = response.Value[i].Size,
-                Url = response.Value[i].Url,
-            };
-            result.Files.Add(fileDTO);
+        var result = new ListFileDTO();
+        foreach(var file in response.Value!) {
+            result.Files.Add(_mapper.Map<FileDTO>(file));
         }
-        await Console.Out.WriteLineAsync("UploadFile-service done the request");
-        await Console.Out.WriteLineAsync("======================================");
         await context.RespondAsync(result);
     }
 

@@ -7,9 +7,6 @@ using DuendeIdentityServer.Services;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
-using Steeltoe.Common.Http.Discovery;
-using Steeltoe.Discovery.Client;
-using Steeltoe.Discovery.Consul;
 
 namespace DuendeIdentityServer;
 
@@ -17,7 +14,6 @@ internal static class HostingExtensions
 {
     public static WebApplication ConfigureServices(this WebApplicationBuilder builder)
     {
-
         EnvUtility.LoadEnvFile();
 
         var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
@@ -27,11 +23,8 @@ internal static class HostingExtensions
         builder.ConfigureKestrel();
         builder.ConfigureSerilog();
 
-        services.AddServiceDiscovery(o => o.UseConsul());
-
+        services.AddInfrastructureServices();
         services.AddApplicationServices();
-        services.AddInfrastructureServices(builder.Configuration);
-
         services.AddGrpcServices();
         services.AddSwaggerServices();
 
@@ -162,6 +155,8 @@ internal static class HostingExtensions
 
         var signalRService = app.Services.GetService<ISignalRService>();
         signalRService!.StartConnectionAsync();
+
+        app.UseConsulServiceDiscovery();
         return app;
     }
 }

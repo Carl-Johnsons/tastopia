@@ -1,5 +1,4 @@
-﻿using Contract.DTOs;
-using Contract.DTOs.UploadFileDTO;
+﻿using Contract.DTOs.UploadFileDTO;
 using Contract.Event.RecipeEvent;
 using Contract.Event.UploadEvent;
 using Google.Protobuf;
@@ -10,10 +9,7 @@ using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using UploadFileProto;
-using static UserProto.GrpcUser;
-using UserProto;
 
 
 namespace RecipeService.Application.Recipes.Commands;
@@ -36,9 +32,7 @@ public record CreateRecipeCommand : IRequest<Result<Recipe?>>
 
     public List<StepDTO> Steps { get; init; } = null!;
 
-    public List<string>? TagCodes { get; set; }
-
-    public List<string>? AdditionTagValues { get; set; }
+    public List<string>? TagValues { get; set; }
 }
 
 public class StepDTO
@@ -79,7 +73,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
             var response = await _grpcUploadFileClient.UploadMultipleImageAsync(new GrpcUploadMultipleImageRequest
             {
-                FileStreams = { await GetGrpcFileStreamDTOsAsync(request.RecipeImage, steps) }
+                FileStreams = { await GetGrpcFileStreamDTOsAsync(request.RecipeImage, steps) },
             }, cancellationToken: cancellationToken);
 
             if (response == null || response.Files.Count != imageIndex.Count)
@@ -131,8 +125,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             await _serviceBus.Publish(new ValidateRecipeEvent
             {
                 RecipeId = recipe.Id,
-                TagCodes = request.TagCodes!,
-                AdditionTagValues = request.AdditionTagValues!
+                TagValues = request.TagValues ?? []
             });
 
             return Result<Recipe?>.Success(recipe);
@@ -149,7 +142,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
     }
 
-    public async Task RollBackImage(List<UploadImageFileEventResponseDTO>? files)
+    public async Task RollBackImage(List<FileDTO>? files)
     {
         if (files == null) return;
         var listUrls = new List<string>();
@@ -157,8 +150,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         {
             listUrls.Add(file.Url);
         }
-        var requestClient = _serviceBus.CreateRequestClient<DeleteMultipleFileEvent>();
-        await requestClient.GetResponse<DeleteMultipleFileEventResponseDTO>(new DeleteMultipleFileEvent
+        await _serviceBus.Publish(new DeleteMultipleFileEvent
         {
             DeleteUrl = listUrls,
         });

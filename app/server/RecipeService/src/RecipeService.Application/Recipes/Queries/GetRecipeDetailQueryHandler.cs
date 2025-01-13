@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Contract.Event.TrackingEvent;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
@@ -11,22 +12,36 @@ public class GetRecipeDetailQuery : IRequest<Result<RecipeDetailsResponse?>>
 {
     [Required]
     public Guid RecipeId { get; init; }
+
+    [Required]
+    public Guid AccountId { get; init; }
 }
 
 public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery, Result<RecipeDetailsResponse?>>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IServiceBus _serviceBus;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
     public GetRecipeDetailQueryHandler(IApplicationDbContext context,
-                        GrpcUser.GrpcUserClient grpcUserClient)
+                        GrpcUser.GrpcUserClient grpcUserClient,
+                        IServiceBus serviceBus)
     {
         _context = context;
         _grpcUserClient = grpcUserClient;
+        _serviceBus = serviceBus;
     }
 
     public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailQuery request, CancellationToken cancellationToken)
     {
+        var accountId = request.AccountId;
+        var recipeId = request.RecipeId;
+
+        if(accountId == Guid.Empty || recipeId == Guid.Empty)
+        {
+            return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound);
+        }
+
         var recipe = await _context.Recipes
                 .SingleOrDefaultAsync(r => r.Id == request.RecipeId);
 
@@ -69,6 +84,13 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
             AuthorNumberOfFollower = grpcResponse.TotalFollower ?? 0,
             similarRecipes = similarRecipes
         };
+
+        await _serviceBus.Publish(new CreateUserViewRecipeDetailEvent
+        {
+            AccountId = request.AccountId,
+            RecipeId = request.RecipeId,
+            ViewTime = DateTime.UtcNow,
+        });
 
         return Result<RecipeDetailsResponse?>.Success(result);
     }

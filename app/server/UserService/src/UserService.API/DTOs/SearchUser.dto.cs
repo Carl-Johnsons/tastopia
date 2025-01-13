@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UserService.API.DTOs;
 
-public class SearchUser
+public class SearchUserDTO
 {
     [Required]
     [JsonProperty("skip")]

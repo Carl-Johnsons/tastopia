@@ -4,7 +4,7 @@ using Google.Protobuf;
 using Google.Protobuf.Collections;
 using UploadFileProto;
 using UploadFileService.API.Configs.MapperConverters;
-using UploadFileService.Domain.Entities;
+using UploadFileService.Domain.Responses;
 
 namespace UploadFileService.API.Configs;
 
@@ -14,7 +14,7 @@ public class MappingConfig
     {
         var mappingConfig = new MapperConfiguration(config =>
         {
-            
+            config.CreateMap<FileDTO, FileResponse>().ReverseMap();
             // Grpc mapping
             config.CreateMap(typeof(List<>), typeof(RepeatedField<>)).ConvertUsing(typeof(ListToRepeatedFieldConverter<,>));
             config.CreateMap(typeof(RepeatedField<>), typeof(List<>)).ConvertUsing(typeof(RepeatedFieldToListConverter<,>));
@@ -26,7 +26,7 @@ public class MappingConfig
                 .ForMember(dest => dest.Stream, otp => otp
                     .MapFrom(src => ByteString.CopyFrom(src.Stream)));
 
-            config.CreateMap<GrpcFileDTO, CloudinaryFile>().ReverseMap();
+            config.CreateMap<GrpcFileDTO, FileResponse>().ReverseMap();
         });
         //mappingConfig.AssertConfigurationIsValid();
 

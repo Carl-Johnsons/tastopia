@@ -25,10 +25,21 @@ public class SettingController : BaseApiController
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
+        var settingsObj = new List<SettingObject>();
+
+        foreach (var settingDTO in dto.Settings)
+        {
+            settingsObj.Add(new SettingObject
+            {
+                Key = settingDTO.Key,
+                Value = settingDTO.Value
+            });
+        }
+
         var result = await _sender.Send(new UpdateSettingCommand
         {
             AccountId = Guid.Parse(subjectId!),
-            Settings = dto.Settings
+            Settings = settingsObj
         });
         result.ThrowIfFailure();
         return NoContent();
