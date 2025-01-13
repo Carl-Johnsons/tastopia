@@ -53,4 +53,27 @@ public class UserController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    [HttpPatch()]
+    [Produces("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UpdateUser([FromForm] UpdateUserDTO dto)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new UpdateUserCommand
+        {
+            AccountId = subjectId != null ? Guid.Parse(subjectId) : Guid.Empty,
+            Avatar = dto.Avatar,
+            Background = dto.Background,
+            DisplayName = dto.DisplayName,
+            Gender = dto.Gender,
+            Bio = dto.Bio
+        });
+
+        result.ThrowIfFailure();
+        return NoContent();
+    }
 }

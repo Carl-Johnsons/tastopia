@@ -32,12 +32,6 @@ const Community = () => {
     setFilterSelected(key);
   };
 
-  const toggleLanguage = () => {
-    const currentLang = i18next.language;
-    const newLang = currentLang === "en" ? "vi" : "en";
-    i18next.changeLanguage(newLang);
-  };
-
   const onRefresh = () => {
     refetch();
   };

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { View, Text, Animated, Pressable } from "react-native";
 import { DownvoteIcon, UpvoteIcon } from "./SVG";
 import { globalStyles } from "./GlobalStyles";

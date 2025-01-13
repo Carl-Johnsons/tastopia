@@ -1,0 +1,15 @@
+export { default as UserIcon } from "../assets/icons/user.svg";
+export { default as SavedIcon } from "../assets/icons/saved.svg";
+export { default as VipIcon } from "../assets/icons/vip.svg";
+export { default as SettingIcon } from "../assets/icons/setting.svg";
+export { default as CloseIcon } from "../assets/icons/close.svg";
+export { default as BaseUserIcon } from "../assets/icons/user_base.svg";
+export { default as LangIcon } from "../assets/icons/lang.svg";
+export { default as MoonIcon } from "../assets/icons/moon.svg";
+export { default as NotificationIcon } from "../assets/icons/notification.svg";
+export { default as DocumentIcon } from "../assets/icons/document.svg";
+export { default as PrivacyIcon } from "../assets/icons/privacy.svg";
+export { default as CheckCircleIcon } from "../assets/icons/check_circle.svg";
+export { default as VietnamFlagIcon } from "../assets/icons/vietnam_flag.svg";
+export { default as UnitedKingdomFlagIcon } from "../assets/icons/united_kingdom_flag.svg";
+export { default as ArrowBackIcon } from "../assets/icons/arrow_back.svg";

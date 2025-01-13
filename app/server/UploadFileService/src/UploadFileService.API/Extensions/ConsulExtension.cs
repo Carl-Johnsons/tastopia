@@ -39,7 +39,7 @@ public static class ConsulExtension
             Check = new AgentServiceCheck
             {
                 Timeout = TimeSpan.FromSeconds(10),
-                Interval = TimeSpan.FromSeconds(30),
+                Interval = TimeSpan.FromSeconds(20),
                 HTTP = healthCheckEndpoint,
                 TLSSkipVerify = true,
             }

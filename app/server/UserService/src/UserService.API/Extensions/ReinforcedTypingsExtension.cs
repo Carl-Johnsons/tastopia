@@ -33,7 +33,8 @@ public static class ReinforcedTypingsExtension
         builder.ExportAsInterfaces([
             typeof(SearchUserDTO),
             typeof(UpdateSettingDTO),
-            typeof(SettingObjectDTO)
+            typeof(SettingObjectDTO),
+            typeof(UpdateUserDTO)
         ], config =>
         {
             config.WithPublicProperties()

@@ -1,4 +1,4 @@
-import { lazy, object, ref, string } from "yup";
+import { InferType, lazy, object, ref, string } from "yup";
 
 export const passwordSchema = string()
   .required("Please enter password.")
