@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import DraggableIngredient from "./DraggableIngredient";
 import uuid from "react-native-uuid";
 import DraggableStep from "./DraggableStep";
+import AutoComplete from "react-native-autocomplete-input";
 
 type DraggableProps = {
   ingredients: CreateIngredientType[];
@@ -34,6 +35,18 @@ export default function CreateRecipeDraggable({
   form
 }: DraggableProps) {
   const { t } = useTranslation("createRecipe");
+
+  const [query, setQuery] = useState("");
+  const data = [
+    {
+      key: "1",
+      value: 1
+    },
+    {
+      key: "2",
+      value: 2
+    }
+  ];
 
   const renderIngredientItem = useCallback(
     ({ item, drag, isActive }: RenderItemParams<CreateIngredientType>) => {
@@ -131,6 +144,19 @@ export default function CreateRecipeDraggable({
                     );
                   }}
                 />
+              </View>
+
+              <View className='mt-4'>
+                {/* <Text className='body-semibold mb-2'>{t("formTitle.tag")}</Text>
+                <AutoComplete
+                  data={data}
+                  value={query}
+                  onChangeText={text => setQuery(text)}
+                  flatListProps={{
+                    keyExtractor: item => item.key,
+                    renderItem: ({ item }) => <Text>{item.value}</Text>
+                  }}
+                /> */}
               </View>
             </View>
           );

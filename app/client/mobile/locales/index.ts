@@ -6,6 +6,8 @@ import errorEn from "../locales/en/error.json";
 import errorVi from "../locales/vi/error.json";
 import createRecipeEn from "../locales/en/createRecipe.json";
 import createRecipeVi from "../locales/vi/createRecipe.json";
+import searchEn from "../locales/en/search.json";
+import searchVi from "../locales/vi/search.json";
 
 export default {
   communityEn,
@@ -15,5 +17,7 @@ export default {
   errorEn,
   errorVi,
   createRecipeEn,
-  createRecipeVi
+  createRecipeVi,
+  searchEn,
+  searchVi
 };

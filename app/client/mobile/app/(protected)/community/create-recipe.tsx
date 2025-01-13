@@ -22,7 +22,9 @@ import {
   View,
   SafeAreaView,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform
 } from "react-native";
 import DraggableIngredient from "@/components/screen/community/DraggableIngredient";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -118,13 +120,9 @@ const CreateRecipe = () => {
       }
     });
 
-    const tagCodes = ["code 0", "code 1"];
-    tagCodes.forEach((code, index) => {
-      data.append(`tagCodes[${index}]`, code);
-    });
-    const additionTagValues = ["AdditionTagValues 0", "AdditionTagValues 1"];
-    additionTagValues.forEach((value, index) => {
-      data.append(`additionTagValues[${index}]`, value);
+    const tagValues = ["code 0", "code 1"];
+    tagValues.forEach((code, index) => {
+      data.append(`tagValues[${index}]`, code);
     });
 
     try {
@@ -189,128 +187,134 @@ const CreateRecipe = () => {
   return (
     <SafeAreaView>
       <View className={`bg-white_black size-full flex-col`}>
-        <View
-          style={{ marginTop: StatusBar.currentHeight }}
-          className='flex-between mb-4 h-[60px] flex-row border-b-[0.6px] border-gray-400 px-6'
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <TouchableWithoutFeedback onPress={handleCancel}>
-            <View className=''>
-              <AntDesign
-                name='close'
-                size={20}
-                color='black'
-              />
-            </View>
-          </TouchableWithoutFeedback>
+          <View
+            style={{ marginTop: StatusBar.currentHeight }}
+            className='flex-between mb-4 h-[60px] flex-row border-b-[0.6px] border-gray-400 px-6'
+          >
+            <TouchableWithoutFeedback onPress={handleCancel}>
+              <View className=''>
+                <AntDesign
+                  name='close'
+                  size={20}
+                  color='black'
+                />
+              </View>
+            </TouchableWithoutFeedback>
 
-          <View className='items-center'>
-            <Text className='text-black_white paragraph-medium'>
-              {t("screens.title")}
-            </Text>
+            <View className='items-center'>
+              <Text className='text-black_white paragraph-medium'>
+                {t("screens.title")}
+              </Text>
+            </View>
+
+            <TouchableWithoutFeedback
+              onPress={handleSubmit(onSubmit)}
+              disabled={isLoading}
+            >
+              <View className='items-center'>
+                {isLoading ? (
+                  <ActivityIndicator
+                    size={"small"}
+                    color={globalStyles.color.primary}
+                  />
+                ) : (
+                  <Text className='paragraph-medium text-primary'>
+                    {t("screens.action")}
+                  </Text>
+                )}
+              </View>
+            </TouchableWithoutFeedback>
           </View>
 
-          <TouchableWithoutFeedback
-            onPress={handleSubmit(onSubmit)}
-            disabled={isLoading}
-          >
-            <View className='items-center'>
-              {isLoading ? (
+          {/* Form */}
+
+          <View className='relative flex-1 px-6'>
+            {isLoading && (
+              <View className='flex-center absolute left-6 z-10 size-full bg-transparent'>
                 <ActivityIndicator
-                  size={"small"}
+                  size={"large"}
                   color={globalStyles.color.primary}
                 />
-              ) : (
-                <Text className='paragraph-medium text-primary'>
-                  {t("screens.action")}
-                </Text>
-              )}
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
-
-        {/* Form */}
-        <View className='relative flex-1 px-6'>
-          {isLoading && (
-            <View className='flex-center absolute left-6 z-10 size-full bg-transparent'>
-              <ActivityIndicator
-                size={"large"}
-                color={globalStyles.color.primary}
-              />
-            </View>
-          )}
-
-          <CreateRecipeDraggable
-            ingredients={ingredients}
-            setIngredients={setIngredients}
-            steps={steps}
-            setSteps={setSteps}
-            form={
-              <View>
-                <FormProvider {...formCreateRecipe}>
-                  <View className='d-flex justify-center gap-4'>
-                    <View className='my-5'>
-                      <UploadImage
-                        defaultImages={images}
-                        onFileChange={onFileChange}
-                        isMultiple={false}
-                      />
-                    </View>
-
-                    <View>
-                      <Input
-                        variant='secondary'
-                        control={formControl}
-                        name='title'
-                        placeHolder={t("formPlaceholder.title")}
-                        errors={[t(errors.title?.message ?? "")]}
-                      />
-                    </View>
-
-                    <View>
-                      <Input
-                        variant='secondary'
-                        control={formControl}
-                        name='description'
-                        placeHolder={t("formPlaceholder.description")}
-                        errors={[t(errors.description?.message ?? "")]}
-                      />
-                    </View>
-
-                    <View className='flex-center flex-row gap-6'>
-                      <View className='flex-1'>
-                        <Text className='body-semibold'>{t("formTitle.serves")}</Text>
-                        <Input
-                          variant='secondary'
-                          control={formControl}
-                          name='serves'
-                          placeHolder={t("formPlaceholder.serves")}
-                          errors={[t(errors.serves?.message ?? "")]}
-                        />
-                      </View>
-
-                      <View className='flex-1'>
-                        <Text className='body-semibold'>{t("formTitle.cookTime")}</Text>
-                        <Input
-                          variant='secondary'
-                          control={formControl}
-                          name='cookTime'
-                          placeHolder={t("formPlaceholder.cookTime")}
-                          errors={[t(errors.cookTime?.message ?? "")]}
-                        />
-                      </View>
-                    </View>
-
-                    <View>
-                      <Text className='body-semibold mb-2'>
-                        {t("formTitle.ingredients")}
-                      </Text>
-                    </View>
-                  </View>
-                </FormProvider>
               </View>
-            }
-          />
-        </View>
+            )}
+
+            <CreateRecipeDraggable
+              ingredients={ingredients}
+              setIngredients={setIngredients}
+              steps={steps}
+              setSteps={setSteps}
+              form={
+                <View>
+                  <FormProvider {...formCreateRecipe}>
+                    <View className='d-flex justify-center gap-4'>
+                      <View className='my-5'>
+                        <UploadImage
+                          defaultImages={images}
+                          onFileChange={onFileChange}
+                          isMultiple={false}
+                        />
+                      </View>
+
+                      <View>
+                        <Input
+                          variant='secondary'
+                          control={formControl}
+                          name='title'
+                          placeHolder={t("formPlaceholder.title")}
+                          errors={[t(errors.title?.message ?? "")]}
+                        />
+                      </View>
+
+                      <View>
+                        <Input
+                          variant='secondary'
+                          control={formControl}
+                          name='description'
+                          placeHolder={t("formPlaceholder.description")}
+                          errors={[t(errors.description?.message ?? "")]}
+                        />
+                      </View>
+
+                      <View className='flex-center flex-row gap-6'>
+                        <View className='flex-1'>
+                          <Text className='body-semibold'>{t("formTitle.serves")}</Text>
+                          <Input
+                            variant='secondary'
+                            control={formControl}
+                            name='serves'
+                            placeHolder={t("formPlaceholder.serves")}
+                            errors={[t(errors.serves?.message ?? "")]}
+                          />
+                        </View>
+
+                        <View className='flex-1'>
+                          <Text className='body-semibold'>{t("formTitle.cookTime")}</Text>
+                          <Input
+                            variant='secondary'
+                            control={formControl}
+                            name='cookTime'
+                            placeHolder={t("formPlaceholder.cookTime")}
+                            errors={[t(errors.cookTime?.message ?? "")]}
+                          />
+                        </View>
+                      </View>
+
+                      <View>
+                        <Text className='body-semibold mb-2'>
+                          {t("formTitle.ingredients")}
+                        </Text>
+                      </View>
+                    </View>
+                  </FormProvider>
+                </View>
+              }
+            />
+          </View>
+        </KeyboardAvoidingView>
       </View>
     </SafeAreaView>
   );

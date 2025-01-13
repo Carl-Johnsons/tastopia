@@ -8,10 +8,14 @@ import { globalStyles } from "@/components/common/GlobalStyles";
 import { View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { router, useFocusEffect } from "expo-router";
+import useDarkMode from "@/hooks/useDarkMode";
 
 const Community = () => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
+  const isDarkMode = useDarkMode();
+
+  console.log("is dark mode", isDarkMode);
 
   //TODO: apply loading later
   const {
@@ -72,7 +76,7 @@ const Community = () => {
   return (
     <SafeAreaView
       style={{
-        backgroundColor: globalStyles.color.light,
+        backgroundColor: isDarkMode ? globalStyles.color.dark : globalStyles.color.light,
         height: "100%"
       }}
     >
