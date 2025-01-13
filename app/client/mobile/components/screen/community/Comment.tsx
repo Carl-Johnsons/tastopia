@@ -1,4 +1,5 @@
 import { Image } from "expo-image";
+import { useTranslation } from "react-i18next";
 import { Text, View, TouchableWithoutFeedback } from "react-native";
 
 type CommentProps = {

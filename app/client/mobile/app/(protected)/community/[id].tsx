@@ -23,8 +23,10 @@ import Comment from "@/components/screen/community/Comment";
 import Button from "@/components/Button";
 import AddCommentSection from "@/components/common/AddCommentSection";
 import { filterUniqueItems } from "@/utils/dataFilter";
+import { useTranslation } from "react-i18next";
 
 const RecipeDetail = () => {
+  const { t } = useTranslation("recipeDetail");
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const {
@@ -163,7 +165,9 @@ const RecipeDetail = () => {
                   </View>
                   <TouchableWithoutFeedback onPress={handleOpenCookMode}>
                     <View className='rounded-3xl bg-primary px-5 py-2'>
-                      <Text className='body-semibold text-white_black'>Cook</Text>
+                      <Text className='body-semibold text-white_black'>
+                        {t("cookButton")}
+                      </Text>
                     </View>
                   </TouchableWithoutFeedback>
                 </View>
@@ -189,8 +193,8 @@ const RecipeDetail = () => {
                       <Text className='body-regular'>
                         {recipeDetailData.authorNumberOfFollower}{" "}
                         {recipeDetailData.authorNumberOfFollower === 1
-                          ? "follower"
-                          : "followers"}
+                          ? t("follower")
+                          : t("followers")}
                       </Text>
                     </View>
                   </TouchableWithoutFeedback>
@@ -210,10 +214,12 @@ const RecipeDetail = () => {
                   </View>
 
                   <View>
-                    <Text className='base-semibold'>Ingredients</Text>
+                    <Text className='base-semibold mb-1'>{t("ingredient")}</Text>
                     <Text className='body-regular'>
-                      For {recipeDetailData.recipe.serves}{" "}
-                      {recipeDetailData.recipe.serves === 1 ? "Serving" : "Servings"}
+                      {t("for")} {recipeDetailData.recipe.serves}{" "}
+                      {recipeDetailData.recipe.serves === 1
+                        ? t("serving")
+                        : t("servings")}
                     </Text>
                     <View className='mt-4 gap-3'>
                       {recipeDetailData.recipe.ingredients.map((ingredient, index) => {
@@ -228,11 +234,7 @@ const RecipeDetail = () => {
                   </View>
 
                   <View>
-                    <Text className='base-semibold'>Steps</Text>
-                    <Text className='body-regular'>
-                      For {recipeDetailData.recipe.serves}{" "}
-                      {recipeDetailData.recipe.serves === 1 ? "Serving" : "Servings"}
-                    </Text>
+                    <Text className='base-semibold'>{t("step")}</Text>
                     <View className='mt-4 gap-3'>
                       {sortedSteps?.map(step => {
                         return (
@@ -250,7 +252,7 @@ const RecipeDetail = () => {
                   <View className='h-[1px] w-full bg-primary'></View>
 
                   <View className='justify-center gap-4'>
-                    <Text className='base-semibold'>Comments</Text>
+                    <Text className='base-semibold'>{t("comment")}</Text>
                     <AddCommentSection
                       recipeId={id}
                       setParentState={setParentState}
@@ -285,7 +287,7 @@ const RecipeDetail = () => {
                           }
                         >
                           <Text className='text-white_black body-semibold text-center'>
-                            Load more comments
+                            {t("loadMoreComment")}
                           </Text>
                         </Button>
                       </View>
