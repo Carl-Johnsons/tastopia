@@ -20,7 +20,7 @@ export const LogoutButton = () => {
         onPress={logout}
         style={[animatedStyles]}
       >
-        <Text className='font-sans text-sm text-center text-black'>Log out</Text>
+        <Text className='font-sans text-sm text-center text-black_white'>Log out</Text>
       </Button>
     </Protected>
   );

@@ -1,4 +1,4 @@
-import { Alert, ScrollView, Switch, Text, View } from "react-native";
+import { Alert, Platform, ScrollView, Switch, Text, View } from "react-native";
 import Button from "./Button";
 import {
   Dispatch,
@@ -55,10 +55,9 @@ import {
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { useChangeLanguage } from "@/hooks/useToggleLanguage";
 import { useTranslation } from "react-i18next";
-import { useColorScheme } from "nativewind";
-import { color } from "@rneui/base";
-import useDarkMode from "@/hooks/useDarkMode";
 import { getColorSchemeValue } from "@/hooks/alternator";
+import { useColorScheme } from "nativewind";
+import useColorizer from "@/hooks/useColorizer";
 
 type SettingModalProps = {
   ref: RefObject<BottomSheetMethods>;
@@ -99,7 +98,8 @@ const SettingModal = forwardRef<BottomSheetModal, SettingModalProps>((_props, re
   const [currentSetting, setCurrentSetting] = useState<SettingState>("initial");
   const [title, setTitle] = useState<string>("setting");
   const { dismiss } = useBottomSheetModal();
-  const { colorScheme } = useColorScheme();
+  const { c } = useColorizer();
+  const { black, white } = colors;
 
   const changeSetting = useCallback((setting: Settings | "initial") => {
     switch (setting) {
@@ -164,12 +164,11 @@ const SettingModal = forwardRef<BottomSheetModal, SettingModalProps>((_props, re
     <BottomSheetModal
       ref={ref}
       backdropComponent={renderBackdrop}
+      handleIndicatorStyle={{
+        backgroundColor: c(colors.black.DEFAULT, colors.white.DEFAULT)
+      }}
       backgroundStyle={{
-        backgroundColor: getColorSchemeValue(
-          colorScheme,
-          colors.white.DEFAULT,
-          colors.black[100]
-        )
+        backgroundColor: c(colors.white.DEFAULT, colors.black[100])
       }}
       enablePanDownToClose={true}
       enableContentPanningGesture={
@@ -190,6 +189,7 @@ const SettingModal = forwardRef<BottomSheetModal, SettingModalProps>((_props, re
               {currentSetting === "initial" ? (
                 <Button onPress={closeModal}>
                   <CloseIcon
+                    color={c(black.DEFAULT, white.DEFAULT)}
                     width={22}
                     height={22}
                   />
@@ -197,6 +197,7 @@ const SettingModal = forwardRef<BottomSheetModal, SettingModalProps>((_props, re
               ) : (
                 <Button onPress={() => changeSetting("initial")}>
                   <ArrowBackIcon
+                    color={c(black.DEFAULT, white.DEFAULT)}
                     width={22}
                     height={22}
                   />
@@ -347,9 +348,9 @@ const AccountSetting = () => {
         className={`flex-row items-center justify-between gap-3 px-4 py-6`}
         onPress={onPress}
       >
-        <Text>{title}</Text>
+        <Text className='text-black_white'>{title}</Text>
         <View className='flex-row items-center gap-2'>
-          <Text>{value ? value : ""}</Text>
+          <Text className='text-black_white'>{value ? value : ""}</Text>
           {ticked || value ? (
             <CheckCircleIcon
               width={20}
@@ -551,7 +552,7 @@ const TermOfServices = () => {
 
   return (
     <ScrollView className='h-[85vh] px-2'>
-      <Text className='font-serif text-lg'>{t("content")}</Text>
+      <Text className='font-serif text-lg text-black_white'>{t("content")}</Text>
     </ScrollView>
   );
 };
@@ -561,7 +562,7 @@ const Privacy = () => {
 
   return (
     <ScrollView className='h-[85vh] px-2'>
-      <Text className='font-serif text-lg'>{t("content")}</Text>
+      <Text className='font-serif text-lg text-black_white'>{t("content")}</Text>
     </ScrollView>
   );
 };
@@ -597,9 +598,12 @@ const ItemCard = ({
   reversed,
   switchOptions
 }: ItemCardProps) => {
+  const { c } = useColorizer();
+
   const mainContent = [
     Icon && (
       <Icon
+        color={c(colors.black.DEFAULT, colors.white.DEFAULT)}
         key='icon'
         width={22}
         height={22}
@@ -615,13 +619,36 @@ const ItemCard = ({
 
   const renderSwitch = useCallback(() => {
     const { isEnabled, onChange } = switchOptions as SwitchOptions;
-    const { primary, gray, white } = colors;
+    const { primary, gray, white, black } = colors;
+    const { c } = useColorizer();
+
+    const thumbColor = c(
+      Platform.select({
+        ios: white.DEFAULT,
+        android: black.DEFAULT
+      }),
+      Platform.select({
+        ios: black.DEFAULT,
+        android: white.DEFAULT
+      })
+    );
+
+    const inactiveTrackColor = c(
+      Platform.select({
+        ios: gray[200],
+        android: gray[200]
+      }),
+      Platform.select({
+        ios: black.DEFAULT,
+        android: white.DEFAULT
+      })
+    );
 
     return (
       <View className='flex w-[10%] items-center'>
         <Switch
-          trackColor={{ false: `${gray[100]}`, true: `${primary}` }}
-          thumbColor={isEnabled ? `${white.DEFAULT}` : `${white.DEFAULT}`}
+          trackColor={{ false: `${inactiveTrackColor}`, true: `${primary}` }}
+          thumbColor={isEnabled ? `${thumbColor}` : `${thumbColor}`}
           onValueChange={onChange}
           value={isEnabled}
         />

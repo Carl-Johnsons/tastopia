@@ -43,8 +43,13 @@ const RootLayout = () => {
   const { colorScheme } = useColorScheme();
   const bgColor = getColorSchemeValue(
     colorScheme,
+    colors.white.DEFAULT,
     colors.black.DEFAULT,
-    colors.white.DEFAULT
+  );
+  const barStyle = getColorSchemeValue(
+    colorScheme,
+    "dark-content",
+    "light-content",
   );
 
   useEffect(() => {
@@ -66,7 +71,7 @@ const RootLayout = () => {
             <I18nextProvider i18n={i18n}>
               <SafeAreaProvider>
                 <BottomSheetModalProvider>
-                  <StatusBar backgroundColor={bgColor} />
+                  <StatusBar backgroundColor={bgColor} barStyle={barStyle} />
                   <Stack
                     screenOptions={{
                       headerShown: false
