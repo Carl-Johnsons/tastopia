@@ -45,81 +45,81 @@ public class CommunityRecipeService : IRecipeService
         await Console.Out.WriteLineAsync("CheckRecipeIngredients");
     }
 
-    public async Task CheckRecipeTags(Guid recipeId, List<string> tagCodes, List<string> additionTagValues)
+    public async Task CheckRecipeTags(Guid recipeId, List<string> tagValues)
     {
-        var listRecipeTagCodes = new List<string>();
-        var listTagValueToBeAdded = new List<string>();
+        //var listRecipeTagCodes = new List<string>();
+        //var listTagValueToBeAdded = new List<string>();
 
-        var requestClient = _serviceBus.CreateRequestClient<GetAllTagsEvents>();
-        var response = await requestClient.GetResponse<TagListDTO>(new GetAllTagsEvents());
-        if (response == null || response.Message == null)
-        {
-            throw new Exception("Tags not found");
-        }
+        //var requestClient = _serviceBus.CreateRequestClient<GetAllTagsEvents>();
+        //var response = await requestClient.GetResponse<TagListDTO>(new GetAllTagsEvents());
+        //if (response == null || response.Message == null)
+        //{
+        //    throw new Exception("Tags not found");
+        //}
 
-        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(response.Message, Formatting.Indented));
+        //await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(response.Message, Formatting.Indented));
 
-        var tags = response.Message.Tags.Where(t => t.Status.ToString() == "Active").ToDictionary(t => t.Code);
+        //var tags = response.Message.Tags.Where(t => t.Status.ToString() == "Active").ToDictionary(t => t.Value);
 
-        var tagRequesteds = response.Message.Tags.Where(t => t.Status.ToString() != "Active").ToDictionary(t => t.Code);
+        //var tagRequesteds = response.Message.Tags.Where(t => t.Status.ToString() != "Active").ToDictionary(t => t.Value);
 
-        foreach (var code in tagCodes)
-        {
-            if(!tags.ContainsKey(code))
-            {
-                await Console.Out.WriteLineAsync($"Tag with code {code} is not found, so skip this code.");
-                continue;
-            }
-            listRecipeTagCodes.Add(code);
-        }
+        //foreach (var value in tagValues)
+        //{
+        //    if(!tags.ContainsKey(value))
+        //    {
+        //        await Console.Out.WriteLineAsync($"Tag with value: {value} is not found, so skip this value.");
+        //        continue;
+        //    }
+        //    listRecipeTagCodes.Add(value);
+        //}
 
 
-        foreach(var value in additionTagValues)
-        {
-            if (!SpellUtility.IsCorrectSpell(value))
-            {
-                await Console.Out.WriteLineAsync($"Tag with value {value} is not valid to be added, so skip this value.");
-                continue;
-            }
+        //foreach(var value in additionTagValues)
+        //{
+        //    if (!SpellUtility.IsCorrectSpell(value))
+        //    {
+        //        await Console.Out.WriteLineAsync($"Tag with value {value} is not valid to be added, so skip this value.");
+        //        continue;
+        //    }
 
-            var isSkip = false;
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(tagRequesteds, Formatting.Indented));
-            foreach (var tagRequested in tagRequesteds)
-            {
-                if (tagRequested.Value.Value.ToLower() == value.ToLower()) {
-                    await Console.Out.WriteLineAsync($"Tag with value {value} is requested, so skip this value.");
-                    listRecipeTagCodes.Add(tagRequested.Value.Code);
-                    isSkip = true;
-                    break;
-                }
-            }
+        //    var isSkip = false;
+        //    await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(tagRequesteds, Formatting.Indented));
+        //    foreach (var tagRequested in tagRequesteds)
+        //    {
+        //        if (tagRequested.Value.Value.ToLower() == value.ToLower()) {
+        //            await Console.Out.WriteLineAsync($"Tag with value {value} is requested, so skip this value.");
+        //            listRecipeTagCodes.Add(tagRequested.Value.Code);
+        //            isSkip = true;
+        //            break;
+        //        }
+        //    }
 
-            if(isSkip) continue;
+        //    if(isSkip) continue;
 
-            listTagValueToBeAdded.Add(value);
-        }
+        //    listTagValueToBeAdded.Add(value);
+        //}
 
-        if(listRecipeTagCodes.Count != 0)
-        {
-            await Console.Out.WriteLineAsync("upadte tag");
-            await _serviceBus.Publish(new UpdateRecipeTagsEvent
-            {
-                RecipeId = recipeId,
-                TagCodes = listRecipeTagCodes,
-            });
-        }
+        //if(listRecipeTagCodes.Count != 0)
+        //{
+        //    await Console.Out.WriteLineAsync("upadte tag");
+        //    await _serviceBus.Publish(new UpdateRecipeTagsEvent
+        //    {
+        //        RecipeId = recipeId,
+        //        TagCodes = listRecipeTagCodes,
+        //    });
+        //}
 
-        if(listTagValueToBeAdded.Count != 0)
-        {
-            await Console.Out.WriteLineAsync("Add tag");
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(listTagValueToBeAdded, Formatting.Indented));
-            await _serviceBus.Publish(new RequestAddTagsEvent
-            {
-                RecipeId = recipeId,
-                Requests = listTagValueToBeAdded,
-            });
+        //if(listTagValueToBeAdded.Count != 0)
+        //{
+        //    await Console.Out.WriteLineAsync("Add tag");
+        //    await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(listTagValueToBeAdded, Formatting.Indented));
+        //    await _serviceBus.Publish(new RequestAddTagsEvent
+        //    {
+        //        RecipeId = recipeId,
+        //        Requests = listTagValueToBeAdded,
+        //    });
 
-        }
+        //}
 
 
 

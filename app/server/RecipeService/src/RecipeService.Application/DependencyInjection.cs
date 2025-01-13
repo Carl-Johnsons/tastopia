@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson.Serialization.Serializers;
 using RecipeService.Application.Configs;
 using System.Reflection;
 using UploadFileProto;
 using UserProto;
 using TrackingProto;
+using Contract.Constants;
+using Grpc.Net.Compression;
+using System.IO.Compression;
 
 namespace RecipeService.Application;
 
@@ -36,6 +38,12 @@ public static class DependencyInjection
         services.AddGrpcClient<GrpcUploadFile.GrpcUploadFileClient>(options =>
         {
             options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_UPLOAD", "Not Found"));
+
+        }).ConfigureChannel(options =>
+        {
+            options.MaxReceiveMessageSize = GrpcUploadFileConfig.MaxMessageSize;
+            options.MaxSendMessageSize = GrpcUploadFileConfig.MaxMessageSize;
+            options.CompressionProviders = new[] { new GzipCompressionProvider(CompressionLevel.Optimal) };
         });
 
         services.AddGrpcClient<GrpcTracking.GrpcTrackingClient>(options =>

@@ -8,7 +8,10 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="MediatR" Version="12.2.0" />
+		<PackageReference Include="DotNetEnv" Version="3.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.5" />
+		<!-- Grpc dependencies -->
+		<PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\TrackingService.Domain\TrackingService.Domain.csproj" />
@@ -19,8 +22,5 @@
 			<HintPath Condition="Exists('..\..\..\Contract\Contract\Published\Contract.dll')">..\..\..\Contract\Contract\Published\Contract.dll</HintPath>
 			<HintPath Condition="Exists('..\Contract\Contract.dll')">..\Contract\Contract.dll</HintPath>
 		</Reference>
-	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="UserViewRecipeDetails\Queries\" />
 	</ItemGroup>
 </Project>

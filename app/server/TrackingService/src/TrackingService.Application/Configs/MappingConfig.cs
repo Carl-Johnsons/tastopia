@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Google.Protobuf.Collections;
+using TrackingService.Application.Configs.MapperConverters;
 
 namespace TrackingService.Application.Configs;
 
@@ -8,7 +10,9 @@ public class MappingConfig
     {
         var mappingConfig = new MapperConfiguration(config =>
         {
-
+            //Grpc
+            config.CreateMap(typeof(List<>), typeof(RepeatedField<>)).ConvertUsing(typeof(ListToRepeatedFieldConverter<,>));
+            config.CreateMap(typeof(RepeatedField<>), typeof(List<>)).ConvertUsing(typeof(RepeatedFieldToListConverter<,>));
         });
 
 

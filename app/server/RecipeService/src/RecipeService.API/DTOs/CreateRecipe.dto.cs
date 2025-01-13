@@ -33,11 +33,8 @@ public class CreateRecipeDTO
     [JsonProperty("steps")]
     public List<StepDTO> Steps { get; set; } = null!;
 
-    [JsonProperty("tagCodes")]
-    public List<string>? TagCodes { get; set; }
-
-    [JsonProperty("additionTagValues")]
-    public List<string>? AdditionTagValues { get; set; }
+    [JsonProperty("tagValues")]
+    public List<string>? TagValues { get; set; }
 }
 
 public class StepDTO

@@ -29,35 +29,12 @@ public class RecipeController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> CreateRecipe([FromForm] CreateRecipeDTO createRecipeDTO)
     {
-        //var listStep = new List<Application.Recipes.StepDTO>();
-        //foreach (var step in createRecipeDTO.Steps) {
-        //    listStep.Add(new Application.Recipes.StepDTO
-        //    {
-        //        Content = step.Content,
-        //        Images = step.Images,
-        //        OrdinalNumber = step.OrdinalNumber,
-        //    });
-        //}
-
-
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
         var command = _mapper.Map<CreateRecipeCommand>(createRecipeDTO);
         command.AuthorId = Guid.Parse(subjectId!);
         var result = await _sender.Send(command);
-        //var result = await _sender.Send(new CreateRecipeCommand
-        //{
-        //   AuthorId = Guid.Parse(subjectId!),
-        //   Title = createRecipeDTO.Title,
-        //   CookTime = createRecipeDTO.CookTime,
-        //   Description = createRecipeDTO.Description,
-        //   Ingredients = createRecipeDTO.Ingredients,
-        //   RecipeImage = createRecipeDTO.RecipeImage,
-        //   Serves = createRecipeDTO.Serves,
-        //   Steps = listStep,
-
-        //});
         result.ThrowIfFailure();
         return Ok(result.Value);
     }

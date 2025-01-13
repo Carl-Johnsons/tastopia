@@ -3,6 +3,6 @@
 public interface IRecipeService
 {
     Task CheckRecipeIngredients();
-    Task CheckRecipeTags(Guid recipeId, List<string> tagCodes, List<string> additionTagValues);
+    Task CheckRecipeTags(Guid recipeId, List<string> tagValues);
     Task CheckRecipeAbuse();
 }

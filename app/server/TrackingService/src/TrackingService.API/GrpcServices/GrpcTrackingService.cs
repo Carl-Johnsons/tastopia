@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using TrackingProto;
 using TrackingService.Application.UserViewRecipeDetails.Commands;
 
-namespace RecipeService.API.GrpcServices;
+namespace TrackingService.API.GrpcServices;
 
 public class GrpcTrackingService : GrpcTracking.GrpcTrackingBase
 {
@@ -17,7 +17,7 @@ public class GrpcTrackingService : GrpcTracking.GrpcTrackingBase
 
     public override async Task<GrpcEmpty> GrpcUserViewRecipeDetail(GrpcUserViewRecipeDetailRequest request, ServerCallContext context)
     {
-        var accountId  = Guid.Parse(request.AccountId);
+        var accountId = Guid.Parse(request.AccountId);
         var recipeId = Guid.Parse(request.RecipeId);
         var viewTime = request.ViewTime.ToDateTime();
 
