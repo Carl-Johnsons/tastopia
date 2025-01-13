@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Contract.DTOs.UploadFileDTO;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UploadFileService.API.DTOs;
-using UploadFileService.Application.CloudinaryFiles.Commands;
-using UploadFileService.Application.CloudinaryFiles.Queries;
-
+using UploadFileService.Application.Files.Commands;
 namespace UploadFileService.API.Controllers;
 
 
 [Route("api/upload")]
 [ApiController]
+[Authorize]
 public class UploadController : ControllerBase
 {
     private readonly ISender _sender;
@@ -18,105 +18,55 @@ public class UploadController : ControllerBase
         _sender = sender;
     }
 
-    [HttpGet("all")]
-    public async Task<IActionResult> GetAll()
+    [AllowAnonymous]
+    [HttpPost("upload-images")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(ListFileDTO), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UploadMultipleImage([FromForm] UploadMultipleImageFileDTO uploadMultipleImageFileDTO)
     {
-        var result = await _sender.Send(new GetAllCloudinaryFilesQuery());
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
 
-    [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] GetCloudinaryFileByIdDTO getCloudinaryFileByIdDTO)
-    {
-        if (getCloudinaryFileByIdDTO.Id != null)
+        var result = await _sender.Send(new CreateMultipleImageFileCommand
         {
-            var result = await _sender.Send(new GetCloudinaryFileByIdQuery
-            {
-                Id = getCloudinaryFileByIdDTO.Id
-            });
-            result.ThrowIfFailure();
-            return Ok(result.Value);
-        }
-        return BadRequest("Get file fail");
-    }
-
-    [HttpPost("image")]
-    public async Task<IActionResult> UploadImage([FromForm] UploadFileDTO uploadFileDTO)
-    {
-        var result = await _sender.Send(new CreateCloudinaryImageFileCommand
-        {
-            FormFile = uploadFileDTO.File
+            FormFiles = uploadMultipleImageFileDTO.Files,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
 
-    [HttpPost("images")]
-    public async Task<IActionResult> UploadMultipleImage([FromForm] UploadMultipleFileDTO uploadMultipleFileDTO)
+    [AllowAnonymous]
+    [HttpPost("delete-images")]
+    [Produces("application/json")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> DeleteMultipleImage([FromForm] DeleteMultipleImageFileDTO deleteMultipleImageFileDTO)
     {
-        var result = await _sender.Send(new CreateMultipleCloudinaryImageFileCommand
+
+        var result = await _sender.Send(new DeleteMultipleImageFileCommand
         {
-            FormFiles = uploadMultipleFileDTO.Files
+            DeleteUrls = deleteMultipleImageFileDTO.DeleteUrls,
         });
         result.ThrowIfFailure();
-        return Ok(result.Value);
+        return Ok();
     }
 
-    [HttpPost("video")]
-    public async Task<IActionResult> UploadVideo([FromForm] UploadFileDTO uploadFileDTO)
-    {
-        var result = await _sender.Send(new CreateCloudinaryVideoFileCommand
-        {
-            FormFile = uploadFileDTO.File
-        });
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    [HttpPost("raw")]
-    public async Task<IActionResult> UploadRaw([FromForm] UploadFileDTO uploadFileDTO)
-    {
-        var result = await _sender.Send(new CreateCloudinaryRawFileCommand
-        {
-            FormFile = uploadFileDTO.File
-        });
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    [HttpDelete]
-    public async Task<IActionResult> Delete([FromQuery] DeleteCloudinaryFileByIdDTO deleteCloudinaryFileById)
-    {
-        if (deleteCloudinaryFileById.Id != null)
-        {
-
-            var result = await _sender.Send(new DeleteCloudinaryFileCommand
-            {
-                Id = deleteCloudinaryFileById.Id
-            });
-            result?.ThrowIfFailure();
-            return NoContent();
-        }
-        return BadRequest("Delete fail");
-    }
-
-    [HttpPost("upload_recipe")]
-    public async Task<IActionResult> Test123([FromForm] TestDTO testDTO)
-    {
-        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(testDTO));
-        return Ok(testDTO);
-    }
-
+    [AllowAnonymous]
     [HttpPost("update-images")]
-    public async Task<IActionResult> UpdateImage([FromForm] UpdateMultipleImageDTO updateMultipleImageDTO)
+    [Produces("application/json")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UpdateMultipleImage([FromForm] UpdateMultipleImageFileDTO updateMultipleImageFileDTO)
     {
-        var result = await _sender.Send(new UpdateMultipleCloudinaryImageFileCommand
+
+        var result = await _sender.Send(new UpdateMultipleImageFileCommand
         {
-            FormFiles = updateMultipleImageDTO.Files,
-            Urls = updateMultipleImageDTO.Urls,
+            FormFiles = updateMultipleImageFileDTO.Files,
+            DeleteUrls = updateMultipleImageFileDTO.DeleteUrls,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+
+
 }

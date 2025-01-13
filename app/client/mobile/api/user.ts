@@ -1,185 +1,233 @@
-import {
-  loginWithEmailSchema,
-  registerWithEmailSchema,
-  verifySchema
-} from "@/lib/validation/auth";
-import { z } from "zod";
-import Constants from "expo-constants";
-import axios from "axios";
-import { API_HOST } from "@/constants/host";
-import { transformPlatformURI } from "@/utils/functions";
+import { loginSchema, registerSchema } from "@/lib/validation/auth";
+import { axiosInstance, protectedAxiosInstance } from "@/constants/host";
+import { useMutation, useQuery } from "react-query";
+import { InferType } from "yup";
+import { CLIENT_ID, SCOPE } from "@/constants/api";
+import { AxiosError } from "axios";
+import { stringify } from "@/utils/debug";
+import { selectAccessToken } from "@/slices/auth.slice";
+import { SETTING_KEY, SETTING_VALUE } from "@/slices/setting.slice";
+import { UserState } from "@/slices/user.slice";
 
-export type LoginParams = z.infer<typeof loginWithEmailSchema>;
-
-export type User = {
-  _id: string;
-  name: string;
-  email: string;
-  username: string;
-  bio: string;
-  profilePic: string;
-  followers: string[];
-  following: string[];
-};
-
-type LoginResponse = {
-  access_token: string;
-  refresh_token: string;
-};
-
-const host: string =
-  transformPlatformURI(API_HOST) ||
-  Constants.expoConfig?.hostUri?.split(":")[0] ||
-  "10.0.2.2";
-
+export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {
   EMAIL,
   PHONE_NUMBER
 }
 
-export const login = async (inputs: LoginParams): Promise<LoginResponse> => {
-  const body = new URLSearchParams({
-    client_id: "react.native",
-    scope: "openid profile phone email offline_access IdentityServerApi",
-    grant_type: "password",
-    username: inputs.identifier,
-    password: inputs.password
-  }).toString();
+export const useLogin = () => {
+  return useMutation<LoginResponse, Error, LoginParams>({
+    mutationKey: ["login"],
+    mutationFn: async (inputs: LoginParams) => {
+      const body = new URLSearchParams({
+        client_id: CLIENT_ID,
+        scope: SCOPE,
+        grant_type: "password",
+        username: inputs.identifier,
+        password: inputs.password
+      }).toString();
 
-  console.log("Sending request");
+      try {
+        const { data } = await axiosInstance.post<LoginResponse>(
+          "/connect/token",
+          body,
+          { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+        );
 
-  try {
-    const res = await axios.post(`http://${host}:5000/connect/token`, body, {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      }
-    });
+        return data;
+      } catch (error) {
+        console.debug("useLogin", stringify(error));
 
-    console.log("Got response");
-    console.log("response", res);
-
-    const data = res.data;
-    console.log("data", data);
-    return data;
-  } catch (error: any) {
-    console.log("error", JSON.stringify(error, null, 2));
-    if (error.message) {
-      throw new Error(error.message);
-    }
-
-    throw new Error("An error has occured.");
-  }
-};
-
-export type SignUpParams = z.infer<typeof registerWithEmailSchema>;
-
-type SignUpResponse = {} & LoginResponse;
-
-export const register = async (
-  inputs: SignUpParams,
-  type: IDENTIFIER_TYPE
-): Promise<SignUpResponse> => {
-  const REGISTER_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
-  const url = `http://${host}:5000/api/account/register/${REGISTER_TYPE}`;
-
-  console.log("url", url);
-  console.log("data", JSON.stringify(inputs, null, 2));
-  console.log("type", type);
-
-  console.log("Sending request");
-
-  try {
-    const { data } = await axios.post(url, inputs, {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-
-    console.log("Got response");
-
-    if (data.error) throw new Error(data.error);
-    if (data.Message) throw new Error(data.Message);
-
-    console.log("Check data ok, return data");
-    return data;
-  } catch (error: any) {
-    console.log("Error during registration:", error);
-    throw new Error(error.response?.data?.Message || "Registration failed");
-  }
-};
-
-export type VerifyParams = z.infer<typeof verifySchema>;
-export type VerifyResponse = VerifyResponseSuccess | VerifyResponseError;
-type VerifyResponseSuccess = 0;
-type VerifyResponseError = {
-  Status: number;
-  Code: string;
-  Message: string;
-};
-
-export const verify = async (
-  input: VerifyParams,
-  accessToken: string
-): Promise<VerifyResponse> => {
-  const { OTP } = input;
-  const url = `http://${host}:5000/api/account/verify/email`;
-
-  try {
-    const { status, data } = await axios.post(
-      url,
-      { OTP },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
+        if (error instanceof AxiosError && error.status === 400) {
+          throw new Error("Wrong email, phone number or password.");
         }
+
+        throw new Error("An error has occurred.");
       }
-    );
-
-    if (status !== 200) {
-      throw new Error(data.Message || "Verification failed");
     }
-
-    return 0;
-  } catch (error: any) {
-    console.log("Error during verification:", error);
-    throw new Error(error.response?.data?.Message || "Verification failed");
-  }
+  });
 };
 
-type ResendVerifyCodeResponseSuccess = 0;
-type ResendVerifyCodeResponseError = {
-  Status: number;
-  Code: string;
-  Message: string;
-};
+export const useGetUserSettings = () => {
+  const accessToken = selectAccessToken();
 
-type ResendVerifyCode = ResendVerifyCodeResponseSuccess | ResendVerifyCodeResponseError;
+  return useQuery<GetUserSettingsResponse, Error>({
+    queryKey: "getUserSettings",
+    enabled: !!accessToken,
+    queryFn: async () => {
+      const url = "/api/setting";
 
-export const resendVerifyCode = async (
-  accessToken: string
-): Promise<ResendVerifyCode> => {
-  const url = `http://${host}:5000/api/account/resend/email`;
-
-  try {
-    const { status, data } = await axios.post(
-      url,
-      {},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`
+      try {
+        const { data } = await protectedAxiosInstance.get(url);
+        return data;
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message);
         }
+
+        throw new Error("An error has occurred.");
       }
-    );
-
-    if (status !== 200) {
-      throw new Error(data.Message || "Resend verification code failed");
     }
+  });
+};
 
-    return 0;
-  } catch (error: any) {
-    console.log("Error during resending verification code:", error);
-    throw new Error(error.response?.data?.Message || "Resend verification code failed");
-  }
+export type GetUserDetailsResponse = UserState;
+
+export const useGetUserDetails = () => {
+  const accessToken = selectAccessToken();
+
+  return useQuery<GetUserDetailsResponse, Error>({
+    queryKey: "getUserDetails",
+    enabled: !!accessToken,
+    queryFn: async () => {
+      const url = "/api/user/get-current-user-details";
+      console.debug("useGetUserDetails: Fetching data with access token", accessToken);
+
+      try {
+        const { data } = await protectedAxiosInstance.get(url);
+        return data;
+      } catch (error) {
+        console.debug("useGetUserDetails", JSON.stringify(error));
+
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message);
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    }
+  });
+};
+
+export type SignUpParams = InferType<typeof registerSchema>;
+
+export const useRegister = () => {
+  return useMutation<
+    SignUpResponse,
+    Error,
+    { data: SignUpParams; type: IDENTIFIER_TYPE }
+  >({
+    mutationKey: ["register"],
+    mutationFn: async ({ data, type }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/register/${ENDPOINT_TYPE}`;
+
+      try {
+        const { data: response } = await axiosInstance.post<SignUpResponse>(url, data);
+        return response;
+      } catch (error) {
+        console.debug("useRegister", stringify(error));
+
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message);
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    }
+  });
+};
+
+export type VerifyParams = { OTP: string; type: IDENTIFIER_TYPE };
+
+export const useVerify = () => {
+  return useMutation<VerifyResponse, Error, VerifyParams>({
+    mutationKey: ["verify"],
+    mutationFn: async ({ OTP, type }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/verify/${ENDPOINT_TYPE}`;
+
+      try {
+        const { data } = await protectedAxiosInstance.post(url, { OTP });
+        return data;
+      } catch (error) {
+        console.debug("useVerify", stringify(error));
+
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message);
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    }
+  });
+};
+
+export const useResendVerifyCode = () => {
+  return useMutation<ResendVerifyCode, Error, { type: IDENTIFIER_TYPE }>({
+    mutationKey: ["resendVerifyCode"],
+    mutationFn: async ({ type }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/resend/${ENDPOINT_TYPE}`;
+
+      try {
+        const { data } = await protectedAxiosInstance.post(url);
+        return data;
+      } catch (error) {
+        console.debug("resendVerifyCode", stringify(error));
+
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message);
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    }
+  });
+};
+
+export type UpdateSettingResponseSuccess = 0;
+export type UpdateSettingResponse = UpdateSettingResponseSuccess | IErrorResponseDTO;
+export type UpdateSettingParams = {
+  settings: Array<{
+    key: SETTING_KEY;
+    value: SETTING_VALUE.BOOLEAN | SETTING_VALUE.LANGUAGE;
+  }>;
+};
+
+type UserSetting = {
+  accountId: string;
+  settingId: string;
+  settingValue: SETTING_VALUE.LANGUAGE | SETTING_VALUE.BOOLEAN;
+  user: null;
+  setting: Setting;
+};
+
+type Setting = {
+  code: SETTING_KEY;
+  description: string;
+  dataType: number;
+  defaultValue: SETTING_VALUE.LANGUAGE | SETTING_VALUE.BOOLEAN;
+  id: string;
+};
+
+type GetUserSettingsResponse = Array<UserSetting>;
+
+
+export const useUpdateSetting = () => {
+  return useMutation<UpdateSettingResponse, Error, { data: UpdateSettingParams }>({
+    mutationKey: ["updateSetting"],
+    mutationFn: async ({ data }) => {
+      const url = "/api/setting";
+
+      try {
+        const { data: response } = await protectedAxiosInstance.put<UpdateSettingResponse>(url, data);
+        return response;
+      } catch (error) {
+        console.debug("useUpdateSetting", stringify(error));
+
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message);
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    }
+  });
 };

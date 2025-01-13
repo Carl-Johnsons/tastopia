@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
 using UserService.Domain.Entities;
 using UserService.Domain.Errors;
@@ -58,10 +57,10 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
 
         var userQuery = _context.Users.Where(u => u.AccountId != accountId).OrderByDescending(u => u.DisplayName).AsQueryable();
 
-        userQuery = userQuery.Where(u => u.IsAccountActive == true &&
+        userQuery = userQuery.Where(u => u.IsAccountActive && !u.IsAdmin &&
                                         (u.DisplayName.ToLower().Contains(keyword) ||
                                          u.AccountUsername.ToLower().Contains(keyword)
-                                        ));
+                                        )); 
 
         var totalPage = (await userQuery.CountAsync() + USER_CONSTANTS.USER_LIMIT - 1) / USER_CONSTANTS.USER_LIMIT;
 

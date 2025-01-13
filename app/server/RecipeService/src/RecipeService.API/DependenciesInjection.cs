@@ -1,10 +1,13 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
-using Serilog;
 using RecipeService.Application;
 using RecipeService.Infrastructure;
 using RecipeService.API.Middleware;
 using Newtonsoft.Json;
+using AutoMapper;
+using RecipeService.API.Configs;
+using Contract.Utilities;
+using RecipeService.API.Extensions;
 
 namespace RecipeService.API;
 
@@ -13,18 +16,23 @@ public static class DependenciesInjection
 {
     public static WebApplicationBuilder AddAPIServices(this WebApplicationBuilder builder)
     {
-        //RecipeService.Infrastructure.Utilities.EnvUtility.LoadEnvFile();
+        EnvUtility.LoadEnvFile();
         var services = builder.Services;
         var config = builder.Configuration;
         var host = builder.Host;
 
-        host.UseSerilog((context, config) =>
-        {
-            config.ReadFrom.Configuration(context.Configuration);
-        });
+        builder.ConfigureKestrel();
+        builder.ConfigureSerilog();
 
+        services.AddInfrastructureServices();
         services.AddApplicationServices();
-        services.AddInfrastructureServices(config);
+        services.AddGrpcServices();
+        services.AddSwaggerServices();
+
+        // Register automapper
+        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+        services.AddSingleton(mapper);
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddControllers()
                 // Prevent circular JSON reach max depth of the object when serialization
@@ -42,12 +50,11 @@ public static class DependenciesInjection
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
-                var IdentityDNS = (Environment.GetEnvironmentVariable("IDENTITY_SERVER_HOST") ?? "localhost:5001").Replace("\"", "");
-                var IdentityServerEndpoint = $"http://{IdentityDNS}";
+                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
+                var IdentityServerEndpoint = $"https://{IdentityDNS}";
                 Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
 
                 options.Authority = IdentityServerEndpoint;
-                options.RequireHttpsMetadata = false;
                 // Clear default Microsoft's JWT claim mapping
                 // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
                 options.MapInboundClaims = false;
@@ -58,32 +65,29 @@ public static class DependenciesInjection
                 {
                     ValidateAudience = false,
                     ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
                 // For development only
                 options.IncludeErrorDetails = true;
             });
 
         services.AddEndpointsApiExplorer();
-
         return builder;
     }
 
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
+        app.UseSerilogServices();
+        app.UseConsulServiceDiscovery();
 
-        app.Use(async (context, next) =>
-        {
-            // Log information about the incoming request
-            app.Logger.LogInformation($"Request: {context.Request.Method} {context.Request.Path}");
-
-            await next(); // Call the next middleware
-        });
-
-        app.UseSerilogRequestLogging();
+        app.UseSwaggerServices();
 
         app.UseHttpsRedirection();
 
         app.MapControllers();
+
+        app.UseGrpcServices();
 
         app.UseGlobalHandlingErrorMiddleware();
 

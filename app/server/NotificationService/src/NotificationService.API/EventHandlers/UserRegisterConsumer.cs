@@ -1,14 +1,11 @@
-﻿using Contract.Common;
-using Contract.Constants;
+﻿using Contract.Constants;
 using Contract.Event.IdentityEvent;
 using MassTransit;
 using NotificationService.Application.Emails;
 
 namespace NotificationService.API.EventHandlers;
 
-[QueueName(RabbitMQConstant.QUEUE.NAME.USER_REGISTER_NOTIFICATION,
-    exchangeName: RabbitMQConstant.EXCHANGE.NAME.USER_REGISTER,
-    type: RabbitMQConstant.EXCHANGE.TYPE.Fanout)]
+[QueueName(RabbitMQConstant.QUEUE.NAME.USER_REGISTER_NOTIFICATION)]
 public class UserRegisterConsumer : IConsumer<UserRegisterEvent>
 {
     private readonly ISender _sender;
@@ -20,7 +17,6 @@ public class UserRegisterConsumer : IConsumer<UserRegisterEvent>
 
     public async Task Consume(ConsumeContext<UserRegisterEvent> context)
     {
-        Console.WriteLine(JsonConvert.SerializeObject(context.Message));
         switch (context.Message.Method)
         {
             case AccountMethod.Email:

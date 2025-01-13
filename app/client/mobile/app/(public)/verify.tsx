@@ -1,66 +1,85 @@
 import { Alert, Platform, Pressable, Text, View } from "react-native";
-import React, { useState } from "react";
 import { router } from "expo-router";
 import { useAppDispatch } from "@/store/hooks";
 import {
   ROLE,
   saveAuthData,
-  selectAccessToken,
   selectVerifyIdentifier
 } from "@/slices/auth.slice";
-import { ZodError } from "zod";
-import { VerifyParams, resendVerifyCode, verify } from "@/api/user";
+import {
+  useVerify,
+  useResendVerifyCode,
+  useGetUserDetails,
+  useGetUserSettings,
+  IDENTIFIER_TYPE,
+  VerifyParams
+} from "@/api/user";
 import VerifyForm from "@/components/VerifyForm";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
-import { verifySchema } from "@/lib/validation/auth";
+import { getIdentifierType } from "@/utils/checker";
+import { saveUserData } from "@/slices/user.slice";
+import { saveSettingData } from "@/slices/setting.slice";
 
 const Verify = () => {
   const isAndroid = Platform.OS === "android";
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const dispatch = useAppDispatch();
-  const identifier = selectVerifyIdentifier();
-  const accessToken = selectAccessToken() as string;
+  const identifier = selectVerifyIdentifier() as string;
+  const type = getIdentifierType(identifier) as IDENTIFIER_TYPE;
+
+  const { mutateAsync: verify, isLoading: isVerifyLoading } = useVerify();
+  const { mutateAsync: resendVerifyCode, isLoading: isResendVerifyCodeLoading } =
+    useResendVerifyCode();
+  const getUserDetails = useGetUserDetails();
+  const getUserSettings = useGetUserSettings();
+
+    const fetchUserData = async () => {
+      const { data: user } = await getUserDetails.refetch();
+      dispatch(saveUserData({ ...user }));
+
+      const { data: settings } = await getUserSettings.refetch();
+      const UNION_SETTING: any = {};
+
+      settings?.map(item => {
+        const key = item.setting.code;
+        const value = item.settingValue;
+
+        UNION_SETTING[key] = value;
+      });
+
+      dispatch(saveSettingData(UNION_SETTING));
+    };
 
   const onSubmit = async (data: VerifyParams) => {
-    setIsSubmitting(true);
+    verify(data, {
+      onSuccess: async _data => {
+        dispatch(saveAuthData({ isVerifyingAccount: false, role: ROLE.USER }));
+        console.log("saved auth data");
 
-    try {
-      console.log("VerifyParams", JSON.stringify(data, null, 2));
+        await fetchUserData();
 
-      verifySchema.parse(data);
-      await verify(data, accessToken);
-
-      dispatch(saveAuthData({ isVerifyingAccount: false, role: ROLE.USER }));
-      console.log("saved auth data");
-
-      // Set user's data here
-      // dispatch(saveUserData(user));
-      //
-      const route = "/(protected)";
-      router.navigate(route);
-    } catch (error: any) {
-      if (error instanceof ZodError) {
-        const firstErr = error.issues[0];
-        console.log("Error", error);
-        return Alert.alert("Error", firstErr.message);
+        const route = "/(protected)";
+        router.navigate(route);
+      },
+      onError: error => {
+        console.log("Verify error", JSON.stringify(error, null, 2));
+        Alert.alert("Error", error.message);
       }
-
-      Alert.alert("Error", error.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   };
 
-  const resendCode = async () => {
-    console.log("Requesting for new OTP");
-
-    try {
-      await resendVerifyCode(accessToken as string);
-      Alert.alert("Success", "New OTP is sent.");
-    } catch (error: any) {
-      Alert.alert("Error", error.message);
-    }
+  const resendCode = () => {
+    resendVerifyCode(
+      { type },
+      {
+        onSuccess: () => {
+          Alert.alert("Success", "New OTP is sent.");
+        },
+        onError: () => {
+          Alert.alert("Error", "Resend verification code failed.");
+        }
+      }
+    );
   };
 
   return (
@@ -85,7 +104,7 @@ const Verify = () => {
 
         <VerifyForm
           onSubmit={onSubmit}
-          isLoading={isSubmitting}
+          isLoading={isVerifyLoading || isResendVerifyCodeLoading}
           className='mt-[5vh]'
         />
 

@@ -1,14 +1,13 @@
 {
-    "scripts": {
-        "pull_env": "./scripts/pull-env.sh",
-        "setup_backend": "./scripts/setup-backend.sh",
-        "run_all_services": "./scripts/run-all-services.sh",
-        "build_all_service": "./scripts/build-all-services.sh",
-        "restore_all_services": "./scripts/restore-all-services.sh",
-        "migrations_apply_all": "./scripts/apply-all-migrations.sh",
-        "rebuild_docker_service": "./scripts/rebuild-service.sh",
-        "k8s_deploy": "./scripts/k8s-deploy.sh",
-        "generate_identity_key": "./scripts/generate_identity_key.sh",
-        "clear_local_dependencies": "./scripts/clear-local-dependencies.sh"
-    }
+  "scripts": {
+    "Pulling environment variables": "./scripts/pull-env.sh",
+    "Setup back-end": "./scripts/setup-backend.sh",
+    "Run all services": "./scripts/run-all-services.sh",
+    "Build all services": "./scripts/build-all-services.sh",
+    "Restore all services": "./scripts/restore-all-services.sh",
+    "Apply all migrations": "./scripts/apply-all-migrations.sh",
+    "Rebuild docker services": "./scripts/rebuild-service.sh",
+    "Generate SSL certificate": "./scripts/generate-cert.sh",
+    "Kill service bus": "./scripts/kill-mq.sh"
+  }
 }

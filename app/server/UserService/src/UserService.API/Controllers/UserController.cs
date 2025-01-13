@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
 using UserService.Application.Users.Commands;
+using UserService.Application.Users.Queries;
+using UserService.Domain.Responses;
 
 namespace UserService.API.Controllers;
 
@@ -14,9 +16,13 @@ public class UserController : BaseApiController
     public UserController(ISender sender, IHttpContextAccessor httpContextAccessor) : base(sender, httpContextAccessor)
     {
     }
+
     [AllowAnonymous]
     [HttpPost("search")]
-    public async Task<IActionResult> SearchUser([FromBody] SearchUser searchUser)
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedSearchUserListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> SearchUser([FromBody] SearchUserDTO searchUser)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
@@ -29,5 +35,45 @@ public class UserController : BaseApiController
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
+    }
+
+    [HttpGet("get-current-user-details")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(GetUserDetailsResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetCurrentUserDetails()
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new GetUserDetailsQuery
+        {
+            AccountId = subjectId != null ? Guid.Parse(subjectId) : Guid.Empty,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPatch()]
+    [Produces("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UpdateUser([FromForm] UpdateUserDTO dto)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new UpdateUserCommand
+        {
+            AccountId = subjectId != null ? Guid.Parse(subjectId) : Guid.Empty,
+            Avatar = dto.Avatar,
+            Background = dto.Background,
+            DisplayName = dto.DisplayName,
+            Gender = dto.Gender,
+            Bio = dto.Bio
+        });
+
+        result.ThrowIfFailure();
+        return NoContent();
     }
 }

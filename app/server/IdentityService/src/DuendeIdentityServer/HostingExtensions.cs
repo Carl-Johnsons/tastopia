@@ -1,11 +1,12 @@
+using Contract.Utilities;
 using Duende.IdentityServer;
 using Duende.IdentityServer.ResponseHandling;
+using DuendeIdentityServer.Extensions;
 using DuendeIdentityServer.Middleware;
 using DuendeIdentityServer.Services;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
-using Serilog;
 
 namespace DuendeIdentityServer;
 
@@ -17,17 +18,15 @@ internal static class HostingExtensions
 
         var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
         var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");
-
         var services = builder.Services;
-        var host = builder.Host;
 
+        builder.ConfigureKestrel();
+        builder.ConfigureSerilog();
+
+        services.AddInfrastructureServices();
         services.AddApplicationServices();
-        services.AddInfrastructureServices(builder.Configuration);
-
-        host.UseSerilog((context, config) =>
-        {
-            config.ReadFrom.Configuration(context.Configuration);
-        });
+        services.AddGrpcServices();
+        services.AddSwaggerServices();
 
         services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
@@ -41,8 +40,6 @@ internal static class HostingExtensions
 
         services.AddSingleton<ISignalRService, SignalRService>();
         services.AddScoped(typeof(IPaginateDataUtility<,>), typeof(PaginateDataUtility<,>));
-
-        services.AddScoped<IServiceBus, MassTransitServiceBus>();
 
         services
             .AddIdentityServer(options =>
@@ -117,12 +114,14 @@ internal static class HostingExtensions
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
-        app.UseSerilogRequestLogging();
+        app.UseSerilogServices();
 
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
         }
+
+        app.UseSwaggerServices();
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
@@ -140,6 +139,7 @@ internal static class HostingExtensions
         app.UseStaticFiles();
         app.UseRouting();
         // UseIdentityServer already call UseAuthenticate()
+        app.UseGrpcServices();
         app.UseIdentityServer();
         app.UseAuthorization();
         app.UseGlobalHandlingErrorMiddleware();
@@ -155,6 +155,8 @@ internal static class HostingExtensions
 
         var signalRService = app.Services.GetService<ISignalRService>();
         signalRService!.StartConnectionAsync();
+
+        app.UseConsulServiceDiscovery();
         return app;
     }
 }

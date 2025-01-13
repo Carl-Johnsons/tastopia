@@ -1,11 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using MongoDB.EntityFrameworkCore;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using RecipeService.Domain.Constants;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace RecipeService.Domain.Entities;
 
-[Table("Tag")]
-public class Tag : BaseAuditableEntity
+[Collection("Tag")]
+public class Tag : BaseMongoDBAuditableEntity
 {
     [Required]
     public string Value { get; set; } = null!;
@@ -14,11 +16,15 @@ public class Tag : BaseAuditableEntity
     public string Code { get; set; } = null!;
 
     [Required]
-    public string Category { get; set; } = null!;
+    public TagCategory Category { get; set; } = TagCategory.All;
 
     [Required]
-    public bool IsActive { get; set; } = false;
+    [JsonConverter(typeof(StringEnumConverter))]
+    public TagStatus Status { get; set; } = TagStatus.Active;
 
     [Required]
     public string ImageUrl { get; set; } = null!;
+
+    public virtual List<RecipeTag> RecipeTags { get; set; } = new();
+
 }

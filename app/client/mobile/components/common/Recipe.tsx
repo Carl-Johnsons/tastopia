@@ -1,8 +1,9 @@
-// components/DishCard.tsx
-import React from "react";
-import Vote from "./Vote";
-import { Ionicons, Feather } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { View, Text, Image, TouchableWithoutFeedback } from "react-native";
+import { useRouter } from "expo-router";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
+import InteractionSection from "./InteractionSection";
 
 const Recipe = ({
   id,
@@ -15,25 +16,35 @@ const Recipe = ({
   voteDiff,
   numberOfComment
 }: RecipeType) => {
+  const router = useRouter();
+  const { c } = useColorizer();
+  const { black, white } = colors;
+  const handleOnPress = () => {
+    router.push({
+      pathname: "/(protected)/community/[id]",
+      params: { id }
+    });
+  };
   const handleTouchMenu = () => {};
-  const handleOnPress = () => {};
 
   return (
     <TouchableWithoutFeedback onPress={handleOnPress}>
-      <View className='pb-4 bg-white_black rounded-3xl'>
-        <View className='flex-row px-4 py-2 flex-between'>
+      <View className='bg-white_black rounded-3xl pb-4'>
+        <View className='flex-between flex-row px-4 py-2'>
           {authorId && authorDisplayName && authorAvtUrl && (
             <TouchableWithoutFeedback
               onPress={() => {
                 console.log("go to user detail");
               }}
             >
-              <View className='flex-row gap-2 flex-center'>
+              <View className='flex-center flex-row gap-2'>
                 <Image
                   source={{ uri: authorAvtUrl }}
                   className='size-[30px] rounded-full'
                 />
-                <Text className='paragraph-medium'>{authorDisplayName}</Text>
+                <Text className='paragraph-medium text-black_white'>
+                  {authorDisplayName}
+                </Text>
               </View>
             </TouchableWithoutFeedback>
           )}
@@ -42,7 +53,7 @@ const Recipe = ({
             <Feather
               name='more-horizontal'
               size={24}
-              color='black'
+              color={c(black.DEFAULT, white.DEFAULT)}
             />
           </TouchableWithoutFeedback>
         </View>
@@ -57,33 +68,26 @@ const Recipe = ({
               <Text
                 numberOfLines={1}
                 ellipsizeMode='tail'
-                className='text-2xl font-bold'
+                className='text-black_white font-bold text-2xl'
               >
                 {title}
               </Text>
               <Text
                 numberOfLines={4}
                 ellipsizeMode='tail'
-                className='body-regular'
+                className='body-regular text-black_white'
               >
                 {description}
               </Text>
             </View>
 
-            <View className='flex-row gap-2 flex-start'>
-              <Vote voteDiff={voteDiff} />
-
-              <TouchableWithoutFeedback>
-                <View className='flex-center flex-row gap-2 rounded-3xl border-[0.5px] border-gray-300 px-3 py-2.5'>
-                  <Ionicons
-                    name='chatbubble-outline'
-                    size={20}
-                    color='black'
-                  />
-                  <Text>{numberOfComment}</Text>
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
+            {(voteDiff !== undefined || numberOfComment !== undefined) && (
+              <InteractionSection
+                handleOnPress={handleOnPress}
+                voteDiff={voteDiff}
+                numberOfComment={numberOfComment}
+              />
+            )}
           </View>
         </View>
       </View>

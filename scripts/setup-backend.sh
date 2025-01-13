@@ -8,7 +8,8 @@ echo "Install dotnet-ef successfully"
 ./scripts/pull-env.sh
 printf "\n\t*** ${GREEN}DONE PULLING ENV${NC} ***\n\n"
 
-$SUDO_PREFIX docker compose up -d postgres rabbitmq redis
+run_required_docker_services
+
 [[ "$PLATFORM" != "windows" ]] && sudo chown $(whoami) data -R && echo -e "${GREEN}Run chown for data directory successfully${NC}"
 printf "\n\t*** ${GREEN}DONE RUNNING CONTAINER${NC} ***\n\n"
 
@@ -17,3 +18,6 @@ printf "\n\t*** ${GREEN}DONE BUILDING ALL SERVICES${NC} ***\n\n"
 
 ./scripts/apply-all-migrations.sh
 printf "\n\t*** ${GREEN}DONE APPLY ALL MIGRATIONS${NC} ***\n\n"
+
+./scripts/config-docker-compose.sh
+printf "\n\t*** ${GREEN}DONE GENERATING DOCKER COMPOSE OVERRIDE FILE${NC} ***\n\n"

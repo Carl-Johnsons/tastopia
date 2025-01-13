@@ -1,0 +1,18 @@
+{
+  "Routes": [
+    {
+      "ServiceName": "subscription-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/subscription/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/subscription/{everything}",
+      "SwaggerKey": "subscription"
+    }
+  ]
+}

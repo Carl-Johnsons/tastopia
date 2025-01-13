@@ -1,9 +1,11 @@
 import { LoginParams } from "@/api/user";
-import { useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import Input from "./Input";
-import Button from "./Button";
 import useBounce from "@/hooks/animation/useBounce";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { loginSchema } from "@/lib/validation/auth";
+import Button from "./Button";
 
 export interface LoginFormFields extends LoginParams {}
 
@@ -17,38 +19,61 @@ type LoginFormProps = {
 } & AuthFormProps;
 
 export const LoginForm = (props: LoginFormProps) => {
-  const { onSubmit, isLoading } = props;
-  const [formValues, setFormValues] = useState<LoginFormFields>({
-    identifier: "",
-    password: ""
+  const {
+    control,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<LoginFormFields>({
+    resolver: yupResolver(loginSchema)
   });
+  const { onSubmit, isLoading } = props;
   const { animate, animatedStyles } = useBounce();
 
   return (
     <View className={`gap-[2vh] ${props.className}`}>
       <View>
         <Text className='mb-3 font-sans text-gray-600'>E-mail or phone number</Text>
-        <Input
-          defaultValue={formValues.identifier}
-          autoCapitalize='none'
-          placeholder='Your email or phone number'
-          className={`border-gray-300 p-5 focus:border-primary`}
-          placeholderTextColor={"gray"}
-          onChangeText={identifier => setFormValues({ ...formValues, identifier })}
+        <Controller
+          name='identifier'
+          control={control}
+          render={({ field: { onBlur, onChange, value } }) => (
+            <Input
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              autoCapitalize='none'
+              placeholder='Your email or phone number'
+              className={`border-gray-300 p-5 focus:border-primary`}
+              placeholderTextColor={"gray"}
+            />
+          )}
         />
+        {errors.identifier ? (
+          <Text className='font-sans text-red-400'>{errors.identifier.message}</Text>
+        ) : null}
       </View>
 
       <View>
         <Text className='mb-3 font-sans text-gray-600'>Password</Text>
-        <Input
-          defaultValue={formValues.password}
-          autoCapitalize='none'
-          placeholder='Password'
-          className={`border-gray-300 p-5 focus:border-primary`}
-          placeholderTextColor={"gray"}
-          onChangeText={password => setFormValues({ ...formValues, password })}
-          secureTextEntry
+        <Controller
+          name='password'
+          control={control}
+          render={({ field: { onBlur, onChange, value } }) => (
+            <Input
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              autoCapitalize='none'
+              placeholder='Password'
+              className={`border-gray-300 p-5 focus:border-primary`}
+              placeholderTextColor={"gray"}
+              secureTextEntry
+            />
+          )}
         />
+        {errors.password ? (
+          <Text className='font-sans text-red-400'>{errors.password.message}</Text>
+        ) : null}
       </View>
 
       <Text className='text-center font-medium text-sm text-primary'>
@@ -58,7 +83,7 @@ export const LoginForm = (props: LoginFormProps) => {
       <Button
         onPress={() => {
           animate();
-          onSubmit(formValues);
+          handleSubmit(onSubmit)();
         }}
         style={[animatedStyles]}
         className='rounded-full bg-primary p-3 py-6 text-white'

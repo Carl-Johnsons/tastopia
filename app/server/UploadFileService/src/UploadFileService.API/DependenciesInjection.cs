@@ -1,5 +1,9 @@
-﻿using Serilog;
+﻿using AutoMapper;
+using Contract.Utilities;
+using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
+using UploadFileService.API.Configs;
+using UploadFileService.API.Extensions;
 using UploadFileService.API.Middleware;
 using UploadFileService.Application;
 using UploadFileService.Infrastructure;
@@ -11,18 +15,23 @@ public static class DependenciesInjection
 {
     public static WebApplicationBuilder AddAPIServices(this WebApplicationBuilder builder)
     {
-        UploadFileService.Infrastructure.Utilities.EnvUtility.LoadEnvFile();
+        EnvUtility.LoadEnvFile();
         var services = builder.Services;
         var config = builder.Configuration;
         var host = builder.Host;
 
-        host.UseSerilog((context, config) =>
-        {
-            config.ReadFrom.Configuration(context.Configuration);
-        });
+        builder.ConfigureKestrel();
+        builder.ConfigureSerilog();
 
+        services.AddInfrastructureServices();
         services.AddApplicationServices();
-        services.AddInfrastructureServices(config);
+        services.AddGrpcServices();
+        services.AddSwaggerServices();
+
+        // Register automapper
+        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+        services.AddSingleton(mapper);
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddControllers()
                 // Prevent circular JSON reach max depth of the object when serialization
@@ -31,25 +40,53 @@ public static class DependenciesInjection
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     options.JsonSerializerOptions.WriteIndented = true;
                 });
-        // Add services to the container.
 
-        builder.Services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        services.AddAuthentication("Bearer")
+            .AddJwtBearer("Bearer", options =>
+            {
+                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
+                var IdentityServerEndpoint = $"https://{IdentityDNS}";
+                Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
+
+                options.Authority = IdentityServerEndpoint;
+                // Clear default Microsoft's JWT claim mapping
+                // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
+                options.MapInboundClaims = false;
+
+                options.TokenValidationParameters.ValidTypes = ["at+jwt"];
+
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+                // For development only
+                options.IncludeErrorDetails = true;
+            });
+
 
         return builder;
     }
 
     public static WebApplication UseAPIServices(this WebApplication app)
     {
-        app.UseSerilogRequestLogging();
+        app.UseSerilogServices();
+        app.UseConsulServiceDiscovery();
+        app.UseSwaggerServices();
 
         app.UseHttpsRedirection();
 
         app.MapControllers();
 
+        app.UseGrpcServices();
+
         app.UseGlobalHandlingErrorMiddleware();
+
+        app.UseAuthentication();
+
+        app.UseAuthorization();
 
         return app;
     }

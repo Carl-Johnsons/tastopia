@@ -1,0 +1,20 @@
+{
+  "Routes": [
+    {
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "subscription-api",
+          "Port": 80
+        }
+      ],
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/{everything}",
+      "SwaggerKey": "subscription"
+    }
+  ]
+}

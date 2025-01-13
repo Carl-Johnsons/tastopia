@@ -1,4 +1,4 @@
-﻿using NotificationService.Infrastructure.Utilities;
+﻿using Contract.Utilities;
 
 namespace NotificationService.Infrastructure.Persistence;
 

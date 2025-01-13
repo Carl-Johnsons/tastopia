@@ -1,14 +1,12 @@
 {
   "Routes": [
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ],
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "https",
       "DownstreamPathTemplate": "/connect/userinfo",
-      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -16,46 +14,43 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [ "Bearer" ],
         "AllowedScopes": [ "IdentityServerApi" ]
-      }
+      },
+      "SwaggerKey": "identity"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ],
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "https",
       "DownstreamPathTemplate": "/connect/token",
-      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "POST"
       ],
-      "UpstreamPathTemplate": "/connect/token"
+      "UpstreamPathTemplate": "/connect/token",
+      "SwaggerKey": "identity"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ],
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "https",
       "DownstreamPathTemplate": "/api/account/register/{everything}",
-      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
       ],
-      "UpstreamPathTemplate": "/api/account/register/{everything}"
+      "UpstreamPathTemplate": "/api/account/register/{everything}",
+      "SwaggerKey": "identity"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ],
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "https",
       "DownstreamPathTemplate": "/api/account/{everything}",
-      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -64,7 +59,8 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [ "Bearer" ],
         "AllowedScopes": [ "IdentityServerApi" ]
-      }
+      },
+      "SwaggerKey": "identity"
     }
   ]
 }

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package AccountProto;
+
+service GrpcAccount {
+    rpc GetAccountDetail (GrpcAccountIdRequest) returns (GrpcAccountDTO);
+}
+
+message GrpcEmpty {}
+
+message GrpcAccountIdRequest {
+    string AccountId = 1;
+}
+
+message GrpcAccountDTO {
+    bool IsActive = 1;
+    string UserName = 2;
+    string Email = 3;
+    string PhoneNumber = 4;
+}

@@ -1,0 +1,31 @@
+# maestro test ./maestro/community/community.yaml
+appId: host.exp.exponent
+---
+- runFlow:
+    file: ../expo/init-android.yml
+    when:
+      platform: "Android"
+
+- runFlow:
+    file: ../expo/init-ios.yml
+    when:
+      platform: "iOS"
+
+- assertVisible: "Cộng Đồng"
+- tapOn: "Cộng Đồng"
+
+- tapOn: "Noodles"
+- tapOn: "Spice"
+- tapOn: "BBQ"
+- tapOn: "Seafood"
+- tapOn: "All"
+- scroll
+- scroll
+- scroll
+- scroll
+- scroll
+- scroll
+- scroll
+- scroll
+- scroll
+- scroll

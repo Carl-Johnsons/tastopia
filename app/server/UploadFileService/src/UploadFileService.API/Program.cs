@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
 using UploadFileService.API;
 
-var builder = WebApplication.CreateBuilder(args);
-
-var app = builder.AddAPIServices()
-                 .Build();
-
-app.UseAPIServices();
+var app = WebApplication.CreateBuilder(args)
+                 .AddAPIServices()
+                 .Build()
+                 .UseAPIServices();
 
 app.Start();
 

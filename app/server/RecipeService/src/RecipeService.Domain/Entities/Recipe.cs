@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.Domain.Entities;
 
-[Table("Recipe")]
-public class Recipe : BaseAuditableEntity
+[Collection("Recipe")]
+public class Recipe : BaseMongoDBAuditableEntity
 {
     [Required]
     public Guid AuthorId { get; set; }
@@ -37,11 +38,51 @@ public class Recipe : BaseAuditableEntity
     public int TotalView { get; set; } = 0;
 
     //one to many
-    public virtual List<Step>? Steps { get; set; }
-    public virtual List<Comment>? Comments { get; set; }
-    public virtual List<RecipeVote>? RecipeVotes { get; set; }
+    [BsonElement("Steps")]
+    public List<Step> Steps { get; set; } = [];
+
+    public List<Comment> Comments { get; set; } = [];
+
+    [BsonElement("RecipeVotes")]
+    public List<RecipeVote> RecipeVotes { get; set; } = [];
     //many to many
-    public virtual List<RecipeTag>? RecipeTags { get; set; }
+    public virtual List<RecipeTag> RecipeTags { get; set; } = [];
 
 
 }
+
+public class Step : BaseMongoDBAuditableEntity
+{
+    [Required]
+    public int OrdinalNumber { get; set; }
+    [Required]
+    [MaxLength(500)]
+    public string Content { get; set; } = null!;
+
+    public List<string>? AttachedImageUrls { get; set; }
+
+}
+
+public class Comment : BaseMongoDBAuditableEntity
+{
+    [Required]
+    [MaxLength(1000)]
+    public string Content { get; set; } = null!;
+
+    [Required]
+    public Guid AccountId { get; set; }
+
+    [Required]
+    public bool IsActive { get; set; } = true;
+
+}
+public class RecipeVote : BaseMongoDBEntity
+{
+    [Required]
+    public Guid AccountId { get; set; }
+
+    [Required]
+    public bool IsUpvote { get; set; } = true;
+}
+
+

@@ -9,7 +9,7 @@ build_service() {
   local service_name=$2
   echo -e "${PURPLE}Building $service_name service ...${NC}"
 
-  dotnet build --packages "$project_root/data/nuget" $service_path 2>&1 |
+  dotnet build --no-incremental --packages "$project_root/data/nuget" $service_path 2>&1 |
     sed -E \
       -e "/(warning|warn|wrn)/I s/.*/$(printf "${WARNING}&${NC}")/" \
       -e "/(error|err)/I s/.*/$(printf "${DANGER}&${NC}")/"
@@ -27,6 +27,9 @@ build_service "./app/server/APIGateway/src/APIGateway" "api gateway" &&
   build_service "./app/server/UploadFileService/src/UploadFileService.API" "upload" &&
   build_service "./app/server/UserService/src/UserService.API" "user" &&
   build_service "./app/server/RecipeService/src/RecipeService.API" "recipe" &&
+  build_service "./app/server/RecipeService/src/RecipeWorker" recipe_worker &&
   build_service "./app/server/NotificationService/src/NotificationService.API" notification &&
   build_service "./app/server/NotificationService/src/EmailWorker" email_worker &&
-  build_service "./app/server/SignalRService/src/SignalRHub" "signalR"
+  build_service "./app/server/SignalRService/src/SignalRHub" "signalR" &&
+  build_service "./app/server/TrackingService/src/TrackingService.API" "tracking" &&
+  build_service "./app/server/SubscriptionService/src/SubscriptionService.API" "Subscription"

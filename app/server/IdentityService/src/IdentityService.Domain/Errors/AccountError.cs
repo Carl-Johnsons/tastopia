@@ -25,7 +25,6 @@ public class AccountError
         new("AccountError.PhoneAlreadyExisted",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Phone already existed!");
-
     public static Error CreateAccountFailed =>
         new("AccountError.CreateAccountFailed",
             StatusCode: (int)HttpStatusCode.InternalServerError,
@@ -34,12 +33,10 @@ public class AccountError
         new("AccountError.InvalidOTP",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Account's OTP is invalid");
-
     public static Error OTPExpired =>
         new("AccountError.OTPExpired",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Account's OTP is expired");
-
     public static Error VerifyFailed =>
         new("AccountError.VerifyFailed",
             StatusCode: (int)HttpStatusCode.InternalServerError,
@@ -48,12 +45,29 @@ public class AccountError
         new("AccountError.EmailAlreadyConfirmed",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Email already confirmed");
+    public static Error EmailNotConfirmed =>
+        new("AccountError.EmailNotConfirmed",
+            StatusCode: (int)HttpStatusCode.BadRequest,
+            Message: "Email not confirmed");
     public static Error PhoneAlreadyConfirmed =>
         new("AccountError.PhoneAlreadyConfirmed",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Phone already confirmed");
+    public static Error PhoneNotConfirmed =>
+        new("AccountError.PhoneNotConfirmed",
+            StatusCode: (int)HttpStatusCode.BadRequest,
+            Message: "Phone not confirmed");
     public static Error ResendOTPFailed =>
         new("AccountError.ResendOTPFailed",
             StatusCode: (int)HttpStatusCode.InternalServerError,
             Message: "Resend OTP Failed");
+    public static Error LinkAccountFailed =>
+        new("AccountError.LinkAccountFailed",
+            StatusCode: (int)HttpStatusCode.InternalServerError,
+            Message: "Link Account Failed");
+
+    public static Error UnlinkAccountFailed =>
+        new("AccountError.UnlinkAccountFailed",
+            StatusCode: (int)HttpStatusCode.InternalServerError,
+            Message: "Unlink Account Failed");
 }

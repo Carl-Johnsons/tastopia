@@ -11,7 +11,7 @@ public class UserData
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 AccountUsername = "admin1234",
-                IsAccountActive = true,
+                IsAdmin = true,
             },
             new User{
                 AccountId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed"),
@@ -20,7 +20,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 21,
                 TotalFollowing = 4,
-                IsAccountActive = true,
                 AccountUsername = "alice1234"
             },
 
@@ -30,7 +29,6 @@ public class UserData
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalFollwer = 1,
-                IsAccountActive = true,
                 AccountUsername = "kian1234"
                 
 
@@ -40,7 +38,6 @@ public class UserData
                 DisplayName = "Bob",
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
-                IsAccountActive = true,
                 AccountUsername = "bob1234"
 
             },
@@ -49,7 +46,6 @@ public class UserData
                 DisplayName = "Duc",
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
-                IsAccountActive = true,
                 AccountUsername = "duc1234"
 
             },
@@ -59,7 +55,6 @@ public class UserData
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalFollwer = 1,
-                IsAccountActive = true,
                 AccountUsername = "an1234"
 
             },
@@ -68,7 +63,6 @@ public class UserData
                 DisplayName = "Kara",
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
-                IsAccountActive = true,
                 AccountUsername = "kara1234"
             },
             new User{
@@ -76,7 +70,6 @@ public class UserData
                 DisplayName = "Raina",
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
-                IsAccountActive = true,
                 AccountUsername = "raina1234"
             },
             new User{
@@ -84,7 +77,6 @@ public class UserData
                 DisplayName = "Mac",
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
-                IsAccountActive = true,
                 AccountUsername = "mac1234"
             },
             new User{
@@ -93,7 +85,6 @@ public class UserData
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalFollwer = 1,
-                IsAccountActive = true,
                 AccountUsername = "lainey1234"
 
             },
@@ -103,7 +94,6 @@ public class UserData
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalFollwer = 1,
-                IsAccountActive = true,
                 AccountUsername = "willa1234"
             },
             //more 20 user
@@ -114,7 +104,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "lily"
             },
             new User {
@@ -124,7 +113,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "james"
             },
             new User {
@@ -134,7 +122,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "emma"
             },
             new User {
@@ -144,7 +131,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "noah"
             },
             new User {
@@ -154,7 +140,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "ava"
             },
             new User {
@@ -164,7 +149,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "logan"
             },
             new User {
@@ -174,7 +158,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "sophia"
             },
             new User {
@@ -184,7 +167,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "lucas"
             },
             new User {
@@ -194,7 +176,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "mia"
             },
             new User {
@@ -204,7 +185,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "ethan"
             },
             new User {
@@ -214,7 +194,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "isabella"
             },
             new User {
@@ -224,7 +203,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "aiden"
             },
             new User {
@@ -234,7 +212,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "amelia"
             },
             new User {
@@ -244,7 +221,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "grayson"
             },
             new User {
@@ -254,7 +230,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "ella"
             },
             new User {
@@ -264,7 +239,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "jackson"
             },
             new User {
@@ -274,7 +248,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "scarlett"
             },
             new User {
@@ -284,7 +257,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "alex"
             },
             new User {
@@ -294,7 +266,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "chloe"
             },
             new User {
@@ -304,7 +275,6 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalRecipe = 0,
                 TotalFollowing = 0,
-                IsAccountActive = true,
                 AccountUsername = "carter"
             },
 

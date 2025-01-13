@@ -2,12 +2,10 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
 using NotificationService.API;
 
-var builder = WebApplication.CreateBuilder(args);
-
-var app = builder.AddAPIServices()
-                 .Build();
-
-app.UseAPIServicesAsync();
+var app = await WebApplication.CreateBuilder(args)
+                 .AddAPIServices()
+                 .Build()
+                 .UseAPIServicesAsync();
 
 app.Start();
 

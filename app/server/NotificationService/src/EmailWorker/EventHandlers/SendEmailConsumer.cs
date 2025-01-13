@@ -4,10 +4,9 @@ using Contract.Event.NotificationEvent;
 using EmailWorker.Interfaces;
 using MassTransit;
 
-namespace NotificationService.API.EventHandlers;
+namespace EmailWorker.EventHandlers;
 
-[QueueName(RabbitMQConstant.QUEUE.NAME.SEND_EMAIL,
-    exchangeName: RabbitMQConstant.EXCHANGE.NAME.SEND_EMAIL)]
+[QueueName(RabbitMQConstant.QUEUE.NAME.SEND_EMAIL)]
 public class SendEmailConsumer : IConsumer<SendEmailEvent>
 {
     private readonly IEmailService _emailService;
@@ -27,6 +26,6 @@ public class SendEmailConsumer : IConsumer<SendEmailEvent>
             body: context.Message.Body,
             isHtml: true);
 
-        _logger.LogInformation("Message acknowledged");
+        _logger.LogInformation("Send email message acknowledged");
     }
 }

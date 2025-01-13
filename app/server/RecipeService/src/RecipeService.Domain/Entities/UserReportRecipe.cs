@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using MongoDB.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.Domain.Entities;
 
-[Table("UserReportRecipe")]
-public class UserReportRecipe : BaseAuditableEntity
+[Collection("UserReportRecipe")]
+public class UserReportRecipe : BaseMongoDBAuditableEntity
 {
     [Required]
     public Guid AccountId { get; set; }

@@ -1,18 +1,19 @@
-﻿using Contract.Common;
+﻿using Consul;
+using Contract.Common;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using UserService.Infrastructure.EventPublishing;
 using UserService.Infrastructure.Persistence;
 using UserService.Infrastructure.Persistence.Mockup;
+using UserService.Infrastructure.Services;
 using UserService.Infrastructure.Utilities;
 
 namespace UserService.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration config)
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
 
@@ -21,11 +22,24 @@ public static class DependencyInjection
         services.AddScoped<MockupData>();
         services.AddScoped(typeof(IPaginateDataUtility<,>), typeof(PaginateDataUtility<,>));
         services.AddSingleton<ISignalRService, SignalRService>();
+        services.AddSingleton<ISignalRService, SignalRService>();
+        services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
+        {
+            return new ConsulClient(config =>
+            {
+                var scheme = DotNetEnv.Env.GetString("CONSUL_SCHEME", "Not found");
+                var host = DotNetEnv.Env.GetString("CONSUL_HOST", "Not found");
+                var port = DotNetEnv.Env.GetString("CONSUL_PORT", "Not found");
+                config.Address = new Uri($"{scheme}://{host}:{port}");
+            });
+        });
+        services.AddSingleton<IConsulRegistryService, ConsulRegistryService>();
         services.AddMassTransitService();
 
         using (var serviceProvider = services.BuildServiceProvider())
         {
             var mockupData = serviceProvider.GetRequiredService<MockupData>();
+            mockupData.SeedDataAsync().Wait();
         }
 
         return services;
@@ -50,7 +64,15 @@ public static class DependencyInjection
                 {
                     h.Username(username);
                     h.Password(password);
+
+                    h.Heartbeat(TimeSpan.FromSeconds(10));
                 });
+
+                config.UseMessageRetry(retryConfig =>
+                {
+                    retryConfig.Incremental(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2));
+                });
+
                 RegisterEndpointsFromAttributes(context, config, applicationAssembly);
 
                 config.ConfigureEndpoints(context);

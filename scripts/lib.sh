@@ -76,3 +76,6 @@ check_docker() {
   fi
 }
 
+run_required_docker_services(){
+  $SUDO_PREFIX docker compose up -d postgres rabbitmq mongo consul
+}

@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using MongoDB.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.Domain.Entities;
 
-[Table("CommentVote")]
-[PrimaryKey(nameof(CommentId), nameof(AccountId))]
-public class CommentVote
+[Collection("CommentVote")]
+public class CommentVote : BaseMongoDBEntity
 {
     [Required]
     public Guid CommentId { get; set; }

@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { TextInput, TextInputProps } from "react-native";
 
-type CustomizedInputProps = {} & TextInputProps;
+type CustomizedInputProps = TextInputProps;
 
 export const Input = forwardRef<TextInput, CustomizedInputProps>((props, ref) => {
   return (

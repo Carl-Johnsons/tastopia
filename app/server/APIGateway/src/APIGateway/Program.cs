@@ -1,102 +1,26 @@
-using Microsoft.IdentityModel.Tokens;
-using Ocelot.DependencyInjection;
-using Ocelot.Middleware;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Hosting.Server;
+using APIGateway;
 
-DotNetEnv.Env.Load();
+var app = await WebApplication.CreateBuilder(args)
+                        .AddAPIServices()
+                        .Build()
+                        .UseAPIServicesAsync();
+app.Start();
 
-var reactUrl = Environment.GetEnvironmentVariable("REACT_URL") ?? "http://localhost:3000";
+var server = app.Services.GetService<IServer>();
+var addresses = server?.Features.Get<IServerAddressesFeature>()?.Addresses;
 
-var builder = new WebHostBuilder();
-builder.UseKestrel()
-       .UseContentRoot(Directory.GetCurrentDirectory())
-       .ConfigureAppConfiguration((hostingContext, config) =>
-       {
-           var env = hostingContext.HostingEnvironment;
-
-           Console.WriteLine("Environment name: " + env.EnvironmentName);
-
-           config.
-               SetBasePath(env.ContentRootPath)
-               //.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
-               .AddEnvironmentVariables();
-
-
-           if (env.IsDevelopment())
-           {
-               config.AddOcelot("Config/development", env);
-           }
-           else if (env.IsEnvironment("Kubernetes"))
-           {
-               config.AddOcelot("Config/kubernetes", env);
-           }
-           else
-           {
-               config.AddOcelot("Config/production", env);
-           }
-
-       });
-// Add logging
-builder.ConfigureLogging(options =>
+if (addresses != null)
 {
-    options.AddConsole();
-});
-
-// Configure service
-builder.ConfigureServices(services =>
-{
-    services.AddOcelot();
-    services.AddAuthentication("Bearer")
-        .AddJwtBearer("Bearer", options =>
-        {
-            var IdentityDNS = (Environment.GetEnvironmentVariable("IDENTITY_SERVER_HOST") ?? "localhost:5001").Replace("\"", "");
-            var IdentityServerEndpoint = $"http://{IdentityDNS}";
-            Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
-
-            options.Authority = IdentityServerEndpoint;
-            options.RequireHttpsMetadata = false;
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                ValidateIssuer = false,
-                // Skip the validate issuer signing key
-                //ValidateIssuerSigningKey = false,
-                //SignatureValidator = delegate (string token, TokenValidationParameters parameters)
-                //{
-                //    var jwt = new JsonWebToken(token);
-
-                //    return jwt;
-                //},
-                //ValidIssuers = [
-                //    IdentityServerEndpoint
-                //],
-            };
-            // For development only
-            options.IncludeErrorDetails = true;
-        });
-    services.AddCors(options =>
+    foreach (var address in addresses)
     {
-        options.AddPolicy("AllowAnyOriginPolicy",
-            builder =>
-            {
-                builder.WithOrigins(reactUrl)
-                       .AllowAnyMethod()
-                       .AllowAnyHeader()
-                       .AllowCredentials();
-            });
-    });
-    services.AddSignalR();
-});
-
-// Start
-builder.Configure(app =>
+        Console.WriteLine($"API gateway is listening on: {address}");
+    }
+}
+else
 {
-    app.UseCors("AllowAnyOriginPolicy");
+    Console.WriteLine("Could not retrieve server addresses.");
+}
 
-    app.UseAuthentication();
-
-    app.UseAuthorization();
-
-    app.UseOcelot().Wait();
-})
-.Build()
-.Run();
+app.WaitForShutdown();

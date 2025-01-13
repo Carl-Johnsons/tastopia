@@ -1,0 +1,126 @@
+import { selectUser } from "@/slices/user.slice";
+import { useCallback, useEffect, useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Modal,
+  ModalProps,
+  SafeAreaView,
+  StatusBar,
+  Text,
+  TextInput,
+  View
+} from "react-native";
+import Entypo from "@expo/vector-icons/Entypo";
+import { useKeyboard } from "@/hooks/useKeyboard";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from "react-native-reanimated";
+import { ScrollView } from "react-native";
+import { useColorModeValue, useOsValue } from "@/hooks/alternator";
+import { router } from "expo-router";
+import Button from "@/components/Button";
+import { BlurView } from "expo-blur";
+
+const CreatePost = () => {
+  const user = selectUser();
+  const [text, setText] = useState<string>("");
+  const { keyboardHeight } = useKeyboard();
+  const keyboardOffset = useSharedValue(keyboardHeight * -1);
+  const [isClosing, setIsClosing] = useState<boolean>(false);
+
+  const backgroundColor = "#FFFFFF";
+  const textColor = useColorModeValue("#000000", "#FFFFFF");
+  const placeholderColor = "text-gray-500";
+
+  const animate = useCallback(() => {
+    keyboardOffset.value = withTiming(keyboardHeight * -1, {
+      duration: 500,
+      easing: Easing.bezier(0, 0.6, 0.3, 1)
+    });
+  }, [keyboardHeight]);
+
+  useEffect(() => {
+    animate();
+  }, [keyboardHeight]);
+
+  const clearInput = () => {
+    setText("");
+  };
+
+  return (
+    <SafeAreaView style={{ backgroundColor }}>
+      <View
+        className='h-full w-full flex-col px-3'
+        style={{ backgroundColor }}
+      >
+        <View
+          style={{ marginTop: StatusBar.currentHeight }}
+          className='h-[60px] flex-row items-center justify-between px-3'
+        >
+          <Text
+            style={{ color: textColor }}
+            onPress={() => (text.length > 0 ? setIsClosing(true) : router.back())}
+          >
+            Cancel
+          </Text>
+          <Text
+            style={{ color: textColor }}
+            className='font-bold'
+          >
+            Add Comment
+          </Text>
+          <Text
+            style={{ color: textColor }}
+            onPress={() => (text.length > 0 ? setIsClosing(true) : router.back())}
+          >
+            Comment
+          </Text>
+        </View>
+
+        <View
+          style={{ borderColor: "#A9A9A9" }}
+          className='border border-gray-500/20'
+        />
+        <KeyboardAvoidingView behavior={useOsValue("padding", undefined)}>
+          <ScrollView>
+            <View className='mt-5 flex-row items-start gap-3'>
+              <View className='flex-1 pb-3'>
+                <View className='flex-row justify-between'>
+                  <Text
+                    style={{ color: textColor }}
+                    className='font-bold'
+                  >
+                    {user.accountUsername}
+                  </Text>
+                  {text.length > 0 && (
+                    <Entypo
+                      name='cross'
+                      size={20}
+                      color={"lightgray"}
+                      onPress={clearInput}
+                    />
+                  )}
+                </View>
+                <TextInput
+                  placeholder="What's new?"
+                  placeholderTextColor={placeholderColor}
+                  multiline
+                  value={text}
+                  autoFocus={true}
+                  onChangeText={setText}
+                  style={{ color: textColor }}
+                  maxLength={500}
+                />
+              </View>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+export default CreatePost;

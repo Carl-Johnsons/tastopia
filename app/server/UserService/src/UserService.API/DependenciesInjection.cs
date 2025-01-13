@@ -1,42 +1,45 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.Text.Json.Serialization;
-using Serilog;
 using UserService.API.Middleware;
 using UserService.Application;
 using UserService.Infrastructure;
 using Newtonsoft.Json;
+using AutoMapper;
+using UserService.API.Configs;
+using Contract.Utilities;
+using UserService.API.Extensions;
 
 namespace UserService.API;
 
-// You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
 public static class DependenciesInjection
 {
     public static WebApplicationBuilder AddAPIServices(this WebApplicationBuilder builder)
     {
-        UserService.Infrastructure.Utilities.EnvUtility.LoadEnvFile();
+        EnvUtility.LoadEnvFile();
         var services = builder.Services;
         var config = builder.Configuration;
         var host = builder.Host;
 
-        host.UseSerilog((context, config) =>
-        {
-            config.ReadFrom.Configuration(context.Configuration);
-        });
+        builder.ConfigureKestrel();
+        builder.ConfigureSerilog();
 
+        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+        services.AddInfrastructureServices();
         services.AddApplicationServices();
-        services.AddInfrastructureServices(config);
+        services.AddGrpcServices();
+        services.AddSwaggerServices();
 
         services.AddControllers()
-                // Prevent circular JSON reach max depth of the object when serialization
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                    options.JsonSerializerOptions.WriteIndented = true;
-                });
-        services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; // Prevent circular JSON references
+                options.JsonSerializerOptions.WriteIndented = true; // Pretty-print JSON
+            })
             .AddNewtonsoftJson(options =>
             {
-                options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
+                options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error; // Error on missing members
             });
 
         services.AddHttpContextAccessor();
@@ -44,12 +47,11 @@ public static class DependenciesInjection
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
-                var IdentityDNS = (Environment.GetEnvironmentVariable("IDENTITY_SERVER_HOST") ?? "localhost:5001").Replace("\"", "");
-                var IdentityServerEndpoint = $"http://{IdentityDNS}";
+                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
+                var IdentityServerEndpoint = $"https://{IdentityDNS}";
                 Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
 
                 options.Authority = IdentityServerEndpoint;
-                options.RequireHttpsMetadata = false;
                 // Clear default Microsoft's JWT claim mapping
                 // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
                 options.MapInboundClaims = false;
@@ -60,32 +62,27 @@ public static class DependenciesInjection
                 {
                     ValidateAudience = false,
                     ValidateIssuer = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
                 };
                 // For development only
                 options.IncludeErrorDetails = true;
             });
-
-        services.AddEndpointsApiExplorer();
 
         return builder;
     }
 
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
-
-        app.Use(async (context, next) =>
-        {
-            // Log information about the incoming request
-            app.Logger.LogInformation($"Request: {context.Request.Method} {context.Request.Path}");
-
-            await next(); // Call the next middleware
-        });
-
-        app.UseSerilogRequestLogging();
+        app.UseSerilogServices();
+        app.UseConsulServiceDiscovery();
+        app.UseSwaggerServices();
 
         app.UseHttpsRedirection();
 
         app.MapControllers();
+
+        app.UseGrpcServices();
 
         app.UseGlobalHandlingErrorMiddleware();
 
@@ -105,4 +102,3 @@ public static class DependenciesInjection
         return app;
     }
 }
-

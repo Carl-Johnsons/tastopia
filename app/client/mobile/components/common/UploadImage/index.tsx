@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -17,8 +17,15 @@ import { globalStyles } from "../GlobalStyles";
 import { transformPlatformURI } from "@/utils/functions";
 import styles from "./UploadImage.style";
 import { extensionToMimeType } from "@/utils/file";
+import { AntDesign } from "@expo/vector-icons";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 type UploadImageProps = {
+  /**
+   * Array of image files to set as default images
+   */
+  defaultImages?: ImageFileType[];
+
   /**
    * Function to handle file change (should be setState function)
    */
@@ -45,22 +52,31 @@ type UploadImageProps = {
   imageStyle?: StyleProp<ViewStyle>;
 
   /**
+   *  Maximum number images
+   */
+  selectionLimit?: number;
+
+  /**
    * ImagePicker options
    */
   props?: ImagePicker.ImagePickerOptions;
 };
 
 const UploadImage = ({
+  defaultImages,
   onFileChange,
   isDisabled = false,
   isMultiple = true,
   containerStyle,
   imageStyle,
+  selectionLimit = 5,
   props
 }: UploadImageProps) => {
+  const [startUploadImage, setStartUploadImage] = useState(false);
   const [imageCount, setImageCount] = useState(0);
-  const [fileObjects, setFileObjects] = useState<FileObject[]>();
+  const [fileObjects, setFileObjects] = useState<FileObject[]>([]);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
+  const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -84,7 +100,7 @@ const UploadImage = ({
 
     let result = await ImagePicker.launchImageLibraryAsync({
       quality: 1,
-      selectionLimit: 5 - imageCount,
+      selectionLimit: selectionLimit - imageCount,
       allowsMultipleSelection: isMultiple,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       ...props
@@ -110,9 +126,16 @@ const UploadImage = ({
       });
 
       const newFileObjects = [...(fileObjects || []), ...files];
+      setStartUploadImage(true);
       setFileObjects(newFileObjects);
       onFileChange(newFileObjects.map(file => file.file as ImageFileType));
       setImageCount(prev => prev + files.length);
+    }
+  };
+
+  const handleImagePress = (id: string) => {
+    if (!isDisabled) {
+      setSelectedImageId(selectedImageId === id ? null : id);
     }
   };
 
@@ -121,55 +144,83 @@ const UploadImage = ({
     setFileObjects(newFileObjects);
     onFileChange(newFileObjects!.map(file => file.file as ImageFileType));
     setImageCount(prev => prev - 1);
+    setSelectedImageId(null);
   };
 
-  return (
-    <View
-      style={[styles.container, imageCount > 0 && styles.containerActive, containerStyle]}
-    >
-      {/* Preview images */}
-      <View style={styles.previewImage}>
-        {fileObjects?.map(fileObject => (
-          <View
-            style={[styles.uploadItem, imageCount <= 2 && styles.flexOne, imageStyle]}
-            key={fileObject.id}
-          >
-            <TouchableHighlight
-              onPress={() => !isDisabled && handleRemoveImage(fileObject.id)}
-              disabled={isDisabled}
-              style={styles.removeItemButton}
-              underlayColor={"none"}
-            >
-              <MaterialIcons
-                style={styles.removeItemButtonIcon}
-                name='highlight-remove'
-                size={30}
-                color={globalStyles.color.primary}
-              />
-            </TouchableHighlight>
-            <Image
-              source={{ uri: transformPlatformURI(fileObject.previewPath)! }}
-              style={styles.uploadItemImage}
-            />
-          </View>
-        ))}
+  const handleDismiss = () => {
+    if (selectedImageId !== null) {
+      setSelectedImageId(null);
+    }
+  };
 
-        {imageCount <= 4 && !isDisabled && (
-          <TouchableHighlight
-            onPress={pickImage}
-            style={styles.uploadButton}
-            underlayColor={globalStyles.color.secondary}
-          >
-            <View style={styles.uploadButtonWrapper}>
-              <FontAwesome
-                name='cloud-upload'
-                size={24}
-                color={globalStyles.color.light}
-              />
-              <Text style={styles.uploadButtonText}>Upload</Text>
-            </View>
-          </TouchableHighlight>
-        )}
+  useEffect(() => {
+    if (defaultImages && defaultImages.length > 0) {
+      const initialFiles = defaultImages.map(image => ({
+        id: image.uri,
+        previewPath: image.uri,
+        file: image
+      }));
+      setFileObjects(initialFiles);
+      setImageCount(initialFiles.length);
+    }
+  }, [defaultImages]);
+
+  return (
+    <View style={[styles.container, imageCount === 1 && styles.flexOne, containerStyle]}>
+      <View style={[styles.wrapper, imageCount === 1 && styles.sizeFull]}>
+        {/* Preview image */}
+        <View style={styles.previewImage}>
+          {fileObjects?.map(fileObject => (
+            <TouchableHighlight
+              key={fileObject.id}
+              style={[styles.uploadItem, imageCount === 1 && styles.flexOne, imageStyle]}
+              onPress={() => handleImagePress(fileObject.id)}
+              underlayColor='transparent'
+            >
+              <View>
+                <Image
+                  source={{ uri: transformPlatformURI(fileObject.previewPath)! }}
+                  style={styles.uploadItemImage}
+                />
+                {selectedImageId === fileObject.id && (
+                  <TouchableHighlight
+                    style={styles.removeOverlay}
+                    onPress={() => handleRemoveImage(fileObject.id)}
+                    underlayColor='transparent'
+                  >
+                    <View style={styles.removeIconWrapper}>
+                      <AntDesign
+                        name='closecircleo'
+                        size={24}
+                        color={globalStyles.color.light}
+                      />
+                    </View>
+                  </TouchableHighlight>
+                )}
+              </View>
+            </TouchableHighlight>
+          ))}
+        </View>
+
+        {/* Upload image button */}
+        {((imageCount <= 4 && !isDisabled && isMultiple) ||
+          (imageCount === 0 && !startUploadImage)) &&
+          imageCount < selectionLimit && (
+            <TouchableHighlight
+              onPress={pickImage}
+              style={styles.uploadButton}
+              underlayColor={globalStyles.color.secondary}
+            >
+              <View style={styles.uploadButtonWrapper}>
+                <FontAwesome
+                  name='cloud-upload'
+                  size={24}
+                  color={globalStyles.color.light}
+                />
+                <Text style={styles.uploadButtonText}>Upload</Text>
+              </View>
+            </TouchableHighlight>
+          )}
       </View>
     </View>
   );

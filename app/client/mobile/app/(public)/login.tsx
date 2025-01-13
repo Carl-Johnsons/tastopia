@@ -1,17 +1,18 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
 import LoginForm, { LoginFormFields } from "@/components/LoginForm";
-import { IDENTIFIER_TYPE, login } from "@/api/user";
+import { useLogin } from "@/api/user";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
-import { ZodError } from "zod";
 import { useAppDispatch } from "@/store/hooks";
 import GoogleButton from "@/components/GoogleButton";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
 import useBounce from "@/hooks/animation/useBounce";
-import { loginWithEmailSchema, loginWithPhoneNumberSchema } from "@/lib/validation/auth";
-import { useLoginWithGoogle } from "@/hooks";
+import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
+import { stringify } from "@/utils/debug";
+import useSyncSetting from "@/hooks/user/useSyncSetting";
+import useSyncUser from "@/hooks/user/useSyncUser";
 
 const Login = () => {
   const isAndroid = Platform.OS === "android";
@@ -19,52 +20,36 @@ const Login = () => {
   const dispatch = useAppDispatch();
   const { loginWithGoogle } = useLoginWithGoogle();
   const { animate, animatedStyles } = useBounce();
+  const loginMutation = useLogin();
+  const { fetch: fetchSettings } = useSyncSetting();
+  const { fetch: fetchUser } = useSyncUser();
 
   const onSubmit = async (data: LoginFormFields) => {
     setIsSubmitting(true);
-    console.log("Begin login");
+    console.info("Begin login");
 
-    try {
-      const identifierChecker = /[a-zA-Z@]/;
+    await loginMutation.mutateAsync(data, {
+      onSuccess: async data => {
+        const accessToken = data.access_token;
+        const refreshToken = data.refresh_token;
+        const role = ROLE.USER;
 
-      const loginType = identifierChecker.test(data.identifier)
-        ? IDENTIFIER_TYPE.EMAIL
-        : IDENTIFIER_TYPE.PHONE_NUMBER;
+        dispatch(saveAuthData({ accessToken, refreshToken, role }));
 
-      console.log("Login type", loginType);
+        await fetchUser();
+        await fetchSettings();
 
-      if (loginType === IDENTIFIER_TYPE.EMAIL) {
-        // loginWithEmailSchema.parse(data);
-      } else {
-        // loginWithPhoneNumberSchema.parse(data);
+        const route = "/(protected)";
+        router.navigate(route);
+      },
+      onError: error => {
+        console.log("Error", stringify(error));
+        Alert.alert("Error", error.message);
+      },
+      onSettled: () => {
+        setIsSubmitting(false);
       }
-
-      const res = await login(data);
-      const accessToken = res.access_token;
-      const refreshToken = res.refresh_token;
-      // Check role here
-      const role = ROLE.USER;
-
-      dispatch(saveAuthData({ accessToken, refreshToken, role }));
-      console.log("Saved tokens");
-
-      // Need to get user's info as well
-      // dispatch(saveUserData(user));
-
-      const route = "/(protected)";
-      router.navigate(route);
-    } catch (error: any) {
-      console.log("Error", error);
-
-      if (error instanceof ZodError) {
-        const firstErr = error.issues[0];
-        return Alert.alert("Error", firstErr.message);
-      }
-
-      Alert.alert("Error", error.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    });
   };
 
   const navigateToSignUpScreen = () => {

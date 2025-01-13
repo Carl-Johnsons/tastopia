@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using MongoDB.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.Domain.Entities;
 
-[Table("UserBookmarkRecipe")]
-[PrimaryKey(nameof(AccountId), nameof(RecipeId))]
-public class UserBookmarkRecipe
+[Collection("UserBookmarkRecipe")]
+public class UserBookmarkRecipe : BaseMongoDBEntity
 {
     [Required]
     public Guid AccountId { get; set; }

@@ -13,6 +13,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import userReducer from "@/slices/user.slice";
 import authReducer from "@/slices/auth.slice";
+import settingReducer from "@/slices/setting.slice";
+import searchRecipeReducer from "@/slices/searchRecipe.slice";
 
 const persistConfig = {
   key: "root",
@@ -22,7 +24,9 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  user: userReducer
+  user: userReducer,
+  setting: settingReducer,
+  searchRecipe: searchRecipeReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
