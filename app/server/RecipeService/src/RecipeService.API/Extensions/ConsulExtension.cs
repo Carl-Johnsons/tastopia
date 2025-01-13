@@ -26,8 +26,7 @@ public static class ConsulExtension
         var healthCheckEndpoint = EnvUtility.IsDevelopment()
                             ? $"https://host.docker.internal:{servicePort}/health"
                             : $"https://{serviceHost}:{servicePort}/health";
-        // var uri = new Uri(address);
-        // Better approach should be used to set the below settings. I hard coded just to explain.
+
         var registration = new AgentServiceRegistration()
         {
             ID = serviceId,
