@@ -33,7 +33,7 @@ public class ResendOTPCommandHandler : IRequestHandler<ResendOTPCommand, Result>
             case AccountMethod.Phone:
                 return await ResendPhoneOTP(request, cancellationToken);
             default:
-                return Result.Failure(AccountError.CreateAccountFailed);
+                return Result.Failure(AccountError.CreateAccountFailed, "Wrong account method");
         }
     }
 

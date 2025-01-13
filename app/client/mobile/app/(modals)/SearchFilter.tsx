@@ -7,7 +7,6 @@ import useDebounce from "@/hooks/useDebounce";
 import {
   clearTagValue,
   removeTagValue,
-  selectSearchTagCodes,
   selectSearchTags
 } from "@/slices/searchRecipe.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";

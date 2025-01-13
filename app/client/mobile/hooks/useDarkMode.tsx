@@ -1,7 +1,7 @@
-import { useColorScheme } from "react-native";
+import { useColorScheme } from "nativewind";
 
 const useDarkMode = () => {
-  const colorScheme = useColorScheme();
+  const { colorScheme } = useColorScheme();
   return colorScheme === "dark";
 };
 

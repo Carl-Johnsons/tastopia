@@ -1,6 +1,8 @@
 import { Feather } from "@expo/vector-icons";
 import { View, Text, Image, TouchableWithoutFeedback } from "react-native";
 import { useRouter } from "expo-router";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 import InteractionSection from "./InteractionSection";
 
 const Recipe = ({
@@ -15,6 +17,8 @@ const Recipe = ({
   numberOfComment
 }: RecipeType) => {
   const router = useRouter();
+  const { c } = useColorizer();
+  const { black, white } = colors;
   const handleOnPress = () => {
     router.push({
       pathname: "/(protected)/community/[id]",
@@ -38,7 +42,9 @@ const Recipe = ({
                   source={{ uri: authorAvtUrl }}
                   className='size-[30px] rounded-full'
                 />
-                <Text className='paragraph-medium'>{authorDisplayName}</Text>
+                <Text className='paragraph-medium text-black_white'>
+                  {authorDisplayName}
+                </Text>
               </View>
             </TouchableWithoutFeedback>
           )}
@@ -47,7 +53,7 @@ const Recipe = ({
             <Feather
               name='more-horizontal'
               size={24}
-              color='black'
+              color={c(black.DEFAULT, white.DEFAULT)}
             />
           </TouchableWithoutFeedback>
         </View>
@@ -62,14 +68,14 @@ const Recipe = ({
               <Text
                 numberOfLines={1}
                 ellipsizeMode='tail'
-                className='font-bold text-2xl'
+                className='text-black_white font-bold text-2xl'
               >
                 {title}
               </Text>
               <Text
                 numberOfLines={4}
                 ellipsizeMode='tail'
-                className='body-regular'
+                className='body-regular text-black_white'
               >
                 {description}
               </Text>

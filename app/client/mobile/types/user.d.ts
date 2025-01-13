@@ -7,6 +7,17 @@ type SearchUserResultType = {
   isFollowing: boolean;
 };
 
+type User = {
+  _id: string;
+  name: string;
+  email: string;
+  username: string;
+  bio: string;
+  profilePic: string;
+  followers: string[];
+  following: string[];
+};
+
 type SearchUserResponse = {
   paginatedData: SearchUserResultType[];
   metadata: {

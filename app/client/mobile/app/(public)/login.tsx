@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
 import LoginForm, { LoginFormFields } from "@/components/LoginForm";
-import { useGetUserDetails, useLogin } from "@/api/user";
+import { useLogin } from "@/api/user";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
 import { useAppDispatch } from "@/store/hooks";
 import GoogleButton from "@/components/GoogleButton";
@@ -11,7 +11,8 @@ import BackButton from "@/components/BackButton";
 import useBounce from "@/hooks/animation/useBounce";
 import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
 import { stringify } from "@/utils/debug";
-import { saveUserData } from "@/slices/user.slice";
+import useSyncSetting from "@/hooks/user/useSyncSetting";
+import useSyncUser from "@/hooks/user/useSyncUser";
 
 const Login = () => {
   const isAndroid = Platform.OS === "android";
@@ -20,7 +21,8 @@ const Login = () => {
   const { loginWithGoogle } = useLoginWithGoogle();
   const { animate, animatedStyles } = useBounce();
   const loginMutation = useLogin();
-  const getUserDetails = useGetUserDetails();
+  const { fetch: fetchSettings } = useSyncSetting();
+  const { fetch: fetchUser } = useSyncUser();
 
   const onSubmit = async (data: LoginFormFields) => {
     setIsSubmitting(true);
@@ -34,9 +36,8 @@ const Login = () => {
 
         dispatch(saveAuthData({ accessToken, refreshToken, role }));
 
-        const { data: user } = await getUserDetails.refetch();
-        console.debug("login: user object after fetching", stringify(user));
-        dispatch(saveUserData({ ...user }));
+        await fetchUser();
+        await fetchSettings();
 
         const route = "/(protected)";
         router.navigate(route);

@@ -1,4 +1,5 @@
 declare module "*.css";
+declare module "*.txt";
 
 declare module "*.svg" {
   import React from "react";
