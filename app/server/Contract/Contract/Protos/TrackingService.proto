@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+package TrackingProto;
+
+service GrpcTracking {
+    rpc GrpcUserViewRecipeDetail(GrpcUserViewRecipeDetailRequest) returns (GrpcEmpty);
+}
+
+message GrpcEmpty {}
+
+message GrpcUserViewRecipeDetailRequest {
+    string AccountId = 1;
+    string RecipeId = 2;
+    google.protobuf.Timestamp ViewTime = 3;
+}

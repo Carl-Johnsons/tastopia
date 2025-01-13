@@ -32,9 +32,7 @@ public record CreateRecipeCommand : IRequest<Result<Recipe?>>
 
     public List<StepDTO> Steps { get; init; } = null!;
 
-    public List<string>? TagCodes { get; set; }
-
-    public List<string>? AdditionTagValues { get; set; }
+    public List<string>? TagValues { get; set; }
 }
 
 public class StepDTO
@@ -127,8 +125,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
             await _serviceBus.Publish(new ValidateRecipeEvent
             {
                 RecipeId = recipe.Id,
-                TagCodes = request.TagCodes!,
-                AdditionTagValues = request.AdditionTagValues!
+                TagValues = request.TagValues ?? []
             });
 
             return Result<Recipe?>.Success(recipe);

@@ -5,12 +5,19 @@ package RecipeProto;
 service GrpcRecipe {
     rpc GetAllTags(GrpcEmpty) returns (GrpcListTagDTO);
     rpc GetRecipeDetails(GrpcRecipeIdRequest) returns (GrpcRecipeDetailsDTO);
+    rpc GetSimpleRecipes(GrpcGetSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
+
 }
 ////////////////////////// COMMON
 message GrpcEmpty {}
 
 message GrpcRecipeIdRequest{
     string RecipeId = 1;
+}
+
+message GrpcGetSimpleRecipeRequest {
+    string AccountId = 1;
+    repeated string RecipeIds = 2; 
 }
 ///////////////////////// Entity DTO
 message GrpcRecipeDetailsDTO{
@@ -66,4 +73,21 @@ message GrpcRecipeTagDTO{
     string Id = 1;
     string RecipeId = 2;
     string TagId = 3;
+}
+
+message GrpcMapSimpleRecipes {
+    map<string, GrpcSimpleRecipe> Recipes = 1;
+}
+
+message GrpcSimpleRecipe {
+    string Id = 1;
+    string AuthorId = 2;
+    string RecipeImgUrl = 3;
+    string Title = 4;
+    string Description = 5;
+    int32 VoteDiff = 6;
+    int32 NumberOfComment = 7;
+    string AuthorDisplayName = 8;
+    string AuthorAvtUrl = 9;
+    string Vote = 10;
 }
