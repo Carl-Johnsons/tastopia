@@ -1,4 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+	<!--
+		This is a workaround for Reinforced.Typing to compile and generate typescript without corrupt entire project
+		Ref: https://github.com/reinforced/Reinforced.Typings/issues/231
+	-->
+	<Target Name="CompileTypeScript" />
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -21,6 +26,8 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
 		<!-- Grpc dependencies -->
 		<PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
+		<PackageReference Include="Reinforced.Typings" Version="1.6.5" />
+
 	</ItemGroup>
 
 	<ItemGroup>

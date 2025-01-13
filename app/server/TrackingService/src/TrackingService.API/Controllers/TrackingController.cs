@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
-using TrackingService.API.Controllers;
 using TrackingService.API.DTOs;
 using TrackingService.Application.UserViewRecipeDetails.Queries;
 
-namespace RecipeService.API.Controllers;
+namespace TrackingService.API.Controllers;
 
 [Route("api/tracking")]
 [ApiController]
@@ -28,6 +27,7 @@ public class TrackingController : BaseApiController
         var result = await _sender.Send(new GetUserViewRecipeDetaiQuery
         {
             AccountId = Guid.Parse(subjectId!),
+            Skip = getUserViewRecipeDetailHistoryDTO.Skip,
         });
         result.ThrowIfFailure();
         return Ok(result);
