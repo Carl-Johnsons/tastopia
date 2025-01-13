@@ -2,12 +2,7 @@ import { useState } from "react";
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
 import LoginForm, { LoginFormFields } from "@/components/LoginForm";
-import {
-  LoginResponse,
-  useGetUserDetails,
-  useGetUserSettings,
-  useLogin
-} from "@/api/user";
+import { useLogin } from "@/api/user";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
 import { useAppDispatch } from "@/store/hooks";
 import GoogleButton from "@/components/GoogleButton";
@@ -16,13 +11,8 @@ import BackButton from "@/components/BackButton";
 import useBounce from "@/hooks/animation/useBounce";
 import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
 import { stringify } from "@/utils/debug";
-import { saveUserData } from "@/slices/user.slice";
-import {
-  SETTING_KEY,
-  SettingState,
-  initialSettingState,
-  saveSettingData
-} from "@/slices/setting.slice";
+import useSyncSetting from "@/hooks/user/useSyncSetting";
+import useSyncUser from "@/hooks/user/useSyncUser";
 
 const Login = () => {
   const isAndroid = Platform.OS === "android";
@@ -31,29 +21,12 @@ const Login = () => {
   const { loginWithGoogle } = useLoginWithGoogle();
   const { animate, animatedStyles } = useBounce();
   const loginMutation = useLogin();
-  const getUserDetails = useGetUserDetails();
-  const getUserSettings = useGetUserSettings();
+  const { fetch: fetchSettings } = useSyncSetting();
+  const { fetch: fetchUser } = useSyncUser();
 
   const onSubmit = async (data: LoginFormFields) => {
     setIsSubmitting(true);
     console.info("Begin login");
-
-    const fetchUserData = async () => {
-      const { data: user } = await getUserDetails.refetch();
-      dispatch(saveUserData({ ...user }));
-
-      const { data: settings } = await getUserSettings.refetch();
-      const UNION_SETTING: any = {};
-
-      settings?.map(item => {
-        const key = item.setting.code;
-        const value = item.settingValue;
-
-        UNION_SETTING[key] = value;
-      });
-
-      dispatch(saveSettingData(UNION_SETTING));
-    };
 
     await loginMutation.mutateAsync(data, {
       onSuccess: async data => {
@@ -62,7 +35,9 @@ const Login = () => {
         const role = ROLE.USER;
 
         dispatch(saveAuthData({ accessToken, refreshToken, role }));
-        await fetchUserData();
+
+        await fetchUser();
+        await fetchSettings();
 
         const route = "/(protected)";
         router.navigate(route);

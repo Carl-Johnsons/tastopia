@@ -1,5 +1,7 @@
 import { useAppSelector } from "@/store/hooks";
+import { getSettingFromBooleanValue } from "@/utils/converter";
 import { createSlice } from "@reduxjs/toolkit";
+import { Appearance } from "react-native";
 import { PURGE } from "redux-persist";
 
 export enum SETTING_KEY {
@@ -30,14 +32,17 @@ export type SettingState = {
   [SETTING_KEY.NOTIFICATION_FOLLOW]: SETTING_VALUE.BOOLEAN;
 };
 
+const isDarkMode = Appearance.getColorScheme() === "dark";
+
 export const initialSettingState: SettingState = {
   [SETTING_KEY.LANGUAGE]: SETTING_VALUE.LANGUAGE.VIETNAMESE,
-  [SETTING_KEY.DARK_MODE]: SETTING_VALUE.BOOLEAN.FALSE,
+  [SETTING_KEY.DARK_MODE]: getSettingFromBooleanValue(isDarkMode),
   [SETTING_KEY.NOTIFICATION_COMMENT]: SETTING_VALUE.BOOLEAN.FALSE,
   [SETTING_KEY.NOTIFICATION_VOTE]: SETTING_VALUE.BOOLEAN.FALSE,
   [SETTING_KEY.NOTIFICATION_FOLLOW]: SETTING_VALUE.BOOLEAN.FALSE,
 };
 
+export const selectSetting = () => useAppSelector(state => state.setting);
 export const selectLanguageSetting = () => useAppSelector(state => state.setting[SETTING_KEY.LANGUAGE]);
 export const selectDarkModeSetting = () => useAppSelector(state => state.setting[SETTING_KEY.DARK_MODE]);
 export const selectNotificationCommentSetting = () => useAppSelector(state => state.setting[SETTING_KEY.NOTIFICATION_COMMENT]);
