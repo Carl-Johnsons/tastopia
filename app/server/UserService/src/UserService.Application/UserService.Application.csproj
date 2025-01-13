@@ -24,8 +24,4 @@
 			<HintPath Condition="Exists('..\Contract\Contract.dll')">..\Contract\Contract.dll</HintPath>
 		</Reference>
 	</ItemGroup>
-
-	<!--<ItemGroup>
-		<Protobuf Include="..\..\..\Contract\Contract\Protos\AccountService.proto" Link="Protos\AccountService.proto" GrpcServices="Client" />
-	</ItemGroup>-->
 </Project>

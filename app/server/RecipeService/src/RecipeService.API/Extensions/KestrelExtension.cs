@@ -14,6 +14,12 @@ public static class KestrelExtension
         var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
         var certPath = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Path");
         var certPassword = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Password");
+        Console.WriteLine("++++++++++++++++++++");
+        Console.WriteLine(httpPort);
+        Console.WriteLine(httpsPort);
+        Console.WriteLine(certPath);
+        Console.WriteLine(certPassword);
+        Console.WriteLine("++++++++++++++++++++");
 
         builder.WebHost.ConfigureKestrel(options =>
         {
