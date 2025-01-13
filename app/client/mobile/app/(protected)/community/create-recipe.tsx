@@ -47,7 +47,9 @@ const CreateRecipe = () => {
     { key: uuid.v4(), content: "", images: [] }
   ]);
 
-  // console.log("ingredients", ingredients);
+  const isInputIngredient = ingredients.some(ingredient => ingredient.value !== "");
+  const isInputSteps = steps.some(step => step.content !== "");
+
   const onFileChange = (files: ImageFileType[]) => {
     setImages(files);
   };
@@ -70,9 +72,6 @@ const CreateRecipe = () => {
     getValues
   } = formCreateRecipe;
   const onSubmit: SubmitHandler<FormCreateRecipeType> = async formData => {
-    const isInputIngredient = ingredients.some(ingredient => ingredient.value !== "");
-    const isInputSteps = steps.some(step => step.content !== "");
-
     if (images.length < 1) {
       Alert.alert(t("validation.image"));
       return;
@@ -165,8 +164,8 @@ const CreateRecipe = () => {
       getValues("serves") ||
       getValues("title") ||
       images.length > 0 ||
-      steps.length > 0 ||
-      ingredients.length > 0
+      (steps.length > 1 && isInputSteps) ||
+      (ingredients.length > 1 && isInputIngredient)
     ) {
       Alert.alert(t("confirmModal.title"), t("confirmModal.description"), [
         {
@@ -231,7 +230,6 @@ const CreateRecipe = () => {
           </View>
 
           {/* Form */}
-
           <View className='relative flex-1 px-6'>
             {isLoading && (
               <View className='flex-center absolute left-6 z-10 size-full bg-transparent'>
