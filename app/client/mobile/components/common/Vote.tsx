@@ -4,6 +4,7 @@ import { DownvoteIcon, UpvoteIcon } from "./SVG";
 import { globalStyles } from "./GlobalStyles";
 import { ROLE } from "@/slices/auth.slice";
 import useProtected, { useProtectedExclude } from "@/hooks/auth/useProtected";
+import { AntDesign } from "@expo/vector-icons";
 
 type VoteProps = {
   voteDiff: number;
@@ -83,12 +84,14 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 flexDirection: "row"
               }}
             >
-              <UpvoteIcon
+              <AntDesign
+                name='like2'
+                size={16}
                 color={upvoted ? globalStyles.color.primary : globalStyles.color.dark}
               />
             </Animated.View>
             <Text
-              className={`mx-2 text-center ${upvoted || downvoted ? "color-primary" : "color-black"}`}
+              className={`color-black_white mx-2 text-center`}
               style={{ width: getDigitCount(votes) }}
             >
               {isNaN(votes) ? "" : votes}
@@ -111,7 +114,9 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 flexDirection: "row"
               }}
             >
-              <DownvoteIcon
+              <AntDesign
+                name='dislike2'
+                size={16}
                 color={downvoted ? globalStyles.color.primary : globalStyles.color.dark}
               />
             </Animated.View>

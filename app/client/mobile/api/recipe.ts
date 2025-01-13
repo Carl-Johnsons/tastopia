@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery } from "react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { protectedAxiosInstance } from "@/constants/host";
 
 const useRecipesFeed = (filterSelected: string) => {
@@ -47,4 +47,22 @@ const useRecipeDetail = (recipeId: string) => {
   });
 };
 
-export { useRecipesFeed, useRecipeDetail };
+const useCreateRecipe = () => {
+  return useMutation<any, Error, CreateRecipePayloadType>({
+    mutationFn: async payload => {
+      console.log("payload", payload);
+      const { data } = await protectedAxiosInstance.post(
+        "/api/recipe/create-recipe",
+        payload,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+      return data;
+    }
+  });
+};
+
+export { useRecipesFeed, useRecipeDetail, useCreateRecipe };

@@ -8,6 +8,12 @@ export default function CommunityLayout() {
       }}
       initialRouteName='index'
     >
+      <Stack.Screen
+        name='create-recipe'
+        options={{
+          animation: "slide_from_bottom"
+        }}
+      />
       <Stack.Screen name='index' />
       <Stack.Screen name='[id]' />
     </Stack>

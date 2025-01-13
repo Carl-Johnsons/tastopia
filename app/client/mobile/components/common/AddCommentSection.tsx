@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import { Feather } from "@expo/vector-icons";
 import { globalStyles } from "./GlobalStyles";
 import { useCreateComment } from "@/api/comment";
+import { useTranslation } from "react-i18next";
 
 type AddCommentSectionProps = {
   recipeId: string;
@@ -13,6 +14,7 @@ type AddCommentSectionProps = {
 };
 
 const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps) => {
+  const { t } = useTranslation("recipeDetail");
   const [comment, setComment] = useState("");
   const { mutate: createComment, isLoading } = useCreateComment();
 
@@ -46,7 +48,7 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
       <Input
         value={comment}
         autoCapitalize='none'
-        placeholder='Add a comment...'
+        placeholder={t("addComment")}
         className={`flex-1 rounded-3xl border-gray-300 px-2 py-3 focus:border-primary`}
         placeholderTextColor={"gray"}
         onChangeText={setComment}

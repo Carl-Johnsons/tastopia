@@ -22,6 +22,11 @@ import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 type UploadImageProps = {
   /**
+   * Array of image files to set as default images
+   */
+  defaultImages?: ImageFileType[];
+
+  /**
    * Function to handle file change (should be setState function)
    */
   onFileChange: (files: ImageFileType[]) => void;
@@ -47,22 +52,29 @@ type UploadImageProps = {
   imageStyle?: StyleProp<ViewStyle>;
 
   /**
+   *  Maximum number images
+   */
+  selectionLimit?: number;
+
+  /**
    * ImagePicker options
    */
   props?: ImagePicker.ImagePickerOptions;
 };
 
 const UploadImage = ({
+  defaultImages,
   onFileChange,
   isDisabled = false,
   isMultiple = true,
   containerStyle,
   imageStyle,
+  selectionLimit = 5,
   props
 }: UploadImageProps) => {
   const [startUploadImage, setStartUploadImage] = useState(false);
   const [imageCount, setImageCount] = useState(0);
-  const [fileObjects, setFileObjects] = useState<FileObject[]>();
+  const [fileObjects, setFileObjects] = useState<FileObject[]>([]);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
 
@@ -88,7 +100,7 @@ const UploadImage = ({
 
     let result = await ImagePicker.launchImageLibraryAsync({
       quality: 1,
-      selectionLimit: 5 - imageCount,
+      selectionLimit: selectionLimit - imageCount,
       allowsMultipleSelection: isMultiple,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       ...props
@@ -141,15 +153,27 @@ const UploadImage = ({
     }
   };
 
+  useEffect(() => {
+    if (defaultImages && defaultImages.length > 0) {
+      const initialFiles = defaultImages.map(image => ({
+        id: image.uri,
+        previewPath: image.uri,
+        file: image
+      }));
+      setFileObjects(initialFiles);
+      setImageCount(initialFiles.length);
+    }
+  }, [defaultImages]);
+
   return (
-    <View style={[styles.container, containerStyle]}>
-      <View style={styles.wrapper}>
+    <View style={[styles.container, imageCount === 1 && styles.flexOne, containerStyle]}>
+      <View style={[styles.wrapper, imageCount === 1 && styles.sizeFull]}>
         {/* Preview image */}
         <View style={styles.previewImage}>
           {fileObjects?.map(fileObject => (
             <TouchableHighlight
               key={fileObject.id}
-              style={[styles.uploadItem, imageCount <= 2 && styles.flexOne, imageStyle]}
+              style={[styles.uploadItem, imageCount === 1 && styles.flexOne, imageStyle]}
               onPress={() => handleImagePress(fileObject.id)}
               underlayColor='transparent'
             >
@@ -180,22 +204,23 @@ const UploadImage = ({
 
         {/* Upload image button */}
         {((imageCount <= 4 && !isDisabled && isMultiple) ||
-          (imageCount === 0 && !startUploadImage)) && (
-          <TouchableHighlight
-            onPress={pickImage}
-            style={styles.uploadButton}
-            underlayColor={globalStyles.color.secondary}
-          >
-            <View style={styles.uploadButtonWrapper}>
-              <FontAwesome
-                name='cloud-upload'
-                size={24}
-                color={globalStyles.color.light}
-              />
-              <Text style={styles.uploadButtonText}>Upload</Text>
-            </View>
-          </TouchableHighlight>
-        )}
+          (imageCount === 0 && !startUploadImage)) &&
+          imageCount < selectionLimit && (
+            <TouchableHighlight
+              onPress={pickImage}
+              style={styles.uploadButton}
+              underlayColor={globalStyles.color.secondary}
+            >
+              <View style={styles.uploadButtonWrapper}>
+                <FontAwesome
+                  name='cloud-upload'
+                  size={24}
+                  color={globalStyles.color.light}
+                />
+                <Text style={styles.uploadButtonText}>Upload</Text>
+              </View>
+            </TouchableHighlight>
+          )}
       </View>
     </View>
   );

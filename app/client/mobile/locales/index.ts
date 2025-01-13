@@ -10,6 +10,12 @@ import settingModalEn from "../locales/en/menu/settingModal.json";
 import settingModalVi from "../locales/vi/menu/settingModal.json";
 import createRecipeEn from "../locales/en/createRecipe.json";
 import createRecipeVi from "../locales/vi/createRecipe.json";
+import searchEn from "../locales/en/search.json";
+import searchVi from "../locales/vi/search.json";
+import componentEn from "../locales/en/component.json";
+import componentVi from "../locales/vi/component.json";
+import recipeDetailEn from "../locales/en/recipeDetail.json";
+import recipeDetailVi from "../locales/vi/recipeDetail.json";
 
 export default {
   communityEn,
@@ -23,5 +29,11 @@ export default {
   settingModalEn,
   settingModalVi,
   createRecipeEn,
-  createRecipeVi
+  createRecipeVi,
+  searchEn,
+  searchVi,
+  componentEn,
+  componentVi,
+  recipeDetailEn,
+  recipeDetailVi
 };
