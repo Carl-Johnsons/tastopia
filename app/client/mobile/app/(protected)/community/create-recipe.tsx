@@ -20,11 +20,15 @@ import {
   Text,
   TouchableWithoutFeedback,
   View,
-  SafeAreaView
+  SafeAreaView,
+  Alert,
+  ActivityIndicator
 } from "react-native";
 import DraggableIngredient from "@/components/screen/community/DraggableIngredient";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { protectedAxiosInstance } from "@/constants/host";
+import { useCreateRecipe } from "@/api/recipe";
+import { globalStyles } from "@/components/common/GlobalStyles";
 
 type renderIngredientItemProps = CreateIngredientType & {
   setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
@@ -32,6 +36,7 @@ type renderIngredientItemProps = CreateIngredientType & {
 
 const CreateRecipe = () => {
   const { t } = useTranslation("createRecipe");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [images, setImages] = useState<ImageFileType[]>([]);
   const [ingredients, setIngredients] = useState<CreateIngredientType[]>([
     { key: uuid.v4(), value: "" }
@@ -55,18 +60,33 @@ const CreateRecipe = () => {
     }
   });
 
+  // const { mutate: createRecipe, isLoading } = useCreateRecipe();
   const {
     control: formControl,
     formState: { errors },
     handleSubmit,
-    resetField,
-    getValues,
-    setValue,
-    setError,
-    watch
+    getValues
   } = formCreateRecipe;
-
   const onSubmit: SubmitHandler<FormCreateRecipeType> = async formData => {
+    const isInputIngredient = ingredients.some(ingredient => ingredient.value !== "");
+    const isInputSteps = steps.some(step => step.content !== "");
+
+    if (images.length < 1) {
+      Alert.alert(t("validation.image"));
+      return;
+    }
+
+    if (!isInputIngredient) {
+      Alert.alert(t("validation.ingredient"));
+      return;
+    }
+
+    if (!isInputSteps) {
+      Alert.alert(t("validation.step"));
+      return;
+    }
+
+    setIsLoading(true);
     const data = new FormData();
 
     data.append("title", formData.title);
@@ -84,7 +104,6 @@ const CreateRecipe = () => {
     ingredients.forEach((ingredient, index) => {
       data.append(`ingredients[${index}]`, ingredient.value);
     });
-
     steps.forEach((step, index) => {
       data.append(`steps[${index}].ordinalNumber`, String(index + 1));
       data.append(`steps[${index}].content`, step.content);
@@ -118,21 +137,64 @@ const CreateRecipe = () => {
           }
         }
       );
-
-      console.log("Response:", response);
+      // createRecipe(
+      //   {
+      //     data
+      //   },
+      //   {
+      //     onSuccess: response => {
+      //       console.log("data", response);
+      //     },
+      //     onError: error => {
+      //       console.error("Failed to create recipe:", error);
+      //       Alert.alert("Fail to create recipe");
+      //     }
+      //   }
+      // );
+      Alert.alert("Create recipe successfully!");
+      router.back();
     } catch (error) {
       console.error("Error submitting recipe:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    if (
+      getValues("cookTime") ||
+      getValues("description") ||
+      getValues("serves") ||
+      getValues("title") ||
+      images.length > 0 ||
+      steps.length > 0 ||
+      ingredients.length > 0
+    ) {
+      Alert.alert(t("confirmModal.title"), t("confirmModal.description"), [
+        {
+          text: t("confirmModal.cancel"),
+          style: "cancel"
+        },
+        {
+          text: t("confirmModal.ok"),
+          onPress: () => {
+            router.back();
+          }
+        }
+      ]);
+    } else {
+      router.back();
     }
   };
 
   return (
     <SafeAreaView>
-      <View className={`bg-white_black bg-red size-full flex-col`}>
+      <View className={`bg-white_black size-full flex-col`}>
         <View
           style={{ marginTop: StatusBar.currentHeight }}
           className='flex-between mb-4 h-[60px] flex-row border-b-[0.6px] border-gray-400 px-6'
         >
-          <TouchableWithoutFeedback onPress={() => router.back()}>
+          <TouchableWithoutFeedback onPress={handleCancel}>
             <View className=''>
               <AntDesign
                 name='close'
@@ -148,15 +210,36 @@ const CreateRecipe = () => {
             </Text>
           </View>
 
-          <TouchableWithoutFeedback onPress={handleSubmit(onSubmit)}>
+          <TouchableWithoutFeedback
+            onPress={handleSubmit(onSubmit)}
+            disabled={isLoading}
+          >
             <View className='items-center'>
-              <Text className='paragraph-medium text-primary'>{t("screens.action")}</Text>
+              {isLoading ? (
+                <ActivityIndicator
+                  size={"small"}
+                  color={globalStyles.color.primary}
+                />
+              ) : (
+                <Text className='paragraph-medium text-primary'>
+                  {t("screens.action")}
+                </Text>
+              )}
             </View>
           </TouchableWithoutFeedback>
         </View>
 
         {/* Form */}
-        <View className='flex-1 px-6'>
+        <View className='relative flex-1 px-6'>
+          {isLoading && (
+            <View className='flex-center absolute left-6 z-10 size-full bg-transparent'>
+              <ActivityIndicator
+                size={"large"}
+                color={globalStyles.color.primary}
+              />
+            </View>
+          )}
+
           <CreateRecipeDraggable
             ingredients={ingredients}
             setIngredients={setIngredients}

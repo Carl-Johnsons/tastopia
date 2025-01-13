@@ -7,7 +7,7 @@ import Header from "@/components/screen/community/Header";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 
 const Community = () => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);

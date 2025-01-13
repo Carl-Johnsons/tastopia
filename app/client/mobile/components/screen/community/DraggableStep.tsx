@@ -41,7 +41,7 @@ const DraggableStep = ({
   const handleRemoveItem = (key: string) => {
     setSteps(prev => {
       return prev.filter(item => {
-        return item.key === key;
+        return item.key !== key;
       });
     });
   };

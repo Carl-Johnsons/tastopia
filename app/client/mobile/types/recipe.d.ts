@@ -59,3 +59,7 @@ type RecipeResponse = {
     totalPage: number;
   };
 };
+
+type CreateRecipePayloadType = {
+  data: FormData;
+};
