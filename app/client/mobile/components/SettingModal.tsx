@@ -1,4 +1,4 @@
-import { Alert, Platform, ScrollView, Switch, Text, View } from "react-native";
+import { Alert, Platform, Switch, Text, View } from "react-native";
 import Button from "./Button";
 import {
   Dispatch,
@@ -58,6 +58,7 @@ import { useTranslation } from "react-i18next";
 import { getColorSchemeValue } from "@/hooks/alternator";
 import { useColorScheme } from "nativewind";
 import useColorizer from "@/hooks/useColorizer";
+import { ScrollView } from "react-native-gesture-handler";
 
 type SettingModalProps = {
   ref: RefObject<BottomSheetMethods>;
@@ -551,9 +552,11 @@ const TermOfServices = () => {
   const { t } = useTranslation("settingModal", { keyPrefix: "termOfServices" });
 
   return (
-    <ScrollView className='h-[85vh] px-2'>
-      <Text className='font-serif text-lg text-black_white'>{t("content")}</Text>
-    </ScrollView>
+    <View className='h-[85vh] px-2'>
+      <View>
+        <Text className='text-black_white font-serif text-lg'>{t("content")}</Text>
+      </View>
+    </View>
   );
 };
 
@@ -561,9 +564,9 @@ const Privacy = () => {
   const { t } = useTranslation("settingModal", { keyPrefix: "privacy" });
 
   return (
-    <ScrollView className='h-[85vh] px-2'>
-      <Text className='font-serif text-lg text-black_white'>{t("content")}</Text>
-    </ScrollView>
+    <View className='h-[85vh] px-2'>
+      <Text className='text-black_white font-serif text-lg'>{t("content")}</Text>
+    </View>
   );
 };
 
