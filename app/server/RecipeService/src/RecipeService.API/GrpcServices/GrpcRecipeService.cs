@@ -12,13 +12,11 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
 {
     private readonly ISender _sender;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
 
-    public GrpcRecipeService(ISender sender, IMapper mapper, ILogger logger)
+    public GrpcRecipeService(ISender sender, IMapper mapper)
     {
         _sender = sender;
         _mapper = mapper;
-        _logger = logger;
     }
 
     public override async Task<GrpcListTagDTO> GetAllTags(RecipeProto.GrpcEmpty request, ServerCallContext context)
@@ -53,7 +51,6 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument, "RecipeIds and AccountId must not be null or empty."));
         }
-
         var recipeIdSet = request.RecipeIds.Select(Guid.Parse).ToHashSet();
         var accountId = Guid.Parse(request.AccountId);
 
@@ -76,14 +73,26 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
         var mapField = new MapField<string, GrpcSimpleRecipe>();
         foreach (var (key, value) in mapRecipe)
         {
-            mapField[key.ToString()] = _mapper.Map<GrpcSimpleRecipe>(value);
+            mapField[key.ToString()] = new GrpcSimpleRecipe
+            {
+                Id = value.Id.ToString(),
+                AuthorId = value.AuthorId.ToString(),
+                AuthorAvtUrl = value.AuthorAvtUrl,
+                AuthorDisplayName = value.AuthorDisplayName,
+                Title = value.Title,
+                Description = value.Description,
+                RecipeImgUrl = value.RecipeImgUrl,
+                NumberOfComment = value.NumberOfComment,
+                VoteDiff = value.VoteDiff,
+                Vote = value.Vote.ToString(),
+            };
         }
 
         var grpcResult = new GrpcMapSimpleRecipes
         {
             Recipes = { mapField }
         };
-        _logger.LogInformation(JsonConvert.SerializeObject(grpcResult, Formatting.Indented));
+        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(grpcResult,Formatting.Indented));
         return grpcResult;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Google.Protobuf.Collections;
 using TrackingService.Application.Configs.MapperConverters;
+using TrackingService.Domain.Responses;
 
 namespace TrackingService.Application.Configs;
 
