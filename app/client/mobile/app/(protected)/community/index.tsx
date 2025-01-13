@@ -15,8 +15,6 @@ const Community = () => {
   const [filterSelected, setFilterSelected] = useState<string>("All");
   const isDarkMode = useDarkMode();
 
-  console.log("is dark mode", isDarkMode);
-
   //TODO: apply loading later
   const {
     data,
