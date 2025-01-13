@@ -172,8 +172,7 @@ const CreateRecipe = () => {
     ) {
       Alert.alert(t("confirmModal.title"), t("confirmModal.description"), [
         {
-          text: t("confirmModal.cancel"),
-          style: "cancel"
+          text: t("confirmModal.cancel")
         },
         {
           text: t("confirmModal.ok"),

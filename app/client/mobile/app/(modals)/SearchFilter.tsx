@@ -97,8 +97,7 @@ const SearchFilter = () => {
     selectedTags.length > 0
       ? Alert.alert("Cancel Filter", "Your selected ingredients will be dismissed", [
           {
-            text: "Cancel",
-            style: "cancel"
+            text: "Cancel"
           },
           {
             text: "OK",

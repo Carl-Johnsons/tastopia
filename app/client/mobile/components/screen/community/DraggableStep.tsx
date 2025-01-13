@@ -53,8 +53,7 @@ const DraggableStep = ({
         t("removeIngredientAlert.description"),
         [
           {
-            text: t("removeIngredientAlert.cancel"),
-            style: "cancel"
+            text: t("removeIngredientAlert.cancel")
           },
           {
             text: t("removeIngredientAlert.delete"),
