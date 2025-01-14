@@ -1,0 +1,60 @@
+@startuml Register
+actor User
+boundary MobileUI
+participant ApiGateway
+participant IdentityService
+participant UserService
+participant Rabbitmq
+participant NotificationService
+participant EmailWorker
+participant Gmail
+database Postgresql
+
+User -> MobileUI: 1. Fill the register form and \n touch register button
+activate MobileUI
+
+MobileUI -> ApiGateway: 2. Register with email
+activate ApiGateway
+
+ApiGateway -> IdentityService: 3. Forward request
+activate IdentityService
+
+database Postgresql
+IdentityService -> Postgresql: 4. Query and insert data
+activate Postgresql
+IdentityService <-- Postgresql: 5. return response
+deactivate Postgresql
+
+IdentityService -> UserService: 6. gRPC call to create user <<gRPC>>
+activate UserService
+UserService -> Postgresql: 7. Query and insert data
+activate Postgresql
+UserService <-- Postgresql: 8. return response
+deactivate Postgresql
+IdentityService <-- UserService: 9. return success <<gRPC>>
+deactivate UserService
+
+IdentityService -> Rabbitmq: 10. Publish "UserRegisterEvent" message <<Async>>
+activate Rabbitmq
+Rabbitmq --> NotificationService: 11. Deliver "UserRegisterEvent"\n message
+deactivate Rabbitmq
+activate NotificationService
+NotificationService -> Rabbitmq: 12. Consume event and publish \n "SendEmailEvent" message <<Async>>
+deactivate NotificationService
+activate Rabbitmq
+Rabbitmq --> EmailWorker: 13. Deliver "SendEmailEvent"\n message
+deactivate Rabbitmq
+activate EmailWorker
+EmailWorker -> Gmail: 14. Send OTP email\n to specified email
+activate Gmail
+deactivate EmailWorker
+deactivate Gmail
+
+ApiGateway <-- IdentityService: 15. return success status code
+deactivate IdentityService
+MobileUI <-- ApiGateway: 16. Forward response
+deactivate ApiGateway
+User <-- MobileUI: 17. Display alert create account\n successfully and redirect user to\n community screen
+deactivate MobileUI
+
+@enduml
