@@ -1,5 +1,7 @@
 ﻿using Contract.Utilities;
 using MongoDB.Driver;
+using TrackingService.Domain.Entities;
+using TrackingService.Infrastructure.Persistence.Mockup.Data;
 
 namespace TrackingService.Infrastructure.Persistence.Mockup;
 
@@ -16,6 +18,7 @@ internal class MockupData
     public async Task SeedAllData()
     {
         await EnsureDatabaseIsReady();
+        await SeedUserViewRecipeDetails();
     }
     private async Task EnsureDatabaseIsReady()
     {
@@ -26,12 +29,37 @@ internal class MockupData
         var databaseList = await client.ListDatabasesAsync();
         var databases = await databaseList.ToListAsync();
 
-        Console.WriteLine("====================================================");
-        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(databases));
-
         if (!databases.Any(d => d["name"] == db))
         {
             Console.WriteLine($"Database '{db}' does not exist. It will be created when data is inserted.");
+        }
+    }
+
+    private async Task SeedUserViewRecipeDetails()
+    {
+        if (!_context.UserViewRecipeDetails.Any())
+        {
+            Console.WriteLine("Begin seed user view recipe detail");
+            Console.WriteLine("===================================================================================");
+            foreach(var accountId in UserViewRecipeDetailData.Accounts)
+            {
+                foreach(var recipeId in UserViewRecipeDetailData.Recipes)
+                {
+                    var time = UserViewRecipeDetailData.GetRandomDateTime();
+                    var view = new UserViewRecipeDetail
+                    {
+                        Id = Guid.NewGuid(),
+                        AccountId = accountId,
+                        RecipeId = recipeId,
+                        CreatedAt = time,
+                        UpdatedAt = time,
+                    };
+                    _context.UserViewRecipeDetails.Add(view);
+                }
+            }
+            _context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Never;
+            await _context.SaveChangesAsync();
+            Console.WriteLine("===================================================================================");
         }
     }
 }

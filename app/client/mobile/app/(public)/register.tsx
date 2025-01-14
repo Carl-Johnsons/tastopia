@@ -14,6 +14,8 @@ import {
 import { useDispatch } from "react-redux";
 import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
 import { getIdentifierType } from "@/utils/checker";
+import useSyncSetting from "@/hooks/user/useSyncSetting";
+import useSyncUser from "@/hooks/user/useSyncUser";
 
 const Register = () => {
   const isAndroid = Platform.OS === "android";
@@ -23,6 +25,8 @@ const Register = () => {
   const verifyIdentifier = selectVerifyIdentifier();
   const currentRouteName = usePathname();
   const { mutateAsync: register, isLoading: isSubmitting } = useRegister();
+  const { upload: uploadSettings } = useSyncSetting();
+  const { fetch: fetchUser } = useSyncUser();
 
   useEffect(() => {
     if (isVerifyingAccount && currentRouteName === "/register") {
@@ -48,7 +52,7 @@ const Register = () => {
     register(
       { data, type: registerType },
       {
-        onSuccess: res => {
+        onSuccess: async res => {
           dispatch(
             saveAuthData({
               accessToken: res.access_token,
@@ -57,6 +61,9 @@ const Register = () => {
               verifyIdentifier: data.identifier
             })
           );
+
+          await uploadSettings();
+          await fetchUser();
 
           const route = "/verify";
           router.push(route);

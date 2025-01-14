@@ -10,7 +10,9 @@ import {
   useVerify,
   useResendVerifyCode,
   useGetUserDetails,
-  useGetUserSettings
+  useGetUserSettings,
+  IDENTIFIER_TYPE,
+  VerifyParams
 } from "@/api/user";
 import VerifyForm from "@/components/VerifyForm";
 import CircleBg from "@/components/CircleBg";

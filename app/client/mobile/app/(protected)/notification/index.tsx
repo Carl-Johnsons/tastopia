@@ -1,18 +1,19 @@
-import { Button } from "@rneui/base";
-import { useCallback, useRef } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { colors } from "@/constants/colors";
+import useColorizer from "@/hooks/useColorizer";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  BottomSheetModal,
-  BottomSheetView,
-  BottomSheetModalProvider
-} from "@gorhom/bottom-sheet";
 
 const Notification = () => {
+  const {c} = useColorizer();
+  const {black, white} = colors;
+
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{
+      backgroundColor: c(white.DEFAULT, black[100]),
+      height: "100%"
+    }}>
       <View>
-        <Text>Notification</Text>
+        <Text className="text-black_white">Notification</Text>
       </View>
     </SafeAreaView>
   );
@@ -20,15 +21,3 @@ const Notification = () => {
 
 export default Notification;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    justifyContent: "center",
-    backgroundColor: "grey"
-  },
-  contentContainer: {
-    flex: 1,
-    alignItems: "center"
-  }
-});

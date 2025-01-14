@@ -1,10 +1,14 @@
 ﻿using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MongoDB.Driver;
+using TrackingService.Domain.Entities;
 
 namespace TrackingService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
+    public DbSet<UserViewRecipeDetail> UserViewRecipeDetails { get; set; }
+
     public DbContext Instance => this;
     public ApplicationDbContext()
     {
@@ -51,5 +55,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             }
         }
 
+    }
+    public IMongoDatabase GetDatabase()
+    {
+        EnvUtility.LoadEnvFile();
+
+        var db = DotNetEnv.Env.GetString("DB", "TrackingDB").Trim();
+        var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
+        var client = new MongoClient(mongoConnectionString);
+        return client.GetDatabase(db);
     }
 }

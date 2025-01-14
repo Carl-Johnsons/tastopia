@@ -25,6 +25,6 @@ export const getColorSchemeValue = <L, D>(
  * @returns The value based on the operating system, either `iosValue` or
  *     `androidValue`.
  */
-export const getOsValue = <I, A>(iosValue: I, androidValue: A): I | A => {
-  return Platform.OS === "ios" ? iosValue : androidValue;
+export const o = <I, A>(iosValue: I, androidValue: A): I | A => {
+  return Platform.OS === "android" ? androidValue : iosValue;
 };
