@@ -84,11 +84,19 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 flexDirection: "row"
               }}
             >
-              <AntDesign
-                name='like2'
-                size={16}
-                color={upvoted ? globalStyles.color.primary : globalStyles.color.dark}
-              />
+              {upvoted ? (
+                <AntDesign
+                  name='like1'
+                  size={16}
+                  color={upvoted ? globalStyles.color.primary : globalStyles.color.dark}
+                />
+              ) : (
+                <AntDesign
+                  name='like2'
+                  size={16}
+                  color={upvoted ? globalStyles.color.primary : globalStyles.color.dark}
+                />
+              )}
             </Animated.View>
             <Text
               className={`color-black_white mx-2 text-center`}
@@ -114,11 +122,19 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 flexDirection: "row"
               }}
             >
-              <AntDesign
-                name='dislike2'
-                size={16}
-                color={downvoted ? globalStyles.color.primary : globalStyles.color.dark}
-              />
+              {downvoted ? (
+                <AntDesign
+                  name='dislike1'
+                  size={16}
+                  color={downvoted ? globalStyles.color.primary : globalStyles.color.dark}
+                />
+              ) : (
+                <AntDesign
+                  name='dislike2'
+                  size={16}
+                  color={downvoted ? globalStyles.color.primary : globalStyles.color.dark}
+                />
+              )}
             </Animated.View>
           </View>
         </Pressable>
