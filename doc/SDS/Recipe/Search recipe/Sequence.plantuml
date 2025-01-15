@@ -1,0 +1,54 @@
+@startuml SearchRecipe
+actor User
+boundary MobileUI
+participant ApiGateway
+participant RecipeService
+participant UserService
+participant Rabbitmq
+participant TrackingService
+database MongoDB
+database Postgresql
+
+
+User -> MobileUI: 1. Enter keyword and tags \n in search recipe screen
+activate MobileUI
+
+MobileUI -> ApiGateway: 2. Search recipe
+activate ApiGateway
+
+ApiGateway -> RecipeService: 3. Forward request
+activate RecipeService
+
+RecipeService -> Rabbitmq: 4. Publish "UserSearchRecipeEvent" \n message <<Async>>
+activate Rabbitmq
+Rabbitmq --> TrackingService: 5. Deliver "UserSearchRecipeEvent"\n message
+deactivate Rabbitmq
+activate TrackingService
+TrackingService --> MongoDB: 6. Consume event and \n add user keyword to DB
+activate MongoDB
+MongoDB --> TrackingService: 7. Return response
+deactivate MongoDB
+deactivate TrackingService
+
+RecipeService -> MongoDB: 8. Query data
+activate MongoDB
+RecipeService <-- MongoDB: 9. return response
+deactivate MongoDB
+
+RecipeService -> UserService: 10. gRPC call to get user's \n information list <<gRPC>>
+activate UserService
+UserService -> Postgresql: 11. Query data
+activate Postgresql
+UserService <-- Postgresql: 12. return response
+deactivate Postgresql
+RecipeService <-- UserService: 13. return user's information list <<gRPC>>
+deactivate UserService
+
+ApiGateway <-- RecipeService: 14. return recipe feeds list
+deactivate RecipeService
+MobileUI <-- ApiGateway: 15. Forward response
+deactivate ApiGateway
+User <-- MobileUI: 16. Display recipe feeds list
+deactivate MobileUI
+
+@enduml

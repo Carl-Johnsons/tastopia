@@ -1,0 +1,30 @@
+@startuml VoteRecipe
+actor User
+boundary MobileUI
+participant ApiGateway
+participant RecipeService
+database MongoDB
+
+User -> MobileUI: 1. Touch on upvote or downvote icon \n in a recipe feed or recipe detail screen
+activate MobileUI
+
+MobileUI -> ApiGateway: 2. Vote recipe
+activate ApiGateway
+
+ApiGateway -> RecipeService: 3. Forward request
+activate RecipeService
+
+database MongoDB
+RecipeService -> MongoDB: 4. Query and insert data
+activate MongoDB
+RecipeService <-- MongoDB: 5. return response
+deactivate MongoDB
+
+ApiGateway <-- RecipeService: 10. return recipe vote
+deactivate RecipeService
+MobileUI <-- ApiGateway: 11. Forward response
+deactivate ApiGateway
+User <-- MobileUI: 12. Display recipe vote
+deactivate MobileUI
+
+@enduml

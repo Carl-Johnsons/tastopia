@@ -1,0 +1,64 @@
+@startuml GetRecipeDetail
+actor User
+boundary MobileUI
+participant ApiGateway
+participant RecipeService
+participant UserService
+participant Rabbitmq
+participant TrackingService
+database MongoDB
+database Postgresql
+
+
+User -> MobileUI: 1. Touch a recipe feed
+activate MobileUI
+
+MobileUI -> ApiGateway: 2. Get recipe detail
+activate ApiGateway
+
+ApiGateway -> RecipeService: 3. Forward request
+activate RecipeService
+
+
+
+RecipeService -> MongoDB: 8. Query data
+activate MongoDB
+RecipeService <-- MongoDB: 9. return response
+deactivate MongoDB
+
+alt Recipe is not existed
+    ApiGateway <-- RecipeService: . Return not found error
+    MobileUI <-- ApiGateway: . Return not found error
+    User <-- ApiGateway: . Display not found error
+else Recipe is existed
+
+    RecipeService -> Rabbitmq: 4. Publish "UserViewRecipeDetailEvent" \n message <<Async>>
+    activate Rabbitmq
+    Rabbitmq --> TrackingService: 5. Deliver "UserViewRecipeDetailEvent"\n message
+    deactivate Rabbitmq
+    activate TrackingService
+    TrackingService --> MongoDB: 6. Consume event and \n add user's view to DB
+    activate MongoDB
+    MongoDB --> TrackingService: 7. Return response
+    deactivate MongoDB
+    deactivate TrackingService
+
+    RecipeService -> UserService: 10. gRPC call to get user's \n information <<gRPC>>
+    activate UserService
+    UserService -> Postgresql: 11. Query data
+    activate Postgresql
+    UserService <-- Postgresql: 12. return response
+    deactivate Postgresql
+    RecipeService <-- UserService: 13. return user's information <<gRPC>>
+    deactivate UserService
+
+    ApiGateway <-- RecipeService: 14. return recipe detail
+    deactivate RecipeService
+    MobileUI <-- ApiGateway: 15. Forward response
+    deactivate ApiGateway
+    User <-- MobileUI: 16. Display recipe detail
+    deactivate MobileUI
+end alt
+
+
+@enduml

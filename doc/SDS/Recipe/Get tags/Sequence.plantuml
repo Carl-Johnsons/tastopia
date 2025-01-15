@@ -1,0 +1,30 @@
+@startuml GetTag
+actor User
+boundary MobileUI
+participant ApiGateway
+participant RecipeService
+database MongoDB
+
+User -> MobileUI: 1. Enter recipe community \n or search recipe srceen
+activate MobileUI
+
+MobileUI -> ApiGateway: 2. Get recipe tags
+activate ApiGateway
+
+ApiGateway -> RecipeService: 3. Forward request
+activate RecipeService
+
+database MongoDB
+RecipeService -> MongoDB: 4. Query data
+activate MongoDB
+RecipeService <-- MongoDB: 5. return response
+deactivate MongoDB
+
+ApiGateway <-- RecipeService: 6. return recipe tags list
+deactivate RecipeService
+MobileUI <-- ApiGateway: 7. Forward response
+deactivate ApiGateway
+User <-- MobileUI: 8. Display recipe tags list
+deactivate MobileUI
+
+@enduml

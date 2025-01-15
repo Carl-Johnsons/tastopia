@@ -1,0 +1,47 @@
+@startuml GetFeeds
+actor User
+boundary MobileUI
+participant ApiGateway
+participant RecipeService
+participant UserService
+database Postgresql
+database MongoDB
+
+User -> MobileUI: 1. Select recipe tag
+activate MobileUI
+
+MobileUI -> ApiGateway: 2. Get recipe feeds
+activate ApiGateway
+
+ApiGateway -> RecipeService: 3. Forward request
+activate RecipeService
+
+database MongoDB
+RecipeService -> MongoDB: 4. Query data
+activate MongoDB
+RecipeService <-- MongoDB: 5. return response
+deactivate MongoDB
+
+alt Recipe list is empty
+    ApiGateway <-- RecipeService: . Return empty list
+    MobileUI <-- ApiGateway: . Return empty list
+    User <-- MobileUI: . Display empty list
+else Recipe list is not empty
+    RecipeService -> UserService: 6. gRPC call to get user's \n information list <<gRPC>>
+    activate UserService
+    UserService -> Postgresql: 7. Query data
+    activate Postgresql
+    UserService <-- Postgresql: 8. return response
+    deactivate Postgresql
+    RecipeService <-- UserService: 9. return user's information list <<gRPC>>
+    deactivate UserService
+
+    ApiGateway <-- RecipeService: 10. return recipe feeds list
+    deactivate RecipeService
+    MobileUI <-- ApiGateway: 11. Forward response
+    deactivate ApiGateway
+    User <-- MobileUI: 12. Display recipe feeds list
+    deactivate MobileUI
+end alt
+
+@enduml

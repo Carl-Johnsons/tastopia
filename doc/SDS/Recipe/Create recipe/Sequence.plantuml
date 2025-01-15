@@ -1,0 +1,119 @@
+@startuml CreateRecipe
+actor User
+boundary MobileUI
+participant ApiGateway
+participant RecipeService
+participant Rabbitmq
+participant UploadFileService
+participant Cloudinary
+participant RecipeWorker
+participant GerminiAPI
+database MongoDB
+
+User -> MobileUI: . Fill the create recipe form and \n touch Create button
+activate MobileUI
+
+MobileUI -> ApiGateway: . Create recipe
+activate ApiGateway
+
+ApiGateway -> RecipeService: . Forward request
+activate RecipeService
+
+RecipeService -> UploadFileService: . gRPC call to upload recipe's images <<gRPC>>
+activate UploadFileService
+UploadFileService -> Cloudinary: . Upload image to cloudinary
+activate Cloudinary
+UploadFileService <-- Cloudinary: . return response
+
+alt Upload to cloudinary fail
+    deactivate Cloudinary
+    RecipeService <-- UploadFileService: Return upload image fail error
+    ApiGateway <-- RecipeService: Return upload image fail error
+    MobileUI <-- ApiGateway: Return upload image fail error
+    User <-- MobileUI: Display upload image fail error
+else Upload to cloudinary success 
+    RecipeService <-- UploadFileService: . return recipe's image urls list <<gRPC>>
+    deactivate UploadFileService
+    RecipeService --> MongoDB: . Insert data
+    activate MongoDB
+    RecipeService <-- MongoDB: . Return response
+    deactivate MongoDB
+    alt Add recipe to database fail
+        RecipeService --> RecipeService: Roll back images
+        activate RecipeService
+        RecipeService --> Rabbitmq: . Publish "DeleteMultipleImageEvent" \n message <<Async>>
+        activate Rabbitmq
+        Rabbitmq --> UploadFileService: . Deliver "DeleteMultipleImageEvent"\n message
+        deactivate Rabbitmq
+        activate UploadFileService
+        UploadFileService --> Cloudinary: . Consume message and call \n cloudinary to delete images
+        activate Cloudinary
+        UploadFileService <-- Cloudinary: . Return response
+        deactivate Cloudinary
+        deactivate UploadFileService
+        deactivate RecipeService
+        ApiGateway <-- RecipeService: . Return add recipe fail error
+        MobileUI <-- ApiGateway: . Return add recipe fail error
+        User <-- MobileUI: . Display add recipe fail error.
+    else Add recipe to database success
+        ApiGateway <-- RecipeService: . Retrun add recipe success
+        MobileUI <-- ApiGateway: . Retrun add recipe success
+        User <-- MobileUI: . Display add recipe success
+        deactivate MobileUI
+        deactivate ApiGateway
+
+        RecipeService --> Rabbitmq: . Publish "ValidateRecipeEvent" \n message <<Async>>
+        activate Rabbitmq
+        Rabbitmq --> RecipeWorker: . Deliver "ValidateRecipeEvent"\n message
+        deactivate Rabbitmq
+        activate RecipeWorker
+        RecipeWorker --> RecipeWorker: . Consume message and call \n CheckRecipeAbuse function
+        activate RecipeWorker
+        RecipeWorker --> GerminiAPI: . Call API to check abuse
+        activate GerminiAPI
+        RecipeWorker <-- GerminiAPI: . Return response
+        deactivate GerminiAPI
+
+        opt recipe has abusive word
+            RecipeWorker --> Rabbitmq: Publish "AbusiveRecipeEvent" \n message <<Async>>
+            activate Rabbitmq
+            Rabbitmq --> RecipeService: . Deliver "AbusiveRecipeEvent"\n message
+            deactivate Rabbitmq
+            RecipeService --> MongoDB: . Consume message and update data
+            activate MongoDB
+            RecipeService <-- MongoDB: . Return response
+            deactivate MongoDB
+        end opt
+        deactivate RecipeWorker
+
+        RecipeWorker --> RecipeWorker: . Call CheckRecipeTags function
+        activate RecipeWorker
+        RecipeWorker --> RecipeService: . gRPC call to get tags <<gRPC>>
+        RecipeWorker <-- RecipeService: . Return tags list
+        opt recipe has tags existed in database
+            RecipeWorker --> Rabbitmq: . Publish "AddTagToRecipeEvent" \n message <<Async>>
+            activate Rabbitmq
+            Rabbitmq --> RecipeService: . Deliver "AddTagToRecipeEvent"\n message
+            deactivate Rabbitmq
+            RecipeService --> MongoDB: . Consume message and update data
+            activate MongoDB
+            RecipeService <-- MongoDB: . Return response
+            deactivate MongoDB
+        end opt
+
+        opt recipe has tags not existed in database
+        RecipeWorker --> Rabbitmq: . Publish "RequestAddTagEvent" \n message <<Async>>
+            activate Rabbitmq
+            Rabbitmq --> RecipeService: . Deliver "RequestAddTagEvent"\n message
+            deactivate Rabbitmq
+            RecipeService --> MongoDB: . Consume message and insert data
+            activate MongoDB
+            RecipeService <-- MongoDB: . Return response
+            deactivate MongoDB
+        end opt
+        deactivate RecipeWorker
+        deactivate RecipeWorker
+    end alt
+end alt
+
+@enduml
