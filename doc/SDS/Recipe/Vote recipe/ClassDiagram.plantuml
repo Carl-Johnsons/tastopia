@@ -1,0 +1,216 @@
+@startuml VoteRecipe
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +VoteRecipe([FromBody] VoteRecipeDTO voteRecipeDTO): async Task<IActionResult>
+}
+
+class VoteRecipeCommand {
+    +IsUpvote: bool
+    +AccountId: Guid
+    +RecipeId: Guid
+}
+
+class VoteRecipeCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +Handle(VoteRecipeCommand request, CancellationToken cancellationToken): async Task<Result> 
+}
+
+interface IApplicationDbContext {
+    +Recipes: DbSet<Recipe>
+    +Tags: DbSet<Tag>
+    +RecipeTags: DbSet<RecipeTag>
+    +UserBookmarkRecipes: DbSet<UserBookmarkRecipe>
+    +UserReportRecipes: DbSet<UserReportRecipe>
+    +UserReportComments: DbSet<UserReportComment>
+}
+
+class ApplicationDbContext {
+    +Recipes: DbSet<Recipe>
+    +Tags: DbSet<Tag>
+    +RecipeTags: DbSet<RecipeTag>
+    +UserBookmarkRecipes: DbSet<UserBookmarkRecipe>
+    +UserReportRecipes: DbSet<UserReportRecipe>
+    +UserReportComments: DbSet<UserReportComment>
+    #OnConfiguring(DbContextOptionsBuilder optionsBuilder): void
+    #OnModelCreating(ModelBuilder modelBuilder): void
+}
+
+class Result {
+    +bool IsFailure
+    +bool IsSuccess
+    +IEnumerable<Error> Errors
+    #Result(bool isSuccess, IEnumerable<Error> errors)
+    #Result(bool isSuccess, Error error)
+    +ThrowIfFailure(): void
+    {static} +Success(): Result
+    {static} +Failure(Error err): Result
+    {static} +Failure(IEnumerable<Error> errs): Result
+}
+
+class "Result<T>" {
+    +T Value
+    {static} +Success(T value): Result<T>
+    {static} +Failure(Error error): Result<T?>
+    {static} +Failure(IEnumerable<Error> errs): Result<T?>
+}
+
+class Error {
+    {static} +None: Error
+    {static} +implicit operator Result(Error err): Result
+}
+
+class VoteRecipeDTO{
+    +IsUpvote: bool
+    +AccountId: Guid
+    +RecipeId: Guid
+}
+
+interface IUnitOfWork {
+    Task SaveChangeAsync(CancellationToken cancellationToken = default)
+}
+
+class UnitOfWork {
+    -_context: ApplicationDbContext
+    +Task SaveChangeAsync(CancellationToken cancellationToken = default)
+}
+
+class RecipeCommentResponse{
+    +Id: Guid
+    +AccountId: Guid
+    +DisplayName: string
+    +Content: string
+    +AvatarUrl: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+    +IsActive: bool
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+
+class BaseMongoDBEntity {
+    +Guid Id
+}
+
+class BaseMongoDBAuditableEntity{
+    +DateTime CreatedAt
+    +DateTime UpdatedAt
+}
+
+class Recipe {
+    +AuthorId: Guid
+    +Title: string
+    +Description: string
+    +ImageUrl: string
+    +Ingredients: List<string>
+    +CookTime: string?
+    +Serves: int?
+    +VoteDiff: int
+    +NumberOfComment: int
+    +IsActive: bool
+    +TotalView: int
+    +Steps: List<Step>
+    +Comments: List<Comment>
+    +RecipeVotes: List<RecipeVote>
+}
+
+class Step{
+    +OrdinalNumber: int
+    +Content: string
+    +AttachedImageUrls: List<string>?
+}
+
+class Comment{
+    Content: string
+    AccountId: Guid
+    IsActive: bool
+}
+
+class RecipeVote{
+    AccountId: Guid
+    IsUpvote: bool
+}
+
+class Tag{
+    +Value: string
+    +Code: string
+    +Category: enum
+    +Status: enum
+    +ImageUrl: string
+}
+
+class RecipeTag{
+    +RecipeId: Guid
+    +TagId: Guid
+}
+
+class UserBookmarkRecipe{
+    +AccountId: Guid
+    +RecipeId: Guid
+}
+
+class UserReportRecipe{
+    +AccountId: Guid
+    +RecipeId: Guid
+    +Reason: string
+    +Status: enum
+}
+
+class UserReportComment{
+    +AccountId: Guid
+    +CommentId: Guid
+    +Reason: string
+    +Status: enum
+}
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" VoteRecipeDTO
+RecipeController "1"--"1" VoteRecipeCommand
+
+VoteRecipeCommandHandler "1"--"1" VoteRecipeCommand
+VoteRecipeCommandHandler "1"--"1" Result
+VoteRecipeCommandHandler "1" o-- "1" IUnitOfWork
+VoteRecipeCommandHandler "1" o-- "1" IApplicationDbContext
+VoteRecipeCommandHandler "1"--"1" RecipeError
+
+IUnitOfWork <|.. UnitOfWork
+IApplicationDbContext <|.. ApplicationDbContext
+
+Result "1" --"1..*" Error
+Result <|-- "Result<T>"
+Error "1" --"1..*" RecipeError
+
+ApplicationDbContext "1" o--"1..*" Recipe
+ApplicationDbContext "1" o--"1..*" Tag
+ApplicationDbContext "1" o--"1..*" RecipeTag
+ApplicationDbContext "1" o--"1..*" UserBookmarkRecipe
+ApplicationDbContext "1" o--"1..*" UserReportComment
+ApplicationDbContext "1" o--"1..*" UserReportRecipe
+
+Recipe --|> BaseMongoDBAuditableEntity
+Step --|> BaseMongoDBAuditableEntity
+Comment --|> BaseMongoDBAuditableEntity
+RecipeVote --|> BaseMongoDBEntity
+Tag --|> BaseMongoDBAuditableEntity
+RecipeTag --|> BaseMongoDBAuditableEntity
+UserBookmarkRecipe --|> BaseMongoDBAuditableEntity
+UserReportRecipe --|> BaseMongoDBAuditableEntity
+UserReportComment --|> BaseMongoDBAuditableEntity
+
+Recipe *--"1.." Step
+Recipe *--"1.." Comment
+Recipe *--"1.." RecipeVote
+
+BaseMongoDBAuditableEntity --|> BaseMongoDBEntity
+@enduml
