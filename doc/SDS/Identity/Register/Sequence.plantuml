@@ -1,15 +1,15 @@
 @startuml Register
 actor User
 boundary MobileUI
-participant ApiGateway
-participant IdentityService
-participant UserService
-participant Rabbitmq
-participant NotificationService
-participant EmailWorker
-participant Gmail
-database Postgresql
+participant "<<coordinator>>\nApiGateWay" as ApiGateway
+participant "<<service>>\nIdentityService" as IdentityService
+participant "<<service>>\nUserService"  as UserService
+participant "<<coordinator>>\nRabbitmq"  as Rabbitmq
+participant "<<service>>\nNotificationService" as NotificationService
+participant "<<service>>\nEmailWorker" as EmailWorker
+participant "<<service>>\nGmail" as Gmail
 
+database Postgresql
 User -> MobileUI: 1. Fill the register form and \n touch register button
 activate MobileUI
 
