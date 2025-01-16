@@ -1,0 +1,41 @@
+@startuml GetCurrentUserDetail
+title "Get current user detail"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n UserService" as UserService
+participant "<<service>>\n IdentityService" as IdentityService
+database Postgresql
+
+User -> MobileUI ++: 1. Enter user detail screen
+MobileUI -> ApiGateway ++: 2. Get current user detail
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> UserService ++: 4. Forward request
+UserService -> Postgresql ++: 5. Query data
+UserService <-- Postgresql--: 6. Return response
+
+UserService -> IdentityService++: 7. gRPC call to get user's account \n information <<gRPC>>
+IdentityService -> Postgresql ++: 8. Query data
+IdentityService <-- Postgresql --: 9. Return response
+UserService <-- IdentityService--: 10. Return account \n information <<gRPC>>
+
+ApiGateway <-- UserService--: 11. Return user detail
+MobileUI <-- ApiGateway--: 12. Forward response
+User <-- MobileUI--: 13. Display user detail
+
+@enduml

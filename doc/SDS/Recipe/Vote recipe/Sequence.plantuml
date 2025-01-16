@@ -1,30 +1,32 @@
 @startuml VoteRecipe
+title "Vote recipe"
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
 actor User
 boundary MobileUI
-participant ApiGateway
-participant RecipeService
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
 database MongoDB
 
-User -> MobileUI: 1. Touch on upvote or downvote icon \n in a recipe feed or recipe detail screen
-activate MobileUI
+User -> MobileUI++: 1. Touch on upvote or downvote icon \n in a recipe feed or recipe detail screen
 
-MobileUI -> ApiGateway: 2. Vote recipe
-activate ApiGateway
+MobileUI -> ApiGateway++: 2. Vote recipe
 
-ApiGateway -> RecipeService: 3. Forward request
-activate RecipeService
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> RecipeService++: 4. Forward request
 
 database MongoDB
-RecipeService -> MongoDB: 4. Query and insert data
-activate MongoDB
-RecipeService <-- MongoDB: 5. return response
-deactivate MongoDB
+RecipeService -> MongoDB++: 5. Query and insert data
+RecipeService <-- MongoDB--: 6. Return response
 
-ApiGateway <-- RecipeService: 10. return recipe vote
-deactivate RecipeService
-MobileUI <-- ApiGateway: 11. Forward response
-deactivate ApiGateway
-User <-- MobileUI: 12. Display recipe vote
-deactivate MobileUI
-
+ApiGateway <-- RecipeService--: 7. Return recipe vote
+MobileUI <-- ApiGateway--: 8. Forward response
+User <-- MobileUI--: 9. Display recipe vote
 @enduml

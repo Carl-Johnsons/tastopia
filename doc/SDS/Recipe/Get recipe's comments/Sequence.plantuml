@@ -1,41 +1,45 @@
 @startuml GetRecipeComment
+title "Get recipe comment"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
 actor User
 boundary MobileUI
-participant ApiGateway
-participant RecipeService
-participant UserService
+participant "<<cordinator>>\n ApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UserService" as UserService
 database Postgresql
 database MongoDB
 
-User -> MobileUI: 1. Enter recipe detail screen
-activate MobileUI
+User -> MobileUI++: 1. Enter recipe detail screen
 
-MobileUI -> ApiGateway: 2. Get recipe comments
-activate ApiGateway
+MobileUI -> ApiGateway++: 2. Get recipe comments
 
-ApiGateway -> RecipeService: 3. Forward request
-activate RecipeService
+ref over ApiGateway: 3. Verify access token
 
-database MongoDB
-RecipeService -> MongoDB: 4. Query data
-activate MongoDB
-RecipeService <-- MongoDB: 5. return response
-deactivate MongoDB
+ApiGateway -> RecipeService++: 4. Forward request
 
-RecipeService -> UserService: 6. gRPC call to get user's \n information list <<gRPC>>
-activate UserService
-UserService -> Postgresql: 7. Query data
-activate Postgresql
-UserService <-- Postgresql: 8. return response
-deactivate Postgresql
-RecipeService <-- UserService: 9. return user's information list <<gRPC>>
-deactivate UserService
+RecipeService -> MongoDB++: 5. Query data
+RecipeService <-- MongoDB--: 6. Return response
 
-ApiGateway <-- RecipeService: 10. return recipe comments list
-deactivate RecipeService
-MobileUI <-- ApiGateway: 11. Forward response
-deactivate ApiGateway
-User <-- MobileUI: 12. Display recipe comments list
-deactivate MobileUI
+alt Comment list is empty
+    ApiGateway <-- RecipeService: 7A. Return empty list
+    MobileUI <-- ApiGateway: 7A.1. Foward response
+    User <-- MobileUI: 7A.2. Display empty list
+else Comment list is not empty
+    RecipeService -> UserService++: 8. gRPC call to get user's \n information list <<gRPC>>
+    UserService -> Postgresql++: 9. Query data
+    UserService <-- Postgresql--: 10. Return response
+    RecipeService <-- UserService--: 11. Return user's information list <<gRPC>>
 
+    ApiGateway <-- RecipeService--: 12. Return recipe comments list
+    MobileUI <-- ApiGateway--: 13. Forward response
+    User <-- MobileUI--: 14. Display recipe comments list
+end alt
 @enduml

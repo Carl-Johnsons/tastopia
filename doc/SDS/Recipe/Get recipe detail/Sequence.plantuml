@@ -1,63 +1,56 @@
 @startuml GetRecipeDetail
+title "Get recipe detail"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
 actor User
 boundary MobileUI
-participant ApiGateway
-participant RecipeService
-participant UserService
-participant Rabbitmq
-participant TrackingService
+participant "<<cordinator>>\n ApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UserService" as UserService
+participant "<<cordinator>>\n Rabbitmq" as Rabbitmq
+participant "<<service>>\n TrackingService" as TrackingService
 database MongoDB
 database Postgresql
 
 
-User -> MobileUI: 1. Touch a recipe feed
-activate MobileUI
+User -> MobileUI++: 1. Touch a recipe feed
 
-MobileUI -> ApiGateway: 2. Get recipe detail
-activate ApiGateway
+MobileUI -> ApiGateway++: 2. Get recipe detail
 
-ApiGateway -> RecipeService: 3. Forward request
-activate RecipeService
+ref over ApiGateway: 3. Verify access token
 
+ApiGateway -> RecipeService++: 4. Forward request
 
-
-RecipeService -> MongoDB: 8. Query data
-activate MongoDB
-RecipeService <-- MongoDB: 9. return response
-deactivate MongoDB
+RecipeService -> MongoDB++: 5. Query data
+RecipeService <-- MongoDB--: 6. Return response
 
 alt Recipe is not existed
-    ApiGateway <-- RecipeService: . Return not found error
-    MobileUI <-- ApiGateway: . Return not found error
-    User <-- ApiGateway: . Display not found error
+    ApiGateway <-- RecipeService: 7A. Return not found error
+    MobileUI <-- ApiGateway: 7A.1. Foward response
+    User <-- ApiGateway: 7a.2. Display not found error
 else Recipe is existed
-
-    RecipeService -> Rabbitmq: 4. Publish "UserViewRecipeDetailEvent" \n message <<Async>>
-    activate Rabbitmq
-    Rabbitmq --> TrackingService: 5. Deliver "UserViewRecipeDetailEvent"\n message
+    RecipeService -> Rabbitmq++: 8. Publish "UserViewRecipeDetailEvent" \n message <<Async>>
+    Rabbitmq --> TrackingService++: 9. Deliver "UserViewRecipeDetailEvent"\n message
     deactivate Rabbitmq
-    activate TrackingService
-    TrackingService --> MongoDB: 6. Consume event and \n add user's view to DB
-    activate MongoDB
-    MongoDB --> TrackingService: 7. Return response
-    deactivate MongoDB
+    TrackingService -> MongoDB++: 10. Consume event and \n add user's view to DB
+    TrackingService <-- MongoDB--: 11. Return response
     deactivate TrackingService
 
-    RecipeService -> UserService: 10. gRPC call to get user's \n information <<gRPC>>
-    activate UserService
-    UserService -> Postgresql: 11. Query data
-    activate Postgresql
-    UserService <-- Postgresql: 12. return response
-    deactivate Postgresql
-    RecipeService <-- UserService: 13. return user's information <<gRPC>>
-    deactivate UserService
+    RecipeService -> UserService++: 12. gRPC call to get user's \n information <<gRPC>>
+    UserService -> Postgresql++: 13. Query data
+    UserService <-- Postgresql--: 14. return response
+    RecipeService <-- UserService--: 15. return user's information <<gRPC>>
 
-    ApiGateway <-- RecipeService: 14. return recipe detail
-    deactivate RecipeService
-    MobileUI <-- ApiGateway: 15. Forward response
-    deactivate ApiGateway
-    User <-- MobileUI: 16. Display recipe detail
-    deactivate MobileUI
+    ApiGateway <-- RecipeService--: 16. return recipe detail
+    MobileUI <-- ApiGateway--: 17. Forward response
+    User <-- MobileUI--: 18. Display recipe detail
 end alt
 
 

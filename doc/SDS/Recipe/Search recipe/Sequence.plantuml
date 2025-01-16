@@ -1,54 +1,49 @@
 @startuml SearchRecipe
+title "Search recipe"
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
 actor User
 boundary MobileUI
-participant ApiGateway
-participant RecipeService
-participant UserService
-participant Rabbitmq
-participant TrackingService
+participant "<<cordinator>>\n ApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UserService" as UserService
+participant "<<cordinator>>\n Rabbitmq" as Rabbitmq
+participant "<<service>>\n TrackingService" as TrackingService
 database MongoDB
 database Postgresql
 
+User -> MobileUI++: 1. Enter keyword and tags \n in search recipe screen
 
-User -> MobileUI: 1. Enter keyword and tags \n in search recipe screen
-activate MobileUI
+MobileUI -> ApiGateway++: 2. Search recipe
 
-MobileUI -> ApiGateway: 2. Search recipe
-activate ApiGateway
+ref over ApiGateway: 3. Verify access token
 
-ApiGateway -> RecipeService: 3. Forward request
-activate RecipeService
+ApiGateway -> RecipeService++: 4. Forward request
 
-RecipeService -> Rabbitmq: 4. Publish "UserSearchRecipeEvent" \n message <<Async>>
-activate Rabbitmq
-Rabbitmq --> TrackingService: 5. Deliver "UserSearchRecipeEvent"\n message
+RecipeService -> Rabbitmq++: 5. Publish "UserSearchRecipeEvent" \n message <<Async>>
+
+RecipeService -> MongoDB++: 6. Query data
+RecipeService <-- MongoDB--: 7. Return response
+
+Rabbitmq -> TrackingService++: 8. Deliver "UserSearchRecipeEvent"\n message
 deactivate Rabbitmq
-activate TrackingService
-TrackingService --> MongoDB: 6. Consume event and \n add user keyword to DB
-activate MongoDB
-MongoDB --> TrackingService: 7. Return response
-deactivate MongoDB
+TrackingService -> MongoDB++: 9. Consume event and \n add user keyword to DB
+TrackingService <-- MongoDB--: 10. Return response
 deactivate TrackingService
 
-RecipeService -> MongoDB: 8. Query data
-activate MongoDB
-RecipeService <-- MongoDB: 9. return response
-deactivate MongoDB
+RecipeService -> UserService++: 11. gRPC call to get user's \n information list <<gRPC>>
+UserService -> Postgresql++: 12. Query data
+UserService <-- Postgresql--: 13. Return response
+RecipeService <-- UserService--: 14. Return user's information list <<gRPC>>
 
-RecipeService -> UserService: 10. gRPC call to get user's \n information list <<gRPC>>
-activate UserService
-UserService -> Postgresql: 11. Query data
-activate Postgresql
-UserService <-- Postgresql: 12. return response
-deactivate Postgresql
-RecipeService <-- UserService: 13. return user's information list <<gRPC>>
-deactivate UserService
-
-ApiGateway <-- RecipeService: 14. return recipe feeds list
-deactivate RecipeService
-MobileUI <-- ApiGateway: 15. Forward response
-deactivate ApiGateway
-User <-- MobileUI: 16. Display recipe feeds list
-deactivate MobileUI
+ApiGateway <-- RecipeService--: 15. Return recipe feeds list
+MobileUI <-- ApiGateway--: 16. Forward response
+User <-- MobileUI--: 17. Display recipe feeds list
 
 @enduml

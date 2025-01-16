@@ -1,0 +1,53 @@
+@startuml GetUserViewRecipeDetailHistory
+title "Get user view recipe detail history"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n TrackingService" as TrackingService
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UserService" as UserService
+database Postgresql
+database MongoDB
+
+User -> MobileUI++: 1. Touch on history icon \n in user detail screen
+
+MobileUI -> ApiGateway++: 2. Get recipe feeds
+
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> TrackingService++: 4. Forward request
+
+TrackingService -> MongoDB++: 5. Query data
+TrackingService <-- MongoDB--: 6. Return response
+
+alt View list is empty
+    ApiGateway <-- TrackingService: 7A. Return empty list
+    MobileUI <-- ApiGateway: 7A.1. Foward response
+    User <-- MobileUI: 7A.2. Display empty list
+else View list is not empty
+    TrackingService -> RecipeService++: 8. gRPC call to get recipe's \n information list <<gRPC>>
+    RecipeService -> MongoDB++: 9. Query data
+    RecipeService <-- MongoDB--: 10. Return response
+
+    RecipeService -> UserService++: 11. gRPC call to get user's \n information list <<gRPC>>
+    UserService -> Postgresql++: 12. Query data
+    UserService <-- Postgresql--: 13. Return repsonse
+    RecipeService <-- UserService--: 14. Return user's \n information list <<gRPC>>
+
+    TrackingService <-- RecipeService--: 15. Return recipe's \n information list <<gRPC>>
+
+    ApiGateway <-- TrackingService--: 16. Return recipes list
+    MobileUI <-- ApiGateway--: 17. Forward response
+    User <-- MobileUI--: 18. Display recipes list
+end alt
+
+@enduml
