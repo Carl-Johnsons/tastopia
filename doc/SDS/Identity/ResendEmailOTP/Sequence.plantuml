@@ -28,20 +28,15 @@ ref over ApiGateway, IdentityService: 3. Verify Access Token
 
 ApiGateway -> IdentityService: 4. Forward request
 
-database Postgresql
 IdentityService -> Postgresql: 5. Query and insert data
 activate Postgresql
 IdentityService <-- Postgresql: 6. return response
 deactivate Postgresql
 
-
 alt if user's email is null
     ApiGateway <-- IdentityService: 7A.1. return resend OTP fail
-    deactivate IdentityService
     MobileUI <-- ApiGateway: 7A.2. Forward response
-    deactivate ApiGateway
     User <-- MobileUI: 7A.3. Display error
-    deactivate MobileUI
 else
     IdentityService -> Rabbitmq: 8. Publish "UserResendOTPEvent"\n message <<Async>>
     activate Rabbitmq
