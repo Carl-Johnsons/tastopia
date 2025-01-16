@@ -1,14 +1,6 @@
 import React, { Dispatch, ReactNode, SetStateAction, useCallback, useState } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  TouchableWithoutFeedback
-} from "react-native";
+import { Text, View, TouchableWithoutFeedback } from "react-native";
 import DraggableFlatList, {
-  NestableDraggableFlatList,
   RenderItemParams,
   ScaleDecorator
 } from "react-native-draggable-flatlist";
@@ -17,13 +9,15 @@ import { useTranslation } from "react-i18next";
 import DraggableIngredient from "./DraggableIngredient";
 import uuid from "react-native-uuid";
 import DraggableStep from "./DraggableStep";
-import AutoComplete from "react-native-autocomplete-input";
+import TagList from "./TagList";
 
 type DraggableProps = {
   ingredients: CreateIngredientType[];
   setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
   steps: CreateStepType[];
   setSteps: Dispatch<SetStateAction<CreateStepType[]>>;
+  selectedTags: SelectedTag[];
+  setSelectedTags: Dispatch<SetStateAction<SelectedTag[]>>;
   form: ReactNode;
 };
 
@@ -32,6 +26,8 @@ export default function CreateRecipeDraggable({
   setIngredients,
   steps,
   setSteps,
+  selectedTags,
+  setSelectedTags,
   form
 }: DraggableProps) {
   const { t } = useTranslation("createRecipe");
@@ -91,7 +87,7 @@ export default function CreateRecipeDraggable({
   };
 
   return (
-    <View className='flex-1 gap-4'>
+    <View className='gap-4'>
       <DraggableFlatList
         key={"draggable-flat-list-create-ingredients"}
         data={ingredients}
@@ -147,16 +143,11 @@ export default function CreateRecipeDraggable({
               </View>
 
               <View className='mt-4'>
-                {/* <Text className='body-semibold mb-2'>{t("formTitle.tag")}</Text>
-                <AutoComplete
-                  data={data}
-                  value={query}
-                  onChangeText={text => setQuery(text)}
-                  flatListProps={{
-                    keyExtractor: item => item.key,
-                    renderItem: ({ item }) => <Text>{item.value}</Text>
-                  }}
-                /> */}
+                <Text className='body-semibold mb-2'>{t("formTitle.tag")}</Text>
+                <TagList
+                  selectedTags={selectedTags}
+                  setSelectedTags={setSelectedTags}
+                />
               </View>
             </View>
           );

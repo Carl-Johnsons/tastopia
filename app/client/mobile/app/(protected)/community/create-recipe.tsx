@@ -46,6 +46,7 @@ const CreateRecipe = () => {
   const [steps, setSteps] = useState<CreateStepType[]>([
     { key: uuid.v4(), content: "", images: [] }
   ]);
+  const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
 
   const isInputIngredient = ingredients.some(ingredient => ingredient.value !== "");
   const isInputSteps = steps.some(step => step.content !== "");
@@ -119,9 +120,8 @@ const CreateRecipe = () => {
       }
     });
 
-    const tagValues = ["code 0", "code 1"];
-    tagValues.forEach((code, index) => {
-      data.append(`tagValues[${index}]`, code);
+    selectedTags.forEach((tag, index) => {
+      data.append(`tagValues[${index}]`, tag.value);
     });
 
     try {
@@ -182,6 +182,8 @@ const CreateRecipe = () => {
       router.back();
     }
   };
+
+  console.log("tag value", selectedTags);
 
   return (
     <SafeAreaView>
@@ -245,6 +247,8 @@ const CreateRecipe = () => {
               setIngredients={setIngredients}
               steps={steps}
               setSteps={setSteps}
+              selectedTags={selectedTags}
+              setSelectedTags={setSelectedTags}
               form={
                 <View>
                   <FormProvider {...formCreateRecipe}>

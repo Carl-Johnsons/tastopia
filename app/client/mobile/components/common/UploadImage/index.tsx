@@ -19,6 +19,7 @@ import styles from "./UploadImage.style";
 import { extensionToMimeType } from "@/utils/file";
 import { AntDesign } from "@expo/vector-icons";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useTranslation } from "react-i18next";
 
 type UploadImageProps = {
   /**
@@ -72,6 +73,7 @@ const UploadImage = ({
   selectionLimit = 5,
   props
 }: UploadImageProps) => {
+  const { t } = useTranslation("component");
   const [startUploadImage, setStartUploadImage] = useState(false);
   const [imageCount, setImageCount] = useState(0);
   const [fileObjects, setFileObjects] = useState<FileObject[]>([]);
@@ -217,7 +219,7 @@ const UploadImage = ({
                   size={24}
                   color={globalStyles.color.light}
                 />
-                <Text style={styles.uploadButtonText}>Upload</Text>
+                <Text style={styles.uploadButtonText}>{t("uploadImage")}</Text>
               </View>
             </TouchableHighlight>
           )}

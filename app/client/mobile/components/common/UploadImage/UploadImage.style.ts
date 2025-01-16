@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
 
   uploadButton: {
     backgroundColor: globalStyles.color.primary,
-    width: 100,
     height: 40,
     marginRight: 10,
     justifyContent: "center",
