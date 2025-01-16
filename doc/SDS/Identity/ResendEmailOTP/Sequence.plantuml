@@ -1,4 +1,6 @@
 @startuml ResendEmailOTP
+title "Resend Email OTP Sequence diagram"
+
 <style>
   sequenceDiagram {
     reference {
@@ -17,46 +19,35 @@ participant "<<service>>\nEmailWorker" as EmailWorker
 participant "<<service>>\nGmail" as Gmail
 
 database Postgresql
-User -> MobileUI: 1. Touch resend OTP button
-activate MobileUI
-
-MobileUI -> ApiGateway: 2. Request resend
-activate ApiGateway
+User -> MobileUI++: 1. Touch resend OTP button
+MobileUI -> ApiGateway++: 2. Request resend
 
 activate IdentityService
 ref over ApiGateway, IdentityService: 3. Verify Access Token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
 
-ApiGateway -> IdentityService: 4. Forward request
-
-IdentityService -> Postgresql: 5. Query and insert data
-activate Postgresql
-IdentityService <-- Postgresql: 6. return response
-deactivate Postgresql
+ApiGateway -> IdentityService++: 4. Forward request
+IdentityService -> Postgresql++: 5. Query and insert data
+IdentityService <-- Postgresql--: 6. return response
 
 alt if user's email is null
     ApiGateway <-- IdentityService: 7A.1. return resend OTP fail
     MobileUI <-- ApiGateway: 7A.2. Forward response
     User <-- MobileUI: 7A.3. Display error
 else
-    IdentityService -> Rabbitmq: 8. Publish "UserResendOTPEvent"\n message <<Async>>
-    activate Rabbitmq
+    IdentityService -> Rabbitmq++: 8. Publish "UserResendOTPEvent"\n message <<Async>>
 
-    ApiGateway <-- IdentityService: 9. return success status code
-    deactivate IdentityService
-    MobileUI <-- ApiGateway: 10. Forward response
-    deactivate ApiGateway
-    User <-- MobileUI: 11. Display alert\n resend OTP successfully
-    deactivate MobileUI
+    ApiGateway <-- IdentityService--: 9. return success status code
+    MobileUI <-- ApiGateway--: 10. Forward response
+    User <-- MobileUI--: 11. Display alert\n resend OTP successfully
 
-    Rabbitmq --> NotificationService: 12. Deliver "UserResendOTPEvent"\n message
+    Rabbitmq --> NotificationService++: 12. Deliver "UserResendOTPEvent"\n message
     deactivate Rabbitmq
-    activate NotificationService
-    NotificationService -> Rabbitmq: 13. Consume event and publish \n "SendEmailEvent" message <<Async>>
+    NotificationService -> Rabbitmq++: 13. Consume event and publish \n "SendEmailEvent" message <<Async>>
     deactivate NotificationService
-    activate Rabbitmq
-    Rabbitmq --> EmailWorker: 14. Deliver "SendEmailEvent"\n message
+    Rabbitmq --> EmailWorker++: 14. Deliver "SendEmailEvent"\n message
     deactivate Rabbitmq
-    activate EmailWorker
     EmailWorker -> Gmail: 15. Send OTP email\n to specified email
     activate Gmail
     deactivate EmailWorker

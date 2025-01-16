@@ -1,35 +1,26 @@
 @startuml Login
+title "Login sequence diagram"
+
 actor User
 boundary MobileUI
 participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
 database Postgresql
 
-User -> MobileUI: 1. Fill the login form and \n touch login button
-activate MobileUI
-
-MobileUI -> ApiGateway: 2. Login with email\n or phone
-activate ApiGateway
-
-ApiGateway -> IdentityService: 3. Forward request
-activate IdentityService
-
-IdentityService -> Postgresql: 4. Query to check password
-activate Postgresql
-IdentityService <-- Postgresql: 5. return response
-deactivate Postgresql
+User -> MobileUI++: 1. Fill the login form and \n touch login button
+MobileUI -> ApiGateway++: 2. Login with email\n or phone
+ApiGateway -> IdentityService++: 3. Forward request
+IdentityService -> Postgresql++: 4. Query to check password
+IdentityService <-- Postgresql--: 5. return response
 
 alt if the password or email or phone not correct
     ApiGateway <-- IdentityService: 6A.1. Return login failed error
     MobileUI <-- ApiGateway: 6A.2. Forward response
     User <-- MobileUI: 6A.3. Display error
 else 
-    ApiGateway <-- IdentityService: 6. return success status code
-    deactivate IdentityService
-    MobileUI <-- ApiGateway: 7. Forward response
-    deactivate ApiGateway
-    User <-- MobileUI: 8. Return access token\n and redirect user to\n community screen
-    deactivate MobileUI
+    ApiGateway <-- IdentityService--: 6. return success status code
+    MobileUI <-- ApiGateway--: 7. Forward response
+    User <-- MobileUI--: 8. Return access token\n and redirect user to\n community screen
 end
 
 @enduml
