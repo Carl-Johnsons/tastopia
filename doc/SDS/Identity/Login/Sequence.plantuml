@@ -21,14 +21,14 @@ deactivate Postgresql
 
 alt if the password or email or phone not correct
     ApiGateway <-- IdentityService: 6A.1. Return login failed error
-    MobileUI <-- ApiGateway: Forward response
-    User <-- MobileUI: Display error
+    MobileUI <-- ApiGateway: 6A.2. Forward response
+    User <-- MobileUI: 6A.3. Display error
 else 
-    ApiGateway <-- IdentityService: 15. return success status code
+    ApiGateway <-- IdentityService: 6. return success status code
     deactivate IdentityService
-    MobileUI <-- ApiGateway: 16. Forward response
+    MobileUI <-- ApiGateway: 7. Forward response
     deactivate ApiGateway
-    User <-- MobileUI: 17. Redirect user to\n community screen
+    User <-- MobileUI: 8. Return access token\n and redirect user to\n community screen
     deactivate MobileUI
 end
 
