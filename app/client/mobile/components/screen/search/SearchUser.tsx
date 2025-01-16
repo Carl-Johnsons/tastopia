@@ -154,9 +154,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
       {/* Result section */}
       {searchValue !== "" && (
-        <View className='mt-6 pb-[200px]'>
-          <Text className='h3-bold mb-2'>{t("searchResultTitle.user")}</Text>
-
+        <View className='mt-6'>
           <FlatList
             data={searchResults}
             keyExtractor={item => item.username}
@@ -170,6 +168,10 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
             onEndReached={handleLoadMore}
             onEndReachedThreshold={0.1}
             showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 120 }}
+            ListHeaderComponent={() => {
+              return <Text className='h3-bold mb-2'>{t("searchResultTitle.user")}</Text>;
+            }}
             renderItem={({ item, index }) => (
               <>
                 <User {...item} />
