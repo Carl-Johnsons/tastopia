@@ -1,4 +1,4 @@
-@startuml Register
+@startuml Sequence
 actor User
 boundary MobileUI
 participant "<<coordinator>>\nApiGateWay" as ApiGateway
