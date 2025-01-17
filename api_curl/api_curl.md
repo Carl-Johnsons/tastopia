@@ -71,19 +71,6 @@ curl --location 'http://localhost:5000/api/recipe/comment-recipe' \
 "content" : "This recipe is absolutely delicious!"
 }'
 
-# USER
-
-**search user**
-curl --location 'http://localhost:5003/api/user/search' \
---header 'Content-Type: application/json' \
---data '{
-"keyword" : "admin",
-"skip" : 0
-}'
-
-**get current user**
-curl --location 'http://localhost:5003/api/user/get-current-user-details' \
-
 **get recipe steps**
 curl --location 'https://localhost:7000/api/recipe/get-recipe-steps' \
 --header 'Content-Type: application/json' \
@@ -104,3 +91,16 @@ curl --location 'https://localhost:7000/api/recipe/get-recipe-bookmarks' \
 --data '{
 "skip" : "0"
 }'
+
+# USER
+
+**search user**
+curl --location 'http://localhost:5003/api/user/search' \
+--header 'Content-Type: application/json' \
+--data '{
+"keyword" : "admin",
+"skip" : 0
+}'
+
+**get current user**
+curl --location 'http://localhost:5003/api/user/get-current-user-details' \
