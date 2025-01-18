@@ -24,10 +24,15 @@ import Button from "@/components/Button";
 import AddCommentSection from "@/components/common/AddCommentSection";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { useTranslation } from "react-i18next";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 const RecipeDetail = () => {
-  const { t } = useTranslation("recipeDetail");
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const router = useRouter();
+  const { t } = useTranslation("recipeDetail");
   const { id } = useLocalSearchParams<{ id: string }>();
   const {
     data: recipeDetailData,
@@ -96,10 +101,7 @@ const RecipeDetail = () => {
   }
   return (
     <SafeAreaView
-      style={{
-        backgroundColor: globalStyles.color.light,
-        height: "100%"
-      }}
+      style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
       {!isLoadingRecipeDetail && !isRefetchingRecipeDetail && recipeDetailData ? (
         <ScrollView
@@ -125,7 +127,7 @@ const RecipeDetail = () => {
                   <BackButton
                     onPress={router.back}
                     style={{
-                      backgroundColor: globalStyles.color.light,
+                      backgroundColor: c(white.DEFAULT, black[100]),
                       padding: 12,
                       borderRadius: 12,
                       shadowColor: "#000",
@@ -144,13 +146,17 @@ const RecipeDetail = () => {
 
               <View className='mt-6 gap-3'>
                 <View className='flex-between flex-row'>
-                  <Text className='h3-bold'>{recipeDetailData.recipe.title}</Text>
+                  <Text className='h3-bold text-black_white'>
+                    {recipeDetailData.recipe.title}
+                  </Text>
                   <TouchableWithoutFeedback onPress={handleTouchMenu}>
-                    <Feather
-                      name='more-horizontal'
-                      size={24}
-                      color='black'
-                    />
+                    <View>
+                      <Feather
+                        name='more-horizontal'
+                        size={24}
+                        color={c(black.DEFAULT, white.DEFAULT)}
+                      />
+                    </View>
                   </TouchableWithoutFeedback>
                 </View>
 
@@ -183,10 +189,10 @@ const RecipeDetail = () => {
                         source={{ uri: recipeDetailData.authorAvtUrl }}
                         style={{ width: 36, height: 36, borderRadius: 100 }}
                       />
-                      <Text className='base-medium'>
+                      <Text className='base-medium text-black_white'>
                         {recipeDetailData.authorDisplayName}
                       </Text>
-                      <Text className='body-regular'>
+                      <Text className='body-regular text-black_white'>
                         @{recipeDetailData.authorUsername}
                       </Text>
                       <Entypo
@@ -194,7 +200,7 @@ const RecipeDetail = () => {
                         size={16}
                         color={globalStyles.color.gray400}
                       />
-                      <Text className='body-regular'>
+                      <Text className='body-regular text-black_white'>
                         {recipeDetailData.authorNumberOfFollower}{" "}
                         {recipeDetailData.authorNumberOfFollower === 1
                           ? t("follower")
@@ -208,18 +214,20 @@ const RecipeDetail = () => {
                   </Text>
 
                   <View className='gap-3'>
-                    <View className='h-[1.4px] w-full bg-black'></View>
+                    <View className='bg-black_white h-[1.4px] w-full'></View>
                     <View className='flex-center'>
-                      <Text className='body-semibold'>
+                      <Text className='body-semibold text-black_white'>
                         {recipeDetailData.recipe.cookTime}
                       </Text>
                     </View>
-                    <View className='h-[1.4px] w-full bg-black'></View>
+                    <View className='bg-black_white h-[1.4px] w-full'></View>
                   </View>
 
                   <View>
-                    <Text className='base-semibold mb-1'>{t("ingredient")}</Text>
-                    <Text className='body-regular'>
+                    <Text className='base-semibold text-black_white mb-1'>
+                      {t("ingredient")}
+                    </Text>
+                    <Text className='body-regular text-black_white'>
                       {t("for")} {recipeDetailData.recipe.serves}{" "}
                       {recipeDetailData.recipe.serves === 1
                         ? t("serving")
@@ -238,7 +246,7 @@ const RecipeDetail = () => {
                   </View>
 
                   <View>
-                    <Text className='base-semibold'>{t("step")}</Text>
+                    <Text className='base-semibold text-black_white'>{t("step")}</Text>
                     <View className='mt-4 gap-3'>
                       {sortedSteps?.map(step => {
                         return (
@@ -257,7 +265,7 @@ const RecipeDetail = () => {
                   <View className='h-[1px] w-full bg-primary'></View>
 
                   <View className='justify-center gap-4'>
-                    <Text className='base-semibold'>{t("comment")}</Text>
+                    <Text className='base-semibold text-black_white'>{t("comment")}</Text>
                     <AddCommentSection
                       recipeId={id}
                       setParentState={setParentState}

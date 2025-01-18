@@ -3,6 +3,7 @@ import Svg, { Path, Rect, SvgProps } from "react-native-svg";
 import { globalStyles } from "./GlobalStyles";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import useDarkMode from "@/hooks/useDarkMode";
 
 type CameraIconProps = {
   width?: number;
@@ -119,6 +120,7 @@ function LogoIcon(props: CustomSvgProps) {
 }
 
 function Filter(props: SvgProps) {
+  const isDarkMode = useDarkMode();
   return (
     <Svg
       width={26}
@@ -129,7 +131,7 @@ function Filter(props: SvgProps) {
     >
       <Path
         d='M1 5.5h4m0 0c0-1.398 0-2.097.203-2.647a3.05 3.05 0 01.578-.974c.248-.28.542-.5.866-.651C7.136 1 7.757 1 9 1s1.864 0 2.353.228c.324.15.618.372.866.65.248.28.444.61.578.975C13 3.402 13 4.101 13 5.5c0 1.398 0 2.097-.203 2.648-.134.364-.33.695-.578.973-.248.28-.542.5-.866.651C10.864 10 10.243 10 9 10s-1.864 0-2.353-.228a2.67 2.67 0 01-.866-.65 3.05 3.05 0 01-.578-.974C5 7.597 5 6.898 5 5.5zm-4 15h8m12 0h4m-4 0c0-1.398 0-2.097-.203-2.648a3.048 3.048 0 00-.578-.973 2.668 2.668 0 00-.866-.651C18.864 16 18.243 16 17 16s-1.864 0-2.353.228c-.324.15-.618.372-.866.65-.248.28-.444.61-.578.974C13 18.403 13 19.102 13 20.5c0 1.398 0 2.097.203 2.648.134.364.33.695.578.973.248.28.542.5.866.651C15.136 25 15.757 25 17 25s1.864 0 2.353-.228c.324-.15.618-.372.866-.65.248-.28.444-.61.578-.974.203-.551.203-1.25.203-2.648zm-4-15h8'
-        stroke='#000'
+        stroke={isDarkMode ? "#fff" : "#000"}
         strokeWidth={1.5}
         strokeLinecap='round'
         strokeLinejoin='round'
@@ -139,6 +141,7 @@ function Filter(props: SvgProps) {
 }
 
 function BookmarkIcon(props: SvgProps) {
+  const isDarkMode = useDarkMode();
   return (
     <Svg
       width={28}
@@ -149,7 +152,7 @@ function BookmarkIcon(props: SvgProps) {
     >
       <Path
         d='M27.5 14c0 7.456-6.044 13.5-13.5 13.5S.5 21.456.5 14 6.544.5 14 .5 27.5 6.544 27.5 14z'
-        fill='#fff'
+        fill={isDarkMode ? "#1E1E1E" : "#fff"}
         stroke='#FE724C'
       />
       <Path
@@ -161,6 +164,7 @@ function BookmarkIcon(props: SvgProps) {
 }
 
 function BookmarkedIcon(props: SvgProps) {
+  const isDarkMode = useDarkMode();
   return (
     <Svg
       width={28}
@@ -175,7 +179,7 @@ function BookmarkedIcon(props: SvgProps) {
       />
       <Path
         d='M17.591 8.5a3.494 3.494 0 00-3.046 1.783A3.494 3.494 0 0011.498 8.5 3.698 3.698 0 008 12.224c0 4.852 6.545 8.237 6.545 8.237s6.545-3.383 6.545-8.237A3.698 3.698 0 0017.59 8.5z'
-        fill='#FFF'
+        fill={isDarkMode ? "#1E1E1E" : "#fff"}
       />
     </Svg>
   );

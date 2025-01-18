@@ -7,7 +7,7 @@ type IngredientProps = {
 const Ingredient = ({ ingredient }: IngredientProps) => {
   return (
     <View className='gap-2'>
-      <Text>{ingredient}</Text>
+      <Text className='text-black_white'>{ingredient}</Text>
       <View className='h-[1px] w-full bg-gray-400'></View>
     </View>
   );
