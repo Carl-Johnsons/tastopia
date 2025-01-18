@@ -7,7 +7,7 @@ import {
   ScrollView,
   RefreshControl
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useRecipeDetail } from "@/api/recipe";
 import { Image } from "expo-image";
@@ -62,7 +62,6 @@ const RecipeDetail = () => {
     refetchGetRecipeComment();
   };
   const handleTouchMenu = () => {};
-  const handleOpenCookMode = () => {};
   const handleTouchUser = () => {};
   const handleToggleBookmark = () => {
     setIsBookmarked(prev => !prev);
@@ -163,13 +162,18 @@ const RecipeDetail = () => {
                       handleToggleBookmark={handleToggleBookmark}
                     />
                   </View>
-                  <TouchableWithoutFeedback onPress={handleOpenCookMode}>
+                  <Link
+                    href={{
+                      pathname: "/(protected)/community/cooking-mode",
+                      params: { id: recipeDetailData.recipe.id }
+                    }}
+                  >
                     <View className='rounded-3xl bg-primary px-5 py-2'>
                       <Text className='body-semibold text-white_black'>
                         {t("cookButton")}
                       </Text>
                     </View>
-                  </TouchableWithoutFeedback>
+                  </Link>
                 </View>
 
                 <View className='gap-6'>

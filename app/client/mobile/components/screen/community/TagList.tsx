@@ -1,18 +1,10 @@
 import { useSearchTags } from "@/api/search";
 import { globalStyles } from "@/components/common/GlobalStyles";
-import Ingredient from "@/components/screen/search/Ingredient";
 import SelectedTag from "@/components/screen/search/SelectedTag";
 import useDarkMode from "@/hooks/useDarkMode";
 import useDebounce from "@/hooks/useDebounce";
-import {
-  clearTagValue,
-  removeTagValue,
-  selectSearchTags
-} from "@/slices/searchRecipe.slice";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import { AntDesign, Feather } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { AntDesign } from "@expo/vector-icons";
 import {
   Dispatch,
   SetStateAction,
@@ -31,11 +23,8 @@ import {
   TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  View,
-  Image,
-  Alert
+  View
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Tag from "./Tag";
 
 type TagListProps = {
@@ -121,7 +110,6 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
           <TouchableWithoutFeedback onPress={() => handleFocus(true)}>
             <View className='relative h-[40px] flex-1 flex-row items-center gap-2 border-b-[0.5px] border-gray-300'>
               <TextInput
-                autoFocus
                 autoCapitalize='none'
                 ref={textInputRef}
                 className='h-full w-[100%]'
