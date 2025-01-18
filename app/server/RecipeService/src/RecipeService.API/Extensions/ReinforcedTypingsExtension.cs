@@ -14,6 +14,8 @@ public static class ReinforcedTypingsExtension
     private static string FILE_NAME = "recipe";
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {
+        Directory.CreateDirectory("../../../../client/mobile/generated");
+
         builder.Global(config =>
         {
             config.CamelCaseForProperties()

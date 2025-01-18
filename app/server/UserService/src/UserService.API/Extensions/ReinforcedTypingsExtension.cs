@@ -15,6 +15,8 @@ public static class ReinforcedTypingsExtension
 
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {
+        Directory.CreateDirectory("../../../../client/mobile/generated");
+
         builder.Global(config =>
         {
             config.CamelCaseForProperties()
