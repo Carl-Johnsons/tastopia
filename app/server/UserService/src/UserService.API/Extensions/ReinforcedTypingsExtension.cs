@@ -2,7 +2,6 @@
 using Reinforced.Typings.Fluent;
 using System.Reflection;
 using System.Text;
-using System.Xml.Linq;
 using UserService.API.DTOs;
 using UserService.Domain.Errors;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;

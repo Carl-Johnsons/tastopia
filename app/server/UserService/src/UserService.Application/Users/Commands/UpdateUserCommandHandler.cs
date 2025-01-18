@@ -1,4 +1,5 @@
-﻿using Contract.Utilities;
+﻿using AccountProto;
+using Contract.Utilities;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -11,24 +12,27 @@ namespace UserService.Application.Users.Commands;
 public record UpdateUserCommand : IRequest<Result>
 {
     [Required]
-    public Guid AccountId { get; set; }
-    public string? DisplayName { get; set; } = null!;
-    public string? Bio { get; set; } = null!;
-    public string? Gender { get; set; } = null!;
-    public IFormFile? Avatar { get; set; } = null!;
-    public IFormFile? Background { get; set; } = null!;
+    public Guid AccountId { get; init; }
+    public string? DisplayName { get; init; } = null!;
+    public string? Bio { get; init; } = null!;
+    public string? Gender { get; init; } = null!;
+    public string? Username { get; init; } = null!;
+    public IFormFile? Avatar { get; init; } = null!;
+    public IFormFile? Background { get; init; } = null!;
 }
 public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
+    private readonly GrpcAccount.GrpcAccountClient _grpcAccountClient;
 
-    public UpdateUserCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient)
+    public UpdateUserCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, GrpcAccount.GrpcAccountClient grpcAccountClient)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _grpcUploadFileClient = grpcUploadFileClient;
+        _grpcAccountClient = grpcAccountClient;
     }
 
     public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
@@ -59,8 +63,18 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
             {
                 return Result.Failure(UserError.NullParameters, "Gender must be MALE or FEMALE");
             }
-
         }
+
+        if (request.Username != null)
+        {
+            await _grpcAccountClient.UpdateAccountAsync(new GrpcUpdateAccountRequest
+            {
+                AccountId = request.AccountId.ToString(),
+                UserName = request.Username,
+            }, cancellationToken: cancellationToken);
+            user.AccountUsername = request.Username;
+        }
+
         var imagesList = new List<IFormFile>();
         var deleteUrls = new List<string>();
 
