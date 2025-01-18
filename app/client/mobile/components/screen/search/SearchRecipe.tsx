@@ -23,6 +23,8 @@ import { filterUniqueItems } from "@/utils/dataFilter";
 import { selectSearchTagCodes } from "@/slices/searchRecipe.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useTranslation } from "react-i18next";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -63,7 +65,11 @@ const ResultSection = memo(
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 100 }}
           ListHeaderComponent={() => {
-            return <Text className='h3-bold mb-2'>{t("searchResultTitle.recipe")}</Text>;
+            return (
+              <Text className='h3-bold text-black_white mb-2'>
+                {t("searchResultTitle.recipe")}
+              </Text>
+            );
           }}
           renderItem={({ item, index }) => (
             <>
@@ -80,7 +86,9 @@ const ResultSection = memo(
                   source={require("../../../assets/icons/noResult.png")}
                   style={{ width: 130, height: 130 }}
                 />
-                <Text className='paragraph-medium text-center'>{t("notFound")}</Text>
+                <Text className='paragraph-medium text-black_white text-center'>
+                  {t("notFound")}
+                </Text>
               </View>
             ) : (
               <View></View>
@@ -93,6 +101,9 @@ const ResultSection = memo(
 );
 
 const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const { t } = useTranslation("search");
   const dispatch = useAppDispatch();
   const tagCodes = useAppSelector(selectSearchTagCodes);
@@ -189,12 +200,13 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
             <Feather
               name='search'
               size={20}
-              color='black'
+              color={c(black.DEFAULT, white.DEFAULT)}
             />
             <TextInput
               autoCapitalize='none'
               ref={textInputRef}
               className='h-full w-[86%]'
+              style={{ color: c(black.DEFAULT, white.DEFAULT) }}
               value={searchValue}
               onPress={() => handleFocus(true)}
               onChangeText={handleSearch}

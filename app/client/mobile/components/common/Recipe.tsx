@@ -50,11 +50,13 @@ const Recipe = ({
           )}
 
           <TouchableWithoutFeedback onPress={handleTouchMenu}>
-            <Feather
-              name='more-horizontal'
-              size={24}
-              color={c(black.DEFAULT, white.DEFAULT)}
-            />
+            <View>
+              <Feather
+                name='more-horizontal'
+                size={24}
+                color={c(black.DEFAULT, white.DEFAULT)}
+              />
+            </View>
           </TouchableWithoutFeedback>
         </View>
         <View className='flex gap-3'>
