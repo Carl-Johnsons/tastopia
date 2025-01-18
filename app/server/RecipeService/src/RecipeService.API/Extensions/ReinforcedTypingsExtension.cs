@@ -1,4 +1,5 @@
 ﻿using RecipeService.API.DTOs;
+using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
@@ -38,7 +39,7 @@ public static class ReinforcedTypingsExtension
                   .DontIncludeToNamespace()
                   .ExportTo("interfaces/common.interface.d.ts");
         });
-        // DTO 
+        // DTO and Entites
         builder.ExportAsInterfaces([
             typeof(CommentRecipeDTO),
             typeof(CreateRecipeDTO),
@@ -48,7 +49,17 @@ public static class ReinforcedTypingsExtension
             typeof(GetRecipeFeedsDTO),
             typeof(GetTagsDTO),
             typeof(SearchRecipesDTO),
-            typeof(VoteRecipeDTO)
+            typeof(VoteRecipeDTO),
+            typeof(CommentVote),
+            typeof(Recipe),
+            typeof(Step),
+            typeof(Comment),
+            typeof(RecipeVote),
+            typeof(RecipeTag),
+            typeof(Tag),
+            typeof(UserBookmarkRecipe),
+            typeof(UserReportComment),
+            typeof(UserReportRecipe)
         ], config =>
         {
             config.WithPublicProperties()

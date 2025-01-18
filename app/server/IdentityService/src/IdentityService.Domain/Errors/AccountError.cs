@@ -69,4 +69,12 @@ public class AccountError
         new("AccountError.UnlinkAccountFailed",
             StatusCode: (int)HttpStatusCode.InternalServerError,
             Message: "Unlink Account Failed");
+    public static Error UsernameAlreadyExisted =>
+        new("AccountError.UsernameAlreadyExisted",
+            StatusCode: (int)HttpStatusCode.BadRequest,
+            Message: "Username already existed");
+    public static Error UpdateAccountFailed =>
+        new("AccountError.UpdateAccountFailed",
+            StatusCode: (int)HttpStatusCode.BadRequest,
+            Message: "Operation update account failed");
 }

@@ -26,6 +26,7 @@ public static class ReinforcedTypingsExtension
 
         // Substitute C# type to typescript type
         builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
+        builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
 
         // Common type
         builder.ExportAsInterfaces([
@@ -37,11 +38,15 @@ public static class ReinforcedTypingsExtension
                   .DontIncludeToNamespace()
                   .ExportTo("interfaces/common.interface.d.ts");
         });
-        // DTO 
+        // DTO and Entities
         builder.ExportAsInterfaces([
             typeof(LinkAccountDTO),
             typeof(RegisterAccountDTO),
-            typeof(VerifyAccountDTO)
+            typeof(VerifyAccountDTO),
+            typeof(ApplicationAccount),
+            typeof(Group),
+            typeof(Permission),
+            typeof(RoleGroupPermission)
         ], config =>
         {
             config.WithPublicProperties()
