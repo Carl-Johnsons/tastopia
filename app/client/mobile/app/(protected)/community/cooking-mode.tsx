@@ -169,14 +169,16 @@ const CookingMode = () => {
                   keyExtractor={step => step.id}
                   contentContainerStyle={{ paddingBottom: 100 }}
                   renderItem={({ item }) => (
-                    <Step
-                      key={item.id}
-                      isCookingMode
-                      isActive={item.ordinalNumber === currentStep}
-                      content={item.content}
-                      ordinalNumber={item.ordinalNumber}
-                      attachedImageUrls={item.attachedImageUrls}
-                    />
+                    <View className='my-2'>
+                      <Step
+                        key={item.id}
+                        isCookingMode
+                        isActive={item.ordinalNumber === currentStep}
+                        content={item.content}
+                        ordinalNumber={item.ordinalNumber}
+                        attachedImageUrls={item.attachedImageUrls}
+                      />
+                    </View>
                   )}
                 />
               </View>
