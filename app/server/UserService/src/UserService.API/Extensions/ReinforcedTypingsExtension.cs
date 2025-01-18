@@ -1,5 +1,4 @@
-﻿using Consul;
-using Reinforced.Typings.Ast.TypeNames;
+﻿using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using System.Reflection;
 using System.Text;
@@ -34,7 +33,7 @@ public static class ReinforcedTypingsExtension
             config.WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo("interfaces\\common.interface.d.ts");
+                  .ExportTo("interfaces/common.interface.d.ts");
         });
         // DTO 
         builder.ExportAsInterfaces([
@@ -47,7 +46,7 @@ public static class ReinforcedTypingsExtension
             config.WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo($"interfaces\\{FILE_NAME}.interface.d.ts");
+                  .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
         });
 
         // Custom export file
@@ -60,17 +59,17 @@ public static class ReinforcedTypingsExtension
     }
     private static void GenerateTypescriptEnumFile(List<Type> errorsTypes)
     {
-        var xmlDoc = XDocument.Load(Directory.GetCurrentDirectory() + "\\Reinforced.Typings.settings.xml");
+        var xmlDoc = XDocument.Load(Directory.GetCurrentDirectory() + "/Reinforced.Typings.settings.xml");
 
         XNamespace msbuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
         var exportFilePath = xmlDoc.Descendants(msbuildNamespace + "RtTargetDirectory")
                                    .FirstOrDefault()?.Value ?? "Not found";
 
-        Directory.CreateDirectory($"{exportFilePath}\\enums");
+        Directory.CreateDirectory($"{exportFilePath}/enums");
         var disableWarning = @"/* eslint no-unused-vars: ""off"" */";
         var typescriptEnumString = disableWarning + "\n" + string.Join("\n", errorsTypes.Select(GenerateErrorEnumTypescript));
 
-        File.WriteAllText($"{exportFilePath}\\enums\\{FILE_NAME}.enum.ts", typescriptEnumString);
+        File.WriteAllText($"{exportFilePath}/enums/{FILE_NAME}.enum.ts", typescriptEnumString);
     }
 
     private static string GenerateErrorEnumTypescript(Type errorType)
