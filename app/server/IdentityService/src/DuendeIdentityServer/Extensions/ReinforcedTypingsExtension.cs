@@ -11,10 +11,11 @@ namespace DuendeIdentityServer.Extensions;
 public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "identity";
+    private static string EXPORT_FILE_PATH = "../../../../client/mobile/generated";
 
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {
-        Directory.CreateDirectory("../../../../client/mobile/generated");
+        Directory.CreateDirectory(EXPORT_FILE_PATH);
 
         builder.Global(config =>
         {
@@ -58,14 +59,7 @@ public static class ReinforcedTypingsExtension
     }
     private static void GenerateTypescriptEnumFile(List<Type> errorsTypes)
     {
-        var xmlFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Reinforced.Typings.settings.xml");
-        var xmlDoc = XDocument.Load(xmlFilePath);
-
-        XNamespace msbuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
-        var exportFilePath = xmlDoc.Descendants(msbuildNamespace + "RtTargetDirectory")
-                                   .FirstOrDefault()?.Value ?? "Not found";
-
-        var enumsDirectory = Path.Combine(exportFilePath, "enums");
+        var enumsDirectory = Path.Combine(EXPORT_FILE_PATH, "enums");
         Directory.CreateDirectory(enumsDirectory);
         var disableWarning = @"/* eslint no-unused-vars: ""off"" */";
         var typescriptEnumString = disableWarning + "\n" + string.Join("\n", errorsTypes.Select(GenerateErrorEnumTypescript));
