@@ -1,5 +1,4 @@
-﻿
-using System.Net;
+﻿using System.Net;
 
 namespace IdentityService.Domain.Errors;
 
@@ -14,7 +13,7 @@ public class AccountError
             StatusCode: (int)HttpStatusCode.NotFound,
             Message: "Account's email not found!");
     public static Error PhoneNotFound =>
-        new("AccountError.EmailNotFound",
+        new("AccountError.PhoneNotFound",
             StatusCode: (int)HttpStatusCode.NotFound,
             Message: "Account's email not found!");
     public static Error EmailAlreadyExisted =>

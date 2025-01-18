@@ -7,8 +7,6 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-# Copy pre-build lib
-COPY ["./data/nuget", "./nuget"]
 
 COPY ["./app/server/IdentityService/src/DuendeIdentityServer/DuendeIdentityServer.csproj", "DuendeIdentityServer/"]
 COPY ["./app/server/IdentityService/src/IdentityService.Application/IdentityService.Application.csproj", "IdentityService.Application/"]
@@ -23,6 +21,8 @@ COPY ["./app/server/IdentityService/src","/src"]
 RUN dotnet build "./DuendeIdentityServer.csproj" --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/build 
 
 FROM build AS publish
+# Have to add work dir, because dotnet publish will scan entire fs, make the docker hang with NAT network
+WORKDIR "/src/DuendeIdentityServer"
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./DuendeIdentityServer.csproj" --packages "../nuget"  -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
