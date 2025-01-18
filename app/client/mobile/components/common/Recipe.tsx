@@ -29,7 +29,7 @@ const Recipe = ({
 
   return (
     <TouchableWithoutFeedback onPress={handleOnPress}>
-      <View className='bg-white_black rounded-3xl pb-4'>
+      <View className='bg-white_black100 rounded-3xl pb-4'>
         <View className='flex-between flex-row px-4 py-2'>
           {authorId && authorDisplayName && authorAvtUrl && (
             <TouchableWithoutFeedback

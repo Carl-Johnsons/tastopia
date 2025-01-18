@@ -1,6 +1,8 @@
 import { Platform, StyleSheet } from "react-native";
 import Svg, { Path, Rect, SvgProps } from "react-native-svg";
 import { globalStyles } from "./GlobalStyles";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 type CameraIconProps = {
   width?: number;
@@ -63,6 +65,9 @@ type CustomSvgProps = SvgProps & {
 
 function LogoIcon(props: CustomSvgProps) {
   const { isActive, ...rest } = props;
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   return (
     <Svg
       width={93}
@@ -76,7 +81,7 @@ function LogoIcon(props: CustomSvgProps) {
         width={93}
         height={93}
         rx={24}
-        fill='#fff'
+        fill={c(white.DEFAULT, black[200])}
       />
       <Path
         d='M42.265 25.738l23.241 23.241c1.074 1.074 1.074 2.836 0 3.931a2.774 2.774 0 01-3.91.022l-.02-.022c-1.075-1.052-2.793-1.03-3.867.022L44.477 66.163a2.748 2.748 0 11-3.888-3.887l13.296-13.297a2.67 2.67 0 000-3.759l-.129-.128a2.67 2.67 0 00-3.759 0L30.773 64.316a2.748 2.748 0 01-3.888 0 2.732 2.732 0 01-.795-1.933c0-.709.258-1.396.795-1.933l19.181-19.182a2.732 2.732 0 00.795-1.933c0-.709-.258-1.396-.794-1.933a2.748 2.748 0 00-3.888 0l-9.28 9.279a2.748 2.748 0 01-3.888 0 2.732 2.732 0 01-.794-1.933c0-.709.279-1.396.794-1.933l9.344-9.344a2.67 2.67 0 000-3.76l-.043-.042a2.767 2.767 0 01-.816-1.955c0-.709.28-1.418.816-1.955 1.117-1.095 2.879-1.095 3.953-.021zM67.073 24.191c5.692 5.693 6.358 14.5 1.997 20.922a2.582 2.582 0 01-3.952.387L45.765 26.146a2.571 2.571 0 01.386-3.952c6.423-4.36 15.23-3.695 20.922 1.997zM72.071 23.032a2.728 2.728 0 10-3.858-3.858 2.728 2.728 0 003.858 3.858z'

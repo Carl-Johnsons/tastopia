@@ -1,3 +1,5 @@
+import { colors } from "@/constants/colors";
+import useColorizer from "@/hooks/useColorizer";
 import { Image } from "expo-image";
 import React, { memo, useState } from "react";
 import { Text, TouchableWithoutFeedback, View } from "react-native";
@@ -36,12 +38,15 @@ type FilterProps = {
 };
 
 const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const handleSelectItem = (value: string) => {
     handleSelect(value);
   };
 
   return (
-    <View className='flex-row gap-3 flex-center'>
+    <View className='flex-center flex-row gap-3'>
       {filterData?.map(item => {
         const isSelected = filterSelected === item.value;
         return (
@@ -50,7 +55,7 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
             key={item.value}
           >
             <View
-              className={`flex-center w-[60px] rounded-full border-2 border-primary py-2 ${isSelected ? "bg-primary" : "bg-white"}`}
+              className={`flex-center w-[64px] rounded-full border-2 border-primary py-2 ${isSelected ? "bg-primary" : "bg-transparent"}`}
             >
               <View
                 className={`rounded-full p-[0.5px] ${isSelected ? "bg-white" : ""}`}
