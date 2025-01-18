@@ -83,7 +83,7 @@ const CookingMode = () => {
       ?.attachedImageUrls?.filter(item => item) || [];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: globalStyles.color.light }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: c(white.DEFAULT, black[100]) }}>
       <View className='size-full'>
         {isLoading || isRefetching ? (
           <View className='flex-center size-full'>
@@ -98,7 +98,7 @@ const CookingMode = () => {
               <BackButton
                 onPress={router.back}
                 style={{
-                  backgroundColor: globalStyles.color.light,
+                  backgroundColor: c(white.DEFAULT, black.DEFAULT),
                   padding: 12,
                   borderRadius: 12,
                   shadowColor: "#000",
@@ -117,9 +117,11 @@ const CookingMode = () => {
                   <MaterialIcons
                     name='keyboard-voice'
                     size={18}
-                    color='black'
+                    color={c(black.DEFAULT, white.DEFAULT)}
                   />
-                  <Text className='body-regular'>{t("voiceCommand")}</Text>
+                  <Text className='body-regular text-black_white'>
+                    {t("voiceCommand")}
+                  </Text>
                   <Switch
                     trackColor={{ false: `${inactiveTrackColor}`, true: `${primary}` }}
                     thumbColor={isActiveSpeaking ? `${thumbColor}` : `${thumbColor}`}
@@ -132,9 +134,9 @@ const CookingMode = () => {
                   <MaterialCommunityIcons
                     name='account-tie-voice-outline'
                     size={18}
-                    color='black'
+                    color={c(black.DEFAULT, white.DEFAULT)}
                   />
-                  <Text className='body-regular'>{t("speaking")}</Text>
+                  <Text className='body-regular text-black_white'>{t("speaking")}</Text>
                   <Switch
                     trackColor={{ false: `${inactiveTrackColor}`, true: `${primary}` }}
                     thumbColor={isActiveVoiceCommand ? `${thumbColor}` : `${thumbColor}`}
@@ -144,7 +146,7 @@ const CookingMode = () => {
                 </View>
               </View>
 
-              <Text className='h3-bold my-8'>
+              <Text className='h3-bold text-black_white my-8'>
                 {t("step")} {currentStep}
               </Text>
             </View>
