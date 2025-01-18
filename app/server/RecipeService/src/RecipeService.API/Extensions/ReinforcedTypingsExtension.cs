@@ -65,17 +65,19 @@ public static class ReinforcedTypingsExtension
 
     private static void GenerateTypescriptEnumFile(List<Type> errorsTypes)
     {
-        var xmlDoc = XDocument.Load(Directory.GetCurrentDirectory() + "/Reinforced.Typings.settings.xml");
+        var xmlFilePath = Path.Combine(Directory.GetCurrentDirectory(), "Reinforced.Typings.settings.xml");
+        var xmlDoc = XDocument.Load(xmlFilePath);
 
         XNamespace msbuildNamespace = "http://schemas.microsoft.com/developer/msbuild/2003";
         var exportFilePath = xmlDoc.Descendants(msbuildNamespace + "RtTargetDirectory")
                                    .FirstOrDefault()?.Value ?? "Not found";
 
-        Directory.CreateDirectory($"{exportFilePath}/enums");
+        var enumsDirectory = Path.Combine(exportFilePath, "enums");
+        Directory.CreateDirectory(enumsDirectory);
         var disableWarning = @"/* eslint no-unused-vars: ""off"" */";
         var typescriptEnumString = disableWarning + "\n" + string.Join("\n", errorsTypes.Select(GenerateErrorEnumTypescript));
 
-        File.WriteAllText($"{exportFilePath}/enums/{FILE_NAME}.enum.ts", typescriptEnumString);
+        File.WriteAllText(Path.Combine(enumsDirectory, $"{FILE_NAME}.enum.ts"), typescriptEnumString);
     }
 
     private static string GenerateErrorEnumTypescript(Type errorType)
