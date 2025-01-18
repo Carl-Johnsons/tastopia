@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Keyboard,
-  ActivityIndicator,
-  Platform,
-} from "react-native";
+import { View, StyleSheet, Keyboard, ActivityIndicator, Platform } from "react-native";
 import { Redirect, Tabs, usePathname, useRootNavigationState } from "expo-router";
 import { menuList } from "@/constants/menu";
 import { useTranslation } from "react-i18next";
@@ -65,7 +59,6 @@ const ProtectedLayout = () => {
       display: "flex",
       justifyContent: "flex-start",
       alignItems: "flex-start",
-      borderTopWidth: 1,
       backgroundColor: c(white.DEFAULT, black[100]),
       height: isAndroid ? 64 : 80,
       paddingTop: 10,
