@@ -20,6 +20,7 @@ import { extensionToMimeType } from "@/utils/file";
 import { AntDesign } from "@expo/vector-icons";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
+import useDarkMode from "@/hooks/useDarkMode";
 
 type UploadImageProps = {
   /**
@@ -73,6 +74,7 @@ const UploadImage = ({
   selectionLimit = 5,
   props
 }: UploadImageProps) => {
+  const isDarkMode = useDarkMode();
   const { t } = useTranslation("component");
   const [startUploadImage, setStartUploadImage] = useState(false);
   const [imageCount, setImageCount] = useState(0);
@@ -149,12 +151,6 @@ const UploadImage = ({
     setSelectedImageId(null);
   };
 
-  const handleDismiss = () => {
-    if (selectedImageId !== null) {
-      setSelectedImageId(null);
-    }
-  };
-
   useEffect(() => {
     if (defaultImages && defaultImages.length > 0) {
       const initialFiles = defaultImages.map(image => ({
@@ -217,9 +213,9 @@ const UploadImage = ({
                 <FontAwesome
                   name='cloud-upload'
                   size={24}
-                  color={globalStyles.color.light}
+                  color={isDarkMode ? globalStyles.color.dark : globalStyles.color.light}
                 />
-                <Text style={styles.uploadButtonText}>{t("uploadImage")}</Text>
+                <Text className='text-white_black body-semibold'>{t("uploadImage")}</Text>
               </View>
             </TouchableHighlight>
           )}

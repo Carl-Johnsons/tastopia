@@ -104,7 +104,7 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
   }, [data]);
 
   return (
-    <View className={`bg-white_black size-full flex-col`}>
+    <View className={`bg-white_black100 size-full flex-col`}>
       <View>
         <View className='flex-row items-center gap-5'>
           <TouchableWithoutFeedback onPress={() => handleFocus(true)}>
@@ -166,10 +166,6 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
         {/* Result section */}
         {searchValue !== "" && (
           <View className='mt-3 pb-[200px]'>
-            {/* <Text className='body-semibold mb-2'>
-              {t("searchResultTitle.ingredient")}
-            </Text> */}
-
             <FlatList
               data={searchResults}
               keyExtractor={item => item.id}
@@ -202,11 +198,6 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
               ListEmptyComponent={() => {
                 return isDoneSearching && searchResults?.length === 0 ? (
                   <View className='items-center gap-2'>
-                    {/* <Image
-                        source={require("../../../assets/icons/noResult.png")}
-                        style={{ width: 130, height: 130 }}
-                      />
-                      <Text className='paragraph-medium text-center'>{t("notFound")}</Text> */}
                     <TouchableWithoutFeedback onPress={handleCreateNew}>
                       <View className='rounded-3xl bg-primary px-5 py-2'>
                         <Text className='body-semibold text-white_black'>

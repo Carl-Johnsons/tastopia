@@ -1,4 +1,4 @@
-import React, { Dispatch, ReactNode, SetStateAction, useCallback, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useCallback, useState } from "react";
 import { Text, View, TouchableWithoutFeedback } from "react-native";
 import DraggableFlatList, {
   RenderItemParams,
@@ -10,6 +10,8 @@ import DraggableIngredient from "./DraggableIngredient";
 import uuid from "react-native-uuid";
 import DraggableStep from "./DraggableStep";
 import TagList from "./TagList";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 type DraggableProps = {
   ingredients: CreateIngredientType[];
@@ -30,20 +32,9 @@ export default function CreateRecipeDraggable({
   setSelectedTags,
   form
 }: DraggableProps) {
+  const { c } = useColorizer();
+  const { black, white } = colors;
   const { t } = useTranslation("createRecipe");
-
-  const [query, setQuery] = useState("");
-  const data = [
-    {
-      key: "1",
-      value: 1
-    },
-    {
-      key: "2",
-      value: 2
-    }
-  ];
-
   const renderIngredientItem = useCallback(
     ({ item, drag, isActive }: RenderItemParams<CreateIngredientType>) => {
       return (
@@ -107,15 +98,19 @@ export default function CreateRecipeDraggable({
                     <Entypo
                       name='plus'
                       size={24}
-                      color='black'
+                      color={c(black.DEFAULT, white.DEFAULT)}
                     />
-                    <Text className='body-semibold'>{t("formTitle.ingredients")}</Text>
+                    <Text className='body-semibold text-black_white'>
+                      {t("formTitle.ingredients")}
+                    </Text>
                   </View>
                 </TouchableWithoutFeedback>
               </View>
 
               <View className='mt-4'>
-                <Text className='body-semibold mb-2'>{t("formTitle.method")}</Text>
+                <Text className='body-semibold text-black_white mb-2'>
+                  {t("formTitle.method")}
+                </Text>
                 <DraggableFlatList
                   key={"draggable-flat-list-create-steps"}
                   data={steps}
@@ -131,9 +126,11 @@ export default function CreateRecipeDraggable({
                             <Entypo
                               name='plus'
                               size={24}
-                              color='black'
+                              color={c(black.DEFAULT, white.DEFAULT)}
                             />
-                            <Text className='body-semibold'>{t("formTitle.step")}</Text>
+                            <Text className='body-semibold text-black_white'>
+                              {t("formTitle.step")}
+                            </Text>
                           </View>
                         </TouchableWithoutFeedback>
                       </View>
@@ -143,7 +140,9 @@ export default function CreateRecipeDraggable({
               </View>
 
               <View className='mt-4'>
-                <Text className='body-semibold mb-2'>{t("formTitle.tag")}</Text>
+                <Text className='body-semibold text-black_white mb-2'>
+                  {t("formTitle.tag")}
+                </Text>
                 <TagList
                   selectedTags={selectedTags}
                   setSelectedTags={setSelectedTags}

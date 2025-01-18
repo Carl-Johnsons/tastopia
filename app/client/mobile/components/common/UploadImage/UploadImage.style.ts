@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
   uploadItem: {
     position: "relative",
     width: "31%",
-    borderWidth: 2,
     borderRadius: 5,
     borderColor: globalStyles.color.light,
     overflow: "hidden"

@@ -8,14 +8,12 @@ import {
 import { ImageFileType } from "@/types/image";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { Dispatch, memo, SetStateAction, useCallback, useState } from "react";
+import { memo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import uuid from "react-native-uuid";
 
 import {
-  FlatList,
-  ScrollView,
   StatusBar,
   Text,
   TouchableWithoutFeedback,
@@ -26,17 +24,16 @@ import {
   KeyboardAvoidingView,
   Platform
 } from "react-native";
-import DraggableIngredient from "@/components/screen/community/DraggableIngredient";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { protectedAxiosInstance } from "@/constants/host";
-import { useCreateRecipe } from "@/api/recipe";
 import { globalStyles } from "@/components/common/GlobalStyles";
-
-type renderIngredientItemProps = CreateIngredientType & {
-  setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
-};
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 const CreateRecipe = () => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const { t } = useTranslation("createRecipe");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [images, setImages] = useState<ImageFileType[]>([]);
@@ -186,8 +183,10 @@ const CreateRecipe = () => {
   console.log("tag value", selectedTags);
 
   return (
-    <SafeAreaView>
-      <View className={`bg-white_black size-full flex-col`}>
+    <SafeAreaView
+      style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
+    >
+      <View className={`size-full flex-col`}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -197,11 +196,11 @@ const CreateRecipe = () => {
             className='flex-between mb-4 h-[60px] flex-row border-b-[0.6px] border-gray-400 px-6'
           >
             <TouchableWithoutFeedback onPress={handleCancel}>
-              <View className=''>
+              <View>
                 <AntDesign
                   name='close'
                   size={20}
-                  color='black'
+                  color={c(black.DEFAULT, white.DEFAULT)}
                 />
               </View>
             </TouchableWithoutFeedback>
@@ -283,7 +282,9 @@ const CreateRecipe = () => {
 
                       <View className='flex-center flex-row gap-6'>
                         <View className='flex-1'>
-                          <Text className='body-semibold'>{t("formTitle.serves")}</Text>
+                          <Text className='body-semibold text-black_white'>
+                            {t("formTitle.serves")}
+                          </Text>
                           <Input
                             variant='secondary'
                             control={formControl}
@@ -294,7 +295,9 @@ const CreateRecipe = () => {
                         </View>
 
                         <View className='flex-1'>
-                          <Text className='body-semibold'>{t("formTitle.cookTime")}</Text>
+                          <Text className='body-semibold text-black_white'>
+                            {t("formTitle.cookTime")}
+                          </Text>
                           <Input
                             variant='secondary'
                             control={formControl}
@@ -306,7 +309,7 @@ const CreateRecipe = () => {
                       </View>
 
                       <View>
-                        <Text className='body-semibold mb-2'>
+                        <Text className='body-semibold text-black_white mb-2'>
                           {t("formTitle.ingredients")}
                         </Text>
                       </View>
