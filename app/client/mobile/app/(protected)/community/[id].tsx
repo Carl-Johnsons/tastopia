@@ -244,6 +244,7 @@ const RecipeDetail = () => {
                         return (
                           <Step
                             key={step.id}
+                            isActive
                             content={step.content}
                             ordinalNumber={step.ordinalNumber}
                             attachedImageUrls={step.attachedImageUrls}

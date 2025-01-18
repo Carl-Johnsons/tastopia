@@ -13,6 +13,7 @@ type SliderProps = {
   data: string[];
 };
 
+const INTERVAL = 4000;
 const { width } = Dimensions.get("screen");
 
 const Slider = ({ data }: SliderProps) => {
@@ -41,7 +42,7 @@ const Slider = ({ data }: SliderProps) => {
         } else {
           offset.value = nextOffset;
         }
-      }, 3000);
+      }, INTERVAL);
     } else {
       clearInterval(interval.current);
     }
