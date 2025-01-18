@@ -32,10 +32,12 @@ const Menu = () => {
 
   return (
     <>
-      <SafeAreaView style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}>
+      <SafeAreaView
+        style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
+      >
         <View>
           <MenuBg />
-          <View className='absolute top-[8.6vh] flex w-full gap-y-5 bg-white_dark-100 px-4'>
+          <View className='bg-white_dark-100 absolute top-[8.6vh] flex w-full gap-y-5 px-4'>
             <UserCard />
             <History />
             <View style={{ paddingBlock: 0.06 * height }}>
@@ -87,7 +89,7 @@ const ItemCard = ({ icon: Icon, title, className, onPress }: ItemCardProps) => {
         width={28}
         height={28}
       />
-      <Text className='text-md font-medium text-black_white'>{t(title)}</Text>
+      <Text className='text-md text-black_white font-medium'>{t(title)}</Text>
     </Button>
   );
 };
@@ -99,9 +101,9 @@ const History = () => {
   return (
     <>
       <View className='flex-row justify-between'>
-        <Text className='font-semibold text-4xl text-black_white'>{t("history")}</Text>
+        <Text className='text-black_white font-semibold text-4xl'>{t("history")}</Text>
         <Button className='flex justify-center rounded-full border border-gray-200 px-4 py-1'>
-          <Text className='font-sans text-black_white'>{t("viewAll")}</Text>
+          <Text className='text-black_white font-sans'>{t("viewAll")}</Text>
         </Button>
       </View>
       <View
@@ -127,7 +129,7 @@ const UserCard = () => {
         },
         android: { elevation: 20 }
       })}
-      className='flex-row items-center gap-3 rounded-lg bg-white dark:bg-black-300 px-4 py-1'
+      className='flex-row items-center gap-3 rounded-lg bg-white px-4 py-1 dark:bg-black-300'
     >
       <Avatar
         size={90}
@@ -137,7 +139,7 @@ const UserCard = () => {
         }
         containerStyle={avatarUrl && { backgroundColor: "#FFC529" }}
       />
-      <Text className='font-semibold text-xl text-black_white'>{displayName}</Text>
+      <Text className='text-black_white font-semibold text-xl'>{displayName}</Text>
     </View>
   );
 };

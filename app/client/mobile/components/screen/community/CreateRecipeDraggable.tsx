@@ -1,14 +1,6 @@
-import React, { Dispatch, ReactNode, SetStateAction, useCallback, useState } from "react";
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  TouchableWithoutFeedback
-} from "react-native";
+import { Dispatch, ReactNode, SetStateAction, useCallback, useState } from "react";
+import { Text, View, TouchableWithoutFeedback } from "react-native";
 import DraggableFlatList, {
-  NestableDraggableFlatList,
   RenderItemParams,
   ScaleDecorator
 } from "react-native-draggable-flatlist";
@@ -17,13 +9,17 @@ import { useTranslation } from "react-i18next";
 import DraggableIngredient from "./DraggableIngredient";
 import uuid from "react-native-uuid";
 import DraggableStep from "./DraggableStep";
-import AutoComplete from "react-native-autocomplete-input";
+import TagList from "./TagList";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 type DraggableProps = {
   ingredients: CreateIngredientType[];
   setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
   steps: CreateStepType[];
   setSteps: Dispatch<SetStateAction<CreateStepType[]>>;
+  selectedTags: SelectedTag[];
+  setSelectedTags: Dispatch<SetStateAction<SelectedTag[]>>;
   form: ReactNode;
 };
 
@@ -32,22 +28,13 @@ export default function CreateRecipeDraggable({
   setIngredients,
   steps,
   setSteps,
+  selectedTags,
+  setSelectedTags,
   form
 }: DraggableProps) {
+  const { c } = useColorizer();
+  const { black, white } = colors;
   const { t } = useTranslation("createRecipe");
-
-  const [query, setQuery] = useState("");
-  const data = [
-    {
-      key: "1",
-      value: 1
-    },
-    {
-      key: "2",
-      value: 2
-    }
-  ];
-
   const renderIngredientItem = useCallback(
     ({ item, drag, isActive }: RenderItemParams<CreateIngredientType>) => {
       return (
@@ -91,7 +78,7 @@ export default function CreateRecipeDraggable({
   };
 
   return (
-    <View className='flex-1 gap-4'>
+    <View className='gap-4'>
       <DraggableFlatList
         key={"draggable-flat-list-create-ingredients"}
         data={ingredients}
@@ -111,15 +98,19 @@ export default function CreateRecipeDraggable({
                     <Entypo
                       name='plus'
                       size={24}
-                      color='black'
+                      color={c(black.DEFAULT, white.DEFAULT)}
                     />
-                    <Text className='body-semibold'>{t("formTitle.ingredients")}</Text>
+                    <Text className='body-semibold text-black_white'>
+                      {t("formTitle.ingredients")}
+                    </Text>
                   </View>
                 </TouchableWithoutFeedback>
               </View>
 
               <View className='mt-4'>
-                <Text className='body-semibold mb-2'>{t("formTitle.method")}</Text>
+                <Text className='body-semibold text-black_white mb-2'>
+                  {t("formTitle.method")}
+                </Text>
                 <DraggableFlatList
                   key={"draggable-flat-list-create-steps"}
                   data={steps}
@@ -135,9 +126,11 @@ export default function CreateRecipeDraggable({
                             <Entypo
                               name='plus'
                               size={24}
-                              color='black'
+                              color={c(black.DEFAULT, white.DEFAULT)}
                             />
-                            <Text className='body-semibold'>{t("formTitle.step")}</Text>
+                            <Text className='body-semibold text-black_white'>
+                              {t("formTitle.step")}
+                            </Text>
                           </View>
                         </TouchableWithoutFeedback>
                       </View>
@@ -147,16 +140,13 @@ export default function CreateRecipeDraggable({
               </View>
 
               <View className='mt-4'>
-                {/* <Text className='body-semibold mb-2'>{t("formTitle.tag")}</Text>
-                <AutoComplete
-                  data={data}
-                  value={query}
-                  onChangeText={text => setQuery(text)}
-                  flatListProps={{
-                    keyExtractor: item => item.key,
-                    renderItem: ({ item }) => <Text>{item.value}</Text>
-                  }}
-                /> */}
+                <Text className='body-semibold text-black_white mb-2'>
+                  {t("formTitle.tag")}
+                </Text>
+                <TagList
+                  selectedTags={selectedTags}
+                  setSelectedTags={setSelectedTags}
+                />
               </View>
             </View>
           );

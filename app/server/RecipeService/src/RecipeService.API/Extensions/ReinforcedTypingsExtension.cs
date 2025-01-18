@@ -48,7 +48,10 @@ public static class ReinforcedTypingsExtension
             typeof(GetRecipeFeedsDTO),
             typeof(GetTagsDTO),
             typeof(SearchRecipesDTO),
-            typeof(VoteRecipeDTO)
+            typeof(VoteRecipeDTO),
+            typeof(BookmarkRecipeDTO),
+            typeof(GetRecipeBookmarkDTO),
+            typeof(GetRecipeStepsDTO),
         ], config =>
         {
             config.WithPublicProperties()

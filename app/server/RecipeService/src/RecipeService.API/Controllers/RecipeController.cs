@@ -7,6 +7,9 @@ using RecipeService.Application.Comments.Queries;
 using RecipeService.Application.Recipes.Commands;
 using RecipeService.Application.Recipes.Queries;
 using RecipeService.Application.Tags.Queries;
+using RecipeService.Application.UserBookmarkRecipes.Commands;
+using RecipeService.Application.UserBookmarkRecipes.Queries;
+using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -145,6 +148,9 @@ public class RecipeController : BaseApiController
     }
 
     [HttpPost("get-recipe-comments")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedRecipeCommentListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> GetRecipeComments([FromBody] GetRecipeCommentsDTO getRecipeCommentsDTO)
     {
         var result = await _sender.Send(new GetRecipeCommentsQuery
@@ -158,6 +164,9 @@ public class RecipeController : BaseApiController
 
 
     [HttpPost("comment-recipe")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(RecipeCommentResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> CommentRecipe([FromBody] CommentRecipeDTO commentRecipeDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
@@ -168,6 +177,56 @@ public class RecipeController : BaseApiController
             AccountId = Guid.Parse(subjectId!),
             RecipeId = commentRecipeDTO.RecipeId,
             Content = commentRecipeDTO.Content,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("get-recipe-steps")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<Step>), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetRecipeSteps([FromBody] GetRecipeStepsDTO getRecipeStepsDTO)
+    {
+        var result = await _sender.Send(new GetRecipeStepsQuery
+        {
+            RecipeId = getRecipeStepsDTO.RecipeId,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("bookmark-recipe")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(BookmarkRecipeResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> BookmarkRecipe([FromBody] BookmarkRecipeDTO bookmarkRecipeDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new BookmarkRecipeCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            RecipeId = bookmarkRecipeDTO.RecipeId,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("get-recipe-bookmarks")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedRecipeFeedsListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetRecipeBookmarks([FromBody] GetRecipeBookmarkDTO getRecipeBookmarkDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new GetRecipeBookmarksQuery
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Skip = getRecipeBookmarkDTO.Skip
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

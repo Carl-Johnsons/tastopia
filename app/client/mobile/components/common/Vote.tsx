@@ -5,12 +5,15 @@ import { globalStyles } from "./GlobalStyles";
 import { ROLE } from "@/slices/auth.slice";
 import useProtected, { useProtectedExclude } from "@/hooks/auth/useProtected";
 import { AntDesign } from "@expo/vector-icons";
+import useDarkMode from "@/hooks/useDarkMode";
 
 type VoteProps = {
   voteDiff: number;
 };
 
 const Vote = ({ voteDiff }: VoteProps) => {
+  const isDarkMode = useDarkMode();
+
   const [votes, setVotes] = useState(voteDiff);
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
@@ -84,14 +87,38 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 flexDirection: "row"
               }}
             >
-              <AntDesign
-                name='like2'
-                size={16}
-                color={upvoted ? globalStyles.color.primary : globalStyles.color.dark}
-              />
+              {upvoted ? (
+                <AntDesign
+                  name='like1'
+                  size={16}
+                  color={
+                    isDarkMode
+                      ? upvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.light
+                      : upvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.dark
+                  }
+                />
+              ) : (
+                <AntDesign
+                  name='like2'
+                  size={16}
+                  color={
+                    isDarkMode
+                      ? upvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.light
+                      : upvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.dark
+                  }
+                />
+              )}
             </Animated.View>
             <Text
-              className={`color-black_white mx-2 text-center`}
+              className={`text-black_white mx-2 text-center`}
               style={{ width: getDigitCount(votes) }}
             >
               {isNaN(votes) ? "" : votes}
@@ -114,11 +141,35 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 flexDirection: "row"
               }}
             >
-              <AntDesign
-                name='dislike2'
-                size={16}
-                color={downvoted ? globalStyles.color.primary : globalStyles.color.dark}
-              />
+              {downvoted ? (
+                <AntDesign
+                  name='dislike1'
+                  size={16}
+                  color={
+                    isDarkMode
+                      ? downvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.light
+                      : downvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.dark
+                  }
+                />
+              ) : (
+                <AntDesign
+                  name='dislike2'
+                  size={16}
+                  color={
+                    isDarkMode
+                      ? downvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.light
+                      : downvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.dark
+                  }
+                />
+              )}
             </Animated.View>
           </View>
         </Pressable>

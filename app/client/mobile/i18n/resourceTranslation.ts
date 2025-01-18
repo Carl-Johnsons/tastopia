@@ -10,7 +10,8 @@ const resources = {
     error: locales.errorEn,
     component: locales.componentEn,
     recipeDetail: locales.recipeDetailEn,
-    settingModal: locales.settingModalEn
+    settingModal: locales.settingModalEn,
+    cookingMode: locales.cookingModeEn
   },
   vi: {
     navbar: locales.navbarVi,
@@ -21,7 +22,8 @@ const resources = {
     error: locales.errorVi,
     component: locales.componentVi,
     recipeDetail: locales.recipeDetailVi,
-    settingModal: locales.settingModalVi
+    settingModal: locales.settingModalVi,
+    cookingMode: locales.cookingModeVi
   }
 };
 

@@ -6,6 +6,9 @@ import { selectUser } from "@/slices/user.slice";
 import Protected from "@/components/Protected";
 import { ROLE } from "@/slices/auth.slice";
 import { useTranslation } from "react-i18next";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
+import useDarkMode from "@/hooks/useDarkMode";
 
 type HeaderProps = {
   isRefreshing: boolean;
@@ -50,10 +53,10 @@ function Header({
               style={{ width: 50, height: 50, borderRadius: 100 }}
             />
             <View className='gap-2'>
-              <Text className='paragraph-bold'>{displayName}</Text>
+              <Text className={`paragraph-bold text-black_white`}>{displayName}</Text>
               <TouchableWithoutFeedback onPress={handleCreateRecipe}>
                 <View className='min-w-[250px] rounded-2xl border-[1px] border-gray-600 px-4 py-3'>
-                  <Text className='text-gray-600'>{t("headerCreateRecipe")}</Text>
+                  <Text className='text-black_white'>{t("headerCreateRecipe")}</Text>
                 </View>
               </TouchableWithoutFeedback>
             </View>

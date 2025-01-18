@@ -156,6 +156,9 @@ body * {
   .text-gray300_gray600 {
     @apply text-gray-300 dark:text-gray-600;
   }
+  .text-gray400_white {
+    @apply text-gray-400 dark:text-white;
+  }
 
   .light-border {
     @apply border-light-800 dark:border-dark-300;

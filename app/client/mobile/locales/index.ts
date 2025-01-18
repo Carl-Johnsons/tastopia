@@ -16,6 +16,8 @@ import componentEn from "../locales/en/component.json";
 import componentVi from "../locales/vi/component.json";
 import recipeDetailEn from "../locales/en/recipeDetail.json";
 import recipeDetailVi from "../locales/vi/recipeDetail.json";
+import cookingModeEn from "../locales/en/cookingMode.json";
+import cookingModeVi from "../locales/vi/cookingMode.json";
 
 export default {
   communityEn,
@@ -35,5 +37,7 @@ export default {
   componentEn,
   componentVi,
   recipeDetailEn,
-  recipeDetailVi
+  recipeDetailVi,
+  cookingModeEn,
+  cookingModeVi
 };

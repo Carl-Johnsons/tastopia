@@ -1,21 +1,21 @@
-import i18next from "i18next";
+import { router } from "expo-router";
 import { useRecipesFeed } from "@/api/recipe";
 import Recipe from "@/components/common/Recipe";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Empty from "@/components/screen/community/Empty";
 import Header from "@/components/screen/community/Header";
-import { globalStyles } from "@/components/common/GlobalStyles";
 import { View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import { router, useFocusEffect } from "expo-router";
-import useDarkMode from "@/hooks/useDarkMode";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 const Community = () => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
-  const isDarkMode = useDarkMode();
 
-  //TODO: apply loading later
   const {
     data,
     fetchNextPage,
@@ -67,10 +67,7 @@ const Community = () => {
 
   return (
     <SafeAreaView
-      style={{
-        backgroundColor: isDarkMode ? globalStyles.color.dark : globalStyles.color.light,
-        height: "100%"
-      }}
+      style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
       <FlatList
         removeClippedSubviews
