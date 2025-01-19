@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
-using TrackingService.API.Controllers;
 using TrackingService.API.DTOs;
 using TrackingService.Application.UserViewRecipeDetails.Queries;
 
-namespace RecipeService.API.Controllers;
+namespace TrackingService.API.Controllers;
 
 [Route("api/tracking")]
 [ApiController]

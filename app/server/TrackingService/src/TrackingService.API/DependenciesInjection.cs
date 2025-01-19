@@ -26,6 +26,7 @@ public static class DependenciesInjection
 
         services.AddInfrastructureServices();
         services.AddApplicationServices();
+        services.AddErrorValidation();
         services.AddSwaggerServices();
 
         // Register automapper
