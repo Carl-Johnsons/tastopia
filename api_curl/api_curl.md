@@ -96,7 +96,7 @@ curl --location 'https://localhost:7000/api/recipe/get-recipe-bookmarks' \
 lưu ý:
 
 -chỗ recipeImage nếu giữ nguyên không muốn update thì gán bằng null hoặc k tạo trong request còn muốn update thì gán giá trị cho nó.
--chỗ các steps phải có stepId (steps[n].stepId) nếu như update 1 step cũ, còn thêm 1 step mới thì không cần tạo steps[n].stepId trong request
+-chỗ các steps phải có stepId (steps[n].stepId) nếu như update 1 step cũ, còn thêm 1 step mới thì không cần tạo steps[n].stepId trong request (có thể tham khảo steps[1] và steps[2])
 -các step đã tồn tại sẽ bị xóa nếu như trong request không tìm thấy stepId của nó.
 
 curl --location 'https://localhost:7000/api/recipe/update-recipe' \
@@ -118,6 +118,9 @@ curl --location 'https://localhost:7000/api/recipe/update-recipe' \
 --form 'steps[1].Images=@"/D:/Images/Anime Image/735279.png"' \
 --form 'steps[1].deleteUrls[0]="http://res.cloudinary.com/dhphzuojz/image/upload/v1737285028/file_storage/c89d9023-b1b2-4a75-830b-b1a8f5bec0ac.jpg"' \
 --form 'steps[1].deleteUrls[1]="http://res.cloudinary.com/dhphzuojz/image/upload/v1737285028/file_storage/8dc93c2a-ee57-4989-9333-7510193d54b8.jpg"' \
+--form 'steps[2].ordinalNumber="3"' \
+--form 'steps[2].content="step 3 mì trộn"' \
+--form 'steps[2].Images=@"/D:/Images/Anime Image/2e3321fce05a83cac5945d4283b573fe.jpg"' \
 --form 'TagValues[0]="value 0"' \
 --form 'TagValues[1]="value 1"'
 
