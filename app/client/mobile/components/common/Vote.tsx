@@ -5,6 +5,8 @@ import { globalStyles } from "./GlobalStyles";
 import { ROLE } from "@/slices/auth.slice";
 import useProtected, { useProtectedExclude } from "@/hooks/auth/useProtected";
 import { AntDesign } from "@expo/vector-icons";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 type VoteProps = {
   voteDiff: number;
@@ -14,6 +16,8 @@ const Vote = ({ voteDiff }: VoteProps) => {
   const [votes, setVotes] = useState(voteDiff);
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
+  const {black,white} = colors;
+  const {c} = useColorizer();
 
   const upvoteBounceValue = useRef(new Animated.Value(1)).current;
   const downvoteBounceValue = useRef(new Animated.Value(1)).current;
@@ -87,11 +91,11 @@ const Vote = ({ voteDiff }: VoteProps) => {
               <AntDesign
                 name='like2'
                 size={16}
-                color={upvoted ? globalStyles.color.primary : globalStyles.color.dark}
+                color={upvoted ? globalStyles.color.primary : c(black.DEFAULT, white.DEFAULT)}
               />
             </Animated.View>
             <Text
-              className={`color-black_white mx-2 text-center`}
+              className={`text-black_white mx-2 text-center`}
               style={{ width: getDigitCount(votes) }}
             >
               {isNaN(votes) ? "" : votes}
@@ -117,7 +121,7 @@ const Vote = ({ voteDiff }: VoteProps) => {
               <AntDesign
                 name='dislike2'
                 size={16}
-                color={downvoted ? globalStyles.color.primary : globalStyles.color.dark}
+                color={downvoted ? globalStyles.color.primary : c(black.DEFAULT, white.DEFAULT)}
               />
             </Animated.View>
           </View>

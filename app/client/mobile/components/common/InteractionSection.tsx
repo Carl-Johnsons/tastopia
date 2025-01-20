@@ -1,6 +1,8 @@
 import { TouchableWithoutFeedback, View, Text } from "react-native";
 import Vote from "./Vote";
 import { Ionicons } from "@expo/vector-icons";
+import { colors } from "@/constants/colors";
+import useColorizer from "@/hooks/useColorizer";
 
 const InteractionSection = ({
   voteDiff,
@@ -11,6 +13,9 @@ const InteractionSection = ({
   numberOfComment: number | undefined;
   handleOnPress: () => void;
 }) => {
+  const {black, white} = colors;
+  const {c} = useColorizer();
+
   return (
     <View className='flex-start flex-row gap-2'>
       {voteDiff !== undefined && <Vote voteDiff={voteDiff} />}
@@ -21,9 +26,9 @@ const InteractionSection = ({
             <Ionicons
               name='chatbubble-outline'
               size={20}
-              color='black'
+              color={c(black.DEFAULT, white.DEFAULT)}
             />
-            <Text>{numberOfComment}</Text>
+            <Text className="text-black_white">{numberOfComment}</Text>
           </View>
         </TouchableWithoutFeedback>
       )}

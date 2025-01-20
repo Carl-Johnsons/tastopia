@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
-import LoginForm, { LoginFormFields } from "@/components/LoginForm";
+import LoginForm, { LoginFormFields } from "@/components/screen/login/LoginForm";
 import { useLogin } from "@/api/user";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
 import { useAppDispatch } from "@/store/hooks";

@@ -1,7 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 import { colors } from "./constants/colors";
 
-const PRIMARY = {
+const FONT_PRIMARY = {
   sans: ["Sofia Pro Regular", "sans-serif"],
   bold: ["Sofia Pro Bold", "sans-serif"],
   light: ["Sofia Pro Light", "sans-serif"],
@@ -20,7 +20,7 @@ const PRIMARY = {
   "ultralight-italic": ["Sofia Pro UltraLight Italic", "sans-serif"]
 };
 
-const SECONDARY = {
+const FONT_SECONDARY = {
   "secondary-black": ["Helvetica Neue Black", "sans-serif"],
   "secondary-black-italic": ["Helvetica Neue Black Italic", "sans-serif"],
   "secondary-bold": ["Helvetica Neue Bold", "sans-serif"],
@@ -40,7 +40,7 @@ const SECONDARY = {
   "secondary-ultralight-italic": ["Helvetica Neue UltraLight Italic", "sans-serif"]
 };
 
-const fontFamily = { ...PRIMARY, ...SECONDARY };
+const fontFamily = { ...FONT_PRIMARY, ...FONT_SECONDARY };
 
 module.exports = {
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],

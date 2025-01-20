@@ -47,9 +47,14 @@ type UploadImageProps = {
   containerStyle?: StyleProp<ViewStyle>;
 
   /**
-   * Image style
+   * Image's wrapper style
    */
   imageStyle?: StyleProp<ViewStyle>;
+
+  /**
+   * The images' class names
+   */
+  innerImageClassName?: string;
 
   /**
    *  Maximum number images
@@ -69,6 +74,7 @@ const UploadImage = ({
   isMultiple = true,
   containerStyle,
   imageStyle,
+  innerImageClassName,
   selectionLimit = 5,
   props
 }: UploadImageProps) => {
@@ -181,6 +187,7 @@ const UploadImage = ({
                 <Image
                   source={{ uri: transformPlatformURI(fileObject.previewPath)! }}
                   style={styles.uploadItemImage}
+                  className={`aspect-[1.6] ${innerImageClassName}`}
                 />
                 {selectedImageId === fileObject.id && (
                   <TouchableHighlight

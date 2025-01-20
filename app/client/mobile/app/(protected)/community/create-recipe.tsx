@@ -31,6 +31,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { protectedAxiosInstance } from "@/constants/host";
 import { useCreateRecipe } from "@/api/recipe";
 import { globalStyles } from "@/components/common/GlobalStyles";
+import { stringify } from "@/utils/debug";
 
 type renderIngredientItemProps = CreateIngredientType & {
   setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
@@ -51,6 +52,7 @@ const CreateRecipe = () => {
   const isInputSteps = steps.some(step => step.content !== "");
 
   const onFileChange = (files: ImageFileType[]) => {
+    console.debug("Files", stringify(files));
     setImages(files);
   };
 
@@ -96,11 +98,12 @@ const CreateRecipe = () => {
     data.append("cookTime", formData.cookTime);
 
     const image = images[0];
+
     data.append(`recipeImage`, {
       uri: image.uri,
       name: image.name,
       type: image.type || "image/jpeg"
-    } as any);
+    } as unknown as Blob);
 
     ingredients.forEach((ingredient, index) => {
       data.append(`ingredients[${index}]`, ingredient.value);

@@ -18,7 +18,7 @@ export enum IDENTIFIER_TYPE {
 export const useLogin = () => {
   return useMutation<LoginResponse, Error, LoginParams>({
     mutationKey: ["login"],
-    mutationFn: async (inputs: LoginParams) => {
+    mutationFn: async inputs => {
       const body = new URLSearchParams({
         client_id: CLIENT_ID,
         scope: SCOPE,
@@ -28,11 +28,9 @@ export const useLogin = () => {
       }).toString();
 
       try {
-        const { data } = await axiosInstance.post<LoginResponse>(
-          "/connect/token",
-          body,
-          { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-        );
+        const { data } = await axiosInstance.post<LoginResponse>("/connect/token", body, {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        });
 
         return data;
       } catch (error) {
@@ -208,18 +206,52 @@ type Setting = {
 
 type GetUserSettingsResponse = Array<UserSetting>;
 
-
 export const useUpdateSetting = () => {
-  return useMutation<UpdateSettingResponse, Error, { data: UpdateSettingParams }>({
+  return useMutation<UpdateSettingResponse, Error, UpdateSettingParams>({
     mutationKey: ["updateSetting"],
-    mutationFn: async ({ data }) => {
+    mutationFn: async data => {
       const url = "/api/setting";
 
       try {
-        const { data: response } = await protectedAxiosInstance.put<UpdateSettingResponse>(url, data);
+        const { data: response } =
+          await protectedAxiosInstance.put<UpdateSettingResponse>(url, data);
         return response;
       } catch (error) {
         console.debug("useUpdateSetting", stringify(error));
+
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message);
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    }
+  });
+};
+
+export type UpdateUserResponseSuccess = undefined;
+export type UpdateUserResponse = UpdateUserResponseSuccess | IErrorResponseDTO;
+
+export const useUpdateUser = () => {
+  return useMutation<UpdateUserResponse, Error, IUpdateUserDTO>({
+    mutationKey: ["updateUser"],
+    mutationFn: async data => {
+      const url = "/api/user";
+      const body = new URLSearchParams({ ...data }).toString();
+
+      try {
+        const { data: response } = await protectedAxiosInstance.post<UpdateUserResponse>(
+          url,
+          body,
+          {
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+          }
+        );
+
+        return response;
+      } catch (error) {
+        console.debug("useUpdateUser", stringify(error));
 
         if (error instanceof AxiosError) {
           const data = error.response?.data as IErrorResponseDTO;

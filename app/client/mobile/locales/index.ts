@@ -16,6 +16,12 @@ import componentEn from "../locales/en/component.json";
 import componentVi from "../locales/vi/component.json";
 import recipeDetailEn from "../locales/en/recipeDetail.json";
 import recipeDetailVi from "../locales/vi/recipeDetail.json";
+import termOfServicesEn from "../locales/en/termOfServices.json";
+import termOfServicesVi from "../locales/vi/termOfServices.json";
+import profileEn from "../locales/en/menu/profile/profile.json";
+import profileVi from "../locales/vi/menu/profile/profile.json";
+import updateProfileEn from "../locales/en/menu/profile/updateProfile.json";
+import updateProfileVi from "../locales/vi/menu/profile/updateProfile.json";
 
 export default {
   communityEn,
@@ -35,5 +41,11 @@ export default {
   componentEn,
   componentVi,
   recipeDetailEn,
-  recipeDetailVi
+  recipeDetailVi,
+  termOfServicesEn,
+  termOfServicesVi,
+  profileEn,
+  profileVi,
+  updateProfileEn,
+  updateProfileVi
 };

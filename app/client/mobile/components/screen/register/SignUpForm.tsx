@@ -1,8 +1,8 @@
 import { SignUpParams } from "@/api/user";
 import { ActivityIndicator, Text, View } from "react-native";
-import { AuthFormProps } from "./LoginForm";
-import Input from "./Input";
-import Button from "./Button";
+import { AuthFormProps } from "../login/LoginForm";
+import Input from "../../Input";
+import Button from "../../Button";
 import useBounce from "@/hooks/animation/useBounce";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";

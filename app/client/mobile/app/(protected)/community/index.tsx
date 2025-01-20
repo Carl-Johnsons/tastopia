@@ -1,26 +1,28 @@
-import i18next from "i18next";
 import { useRecipesFeed } from "@/api/recipe";
 import Recipe from "@/components/common/Recipe";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Empty from "@/components/screen/community/Empty";
 import Header from "@/components/screen/community/Header";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import { router, useFocusEffect } from "expo-router";
+import { router } from "expo-router";
 import useDarkMode from "@/hooks/useDarkMode";
+import { selectUser } from "@/slices/user.slice";
+import { stringify } from "@/utils/debug";
 
 const Community = () => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
   const isDarkMode = useDarkMode();
+  const user = selectUser();
+  console.debug("User", stringify(user));
 
   //TODO: apply loading later
   const {
     data,
     fetchNextPage,
     hasNextPage,
-    isLoading,
     isFetchingNextPage,
     refetch,
     isRefetching
@@ -46,12 +48,12 @@ const Community = () => {
 
   const renderItem = useCallback(
     ({ item, index }: { item: RecipeType; index: number }) => (
-      <>
+      <View className="px-4">
         <Recipe {...item} />
         {index !== recipes.length - 1 && (
           <View className='my-4 h-[1px] w-full bg-gray-300' />
         )}
-      </>
+      </View>
     ),
     [recipes.length]
   );
@@ -74,7 +76,6 @@ const Community = () => {
     >
       <FlatList
         removeClippedSubviews
-        style={{ paddingHorizontal: 16 }}
         data={recipes}
         keyExtractor={keyExtractor}
         refreshControl={

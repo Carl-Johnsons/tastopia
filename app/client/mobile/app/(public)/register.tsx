@@ -1,7 +1,7 @@
 import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useEffect } from "react";
 import { router, usePathname } from "expo-router";
-import SignUpForm from "@/components/SignUpForm";
+import SignUpForm from "@/components/screen/register/SignUpForm";
 import { IDENTIFIER_TYPE, SignUpParams, useRegister } from "@/api/user";
 import GoogleButton from "@/components/GoogleButton";
 import CircleBg from "@/components/CircleBg";
