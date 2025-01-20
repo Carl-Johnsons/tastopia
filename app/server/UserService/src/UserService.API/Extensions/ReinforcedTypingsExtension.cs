@@ -28,7 +28,6 @@ public static class ReinforcedTypingsExtension
         // Substitute C# type to typescript type
         builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
         builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
-        builder.Substitute(typeof(IFormFile), new RtSimpleTypeName("Blob"));
 
         // Common type
         builder.ExportAsInterfaces([
