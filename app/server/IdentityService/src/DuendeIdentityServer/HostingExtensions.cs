@@ -25,6 +25,7 @@ internal static class HostingExtensions
 
         services.AddInfrastructureServices();
         services.AddApplicationServices();
+        services.AddErrorValidation();
         services.AddGrpcServices();
         services.AddSwaggerServices();
 
