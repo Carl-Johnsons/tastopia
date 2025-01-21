@@ -20,6 +20,8 @@ COPY ["./app/server/NotificationService/src/EmailWorker","/src/EmailWorker"]
 RUN dotnet build --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/build  --verbosity normal
 
 FROM build AS publish
+# Have to add work dir, because dotnet publish will scan entire fs, make the docker hang with NAT network
+WORKDIR "/src/EmailWorker"
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
