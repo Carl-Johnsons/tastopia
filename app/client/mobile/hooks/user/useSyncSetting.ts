@@ -36,7 +36,7 @@ const useSyncSetting = () => {
     };
 
     await mutateAsync(
-      { data },
+      { ...data },
       {
         onSuccess: () => {
           setStatus("success");

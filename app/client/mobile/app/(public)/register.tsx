@@ -1,7 +1,7 @@
 import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useEffect } from "react";
 import { router, usePathname } from "expo-router";
-import SignUpForm from "@/components/SignUpForm";
+import SignUpForm from "@/components/screen/register/SignUpForm";
 import { IDENTIFIER_TYPE, SignUpParams, useRegister } from "@/api/user";
 import GoogleButton from "@/components/GoogleButton";
 import CircleBg from "@/components/CircleBg";
@@ -16,6 +16,7 @@ import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
 import { getIdentifierType } from "@/utils/checker";
 import useSyncSetting from "@/hooks/user/useSyncSetting";
 import useSyncUser from "@/hooks/user/useSyncUser";
+import { o } from "@/hooks/alternator";
 
 const Register = () => {
   const isAndroid = Platform.OS === "android";
@@ -80,10 +81,10 @@ const Register = () => {
   };
 
   return (
-    <ScrollView className='relative h-full'>
+    <View className='relative h-full'>
       <CircleBg />
       <View
-        className={`absolute ${isAndroid ? "top-[5%]" : "top-[6%]"} flex w-full justify-center gap-[3vh] px-4`}
+        className={`absolute ${o("top-[5%]", "top-[6%]")} flex w-full justify-center gap-[3vh] px-4`}
       >
         <BackButton
           onPress={router.back}
@@ -116,7 +117,7 @@ const Register = () => {
           />
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 

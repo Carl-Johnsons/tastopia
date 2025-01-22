@@ -87,7 +87,7 @@ const ProtectedLayout = () => {
           tabBarShowLabel: false,
           tabBarActiveTintColor: primary,
           tabBarInactiveTintColor: c(black.DEFAULT, white.DEFAULT),
-          tabBarStyle: [styles.tabBar, { bottom: isKeyBoardVisible ? -50 : 0 }],
+          tabBarStyle: [styles.tabBar],
           tabBarHideOnKeyboard: false
         }}
       >

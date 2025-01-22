@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
 
   uploadItemImage: {
     width: "100%",
-    aspectRatio: 1.6
   },
 
   removeOverlay: {
