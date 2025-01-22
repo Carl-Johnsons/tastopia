@@ -91,7 +91,7 @@ const RecipeDetail = () => {
 
   if (isLoadingRecipeDetail || isLoadingGetRecipeComment) {
     return (
-      <View className='flex-1 items-center justify-center'>
+      <View className='bg-white_black100 flex-1 items-center justify-center'>
         <ActivityIndicator
           size='large'
           color={globalStyles.color.primary}
