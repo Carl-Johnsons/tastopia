@@ -5,11 +5,12 @@ import {
   TouchableWithoutFeedback,
   ActivityIndicator,
   ScrollView,
-  RefreshControl
+  RefreshControl,
+  Alert
 } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { globalStyles } from "@/components/common/GlobalStyles";
-import { useRecipeDetail } from "@/api/recipe";
+import { useBookmarkRecipe, useRecipeDetail } from "@/api/recipe";
 import { Image } from "expo-image";
 import BackButton from "@/components/BackButton";
 import Vote from "@/components/common/Vote";
@@ -55,6 +56,7 @@ const RecipeDetail = () => {
     refetch: refetchGetRecipeComment,
     isRefetching: isRefetchingGetRecipeComment
   } = useGetRecipeComment(id);
+  const { mutateAsync: bookmark, isLoading: isBookmarking } = useBookmarkRecipe();
 
   const [comments, setComments] = useState(
     commentData?.pages.flatMap(page => page.paginatedData) ?? []
@@ -68,8 +70,24 @@ const RecipeDetail = () => {
   };
   const handleTouchMenu = () => {};
   const handleTouchUser = () => {};
+
   const handleToggleBookmark = () => {
-    setIsBookmarked(prev => !prev);
+    if (!isBookmarking) {
+      setIsBookmarked(prev => !prev);
+      bookmark(
+        { recipeId: id },
+        {
+          onSuccess: async data => {
+            setIsBookmarked(data.isBookmark);
+            console.log("bookmark successfully");
+          },
+          onError: error => {
+            console.log("Bookmark error", JSON.stringify(error, null, 2));
+            Alert.alert("Error", error.message);
+          }
+        }
+      );
+    }
   };
 
   const handleLoadMoreComment = useCallback(() => {

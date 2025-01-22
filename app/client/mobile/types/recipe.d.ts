@@ -63,3 +63,15 @@ type RecipeResponse = {
 type CreateRecipePayloadType = {
   data: FormData;
 };
+
+type BookMarkRecipeResponse = {
+  userBookmarkRecipe: {
+    accountId: string;
+    recipeId: string;
+    recipe: null | unknown;
+    createdAt: string;
+    updatedAt: string;
+    id: string;
+  };
+  isBookmark: boolean;
+};
