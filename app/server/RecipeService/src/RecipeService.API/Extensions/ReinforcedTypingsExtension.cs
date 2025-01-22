@@ -59,7 +59,7 @@ public static class ReinforcedTypingsExtension
             typeof(Tag),
             typeof(UserBookmarkRecipe),
             typeof(UserReportComment),
-            typeof(UserReportRecipe)
+            typeof(UserReportRecipe),
             typeof(BookmarkRecipeDTO),
             typeof(GetRecipeBookmarkDTO),
             typeof(GetRecipeStepsDTO)
