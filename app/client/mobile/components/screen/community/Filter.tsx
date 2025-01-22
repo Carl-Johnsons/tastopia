@@ -35,7 +35,7 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
   };
 
   return (
-    <View className='w-[400px] flex-row flex-wrap items-center justify-center gap-3'>
+    <View className='w-max-[400px] flex-center flex-row flex-wrap gap-3'>
       {filterData?.map(item => {
         const isSelected = filterSelected === item.value;
 
@@ -51,9 +51,9 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
                   shadowColor: "#000",
                   shadowOffset: { width: 0, height: 2 },
                   shadowOpacity: 0.2,
-                  shadowRadius: 50
+                  shadowRadius: 30
                 },
-                android: { elevation: 20 }
+                android: { elevation: 5 }
               })}
             >
               <View className={`rounded-full p-[0.5px] ${isSelected ? "bg-white" : ""}`}>

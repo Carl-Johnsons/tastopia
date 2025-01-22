@@ -20,11 +20,11 @@ export const getColorSchemeValue = <L, D>(
 /**
  * Returns the right value based on the device's operating system.
  *
- * @param iosValue The value to return if the device is running iOS.
  * @param androidValue The value to return if the device is running Android.
+ * @param iosValue The value to return if the device is running iOS.
  * @returns The value based on the operating system, either `iosValue` or
  *     `androidValue`.
  */
-export const o = <I, A>(iosValue: I, androidValue: A): I | A => {
+export const o = <I, A>(androidValue: A, iosValue: I): I | A => {
   return Platform.OS === "android" ? androidValue : iosValue;
 };

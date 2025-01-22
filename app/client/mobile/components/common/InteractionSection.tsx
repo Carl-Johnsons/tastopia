@@ -13,8 +13,8 @@ const InteractionSection = ({
   numberOfComment: number | undefined;
   handleOnPress: () => void;
 }) => {
-  const {black, white} = colors;
-  const {c} = useColorizer();
+  const { black, white } = colors;
+  const { c } = useColorizer();
 
   return (
     <View className='flex-start flex-row gap-2'>

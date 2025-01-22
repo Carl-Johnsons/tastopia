@@ -1,5 +1,3 @@
-import { router } from "expo-router";
-import { useRecipesFeed } from "@/api/recipe";
 import Recipe from "@/components/common/Recipe";
 import { useCallback, useEffect, useState } from "react";
 import Empty from "@/components/screen/community/Empty";
@@ -7,11 +5,9 @@ import Header from "@/components/screen/community/Header";
 import { View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { router } from "expo-router";
-import useDarkMode from "@/hooks/useDarkMode";
-import { selectUser } from "@/slices/user.slice";
-import { stringify } from "@/utils/debug";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import { useRecipesFeed } from "@/api/recipe";
 
 const Community = () => {
   const { c } = useColorizer();
@@ -19,9 +15,6 @@ const Community = () => {
 
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
-  const isDarkMode = useDarkMode();
-  const user = selectUser();
-  console.debug("User", stringify(user));
 
   const {
     data,

@@ -6,9 +6,6 @@ import { selectUser } from "@/slices/user.slice";
 import Protected from "@/components/Protected";
 import { ROLE } from "@/slices/auth.slice";
 import { useTranslation } from "react-i18next";
-import useColorizer from "@/hooks/useColorizer";
-import { colors } from "@/constants/colors";
-import useDarkMode from "@/hooks/useDarkMode";
 
 type HeaderProps = {
   isRefreshing: boolean;
@@ -38,7 +35,7 @@ function Header({
 
       <Protected excludedRoles={[ROLE.GUEST]}>
         <View className='flex-start mt-2 flex-row px-6'>
-          <View className='items-center flex-row gap-3'>
+          <View className='flex-row w-full items-center gap-3'>
             <Image
               cachePolicy={"disk"}
               source={
@@ -53,10 +50,10 @@ function Header({
                 backgroundColor: "#FFC529"
               }}
             />
-            <View className='gap-2'>
+            <View className='gap-2 grow'>
               <Text className={`paragraph-bold text-black_white`}>{displayName}</Text>
               <TouchableWithoutFeedback onPress={handleCreateRecipe}>
-                <View className='w-full rounded-2xl border border-gray-400 dark:border-gray-200 px-4 py-3'>
+                <View className='flex rounded-2xl border border-gray-400 px-4 py-3 dark:border-gray-200'>
                   <Text className='text-black_white'>{t("headerCreateRecipe")}</Text>
                 </View>
               </TouchableWithoutFeedback>
