@@ -1,47 +1,16 @@
-﻿
-using Consul;
+﻿using Contract.Common;
+using Expo.Server.Client;
 using MassTransit;
-using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson;
 using System.Reflection;
 
-namespace NotificationService.Infrastructure;
+namespace PushNotificationWorker;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    public static IServiceCollection AddWorkerServices(this IServiceCollection services)
     {
-        // This line only use 1 in infrastructure
-        if (!BsonClassMap.IsClassMapRegistered(typeof(Guid)))
-        {
-            BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
-        }
-
-        services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
-        // MediatR require repository scope dependency injection
-        services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
-        services.AddScoped<MockupData>();
-        services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
-        {
-            return new ConsulClient(config =>
-            {
-                var scheme = DotNetEnv.Env.GetString("CONSUL_SCHEME", "Not found");
-                var host = DotNetEnv.Env.GetString("CONSUL_HOST", "Not found");
-                var port = DotNetEnv.Env.GetString("CONSUL_PORT", "Not found");
-                Console.WriteLine($"{scheme}://{host}:{port}");
-                config.Address = new Uri($"{scheme}://{host}:{port}");
-            });
-        });
-        services.AddSingleton<IConsulRegistryService, ConsulRegistryService>();
+        services.AddSingleton<PushApiClient>();
         services.AddMassTransitService();
-
-        using (var serviceProvider = services.BuildServiceProvider())
-        {
-            var mockupData = serviceProvider.GetRequiredService<MockupData>();
-            mockupData.SeedAllData().Wait();
-        }
 
         return services;
     }
@@ -52,7 +21,7 @@ public static class DependencyInjection
         {
             busConfig.SetKebabCaseEndpointNameFormatter();
 
-            var applicationAssembly = AppDomain.CurrentDomain.Load("NotificationService.API");
+            var applicationAssembly = AppDomain.CurrentDomain.Load("PushNotificationWorker");
             busConfig.AddConsumers(applicationAssembly);
 
             busConfig.UsingRabbitMq((context, config) =>
@@ -71,7 +40,6 @@ public static class DependencyInjection
                 config.ConfigureEndpoints(context);
             });
         });
-        services.AddScoped<IServiceBus, MassTransitServiceBus>();
         return services;
     }
 

@@ -1,8 +1,7 @@
-﻿
-using Contract.Event.NotificationEvent;
+﻿using Contract.Event.NotificationEvent;
 using System.ComponentModel.DataAnnotations;
 
-namespace NotificationService.Application.Emails;
+namespace NotificationService.Application.Notifications.Commands;
 
 public record SendEmailCommand : IRequest<Result>
 {

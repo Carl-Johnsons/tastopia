@@ -1,4 +1,4 @@
-namespace EmailWorker;
+namespace PushNotificationWorker;
 
 public class Worker : IHostedLifecycleService
 {
@@ -10,12 +10,12 @@ public class Worker : IHostedLifecycleService
     }
     public Task StartingAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Email worker starting");
+        _logger.LogInformation("Push notification worker starting");
         return Task.CompletedTask;
     }
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Email worker start");
+        _logger.LogInformation("Push notification worker start");
         try
         {
         }
@@ -27,22 +27,22 @@ public class Worker : IHostedLifecycleService
     }
     public Task StartedAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Email worker started");
+        _logger.LogInformation("Push notification worker started");
         return Task.CompletedTask;
     }
     public Task StoppingAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Email worker stopping");
+        _logger.LogInformation("Push notification worker stopping");
         return Task.CompletedTask;
     }
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Email worker stop");
+        _logger.LogInformation("Push notification worker stop");
         return Task.CompletedTask;
     }
     public Task StoppedAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Email worker stopped");
+        _logger.LogInformation("Push notification worker stopped");
         return Task.CompletedTask;
     }
 }
