@@ -1,0 +1,240 @@
+@startuml ClassDiagram
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +CommentRecipe(CommentRecipeDTO commentRecipeDTO): async Task<IActionResult>
+}
+
+class CommentRecipeCommand {
+    +Content: string
+    +AccountId: Guid
+    +RecipeId: Guid
+}
+
+class CommentRecipeCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    -_mapper: IMapper
+    -_grpcUserClient: GrpcUserClient
+    -_serviceBus: IServicebus
+    +Handle(CommentRecipeCommand request, CancellationToken cancellationToken): async Task<Result<RecipeCommentResponse?>> 
+}
+
+interface IMapper{
+    #Map<TDestination>(object source): TDestination
+}
+
+interface IServicebus{
+    #CreateRequestClient<TRequest>(): IRequestClient<TRequest>
+    #Publish<T>(T eventMessage): async Task
+}
+
+class MassTransitServiceBus{
+    -_bus: IBus 
+    +CreateRequestClient<TRequest>(): IRequestClient<TRequest>
+    +Publish<T>(T eventMessage): async Task
+}
+
+interface IApplicationDbContext {
+    +Recipes: DbSet<Recipe>
+    +Tags: DbSet<Tag>
+    +RecipeTags: DbSet<RecipeTag>
+    +UserBookmarkRecipes: DbSet<UserBookmarkRecipe>
+    +UserReportRecipes: DbSet<UserReportRecipe>
+    +UserReportComments: DbSet<UserReportComment>
+}
+
+class ApplicationDbContext {
+    +Recipes: DbSet<Recipe>
+    +Tags: DbSet<Tag>
+    +RecipeTags: DbSet<RecipeTag>
+    +UserBookmarkRecipes: DbSet<UserBookmarkRecipe>
+    +UserReportRecipes: DbSet<UserReportRecipe>
+    +UserReportComments: DbSet<UserReportComment>
+    #OnConfiguring(DbContextOptionsBuilder optionsBuilder): void
+    #OnModelCreating(ModelBuilder modelBuilder): void
+}
+
+class Result {
+    +bool IsFailure
+    +bool IsSuccess
+    +IEnumerable<Error> Errors
+    #Result(bool isSuccess, IEnumerable<Error> errors)
+    #Result(bool isSuccess, Error error)
+    +ThrowIfFailure(): void
+    {static} +Success(): Result
+    {static} +Failure(Error err): Result
+    {static} +Failure(IEnumerable<Error> errs): Result
+}
+
+class "Result<T>" {
+    +T Value
+    {static} +Success(T value): Result<T>
+    {static} +Failure(Error error): Result<T?>
+    {static} +Failure(IEnumerable<Error> errs): Result<T?>
+}
+
+class Error {
+    {static} +None: Error
+    {static} +implicit operator Result(Error err): Result
+}
+
+class CommentRecipeDTO{
+    +RecipeId: Guid
+    +Content: string
+}
+
+interface IUnitOfWork {
+    Task SaveChangeAsync(CancellationToken cancellationToken = default)
+}
+
+class UnitOfWork {
+    -_context: ApplicationDbContext
+    +Task SaveChangeAsync(CancellationToken cancellationToken = default)
+}
+
+class RecipeCommentResponse{
+    +Id: Guid
+    +AccountId: Guid
+    +DisplayName: string
+    +Content: string
+    +AvatarUrl: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+    +IsActive: bool
+}
+
+class CommentError {
+    {static} +NotFound: Error
+    {static} +AddCommentFail: Error
+    {static} +DeleteCommentFail: Error
+    {static} +UpdateCommentFail: Error
+}
+
+class BaseMongoDBEntity {
+    +Guid Id
+}
+
+class BaseMongoDBAuditableEntity{
+    +DateTime CreatedAt
+    +DateTime UpdatedAt
+}
+
+class Recipe {
+    +AuthorId: Guid
+    +Title: string
+    +Description: string
+    +ImageUrl: string
+    +Ingredients: List<string>
+    +CookTime: string?
+    +Serves: int?
+    +VoteDiff: int
+    +NumberOfComment: int
+    +IsActive: bool
+    +TotalView: int
+    +Steps: List<Step>
+    +Comments: List<Comment>
+    +RecipeVotes: List<RecipeVote>
+}
+
+class Step{
+    +OrdinalNumber: int
+    +Content: string
+    +AttachedImageUrls: List<string>?
+}
+
+class Comment{
+    Content: string
+    AccountId: Guid
+    IsActive: bool
+}
+
+class RecipeVote{
+    AccountId: Guid
+    IsUpvote: bool
+}
+
+class Tag{
+    +Value: string
+    +Code: string
+    +Category: enum
+    +Status: enum
+    +ImageUrl: string
+}
+
+class RecipeTag{
+    +RecipeId: Guid
+    +TagId: Guid
+}
+
+class UserBookmarkRecipe{
+    +AccountId: Guid
+    +RecipeId: Guid
+}
+
+class UserReportRecipe{
+    +AccountId: Guid
+    +RecipeId: Guid
+    +Reason: string
+    +Status: enum
+}
+
+class UserReportComment{
+    +AccountId: Guid
+    +CommentId: Guid
+    +Reason: string
+    +Status: enum
+}
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" CommentRecipeDTO
+RecipeController "1"--"1" CommentRecipeCommand
+
+CommentRecipeCommandHandler "1"--"1" CommentRecipeCommand
+CommentRecipeCommandHandler "1"--"1" Result
+CommentRecipeCommandHandler "1"--"1" RecipeCommentResponse
+CommentRecipeCommandHandler "1" o-- "1" IUnitOfWork
+CommentRecipeCommandHandler "1" o-- "1" IApplicationDbContext
+CommentRecipeCommandHandler "1" o-- "1" IMapper
+CommentRecipeCommandHandler "1" o-- "1" GrpcUserClient
+CommentRecipeCommandHandler "1" o-- "1" IServicebus
+CommentRecipeCommandHandler "1"--"1" CommentError
+
+IUnitOfWork <|.. UnitOfWork
+IApplicationDbContext <|.. ApplicationDbContext
+IServicebus <|.. MassTransitServiceBus
+
+Result "1" --"1..*" Error
+Result <|-- "Result<T>"
+Error "1" --"1..*" CommentError
+
+ApplicationDbContext "1" o--"1..*" Recipe
+ApplicationDbContext "1" o--"1..*" Tag
+ApplicationDbContext "1" o--"1..*" RecipeTag
+ApplicationDbContext "1" o--"1..*" UserBookmarkRecipe
+ApplicationDbContext "1" o--"1..*" UserReportComment
+ApplicationDbContext "1" o--"1..*" UserReportRecipe
+
+Recipe --|> BaseMongoDBAuditableEntity
+Step --|> BaseMongoDBAuditableEntity
+Comment --|> BaseMongoDBAuditableEntity
+RecipeVote --|> BaseMongoDBEntity
+Tag --|> BaseMongoDBAuditableEntity
+RecipeTag --|> BaseMongoDBAuditableEntity
+UserBookmarkRecipe --|> BaseMongoDBAuditableEntity
+UserReportRecipe --|> BaseMongoDBAuditableEntity
+UserReportComment --|> BaseMongoDBAuditableEntity
+
+
+
+Recipe *--"1.." Step
+Recipe *--"1.." Comment
+Recipe *--"1.." RecipeVote
+
+BaseMongoDBAuditableEntity --|> BaseMongoDBEntity
+@enduml

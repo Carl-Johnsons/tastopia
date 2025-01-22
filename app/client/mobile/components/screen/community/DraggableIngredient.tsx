@@ -4,6 +4,8 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
 import useDebounce from "@/hooks/useDebounce";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 interface DraggableIngredientProps {
   ingredientKey: string;
@@ -16,6 +18,9 @@ const DraggableIngredient = ({
   value,
   setIngredients
 }: DraggableIngredientProps) => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const { t } = useTranslation("createRecipe");
   const [inputValue, setInputValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
@@ -68,7 +73,7 @@ const DraggableIngredient = ({
   }, [debouncedValue, ingredientKey, setIngredients]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
       <TouchableOpacity
         style={styles.iconContainer}
         onPress={confirmRemoveItem}

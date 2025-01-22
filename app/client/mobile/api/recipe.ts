@@ -47,6 +47,22 @@ const useRecipeDetail = (recipeId: string) => {
   });
 };
 
+const useRecipeSteps = (recipeId: string) => {
+  return useQuery<RecipeStep[]>({
+    queryKey: ["recipeSteps", recipeId],
+    queryFn: async () => {
+      const { data } = await protectedAxiosInstance.post<RecipeStep[]>(
+        "/api/recipe/get-recipe-steps",
+        {
+          recipeId
+        }
+      );
+      return data;
+    },
+    enabled: !!recipeId
+  });
+};
+
 const useCreateRecipe = () => {
   return useMutation<any, Error, CreateRecipePayloadType>({
     mutationFn: async payload => {
@@ -65,4 +81,4 @@ const useCreateRecipe = () => {
   });
 };
 
-export { useRecipesFeed, useRecipeDetail, useCreateRecipe };
+export { useRecipesFeed, useRecipeDetail, useRecipeSteps, useCreateRecipe };

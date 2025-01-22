@@ -28,7 +28,7 @@ const InteractionSection = ({
               size={20}
               color={c(black.DEFAULT, white.DEFAULT)}
             />
-            <Text className="text-black_white">{numberOfComment}</Text>
+            <Text className={`text-black_white mx-2 text-center`}>{numberOfComment}</Text>
           </View>
         </TouchableWithoutFeedback>
       )}

@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
   uploadItem: {
     position: "relative",
     width: "31%",
-    borderWidth: 2,
     borderRadius: 5,
     borderColor: globalStyles.color.light,
     overflow: "hidden"
@@ -61,7 +60,6 @@ const styles = StyleSheet.create({
 
   uploadButton: {
     backgroundColor: globalStyles.color.primary,
-    width: 100,
     height: 40,
     marginRight: 10,
     justifyContent: "center",

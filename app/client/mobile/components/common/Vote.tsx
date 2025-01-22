@@ -13,11 +13,13 @@ type VoteProps = {
 };
 
 const Vote = ({ voteDiff }: VoteProps) => {
+  const isDarkMode = useDarkMode();
+
   const [votes, setVotes] = useState(voteDiff);
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
-  const {black,white} = colors;
-  const {c} = useColorizer();
+  const { black, white } = colors;
+  const { c } = useColorizer();
 
   const upvoteBounceValue = useRef(new Animated.Value(1)).current;
   const downvoteBounceValue = useRef(new Animated.Value(1)).current;
@@ -88,11 +90,35 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 flexDirection: "row"
               }}
             >
-              <AntDesign
-                name='like2'
-                size={16}
-                color={upvoted ? globalStyles.color.primary : c(black.DEFAULT, white.DEFAULT)}
-              />
+              {upvoted ? (
+                <AntDesign
+                  name='like1'
+                  size={16}
+                  color={
+                    isDarkMode
+                      ? upvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.light
+                      : upvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.dark
+                  }
+                />
+              ) : (
+                <AntDesign
+                  name='like2'
+                  size={16}
+                  color={
+                    isDarkMode
+                      ? upvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.light
+                      : upvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.dark
+                  }
+                />
+              )}
             </Animated.View>
             <Text
               className={`text-black_white mx-2 text-center`}
@@ -118,11 +144,35 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 flexDirection: "row"
               }}
             >
-              <AntDesign
-                name='dislike2'
-                size={16}
-                color={downvoted ? globalStyles.color.primary : c(black.DEFAULT, white.DEFAULT)}
-              />
+              {downvoted ? (
+                <AntDesign
+                  name='dislike1'
+                  size={16}
+                  color={
+                    isDarkMode
+                      ? downvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.light
+                      : downvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.dark
+                  }
+                />
+              ) : (
+                <AntDesign
+                  name='dislike2'
+                  size={16}
+                  color={
+                    isDarkMode
+                      ? downvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.light
+                      : downvoted
+                        ? globalStyles.color.primary
+                        : globalStyles.color.dark
+                  }
+                />
+              )}
             </Animated.View>
           </View>
         </Pressable>

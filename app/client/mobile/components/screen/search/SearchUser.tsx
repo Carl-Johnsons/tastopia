@@ -7,12 +7,9 @@ import {
   Keyboard,
   TouchableOpacity,
   FlatList,
-  RefreshControl,
-  ActivityIndicator
+  RefreshControl
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Feather from "@expo/vector-icons/Feather";
-import { Filter } from "@/components/common/SVG";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import useDebounce from "@/hooks/useDebounce";
 import { AntDesign } from "@expo/vector-icons";
@@ -20,9 +17,10 @@ import useDarkMode from "@/hooks/useDarkMode";
 import User from "@/components/common/User";
 import { Image } from "expo-image";
 import { useSearchUsers } from "@/api/search";
-import Tag from "@/components/common/Tag";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { useTranslation } from "react-i18next";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -30,6 +28,9 @@ type SearchUserProps = {
 };
 
 const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const { t } = useTranslation("search");
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchResults, setSearchResults] = useState<SearchUserResultType[]>();
@@ -56,8 +57,6 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
     !isRefetching &&
     !isSearching &&
     !isFetchingNextPage;
-
-  const handleFilter = () => {};
 
   const handleFocus = useCallback(
     (isFocus: boolean) => {
@@ -91,8 +90,6 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const handleOnPressTag = () => {};
-
   useEffect(() => {
     if (data?.pages) {
       const uniqueData = filterUniqueItems(data.pages);
@@ -109,12 +106,13 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
             <Feather
               name='search'
               size={20}
-              color='black'
+              color={c(black.DEFAULT, white.DEFAULT)}
             />
             <TextInput
               autoCapitalize='none'
               ref={textInputRef}
               className='h-full w-[86%]'
+              style={{ color: c(black.DEFAULT, white.DEFAULT) }}
               value={searchValue}
               onPress={() => handleFocus(true)}
               onChangeText={handleSearch}
@@ -154,9 +152,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
       {/* Result section */}
       {searchValue !== "" && (
-        <View className='mt-6 pb-[200px]'>
-          <Text className='h3-bold mb-2'>{t("searchResultTitle.user")}</Text>
-
+        <View className='mt-6'>
           <FlatList
             data={searchResults}
             keyExtractor={item => item.username}
@@ -170,6 +166,14 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
             onEndReached={handleLoadMore}
             onEndReachedThreshold={0.1}
             showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 120 }}
+            ListHeaderComponent={() => {
+              return (
+                <Text className='h3-bold text-black_white mb-2'>
+                  {t("searchResultTitle.user")}
+                </Text>
+              );
+            }}
             renderItem={({ item, index }) => (
               <>
                 <User {...item} />
@@ -185,7 +189,9 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
                     source={require("../../../assets/icons/noResult.png")}
                     style={{ width: 130, height: 130 }}
                   />
-                  <Text className='paragraph-medium text-center'>{t("notFound")}</Text>
+                  <Text className='paragraph-medium text-black_white text-center'>
+                    {t("notFound")}
+                  </Text>
                 </View>
               ) : (
                 <View></View>

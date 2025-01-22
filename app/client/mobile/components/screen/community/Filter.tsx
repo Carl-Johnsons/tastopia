@@ -1,5 +1,5 @@
 import { Image } from "expo-image";
-import React, { memo, useState } from "react";
+import { memo } from "react";
 import { Platform, Text, TouchableWithoutFeedback, View } from "react-native";
 
 const filterData = [
@@ -51,7 +51,7 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
                   shadowColor: "#000",
                   shadowOffset: { width: 0, height: 2 },
                   shadowOpacity: 0.2,
-                  shadowRadius: 50 //2
+                  shadowRadius: 50
                 },
                 android: { elevation: 20 }
               })}

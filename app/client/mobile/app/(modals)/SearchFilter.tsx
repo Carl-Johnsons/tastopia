@@ -2,6 +2,8 @@ import { useSearchTags } from "@/api/search";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import Ingredient from "@/components/screen/search/Ingredient";
 import SelectedTag from "@/components/screen/search/SelectedTag";
+import { colors } from "@/constants/colors";
+import useColorizer from "@/hooks/useColorizer";
 import useDarkMode from "@/hooks/useDarkMode";
 import useDebounce from "@/hooks/useDebounce";
 import {
@@ -31,6 +33,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const SearchFilter = () => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const { t } = useTranslation("search");
   const dispatch = useAppDispatch();
   const selectedTagsStore = useAppSelector(selectSearchTags);
@@ -124,8 +129,10 @@ const SearchFilter = () => {
   }, [data]);
 
   return (
-    <SafeAreaView>
-      <View className={`bg-white_black size-full flex-col`}>
+    <SafeAreaView
+      style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
+    >
+      <View className={`size-full flex-col`}>
         <View
           style={{ marginTop: StatusBar.currentHeight }}
           className='flex-between mb-4 h-[60px] flex-row items-center border-b-[0.6px] border-gray-400 px-6'
@@ -135,7 +142,7 @@ const SearchFilter = () => {
               <AntDesign
                 name='close'
                 size={20}
-                color='black'
+                color={c(black.DEFAULT, white.DEFAULT)}
               />
             </View>
           </TouchableWithoutFeedback>
@@ -154,7 +161,7 @@ const SearchFilter = () => {
         </View>
 
         <View className='mt-2 px-6'>
-          <Text className='body-semibold'>{t("filter.title")}</Text>
+          <Text className='body-semibold text-black_white'>{t("filter.title")}</Text>
 
           <View className='mt-4 flex-row items-center gap-5'>
             <TouchableWithoutFeedback onPress={() => handleFocus(true)}>
@@ -162,13 +169,14 @@ const SearchFilter = () => {
                 <Feather
                   name='search'
                   size={20}
-                  color='black'
+                  color={c(black.DEFAULT, white.DEFAULT)}
                 />
                 <TextInput
                   autoFocus
                   autoCapitalize='none'
                   ref={textInputRef}
                   className='h-full w-[86%]'
+                  style={{ color: c(black.DEFAULT, white.DEFAULT) }}
                   value={searchValue}
                   onPress={() => handleFocus(true)}
                   onChangeText={handleSearch}
@@ -222,7 +230,9 @@ const SearchFilter = () => {
           {/* Result section */}
           {searchValue !== "" && (
             <View className='mt-3 pb-[200px]'>
-              <Text className='h3-bold mb-2'>{t("searchResultTitle.ingredient")}</Text>
+              <Text className='h3-bold text-black_white mb-2'>
+                {t("searchResultTitle.ingredient")}
+              </Text>
 
               <FlatList
                 data={searchResults}
@@ -259,7 +269,7 @@ const SearchFilter = () => {
                         source={require("../../assets/icons/noResult.png")}
                         style={{ width: 130, height: 130 }}
                       />
-                      <Text className='paragraph-medium text-center'>
+                      <Text className='paragraph-medium text-black_white text-center'>
                         {t("notFound")}
                       </Text>
                     </View>

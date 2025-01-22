@@ -60,6 +60,9 @@ public static class ReinforcedTypingsExtension
             typeof(UserBookmarkRecipe),
             typeof(UserReportComment),
             typeof(UserReportRecipe)
+            typeof(BookmarkRecipeDTO),
+            typeof(GetRecipeBookmarkDTO),
+            typeof(GetRecipeStepsDTO)
         ], config =>
         {
             config.WithPublicProperties()

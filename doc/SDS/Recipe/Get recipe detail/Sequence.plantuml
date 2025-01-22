@@ -1,0 +1,57 @@
+@startuml Sequence
+title "Get recipe detail"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\n ApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UserService" as UserService
+participant "<<cordinator>>\n Rabbitmq" as Rabbitmq
+participant "<<service>>\n TrackingService" as TrackingService
+database MongoDB
+database Postgresql
+
+
+User -> MobileUI++: 1. Touch a recipe feed
+
+MobileUI -> ApiGateway++: 2. Get recipe detail
+
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> RecipeService++: 4. Forward request
+
+RecipeService -> MongoDB++: 5. Query data
+RecipeService <-- MongoDB--: 6. Return response
+
+alt Recipe is not existed
+    ApiGateway <-- RecipeService: 7A. Return not found error
+    MobileUI <-- ApiGateway: 7A.1. Foward response
+    User <-- ApiGateway: 7a.2. Display not found error
+else Recipe is existed
+    RecipeService -> Rabbitmq++: 8. Publish "UserViewRecipeDetailEvent" \n message <<Async>>
+    Rabbitmq --> TrackingService++: 9. Deliver "UserViewRecipeDetailEvent"\n message
+    deactivate Rabbitmq
+    TrackingService -> MongoDB++: 10. Consume event and \n add user's view to DB
+    TrackingService <-- MongoDB--: 11. Return response
+    deactivate TrackingService
+
+    RecipeService -> UserService++: 12. gRPC call to get user's \n information <<gRPC>>
+    UserService -> Postgresql++: 13. Query data
+    UserService <-- Postgresql--: 14. return response
+    RecipeService <-- UserService--: 15. return user's information <<gRPC>>
+
+    ApiGateway <-- RecipeService--: 16. return recipe detail
+    MobileUI <-- ApiGateway--: 17. Forward response
+    User <-- MobileUI--: 18. Display recipe detail
+end alt
+
+
+@enduml

@@ -108,6 +108,20 @@ public class GetRecipeFeedsQueryHandler : IRequestHandler<GetRecipeFeedsQuery, R
 
         }
 
+
+        var recipeMap = await recipesQuery.ToDictionaryAsync(r => r.Id);
+        var voteDict = new Dictionary<Tuple<Guid, Guid>, Vote>();
+        foreach (var (key, value) in recipeMap)
+        {
+            var vote = recipeMap[key].RecipeVotes.Where(v => v.AccountId == accountId).SingleOrDefault();
+            voteDict.Add(Tuple.Create(key, value.AuthorId), vote != null ? (vote.IsUpvote ? Vote.Upvote : Vote.Downvote) : Vote.None);
+        }
+
+        foreach (var recipe in recipeList)
+        {
+            recipe.Vote = voteDict[Tuple.Create(recipe.Id, recipe.AuthorId)].ToString();
+        }
+
         var authorIds = recipesQuery
         .Select(r => r.AuthorId)
         .Distinct()

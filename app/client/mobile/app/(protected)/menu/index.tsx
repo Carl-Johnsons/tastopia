@@ -104,7 +104,7 @@ const ItemCard = ({ icon: Icon, title, className, onPress }: ItemCardProps) => {
         width={28}
         height={28}
       />
-      <Text className='text-black_white font-sans'>{t(title)}</Text>
+      <Text className='text-black_white font-medium'>{t(title)}</Text>
     </Button>
   );
 };
@@ -116,9 +116,7 @@ const History = () => {
   return (
     <>
       <View className='flex-row justify-between'>
-        <Text className='text-black_white font-secondary font-semibold text-4xl'>
-          {t("history")}
-        </Text>
+        <Text className='text-black_white font-semibold text-4xl'>{t("history")}</Text>
         <Button className='flex justify-center rounded-full border border-gray-200 px-4 py-1'>
           <Text className='text-black_white font-sans'>{t("viewAll")}</Text>
         </Button>

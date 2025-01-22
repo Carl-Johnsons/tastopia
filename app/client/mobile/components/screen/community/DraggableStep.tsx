@@ -13,6 +13,8 @@ import { useTranslation } from "react-i18next";
 import useDebounce from "@/hooks/useDebounce";
 import UploadImage from "@/components/common/UploadImage";
 import { ImageFileType } from "@/types/image";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 interface DraggableStepProps {
   stepKey: string;
@@ -29,6 +31,9 @@ const DraggableStep = ({
   drag,
   setSteps
 }: DraggableStepProps) => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const { t } = useTranslation("createRecipe");
   const [inputValue, setInputValue] = useState(content);
   const [isFocused, setIsFocused] = useState(false);
@@ -85,7 +90,7 @@ const DraggableStep = ({
   }, [debouncedValue, stepKey, setSteps]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
       <TouchableOpacity
         style={styles.iconContainer}
         onPress={confirmRemoveItem}
@@ -135,12 +140,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: "white",
     borderRadius: 8,
     marginVertical: 4,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2
