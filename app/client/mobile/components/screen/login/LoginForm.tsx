@@ -1,11 +1,11 @@
 import { LoginParams } from "@/api/user";
 import { ActivityIndicator, Text, View } from "react-native";
-import Input from "./Input";
+import Input from "../../Input";
 import useBounce from "@/hooks/animation/useBounce";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "@/lib/validation/auth";
-import Button from "./Button";
+import Button from "../../Button";
 
 export interface LoginFormFields extends LoginParams {}
 

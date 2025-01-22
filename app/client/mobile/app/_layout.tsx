@@ -15,6 +15,8 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useColorScheme } from "nativewind";
 import { colors } from "@/constants/colors";
+import { FONTS } from "@/constants/fonts";
+import useColorizer from "@/hooks/useColorizer";
 
 import("./global.css");
 
@@ -22,35 +24,11 @@ SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
   const queryClient = new QueryClient();
-  const [fontsLoaded, error] = useFonts({
-    "Sofia-Pro-Black": require("../assets/fonts/Sofia-Pro-Black-Az.otf"),
-    "Sofia-Pro-Black-Italic": require("../assets/fonts/Sofia-Pro-Black-Italic-Az.otf"),
-    "Sofia-Pro-Bold": require("../assets/fonts/Sofia-Pro-Bold-Az.otf"),
-    "Sofia-Pro-Bold-Italic": require("../assets/fonts/Sofia-Pro-Bold-Italic-Az.otf"),
-    "Sofia-Pro-ExtraLight": require("../assets/fonts/Sofia-Pro-ExtraLight-Az.otf"),
-    "Sofia-Pro-ExtraLight-Italic": require("../assets/fonts/Sofia-Pro-ExtraLight-Italic-Az.otf"),
-    "Sofia-Pro-Light": require("../assets/fonts/Sofia-Pro-Light-Az.otf"),
-    "Sofia-Pro-Light-Italic": require("../assets/fonts/Sofia-Pro-Light-Italic-Az.otf"),
-    "Sofia-Pro-Medium": require("../assets/fonts/Sofia-Pro-Medium-Az.otf"),
-    "Sofia-Pro-Medium-Italic": require("../assets/fonts/Sofia-Pro-Medium-Italic-Az.otf"),
-    "Sofia-Pro-Regular": require("../assets/fonts/Sofia-Pro-Regular-Az.otf"),
-    "Sofia-Pro-Regular-Italic": require("../assets/fonts/Sofia-Pro-Regular-Italic-Az.otf"),
-    "Sofia-Pro-Semi-Bold": require("../assets/fonts/Sofia-Pro-Semi-Bold-Az.otf"),
-    "Sofia-Pro-Semi-Bold-Italic": require("../assets/fonts/Sofia-Pro-Semi-Bold-Italic-Az.otf"),
-    "Sofia-Pro-UltraLight": require("../assets/fonts/Sofia-Pro-UltraLight-Az.otf"),
-    "Sofia-Pro-UltraLight-Italic": require("../assets/fonts/Sofia-Pro-UltraLight-Italic-Az.otf")
-  });
-  const { colorScheme } = useColorScheme();
-  const bgColor = getColorSchemeValue(
-    colorScheme,
-    colors.white.DEFAULT,
-    colors.black.DEFAULT,
-  );
-  const barStyle = getColorSchemeValue(
-    colorScheme,
-    "dark-content",
-    "light-content",
-  );
+  const [fontsLoaded, error] = useFonts(FONTS);
+  const { white, black } = colors;
+  const { c } = useColorizer();
+  const bgColor = c(white.DEFAULT, black.DEFAULT);
+  const barStyle = c("dark-content", "light-content");
 
   useEffect(() => {
     if (error) throw error;
@@ -71,7 +49,10 @@ const RootLayout = () => {
             <I18nextProvider i18n={i18n}>
               <SafeAreaProvider>
                 <BottomSheetModalProvider>
-                  <StatusBar backgroundColor={bgColor} barStyle={barStyle} />
+                  <StatusBar
+                    backgroundColor={bgColor}
+                    barStyle={barStyle}
+                  />
                   <Stack
                     screenOptions={{
                       headerShown: false

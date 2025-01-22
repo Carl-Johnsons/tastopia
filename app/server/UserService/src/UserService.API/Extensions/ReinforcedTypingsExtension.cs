@@ -2,8 +2,8 @@
 using Reinforced.Typings.Fluent;
 using System.Reflection;
 using System.Text;
-using System.Xml.Linq;
 using UserService.API.DTOs;
+using UserService.Domain.Entities;
 using UserService.Domain.Errors;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 namespace UserService.API.Extensions;
@@ -27,6 +27,7 @@ public static class ReinforcedTypingsExtension
 
         // Substitute C# type to typescript type
         builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
+        builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
 
         // Common type
         builder.ExportAsInterfaces([
@@ -38,12 +39,17 @@ public static class ReinforcedTypingsExtension
                   .DontIncludeToNamespace()
                   .ExportTo("interfaces/common.interface.d.ts");
         });
-        // DTO 
+        // DTO and entities
         builder.ExportAsInterfaces([
             typeof(SearchUserDTO),
             typeof(UpdateSettingDTO),
             typeof(SettingObjectDTO),
-            typeof(UpdateUserDTO)
+            typeof(UpdateUserDTO),
+            typeof(User),
+            typeof(Setting),
+            typeof(UserFollow),
+            typeof(UserReport),
+            typeof(UserSetting),
         ], config =>
         {
             config.WithPublicProperties()
@@ -51,6 +57,7 @@ public static class ReinforcedTypingsExtension
                   .DontIncludeToNamespace()
                   .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
         });
+
 
         //Custom export file
         List<Type> errorsTypes = [

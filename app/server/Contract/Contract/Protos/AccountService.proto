@@ -4,12 +4,18 @@ package AccountProto;
 
 service GrpcAccount {
     rpc GetAccountDetail (GrpcAccountIdRequest) returns (GrpcAccountDTO);
+    rpc UpdateAccount (GrpcUpdateAccountRequest) returns (GrpcEmpty);
 }
 
 message GrpcEmpty {}
 
 message GrpcAccountIdRequest {
     string AccountId = 1;
+}
+
+message GrpcUpdateAccountRequest {
+    string AccountId = 1;
+    string UserName = 2;
 }
 
 message GrpcAccountDTO {

@@ -4,8 +4,10 @@ import Protected from "./Protected";
 import Button from "./Button";
 import { persistor } from "@/store";
 import { useBounce } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 export const LogoutButton = () => {
+  const { t } = useTranslation("menu");
   const { animate, animatedStyles } = useBounce();
   const logout = async () => {
     animate();
@@ -16,11 +18,13 @@ export const LogoutButton = () => {
   return (
     <Protected excludedRoles={[]}>
       <Button
-        className='py-2.5 rounded-lg border border-gray-300'
+        className='rounded-lg border border-gray-300 py-2.5'
         onPress={logout}
         style={[animatedStyles]}
       >
-        <Text className='font-sans text-sm text-center text-black_white'>Log out</Text>
+        <Text className='text-black_white text-center font-sans text-sm'>
+          {t("logout")}
+        </Text>
       </Button>
     </Protected>
   );

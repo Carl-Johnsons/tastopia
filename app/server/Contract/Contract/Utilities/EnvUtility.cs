@@ -85,24 +85,18 @@ public class EnvUtility
     }
 
     /// <summary>
-    ///     Recursively search for the .env file by traversing up to the target parent directory.
     /// </summary>
     /// <param name="folderName"></param>
     /// <param name="envFileName"></param>
     /// <returns>absolute env file path, if not found return null</returns>
     private static string? GetEnvFilePath(string folderName, string envFileName)
     {
-        var currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
-
-        while (currentDirectory != null && currentDirectory.Exists)
+        var currentDirectory = Directory.GetCurrentDirectory();
+        int rootIndex = currentDirectory.IndexOf(folderName);
+        if (rootIndex != -1)
         {
-            if (currentDirectory.Name.Equals(folderName, StringComparison.OrdinalIgnoreCase))
-            {
-                return Path.Combine(currentDirectory.FullName, envFileName);
-            }
-            currentDirectory = currentDirectory.Parent;
+            return Path.Combine(currentDirectory.Substring(0, rootIndex + folderName.Length), envFileName);
         }
-
         return null;
     }
 
@@ -133,7 +127,7 @@ public class EnvUtility
             }
         }
     }
-    
+
     private static Dictionary<string, string> ParseEnvFile(string envPath)
     {
         var envVariables = new Dictionary<string, string>();

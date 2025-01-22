@@ -11,6 +11,9 @@ const resources = {
     component: locales.componentEn,
     recipeDetail: locales.recipeDetailEn,
     settingModal: locales.settingModalEn,
+    termOfServices: locales.termOfServicesEn,
+    profile: locales.profileEn,
+    updateProfile: locales.updateProfileEn,
     cookingMode: locales.cookingModeEn
   },
   vi: {
@@ -23,6 +26,9 @@ const resources = {
     component: locales.componentVi,
     recipeDetail: locales.recipeDetailVi,
     settingModal: locales.settingModalVi,
+    termOfServices: locales.termOfServicesVi,
+    profile: locales.profileVi,
+    updateProfile: locales.updateProfileVi,
     cookingMode: locales.cookingModeVi
   }
 };
