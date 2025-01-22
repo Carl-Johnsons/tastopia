@@ -1,11 +1,12 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { Text, View, Image, StyleProp, ViewStyle, Alert, Pressable } from "react-native";
+import { Text, View, Image, StyleProp, ViewStyle, Pressable } from "react-native";
 
 import { transformPlatformURI } from "@/utils/functions";
 import { AntDesign } from "@expo/vector-icons";
 import { colors } from "@/constants/colors";
 import { CameraPlusIcon, UploadIcon } from "@/constants/icons";
 import { useImagePicking } from "@/hooks";
+import Button from "@/components/Button";
 
 type ReplaceImageModeOptions = {
   /**
@@ -248,7 +249,7 @@ const ReplaceImageLayer = ({
   const { white } = colors;
 
   return (
-    <Pressable
+    <Button
       className={`absolute h-full w-full items-center justify-center bg-black/50 ${className}`}
       onPress={globalCallback ? onButtonPress : undefined}
     >
@@ -260,7 +261,7 @@ const ReplaceImageLayer = ({
           onPress={onButtonPress}
         />
       </View>
-    </Pressable>
+    </Button>
   );
 };
 

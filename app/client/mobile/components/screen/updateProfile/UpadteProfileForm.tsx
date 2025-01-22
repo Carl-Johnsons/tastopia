@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType } from "yup";
 import { useTranslation } from "react-i18next";
 import { TextInputProps } from "react-native";
-import { selectUser } from "@/slices/user.slice";
+import { GENDER, selectUser } from "@/slices/user.slice";
 import RNPickerSelect, {
   PickerSelectProps,
   PickerStyle
@@ -15,23 +15,59 @@ import { colors } from "@/constants/colors";
 import { FONT_PRIMARY } from "@/constants/fonts";
 import { ArrowDownIcon } from "@/constants/icons";
 import useColorizer from "@/hooks/useColorizer";
+import { useCallback, useEffect } from "react";
+import useUpdateProfile from "@/hooks/components/screen/updateProfile/useUpdateProfile";
+import { stringify } from "@/utils/debug";
 
 export interface UpdateProfileFormFields extends InferType<typeof updateUserSchema> {}
 
 type UpdateProfileFormProps = {
   className?: string;
+  onSubmit: (data: IUpdateUserDTO) => void;
 };
 
-export const UpdateProfileForm = ({ className }: UpdateProfileFormProps) => {
+export const UpdateProfileForm = ({ className, onSubmit }: UpdateProfileFormProps) => {
   const { t } = useTranslation("updateProfile");
-  const { accountUsername, displayName, bio, gender } = selectUser();
+  const { accountUsername: username, displayName, bio, gender } = selectUser();
+  const { setTriggerSubmit, avatar, background } = useUpdateProfile();
+
   const {
+    handleSubmit,
     control,
     formState: { errors }
   } = useForm({
     resolver: yupResolver(updateUserSchema),
-    mode: "onSubmit"
+    mode: "onSubmit",
+    defaultValues: {
+      username,
+      displayName,
+      bio,
+      gender
+    }
   });
+
+  /**
+   * Submit the form.
+   */
+  const submit = useCallback(() => {
+    return async () => {
+      await handleSubmit(data => {
+        const payload: IUpdateUserDTO = {
+          ...data,
+          ...(avatar !== undefined && { avatar }),
+          ...(background !== undefined && { background })
+        };
+
+        onSubmit(payload);
+      })();
+    };
+  }, [handleSubmit, avatar, background]);
+
+  useEffect(() => {
+    if (setTriggerSubmit && submit) {
+      setTriggerSubmit(submit);
+    }
+  }, [submit]);
 
   return (
     <View className={`gap-6 ${className}`}>
@@ -67,7 +103,7 @@ export const UpdateProfileForm = ({ className }: UpdateProfileFormProps) => {
             <CustomInput
               onChangeText={onChange}
               value={value}
-              defaultValue={accountUsername}
+              defaultValue={username}
             />
           )}
         />
@@ -100,15 +136,17 @@ export const UpdateProfileForm = ({ className }: UpdateProfileFormProps) => {
         <Controller
           name='gender'
           control={control}
-          render={({ field: { onChange, value } }) => (
+          render={({
+            field: { onChange, value = t(`gender.${gender?.toLowerCase()}`) }
+          }) => (
             <Select
               value={value}
               onValueChange={value => {
                 onChange(value);
               }}
               items={[
-                { label: t("gender.male"), value: "male" },
-                { label: t("gender.female"), value: "female" }
+                { label: t("gender.male"), value: GENDER.MALE },
+                { label: t("gender.female"), value: GENDER.FEMALE }
               ]}
               placeholder={{ label: t("gender.prompt") }}
             />

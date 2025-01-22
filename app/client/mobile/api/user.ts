@@ -80,7 +80,6 @@ export const useGetUserDetails = () => {
     enabled: !!accessToken,
     queryFn: async () => {
       const url = "/api/user/get-current-user-details";
-      console.debug("useGetUserDetails: Fetching data with access token", accessToken);
 
       try {
         const { data } = await protectedAxiosInstance.get(url);
@@ -238,14 +237,20 @@ export const useUpdateUser = () => {
     mutationKey: ["updateUser"],
     mutationFn: async data => {
       const url = "/api/user";
-      const body = new URLSearchParams({ ...data }).toString();
+      const body = new FormData();
+
+      Object.entries(data).forEach(([key, value]) => {
+        if (value) {
+          body.append(key, value);
+        }
+      });
 
       try {
-        const { data: response } = await protectedAxiosInstance.post<UpdateUserResponse>(
+        const { data: response } = await protectedAxiosInstance.patch<UpdateUserResponse>(
           url,
           body,
           {
-            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            headers: { "Content-Type": "multipart/form-data" }
           }
         );
 

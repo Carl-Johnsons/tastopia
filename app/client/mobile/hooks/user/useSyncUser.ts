@@ -1,15 +1,15 @@
-import { useGetUserDetails } from "@/api/user";
+import { useGetUserDetails, useUpdateUser } from "@/api/user";
 import { saveUserData } from "@/slices/user.slice";
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 
-type SyncStatus = "todo" | "loading" | "success" | "error";
+type Status = "todo" | "loading" | "success" | "error";
 
 const useSyncUser = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState<SyncStatus>("todo");
-  const dispatch = useDispatch();
+  const [status, setStatus] = useState<Status>("todo");
   const getUserDetails = useGetUserDetails();
+  const dispatch = useDispatch();
 
   /**
    * Fetch the user's details and then save it.
