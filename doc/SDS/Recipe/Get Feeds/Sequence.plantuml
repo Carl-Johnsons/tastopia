@@ -1,0 +1,46 @@
+@startuml Sequence
+title "Get feeds"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UserService" as UserService
+database Postgresql
+database MongoDB
+
+User -> MobileUI++: 1. Select recipe tag
+
+MobileUI -> ApiGateway++: 2. Get recipe feeds
+
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> RecipeService++: 4. Forward request
+
+RecipeService -> MongoDB++: 5. Query data
+RecipeService <-- MongoDB--: 6. Return response
+
+alt Recipe list is empty
+    ApiGateway <-- RecipeService: 7A. Return empty list
+    MobileUI <-- ApiGateway: 7A.1. Foward response
+    User <-- MobileUI: 7A.2. Display empty list
+else Recipe list is not empty
+    RecipeService -> UserService++: 8. gRPC call to get user's \n information list <<gRPC>>
+    UserService -> Postgresql++: 9. Query data
+    UserService <-- Postgresql--: 10. Return response
+    RecipeService <-- UserService--: 11. Return user's information list <<gRPC>>
+
+    ApiGateway <-- RecipeService--: 12. Return recipe feeds list
+    MobileUI <-- ApiGateway--: 13. Forward response
+    User <-- MobileUI--: 14. Display recipe feeds list
+end alt
+
+@enduml

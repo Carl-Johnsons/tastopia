@@ -1,0 +1,49 @@
+@startuml Sequence
+title "Search recipe"
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\n ApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UserService" as UserService
+participant "<<cordinator>>\n Rabbitmq" as Rabbitmq
+participant "<<service>>\n TrackingService" as TrackingService
+database MongoDB
+database Postgresql
+
+User -> MobileUI++: 1. Enter keyword and tags \n in search recipe screen
+
+MobileUI -> ApiGateway++: 2. Search recipe
+
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> RecipeService++: 4. Forward request
+
+RecipeService -> Rabbitmq++: 5. Publish "UserSearchRecipeEvent" \n message <<Async>>
+
+RecipeService -> MongoDB++: 6. Query data
+RecipeService <-- MongoDB--: 7. Return response
+
+Rabbitmq -> TrackingService++: 8. Deliver "UserSearchRecipeEvent"\n message
+deactivate Rabbitmq
+TrackingService -> MongoDB++: 9. Consume event and \n add user keyword to DB
+TrackingService <-- MongoDB--: 10. Return response
+deactivate TrackingService
+
+RecipeService -> UserService++: 11. gRPC call to get user's \n information list <<gRPC>>
+UserService -> Postgresql++: 12. Query data
+UserService <-- Postgresql--: 13. Return response
+RecipeService <-- UserService--: 14. Return user's information list <<gRPC>>
+
+ApiGateway <-- RecipeService--: 15. Return recipe feeds list
+MobileUI <-- ApiGateway--: 16. Forward response
+User <-- MobileUI--: 17. Display recipe feeds list
+
+@enduml

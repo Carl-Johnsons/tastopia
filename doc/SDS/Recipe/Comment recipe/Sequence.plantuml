@@ -1,0 +1,59 @@
+@startuml Sequence
+title "Comment recipe"
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UserService" as UserService
+participant "<<cordinator>>\n Rabbitmq" as Rabbitmq
+participant "<<service>>\n RecipeWorker" as RecipeWorker
+participant "<<service>>\n GerminiAPI" as GerminiAPI
+database MongoDB
+database Postgresql
+
+User -> MobileUI++: 1. Enter comment in recipe detail screen
+
+MobileUI -> ApiGateway++: 2. Comment recipe
+
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> RecipeService++: 4. Forward request
+
+RecipeService -> MongoDB++: 5. Insert data
+RecipeService <-- MongoDB--: 6. Return response
+
+RecipeService -> UserService++: 7. gRPC call to get user's \n information <<gRPC>>
+UserService -> Postgresql++: 8. Query data
+UserService <-- Postgresql--: 9. Return response
+RecipeService <-- UserService--: 10. Return user's information <<gRPC>>
+
+RecipeService -> Rabbitmq++: 11. Publish "UserCommentRecipeEvent" \n message <<Async>>
+
+ApiGateway <-- RecipeService--: 12. Return recipe comment
+MobileUI <-- ApiGateway--: 13. Forward response
+User <-- MobileUI--: 14. Display recipe comment
+
+Rabbitmq -> RecipeWorker++: 15. Deliver "UserCommentRecipeEvent"\n message
+deactivate Rabbitmq
+
+RecipeWorker -> GerminiAPI++: 16. Consume event and \n call api to check abuse
+RecipeWorker <-- GerminiAPI--: 17. Return response
+
+opt Comment has abusive word
+    RecipeWorker -> Rabbitmq++: 18A. Publish "AbusiveCommentEvent" \n message <<Async>>
+    deactivate RecipeWorker
+    Rabbitmq -> RecipeService++: 18A.1. Deliver "AbusiveCommentEvent"\n message
+    deactivate Rabbitmq
+    RecipeService -> MongoDB++: 18A.2. Consume message and update data
+    RecipeService <-- MongoDB--: 18A.3. Return response.
+    deactivate RecipeService
+end opt
+@enduml
