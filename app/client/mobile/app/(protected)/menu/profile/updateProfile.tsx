@@ -1,18 +1,16 @@
 import { useUpdateUser } from "@/api/user";
-import { UpdateProfileForm } from "@/components/screen/updateProfile";
 import Header from "@/components/screen/updateProfile/Header";
 import ImageChangingSection from "@/components/screen/updateProfile/ImageChangingSection";
+import UpdateProfileForm from "@/components/screen/updateProfile/UpadteProfileForm";
 import UpdateProfileProvider, {
   UpdateProfileContext
 } from "@/components/screen/updateProfile/UpdateProfileProvider";
 import useSyncUser from "@/hooks/user/useSyncUser";
-import { saveUserData } from "@/slices/user.slice";
 import { stringify } from "@/utils/debug";
 import { router } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { Alert, SafeAreaView, View } from "react-native";
 import { useQueryClient } from "react-query";
-import { useDispatch } from "react-redux";
 
 export default function UpdateProfile() {
   const [avatar, setAvatar] = useState<ImageFileType>();
