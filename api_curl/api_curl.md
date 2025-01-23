@@ -92,6 +92,38 @@ curl --location 'https://localhost:7000/api/recipe/get-recipe-bookmarks' \
 "skip" : "0"
 }'
 
+**update recipe**
+lưu ý:
+
+-chỗ recipeImage nếu giữ nguyên không muốn update thì gán bằng null hoặc k tạo trong request còn muốn update thì gán giá trị cho nó.
+-chỗ các steps phải có stepId (steps[n].stepId) nếu như update 1 step cũ, còn thêm 1 step mới thì không cần tạo steps[n].stepId trong request (có thể tham khảo steps[1] và steps[2])
+-các step đã tồn tại sẽ bị xóa nếu như trong request không tìm thấy stepId của nó.
+
+curl --location 'https://localhost:7000/api/recipe/update-recipe' \
+--form 'id="b74abbbf-5238-4aff-8154-2144656be675"' \
+--form 'title="Mì trộn trứng chiên update"' \
+--form 'recipeImage=@"/D:/Images/Anime Image/88f88b7fca92bb8d_93981df87b63ba1d_6975815044573808143215.jpg"' \
+--form 'description="desciription Mì trộn update"' \
+--form 'ingredients[0]="1 quả trứng update"' \
+--form 'ingredients[1]="1 gói mì"' \
+--form 'ingredients[2]="1 muỗng nước tương update"' \
+--form 'steps[0].stepId="04af3c40-2d2a-4f82-8979-c0f2a9a15e82"' \
+--form 'steps[0].ordinalNumber="1"' \
+--form 'steps[0].content="step 1 mì trộn"' \
+--form 'steps[0].Images=@"/D:/Images/Anime Image/2e3321fce05a83cac5945d4283b573fe.jpg"' \
+--form 'steps[0].Images=@"/D:/Images/Anime Image/4caa520c43e4a189c0b0208a23ede849.jpg"' \
+--form 'steps[1].stepId="b976ba2a-3468-4af5-b717-6dc9a2e6eb2f"' \
+--form 'steps[1].ordinalNumber="2"' \
+--form 'steps[1].content="step mi trộn update"' \
+--form 'steps[1].Images=@"/D:/Images/Anime Image/735279.png"' \
+--form 'steps[1].deleteUrls[0]="http://res.cloudinary.com/dhphzuojz/image/upload/v1737285028/file_storage/c89d9023-b1b2-4a75-830b-b1a8f5bec0ac.jpg"' \
+--form 'steps[1].deleteUrls[1]="http://res.cloudinary.com/dhphzuojz/image/upload/v1737285028/file_storage/8dc93c2a-ee57-4989-9333-7510193d54b8.jpg"' \
+--form 'steps[2].ordinalNumber="3"' \
+--form 'steps[2].content="step 3 mì trộn"' \
+--form 'steps[2].Images=@"/D:/Images/Anime Image/2e3321fce05a83cac5945d4283b573fe.jpg"' \
+--form 'TagValues[0]="value 0"' \
+--form 'TagValues[1]="value 1"'
+
 # USER
 
 **search user**

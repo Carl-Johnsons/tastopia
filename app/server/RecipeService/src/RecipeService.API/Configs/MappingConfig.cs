@@ -22,6 +22,15 @@ public class MappingConfig
             config.CreateMap<RecipeDetailsDTO, Recipe>()
                 .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)).ReverseMap();
 
+
+            config.CreateMap<UpdateRecipeDTO, UpdateRecipeCommand>()
+                .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)).ReverseMap();
+
+            config.CreateMap<DTOs.UpdateStepDTO, Application.Recipes.Commands.UpdateStepDTO>().ReverseMap();
+
+            config.CreateMap<RecipeDetailsDTO, Recipe>()
+                .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)).ReverseMap();
+
             //Grpc mapping
 
             config.CreateMap<GrpcRecipeDetailsDTO, Recipe>()

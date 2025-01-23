@@ -42,6 +42,23 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
+
+    [HttpPost("update-recipe")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Domain.Entities.Recipe), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UpdateRecipe([FromForm] UpdateRecipeDTO updateRecipeDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var command = _mapper.Map<UpdateRecipeCommand>(updateRecipeDTO);
+        command.AuthorId = Guid.Parse(subjectId!);
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [AllowAnonymous]
     [HttpPost("get-recipe-feed")]
     [Produces("application/json")]
