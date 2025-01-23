@@ -161,7 +161,7 @@ public class RecipeController : BaseApiController
             RecipeId = voteRecipeDTO.RecipeId
         });
         result.ThrowIfFailure();
-        return NoContent();
+        return Ok(result.Value);
     }
 
     [HttpPost("get-recipe-comments")]
