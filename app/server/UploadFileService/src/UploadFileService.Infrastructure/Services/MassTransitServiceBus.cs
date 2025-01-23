@@ -1,23 +1,22 @@
 ﻿using MassTransit;
+using Microsoft.Extensions.Logging;
 
 namespace UploadFileService.Infrastructure.Services;
 
 public class MassTransitServiceBus : IServiceBus
 {
     private readonly IBus _bus;
+    private readonly ILogger<MassTransitServiceBus> _logger;
 
-    public MassTransitServiceBus(IBus bus)
+    public MassTransitServiceBus(IBus bus, ILogger<MassTransitServiceBus> logger)
     {
         _bus = bus;
-    }
-
-    public IRequestClient<TRequest> CreateRequestClient<TRequest>() where TRequest : class
-    {
-        return _bus.CreateRequestClient<TRequest>();
+        _logger = logger;
     }
 
     public async Task Publish<T>(T eventMessage) where T : class
     {
         await _bus.Publish(eventMessage);
+        _logger.LogInformation($"Publish event {typeof(T).Name} successfully");
     }
 }

@@ -20,8 +20,8 @@ internal static class HostingExtensions
         var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");
         var services = builder.Services;
 
-        builder.ConfigureKestrel();
         builder.ConfigureSerilog();
+        builder.ConfigureKestrel();
 
         services.AddInfrastructureServices();
         services.AddApplicationServices();
@@ -38,9 +38,6 @@ internal static class HostingExtensions
         IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
         services.AddSingleton(mapper);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-        services.AddSingleton<ISignalRService, SignalRService>();
-        services.AddScoped(typeof(IPaginateDataUtility<,>), typeof(PaginateDataUtility<,>));
 
         services
             .AddIdentityServer(options =>
@@ -116,13 +113,13 @@ internal static class HostingExtensions
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
         app.UseSerilogServices();
+        app.UseSwaggerServices();
 
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseSwaggerServices();
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
@@ -154,8 +151,8 @@ internal static class HostingExtensions
                 .RequireAuthorization();
         });
 
-        var signalRService = app.Services.GetService<ISignalRService>();
-        signalRService!.StartConnectionAsync();
+        //var signalRService = app.Services.GetService<ISignalRService>();
+        //signalRService!.StartConnectionAsync();
 
         app.UseConsulServiceDiscovery();
         return app;

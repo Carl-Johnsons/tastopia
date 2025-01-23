@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Grpc.Core;
-using Newtonsoft.Json;
+﻿using Grpc.Core;
 using TrackingProto;
 using TrackingService.Application.UserViewRecipeDetails.Commands;
 

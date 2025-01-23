@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-
-namespace NotificationService.Infrastructure.Persistence;
+﻿namespace NotificationService.Infrastructure.Persistence;
 
 internal class UnitOfWork : IUnitOfWork
 {
@@ -44,6 +42,7 @@ internal class UnitOfWork : IUnitOfWork
             }
         }
 
+        _context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Never;
 
         return _context.SaveChangesAsync(cancellationToken);
     }

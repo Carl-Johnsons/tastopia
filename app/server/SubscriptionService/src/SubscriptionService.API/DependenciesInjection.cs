@@ -9,6 +9,7 @@ using SubscriptionService.API.Middleware;
 using SubscriptionService.Domain.Interfaces;
 using Contract.Utilities;
 using SubscriptionService.API.Extensions;
+using Serilog;
 
 namespace SubscriptionService.API;
 
@@ -21,8 +22,8 @@ public static class DependenciesInjection
         var config = builder.Configuration;
         var host = builder.Host;
 
-        builder.ConfigureKestrel();
         builder.ConfigureSerilog();
+        builder.ConfigureKestrel();
 
         // Register automapper
         IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
@@ -51,11 +52,12 @@ public static class DependenciesInjection
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
-                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
-                var IdentityServerEndpoint = $"https://{IdentityDNS}";
-                Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
+                var serviceProvider = services.BuildServiceProvider();
+                var consulRegistryService = serviceProvider.GetRequiredService<IConsulRegistryService>();
+                var identityUri = consulRegistryService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not found"));
+                Log.Information("Connect to Identity Provider: " + identityUri!.ToString());
 
-                options.Authority = IdentityServerEndpoint;
+                options.Authority = identityUri!.ToString();
                 // Clear default Microsoft's JWT claim mapping
                 // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
                 options.MapInboundClaims = false;
@@ -76,7 +78,7 @@ public static class DependenciesInjection
         return builder;
     }
 
-    public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
+    public static WebApplication UseAPIServices(this WebApplication app)
     {
         app.UseSerilogServices();
         app.UseConsulServiceDiscovery();

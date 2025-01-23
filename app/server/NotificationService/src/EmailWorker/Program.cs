@@ -1,11 +1,13 @@
 using Contract.Utilities;
 using EmailWorker;
+using EmailWorker.Extensions;
 using EmailWorker.Interfaces;
 using EmailWorker.Services;
 
 EnvUtility.LoadEnvFile();
 
 var builder = Host.CreateDefaultBuilder(args)
+    .ConfigureSerilog()
     .ConfigureServices((context, services) =>
     {
         services.AddWorkerServices();

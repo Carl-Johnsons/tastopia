@@ -13,7 +13,7 @@ public class Worker : IHostedLifecycleService
         _logger.LogInformation("Email worker starting");
         return Task.CompletedTask;
     }
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Email worker start");
         try
@@ -23,6 +23,7 @@ public class Worker : IHostedLifecycleService
         {
             _logger.LogError(ex.Message);
         }
+        return Task.CompletedTask;
     }
     public Task StartedAsync(CancellationToken cancellationToken)
     {
@@ -34,9 +35,10 @@ public class Worker : IHostedLifecycleService
         _logger.LogInformation("Email worker stopping");
         return Task.CompletedTask;
     }
-    public async Task StopAsync(CancellationToken cancellationToken)
+    public Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Email worker stop");
+        return Task.CompletedTask;
     }
     public Task StoppedAsync(CancellationToken cancellationToken)
     {

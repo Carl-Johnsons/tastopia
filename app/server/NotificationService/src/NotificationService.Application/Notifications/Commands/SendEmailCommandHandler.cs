@@ -1,8 +1,7 @@
-﻿
-using Contract.Event.NotificationEvent;
+﻿using Contract.Event.NotificationEvent;
 using System.ComponentModel.DataAnnotations;
 
-namespace NotificationService.Application.Emails;
+namespace NotificationService.Application.Notifications.Commands;
 
 public record SendEmailCommand : IRequest<Result>
 {
@@ -27,7 +26,6 @@ public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand, Result>
 
     public async Task<Result> Handle(SendEmailCommand request, CancellationToken cancellationToken)
     {
-        Console.WriteLine("Begin to send email event here");
         await _serviceBus.Publish(new SendEmailEvent
         {
             EmailTo = request.EmailTo,
