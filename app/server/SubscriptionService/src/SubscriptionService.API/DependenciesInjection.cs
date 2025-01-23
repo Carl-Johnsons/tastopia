@@ -32,6 +32,8 @@ public static class DependenciesInjection
         services.AddInfrastructureServices();
         services.AddApplicationServices();
         services.AddSwaggerServices();
+        services.AddGrpcServices();
+
 
         services.AddControllers()
             .AddJsonOptions(options =>
@@ -78,13 +80,13 @@ public static class DependenciesInjection
     {
         app.UseSerilogServices();
         app.UseConsulServiceDiscovery();
-
-
         app.UseSwaggerServices();
 
         app.UseHttpsRedirection();
 
         app.MapControllers();
+
+        app.UseGrpcServices();
 
         app.UseGlobalHandlingErrorMiddleware();
 
@@ -92,15 +94,15 @@ public static class DependenciesInjection
 
         app.UseAuthorization();
 
-        try
-        {
-            var signalRService = app.Services.GetService<ISignalRService>();
-            await signalRService!.StartConnectionAsync();
-        }
-        catch (Exception ex)
-        {
-            app.Logger.LogError($"Error connecting to SignalR: {ex.Message}");
-        }
+        //try   
+        //{
+        //    var signalRService = app.Services.GetService<ISignalRService>();
+        //    await signalRService!.StartConnectionAsync();
+        //}
+        //catch (Exception ex)
+        //{
+        //    app.Logger.LogError($"Error connecting to SignalR: {ex.Message}");
+        //}
         return app;
     }
 }
