@@ -1,17 +1,21 @@
 ﻿using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Logging;
 using SubscriptionService.Domain.Entities;
 
 namespace SubscriptionService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    public ApplicationDbContext()
+    private readonly ILogger<ApplicationDbContext> _logger;
+    public ApplicationDbContext(ILogger<ApplicationDbContext> logger)
     {
+        _logger = logger;
     }
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILogger<ApplicationDbContext> logger)
     : base(options)
     {
+        _logger = logger;
     }
 
     public DbContext Instance => this;
@@ -24,7 +28,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(EnvUtility.GetConnectionString(), option =>
+        var connectionString = EnvUtility.GetConnectionString();
+
+        _logger.LogInformation($"DB connection string: {connectionString}");
+
+        optionsBuilder.UseNpgsql(connectionString, option =>
         {
             option.EnableRetryOnFailure(
                     maxRetryCount: 10,

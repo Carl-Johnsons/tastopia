@@ -1,6 +1,7 @@
 ﻿using Contract.Utilities;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using NotificationService.API.Extensions;
+using Serilog;
 
 namespace NotificationService.API.Extensions;
 
@@ -14,12 +15,10 @@ public static class KestrelExtension
         var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
         var certPath = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Path");
         var certPassword = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Password");
-        Console.WriteLine("++++++++++++++++++++");
-        Console.WriteLine(httpPort);
-        Console.WriteLine(httpsPort);
-        Console.WriteLine(certPath);
-        Console.WriteLine(certPassword);
-        Console.WriteLine("++++++++++++++++++++");
+        Log.Information(httpPort + "");
+        Log.Information(httpsPort + "");
+        Log.Information(certPath);
+        Log.Information(certPassword);
 
         builder.WebHost.ConfigureKestrel(options =>
         {

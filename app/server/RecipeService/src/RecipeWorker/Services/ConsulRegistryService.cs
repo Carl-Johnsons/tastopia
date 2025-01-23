@@ -6,10 +6,12 @@ namespace RecipeWorker.Services;
 public class ConsulRegistryService : IConsulRegistryService
 {
     private IConsulClient _consulClient;
+    private readonly ILogger<ConsulRegistryService> _logger;
 
-    public ConsulRegistryService(IConsulClient consulClient)
+    public ConsulRegistryService(IConsulClient consulClient, ILogger<ConsulRegistryService> logger)
     {
         _consulClient = consulClient;
+        _logger = logger;
     }
 
     public Uri? GetServiceUri(string serviceName)
@@ -24,7 +26,7 @@ public class ConsulRegistryService : IConsulRegistryService
         }
 
         var services = serviceQueryResult.Response;
-        Console.WriteLine($"https://{services[0].Service.Address}:{services[0].Service.Port}");
+        _logger.LogInformation($"https://{services[0].Service.Address}:{services[0].Service.Port}");
         return new Uri($"https://{services[0].Service.Address}:{services[0].Service.Port}");
     }
 }

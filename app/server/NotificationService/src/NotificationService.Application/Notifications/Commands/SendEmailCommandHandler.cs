@@ -26,7 +26,6 @@ public class SendEmailCommandHandler : IRequestHandler<SendEmailCommand, Result>
 
     public async Task<Result> Handle(SendEmailCommand request, CancellationToken cancellationToken)
     {
-        Console.WriteLine("Begin to send email event here");
         await _serviceBus.Publish(new SendEmailEvent
         {
             EmailTo = request.EmailTo,

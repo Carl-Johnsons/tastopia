@@ -9,10 +9,12 @@ namespace PushNotificationWorker.Services;
 public class ExpoPushNotificationService : IPushNotificationService
 {
     private readonly PushApiClient _pushApiClient;
-    public ExpoPushNotificationService(PushApiClient pushApiClient)
+    private readonly ILogger<ExpoPushNotificationService> _logger;
+    public ExpoPushNotificationService(PushApiClient pushApiClient, ILogger<ExpoPushNotificationService> logger)
     {
         EnvUtility.LoadEnvFile();
         _pushApiClient = pushApiClient;
+        _logger = logger;
     }
 
     public async Task Notify(List<string> expoPushTokens, string message)
@@ -28,7 +30,7 @@ public class ExpoPushNotificationService : IPushNotificationService
         {
             foreach (var error in result.PushTicketErrors)
             {
-                Console.WriteLine($"Error: {error.ErrorCode} - {error.ErrorMessage}");
+                _logger.LogError($"Error: {error.ErrorCode} - {error.ErrorMessage}");
             }
         }
     }

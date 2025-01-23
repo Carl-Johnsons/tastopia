@@ -84,16 +84,15 @@ run_service() {
     --no-launch-profile \
     --project "$project" \
     2>&1 | sed -E \
-    -e "/(warning|warn|wrn)/I s/.*/$(printf "${WARNING}&${NC}")/" \
-    -e "/(error|err)/I s/.*/$(printf "${DANGER}&${NC}")/" \
-    -e "/(information|info|inf)/I s/.*/$(printf "${INFO}&${NC}")/" \
-    -e "/ is listening on/I s/.*/$(printf "${SUCCESS}&${NC}")/" \
-    -e "s/^/$(printf "${color}[${name}]${NC} ")/"
+      -e "/(warning\])/I s/.*/$(printf "${WARNING}&${NC}")/" \
+      -e "/(error\])/I s/.*/$(printf "${DANGER}&${NC}")/" \
+      -e "/(information\])/I s/.*/$(printf "${INFO}&${NC}")/" \
+      -e "/ is listening on/I s/.*/$(printf "${SUCCESS}&${NC}")/" \
+      -e "s/^/$(printf "${color}[${name}]${NC} ")/"
 }
 
 run_services() {
   run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" &
-  \ 
   run_service 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" &
   run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" &
   run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" &
@@ -109,7 +108,11 @@ run_services() {
 }
 
 test_services() {
+  run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" &
+  run_service 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" &
+  run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" &
   run_service 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" &
+  run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User"
 }
 
 run_services

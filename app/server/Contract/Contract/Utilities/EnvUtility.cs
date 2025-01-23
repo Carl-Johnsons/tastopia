@@ -46,7 +46,6 @@ public class EnvUtility
         var user = DotNetEnv.Env.GetString("POSTGRES_USER", "Not found").Trim();
         var pwd = DotNetEnv.Env.GetString("POSTGRES_PASSWORD", "Not found").Trim();
         var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={pwd};";
-        Console.WriteLine(connectionString);
         return connectionString;
     }
 
@@ -63,7 +62,6 @@ public class EnvUtility
         var user = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_USERNAME", "Not found").Trim();
         var pwd = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_PASSWORD", "Not found").Trim();
         var connectionString = $"mongodb://{user}:{pwd}@{host}:{port}?authSource=admin";
-        Console.WriteLine(connectionString);
         return connectionString;
     }
 
@@ -80,7 +78,6 @@ public class EnvUtility
         var user = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_USERNAME", "Not found").Trim();
         var pwd = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_PASSWORD", "Not found").Trim();
         var connectionString = $"mongodb://{user}:{pwd}@{host}:{port}";
-        Console.WriteLine(connectionString);
         return connectionString;
     }
 
@@ -138,7 +135,7 @@ public class EnvUtility
             if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
                 continue;
 
-            var parts = line.Split(new[] { '=' }, 2);
+            var parts = line.Split(['='], 2);
             if (parts.Length == 2)
             {
                 var key = parts[0].Trim();

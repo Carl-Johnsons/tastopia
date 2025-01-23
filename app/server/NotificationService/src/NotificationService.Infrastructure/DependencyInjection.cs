@@ -30,7 +30,6 @@ public static class DependencyInjection
                 var scheme = DotNetEnv.Env.GetString("CONSUL_SCHEME", "Not found");
                 var host = DotNetEnv.Env.GetString("CONSUL_HOST", "Not found");
                 var port = DotNetEnv.Env.GetString("CONSUL_PORT", "Not found");
-                Console.WriteLine($"{scheme}://{host}:{port}");
                 config.Address = new Uri($"{scheme}://{host}:{port}");
             });
         });

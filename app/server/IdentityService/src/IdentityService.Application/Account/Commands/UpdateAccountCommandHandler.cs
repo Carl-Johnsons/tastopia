@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
 
 namespace IdentityService.Application.Account.Commands;
 
@@ -25,8 +24,6 @@ public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand,
                                                  || acc.UserName == request.UserName).ToList();
 
         var account = accounts.SingleOrDefault(acc => acc.Id == request.AccountId.ToString());
-
-        Console.WriteLine(JsonConvert.SerializeObject(account, Formatting.Indented));
 
         if (account == null)
         {

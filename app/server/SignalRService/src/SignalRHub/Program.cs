@@ -16,12 +16,10 @@ if (addresses != null)
 {
     foreach (var address in addresses)
     {
-        Console.WriteLine($"signalR hub is listening on: {address}");
     }
 }
 else
 {
-    Console.WriteLine("Could not retrieve server addresses.");
 }
 
 app.WaitForShutdown();

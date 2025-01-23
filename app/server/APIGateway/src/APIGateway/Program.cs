@@ -1,26 +1,39 @@
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
 using APIGateway;
+using Serilog;
 
-var app = await WebApplication.CreateBuilder(args)
+try
+{
+    var app = WebApplication.CreateBuilder(args)
                         .AddAPIServices()
                         .Build()
-                        .UseAPIServicesAsync();
-app.Start();
+                        .UseAPIServices();
+    app.Start();
 
-var server = app.Services.GetService<IServer>();
-var addresses = server?.Features.Get<IServerAddressesFeature>()?.Addresses;
+    var server = app.Services.GetService<IServer>();
+    var addresses = server?.Features.Get<IServerAddressesFeature>()?.Addresses;
 
-if (addresses != null)
-{
-    foreach (var address in addresses)
+    if (addresses != null)
     {
-        Console.WriteLine($"API gateway is listening on: {address}");
+        foreach (var address in addresses)
+        {
+            Log.Information($"API gateway is listening on: {address}");
+        }
     }
-}
-else
-{
-    Console.WriteLine("Could not retrieve server addresses.");
-}
+    else
+    {
+        Log.Information("Could not retrieve server addresses.");
+    }
 
-app.WaitForShutdown();
+    app.WaitForShutdown();
+}
+catch (Exception ex) when (ex is not HostAbortedException)
+{
+    Log.Fatal(ex, "Unhandled exception");
+}
+finally
+{
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
+}

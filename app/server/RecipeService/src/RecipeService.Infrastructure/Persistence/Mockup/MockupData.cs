@@ -1,8 +1,9 @@
 ﻿using Contract.Utilities;
+using DnsClient.Internal;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using RecipeService.Domain.Entities;
 using RecipeService.Infrastructure.Persistence.Mockup.Data;
-using RecipeService.Infrastructure.Utilities;
 
 namespace RecipeService.Infrastructure.Persistence.Mockup;
 
@@ -10,10 +11,12 @@ internal class MockupData
 {
     private readonly ApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
-    public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork)
+    private readonly ILogger<MockupData> _logger;
+    public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<MockupData> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task SeedAllData()
@@ -32,12 +35,11 @@ internal class MockupData
         var databaseList = await client.ListDatabasesAsync();
         var databases = await databaseList.ToListAsync();
 
-        Console.WriteLine("====================================================");
-        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(databases));
+        _logger.LogInformation(Newtonsoft.Json.JsonConvert.SerializeObject(databases));
 
         if (!databases.Any(d => d["name"] == db))
         {
-            Console.WriteLine($"Database '{db}' does not exist. It will be created when data is inserted.");
+            _logger.LogInformation($"Database '{db}' does not exist. It will be created when data is inserted.");
         }
     }
 
@@ -45,8 +47,7 @@ internal class MockupData
     {
         if (!_context.Recipes.Any())
         {
-            Console.WriteLine("Begin seed recipe");
-            Console.WriteLine("===================================================================================");
+            _logger.LogInformation("Begin seed recipe");
             Random random = new Random();
 
             foreach (var recipe in RecipeData.Recipes)
@@ -56,14 +57,14 @@ internal class MockupData
                 recipe.AuthorId = RecipeData.Authors[randomIndex];
 
                 //add id for step
-                foreach(var step in recipe.Steps)
+                foreach (var step in recipe.Steps)
                 {
                     step.Id = Guid.NewGuid();
                 }
 
                 //add comment
                 int numberOfComment = random.Next(35);
-                for(int i = 0; i <= numberOfComment; i++)
+                for (int i = 0; i <= numberOfComment; i++)
                 {
                     var randomIndexAccount = GetRandomExcluding(RecipeData.Authors.Count, randomIndex);
                     var comment = CommentData.GetRandomComment();
@@ -89,7 +90,6 @@ internal class MockupData
             }
 
             await _unitOfWork.SaveChangeAsync();
-            Console.WriteLine("===================================================================================");
         }
     }
 
@@ -97,15 +97,13 @@ internal class MockupData
     {
         if (!_context.Tags.Any())
         {
-            Console.WriteLine("Begin seed tag");
-            Console.WriteLine("===================================================================================");
+            _logger.LogInformation("Begin seed tag");
             foreach (var tag in TagData.Data)
             {
                 _context.Tags.Add(tag);
             }
 
             await _unitOfWork.SaveChangeAsync();
-            Console.WriteLine("===================================================================================");
         }
     }
 
@@ -113,14 +111,12 @@ internal class MockupData
     {
         if (!_context.RecipeTags.Any())
         {
-            Console.WriteLine("Begin seed recipe tag");
-            Console.WriteLine("===================================================================================");
+            _logger.LogInformation("Begin seed recipe tag");
             foreach (var recipeTag in RecipeTagData.Data)
             {
                 _context.RecipeTags.Add(recipeTag);
             }
             await _unitOfWork.SaveChangeAsync();
-            Console.WriteLine("===================================================================================");
         }
     }
 

@@ -20,8 +20,8 @@ public static class DependenciesInjection
         var config = builder.Configuration;
         var host = builder.Host;
 
-        builder.ConfigureKestrel();
         builder.ConfigureSerilog();
+        builder.ConfigureKestrel();
 
         services.AddInfrastructureServices();
         services.AddApplicationServices();
@@ -69,7 +69,7 @@ public static class DependenciesInjection
         return builder;
     }
 
-    public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
+    public static WebApplication UseAPIServices(this WebApplication app)
     {
         app.UseSerilogServices();
         app.UseConsulServiceDiscovery();

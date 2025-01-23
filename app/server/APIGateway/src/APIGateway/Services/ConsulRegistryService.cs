@@ -1,7 +1,7 @@
-﻿using Consul;
-using Microsoft.Extensions.Logging;
+﻿using APIGateway.Interfaces;
+using Consul;
 
-namespace SubscriptionService.Infrastructure.Services;
+namespace APIGateway.Services;
 
 public class ConsulRegistryService : IConsulRegistryService
 {
