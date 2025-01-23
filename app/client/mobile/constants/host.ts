@@ -4,10 +4,16 @@ import { saveAuthData } from "@/slices/auth.slice";
 import { stringify } from "@/utils/debug";
 import Constants from "expo-constants";
 import { refreshAccessToken } from "@/api/tokens";
+import { transformPlatformURI } from "@/utils/functions";
 
-const {expoConfig} = Constants;
-const HOST = expoConfig?.hostUri?.split(":")[0];
-const API_HOST = `http://${HOST}:5000`;
+const { expoConfig } = Constants;
+
+const SCHEME = process.env.EXPO_PUBLIC_API_GATEWAY_SCHEME;
+const HOST = process.env.EXPO_PUBLIC_API_GATEWAY_HOST ?? expoConfig?.hostUri?.split(":")[0];
+const PORT = process.env.EXPO_PUBLIC_API_GATEWAY_PORT;
+
+const API_HOST = transformPlatformURI(`${SCHEME}://${HOST}:${PORT}`);
+console.log("API gateways uri is " + API_HOST);
 
 const defaultHeaders = {
   "Content-Type": "application/json"
