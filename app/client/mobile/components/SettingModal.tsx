@@ -18,7 +18,6 @@ import {
   LangIcon,
   MoonIcon,
   NotificationIcon,
-  PrivacyIcon,
   VietnamFlagIcon,
   UnitedKingdomFlagIcon,
   ArrowBackIcon
@@ -40,10 +39,10 @@ import {
   getSettingFromBooleanValue
 } from "@/utils/converter";
 import { useDispatch } from "react-redux";
-import Animated, { useEvent } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import Protected from "./Protected";
-import { ROLE } from "@/slices/auth.slice";
-import { UpdateSettingParams, useUpdateSetting } from "@/api/user";
+import { ROLE, selectRole } from "@/slices/auth.slice";
+import { UpdateSettingParams, useUpdateSetting, useUpdateUser } from "@/api/user";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -55,10 +54,9 @@ import {
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { useChangeLanguage } from "@/hooks/useToggleLanguage";
 import { useTranslation } from "react-i18next";
-import { getColorSchemeValue } from "@/hooks/alternator";
 import { useColorScheme } from "nativewind";
 import useColorizer from "@/hooks/useColorizer";
-import { ScrollView } from "react-native-gesture-handler";
+import { router } from "expo-router";
 
 type SettingModalProps = {
   ref: RefObject<BottomSheetMethods>;
@@ -70,8 +68,7 @@ enum Settings {
   "LANGUAGE",
   "DARK MODE",
   "NOTIFICATION",
-  "TERM OF SERVICES",
-  "PRIVACY"
+  "TERM OF SERVICES"
 }
 
 const CATEGORY = [
@@ -79,18 +76,10 @@ const CATEGORY = [
   "language.title",
   "darkMode",
   "notification.title",
-  "termOfServices.title",
-  "privacy.title"
+  "termOfServices.title"
 ];
 
-const ICON = [
-  BaseUserIcon,
-  LangIcon,
-  MoonIcon,
-  NotificationIcon,
-  DocumentIcon,
-  PrivacyIcon
-];
+const ICON = [BaseUserIcon, LangIcon, MoonIcon, NotificationIcon, DocumentIcon];
 
 type SettingState = Settings | "initial";
 
@@ -106,7 +95,7 @@ const SettingModal = forwardRef<BottomSheetModal, SettingModalProps>((_props, re
     switch (setting) {
       case "initial":
         setCurrentSetting("initial");
-        setTitle("Setting");
+        setTitle(t("setting"));
         break;
 
       case Settings.ACCOUNT:
@@ -130,13 +119,9 @@ const SettingModal = forwardRef<BottomSheetModal, SettingModalProps>((_props, re
       case Settings["TERM OF SERVICES"]:
         setCurrentSetting(Settings["TERM OF SERVICES"]);
         setTitle(CATEGORY[Settings["TERM OF SERVICES"]]);
+        router.push("/(public)/(modals)/termOfServices");
+        closeModal();
         break;
-
-      case Settings.PRIVACY:
-        setCurrentSetting(Settings.PRIVACY);
-        setTitle(CATEGORY[Settings.PRIVACY]);
-        break;
-
       default:
         throw new Error(`Unhandled setting: ${setting}`);
     }
@@ -173,10 +158,7 @@ const SettingModal = forwardRef<BottomSheetModal, SettingModalProps>((_props, re
       }}
       enablePanDownToClose={true}
       enableContentPanningGesture={
-        currentSetting === Settings["TERM OF SERVICES"] ||
-        currentSetting === Settings.PRIVACY
-          ? false
-          : true
+        currentSetting === Settings["TERM OF SERVICES"] ? false : true
       }
     >
       <BottomSheetView>
@@ -214,8 +196,6 @@ const SettingModal = forwardRef<BottomSheetModal, SettingModalProps>((_props, re
           {currentSetting === Settings.ACCOUNT && <AccountSetting />}
           {currentSetting === Settings.LANGUAGE && <LanguageSetting />}
           {currentSetting === Settings.NOTIFICATION && <NotificationSetting />}
-          {currentSetting === Settings["TERM OF SERVICES"] && <TermOfServices />}
-          {currentSetting === Settings.PRIVACY && <Privacy />}
         </Animated.View>
       </BottomSheetView>
     </BottomSheetModal>
@@ -228,6 +208,7 @@ const Main = ({
   changeSetting: (index: Settings | "initial") => void;
 }) => {
   const { t } = useTranslation("settingModal");
+  const role = selectRole();
   const dispatch = useDispatch();
   const { mutateAsync: updateSetting } = useUpdateSetting();
   const darkMode = selectDarkModeSetting();
@@ -253,8 +234,12 @@ const Main = ({
       ]
     };
 
+    if (role === ROLE.GUEST) {
+      return toggleColorScheme();
+    }
+
     await updateSetting(
-      { data },
+      { ...data },
       {
         onSuccess: () => {
           toggleColorScheme();
@@ -332,6 +317,25 @@ const AccountSetting = () => {
   const { t } = useTranslation("settingModal", { keyPrefix: "account" });
   const { accountPhoneNumber, accountEmail } = selectUser();
   const isLinkedGoogle = false;
+  const { mutateAsync: updateUser } = useUpdateUser();
+
+  const updateUserInfo = async (key: string, data: IUpdateUserDTO) => {
+    switch (key) {
+      case "":
+    }
+
+    //TODO: update user info
+    //TODO: save info into state
+
+    await updateUser(data, {
+      onSuccess: () => {
+        Alert.alert("Update successfully.");
+      },
+      onError: () => {
+        Alert.alert("An error has occured.");
+      }
+    });
+  };
 
   const Item = ({
     title,
@@ -385,6 +389,7 @@ const AccountSetting = () => {
 
 const LanguageSetting = () => {
   const { t } = useTranslation("settingModal", { keyPrefix: "language" });
+  const role = selectRole();
   const dispatch = useDispatch();
   const { mutateAsync: updateSetting } = useUpdateSetting();
   const languague = selectLanguageSetting();
@@ -408,8 +413,12 @@ const LanguageSetting = () => {
       ]
     };
 
+    if (role === ROLE.GUEST) {
+      return changeLanguage(value);
+    }
+
     await updateSetting(
-      { data },
+      { ...data },
       {
         onSuccess: () => {
           changeLanguage(value);
@@ -497,7 +506,7 @@ const NotificationSetting = () => {
     };
 
     await updateSetting(
-      { data },
+      { ...data },
       {
         onError: () => {
           dispatch(
@@ -545,28 +554,6 @@ const NotificationSetting = () => {
         }}
       />
     </>
-  );
-};
-
-const TermOfServices = () => {
-  const { t } = useTranslation("settingModal", { keyPrefix: "termOfServices" });
-
-  return (
-    <View className='h-[85vh] px-2'>
-      <View>
-        <Text className='text-black_white font-serif text-lg'>{t("content")}</Text>
-      </View>
-    </View>
-  );
-};
-
-const Privacy = () => {
-  const { t } = useTranslation("settingModal", { keyPrefix: "privacy" });
-
-  return (
-    <View className='h-[85vh] px-2'>
-      <Text className='text-black_white font-serif text-lg'>{t("content")}</Text>
-    </View>
   );
 };
 

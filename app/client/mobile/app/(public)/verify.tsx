@@ -14,7 +14,7 @@ import {
   IDENTIFIER_TYPE,
   VerifyParams
 } from "@/api/user";
-import VerifyForm from "@/components/VerifyForm";
+import VerifyForm from "@/components/screen/verify/VerifyForm";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
 import { getIdentifierType } from "@/utils/checker";

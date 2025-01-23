@@ -5,18 +5,19 @@ import { globalStyles } from "./GlobalStyles";
 import { ROLE } from "@/slices/auth.slice";
 import useProtected, { useProtectedExclude } from "@/hooks/auth/useProtected";
 import { AntDesign } from "@expo/vector-icons";
-import useDarkMode from "@/hooks/useDarkMode";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 type VoteProps = {
   voteDiff: number;
 };
 
 const Vote = ({ voteDiff }: VoteProps) => {
-  const isDarkMode = useDarkMode();
-
   const [votes, setVotes] = useState(voteDiff);
   const [upvoted, setUpvoted] = useState(false);
   const [downvoted, setDownvoted] = useState(false);
+  const { black, white, primary } = colors;
+  const { c } = useColorizer();
 
   const upvoteBounceValue = useRef(new Animated.Value(1)).current;
   const downvoteBounceValue = useRef(new Animated.Value(1)).current;
@@ -71,6 +72,15 @@ const Vote = ({ voteDiff }: VoteProps) => {
     return votes.toString().length * 9;
   };
 
+  const upvoteForegound = c(
+    upvoted ? primary : black.DEFAULT,
+    upvoted ? primary : white.DEFAULT
+  );
+  const downvoteForegound = c(
+    downvoted ? globalStyles.color.primary : globalStyles.color.dark,
+    downvoted ? globalStyles.color.primary : globalStyles.color.light
+  );
+
   return (
     <View className='rounded-3xl border-[0.5px] border-gray-300'>
       <View className='flex flex-row items-center justify-center'>
@@ -91,29 +101,13 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 <AntDesign
                   name='like1'
                   size={16}
-                  color={
-                    isDarkMode
-                      ? upvoted
-                        ? globalStyles.color.primary
-                        : globalStyles.color.light
-                      : upvoted
-                        ? globalStyles.color.primary
-                        : globalStyles.color.dark
-                  }
+                  color={upvoteForegound}
                 />
               ) : (
                 <AntDesign
                   name='like2'
                   size={16}
-                  color={
-                    isDarkMode
-                      ? upvoted
-                        ? globalStyles.color.primary
-                        : globalStyles.color.light
-                      : upvoted
-                        ? globalStyles.color.primary
-                        : globalStyles.color.dark
-                  }
+                  color={upvoteForegound}
                 />
               )}
             </Animated.View>
@@ -145,29 +139,13 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 <AntDesign
                   name='dislike1'
                   size={16}
-                  color={
-                    isDarkMode
-                      ? downvoted
-                        ? globalStyles.color.primary
-                        : globalStyles.color.light
-                      : downvoted
-                        ? globalStyles.color.primary
-                        : globalStyles.color.dark
-                  }
+                  color={downvoteForegound}
                 />
               ) : (
                 <AntDesign
                   name='dislike2'
                   size={16}
-                  color={
-                    isDarkMode
-                      ? downvoted
-                        ? globalStyles.color.primary
-                        : globalStyles.color.light
-                      : downvoted
-                        ? globalStyles.color.primary
-                        : globalStyles.color.dark
-                  }
+                  color={downvoteForegound}
                 />
               )}
             </Animated.View>

@@ -3,7 +3,7 @@
 project_root=$(pwd)
 
 pull_both_env_file() {
-  local service_path=$ 1
+  local service_path=$1
   local file_name=$2
   echo -e "\e[95mPulling dev and prod $file_name env file...\e[0m"
   cd "$service_path" &&

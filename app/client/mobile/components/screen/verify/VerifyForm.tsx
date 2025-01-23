@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { ActivityIndicator, Alert, Text, TextInput, View } from "react-native";
-import { AuthFormProps } from "./LoginForm";
+import { AuthFormProps } from "../login/LoginForm";
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -8,8 +8,8 @@ import {
   withTiming
 } from "react-native-reanimated";
 
-import Input from "./Input";
-import Button from "./Button";
+import Input from "../../Input";
+import Button from "../../Button";
 import { IDENTIFIER_TYPE, VerifyParams } from "@/api/user";
 import { selectVerifyIdentifier } from "@/slices/auth.slice";
 import { verifySchema } from "@/lib/validation/auth";

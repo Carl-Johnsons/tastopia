@@ -1,8 +1,8 @@
 import { TouchableWithoutFeedback, View, Text } from "react-native";
 import Vote from "./Vote";
 import { Ionicons } from "@expo/vector-icons";
-import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import useColorizer from "@/hooks/useColorizer";
 
 const InteractionSection = ({
   voteDiff,
@@ -13,8 +13,8 @@ const InteractionSection = ({
   numberOfComment: number | undefined;
   handleOnPress: () => void;
 }) => {
-  const { c } = useColorizer();
   const { black, white } = colors;
+  const { c } = useColorizer();
 
   return (
     <View className='flex-start flex-row gap-2'>

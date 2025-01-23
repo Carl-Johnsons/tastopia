@@ -1,5 +1,6 @@
 ﻿using AccountProto;
 using Grpc.Core;
+using IdentityService.Application.Account.Commands;
 using IdentityService.Application.Account.Queries;
 using Newtonsoft.Json;
 
@@ -41,5 +42,17 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
         Console.WriteLine(JsonConvert.SerializeObject(grpcResponse, Formatting.Indented));
 
         return grpcResponse;
+    }
+
+    public override async Task<GrpcEmpty> UpdateAccount(GrpcUpdateAccountRequest request, ServerCallContext context)
+    {
+        var result = await _sender.Send(new UpdateAccountCommand
+        {
+            AccountId = Guid.Parse(request.AccountId),
+            UserName = request.UserName
+        });
+        result.ThrowIfFailure();
+
+        return new GrpcEmpty();
     }
 }

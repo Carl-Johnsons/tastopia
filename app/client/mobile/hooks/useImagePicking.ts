@@ -1,15 +1,19 @@
-import { ImagePickerAsset, launchImageLibraryAsync } from "expo-image-picker";
-import { useState } from "react";
+import { extensionToMimeType } from "@/utils/file";
+import {
+  ImagePickerOptions,
+  launchImageLibraryAsync,
+  useMediaLibraryPermissions
+} from "expo-image-picker";
+import { Alert } from "react-native";
+
+interface UseImagePickingParams extends ImagePickerOptions {
+  /** The current number of previewing image. */
+  imageCount: number;
+}
 
 interface UseImagePickingResult {
-  /** The image data object */
-  image: ImagePickerAsset | null;
-  /** The image's base64 url */
-  imageBase64Url: string;
-  /** Launches the image picker */
-  pickImage: () => Promise<void>;
-  /** Clears the data of the picked image */
-  removeImage: () => void;
+  /** Launch the image picker. */
+  pickImage: () => Promise<ImageFileObject[] | null>;
 }
 
 /**
@@ -17,25 +21,57 @@ interface UseImagePickingResult {
  *
  * @param initialValue The initial image data object
  */
-export const useImagePicking = (
-  initialValue?: ImagePickerAsset
-): UseImagePickingResult => {
-  const [image, setImage] = useState<ImagePickerAsset | null>(initialValue || null);
-  const [imageBase64Url, setImageBase64Url] = useState<string>(initialValue ? `data:image/jpeg;base64,${initialValue.base64}` : "");
+export const useImagePicking = ({
+  selectionLimit,
+  imageCount,
+  allowsMultipleSelection,
+  ...props
+}: UseImagePickingParams): UseImagePickingResult => {
+  const [status, requestPermission] = useMediaLibraryPermissions();
 
   const pickImage = async () => {
-    const result = await launchImageLibraryAsync({ base64: true });
+    if (!status?.granted) {
+      const { granted } = await requestPermission();
 
-    if (!result.canceled) {
-      setImage(result.assets[0]);
-      setImageBase64Url(`data:image/jpeg;base64,${result.assets[0].base64}`);
+      if (!granted) {
+        Alert.alert(
+          "Permission Denied",
+          "You need to grant permission to access the media library to upload images."
+        );
+
+        return null;
+      }
     }
+
+    const result = await launchImageLibraryAsync({
+      quality: 1,
+      selectionLimit: selectionLimit ? selectionLimit - imageCount : 0,
+      allowsMultipleSelection,
+      mediaTypes: "images",
+      ...props
+    });
+
+    if (result.canceled) {
+      return null;
+    }
+
+    const files = result.assets.map(asset => {
+      const fileName =
+        asset.fileName ||
+        asset.uri.substring(asset.uri.lastIndexOf("/") + 1, asset.uri.length);
+
+      const type = asset.mimeType || extensionToMimeType(asset.uri.split(".").pop()!);
+      const file: ImageFileObject = {
+        id: asset.uri,
+        previewPath: asset.uri,
+        file: { uri: asset.uri, type, name: fileName }
+      };
+
+      return file;
+    });
+
+    return files;
   };
 
-  const removeImage = () => {
-    setImage(null);
-    setImageBase64Url("");
-  };
-
-  return { image, imageBase64Url, pickImage, removeImage };
+  return { pickImage };
 };
