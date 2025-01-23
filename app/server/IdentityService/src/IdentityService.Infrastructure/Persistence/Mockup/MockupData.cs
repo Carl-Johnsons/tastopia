@@ -1,5 +1,6 @@
 ﻿using IdentityService.Infrastructure.Persistence.Mockup.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace IdentityService.Infrastructure.Persistence.Mockup;
 
@@ -9,12 +10,14 @@ internal class MockupData
     private RoleManager<IdentityRole> _roleManager;
     private readonly ApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
-    public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork, UserManager<ApplicationAccount> userManager, RoleManager<IdentityRole> roleManager)
+    private readonly ILogger<MockupData> _logger;
+    public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork, UserManager<ApplicationAccount> userManager, RoleManager<IdentityRole> roleManager, ILogger<MockupData> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _userManager = userManager;
         _roleManager = roleManager;
+        _logger = logger;
     }
 
     public async Task SeedAllData()
@@ -45,47 +48,39 @@ internal class MockupData
 
         if (user == null)
         {
-            await Console.Out.WriteLineAsync("================================================");
-            await Console.Out.WriteLineAsync("Seed super admin data");
+            _logger.LogInformation("***\tSeed super admin data\t***");
             var createAdminUser = await _userManager.CreateAsync(adminUser, userPassword);
             if (createAdminUser.Succeeded)
             {
                 await _userManager.AddToRoleAsync(adminUser, "SUPER ADMIN");
-                await Console.Out.WriteLineAsync("Seed admin data successfully");
+                _logger.LogInformation("***\tSeed admin data successfully\t***");
             }
-            await Console.Out.WriteLineAsync("================================================");
         }
     }
 
     public async Task SeedRoleGroupPermission()
     {
-        await Console.Out.WriteLineAsync("================================================");
-        await Console.Out.WriteLineAsync("Seed role data");
+        _logger.LogInformation("***\tSeed role data\t***");
         foreach (var roleName in RoleGroupPermissionData.ROLES_DATA)
         {
             var roleExist = await _roleManager.RoleExistsAsync(roleName);
             if (!roleExist)
             {
                 await _roleManager.CreateAsync(new IdentityRole(roleName));
-                await Console.Out.WriteLineAsync($"Seed role '{roleName}' data successfully");
+                _logger.LogInformation($"***\tSeed role '{roleName}' data successfully\t***");
             }
         }
-        await Console.Out.WriteLineAsync("================================================");
 
         if (!_context.Permissions.Any())
         {
-            await Console.Out.WriteLineAsync("================================================");
-            await Console.Out.WriteLineAsync("Seed permission data");
+            _logger.LogInformation("***\tSeed permission data\t***");
             await _context.Permissions.AddRangeAsync(RoleGroupPermissionData.PERMISSIONS_DATA);
-            await Console.Out.WriteLineAsync("================================================");
         }
 
         if (!_context.Groups.Any())
         {
-            await Console.Out.WriteLineAsync("================================================");
-            await Console.Out.WriteLineAsync("Seed permission data");
+            _logger.LogInformation("***\tSeed group permission data\t***");
             await _context.Groups.AddRangeAsync(RoleGroupPermissionData.GROUPS_DATA);
-            await Console.Out.WriteLineAsync("================================================");
         }
     }
 
@@ -103,7 +98,7 @@ internal class MockupData
                 }
                 await _userManager.AddToRoleAsync(user, "User");
 
-                Console.WriteLine($"{user.UserName} created");
+                _logger.LogInformation($"{user.UserName} created");
             }
         }
     }

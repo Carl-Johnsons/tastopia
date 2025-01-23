@@ -1,5 +1,8 @@
-﻿namespace NotificationService.Domain.Interfaces;
+﻿using NotificationService.Domain.Entities;
 
-public interface IApplicationDbContext : IDbContext 
+namespace NotificationService.Domain.Interfaces;
+
+public interface IApplicationDbContext : IDbContext
 {
+    DbSet<AccountExpoPushToken> AccountExpoPushTokens { get; set; }
 }

@@ -1,5 +1,4 @@
 ﻿using UserService.Domain.Common;
-using UserService.Domain.Interfaces;
 
 namespace UserService.Infrastructure.Utilities;
 

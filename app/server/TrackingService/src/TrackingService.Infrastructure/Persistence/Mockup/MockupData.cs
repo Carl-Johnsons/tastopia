@@ -1,4 +1,5 @@
 ﻿using Contract.Utilities;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using TrackingService.Domain.Entities;
 using TrackingService.Infrastructure.Persistence.Mockup.Data;
@@ -9,10 +10,12 @@ internal class MockupData
 {
     private readonly ApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
-    public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork)
+    private readonly ILogger<MockupData> _logger;
+    public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<MockupData> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task SeedAllData()
@@ -31,7 +34,7 @@ internal class MockupData
 
         if (!databases.Any(d => d["name"] == db))
         {
-            Console.WriteLine($"Database '{db}' does not exist. It will be created when data is inserted.");
+            _logger.LogInformation($"Database '{db}' does not exist. It will be created when data is inserted.");
         }
     }
 
@@ -39,8 +42,7 @@ internal class MockupData
     {
         if (!_context.UserViewRecipeDetails.Any())
         {
-            Console.WriteLine("Begin seed user view recipe detail");
-            Console.WriteLine("===================================================================================");
+            _logger.LogInformation("Begin seed user view recipe detail");
             foreach(var accountId in UserViewRecipeDetailData.Accounts)
             {
                 foreach(var recipeId in UserViewRecipeDetailData.Recipes)
@@ -59,7 +61,6 @@ internal class MockupData
             }
             _context.Database.AutoTransactionBehavior = AutoTransactionBehavior.Never;
             await _context.SaveChangesAsync();
-            Console.WriteLine("===================================================================================");
         }
     }
 }

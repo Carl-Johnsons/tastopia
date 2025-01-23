@@ -1,6 +1,4 @@
-﻿using SubscriptionService.API.GrpcServices;
-
-namespace SubscriptionService.API.Extensions;
+﻿namespace SubscriptionService.API.Extensions;
 
 public static class GrpcExtension
 {
@@ -13,7 +11,6 @@ public static class GrpcExtension
     public static WebApplication UseGrpcServices(this WebApplication app)
     {
         app.UseRouting();
-        app.MapGrpcService<GrpcUserService>();
         return app;
     }
 }

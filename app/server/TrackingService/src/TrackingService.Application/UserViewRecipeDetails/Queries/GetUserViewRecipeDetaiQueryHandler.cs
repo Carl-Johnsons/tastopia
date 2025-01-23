@@ -4,7 +4,6 @@ using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RecipeProto;
-using RecipeService.Domain.Responses;
 using TrackingService.Domain.Entities;
 using TrackingService.Domain.Errors;
 using TrackingService.Domain.Responses;

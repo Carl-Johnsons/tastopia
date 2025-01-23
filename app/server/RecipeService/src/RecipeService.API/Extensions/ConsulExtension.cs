@@ -1,5 +1,6 @@
 ﻿using Consul;
 using Contract.Utilities;
+using Serilog;
 
 namespace RecipeService.API.Extensions;
 
@@ -46,7 +47,7 @@ public static class ConsulExtension
 
         lifetime.ApplicationStarted.Register(() =>
         {
-            Console.WriteLine("Registering to Consul");
+            Log.Information("Registering to Consul");
             consulClient.Agent.ServiceDeregister(registration.ID).ConfigureAwait(true);
             consulClient.Agent.ServiceRegister(registration).ConfigureAwait(true);
         });
@@ -54,7 +55,7 @@ public static class ConsulExtension
 
         lifetime.ApplicationStopping.Register(() =>
         {
-            Console.WriteLine("Unregistering from Consul");
+            Log.Information("Unregistering from Consul");
             consulClient.Agent.ServiceDeregister(registration.ID).ConfigureAwait(true);
         });
         return app;
