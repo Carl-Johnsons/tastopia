@@ -12,7 +12,8 @@
     "test": "jest --watchAll",
     "lint": "expo lint",
     "build:android": "npx expo prebuild --platform android",
-    "build:ios": "npx expo prebuild --platform ios"
+    "build:ios": "npx expo prebuild --platform ios",
+    "postinstall": "npx patch-package"
   },
   "jest": {
     "preset": "jest-expo"
