@@ -50,14 +50,23 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
             return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound);
         }
         recipe.Steps = recipe.Steps.OrderBy(s => s.OrdinalNumber).ToList();
-        recipe.Comments = [];
-        recipe.RecipeVotes = [];
 
         var grpcResponse = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
         {
             AccountId = recipe.AuthorId.ToString()
         });
 
+        var vote = recipe.RecipeVotes.Where(v => v.AccountId == accountId).SingleOrDefault();
+        var v = Vote.None;
+        if (vote != null) {
+            v = vote.IsUpvote ? Vote.Upvote : Vote.Downvote;
+        }
+        var bookmark = await _context.UserBookmarkRecipes.Where(bm => bm.AccountId == accountId && bm.RecipeId == recipeId).SingleOrDefaultAsync();
+
+        var isBookmark = false;
+        if(bookmark != null) {
+            isBookmark = true;
+        }
 
         var listString = recipe.Title.ToLower().Split(' ');
 
@@ -75,6 +84,8 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
                 Title = r.Title
             }).Take(6).ToList();
 
+        recipe.RecipeVotes = [];
+        recipe.Comments = [];
         var result = new RecipeDetailsResponse
         {
             Recipe = recipe,
@@ -82,7 +93,9 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
             AuthorAvtUrl = grpcResponse.AvatarUrl,
             AuthorDisplayName = grpcResponse.DisplayName,
             AuthorNumberOfFollower = grpcResponse.TotalFollower ?? 0,
-            similarRecipes = similarRecipes
+            similarRecipes = similarRecipes,
+            IsBookmarked = isBookmark,
+            Vote = v.ToString(),
         };
 
         await _serviceBus.Publish(new CreateUserViewRecipeDetailEvent
