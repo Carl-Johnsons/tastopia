@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, Keyboard, ActivityIndicator, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Keyboard,
+  ActivityIndicator,
+  Platform,
+  TouchableHighlight
+} from "react-native";
 import { Redirect, Tabs, usePathname, useRootNavigationState } from "expo-router";
 import { menuList } from "@/constants/menu";
 import { useTranslation } from "react-i18next";
