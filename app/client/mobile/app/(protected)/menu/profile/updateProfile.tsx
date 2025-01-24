@@ -2,35 +2,39 @@ import { useUpdateUser } from "@/api/user";
 import Header from "@/components/screen/updateProfile/Header";
 import ImageChangingSection from "@/components/screen/updateProfile/ImageChangingSection";
 import UpdateProfileForm from "@/components/screen/updateProfile/UpadteProfileForm";
-import UpdateProfileProvider, {
-  UpdateProfileContext
-} from "@/components/screen/updateProfile/UpdateProfileProvider";
+import UpdateProfileProvider from "@/components/screen/updateProfile/UpdateProfileProvider";
 import useSyncUser from "@/hooks/user/useSyncUser";
+import { saveUpdateProfileData } from "@/slices/menu/profile/updateProfileForm.slice";
+import { useAppDispatch } from "@/store/hooks";
 import { stringify } from "@/utils/debug";
+import { dismissKeyboard } from "@/utils/keyboard";
 import { router } from "expo-router";
-import { useState } from "react";
-import { Alert, SafeAreaView, View } from "react-native";
+import { useCallback, useState } from "react";
+import {
+  Alert,
+  GestureResponderEvent,
+  Keyboard,
+  Pressable,
+  SafeAreaView,
+  View
+} from "react-native";
 import { useQueryClient } from "react-query";
 
 export default function UpdateProfile() {
-  const [avatar, setAvatar] = useState<ImageFileType>();
-  const [background, setBackground] = useState<ImageFileType>();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [triggerSubmit, setTriggerSubmit] = useState<() => void>();
-
   const { mutateAsync: updateProfile } = useUpdateUser();
   const { fetch: fetchUser } = useSyncUser();
   const queryClient = useQueryClient();
+  const dispatch = useAppDispatch();
 
-  const contextValues: UpdateProfileContext = {
-    avatar,
-    setAvatar,
-    background,
-    setBackground,
+  const [triggerSubmit, setTriggerSubmit] = useState<() => void>();
+  const [onChangeGenderValue, setOnChangeGenderValue] =
+    useState<(newValue: string) => void>();
+
+  const contextValue = {
     triggerSubmit,
     setTriggerSubmit,
-    isLoading,
-    setIsLoading
+    onChangeGenderValue,
+    setOnChangeGenderValue
   };
 
   /**
@@ -38,7 +42,7 @@ export default function UpdateProfile() {
    */
   const updateUser = async (data: IUpdateUserDTO) => {
     console.log("data", stringify(data));
-    setIsLoading(true);
+    dispatch(saveUpdateProfileData({ isLoading: true }));
 
     await updateProfile(data, {
       onSuccess: async () => {
@@ -51,21 +55,25 @@ export default function UpdateProfile() {
       onError: error => {
         Alert.alert("Error", error.message);
       },
-      onSettled: () => setIsLoading(false)
+      onSettled: () => {
+        dispatch(saveUpdateProfileData({ isLoading: false }));
+      }
     });
   };
 
   return (
-    <UpdateProfileProvider value={contextValues}>
+    <UpdateProfileProvider value={contextValue}>
       <SafeAreaView>
-        <View className='bg-white_black flex h-full'>
-          <Header />
-          <ImageChangingSection />
-          <UpdateProfileForm
-            className='mt-10 px-4'
-            onSubmit={updateUser}
-          />
-        </View>
+        <Pressable onPress={dismissKeyboard}>
+          <View className='bg-white_black flex h-full'>
+            <Header />
+            <ImageChangingSection />
+            <UpdateProfileForm
+              className='mt-10 px-4'
+              onSubmit={updateUser}
+            />
+          </View>
+        </Pressable>
       </SafeAreaView>
     </UpdateProfileProvider>
   );

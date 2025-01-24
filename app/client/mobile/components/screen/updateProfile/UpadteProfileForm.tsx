@@ -1,7 +1,7 @@
-import { Text, View } from "react-native";
+import { GestureResponderEvent, Keyboard, Pressable, Text, View } from "react-native";
 import { updateUserSchema } from "@/lib/validation/user";
 import Input from "../../Input";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FieldError, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { InferType } from "yup";
 import { useTranslation } from "react-i18next";
@@ -13,7 +13,6 @@ import Select from "./Select";
 import { selectUpdateProfile } from "@/slices/menu/profile/updateProfileForm.slice";
 import useUpdateProfile from "@/hooks/components/screen/updateProfile/useUpdateProfile";
 import { router } from "expo-router";
-import { stringify } from "@/utils/debug";
 
 export interface UpdateProfileFormFields extends InferType<typeof updateUserSchema> {}
 
@@ -31,7 +30,7 @@ export const UpdateProfileForm = ({ className, onSubmit }: UpdateProfileFormProp
   const {
     handleSubmit,
     control,
-    formState: { errors, isDirty, dirtyFields }
+    formState: { errors, isDirty }
   } = useForm({
     resolver: yupResolver(updateUserSchema),
     mode: "onSubmit",
@@ -60,15 +59,6 @@ export const UpdateProfileForm = ({ className, onSubmit }: UpdateProfileFormProp
           ...(gender && gender !== user.gender && { gender })
         };
 
-        console.debug(
-          "isDirty",
-          isDirty,
-          "dirtyFields",
-          stringify(dirtyFields),
-          "isDirtyImageFields",
-          stringify(isDirtyImageFields)
-        );
-
         if (isDirty || isDirtyImageFields.avatar || isDirtyImageFields.background) {
           onSubmit(payload);
         } else {
@@ -85,88 +75,102 @@ export const UpdateProfileForm = ({ className, onSubmit }: UpdateProfileFormProp
   }, [setTriggerSubmit, submit]);
 
   return (
-    <>
-      <View className={`gap-6 ${className}`}>
-        <View>
-          <Text className='text-black_white mb-2 font-sans'>
-            {t("displayName.title")}
-          </Text>
-          <Controller
-            name='displayName'
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <CustomInput
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-          />
-          {errors.displayName ? (
-            <Text className='text-black_white mb-2 font-sans'>
-              {errors.displayName.message}
-            </Text>
-          ) : null}
-          <Text className='font-sans text-sm text-gray-600'>
-            {t("displayName.description")}
-          </Text>
-        </View>
-
-        <View>
-          <Text className='text-black_white mb-2 font-sans'>{t("username.title")}</Text>
-          <Controller
-            name='username'
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <CustomInput
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-          />
-          {errors.username ? (
-            <Text className='font-sans text-red-400'>{errors.username.message}</Text>
-          ) : null}
-        </View>
-
-        <View>
-          <Text className='text-black_white mb-2 font-sans'>{t("bio.title")}</Text>
-          <Controller
-            name='bio'
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <CustomInput
-                onChangeText={onChange}
-                value={value}
-                placeholder={t("bio.placeholder")}
-              />
-            )}
-          />
-          {errors.bio ? (
-            <Text className='font-sans text-red-400'>{errors.bio.message}</Text>
-          ) : null}
-        </View>
-
-        <View>
-          <Text className='text-black_white mb-2 font-sans'>{t("gender.title")}</Text>
-          <Controller
-            name='gender'
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                value={value}
-                onChangeValue={newValue => {
-                  onChange(newValue);
-                }}
-              />
-            )}
-          />
-          {errors.gender ? (
-            <Text className='font-sans text-red-400'>{errors.gender.message}</Text>
-          ) : null}
-        </View>
+    <View className={`gap-3 ${className}`}>
+      <View>
+        <Text className='text-black_white mb-2 font-sans'>{t("displayName.title")}</Text>
+        <Controller
+          name='displayName'
+          control={control}
+          render={({ field: { onChange, value, onBlur } }) => (
+            <CustomInput
+              onChangeText={onChange}
+              value={value}
+              onBlur={onBlur}
+              error={errors.displayName}
+            />
+          )}
+        />
+        <Text className='font-sans text-sm text-gray-600'>
+          {t("displayName.description")}
+        </Text>
+        <Text className='font-sans text-red-400'>
+          {errors?.displayName && t(`displayName.error.${errors?.displayName?.message}`)}
+        </Text>
       </View>
-    </>
+
+      <View>
+        <Text className='text-black_white mb-2 font-sans'>{t("username.title")}</Text>
+        <Controller
+          name='username'
+          control={control}
+          render={({ field: { onChange, value, onBlur } }) => (
+            <CustomInput
+              onChangeText={onChange}
+              value={value}
+              onBlur={onBlur}
+              error={errors.username}
+            />
+          )}
+        />
+        <Text className='font-sans text-red-400'>
+          {errors?.username && t(`username.error.${errors?.username?.message}`)}
+        </Text>
+      </View>
+
+      <View>
+        <Text className='text-black_white mb-2 font-sans'>{t("bio.title")}</Text>
+        <Controller
+          name='bio'
+          control={control}
+          render={({ field: { onChange, value, onBlur } }) => (
+            <CustomInput
+              value={value}
+              onChangeText={onChange}
+              placeholder={t("bio.placeholder")}
+              onBlur={onBlur}
+              error={errors.bio}
+              multiline
+            />
+          )}
+        />
+        <Text className='font-sans text-red-400'>
+          {errors?.bio && t(`bio.error.${errors?.bio?.message}`)}
+        </Text>
+      </View>
+
+      <View>
+        <Text className='text-black_white mb-2 font-sans'>{t("gender.title")}</Text>
+        <Controller
+          name='gender'
+          control={control}
+          render={({ field: { onChange, value } }) => (
+            <Select
+              value={value}
+              onChangeValue={newValue => {
+                onChange(newValue);
+              }}
+            />
+          )}
+        />
+        <Text className='font-sans text-red-400'>
+          {errors?.gender && t(`gender.error.${errors?.gender?.message}`)}
+        </Text>
+      </View>
+    </View>
   );
+};
+
+type CustomInputProps = Pick<
+  TextInputProps,
+  | "onChangeText"
+  | "onBlur"
+  | "value"
+  | "placeholder"
+  | "defaultValue"
+  | "className"
+  | "multiline"
+> & {
+  error?: FieldError;
 };
 
 const CustomInput = ({
@@ -174,22 +178,25 @@ const CustomInput = ({
   value,
   placeholder,
   defaultValue,
-  className
-}: Pick<
-  TextInputProps,
-  "onChangeText" | "value" | "placeholder" | "defaultValue" | "className"
->) => {
-  const { gray } = colors;
+  className,
+  onBlur,
+  error,
+  multiline
+}: CustomInputProps) => {
+  const { gray, primary } = colors;
 
   return (
     <Input
       onChangeText={onChangeText}
+      onBlur={onBlur}
       value={value}
       autoCapitalize='none'
-      className={`text-black_white border-transparent bg-gray-100 px-4 py-3 focus:border-primary dark:bg-black-100 ${className}`}
+      className={`text-black_white border-transparent bg-gray-100 px-4 py-3 focus:border-primary ${error && "border-red-600"} dark:bg-black-100 ${className}`}
       placeholderTextColor={gray[500]}
       placeholder={placeholder ? placeholder : undefined}
       defaultValue={defaultValue ? defaultValue : undefined}
+      cursorColor={primary}
+      multiline={multiline}
     />
   );
 };

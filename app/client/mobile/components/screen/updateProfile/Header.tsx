@@ -39,7 +39,7 @@ export default function Header() {
       <Button
         onPress={handleSubmit}
         isLoading={isLoading}
-        className="w-[30px]"
+        className='w-[40px]'
         spinner={
           <ActivityIndicator
             animating={isLoading}

@@ -1,17 +1,14 @@
 import { object, string } from "yup";
 
 export const updateUserSchema = object({
-  displayName: string().max(50, "Display name cannot exceed 50 characters.").required("Please enter your display name"),
-  bio: string().max(160, "Bio cannot exceed 160 characters."),
+  displayName: string().max(50, "max").required("required"),
+  bio: string().max(160, "max").nullable(),
   gender: string(),
   username: string()
-    .required("Username is required.")
-    .matches(
-      /^[a-zA-Z0-9_.-]+$/,
-      "Username can only contain letters, numbers, underscores, hyphens, and periods."
-    )
-    .min(6, "Username must be at least 6 characters long.")
-    .max(30, "Username cannot exceed 30 characters."),
+    .required("required")
+    .matches(/^[a-zA-Z0-9_.-]+$/, "matches")
+    .min(6, "min")
+    .max(30, "max"),
   avatar: object(),
   background: object()
 });

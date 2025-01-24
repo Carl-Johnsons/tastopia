@@ -1,20 +1,14 @@
 import { Text, View } from "react-native";
 import Button from "../../Button";
 import { RefObject, forwardRef, useCallback, useEffect } from "react";
-import {
-  CheckCircleIcon,
-  CloseIcon,
-  UnitedKingdomFlagIcon,
-  VietnamFlagIcon
-} from "@/constants/icons";
+import { CheckCircleIcon, CloseIcon } from "@/constants/icons";
 import { colors } from "@/constants/colors";
 import Animated from "react-native-reanimated";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetView,
-  BottomSheetBackdropProps,
-  useBottomSheetModal
+  BottomSheetBackdropProps
 } from "@gorhom/bottom-sheet";
 
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
@@ -27,23 +21,7 @@ import {
   saveUpdateProfileData,
   selectUpdateProfile
 } from "@/slices/menu/profile/updateProfileForm.slice";
-
-type Item = {
-  /**
-   * The item's text that is showing to the user. If omited, the select will render the value instead.
-   */
-  label?: string;
-
-  /**
-   * The item's that is used for state management.
-   */
-  value: string;
-
-  /**
-   * Determine if the item is a placeholder.
-   */
-  isPlaceholder?: boolean;
-};
+import { o } from "@/hooks/alternator";
 
 type SelectGenderModalProps = {
   ref: RefObject<BottomSheetMethods>;
@@ -51,15 +29,14 @@ type SelectGenderModalProps = {
 };
 
 const SelectGenderModal = forwardRef<BottomSheetModal, SelectGenderModalProps>(
-  (_props, ref) => {
+  ({ onClose }, ref) => {
     const { t } = useTranslation("updateProfile", { keyPrefix: "gender" });
-    const { dismiss } = useBottomSheetModal();
     const { c } = useColorizer();
     const { black, white } = colors;
 
     const closeModal = useCallback(() => {
-      dismiss();
-    }, [dismiss]);
+      onClose();
+    }, [onClose]);
 
     const renderBackdrop = useCallback(
       (props: BottomSheetBackdropProps) => (
@@ -130,7 +107,7 @@ const SelectSection = () => {
   };
 
   return (
-    <>
+    <View className={`${o("pb-2", "pb-10")}`}>
       <ItemCard
         title={t("male")}
         className='justify-between'
@@ -143,7 +120,7 @@ const SelectSection = () => {
         additionalIcon={gender === GENDER.FEMALE ? CheckCircleIcon : undefined}
         onPress={() => handleChangeValue(GENDER.FEMALE)}
       />
-    </>
+    </View>
   );
 };
 

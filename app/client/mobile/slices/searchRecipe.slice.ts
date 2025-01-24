@@ -1,5 +1,4 @@
 import { RootState } from "@/store";
-import { useAppSelector } from "@/store/hooks";
 import { createSelector, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 

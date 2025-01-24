@@ -1,5 +1,13 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { Text, View, Image, StyleProp, ViewStyle, Pressable } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  StyleProp,
+  ViewStyle,
+  Pressable,
+  GestureResponderEvent
+} from "react-native";
 
 import { transformPlatformURI } from "@/utils/functions";
 import { AntDesign } from "@expo/vector-icons";
@@ -7,6 +15,9 @@ import { colors } from "@/constants/colors";
 import { CameraPlusIcon, UploadIcon } from "@/constants/icons";
 import { useImagePicking } from "@/hooks";
 import Button from "@/components/Button";
+import { AnimatedStyle } from "react-native-reanimated";
+import { dismissKeyboard } from "@/utils/keyboard";
+import { Gesture } from "react-native-gesture-handler/lib/typescript/handlers/gestures/gesture";
 
 type ReplaceImageModeOptions = {
   /**
@@ -32,9 +43,13 @@ type ReplaceImageModeOptions = {
 
   /**
    * The layer's class name.
-   *
    */
   className?: string;
+
+  /**
+   * The layer's style.
+   */
+  style?: StyleProp<AnimatedStyle<StyleProp<ViewStyle>>>;
 
   /**
    * The icon's size.
@@ -213,9 +228,7 @@ const UploadImage = ({
               {replaceImageMode?.enabled && (
                 <ReplaceImageLayer
                   onButtonPress={replaceImage}
-                  globalCallback={replaceImageMode.globalCallback}
-                  className={replaceImageMode.className}
-                  iconSize={replaceImageMode.iconSize}
+                  {...replaceImageMode}
                 />
               )}
               {!replaceImageMode && selectedImageId === fileObject.id && (
@@ -242,8 +255,12 @@ const ReplaceImageLayer = ({
   onButtonPress,
   globalCallback,
   className,
-  iconSize
-}: Pick<ReplaceImageModeOptions, "globalCallback" | "className" | "iconSize"> & {
+  iconSize,
+  style
+}: Pick<
+  ReplaceImageModeOptions,
+  "globalCallback" | "className" | "style" | "iconSize"
+> & {
   onButtonPress: () => void;
 }) => {
   const { white } = colors;
@@ -252,6 +269,7 @@ const ReplaceImageLayer = ({
     <Button
       className={`absolute h-full w-full items-center justify-center bg-black/50 ${className}`}
       onPress={globalCallback ? onButtonPress : undefined}
+      style={style}
     >
       <View className='flex items-center justify-center rounded-2xl'>
         <CameraPlusIcon

@@ -1,6 +1,6 @@
 import { SignUpParams } from "@/api/user";
 import { ActivityIndicator, Text, View } from "react-native";
-import { AuthFormProps } from "../login/LoginForm";
+import { AuthFormProps, CustomInput } from "../login/LoginForm";
 import Input from "../../Input";
 import Button from "../../Button";
 import useBounce from "@/hooks/animation/useBounce";
@@ -35,14 +35,11 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
           name='fullName'
           control={control}
           render={({ field: { onBlur, onChange, value } }) => (
-            <Input
+            <CustomInput
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              autoCapitalize='none'
               placeholder='Your full name'
-              className={`border-gray-300 p-5 focus:border-primary`}
-              placeholderTextColor={"gray"}
             />
           )}
         />
@@ -57,13 +54,10 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
           name='identifier'
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Input
-              onChangeText={onChange}
+            <CustomInput
               value={value}
-              autoCapitalize='none'
+              onChangeText={onChange}
               placeholder='Your email or phone number'
-              className={`border-gray-300 p-5 focus:border-primary`}
-              placeholderTextColor={"gray"}
             />
           )}
         />
@@ -78,13 +72,10 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
           name='password'
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Input
+            <CustomInput
               onChangeText={onChange}
               value={value}
-              autoCapitalize='none'
               placeholder='Password'
-              className={`border-gray-300 p-5 focus:border-primary`}
-              placeholderTextColor={"gray"}
               secureTextEntry
             />
           )}
@@ -97,13 +88,11 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
           name='rePassword'
           control={control}
           render={({ field: { onChange, value } }) => (
-            <Input
+            <CustomInput
               onChangeText={onChange}
               value={value}
-              autoCapitalize='none'
               placeholder='Confirm password'
-              className={`mt-3 border-gray-300 p-5 focus:border-primary`}
-              placeholderTextColor={"gray"}
+              className={`mt-3`}
               secureTextEntry
             />
           )}
