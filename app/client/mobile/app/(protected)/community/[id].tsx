@@ -29,8 +29,11 @@ import { filterUniqueItems } from "@/utils/dataFilter";
 import { useTranslation } from "react-i18next";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import { useQueryClient } from "react-query";
 
 const RecipeDetail = () => {
+  const queryClient = useQueryClient();
+
   const { c } = useColorizer();
   const { black, white } = colors;
 
@@ -81,7 +84,14 @@ const RecipeDetail = () => {
         {
           onSuccess: async data => {
             setIsBookmarked(data.isBookmark);
-            console.log("bookmark successfully");
+
+            queryClient.setQueryData(["recipe", id], (oldData: unknown) => {
+              if (!oldData) return oldData;
+              return {
+                ...oldData,
+                isBookmarked: data.isBookmark
+              };
+            });
           },
           onError: error => {
             console.log("Bookmark error", JSON.stringify(error, null, 2));
@@ -108,6 +118,12 @@ const RecipeDetail = () => {
       setComments(uniqueComments);
     }
   }, [commentData]);
+
+  useEffect(() => {
+    if (recipeDetailData?.isBookmarked !== undefined) {
+      setIsBookmarked(recipeDetailData.isBookmarked);
+    }
+  }, [recipeDetailData]);
 
   if (isLoadingRecipeDetail || isLoadingGetRecipeComment) {
     return (
@@ -187,7 +203,11 @@ const RecipeDetail = () => {
 
                   <View className='flex-between flex-row'>
                     <View className='flex-start flex-row gap-3'>
-                      <Vote voteDiff={recipeDetailData.recipe.voteDiff!} />
+                      <Vote
+                        recipeId={recipeDetailData.recipe.id}
+                        vote={recipeDetailData.vote}
+                        voteDiff={recipeDetailData.recipe.voteDiff!}
+                      />
                       <Bookmark
                         isBookmarked={isBookmarked}
                         handleToggleBookmark={handleToggleBookmark}

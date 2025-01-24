@@ -23,14 +23,6 @@ const useRecipesFeed = (filterSelected: string) => {
   });
 };
 
-type RecipeDetailResponse = {
-  recipe: RecipeDetailType;
-  authorUsername: string;
-  authorAvtUrl: string;
-  authorDisplayName: string;
-  authorNumberOfFollower: number;
-};
-
 const useRecipeDetail = (recipeId: string) => {
   return useQuery<RecipeDetailResponse>({
     queryKey: ["recipe", recipeId],
