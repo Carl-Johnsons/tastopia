@@ -123,6 +123,7 @@ const CookingMode = () => {
                     {t("voiceCommand")}
                   </Text>
                   <Switch
+                    testID='active-speaking-switch'
                     trackColor={{ false: `${inactiveTrackColor}`, true: `${primary}` }}
                     thumbColor={isActiveSpeaking ? `${thumbColor}` : `${thumbColor}`}
                     onValueChange={handleToggleSpeaking}
@@ -138,6 +139,7 @@ const CookingMode = () => {
                   />
                   <Text className='body-regular text-black_white'>{t("speaking")}</Text>
                   <Switch
+                    testID='active-voice-switch'
                     trackColor={{ false: `${inactiveTrackColor}`, true: `${primary}` }}
                     thumbColor={isActiveVoiceCommand ? `${thumbColor}` : `${thumbColor}`}
                     onValueChange={handleToggleVoiceCommand}
