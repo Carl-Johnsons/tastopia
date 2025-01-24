@@ -4,6 +4,7 @@ using RecipeWorker;
 using RecipeWorker.Extensions;
 
 var builder = Host.CreateDefaultBuilder(args)
+    .ConfigureSerilog()
     .ConfigureWebHostDefaults(webBuilder =>
     {
         webBuilder.ConfigureKestrel();

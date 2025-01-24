@@ -1,8 +1,7 @@
-﻿using Contract.Common;
-using Contract.Constants;
+﻿using Contract.Constants;
 using Contract.Event.IdentityEvent;
 using MassTransit;
-using NotificationService.Application.Emails;
+using NotificationService.Application.Notifications.Commands;
 
 namespace NotificationService.API.EventHandlers;
 

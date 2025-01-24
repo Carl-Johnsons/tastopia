@@ -5,6 +5,10 @@ using Ocelot.Middleware;
 using Contract.Utilities;
 using APIGateway.Extensions;
 using Ocelot.Provider.Consul;
+using APIGateway.Interfaces;
+using Serilog;
+using APIGateway.Services;
+using Consul;
 
 namespace APIGateway;
 
@@ -20,8 +24,22 @@ public static class DependenciesInjection
         var host = builder.Host;
         var env = builder.Environment;
 
-        builder.ConfigureKestrel();
         builder.ConfigureSerilog();
+        builder.ConfigureKestrel();
+
+
+        services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
+        {
+            return new ConsulClient(config =>
+            {
+                var scheme = DotNetEnv.Env.GetString("CONSUL_SCHEME", "Not found");
+                var host = DotNetEnv.Env.GetString("CONSUL_HOST", "Not found");
+                var port = DotNetEnv.Env.GetString("CONSUL_PORT", "Not found");
+                config.Address = new Uri($"{scheme}://{host}:{port}");
+            });
+        });
+        services.AddSingleton<IConsulRegistryService, ConsulRegistryService>();
+
 
         config.SetBasePath(env.ContentRootPath)
               .AddEnvironmentVariables();
@@ -54,11 +72,12 @@ public static class DependenciesInjection
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
-                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
-                var IdentityServerEndpoint = $"https://{IdentityDNS}";
-                Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
+                var serviceProvider = services.BuildServiceProvider();
+                var consulRegistryService = serviceProvider.GetRequiredService<IConsulRegistryService>();
+                var identityUri = consulRegistryService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not found"));
+                Log.Information("Connect to Identity Provider: " + identityUri!.ToString());
 
-                options.Authority = IdentityServerEndpoint;
+                options.Authority = identityUri!.ToString();
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = false,
@@ -95,7 +114,7 @@ public static class DependenciesInjection
         return builder;
     }
 
-    public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
+    public static WebApplication UseAPIServices(this WebApplication app)
     {
         app.UseSerilogServices();
 

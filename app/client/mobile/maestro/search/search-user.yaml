@@ -10,22 +10,17 @@ appId: host.exp.exponent
     file: ./expo/init-ios.yml
     when:
       platform: "iOS"
+- launchApp
 
-# - assertVisible: "Tìm Kiếm"
-- tapOn: "Tìm Kiếm"
-- tapOn: "Enter name or username"
+- tapOn:
+    id: "SEARCH"
+- tapOn:
+    text: "Nhập tên người dùng hoặc tên hiển thị..."
 - inputText: "a"
 - assertVisible: "Follow"
 - tapOn:
     text: "Follow"
+    index: 0
     repeat: 3
     delay: 500
-- scroll
-- scroll
-- scroll
-- scroll
-- scroll
-- scroll
-- scroll
-- scroll
 # - assertVisible: "Unfollow"

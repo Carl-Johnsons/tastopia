@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace DuendeIdentityServer.Services;
+namespace RecipeService.Infrastructure.Services;
 
 public sealed class SignalRService : ISignalRService
 {
@@ -12,7 +13,7 @@ public sealed class SignalRService : ISignalRService
     {
         _logger = logger;
         var websocketHost = (Environment.GetEnvironmentVariable("WEBSOCKET_HOST") ?? "localhost:5003").Replace("\"", "");
-        Console.WriteLine("Connect to chat hub " + websocketHost);
+        _logger.LogInformation("Connect to chat hub " + websocketHost);
 
         HubConnection = new HubConnectionBuilder()
             .WithUrl($"http://{websocketHost}/chat-hub")
@@ -43,4 +44,8 @@ public sealed class SignalRService : ISignalRService
         _logger.LogInformation($"Done invoking action");
     }
 
+    public async Task InvokeAction(string action)
+    {
+        await HubConnection.InvokeAsync(action);
+    }
 }

@@ -129,8 +129,8 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
 
         response.ThrowIfFailure();
 
-        Console.WriteLine("Create user successfully");
-        Console.WriteLine(JsonConvert.SerializeObject(user, Formatting.Indented));
+        _logger.LogInformation("Grpc create user successfully");
+        _logger.LogInformation(JsonConvert.SerializeObject(user, Formatting.Indented));
         return new GrpcEmpty();
     }
 }

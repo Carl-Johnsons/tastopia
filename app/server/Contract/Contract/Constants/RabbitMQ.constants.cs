@@ -19,6 +19,7 @@ public static class RabbitMQConstant
             public const string GET_ALL_TAGS = "get-all-tags-queue";
             // ======================= OTHER ============================
             public const string SEND_EMAIL = "send-email-queue";
+            public const string PUSH_NOTIFICATION = "push-notification-queue";
             public const string VALIDATE_RECIPE = "validate-recipe-queue";
 
             // ======================= FILE ============================
@@ -47,6 +48,7 @@ public static class RabbitMQConstant
 
             // ======================= OTHER ============================
             public const string SEND_EMAIL = "send-email-event";
+            public const string PUSH_NOTIFICATION = "push-notification-event";
             public const string VALIDATE_RECIPE = "validate-recipe-event";
 
             // ======================= FILE ============================

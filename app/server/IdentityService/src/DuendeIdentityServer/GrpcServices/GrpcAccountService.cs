@@ -10,11 +10,12 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
 {
     private readonly ISender _sender;
     private readonly IMapper _mapper;
-
-    public GrpcAccountService(ISender sender, IMapper mapper)
+    private readonly ILogger<GrpcAccountService> _logger;
+    public GrpcAccountService(ISender sender, IMapper mapper, ILogger<GrpcAccountService> logger)
     {
         _sender = sender;
         _mapper = mapper;
+        _logger = logger;
     }
 
     public override async Task<GrpcAccountDTO> GetAccountDetail(GrpcAccountIdRequest request, ServerCallContext context)
@@ -39,7 +40,8 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
             UserName = result.Value![0].UserName,
         };
 
-        Console.WriteLine(JsonConvert.SerializeObject(grpcResponse, Formatting.Indented));
+        _logger.LogInformation("Grpc get account detail successfully!");
+        _logger.LogInformation(JsonConvert.SerializeObject(grpcResponse, Formatting.Indented));
 
         return grpcResponse;
     }
@@ -52,6 +54,8 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
             UserName = request.UserName
         });
         result.ThrowIfFailure();
+
+        _logger.LogInformation("Grpc update account successfully!");
 
         return new GrpcEmpty();
     }

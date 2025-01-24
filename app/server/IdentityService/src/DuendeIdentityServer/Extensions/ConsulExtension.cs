@@ -1,5 +1,6 @@
 ﻿using Consul;
 using Contract.Utilities;
+using Serilog;
 
 namespace DuendeIdentityServer.Extensions;
 
@@ -47,14 +48,15 @@ public static class ConsulExtension
 
         lifetime.ApplicationStarted.Register(() =>
         {
-            Console.WriteLine("Registering with Consul");
+            Log.Information("Registering to Consul");
             consulClient.Agent.ServiceDeregister(registration.ID).ConfigureAwait(true);
             consulClient.Agent.ServiceRegister(registration).ConfigureAwait(true);
         });
 
+
         lifetime.ApplicationStopping.Register(() =>
         {
-            Console.WriteLine("Unregistering from Consul");
+            Log.Information("Unregistering from Consul");
             consulClient.Agent.ServiceDeregister(registration.ID).ConfigureAwait(true);
         });
         return app;

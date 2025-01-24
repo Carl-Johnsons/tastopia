@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contract.Utilities;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text.Json.Serialization;
 using UploadFileService.API.Configs;
 using UploadFileService.API.Extensions;
@@ -20,8 +21,8 @@ public static class DependenciesInjection
         var config = builder.Configuration;
         var host = builder.Host;
 
-        builder.ConfigureKestrel();
         builder.ConfigureSerilog();
+        builder.ConfigureKestrel();
 
         services.AddInfrastructureServices();
         services.AddApplicationServices();
@@ -44,11 +45,12 @@ public static class DependenciesInjection
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
             {
-                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
-                var IdentityServerEndpoint = $"https://{IdentityDNS}";
-                Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
+                var serviceProvider = services.BuildServiceProvider();
+                var consulRegistryService = serviceProvider.GetRequiredService<IConsulRegistryService>();
+                var identityUri = consulRegistryService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not found"));
+                Log.Information("Connect to Identity Provider: " + identityUri!.ToString());
 
-                options.Authority = IdentityServerEndpoint;
+                options.Authority = identityUri!.ToString();
                 // Clear default Microsoft's JWT claim mapping
                 // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
                 options.MapInboundClaims = false;

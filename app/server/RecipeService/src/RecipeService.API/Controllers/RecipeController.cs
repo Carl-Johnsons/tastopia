@@ -28,7 +28,7 @@ public class RecipeController : BaseApiController
 
     [HttpPost("create-recipe")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(Domain.Entities.Recipe), 200)]
+    [ProducesResponseType(typeof(Recipe), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> CreateRecipe([FromForm] CreateRecipeDTO createRecipeDTO)
     {
@@ -45,7 +45,7 @@ public class RecipeController : BaseApiController
 
     [HttpPost("update-recipe")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(Domain.Entities.Recipe), 200)]
+    [ProducesResponseType(typeof(Recipe), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> UpdateRecipe([FromForm] UpdateRecipeDTO updateRecipeDTO)
     {
@@ -161,7 +161,7 @@ public class RecipeController : BaseApiController
             RecipeId = voteRecipeDTO.RecipeId
         });
         result.ThrowIfFailure();
-        return NoContent();
+        return Ok(result.Value);
     }
 
     [HttpPost("get-recipe-comments")]

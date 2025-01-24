@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace SubscriptionService.Infrastructure.Utilities;
+namespace IdentityService.Infrastructure.Services;
 
 public sealed class SignalRService : ISignalRService
 {
@@ -13,7 +13,7 @@ public sealed class SignalRService : ISignalRService
     {
         _logger = logger;
         var websocketHost = (Environment.GetEnvironmentVariable("WEBSOCKET_HOST") ?? "localhost:5003").Replace("\"", "");
-        Console.WriteLine("Connect to chat hub " + websocketHost);
+        _logger.LogInformation("Connect to chat hub " + websocketHost);
 
         HubConnection = new HubConnectionBuilder()
             .WithUrl($"http://{websocketHost}/chat-hub")

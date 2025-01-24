@@ -16,14 +16,8 @@ const Community = () => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
 
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    refetch,
-    isRefetching
-  } = useRecipesFeed(filterSelected);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
+    useRecipesFeed(filterSelected);
 
   const handleCreateRecipe = () => {
     router.push("/(protected)/community/create-recipe");
@@ -45,7 +39,10 @@ const Community = () => {
 
   const renderItem = useCallback(
     ({ item, index }: { item: RecipeType; index: number }) => (
-      <View className="px-4">
+      <View
+        className='px-4'
+        testID='recipe'
+      >
         <Recipe {...item} />
         {index !== recipes.length - 1 && (
           <View className='my-4 h-[1px] w-full bg-gray-300' />

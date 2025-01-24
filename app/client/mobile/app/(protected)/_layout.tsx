@@ -114,7 +114,10 @@ const ProtectedLayout = () => {
                 ...(translateCode && { title: t(translateCode) }),
                 headerShown: false,
                 tabBarIcon: ({ size, focused }) => (
-                  <View style={styles.tabItem}>
+                  <View
+                    style={styles.tabItem}
+                    testID={code}
+                  >
                     {typeof icon === "function"
                       ? icon({
                           focused:

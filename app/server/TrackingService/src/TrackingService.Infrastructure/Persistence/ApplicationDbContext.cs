@@ -1,5 +1,6 @@
 ﻿using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using TrackingService.Domain.Entities;
 
@@ -7,16 +8,19 @@ namespace TrackingService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    public DbSet<UserViewRecipeDetail> UserViewRecipeDetails { get; set; }
-
+    private readonly ILogger<ApplicationDbContext> _logger;
     public DbContext Instance => this;
-    public ApplicationDbContext()
+
+    public ApplicationDbContext(ILogger<ApplicationDbContext> logger)
     {
+        _logger = logger;
     }
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : base(options)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILogger<ApplicationDbContext> logger)
+        : base(options)
     {
+        _logger = logger;
     }
+    public DbSet<UserViewRecipeDetail> UserViewRecipeDetails { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
