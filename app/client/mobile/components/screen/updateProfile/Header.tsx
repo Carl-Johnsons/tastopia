@@ -3,6 +3,7 @@ import { colors } from "@/constants/colors";
 import { CloseIcon } from "@/constants/icons";
 import useUpdateProfile from "@/hooks/components/screen/updateProfile/useUpdateProfile";
 import useColorizer from "@/hooks/useColorizer";
+import { selectUpdateProfile } from "@/slices/menu/profile/updateProfileForm.slice";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, Alert, Text, View } from "react-native";
@@ -11,7 +12,8 @@ export default function Header() {
   const { t } = useTranslation("updateProfile");
   const { c } = useColorizer();
   const { black, white, primary } = colors;
-  const { triggerSubmit, isLoading } = useUpdateProfile();
+  const { isLoading } = selectUpdateProfile();
+  const { triggerSubmit } = useUpdateProfile();
 
   const handleSubmit = () => {
     console.debug("triggerSubmit from Header status:", triggerSubmit);
@@ -37,6 +39,7 @@ export default function Header() {
       <Button
         onPress={handleSubmit}
         isLoading={isLoading}
+        className="w-[30px]"
         spinner={
           <ActivityIndicator
             animating={isLoading}

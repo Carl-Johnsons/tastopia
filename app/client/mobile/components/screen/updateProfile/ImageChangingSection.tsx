@@ -3,13 +3,13 @@ import { useCallback, useMemo } from "react";
 import { View } from "react-native";
 import UploadImage from "./UploadImage";
 import { transformPlatformURI } from "@/utils/functions";
-import useUpdateProfile from "@/hooks/components/screen/updateProfile/useUpdateProfile";
 import { selectUser } from "@/slices/user.slice";
-import { stringify } from "@/utils/debug";
+import { useAppDispatch } from "@/store/hooks";
+import { saveIsDirtyFieldsData, saveUpdateProfileData } from "@/slices/menu/profile/updateProfileForm.slice";
 
 export default function ImageChangingSection() {
-  const { setAvatar, setBackground } = useUpdateProfile();
   const { avatarUrl, backgroundUrl } = selectUser();
+  const dispatch = useAppDispatch();
 
   const defaultBackgroundImages: ImageFileType[] | undefined = useMemo(() => {
     return backgroundUrl
@@ -41,11 +41,13 @@ export default function ImageChangingSection() {
 
       switch (type) {
         case "background":
-          setBackground(file);
+          dispatch(saveUpdateProfileData({ background: file }));
+          dispatch(saveIsDirtyFieldsData({ background: true }));
           break;
 
         case "avatar":
-          setAvatar(file);
+          dispatch(saveUpdateProfileData({ avatar: file }));
+          dispatch(saveIsDirtyFieldsData({ avatar: true }));
           break;
       }
     },
@@ -68,7 +70,11 @@ export default function ImageChangingSection() {
           replaceImageMode={{
             enabled: true,
             globalCallback: true,
-            className: "rounded-full bottom-0 right-0 w-[31px] h-[32px]",
+            className: "rounded-full bottom-0 right-0",
+            style: {
+              width: 30,
+              height: 30
+            },
             replaceImageOnPress: true,
             iconSize: {
               width: 20,

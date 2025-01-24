@@ -1,13 +1,9 @@
-import { GENDER } from "@/slices/user.slice";
 import { object, string } from "yup";
 
 export const updateUserSchema = object({
   displayName: string().max(50, "Display name cannot exceed 50 characters.").required("Please enter your display name"),
   bio: string().max(160, "Bio cannot exceed 160 characters."),
-  gender: string().oneOf(
-    [GENDER.MALE, GENDER.FEMALE],
-    "Gender must be 'male' or 'female'."
-  ),
+  gender: string(),
   username: string()
     .required("Username is required.")
     .matches(

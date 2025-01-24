@@ -1,14 +1,10 @@
 import { Dispatch, ReactNode, SetStateAction, createContext } from "react";
 
 export type UpdateProfileContext = {
-  avatar?: ImageFileType;
-  setAvatar: Dispatch<SetStateAction<ImageFileType | undefined>>;
-  background?: ImageFileType;
-  setBackground: Dispatch<SetStateAction<ImageFileType | undefined>>;
   triggerSubmit?: () => void;
   setTriggerSubmit?: Dispatch<SetStateAction<(() => void) | undefined>>;
-  isLoading: boolean;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  onChangeGenderValue?: (newValue: string) => void;
+  setOnChangeGenderValue?: Dispatch<SetStateAction<((newValue: string) => void) | undefined>>;
 };
 
 type UpdateProfileProviderProps = {
