@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 PEM_FILE_NAME=cert.pem
-CERT_FILE_NAME=cert.crt
 
 dotnet dev-certs https -ep $PEM_FILE_NAME --format PEM
 
@@ -12,3 +11,5 @@ adb root
 adb push ./$subjectHash.0 /data/misc/user/0/cacerts-added/$subjectHash.0
 adb shell "su 0 chmod 644 /data/misc/user/0/cacerts-added/$subjectHash.0"
 adb reboot
+
+rm ./$subjectHash.0 cert.pem 
