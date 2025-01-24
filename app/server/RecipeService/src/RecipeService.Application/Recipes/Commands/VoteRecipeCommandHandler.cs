@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
+using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.Application.Recipes.Commands;
 
-public class VoteRecipeCommand : IRequest<Result>
+public class VoteRecipeCommand : IRequest<Result<VoteResponse?>>
 {
     [Required]
     public bool? IsUpvote { get; init; } = null!;
@@ -15,7 +16,7 @@ public class VoteRecipeCommand : IRequest<Result>
     public Guid? RecipeId { get; init; } = null!;
 }
 
-public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Result>
+public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Result<VoteResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
@@ -26,7 +27,7 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(VoteRecipeCommand request, CancellationToken cancellationToken)
+    public async Task<Result<VoteResponse?>> Handle(VoteRecipeCommand request, CancellationToken cancellationToken)
     {
         try
         {
@@ -36,16 +37,17 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
 
             if (accountId == null || recipeId == null || isUpvote == null)
             {
-                return Result.Failure(RecipeError.NotFound);
+                return Result<VoteResponse?>.Failure(RecipeError.NotFound);
             }
             var recipe = await _context.Recipes.Where(r => r.Id == recipeId && r.IsActive == true).FirstOrDefaultAsync();
 
             if (recipe == null)
             {
-                return Result.Failure(RecipeError.NotFound);
+                return Result<VoteResponse?>.Failure(RecipeError.NotFound);
             }
 
             var recipeVote = recipe.RecipeVotes.Where(rv => rv.AccountId == accountId).FirstOrDefault();
+            var vote = (bool)isUpvote ? Vote.Upvote : Vote.Downvote;
             if (recipeVote == null)
             {
                 recipeVote = new RecipeVote
@@ -63,6 +65,7 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
                 var delta = recipeVote.IsUpvote ? isUpvote.Value ? -1 : -2 : isUpvote.Value ? 2 : 1;
                 if (recipeVote.IsUpvote == isUpvote.Value)
                 {
+                    vote = Vote.None;
                     recipe.RecipeVotes.Remove(recipeVote);
 
                 }
@@ -74,7 +77,13 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
                 _context.Recipes.Update(recipe);
             }
             await _unitOfWork.SaveChangeAsync();
-            return Result.Success();
+
+            return Result<VoteResponse?>.Success(new VoteResponse
+            {
+                Vote = vote,
+                AccountId = accountId.Value,
+                RecipeId = recipe.Id,
+            });
 
         }
         catch (Exception ex)
