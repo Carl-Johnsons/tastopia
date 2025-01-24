@@ -53,7 +53,8 @@ export default function UpdateProfile() {
         Alert.alert("Success", "Update profile successfully.");
       },
       onError: error => {
-        Alert.alert("Error", error.message);
+        console.debug("Error updateProfile", stringify(error));
+        Alert.alert("Error", "An error has occured. Please try again later.");
       },
       onSettled: () => {
         dispatch(saveUpdateProfileData({ isLoading: false }));
