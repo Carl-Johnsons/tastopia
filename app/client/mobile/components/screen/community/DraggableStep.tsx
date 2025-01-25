@@ -12,7 +12,6 @@ import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
 import useDebounce from "@/hooks/useDebounce";
 import UploadImage from "@/components/common/UploadImage";
-import { ImageFileType } from "@/types/image";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 
@@ -106,7 +105,10 @@ const DraggableStep = ({
         <TextInput
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          style={isFocused ? [styles.input, styles.inputFocused] : styles.input}
+          style={
+            (isFocused ? [styles.input, styles.inputFocused] : styles.input,
+            { color: `${c(black.DEFAULT, white.DEFAULT)}` })
+          }
           value={inputValue}
           onChangeText={handleChangeText}
           placeholder={t("formPlaceholder.steps")}

@@ -5,7 +5,6 @@ import {
   FormCreateRecipeType,
   schema as createRecipeSchema
 } from "@/schemas/create-recipe";
-import { ImageFileType } from "@/types/image";
 import { AntDesign } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { memo, useState } from "react";
@@ -29,9 +28,6 @@ import { protectedAxiosInstance } from "@/constants/host";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { stringify } from "@/utils/debug";
 
-type renderIngredientItemProps = CreateIngredientType & {
-  setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
-};
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 
