@@ -135,7 +135,6 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         catch (Exception ex)
         {
             await RollBackImageGrpc(rollbaclUrls);
-            await Console.Out.WriteLineAsync(ex.Message);
         }
 
         return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
@@ -154,7 +153,6 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         {
             DeleteUrl = listUrls,
         });
-        await Console.Out.WriteLineAsync("***Roll back image success!***");
     }
 
     public async Task RollBackImageGrpc(List<string>? urls)
@@ -164,7 +162,6 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         {
             DeleteUrl = urls
         });
-        await Console.Out.WriteLineAsync("***Roll back image success!***");
     }
 
     private Dictionary<string, int> GetImageIndexMap(List<StepDTO> steps)

@@ -21,7 +21,6 @@ internal class MockupData
     {
         if (!_context.Events.Any())
         {
-            await Console.Out.WriteLineAsync("===============Seed Event data============");
             _context.Events.AddRange(EventData.Data);
             await _unitOfWork.SaveChangeAsync();
         }

@@ -45,10 +45,8 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
 
             if (recipeId == null || accountId == null || string.IsNullOrEmpty(content))
             {
-                await Console.Out.WriteLineAsync("*AddCommentFail*********************");
                 return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);
             }
-            await Console.Out.WriteLineAsync();
             var recipe = await _context.Recipes.Where(r => r.Id == recipeId).FirstOrDefaultAsync();
 
             if (recipe == null)
@@ -58,7 +56,6 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
 
             List<string> accountList = [accountId.ToString()!];
 
-            await Console.Out.WriteLineAsync("*GetSimpleUser*********************");
             var response = _grpcUserClient.GetSimpleUser(new GrpcGetSimpleUsersRequest
             {
                 AccountId = { _mapper.Map<RepeatedField<string>>(accountList) }
@@ -112,7 +109,6 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
         }
         catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);
         }
     }
