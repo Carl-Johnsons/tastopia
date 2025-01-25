@@ -7,16 +7,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Consul" Version="1.7.14.6" />
 		<PackageReference Include="DotNetEnv" Version="3.0.0" />
-		<PackageReference Include="MongoDB.EntityFrameworkCore" Version="8.2.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
+		<!-- Consul dependencies -->
+		<PackageReference Include="Consul" Version="1.7.14.1" />
+		<!-- Ef-core dependencies -->
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="MassTransit" Version="8.2.2" />
-		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.2" />
+
+		<!-- Serilog dependencies -->
+		<PackageReference Include="Serilog" Version="4.1.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,5 +1,4 @@
 ﻿using Contract.Constants;
-using IdentityService.Domain.Common;
 using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

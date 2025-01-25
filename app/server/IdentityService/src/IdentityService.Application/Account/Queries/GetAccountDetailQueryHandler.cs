@@ -1,5 +1,4 @@
-﻿using IdentityService.Domain.Common;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Application.Account.Queries;

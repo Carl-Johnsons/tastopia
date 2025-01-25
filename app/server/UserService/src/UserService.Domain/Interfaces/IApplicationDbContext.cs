@@ -1,4 +1,5 @@
-﻿using UserService.Domain.Entities;
+﻿using Contract.Interfaces;
+using UserService.Domain.Entities;
 
 namespace UserService.Domain.Interfaces;
 
