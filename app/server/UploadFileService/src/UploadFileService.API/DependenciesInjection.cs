@@ -16,8 +16,6 @@ public static class DependenciesInjection
     {
         EnvUtility.LoadEnvFile();
         var services = builder.Services;
-        var config = builder.Configuration;
-        var host = builder.Host;
 
         builder.ConfigureCommonAPIServices();
 
