@@ -14,7 +14,8 @@ const Recipe = ({
   authorDisplayName,
   authorAvtUrl,
   voteDiff,
-  numberOfComment
+  numberOfComment,
+  vote
 }: RecipeType) => {
   const router = useRouter();
   const { c } = useColorizer();
@@ -83,8 +84,12 @@ const Recipe = ({
               </Text>
             </View>
 
-            {(voteDiff !== undefined || numberOfComment !== undefined) && (
+            {(voteDiff !== undefined ||
+              numberOfComment !== undefined ||
+              vote !== undefined) && (
               <InteractionSection
+                recipeId={id}
+                vote={vote}
                 handleOnPress={handleOnPress}
                 voteDiff={voteDiff}
                 numberOfComment={numberOfComment}

@@ -1,0 +1,25 @@
+# maestro test ./maestro/community/community.yaml
+appId: host.exp.exponent
+---
+- runFlow:
+    file: ../expo/init-android.yml
+    when:
+      platform: "Android"
+
+- runFlow:
+    file: ../expo/init-ios.yml
+    when:
+      platform: "iOS"
+
+- tapOn:
+    id: "recipe"
+    index: 0
+- scrollUntilVisible:
+    element:
+      id: "comment-section"
+    direction: DOWN
+    timeout: 10000
+- tapOn: "Thêm bình luận..."
+- inputText: "test comment"
+- tapOn:
+    id: "submit_comment_button"

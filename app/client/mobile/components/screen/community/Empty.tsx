@@ -10,7 +10,7 @@ const Empty = memo(() => {
         source={require("../../../assets/icons/noResult.png")}
         style={{ width: 130, height: 130 }}
       />
-      <Text className='paragraph-medium text-center'>{t("empty")}</Text>
+      <Text className='paragraph-medium text-black_white text-center'>{t("empty")}</Text>
     </View>
   );
 });

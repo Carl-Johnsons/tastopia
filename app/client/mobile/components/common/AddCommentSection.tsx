@@ -57,6 +57,7 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
 
       {comment.trim() !== "" && (
         <TouchableWithoutFeedback
+          testID='submit_comment_button'
           onPress={handleOnSubmit}
           disabled={isLoading}
         >
