@@ -84,11 +84,11 @@ run_service() {
     --no-launch-profile \
     --project "$project" \
     2>&1 | sed -E \
-      -e "/(warning\])/I s/.*/$(printf "${WARNING}&${NC}")/" \
-      -e "/(error\])/I s/.*/$(printf "${DANGER}&${NC}")/" \
-      -e "/(information\])/I s/.*/$(printf "${INFO}&${NC}")/" \
-      -e "/ is listening on/I s/.*/$(printf "${SUCCESS}&${NC}")/" \
-      -e "s/^/$(printf "${color}[${name}]${NC} ")/"
+    -e "/(warning\])/I s/.*/$(printf "${WARNING}&${NC}")/" \
+    -e "/(error\])/I s/.*/$(printf "${DANGER}&${NC}")/" \
+    -e "/(information\])/I s/.*/$(printf "${INFO}&${NC}")/" \
+    -e "/ is listening on/I s/.*/$(printf "${SUCCESS}&${NC}")/" \
+    -e "s/^/$(printf "${color}[${name}]${NC} ")/"
 }
 
 run_services() {

@@ -1,4 +1,5 @@
 using Contract.Event.IdentityEvent;
+using Contract.Interfaces;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;

@@ -1,5 +1,4 @@
-﻿using IdentityService.Domain.Common;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IdentityService.Domain.Entities;
 
