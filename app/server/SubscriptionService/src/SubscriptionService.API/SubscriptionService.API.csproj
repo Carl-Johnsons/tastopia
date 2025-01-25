@@ -7,8 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="13.0.1" />
-		<PackageReference Include="MediatR" Version="12.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.4" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
@@ -20,7 +18,6 @@
 		</PackageReference>
 		<PackageReference Include="Reinforced.Typings" Version="1.6.5" />
 		<!-- Grpc dependencies -->
-		<PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
 	</ItemGroup>
 
 	<ItemGroup>

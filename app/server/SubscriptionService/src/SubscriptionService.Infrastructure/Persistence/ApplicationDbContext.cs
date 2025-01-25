@@ -7,15 +7,8 @@ namespace SubscriptionService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    private readonly ILogger<ApplicationDbContext> _logger;
-    public ApplicationDbContext(ILogger<ApplicationDbContext> logger)
+    public ApplicationDbContext()
     {
-        _logger = logger;
-    }
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILogger<ApplicationDbContext> logger)
-    : base(options)
-    {
-        _logger = logger;
     }
 
     public DbContext Instance => this;
@@ -29,8 +22,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var connectionString = EnvUtility.GetConnectionString();
-
-        _logger.LogInformation($"DB connection string: {connectionString}");
 
         optionsBuilder.UseNpgsql(connectionString, option =>
         {
