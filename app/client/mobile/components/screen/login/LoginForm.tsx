@@ -1,11 +1,12 @@
 import { LoginParams } from "@/api/user";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Text, TextInputProps, View } from "react-native";
 import Input from "../../Input";
 import useBounce from "@/hooks/animation/useBounce";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "@/lib/validation/auth";
 import Button from "../../Button";
+import { colors } from "@/constants/colors";
 
 export interface LoginFormFields extends LoginParams {}
 
@@ -36,15 +37,12 @@ export const LoginForm = (props: LoginFormProps) => {
         <Controller
           name='identifier'
           control={control}
-          render={({ field: { onBlur, onChange, value } }) => (
-            <Input
+          render={({ field: { onChange, value, onBlur } }) => (
+            <CustomInput
+              value={value}
               onBlur={onBlur}
               onChangeText={onChange}
-              value={value}
-              autoCapitalize='none'
               placeholder='Your email or phone number'
-              className={`border-gray-300 p-5 focus:border-primary`}
-              placeholderTextColor={"gray"}
             />
           )}
         />
@@ -59,14 +57,11 @@ export const LoginForm = (props: LoginFormProps) => {
           name='password'
           control={control}
           render={({ field: { onBlur, onChange, value } }) => (
-            <Input
+            <CustomInput
+              value={value}
               onBlur={onBlur}
               onChangeText={onChange}
-              value={value}
-              autoCapitalize='none'
               placeholder='Password'
-              className={`border-gray-300 p-5 focus:border-primary`}
-              placeholderTextColor={"gray"}
               secureTextEntry
             />
           )}
@@ -100,6 +95,40 @@ export const LoginForm = (props: LoginFormProps) => {
         </Text>
       </Button>
     </View>
+  );
+};
+
+export const CustomInput = ({
+  onChangeText,
+  onBlur,
+  value,
+  placeholder,
+  className,
+  secureTextEntry
+}: Pick<
+  TextInputProps,
+  | "onChangeText"
+  | "value"
+  | "onBlur"
+  | "placeholder"
+  | "defaultValue"
+  | "className"
+  | "secureTextEntry"
+>) => {
+  const { gray, primary } = colors;
+
+  return (
+    <Input
+      onBlur={onBlur}
+      onChangeText={onChangeText}
+      value={value}
+      autoCapitalize='none'
+      placeholder={placeholder}
+      className={`border-gray-300 p-5 focus:border-primary ${className}`}
+      placeholderTextColor={gray[300]}
+      secureTextEntry={secureTextEntry}
+      cursorColor={primary}
+    />
   );
 };
 

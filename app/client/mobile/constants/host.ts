@@ -2,11 +2,8 @@ import axios from "axios";
 import { store } from "@/store";
 import { saveAuthData } from "@/slices/auth.slice";
 import { stringify } from "@/utils/debug";
-import Constants from "expo-constants";
 import { refreshAccessToken } from "@/api/tokens";
 import { transformPlatformURI } from "@/utils/functions";
-
-const { expoConfig } = Constants;
 
 const SCHEME = process.env.EXPO_PUBLIC_API_GATEWAY_SCHEME;
 const HOST = process.env.EXPO_PUBLIC_API_GATEWAY_HOST ?? expoConfig?.hostUri?.split(":")[0];

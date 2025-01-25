@@ -75,6 +75,7 @@ const Menu = () => {
           </View>
         </View>
       </SafeAreaView>
+
       <SettingModal
         ref={settingModalRef}
         onClose={closeSettingModal}
