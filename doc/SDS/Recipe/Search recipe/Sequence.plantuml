@@ -31,8 +31,9 @@ RecipeService -> Rabbitmq++: 5. Publish "UserSearchRecipeEvent" \n message <<Asy
 RecipeService -> MongoDB++: 6. Query data
 RecipeService <-- MongoDB--: 7. Return response
 
-Rabbitmq -> TrackingService++: 8. Deliver "UserSearchRecipeEvent"\n message
+Rabbitmq -> TrackingService: 8. Deliver "UserSearchRecipeEvent"\n message
 deactivate Rabbitmq
+activate TrackingService
 TrackingService -> MongoDB++: 9. Consume event and \n add user keyword to DB
 TrackingService <-- MongoDB--: 10. Return response
 deactivate TrackingService

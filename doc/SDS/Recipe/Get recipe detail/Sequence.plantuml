@@ -37,8 +37,9 @@ alt Recipe is not existed
     User <-- ApiGateway: 7a.2. Display not found error
 else Recipe is existed
     RecipeService -> Rabbitmq++: 8. Publish "UserViewRecipeDetailEvent" \n message <<Async>>
-    Rabbitmq --> TrackingService++: 9. Deliver "UserViewRecipeDetailEvent"\n message
+    Rabbitmq --> TrackingService: 9. Deliver "UserViewRecipeDetailEvent"\n message
     deactivate Rabbitmq
+    activate TrackingService
     TrackingService -> MongoDB++: 10. Consume event and \n add user's view to DB
     TrackingService <-- MongoDB--: 11. Return response
     deactivate TrackingService
