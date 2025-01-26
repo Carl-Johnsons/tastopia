@@ -41,17 +41,20 @@ ApiGateway <-- RecipeService--: 12. Return recipe comment
 MobileUI <-- ApiGateway--: 13. Forward response
 User <-- MobileUI--: 14. Display recipe comment
 
-Rabbitmq -> RecipeWorker++: 15. Deliver "UserCommentRecipeEvent"\n message
+Rabbitmq -> RecipeWorker: 15. Deliver "UserCommentRecipeEvent"\n message
 deactivate Rabbitmq
+activate RecipeWorker
 
 RecipeWorker -> GerminiAPI++: 16. Consume event and \n call api to check abuse
 RecipeWorker <-- GerminiAPI--: 17. Return response
 
 opt Comment has abusive word
-    RecipeWorker -> Rabbitmq++: 18A. Publish "AbusiveCommentEvent" \n message <<Async>>
+    RecipeWorker -> Rabbitmq: 18A. Publish "AbusiveCommentEvent" \n message <<Async>>
     deactivate RecipeWorker
-    Rabbitmq -> RecipeService++: 18A.1. Deliver "AbusiveCommentEvent"\n message
+    activate Rabbitmq
+    Rabbitmq -> RecipeService: 18A.1. Deliver "AbusiveCommentEvent"\n message
     deactivate Rabbitmq
+    activate RecipeService
     RecipeService -> MongoDB++: 18A.2. Consume message and update data
     RecipeService <-- MongoDB--: 18A.3. Return response.
     deactivate RecipeService
