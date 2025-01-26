@@ -8,6 +8,7 @@ package UserProto;
 service GrpcUser {
     rpc GetSimpleUser(GrpcGetSimpleUsersRequest) returns (GrpcGetSimpleUsersDTO);
     rpc GetUserDetail(GrpcAccountIdRequest) returns (GrpcUserDetailDTO);
+    rpc SearchUser(GrpcSearchUserRequest) returns (GrpcListAccountIds);
     // This will throw exception when user can't be created
     rpc CreateUser(GrpcCreateUserRequest) returns (GrpcEmpty);
 }
@@ -26,6 +27,14 @@ message GrpcCreateUserRequest {
     string AccountId = 1;
     string FullName = 2;
     string AccountUsername = 3;
+}
+
+message GrpcSearchUserRequest {
+    string Keyword = 1;
+}
+
+message GrpcListAccountIds{
+    repeated string AccountIds = 1;
 }
 
 message GrpcGetSimpleUsersDTO {
