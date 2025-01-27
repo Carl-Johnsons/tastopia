@@ -10,10 +10,13 @@ export type UseBounceResult = {
   /** Start the animation. */
   animate: () => void;
 
-  /** The styles to asign to the object. */
-  animatedStyles: DefaultStyle
+  /** The styles to assign to the object. */
+  animatedStyles: DefaultStyle;
 };
 
+/**
+ * Provide a fast way to make a bouncy element.
+ */
 export const useBounce = (): UseBounceResult => {
   const buttonScale = useSharedValue(1);
   const buttonOpacity = useSharedValue(1);
