@@ -1,5 +1,7 @@
 import {
   AuthSessionResult,
+  CodeChallengeMethod,
+  exchangeCodeAsync,
   makeRedirectUri,
   useAuthRequest,
   useAutoDiscovery
@@ -26,31 +28,59 @@ export const useLoginWithGoogle = (): UseLoginWithGoogleResult => {
 
   const discovery = useAutoDiscovery(discoveryUrl);
 
-  // const redirectUri = makeRedirectUri();
-  const redirectUri = "com.tastopia.app://";
+  // const redirectUri = makeRedirectUri({
+  //   scheme: "com.tastopia.app",
+  //   isTripleSlashed: true
+  // });
+
+  const clientId = "react.native";
+  const redirectUri = "com.tastopia.app://"; // TODO: Remove hardcode redirect Uri
   const [base64_state] = useState(() => btoa(Math.random().toString()));
 
-  const [_request, response, promptAsync] = useAuthRequest(
+  const [request, _, promptAsync] = useAuthRequest(
     {
       clientId: "react.native",
       redirectUri: redirectUri,
       scopes: ["openid", "profile", "email", "offline_access"],
-      state: base64_state
+      state: base64_state,
+      codeChallengeMethod: CodeChallengeMethod.S256
     },
     discovery
   );
 
   const loginWithGoogle = async () => {
+    if (!request) {
+      return;
+    }
     console.log("Initing google flow");
 
-    console.log("Start login flow");
-    console.log("redirectUri", redirectUri);
+    try {
+      console.log("Start login flow");
+      console.log("redirectUri", redirectUri);
+      maybeCompleteAuthSession();
 
-    maybeCompleteAuthSession();
-    await promptAsync();
+      const result = await promptAsync();
+      if (request && result?.type === "success" && discovery) {
+        const tokenResponse = await exchangeCodeAsync(
+          {
+            clientId,
+            redirectUri,
+            code: result.params.code,
+            extraParams: request.codeVerifier
+              ? { code_verifier: request.codeVerifier }
+              : undefined
+          },
+          discovery
+        );
+        console.log(JSON.stringify(tokenResponse, null, 2));
+      } else {
+        console.error("Error");
+      }
 
-    console.log("End login flow");
-    console.log("Data:", JSON.stringify(response, null, 2));
+      console.log(JSON.stringify(result, null, 2));
+    } catch (error) {
+      console.error("Authorization error:", error);
+    }
   };
 
   return { loginWithGoogle, response: undefined };
