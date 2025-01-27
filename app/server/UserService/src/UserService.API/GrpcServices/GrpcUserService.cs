@@ -133,4 +133,19 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         _logger.LogInformation(JsonConvert.SerializeObject(user, Formatting.Indented));
         return new GrpcEmpty();
     }
+    public override async Task<GrpcListAccountIds> SearchUser(GrpcSearchUserRequest request, ServerCallContext context)
+    {
+        var keyword = request.Keyword;
+        var response = await _sender.Send(new SearchSimpleUserQuery
+        {
+            Keyword = keyword,
+        });
+        response.ThrowIfFailure();
+
+        var result = new GrpcListAccountIds
+        {
+            AccountIds = { response.Value!.Select(id => id.ToString()) }
+        };
+        return result;
+    }
 }

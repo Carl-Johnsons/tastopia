@@ -119,7 +119,6 @@ public class CreateMultipleImageFileCommandHandler : IRequestHandler<CreateMulti
         {
 
             await _applicationFileUtility.RollBackImageFile(uploadResults.Select(u => u.PublicId).ToList());
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<List<FileResponse>?>.Failure(CloudinaryFileError.UploadToCloudFail);
         }
     }

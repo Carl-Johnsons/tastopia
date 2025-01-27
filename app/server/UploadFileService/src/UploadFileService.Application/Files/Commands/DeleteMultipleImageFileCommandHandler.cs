@@ -41,7 +41,6 @@ public class DeleteMultipleImageFileCommandHandler : IRequestHandler<DeleteMulti
             {
                 if (string.IsNullOrEmpty(publicId))
                 {
-                    await Console.Out.WriteLineAsync($"Not have permission to delete, so skip 1 image!");
                     return;
                 }
                 var deleteParams = new DeletionParams(publicId)
@@ -58,7 +57,6 @@ public class DeleteMultipleImageFileCommandHandler : IRequestHandler<DeleteMulti
         }
         catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result.Failure(CloudinaryFileError.DeleteToCloudFail);
         }
     }

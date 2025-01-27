@@ -23,7 +23,6 @@ public class GetRecipeDetailsConsumer : IConsumer<GetRecipeDetailsEvent>
 
     public async Task Consume(ConsumeContext<GetRecipeDetailsEvent> context)
     {
-        await Console.Out.WriteLineAsync("ok comsuner");
         var result = await _sender.Send(new GetRecipeDetailQuery{
             RecipeId = context.Message.RecipeId,
         });

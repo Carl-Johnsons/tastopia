@@ -14,7 +14,6 @@ public class GlobalLoggingFilter : IHubFilter
         if (invocationContext.HubMethodArguments != null && invocationContext.HubMethodArguments.Count > 0)
         {
             Log.Information("Parameters:");
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(invocationContext.HubMethodArguments));
         }
         try
         {

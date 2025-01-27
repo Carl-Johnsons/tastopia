@@ -69,10 +69,18 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
 
         if (!string.IsNullOrEmpty(keyword))
         {
+            var searchUserResponse = await _grpcUserClient.SearchUserAsync(new GrpcSearchUserRequest
+            {
+                Keyword = keyword,
+            }, cancellationToken: cancellationToken);
+
+            var searchAuthorIds = searchUserResponse.AccountIds.ToHashSet();
+
             recipesQuery = recipesQuery.Where(r =>
                 r.Title.ToLower().Contains(keyword.ToLower()) ||
                 r.Description.ToLower().Contains(keyword.ToLower()) ||
-                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(keyword.ToLower()))
+                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(keyword.ToLower())) ||
+                searchAuthorIds.Contains(r.AuthorId.ToString())
             );
         }
 
