@@ -86,9 +86,12 @@ internal static class HostingExtensions
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
+                options.Scope.Add("https://www.googleapis.com/auth/user.phonenumbers.read");
 
-                // Map google picture's claim to picture for easier query
+                // Map google picture's claim to simple claim for easier query
                 options.ClaimActions.MapJsonKey("picture", "picture");
+
+                options.SaveTokens = true;
 
                 // Config cookie
                 options.CorrelationCookie.SameSite = SameSiteMode.Lax;

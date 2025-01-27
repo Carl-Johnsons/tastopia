@@ -55,6 +55,8 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
             var externalUser = result.Principal ??
                 throw new InvalidOperationException("External authentication produced a null Principal");
 
+            var accessToken = result.Properties?.GetTokenValue("access_token");
+
             if (_logger.IsEnabled(LogLevel.Debug))
             {
                 var externalClaims = externalUser.Claims.Select(c => $"{c.Type}: {c.Value}");
@@ -85,6 +87,7 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
                     Provider = provider,
                     ProviderUserId = providerUserId,
                     Claims = externalUser.Claims,
+                    AccessToken = accessToken
                 });
                 response.ThrowIfFailure();
                 user = response.Value;
@@ -112,6 +115,7 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
             var additionalLocalClaims = new List<Claim>();
             var localSignInProps = new AuthenticationProperties();
             CaptureExternalLoginContext(result, additionalLocalClaims, localSignInProps);
+
 
             // issue authentication cookie for user
             await _signInManager.SignInWithClaimsAsync(user!, localSignInProps, additionalLocalClaims);
