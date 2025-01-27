@@ -7,6 +7,7 @@ using DuendeIdentityServer.Middleware;
 using DuendeIdentityServer.Services;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace DuendeIdentityServer;
@@ -85,6 +86,9 @@ internal static class HostingExtensions
                 options.Scope.Add("openid");
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
+
+                // Map google picture's claim to picture for easier query
+                options.ClaimActions.MapJsonKey("picture", "picture");
 
                 // Config cookie
                 options.CorrelationCookie.SameSite = SameSiteMode.Lax;

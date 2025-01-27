@@ -110,11 +110,12 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         var defaultBackground = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png";
         var fullName = request.FullName;
         var username = request.AccountUsername;
+        var avatar = string.IsNullOrEmpty(request.Avatar) ? defaultAvatar : request.Avatar;
 
         var user = new User
         {
             AccountId = accountId,
-            AvatarUrl = defaultAvatar,
+            AvatarUrl = avatar,
             BackgroundUrl = defaultBackground,
             DisplayName = fullName,
             IsAccountActive = true,

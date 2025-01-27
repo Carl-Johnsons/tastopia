@@ -5,6 +5,7 @@ using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
 using IdentityModel;
+using IdentityService.Application.Account.Commands;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,19 +25,22 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
         private readonly IIdentityServerInteractionService _interaction;
         private readonly ILogger<Callback> _logger;
         private readonly IEventService _events;
+        private readonly ISender _sender;
 
         public Callback(
             IIdentityServerInteractionService interaction,
             IEventService events,
             ILogger<Callback> logger,
             UserManager<ApplicationAccount> userManager,
-            SignInManager<ApplicationAccount> signInManager)
+            SignInManager<ApplicationAccount> signInManager,
+            ISender sender)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _interaction = interaction;
             _logger = logger;
             _events = events;
+            _sender = sender;
         }
 
         public async Task<IActionResult> OnGet()
@@ -76,7 +80,14 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
                 // this might be where you might initiate a custom workflow for user registration
                 // in this sample we don't show how that would be done, as our sample implementation
                 // simply auto-provisions new external user
-                user = await AutoProvisionUserAsync(provider, providerUserId, externalUser.Claims);
+                var response = await _sender.Send(new LoginWithGoogleCommand
+                {
+                    Provider = provider,
+                    ProviderUserId = providerUserId,
+                    Claims = externalUser.Claims,
+                });
+                response.ThrowIfFailure();
+                user = response.Value;
             }
 
             // Retrieve return URL
@@ -124,70 +135,6 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
             }
 
             return Redirect(returnUrl);
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1851:Possible multiple enumerations of 'IEnumerable' collection", Justification = "<Pending>")]
-        private async Task<ApplicationAccount> AutoProvisionUserAsync(string provider, string providerUserId, IEnumerable<Claim> claims)
-        {
-            var sub = Guid.NewGuid().ToString();
-
-            var user = new ApplicationAccount
-            {
-                Id = sub,
-                UserName = sub, // don't need a username, since the user will be using an external provider to login
-            };
-
-            // email
-            var email = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Email)?.Value ??
-                        claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-            if (email != null)
-            {
-                user.Email = email;
-            }
-
-            // create a list of claims that we want to transfer into our store
-            var filtered = new List<Claim>();
-
-            // user's display name
-            var name = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Name)?.Value ??
-                       claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
-            if (name != null)
-            {
-                filtered.Add(new Claim(JwtClaimTypes.Name, name));
-            }
-            else
-            {
-                var first = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.GivenName)?.Value ??
-                            claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
-                var last = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.FamilyName)?.Value ??
-                           claims.FirstOrDefault(x => x.Type == ClaimTypes.Surname)?.Value;
-                if (first != null && last != null)
-                {
-                    filtered.Add(new Claim(JwtClaimTypes.Name, first + " " + last));
-                }
-                else if (first != null)
-                {
-                    filtered.Add(new Claim(JwtClaimTypes.Name, first));
-                }
-                else if (last != null)
-                {
-                    filtered.Add(new Claim(JwtClaimTypes.Name, last));
-                }
-            }
-
-            var identityResult = await _userManager.CreateAsync(user);
-            if (!identityResult.Succeeded) throw new InvalidOperationException(identityResult.Errors.First().Description);
-
-            if (filtered.Count != 0)
-            {
-                identityResult = await _userManager.AddClaimsAsync(user, filtered);
-                if (!identityResult.Succeeded) throw new InvalidOperationException(identityResult.Errors.First().Description);
-            }
-
-            identityResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
-            if (!identityResult.Succeeded) throw new InvalidOperationException(identityResult.Errors.First().Description);
-
-            return user;
         }
 
         // if the external login is OIDC-based, there are certain things we need to preserve to make logout work
