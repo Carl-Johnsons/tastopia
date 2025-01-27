@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -12,7 +12,6 @@ import {
   Alert
 } from "react-native";
 
-import { FileObject, ImageFileType } from "@/types/image";
 import { globalStyles } from "../GlobalStyles";
 import { transformPlatformURI } from "@/utils/functions";
 import styles from "./UploadImage.style";
@@ -84,7 +83,7 @@ const UploadImage = ({
   const { t } = useTranslation("component");
   const [startUploadImage, setStartUploadImage] = useState(false);
   const [imageCount, setImageCount] = useState(0);
-  const [fileObjects, setFileObjects] = useState<FileObject[]>([]);
+  const [fileObjects, setFileObjects] = useState<ImageFileObject[]>([]);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
 
