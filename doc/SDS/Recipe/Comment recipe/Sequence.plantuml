@@ -38,6 +38,7 @@ RecipeService <-- UserService--: 10. Return user's information <<gRPC>>
 RecipeService -> Rabbitmq++: 11. Publish "UserCommentRecipeEvent" \n message <<Async>>
 
 ApiGateway <-- RecipeService--: 12. Return recipe comment
+destroy RecipeService
 MobileUI <-- ApiGateway--: 13. Forward response
 User <-- MobileUI--: 14. Display recipe comment
 
@@ -57,6 +58,7 @@ opt Comment has abusive word
     activate RecipeService
     RecipeService -> MongoDB++: 18A.2. Consume message and update data
     RecipeService <-- MongoDB--: 18A.3. Return response.
+    destroy RecipeService
     deactivate RecipeService
 end opt
 @enduml

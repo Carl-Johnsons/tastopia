@@ -52,6 +52,7 @@ else Upload to cloudinary success
         activate UploadFileService
         UploadFileService -> Cloudinary++: 12A.3. Consume message and call \n cloudinary to delete images
         UploadFileService <-- Cloudinary--: 12A.4. Return response
+        destroy UploadFileService
         deactivate UploadFileService
         ApiGateway <-- RecipeService: 12A.5. Return add recipe fail error
         MobileUI <-- ApiGateway: 12A.6. Forward response
@@ -62,6 +63,7 @@ else Upload to cloudinary success
         deactivate Rabbitmq
         activate RecipeWorker
         ApiGateway <-- RecipeService--: 20. Retrun add recipe success
+        destroy RecipeService
         MobileUI <-- ApiGateway--: 21. Forward response
         User <-- MobileUI--: 22. Display add recipe success\n and redirect user to community screen
 
@@ -78,6 +80,7 @@ else Upload to cloudinary success
             activate RecipeService
             RecipeService -> MongoDB++: 26A.2. Consume message and update data
             RecipeService <-- MongoDB--: 26A.3. Return response
+            destroy RecipeService
             deactivate RecipeService
         end opt
 
@@ -93,6 +96,8 @@ else Upload to cloudinary success
             activate RecipeService
             RecipeService -> MongoDB++: 32A.2. Consume message and update data
             RecipeService <-- MongoDB--: 32A.3. Return response
+            destroy RecipeService
+
             deactivate RecipeService
         end opt
 
@@ -103,6 +108,8 @@ else Upload to cloudinary success
             activate RecipeService
             RecipeService -> MongoDB++: 33A.2. Consume message and insert data
             RecipeService <-- MongoDB--: 33A.3. Return response
+            destroy RecipeService
+
             deactivate RecipeService
         end opt
         deactivate RecipeWorker
