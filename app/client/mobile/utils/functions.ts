@@ -25,7 +25,7 @@ export const transformListWithIndex = <T>(objectList: T[], startWith: number = 0
 export const transformPlatformURI = (uri: string) => {
   return Platform.select({
     ios: uri,
-    android: uri?.replace("localhost", "10.0.2.2")
+    android: uri?.replace("localhost", "10.0.2.2.nip.io")
   }) as string;
 };
 

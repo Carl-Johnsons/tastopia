@@ -1,10 +1,17 @@
-import { AuthSessionResult, makeRedirectUri, useAuthRequest, useAutoDiscovery } from "expo-auth-session";
+import {
+  AuthSessionResult,
+  makeRedirectUri,
+  useAuthRequest,
+  useAutoDiscovery
+} from "expo-auth-session";
+import { API_GATEWAY_HOST } from "@/constants/host";
 import { maybeCompleteAuthSession } from "expo-web-browser";
-import { useApiHost } from "./useApiHost";
+import { transformPlatformURI } from "@/utils/functions";
+import { useState } from "react";
 
 interface UseLoginWithGoogleResult {
   /** The response object */
-  response: AuthSessionResult | null;
+  response?: AuthSessionResult | null;
   /** Initializes the Google login flow. */
   loginWithGoogle: () => Promise<void>;
 }
@@ -15,16 +22,18 @@ interface UseLoginWithGoogleResult {
  * @param initialValue The initial image data object
  */
 export const useLoginWithGoogle = (): UseLoginWithGoogleResult => {
-  const { host } = useApiHost();
-  const discoveryUrl = `http://${host}:5001`;
+  const discoveryUrl = transformPlatformURI(`http://${API_GATEWAY_HOST}:5001`);
+
   const discovery = useAutoDiscovery(discoveryUrl);
-  const redirectUri = makeRedirectUri();
-  const base64_state = btoa(Math.random().toString());
+
+  // const redirectUri = makeRedirectUri();
+  const redirectUri = "com.tastopia.app://";
+  const [base64_state] = useState(() => btoa(Math.random().toString()));
 
   const [_request, response, promptAsync] = useAuthRequest(
     {
       clientId: "react.native",
-      redirectUri,
+      redirectUri: redirectUri,
       scopes: ["openid", "profile", "email", "offline_access"],
       state: base64_state
     },
@@ -44,7 +53,7 @@ export const useLoginWithGoogle = (): UseLoginWithGoogleResult => {
     console.log("Data:", JSON.stringify(response, null, 2));
   };
 
-  return { loginWithGoogle, response };
+  return { loginWithGoogle, response: undefined };
 };
 
 export default useLoginWithGoogle;
