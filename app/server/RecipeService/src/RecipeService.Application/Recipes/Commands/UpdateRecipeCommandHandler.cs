@@ -111,9 +111,6 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                 files = response.Files;
                 rollbaclUrls = response.Files.Select(f => f.Url).ToList();
             }
-
-            await Console.Out.WriteLineAsync("Image url to delete:");
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(deleteUrls, Formatting.Indented));
             await _serviceBus.Publish(new DeleteMultipleFileEvent
             {
                 DeleteUrl = deleteUrls
@@ -177,7 +174,6 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
         catch (Exception ex)
         {
             await RollBackImageGrpc(rollbaclUrls);
-            await Console.Out.WriteLineAsync(ex.Message);
         }
 
         return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
@@ -196,7 +192,6 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
         {
             DeleteUrl = listUrls,
         });
-        await Console.Out.WriteLineAsync("***Roll back image success!***");
     }
 
     public async Task RollBackImageGrpc(List<string>? urls)
@@ -206,7 +201,6 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
         {
             DeleteUrl = urls
         });
-        await Console.Out.WriteLineAsync("***Roll back image success!***");
     }
 
     private Dictionary<string, int> GetImageIndexMap(IFormFile? recipeImage, List<UpdateStepDTO> steps)

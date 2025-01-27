@@ -73,9 +73,7 @@ public class RequestAddTagsCommandHandler : IRequestHandler<RequestAddTagsComman
         }
         catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented)+ex.StackTrace);
             return Result.Failure(TagError.AddTagFail);
-
         }
     }
 }

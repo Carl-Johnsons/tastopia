@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DnsClient.Internal;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
@@ -20,11 +22,13 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<VoteRecipeCommandHandler> _logger;
 
-    public VoteRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork)
+    public VoteRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<VoteRecipeCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result<VoteResponse?>> Handle(VoteRecipeCommand request, CancellationToken cancellationToken)
@@ -45,6 +49,13 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
             {
                 return Result<VoteResponse?>.Failure(RecipeError.NotFound);
             }
+
+            _logger.LogInformation("cc");
+            _logger.LogInformation("cc");
+            _logger.LogInformation("cc");
+            _logger.LogInformation("cc");
+            _logger.LogInformation("cc");
+
 
             var recipeVote = recipe.RecipeVotes.Where(rv => rv.AccountId == accountId).FirstOrDefault();
             var vote = (bool)isUpvote ? Vote.Upvote : Vote.Downvote;

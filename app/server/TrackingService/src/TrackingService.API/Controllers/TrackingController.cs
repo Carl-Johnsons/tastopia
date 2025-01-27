@@ -21,9 +21,6 @@ public class TrackingController : BaseApiController
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-
-        await Console.Out.WriteLineAsync("subjectId:" + string.IsNullOrEmpty(subjectId));
-
         var result = await _sender.Send(new GetUserViewRecipeDetaiQuery
         {
             AccountId = Guid.Parse(subjectId!),
