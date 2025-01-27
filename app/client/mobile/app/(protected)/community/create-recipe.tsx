@@ -183,8 +183,6 @@ const CreateRecipe = () => {
     }
   };
 
-  console.log("tag value", selectedTags);
-
   return (
     <SafeAreaView
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
