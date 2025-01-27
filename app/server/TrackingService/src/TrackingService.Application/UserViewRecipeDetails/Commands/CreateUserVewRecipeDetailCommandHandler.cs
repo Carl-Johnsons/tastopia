@@ -59,7 +59,6 @@ public class CreateUserVewRecipeDetailCommandHandler : IRequestHandler<CreateUse
         }
         catch(Exception ex)
         {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result.Failure(UserViewRecipeDetailError.AddUserViewRecipeDetailFail);
         }
     }

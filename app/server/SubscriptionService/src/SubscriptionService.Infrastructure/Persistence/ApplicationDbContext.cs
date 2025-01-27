@@ -69,6 +69,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             e.Property(evt => evt.EndDate)
                 .HasConversion(v => v.ToUniversalTime(),
                                v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+          
+            e.Property(e => e.ReductionType)
+                      .HasConversion(typeof(string));
         });
 
         modelBuilder.Entity<SubscriptionEvent>(se =>
@@ -95,6 +98,24 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 .WithMany()
                 .HasForeignKey(us => us.PaymentId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            us.Property(e => e.Status)
+                    .HasConversion(typeof(string));
+        });
+
+        modelBuilder.Entity<Payment>(e =>
+        {
+            e.Property(e => e.Status)
+                    .HasConversion(typeof(string));
+
+            e.Property(e => e.Method)
+                    .HasConversion(typeof(string));
+        });
+
+        modelBuilder.Entity<Subscription>(e =>
+        {
+            e.Property(e => e.SubscriptionAccess)
+                    .HasConversion(typeof(string));
         });
     }
 }

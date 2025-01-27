@@ -133,9 +133,7 @@ public class UpdateMultipleImageFileCommandHandler : IRequestHandler<UpdateMulti
         }
         catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<List<FileResponse>?>.Failure(CloudinaryFileError.UploadToCloudFail);
-
         }
     }
 
@@ -151,7 +149,6 @@ public class UpdateMultipleImageFileCommandHandler : IRequestHandler<UpdateMulti
             {
                 if (string.IsNullOrEmpty(publicId))
                 {
-                    await Console.Out.WriteLineAsync("Not have permission to delete, so skip 1 image.");
                     return;
                 }
                 var deleteParams = new DeletionParams(publicId)
@@ -164,7 +161,6 @@ public class UpdateMultipleImageFileCommandHandler : IRequestHandler<UpdateMulti
             return;
         } catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return;
         }
     }

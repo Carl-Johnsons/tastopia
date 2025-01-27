@@ -23,14 +23,6 @@ const useRecipesFeed = (filterSelected: string) => {
   });
 };
 
-type RecipeDetailResponse = {
-  recipe: RecipeDetailType;
-  authorUsername: string;
-  authorAvtUrl: string;
-  authorDisplayName: string;
-  authorNumberOfFollower: number;
-};
-
 const useRecipeDetail = (recipeId: string) => {
   return useQuery<RecipeDetailResponse>({
     queryKey: ["recipe", recipeId],
@@ -81,4 +73,34 @@ const useCreateRecipe = () => {
   });
 };
 
-export { useRecipesFeed, useRecipeDetail, useRecipeSteps, useCreateRecipe };
+const useBookmarkRecipe = () => {
+  return useMutation<BookMarkRecipeResponse, Error, { recipeId: string }>({
+    mutationFn: async ({ recipeId }) => {
+      const { data } = await protectedAxiosInstance.post("/api/recipe/bookmark-recipe", {
+        recipeId: recipeId
+      });
+      return data;
+    }
+  });
+};
+
+const useVoteRecipe = () => {
+  return useMutation<any, Error, { recipeId: string; isUpvote: boolean }>({
+    mutationFn: async ({ recipeId, isUpvote }) => {
+      const { data } = await protectedAxiosInstance.post("/api/recipe/vote-recipe", {
+        recipeId: recipeId,
+        isUpvote: isUpvote
+      });
+      return data;
+    }
+  });
+};
+
+export {
+  useRecipesFeed,
+  useRecipeDetail,
+  useRecipeSteps,
+  useCreateRecipe,
+  useBookmarkRecipe,
+  useVoteRecipe
+};

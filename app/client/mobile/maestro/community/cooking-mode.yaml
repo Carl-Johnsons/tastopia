@@ -1,0 +1,27 @@
+# maestro test ./maestro/community/community.yaml
+appId: host.exp.exponent
+---
+- runFlow:
+    file: ../expo/init-android.yml
+    when:
+      platform: "Android"
+
+- runFlow:
+    file: ../expo/init-ios.yml
+    when:
+      platform: "iOS"
+
+- tapOn:
+    id: "recipe"
+    index: 0
+- tapOn: "Nấu"
+- tapOn:
+    id: "active-speaking-switch"
+- tapOn:
+    id: "active-speaking-switch"
+- tapOn:
+    id: "active-voice-switch"
+- tapOn:
+    id: "active-voice-switch"
+- tapOn: "Tiếp theo"
+- tapOn: "Về trước"

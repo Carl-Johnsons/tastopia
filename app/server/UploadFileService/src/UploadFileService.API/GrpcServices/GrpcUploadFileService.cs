@@ -85,7 +85,6 @@ public class GrpcUploadFileService : GrpcUploadFile.GrpcUploadFileBase
                 Url = file.Url
             });
         }
-        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(result, Formatting.Indented));
         return result;
     }
 }

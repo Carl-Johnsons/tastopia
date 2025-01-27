@@ -2,9 +2,9 @@ import axios from "axios";
 import { store } from "@/store";
 import { saveAuthData } from "@/slices/auth.slice";
 import { stringify } from "@/utils/debug";
-import Constants from "expo-constants";
 import { refreshAccessToken } from "@/api/tokens";
 import { transformPlatformURI } from "@/utils/functions";
+import Constants from "expo-constants";
 
 const { expoConfig } = Constants;
 

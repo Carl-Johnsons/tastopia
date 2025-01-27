@@ -37,12 +37,10 @@ public class CommunityRecipeService : IRecipeService
 
     public async Task CheckRecipeAbuse()
     {
-        await Console.Out.WriteLineAsync("CheckRecipeAbuse");
     }
 
     public async Task CheckRecipeIngredients()
     {
-        await Console.Out.WriteLineAsync("CheckRecipeIngredients");
     }
 
     public async Task CheckRecipeTags(Guid recipeId, List<string> tagValues)

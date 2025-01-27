@@ -2,13 +2,18 @@ import { useAppSelector } from "@/store/hooks";
 import { createSlice } from "@reduxjs/toolkit";
 import { PURGE } from "redux-persist";
 
+export enum GENDER {
+  MALE = "MALE",
+  FEMALE = "FEMALE"
+};
+
 export type UserState = {
   accountId?: string;
   displayName?: string;
   avatarUrl?: string;
   backgroundUrl?: string;
   dob?: string;
-  gender?: string;
+  gender?: GENDER;
   bio?: string;
   address?: string;
   totalFollower?: number;
@@ -31,7 +36,7 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    saveUserData: (state, action) => {
+    saveUserData: (state, action: { type: string; payload: Partial<UserState> }) => {
       Object.assign(state, action.payload);
     }
   },

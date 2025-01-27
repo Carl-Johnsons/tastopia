@@ -1,4 +1,6 @@
-﻿namespace SubscriptionService.Infrastructure.Persistence.Mockup;
+﻿using SubscriptionService.Infrastructure.Persistence.Mockup.Data;
+
+namespace SubscriptionService.Infrastructure.Persistence.Mockup;
 
 internal class MockupData
 {
@@ -12,6 +14,16 @@ internal class MockupData
 
     public async Task SeedDataAsync()
     {
+        await SeedEventDataAsync();
+    }
+
+    public async Task SeedEventDataAsync()
+    {
+        if (!_context.Events.Any())
+        {
+            _context.Events.AddRange(EventData.Data);
+            await _unitOfWork.SaveChangeAsync();
+        }
     }
 
 }

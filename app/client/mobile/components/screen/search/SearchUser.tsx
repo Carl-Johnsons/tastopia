@@ -109,6 +109,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
               color={c(black.DEFAULT, white.DEFAULT)}
             />
             <TextInput
+              testID='search-user-input'
               autoCapitalize='none'
               ref={textInputRef}
               className='h-full w-[86%]'

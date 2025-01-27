@@ -69,8 +69,6 @@ public class RecipeController : BaseApiController
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
-        await Console.Out.WriteLineAsync("subjectId:" + string.IsNullOrEmpty(subjectId));
-
         if (string.IsNullOrEmpty(subjectId))
         {
             var resultGuest = await _sender.Send(new GetRecipeFeedsForGuestQuery
@@ -161,7 +159,7 @@ public class RecipeController : BaseApiController
             RecipeId = voteRecipeDTO.RecipeId
         });
         result.ThrowIfFailure();
-        return NoContent();
+        return Ok(result.Value);
     }
 
     [HttpPost("get-recipe-comments")]

@@ -15,6 +15,7 @@ import { selectVerifyIdentifier } from "@/slices/auth.slice";
 import { verifySchema } from "@/lib/validation/auth";
 import { ValidationError } from "yup";
 import { getIdentifierType } from "@/utils/checker";
+import { colors } from "@/constants/colors";
 
 type VerifyFormProps = {
   onSubmit: (data: VerifyParams) => Promise<void>;
@@ -26,6 +27,7 @@ export const VerifyForm = (props: VerifyFormProps) => {
   const { onSubmit, isLoading } = props;
   const identifier = selectVerifyIdentifier() as string;
   const type = getIdentifierType(identifier) as IDENTIFIER_TYPE;
+  const { primary } = colors;
   const [formValues, setFormValues] = useState<VerifyFormFields>([
     "",
     "",
@@ -96,6 +98,7 @@ export const VerifyForm = (props: VerifyFormProps) => {
             onChangeText={value => handleTextChange(value, index)}
             onKeyPress={({ nativeEvent }) => resolvePos(nativeEvent.key, index)}
             autoFocus={index === 0}
+            cursorColor={primary}
           />
         ))}
       </View>

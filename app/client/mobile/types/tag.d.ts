@@ -1,4 +1,5 @@
 type SelectedTag = {
+  id?: string;
   code: string;
   value: string;
 };
