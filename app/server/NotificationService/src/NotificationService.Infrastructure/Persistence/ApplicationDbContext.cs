@@ -1,5 +1,6 @@
 ﻿using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MongoDB.Driver;
 using NotificationService.Domain.Entities;
 
 namespace NotificationService.Infrastructure.Persistence;
@@ -58,5 +59,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             e.Property(e => e.DeviceType)
              .HasConversion(typeof(string));
         });
+    }
+
+    public IMongoDatabase GetDatabase()
+    {
+        throw new NotImplementedException();
     }
 }

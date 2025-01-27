@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Contract.Interfaces;
 
 namespace UploadFileService.Domain.Interfaces;
 

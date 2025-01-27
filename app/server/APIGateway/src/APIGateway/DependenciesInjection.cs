@@ -1,14 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using Ocelot.DependencyInjection;
-using APIGateway.Middleware;
+﻿using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Contract.Utilities;
 using APIGateway.Extensions;
 using Ocelot.Provider.Consul;
-using APIGateway.Interfaces;
-using Serilog;
-using APIGateway.Services;
-using Consul;
+using Contract.Extension;
 
 namespace APIGateway;
 
@@ -24,22 +19,9 @@ public static class DependenciesInjection
         var host = builder.Host;
         var env = builder.Environment;
 
-        builder.ConfigureSerilog();
-        builder.ConfigureKestrel();
+        builder.ConfigureCommonAPIServices();
 
-
-        services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
-        {
-            return new ConsulClient(config =>
-            {
-                var scheme = DotNetEnv.Env.GetString("CONSUL_SCHEME", "Not found");
-                var host = DotNetEnv.Env.GetString("CONSUL_HOST", "Not found");
-                var port = DotNetEnv.Env.GetString("CONSUL_PORT", "Not found");
-                config.Address = new Uri($"{scheme}://{host}:{port}");
-            });
-        });
-        services.AddSingleton<IConsulRegistryService, ConsulRegistryService>();
-
+        services.AddAPIGatewayInfrastructureServices();
 
         config.SetBasePath(env.ContentRootPath)
               .AddEnvironmentVariables();
@@ -69,36 +51,8 @@ public static class DependenciesInjection
 
         services.AddSwaggerServices(config);
 
-        services.AddAuthentication("Bearer")
-            .AddJwtBearer("Bearer", options =>
-            {
-                var serviceProvider = services.BuildServiceProvider();
-                var consulRegistryService = serviceProvider.GetRequiredService<IConsulRegistryService>();
-                var identityUri = consulRegistryService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not found"));
-                Log.Information("Connect to Identity Provider: " + identityUri!.ToString());
+        services.AddAPIGatewayAPIServices();
 
-                options.Authority = identityUri!.ToString();
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
-                    // Skip the validate issuer signing key
-                    //ValidateIssuerSigningKey = false,
-                    //SignatureValidator = delegate (string token, TokenValidationParameters parameters)
-                    //{
-                    //    var jwt = new JsonWebToken(token);
-
-                    //    return jwt;
-                    //},
-                    //ValidIssuers = [
-                    //    IdentityServerEndpoint
-                    //],
-                };
-                // For development only
-                options.IncludeErrorDetails = true;
-            });
         services.AddCors(options =>
         {
             options.AddPolicy("AllowAnyOriginPolicy",
@@ -118,15 +72,24 @@ public static class DependenciesInjection
     {
         app.UseSerilogServices();
 
-        app.UseMiddleware<HttpsFallbackMiddleware>();
-
         app.UseCors("AllowAnyOriginPolicy");
 
         app.UseAuthentication();
 
         app.UseAuthorization();
 
+        app.UseRouting();
+        app.UseHealthCheck();
+#pragma warning disable ASP0014 // Suggest using top level route registrations
+        app.UseEndpoints(e =>
+        {
+            e.MapControllers();
+        });
+#pragma warning restore ASP0014 // Suggest using top level route registrations
+
         app.UseOcelot().Wait();
+
+        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_API_GATEWAY", "Not Found"));
         return app;
     }
 }

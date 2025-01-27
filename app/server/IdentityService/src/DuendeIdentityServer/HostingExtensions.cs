@@ -1,3 +1,4 @@
+using Contract.Extension;
 using Contract.Utilities;
 using Duende.IdentityServer;
 using Duende.IdentityServer.ResponseHandling;
@@ -20,8 +21,7 @@ internal static class HostingExtensions
         var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");
         var services = builder.Services;
 
-        builder.ConfigureSerilog();
-        builder.ConfigureKestrel();
+        builder.ConfigureCommonAPIServices();
 
         services.AddInfrastructureServices();
         services.AddApplicationServices();
@@ -32,6 +32,7 @@ internal static class HostingExtensions
         services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
 
+
         services.AddControllers();
 
         // Register automapper
@@ -39,6 +40,7 @@ internal static class HostingExtensions
         services.AddSingleton(mapper);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+        services.AddCommonAPIServices();
         services
             .AddIdentityServer(options =>
             {
@@ -143,6 +145,7 @@ internal static class HostingExtensions
         app.UseGlobalHandlingErrorMiddleware();
         app.MapRazorPages();
 
+        app.UseHealthCheck();
         // Add a user api endpoint so this will not be a minimal API
 #pragma warning disable ASP0014
         app.UseEndpoints(endpoints =>
@@ -154,7 +157,7 @@ internal static class HostingExtensions
         //var signalRService = app.Services.GetService<ISignalRService>();
         //signalRService!.StartConnectionAsync();
 
-        app.UseConsulServiceDiscovery();
+        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
         return app;
     }
 }

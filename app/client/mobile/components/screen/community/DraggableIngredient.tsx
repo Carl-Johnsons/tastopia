@@ -89,7 +89,10 @@ const DraggableIngredient = ({
         <TextInput
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          style={isFocused ? [styles.input, styles.inputFocused] : styles.input}
+          style={
+            (isFocused ? [styles.input, styles.inputFocused] : styles.input,
+            { color: `${c(black.DEFAULT, white.DEFAULT)}` })
+          }
           value={inputValue}
           onChangeText={handleChangeText}
           placeholder={t("formPlaceholder.ingredients")}

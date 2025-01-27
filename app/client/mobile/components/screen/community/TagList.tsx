@@ -1,3 +1,4 @@
+import uuid from "react-native-uuid";
 import { useSearchTags } from "@/api/search";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import SelectedTag from "@/components/screen/search/SelectedTag";
@@ -89,12 +90,22 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleCreateNew = useCallback(() => {
-    setSelectedTags(prev => [...prev, { code: "NEW-TAG", value: searchValue }]);
-  }, []);
+    setSelectedTags(prev => [
+      ...prev,
+      { id: uuid.v4(), code: "NEW-TAG", value: searchValue.trim() }
+    ]);
+  }, [searchValue, setSelectedTags]);
 
-  const handleRemoveTag = useCallback((code: string) => {
-    setSelectedTags(prev => prev.filter(t => t.code !== code));
-  }, []);
+  const handleRemoveTag = useCallback(
+    (code: string, id: string) => {
+      setSelectedTags(prev =>
+        prev.filter(t => {
+          return t.id !== id;
+        })
+      );
+    },
+    [searchValue, setSelectedTags]
+  );
 
   useEffect(() => {
     if (data?.pages) {
@@ -112,7 +123,7 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
               <TextInput
                 autoCapitalize='none'
                 ref={textInputRef}
-                className='h-full w-[100%]'
+                className='text-black_white h-full w-[100%]'
                 value={searchValue}
                 onPress={() => handleFocus(true)}
                 onChangeText={handleSearch}
@@ -154,6 +165,7 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
               return (
                 <SelectedTag
                   key={`${tag}-${index}`}
+                  id={tag.id}
                   code={tag.code}
                   value={tag.value}
                   onRemove={handleRemoveTag}

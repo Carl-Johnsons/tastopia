@@ -151,7 +151,8 @@ const SettingModal = forwardRef<BottomSheetModal, SettingModalProps>((_props, re
       ref={ref}
       backdropComponent={renderBackdrop}
       handleIndicatorStyle={{
-        backgroundColor: c(colors.black.DEFAULT, colors.white.DEFAULT)
+        backgroundColor: c(colors.black.DEFAULT, colors.white.DEFAULT),
+        display: "none"
       }}
       backgroundStyle={{
         backgroundColor: c(colors.white.DEFAULT, colors.black[100])
@@ -578,7 +579,7 @@ type SwitchOptions = {
   onChange: Dispatch<SetStateAction<boolean>>;
 };
 
-const ItemCard = ({
+export const ItemCard = ({
   icon: Icon,
   additionalIcon: AdditionalIcon,
   title,
