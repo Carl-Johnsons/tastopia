@@ -87,8 +87,8 @@ internal static class HostingExtensions
                 options.Scope.Add("email");
 
                 // Config cookie
-                //options.CorrelationCookie.SameSite = SameSiteMode.None;
-                //options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+                options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.None;
             });
 
         services.AddLocalApiAuthentication();
@@ -117,22 +117,23 @@ internal static class HostingExtensions
         app.UseSerilogServices();
         app.UseSwaggerServices();
 
-        if (app.Environment.IsDevelopment())
+        if (EnvUtility.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
         }
 
-
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
 
-        //app.UseCookiePolicy(new CookiePolicyOptions
-        //{
-        //    MinimumSameSitePolicy = SameSiteMode.None,
-        //    Secure = app.Environment.IsDevelopment()
-        //        ? CookieSecurePolicy.SameAsRequest // Allow http in development
-        //        : CookieSecurePolicy.Always        // Enforce https in production
-        //});
+        app.UseCookiePolicy();
+
+        app.UseCookiePolicy(new CookiePolicyOptions
+        {
+            MinimumSameSitePolicy = SameSiteMode.None,
+            Secure = EnvUtility.IsDevelopment()
+                ? CookieSecurePolicy.SameAsRequest // Allow http in development
+                : CookieSecurePolicy.Always        // Enforce https in production
+        });
 
         app.UseCors("AllowSpecificOrigins");
 
