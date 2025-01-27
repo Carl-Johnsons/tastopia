@@ -1,5 +1,6 @@
 import { ROLE, selectRole } from "@/slices/auth.slice";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 
 /**
  * A hook that wraps around a function to litmit access to a predefined user
@@ -46,4 +47,24 @@ export const useProtectedExclude = (
   return protectedFn;
 };
 
+export const useRouteGuardExclude = (excludedRoles: ROLE[]) => {
+  const router = useRouter();
+  const currentUserRole = selectRole();
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  useEffect(() => {
+    const checkAccess = async () => {
+      if (!isRedirecting && currentUserRole && excludedRoles.includes(currentUserRole)) {
+        setIsRedirecting(true);
+        router.push("/login");
+      }
+    };
+
+    checkAccess();
+  }, [currentUserRole]);
+
+  return {
+    hasAccess: !currentUserRole || !excludedRoles.includes(currentUserRole)
+  };
+};
 export default useProtected;
