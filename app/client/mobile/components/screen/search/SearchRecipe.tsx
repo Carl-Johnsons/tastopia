@@ -49,7 +49,7 @@ const ResultSection = memo(
   }: ResultSectionProps) => {
     const { t } = useTranslation("search");
     return (
-      <View className='mt-6'>
+      <View className='mt-6 pb-10'>
         <FlatList
           data={searchResults}
           keyExtractor={item => item.id}

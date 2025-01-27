@@ -7,6 +7,15 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "@/lib/validation/auth";
 import Button from "../../Button";
 import { colors } from "@/constants/colors";
+import useColorizer from "@/hooks/useColorizer";
+import { useState } from "react";
+import { EyeIcon } from "@/constants/icons";
+import {
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withTiming
+} from "react-native-reanimated";
 
 export interface LoginFormFields extends LoginParams {}
 
@@ -33,7 +42,9 @@ export const LoginForm = (props: LoginFormProps) => {
   return (
     <View className={`gap-[2vh] ${props.className}`}>
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>E-mail or phone number</Text>
+        <Text className='mb-3 font-sans text-gray-600 dark:text-gray-500'>
+          E-mail or phone number
+        </Text>
         <Controller
           name='identifier'
           control={control}
@@ -52,7 +63,7 @@ export const LoginForm = (props: LoginFormProps) => {
       </View>
 
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>Password</Text>
+        <Text className='mb-3 font-sans text-gray-600 dark:text-gray-500'>Password</Text>
         <Controller
           name='password'
           control={control}
@@ -98,14 +109,7 @@ export const LoginForm = (props: LoginFormProps) => {
   );
 };
 
-export const CustomInput = ({
-  onChangeText,
-  onBlur,
-  value,
-  placeholder,
-  className,
-  secureTextEntry
-}: Pick<
+type CustomInputProps = Pick<
   TextInputProps,
   | "onChangeText"
   | "value"
@@ -114,21 +118,67 @@ export const CustomInput = ({
   | "defaultValue"
   | "className"
   | "secureTextEntry"
->) => {
+> & {
+  containerClassName?: string;
+};
+
+export const CustomInput = ({
+  onChangeText,
+  onBlur,
+  value,
+  placeholder,
+  className,
+  containerClassName,
+  secureTextEntry
+}: CustomInputProps) => {
   const { gray, primary } = colors;
+  const { c } = useColorizer();
+  const [isSecureText, setIsSecureText] = useState(secureTextEntry ? true : false);
+
+  const buttonScale = useSharedValue(1);
+  const buttonOpacity = useSharedValue(1);
+
+  const animate = () => {
+    buttonScale.value = withSequence(withTiming(0.96), withTiming(1));
+    buttonOpacity.value = withSequence(withTiming(0.7), withTiming(1));
+  };
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    transform: [{ scale: buttonScale.value }, { translateY: "-50%" }],
+    opacity: buttonOpacity.value
+  }));
 
   return (
-    <Input
-      onBlur={onBlur}
-      onChangeText={onChangeText}
-      value={value}
-      autoCapitalize='none'
-      placeholder={placeholder}
-      className={`border-gray-300 p-5 focus:border-primary ${className}`}
-      placeholderTextColor={gray[300]}
-      secureTextEntry={secureTextEntry}
-      cursorColor={primary}
-    />
+    <View className={`relative ${containerClassName}`}>
+      <Input
+        onBlur={onBlur}
+        onChangeText={onChangeText}
+        value={value}
+        autoCapitalize='none'
+        placeholder={placeholder}
+        className={`text-black_white border-gray-300 p-5 focus:border-primary dark:border-gray-600 ${secureTextEntry && "pe-14"} ${className}`}
+        placeholderTextColor={c(gray[300], gray[600])}
+        secureTextEntry={secureTextEntry ? isSecureText : undefined}
+        cursorColor={primary}
+        numberOfLines={1}
+      />
+      {secureTextEntry && (
+        <Button
+          className='absolute right-5 top-1/2'
+          style={animatedStyles}
+          onPress={() => {
+            animate();
+            setIsSecureText(!isSecureText);
+          }}
+        >
+          <EyeIcon
+            width={18}
+            height={12}
+            color={c(gray[300], gray[600])}
+          />
+        </Button>
+      )}
+    </View>
   );
 };
 

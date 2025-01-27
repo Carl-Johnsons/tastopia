@@ -1,4 +1,4 @@
-import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 import { useEffect } from "react";
 import { router, usePathname } from "expo-router";
 import SignUpForm from "@/components/screen/register/SignUpForm";
@@ -84,7 +84,7 @@ const Register = () => {
 
   return (
     <Pressable
-      className='relative h-full'
+      className='bg-white_black200 relative h-full'
       onPress={dismissKeyboard}
     >
       <CircleBg />
@@ -95,7 +95,9 @@ const Register = () => {
           onPress={router.back}
           className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
         />
-        <Text className='font-sans font-semibold text-4xl text-black'>Register</Text>
+        <Text className='text-black_white font-sans font-semibold text-4xl'>
+          Register
+        </Text>
         <SignUpForm
           onSubmit={onSubmit}
           isLoading={isSubmitting}
@@ -118,7 +120,7 @@ const Register = () => {
         <View className='flex items-center'>
           <GoogleButton
             onPress={loginWithGoogle}
-            className='rounded-full border border-gray-300 p-3.5'
+            className='rounded-full border-[1.5px] border-gray-300 p-3.5'
           />
         </View>
       </View>

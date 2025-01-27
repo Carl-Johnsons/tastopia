@@ -1,7 +1,6 @@
 import { SignUpParams } from "@/api/user";
 import { ActivityIndicator, Text, View } from "react-native";
 import { AuthFormProps, CustomInput } from "../login/LoginForm";
-import Input from "../../Input";
 import Button from "../../Button";
 import useBounce from "@/hooks/animation/useBounce";
 import { Controller, useForm } from "react-hook-form";
@@ -13,7 +12,7 @@ export interface SignUpFormFields extends SignUpParams {
 }
 
 type SignUpFormProps = {
-  onSubmit: (data: SignUpFormFields) => Promise<void>;
+  onSubmit: (data: SignUpParams) => Promise<void>;
 } & AuthFormProps;
 
 export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) => {
@@ -30,7 +29,7 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
   return (
     <View className={`gap-[2vh] ${className}`}>
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>Full name</Text>
+        <Text className='mb-3 font-sans text-gray-600 dark:text-gray-500'>Full name</Text>
         <Controller
           name='fullName'
           control={control}
@@ -49,7 +48,7 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
       </View>
 
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>E-mail or phone number</Text>
+        <Text className='mb-3 font-sans text-gray-600 dark:text-gray-500'>E-mail or phone number</Text>
         <Controller
           name='identifier'
           control={control}
@@ -67,7 +66,7 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
       </View>
 
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>Password</Text>
+        <Text className='mb-3 font-sans text-gray-600 dark:text-gray-500'>Password</Text>
         <Controller
           name='password'
           control={control}
@@ -92,7 +91,7 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
               onChangeText={onChange}
               value={value}
               placeholder='Confirm password'
-              className={`mt-3`}
+              containerClassName="mt-3"
               secureTextEntry
             />
           )}
