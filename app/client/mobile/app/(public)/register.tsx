@@ -49,9 +49,11 @@ const Register = () => {
 
   const onSubmit = async (data: SignUpParams) => {
     const registerType = getIdentifierType(data.identifier as string) as IDENTIFIER_TYPE;
+    const { identifier , password, fullName } = data;
+    const payload = { identifier, password, fullName } as IRegisterAccountDTO;
 
     register(
-      { data, type: registerType },
+      { data: payload, type: registerType },
       {
         onSuccess: async res => {
           dispatch(

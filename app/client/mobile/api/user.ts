@@ -104,7 +104,7 @@ export const useRegister = () => {
   return useMutation<
     SignUpResponse,
     Error,
-    { data: SignUpParams; type: IDENTIFIER_TYPE }
+    { data: IRegisterAccountDTO; type: IDENTIFIER_TYPE }
   >({
     mutationKey: ["register"],
     mutationFn: async ({ data, type }) => {
