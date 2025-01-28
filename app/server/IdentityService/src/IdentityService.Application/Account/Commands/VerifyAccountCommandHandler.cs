@@ -1,6 +1,8 @@
 ﻿using Contract.Constants;
 using IdentityService.Domain.Constants;
+using IdentityService.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 namespace IdentityService.Application.Account.Commands;
 
 public record VerifyAccountCommand : IRequest<Result>
@@ -15,10 +17,12 @@ public record VerifyAccountCommand : IRequest<Result>
 public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand, Result>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
+    private readonly IApplicationDbContext _context;
 
-    public VerifyAccountCommandHandler(UserManager<ApplicationAccount> userManager)
+    public VerifyAccountCommandHandler(UserManager<ApplicationAccount> userManager, IApplicationDbContext context)
     {
         _userManager = userManager;
+        _context = context;
     }
 
     public async Task<Result> Handle(VerifyAccountCommand request, CancellationToken cancellationToken)
@@ -31,6 +35,7 @@ public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand,
                 return Result.Failure(AccountError.VerifyFailed, "Wrong account method");
             case VerifyAccountMethod.Unlink:
                 if (request.Method == AccountMethod.Email) return await VerifyUnlinkEmail(request, cancellationToken);
+                if (request.Method == AccountMethod.Google) return await VerifyUnlinkGoogle(request, cancellationToken);
                 if (request.Method == AccountMethod.Phone) return await VerifyUnlinkPhone(request, cancellationToken);
                 return Result.Failure(AccountError.VerifyFailed, "Wrong account method");
         }
@@ -188,6 +193,57 @@ public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand,
         {
             return Result.Failure(AccountError.VerifyFailed);
         }
+
+        return Result.Success();
+    }
+    //TODO: Need apply rollback transaction in case RemoveLoginAsync failed
+    private async Task<Result> VerifyUnlinkGoogle(VerifyAccountCommand request, CancellationToken cancellationToken)
+    {
+        var externalAccount = await _context.UserLogins
+                            .SingleOrDefaultAsync(ul => ul.LoginProvider == request.Method.ToString()
+                                                && ul.UserId == request.AccountId.ToString());
+        if (externalAccount == null)
+        {
+            return Result.Failure(AccountError.NotFound, $"Not found {request.Method.ToString()} account link with this account");
+        }
+
+        var user = await _userManager.FindByIdAsync(request.AccountId.ToString());
+        if (user == null)
+        {
+            return Result.Failure(AccountError.NotFound);
+        }
+
+        if (!user.EmailConfirmed)
+        {
+            return Result.Failure(AccountError.EmailNotConfirmed);
+        }
+
+        if (user.UnlinkEmailOTP != request.OTP)
+        {
+            return Result.Failure(AccountError.InvalidOTP);
+        }
+
+        // The expiry store in database in UTC time but when it return value it return local time
+        if (user.EmailOTPExpiry < DateTime.Now)
+        {
+            return Result.Failure(AccountError.OTPExpired);
+        }
+
+        user.EmailConfirmed = false;
+        user.Email = null;
+        user.UnlinkEmailOTP = null;
+        user.EmailOTPCreated = null;
+        user.EmailOTPExpiry = null;
+        user.RequestOTPCount = 0;
+        var updateResult = await _userManager.UpdateAsync(user);
+
+        if (!updateResult.Succeeded)
+        {
+            return Result.Failure(AccountError.VerifyFailed);
+        }
+
+        var identityResult = await _userManager.RemoveLoginAsync(user, externalAccount.LoginProvider, externalAccount.ProviderKey);
+        if (!identityResult.Succeeded) return Result.Failure(AccountError.VerifyFailed, "Remove external account failed");
 
         return Result.Success();
     }

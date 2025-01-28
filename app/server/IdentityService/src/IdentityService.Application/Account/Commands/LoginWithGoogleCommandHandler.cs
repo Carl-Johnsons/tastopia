@@ -83,12 +83,6 @@ public class LoginWithGoogleCommandHandler : IRequestHandler<LoginWithGoogleComm
             }
         }
 
-        //if (email != null)
-        //{
-        //    account.Email = email;
-        //    account.UserName = GenerateUsername(GetLocalPart(email));
-        //}
-
         ApplicationAccount? account;
         account = await _userManager.FindByEmailAsync(email);
 

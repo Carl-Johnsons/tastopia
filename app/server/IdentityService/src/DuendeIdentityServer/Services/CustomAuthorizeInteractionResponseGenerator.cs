@@ -23,7 +23,7 @@ public class CustomAuthorizeInteractionResponseGenerator : AuthorizeInteractionR
 
         if (response.IsLogin && request.ClientId == "react.native")
         {
-            Log.Information("Login to google instead default :)");
+            Log.Information("Login to provider instead default login page:)");
 
             var externalProvider = "Google";
             var codeChallenge = request.Raw.Get("code_challenge");
