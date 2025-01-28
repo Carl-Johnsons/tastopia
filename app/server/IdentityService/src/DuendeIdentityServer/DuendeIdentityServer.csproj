@@ -52,13 +52,6 @@
 	<ItemGroup>
 		<Watch Include="**\*.cshtml;**\*.cshtml.cs" />
 	</ItemGroup>
-	
-	<ItemGroup>
-	  <Watch Remove="Pages\ExternalLinkAccount\Callback.cshtml" />
-	  <Watch Remove="Pages\ExternalLinkAccount\Callback.cshtml.cs" />
-	  <Watch Remove="Pages\ExternalLinkAccount\Challenge.cshtml" />
-	  <Watch Remove="Pages\ExternalLinkAccount\Challenge.cshtml.cs" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\IdentityService.Application\IdentityService.Application.csproj" />
