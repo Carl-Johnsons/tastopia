@@ -4,5 +4,6 @@ public enum AccountMethod
 {
     Phone,
     Email,
-    Username
+    Username,
+    Google
 }

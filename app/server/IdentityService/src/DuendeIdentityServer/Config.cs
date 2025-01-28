@@ -42,7 +42,8 @@ public static class Config
                     AllowOfflineAccess = true,
                     RedirectUris = {
                        $"{reactUrl}/api/auth/callback/duende-identityserver6",
-                       "https://www.getpostman.com/oauth2/callback"
+                       "https://www.getpostman.com/oauth2/callback",
+                       "com.tastopia.app://"
                     },
                     PostLogoutRedirectUris ={reactUrl},
                     AllowedCorsOrigins = { reactUrl, "https://www.getpostman.com" },

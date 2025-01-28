@@ -4,27 +4,34 @@ import { saveAuthData } from "@/slices/auth.slice";
 import { stringify } from "@/utils/debug";
 import { refreshAccessToken } from "@/api/tokens";
 import { transformPlatformURI } from "@/utils/functions";
+import Constants from "expo-constants";
 
-const SCHEME = process.env.EXPO_PUBLIC_API_GATEWAY_SCHEME;
-const HOST = process.env.EXPO_PUBLIC_API_GATEWAY_HOST ?? expoConfig?.hostUri?.split(":")[0];
-const PORT = process.env.EXPO_PUBLIC_API_GATEWAY_PORT;
+const { expoConfig } = Constants;
 
-const API_HOST = transformPlatformURI(`${SCHEME}://${HOST}:${PORT}`);
-console.log("API gateways uri is " + API_HOST);
+const API_GATEWAY_SCHEME = process.env.EXPO_PUBLIC_API_GATEWAY_SCHEME;
+const API_GATEWAY_HOST =
+  process.env.EXPO_PUBLIC_API_GATEWAY_HOST ?? expoConfig?.hostUri?.split(":")[0];
+const API_GATEWAY_PORT = process.env.EXPO_PUBLIC_API_GATEWAY_PORT;
+
+const API_URI = transformPlatformURI(
+  `${API_GATEWAY_SCHEME}://${API_GATEWAY_HOST}:${API_GATEWAY_PORT}`
+);
+
+console.log("API gateways uri is " + API_URI);
 
 const defaultHeaders = {
   "Content-Type": "application/json"
 };
 
 const axiosInstance = axios.create({
-  baseURL: API_HOST,
+  baseURL: API_URI,
   withCredentials: true,
   headers: defaultHeaders,
   timeout: 10000
 });
 
 const protectedAxiosInstance = axios.create({
-  baseURL: API_HOST,
+  baseURL: API_URI,
   withCredentials: true,
   headers: defaultHeaders,
   timeout: 10000
@@ -75,4 +82,10 @@ protectedAxiosInstance.interceptors.response.use(
   }
 );
 
-export { API_HOST, axiosInstance, protectedAxiosInstance };
+export {
+  API_GATEWAY_SCHEME,
+  API_GATEWAY_HOST,
+  API_URI,
+  axiosInstance,
+  protectedAxiosInstance
+};

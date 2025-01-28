@@ -178,4 +178,22 @@ public class AccountController : BaseApiController
         result.ThrowIfFailure();
         return NoContent();
     }
+
+    [HttpPost("unlink/google")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> UnlinkGoogleToAccount(LinkAccountDTO dto)
+    {
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+        var command = new UnlinkAccountCommand
+        {
+            Identifier = dto.Identifier,
+            Method = AccountMethod.Google,
+            Id = Guid.Parse(userId!)
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
+    }
 }

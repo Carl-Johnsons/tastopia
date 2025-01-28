@@ -89,6 +89,7 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
             AccountId = acc.Id,
             AccountUsername = username,
             FullName = request.FullName,
+            Avatar = ""
         });
 
         await _serviceBus.Publish(new UserRegisterEvent
