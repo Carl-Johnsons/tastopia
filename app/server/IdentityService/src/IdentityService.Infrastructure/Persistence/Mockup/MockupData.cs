@@ -41,6 +41,8 @@ internal class MockupData
             PhoneNumberConfirmed = true,
             /* Custom attribute */
             IsActive = true,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
 
         string userPassword = "Pass123$";
@@ -91,6 +93,8 @@ internal class MockupData
             var userResult = _userManager.FindByNameAsync(user.UserName!).Result;
             if (userResult == null)
             {
+                user.CreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
                 var result = _userManager.CreateAsync(user, "Pass123$").Result;
                 if (!result.Succeeded)
                 {
