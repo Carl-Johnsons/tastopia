@@ -24,6 +24,8 @@ import updateProfileEn from "../locales/en/menu/profile/updateProfile.json";
 import updateProfileVi from "../locales/vi/menu/profile/updateProfile.json";
 import cookingModeEn from "../locales/en/cookingMode.json";
 import cookingModeVi from "../locales/vi/cookingMode.json";
+import loginWithGoogleEn from "../locales/en/auth/loginWithGoogle.json";
+import loginWithGoogleVi from "../locales/vi/auth/loginWithGoogle.json";
 
 export default {
   communityEn,
@@ -51,5 +53,7 @@ export default {
   updateProfileEn,
   updateProfileVi,
   cookingModeEn,
-  cookingModeVi
+  cookingModeVi,
+  loginWithGoogleEn,
+  loginWithGoogleVi
 };
