@@ -2,7 +2,6 @@
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net.Http.Headers;
 using System.Net.Mail;
@@ -12,7 +11,7 @@ using UserProto;
 
 namespace IdentityService.Application.Account.Commands;
 
-public record LoginWithGoogleCommand : IRequest<Result<ApplicationAccount>>
+public record LoginWithGoogleCommand : IRequest<Result<ApplicationAccount?>>
 {
     public string Provider { get; set; } = null!;
     public string ProviderUserId { get; set; } = null!;
@@ -22,7 +21,7 @@ public record LoginWithGoogleCommand : IRequest<Result<ApplicationAccount>>
 }
 
 
-public class LoginWithGoogleCommandHandler : IRequestHandler<LoginWithGoogleCommand, Result<ApplicationAccount>>
+public class LoginWithGoogleCommandHandler : IRequestHandler<LoginWithGoogleCommand, Result<ApplicationAccount?>>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
@@ -35,38 +34,23 @@ public class LoginWithGoogleCommandHandler : IRequestHandler<LoginWithGoogleComm
         _logger = logger;
     }
 
-    async Task<Result<ApplicationAccount>> IRequestHandler<LoginWithGoogleCommand, Result<ApplicationAccount>>.Handle(LoginWithGoogleCommand request, CancellationToken cancellationToken)
+    //TODO: check duplicate username
+    async Task<Result<ApplicationAccount?>> IRequestHandler<LoginWithGoogleCommand, Result<ApplicationAccount?>>.Handle(LoginWithGoogleCommand request, CancellationToken cancellationToken)
     {
         var provider = request.Provider;
         var providerUserId = request.ProviderUserId;
         var claims = request.Claims;
+        bool isAccountNew = false;
 
         var sub = Guid.NewGuid().ToString();
         string fullName = "";
         string avatar = "";
-
-        var user = new ApplicationAccount
-        {
-            Id = sub,
-            EmailConfirmed = true
-        };
-
-        var simplifiedClaims = claims.Select(c => new
-        {
-            c.Type,
-            c.Value,
-            c.Issuer
-        });
-
-        Console.WriteLine(JsonConvert.SerializeObject(simplifiedClaims, Formatting.Indented));
-
         // email
         var email = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Email)?.Value ??
                     claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-        if (email != null)
+        if (email == null)
         {
-            user.Email = email;
-            user.UserName = GenerateUsername(GetLocalPart(email));
+            return Result<ApplicationAccount>.Failure(AccountError.EmailNotFound);
         }
 
         // create a list of claims that we want to transfer into our store
@@ -98,37 +82,81 @@ public class LoginWithGoogleCommandHandler : IRequestHandler<LoginWithGoogleComm
                 fullName = last;
             }
         }
-        if (string.IsNullOrEmpty(user.UserName))
+
+        //if (email != null)
+        //{
+        //    account.Email = email;
+        //    account.UserName = GenerateUsername(GetLocalPart(email));
+        //}
+
+        ApplicationAccount? account;
+        account = await _userManager.FindByEmailAsync(email);
+
+        if (account == null)
         {
-            user.UserName = GenerateUsername(fullName);
+            account = new ApplicationAccount
+            {
+                Id = sub,
+                EmailConfirmed = true,
+                Email = email,
+                UserName = GenerateUsername(GetLocalPart(email))
+            };
+            isAccountNew = true;
+            _logger.LogInformation($"There are no account that have email address {email}, creating a new account");
         }
+
+
+        if (string.IsNullOrEmpty(account.UserName))
+        {
+            account.UserName = GenerateUsername(fullName);
+        }
+        // Debug to see how many claims are there
+        //var simplifiedClaims = claims.Select(c => new
+        //{
+        //    c.Type,
+        //    c.Value,
+        //    c.Issuer
+        //});
+
+        //Console.WriteLine(JsonConvert.SerializeObject(simplifiedClaims, Formatting.Indented));
 
         filtered.Add(new Claim(JwtClaimTypes.Name, fullName));
 
         avatar = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Picture)?.Value ?? "";
 
-        var identityResult = await _userManager.CreateAsync(user);
-        if (!identityResult.Succeeded) throw new InvalidOperationException(identityResult.Errors.First().Description);
-
-        if (filtered.Count != 0)
+        if (isAccountNew)
         {
-            identityResult = await _userManager.AddClaimsAsync(user, filtered);
+            var identityResult = await _userManager.CreateAsync(account);
+            if (!identityResult.Succeeded) throw new InvalidOperationException(identityResult.Errors.First().Description);
+
+            if (filtered.Count != 0)
+            {
+                identityResult = await _userManager.AddClaimsAsync(account, filtered);
+                if (!identityResult.Succeeded) throw new InvalidOperationException(identityResult.Errors.First().Description);
+            }
+
+            // Link the identity provider to the user
+            identityResult = await _userManager.AddLoginAsync(account, new UserLoginInfo(provider, providerUserId, provider));
+            if (!identityResult.Succeeded) throw new InvalidOperationException(identityResult.Errors.First().Description);
+
+            // Add user to user service
+            await _grpcUserClient.CreateUserAsync(new GrpcCreateUserRequest
+            {
+                AccountId = sub,
+                AccountUsername = account.UserName,
+                FullName = fullName,
+                Avatar = avatar
+            });
+        }
+        else
+        {
+            // Only link the account to the provider if the account with specified email existed.
+            var identityResult = await _userManager.AddLoginAsync(account, new UserLoginInfo(provider, providerUserId, provider));
             if (!identityResult.Succeeded) throw new InvalidOperationException(identityResult.Errors.First().Description);
         }
 
-        identityResult = await _userManager.AddLoginAsync(user, new UserLoginInfo(provider, providerUserId, provider));
-        if (!identityResult.Succeeded) throw new InvalidOperationException(identityResult.Errors.First().Description);
 
-        // Add user to user service
-        await _grpcUserClient.CreateUserAsync(new GrpcCreateUserRequest
-        {
-            AccountId = sub,
-            AccountUsername = user.UserName,
-            FullName = fullName,
-            Avatar = avatar
-        });
-
-        return Result<ApplicationAccount>.Success(user);
+        return Result<ApplicationAccount?>.Success(account);
     }
 
     private string GetLocalPart(string email)
