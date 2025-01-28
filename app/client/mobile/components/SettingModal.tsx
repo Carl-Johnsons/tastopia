@@ -25,8 +25,6 @@ import {
 import { selectUser } from "@/slices/user.slice";
 import { colors } from "@/constants/colors";
 import {
-  SETTING_KEY,
-  SETTING_VALUE,
   saveSettingData,
   selectDarkModeSetting,
   selectLanguageSetting,
@@ -57,6 +55,7 @@ import { useTranslation } from "react-i18next";
 import { useColorScheme } from "nativewind";
 import useColorizer from "@/hooks/useColorizer";
 import { router } from "expo-router";
+import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 
 type SettingModalProps = {
   ref: RefObject<BottomSheetMethods>;
