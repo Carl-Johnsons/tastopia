@@ -32,7 +32,7 @@ public class LinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, Res
             case AccountMethod.Phone:
                 return await LinkPhone(request, cancellationToken);
             default:
-                return Result.Failure(AccountError.LinkAccountFailed," Wrong account method");
+                return Result.Failure(AccountError.LinkAccountFailed, " Wrong account method");
         }
     }
 
