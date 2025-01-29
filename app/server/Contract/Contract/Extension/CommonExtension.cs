@@ -116,8 +116,8 @@ public static class CommonExtension
     {
         var retryPolicy = Polly.Policy.Handle<Exception>()
             .WaitAndRetryAsync(
-                retryCount: 5,
-                sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+                retryCount: 20,
+                sleepDurationProvider: attempt => TimeSpan.FromSeconds(attempt),
                 onRetry: (exception, timeSpan, retryCount, context) =>
                 {
                     // Log the retry attempt
