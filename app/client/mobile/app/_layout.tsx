@@ -18,7 +18,7 @@ import { colors } from "@/constants/colors";
 import { FONTS } from "@/constants/fonts";
 import useColorizer from "@/hooks/useColorizer";
 
-import("./global.css");
+import("../global.css");
 
 SplashScreen.preventAutoHideAsync();
 
