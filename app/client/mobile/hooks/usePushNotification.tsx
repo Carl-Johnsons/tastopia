@@ -7,6 +7,7 @@ import { protectedAxiosInstance } from "@/constants/host";
 export interface PushNotificationState {
   notification?: Notifications.Notification;
   expoPushToken?: Notifications.ExpoPushToken;
+  registerForPushNotificationAsync: () => Promise<void>;
 }
 
 export const usePushNotification = (): PushNotificationState => {
@@ -38,7 +39,6 @@ export const usePushNotification = (): PushNotificationState => {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
-    console.log({ finalStatus });
 
     if (finalStatus !== Notifications.PermissionStatus.GRANTED) {
       Alert.alert("In order to have notification, you have to allowed this permission");
@@ -46,14 +46,9 @@ export const usePushNotification = (): PushNotificationState => {
 
       return;
     }
-    console.log("2");
-    console.log(Constants.expoConfig?.extra?.eas?.projectId);
-
     token = await Notifications.getExpoPushTokenAsync({
       projectId: Constants.expoConfig?.extra?.eas?.projectId
     });
-    console.log("Token here");
-    console.log({ token });
 
     if (Platform.OS === "android") {
       Notifications.setNotificationChannelAsync("default", {
@@ -64,7 +59,7 @@ export const usePushNotification = (): PushNotificationState => {
       });
       try {
         await protectedAxiosInstance.post("api/notification/expo-push-token/android", {
-          expoPushToken
+          expoPushToken: token.data
         });
         console.log("Register user with push token successfully");
       } catch (err) {
@@ -74,14 +69,9 @@ export const usePushNotification = (): PushNotificationState => {
         console.error(err);
       }
     }
-    return token;
+    setExpoPushToken(token);
   };
   useEffect(() => {
-    console.log("register notification");
-    registerForPushNotificationAsync().then(token => {
-      setExpoPushToken(token);
-    });
-
     notificationListener.current = Notifications.addNotificationReceivedListener(
       notification => {
         setNotification(notification);
@@ -101,6 +91,7 @@ export const usePushNotification = (): PushNotificationState => {
 
   return {
     expoPushToken,
-    notification
+    notification,
+    registerForPushNotificationAsync
   };
 };

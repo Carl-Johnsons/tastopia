@@ -1,23 +1,19 @@
-import { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Keyboard,
-  ActivityIndicator,
-  Platform,
-  TouchableHighlight
-} from "react-native";
-import { Redirect, Tabs, usePathname, useRootNavigationState } from "expo-router";
-import { menuList } from "@/constants/menu";
-import { useTranslation } from "react-i18next";
-import { selectRole } from "@/slices/auth.slice";
-import { COMMUNITY_PATH, MAIN_PATH } from "@/constants/paths";
-import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import { COMMUNITY_PATH, MAIN_PATH } from "@/constants/paths";
+import { menuList } from "@/constants/menu";
+import { Redirect, Tabs, usePathname, useRootNavigationState } from "expo-router";
+import { selectRole } from "@/slices/auth.slice";
+import { useEffect, useState } from "react";
+import { usePushNotification } from "@/hooks";
+import { useTranslation } from "react-i18next";
+import { View, StyleSheet, Keyboard, ActivityIndicator, Platform } from "react-native";
+import useColorizer from "@/hooks/useColorizer";
 
 const isAndroid = Platform.OS === "android";
 
 const ProtectedLayout = () => {
+  const { registerForPushNotificationAsync } = usePushNotification();
+
   const { t } = useTranslation("menu");
   const { c } = useColorizer();
   const { black, white, primary } = colors;
@@ -46,6 +42,12 @@ const ProtectedLayout = () => {
       KeyboardDidShow.remove();
       KeyboardDidHide.remove();
     };
+  }, []);
+
+  useEffect(() => {
+    if (role) {
+      registerForPushNotificationAsync();
+    }
   }, []);
 
   if (!role) {
