@@ -3,6 +3,7 @@ import Constants from "expo-constants";
 import { Alert, Platform } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import { protectedAxiosInstance } from "@/constants/host";
+import { useRouter } from "expo-router";
 
 export interface PushNotificationState {
   notification?: Notifications.Notification;
@@ -11,6 +12,8 @@ export interface PushNotificationState {
 }
 
 export const usePushNotification = (): PushNotificationState => {
+  const router = useRouter();
+
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
       shouldPlaySound: false,
@@ -42,8 +45,6 @@ export const usePushNotification = (): PushNotificationState => {
 
     if (finalStatus !== Notifications.PermissionStatus.GRANTED) {
       Alert.alert("In order to have notification, you have to allowed this permission");
-      console.log("1");
-
       return;
     }
     token = await Notifications.getExpoPushTokenAsync({
@@ -78,9 +79,17 @@ export const usePushNotification = (): PushNotificationState => {
       }
     );
 
-    responseListener.current = Notifications.addNotificationResponseClearedListener(
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(
       response => {
-        console.log(response);
+        const data = response.notification.request.content.data;
+        console.log({ data });
+
+        if (data.redirectUri) {
+          router.push({
+            pathname: data.redirectUri,
+            params: data.params
+          });
+        }
       }
     );
     return () => {
