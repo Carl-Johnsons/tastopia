@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using NotificationService.API.DTOs;
 using NotificationService.Application.Notifications.Commands;
+using NotificationService.Application.Notifications.Queries;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace NotificationService.API.Controllers;
@@ -18,7 +19,7 @@ public partial class NotificationController : BaseApiController
     }
 
     [HttpPost("expo-push-token/android")]
-    public async Task SaveExpoAndroidPushToken([FromBody] SaveExpoPushTokenDTO dto)
+    public async Task<IActionResult> SaveExpoAndroidPushToken([FromBody] SaveExpoPushTokenDTO dto)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
@@ -29,10 +30,13 @@ public partial class NotificationController : BaseApiController
             DeviceType = Domain.Constants.DeviceType.ANDROID,
             ExpoPushToken = dto.ExpoPushToken,
         });
+        result.ThrowIfFailure();
+
+        return Created();
     }
 
     [HttpPost("expo-push-token/ios")]
-    public async Task SaveExpoIOSPushToken([FromBody] SaveExpoPushTokenDTO dto)
+    public async Task<IActionResult> SaveExpoIOSPushToken([FromBody] SaveExpoPushTokenDTO dto)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
@@ -43,17 +47,39 @@ public partial class NotificationController : BaseApiController
             DeviceType = Domain.Constants.DeviceType.IOS,
             ExpoPushToken = dto.ExpoPushToken,
         });
+        result.ThrowIfFailure();
+
+        return Created();
     }
 
     [HttpPost("notify/push")]
-    public async Task NotifyPush([FromBody] NotifyDTO dto)
+    public async Task<IActionResult> NotifyPush([FromBody] NotifyDTO dto)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new PushNotificationCommand
         {
             Message = dto.Message,
-            RecipientIds = dto.RecipientIds
+            RecipientIds = dto.RecipientIds,
+            Data = dto.Data
         });
+        result.ThrowIfFailure();
+
+        return Ok();
+    }
+
+    [HttpGet()]
+    public async Task<IActionResult> GetNotifications()
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new GetNotificationsQuery
+        {
+            AccountId = Guid.Parse(subjectId!)
+        });
+        
+        result.ThrowIfFailure();
+
+        return Ok(result.Value);
     }
 }

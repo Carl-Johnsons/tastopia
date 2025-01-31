@@ -2,6 +2,7 @@
 using Contract.Event.NotificationEvent;
 using MassTransit.Initializers;
 using MongoDB.Driver.Linq;
+using Newtonsoft.Json;
 using NotificationService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
 
@@ -12,6 +13,7 @@ public record PushNotificationCommand : IRequest<Result>
     [Required]
     public string Message { get; init; } = null!;
     public List<Guid> RecipientIds { get; init; } = null!;
+    public object? Data { get; init; } = null!;
 }
 
 
@@ -36,13 +38,13 @@ public class PushNotificationCommandHandler : IRequestHandler<PushNotificationCo
         {
             return Result.Failure(NotificationErrors.ExpoPushTokenNotFound);
         }
-
         var tokens = expoPushTokens.Select(ept => ept.ExpoPushToken).ToList();
 
         await _serviceBus.Publish(new PushNotificationEvent
         {
-            ExpoPushToken = tokens,
-            Message = request.Message
+            ExpoPushTokens = tokens,
+            Message = request.Message,
+            JsonData = JsonConvert.SerializeObject(request.Data)
         });
 
         return Result.Success();

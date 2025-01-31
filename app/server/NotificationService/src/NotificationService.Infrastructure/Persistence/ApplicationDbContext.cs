@@ -7,7 +7,6 @@ namespace NotificationService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
-    public DbSet<AccountExpoPushToken> AccountExpoPushTokens { get; set; }
     public ApplicationDbContext()
     {
     }
@@ -18,6 +17,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbContext Instance => this;
 
+    public DbSet<Notification> Notifications { get; set; }
+    public DbSet<NotificationTemplate> NotificationTemplates { get; set; }
+    public DbSet<AccountExpoPushToken> AccountExpoPushTokens { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -57,7 +59,27 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.Entity<AccountExpoPushToken>(e =>
         {
             e.Property(e => e.DeviceType)
-             .HasConversion(typeof(string));
+             .HasConversion<string>();
+        });
+        modelBuilder.Entity<Notification>(e =>
+        {
+            e.OwnsMany(n => n.PrimaryActors, a =>
+            {
+                a.Property(actor => actor.Type)
+                 .HasConversion<string>(); // Convert enum to string
+            });
+
+            e.OwnsMany(n => n.SecondaryActors, a =>
+            {
+                a.Property(actor => actor.Type)
+                 .HasConversion<string>(); // Convert enum to string
+            });
+        });
+
+        modelBuilder.Entity<NotificationTemplate>(nt =>
+        {
+            nt.Property(e => e.TemplateCode)
+              .HasConversion<string>();
         });
     }
 

@@ -17,16 +17,17 @@ public class ExpoPushNotificationService : IPushNotificationService
         _logger = logger;
     }
 
-    public async Task Notify(List<string> expoPushTokens, string message)
+    public async Task Notify(List<string> expoPushTokens, string message, string? data)
     {
         var pushTicketReq = new PushTicketRequest()
         {
             PushTo = expoPushTokens,
             PushBadgeCount = 7,
             PushBody = message,
+            PushData = data,
         };
+        _logger.LogInformation("Request ticket:\n" + JsonConvert.SerializeObject(pushTicketReq, Formatting.Indented));
         var result = await _pushApiClient.PushSendAsync(pushTicketReq);
-        _logger.LogInformation("Done push notification");
         _logger.LogInformation(JsonConvert.SerializeObject(result, Formatting.Indented));
     }
 }

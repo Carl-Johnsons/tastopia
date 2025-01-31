@@ -7,7 +7,6 @@ using Contract.Common;
 using MassTransit;
 using System.Reflection;
 using Microsoft.AspNetCore.Builder;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Serilog;
 using Microsoft.IdentityModel.Tokens;
@@ -37,11 +36,12 @@ public static class CommonExtension
         services.AddErrorValidation();
         services.AddControllers()
             // Prevent circular JSON reach max depth of the object when serialization
-            .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                options.JsonSerializerOptions.WriteIndented = true;
-            }).AddNewtonsoftJson(options =>
+            //.AddJsonOptions(options =>
+            //{
+            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            //    options.JsonSerializerOptions.WriteIndented = true;
+            //})
+            .AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
             });
