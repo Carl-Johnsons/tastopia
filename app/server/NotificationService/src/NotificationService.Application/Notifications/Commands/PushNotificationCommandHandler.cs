@@ -1,4 +1,8 @@
 ﻿
+using Contract.Event.NotificationEvent;
+using MassTransit.Initializers;
+using MongoDB.Driver.Linq;
+using NotificationService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
 
 namespace NotificationService.Application.Notifications.Commands;
@@ -6,31 +10,42 @@ namespace NotificationService.Application.Notifications.Commands;
 public record PushNotificationCommand : IRequest<Result>
 {
     [Required]
-    public Guid AccountId { get; init; }
-    [Required]
     public string Message { get; init; } = null!;
+    public List<Guid> RecipientIds { get; init; } = null!;
 }
 
 
 public class PushNotificationCommandHandler : IRequestHandler<PushNotificationCommand, Result>
 {
+    private readonly IApplicationDbContext _context;
     private readonly IServiceBus _serviceBus;
 
-    public PushNotificationCommandHandler(IServiceBus serviceBus)
+    public PushNotificationCommandHandler(IServiceBus serviceBus, IApplicationDbContext context)
     {
         _serviceBus = serviceBus;
+        _context = context;
     }
 
     public async Task<Result> Handle(PushNotificationCommand request, CancellationToken cancellationToken)
     {
+        var expoPushTokens = _context.AccountExpoPushTokens
+                                          .Where(aet => request.RecipientIds.Contains(aet.AccountId))
+                                          .ToList();
 
+        if (expoPushTokens.Count <= 0)
+        {
+            return Result.Failure(NotificationErrors.ExpoPushTokenNotFound);
+        }
 
-        //await _serviceBus.Publish(new PushNotificationEvent
-        //{
-        //    ExpoPushToken = request.ExpoPushToken,
-        //    Message = request.Message
-        //});
+        var tokens = expoPushTokens.Select(ept => ept.ExpoPushToken).ToList();
+
+        await _serviceBus.Publish(new PushNotificationEvent
+        {
+            ExpoPushToken = tokens,
+            Message = request.Message
+        });
 
         return Result.Success();
+
     }
 }

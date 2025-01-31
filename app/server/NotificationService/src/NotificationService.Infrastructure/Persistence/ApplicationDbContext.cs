@@ -63,6 +63,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public IMongoDatabase GetDatabase()
     {
-        throw new NotImplementedException();
+        EnvUtility.LoadEnvFile();
+
+        var db = DotNetEnv.Env.GetString("DB", "NotificationDB").Trim();
+        var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
+        var client = new MongoClient(mongoConnectionString);
+        return client.GetDatabase(db);
     }
 }

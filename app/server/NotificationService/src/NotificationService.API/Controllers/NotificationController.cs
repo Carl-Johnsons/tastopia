@@ -44,4 +44,16 @@ public partial class NotificationController : BaseApiController
             ExpoPushToken = dto.ExpoPushToken,
         });
     }
+
+    [HttpPost("notify/push")]
+    public async Task NotifyPush([FromBody] NotifyDTO dto)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new PushNotificationCommand
+        {
+            Message = dto.Message,
+            RecipientIds = dto.RecipientIds
+        });
+    }
 }
