@@ -13,7 +13,8 @@
     "lint": "expo lint",
     "build:android": "npx expo prebuild --platform android",
     "build:ios": "npx expo prebuild --platform ios",
-    "postinstall": "npx patch-package"
+    "postinstall": "npx patch-package",
+    "init-notification-service": "npx eas env:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json --visibility secret --environment development --non-interactive --force"
   },
   "jest": {
     "preset": "jest-expo"
