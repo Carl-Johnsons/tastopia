@@ -14,7 +14,6 @@
     },
     "ios": {
       "supportsTablet": true,
-      "package": "com.tastopia.app",
       "bundleIdentifier": "com.tastopia.app"
     },
     "android": {
@@ -26,7 +25,8 @@
       "softwareKeyboardLayoutMode": "pan",
       "permissions": [
         "android.permission.RECORD_AUDIO"
-      ]
+      ],
+      "googleServicesFile": "google-services.json"
     },
     "web": {
       "bundler": "metro",

@@ -2,6 +2,7 @@
 using Contract.Constants;
 using Contract.Event.NotificationEvent;
 using MassTransit;
+using Newtonsoft.Json;
 using PushNotificationWorker.Interfaces;
 
 namespace PushNotificationWorker.EventHandlers;
@@ -20,7 +21,10 @@ public class PushNotificationConsumer : IConsumer<PushNotificationEvent>
 
     public async Task Consume(ConsumeContext<PushNotificationEvent> context)
     {
-        await _pushNotificationService.Notify(context.Message.ExpoPushToken, context.Message.Message);
+        await _pushNotificationService.Notify(context.Message.ExpoPushTokens,
+                                            context.Message.Message,
+                                            context.Message.JsonData);
+
         _logger.LogInformation("Push notification message acknowledged");
     }
 }

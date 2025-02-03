@@ -6,8 +6,8 @@ import { CLIENT_ID, SCOPE } from "@/constants/api";
 import { AxiosError } from "axios";
 import { stringify } from "@/utils/debug";
 import { selectAccessToken } from "@/slices/auth.slice";
-import { SETTING_KEY, SETTING_VALUE } from "@/slices/setting.slice";
 import { UserState } from "@/slices/user.slice";
+import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 
 export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {

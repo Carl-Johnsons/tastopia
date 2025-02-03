@@ -1,10 +1,10 @@
 ﻿using Contract.Utilities;
 using Expo.Server.Client;
 using Expo.Server.Models;
+using Newtonsoft.Json;
 using PushNotificationWorker.Interfaces;
 
 namespace PushNotificationWorker.Services;
-
 
 public class ExpoPushNotificationService : IPushNotificationService
 {
@@ -17,21 +17,17 @@ public class ExpoPushNotificationService : IPushNotificationService
         _logger = logger;
     }
 
-    public async Task Notify(List<string> expoPushTokens, string message)
+    public async Task Notify(List<string> expoPushTokens, string message, string? data)
     {
         var pushTicketReq = new PushTicketRequest()
         {
             PushTo = expoPushTokens,
             PushBadgeCount = 7,
-            PushBody = message
+            PushBody = message,
+            PushData = data,
         };
+        _logger.LogInformation("Request ticket:\n" + JsonConvert.SerializeObject(pushTicketReq, Formatting.Indented));
         var result = await _pushApiClient.PushSendAsync(pushTicketReq);
-        if (result?.PushTicketErrors?.Count() > 0)
-        {
-            foreach (var error in result.PushTicketErrors)
-            {
-                _logger.LogError($"Error: {error.ErrorCode} - {error.ErrorMessage}");
-            }
-        }
+        _logger.LogInformation(JsonConvert.SerializeObject(result, Formatting.Indented));
     }
 }

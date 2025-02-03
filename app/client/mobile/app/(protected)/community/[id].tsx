@@ -30,8 +30,21 @@ import { useTranslation } from "react-i18next";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import { useQueryClient } from "react-query";
+import { useRouteGuardExclude } from "@/hooks/auth/useProtected";
+import { ROLE } from "@/slices/auth.slice";
+import Unauthorize from "@/components/common/Unauthorize";
 
 const RecipeDetail = () => {
+  const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
+
+  if (!hasAccess) {
+    return (
+      <View className='bg-white_black100 flex-1 items-center justify-center'>
+        <Unauthorize />
+      </View>
+    );
+  }
+
   const queryClient = useQueryClient();
 
   const { c } = useColorizer();
@@ -135,6 +148,7 @@ const RecipeDetail = () => {
       </View>
     );
   }
+
   return (
     <SafeAreaView
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}

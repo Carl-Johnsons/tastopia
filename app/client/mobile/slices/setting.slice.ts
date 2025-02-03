@@ -1,28 +1,9 @@
+import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 import { useAppSelector } from "@/store/hooks";
 import { getSettingFromBooleanValue } from "@/utils/converter";
 import { createSlice } from "@reduxjs/toolkit";
 import { Appearance } from "react-native";
 import { PURGE } from "redux-persist";
-
-export enum SETTING_KEY {
-  LANGUAGE = 'LANGUAGE',
-  DARK_MODE = 'DARK_MODE',
-  NOTIFICATION_COMMENT = 'NOTIFICATION_COMMENT',
-  NOTIFICATION_VOTE = 'NOTIFICATION_VOTE',
-  NOTIFICATION_FOLLOW = 'NOTIFICATION_FOLLOW',
-}
-
-export namespace SETTING_VALUE {
-  export enum LANGUAGE {
-    VIETNAMESE = 'VIETNAMESE',
-    ENGLISH = 'ENGLISH',
-  }
-
-  export enum BOOLEAN {
-    TRUE = 'TRUE',
-    FALSE = 'FALSE',
-  }
-}
 
 export type SettingState = {
   [SETTING_KEY.LANGUAGE]: SETTING_VALUE.LANGUAGE;

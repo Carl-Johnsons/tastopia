@@ -95,7 +95,7 @@ const Welcome = () => {
           <Animated.View className='mt-[20vh] flex gap-3.5'>
             <Animated.Text
               style={textStyles[0]}
-              className='text-black font-bold text-5xl'
+              className='font-bold text-5xl text-black'
             >
               Welcome to
             </Animated.Text>
@@ -117,7 +117,7 @@ const Welcome = () => {
 
           <View className='absolute bottom-[6vh] left-3.5 flex w-full gap-4'>
             <View className='flex-row items-center justify-center gap-5'>
-              <View className='bg-white_black h-[1px] grow' />
+              <View className='h-[1px] grow bg-gray-300' />
               <Animated.Text className='text-center font-medium text-sm text-gray-300'>
                 Sign in with
               </Animated.Text>

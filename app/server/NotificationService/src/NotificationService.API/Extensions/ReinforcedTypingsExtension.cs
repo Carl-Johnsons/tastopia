@@ -1,4 +1,4 @@
-﻿using NotificationService.API.DTOs;
+﻿using Contract.DTOs;
 using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using System.Reflection;
