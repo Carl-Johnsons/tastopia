@@ -32,6 +32,7 @@ internal class NotificationMockup
         int templateIdIndex;
         foreach (var recipientId in RecipientIds)
         {
+
             while (UserIds[userIdIndex] == recipientId)
             {
                 userIdIndex = random.Next(UserIds.Count);
@@ -49,7 +50,7 @@ internal class NotificationMockup
                     Type = Domain.Constants.EntityType.USER
                 }],
                 TemplateId = Guid.Parse(TemplateIds[templateIdIndex]),
-                JsonData = "{\"redirectUri\":\"/(protected)/notification\"}",
+                JsonData = "{\"redirectUri\":\"" + Contract.Constants.CLIENT_URI.MOBILE.NOTIFICATION + "\"}",
             });
         }
         return list;

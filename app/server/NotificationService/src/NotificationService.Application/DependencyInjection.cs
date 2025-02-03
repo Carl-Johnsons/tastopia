@@ -1,4 +1,6 @@
-﻿using UserProto;
+﻿using AutoMapper;
+using NotificationService.Application.Configs;
+using UserProto;
 
 namespace NotificationService.Application;
 
@@ -6,6 +8,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
+        // Register automapper
+        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+        services.AddSingleton(mapper);
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         services.AddGrpcClientService();
         return services;
