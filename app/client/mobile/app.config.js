@@ -24,7 +24,7 @@ module.exports = {
       package: "com.tastopia.app",
       softwareKeyboardLayoutMode: "pan",
       permissions: ["android.permission.RECORD_AUDIO"],
-      googleServicesFile: "process.env.GOOGLE_SERVICES_JSON"
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON
     },
     web: {
       bundler: "metro",
