@@ -59,7 +59,6 @@ const CreateRecipe = () => {
     defaultValues: {
       title: "",
       description: "",
-      serves: "",
       cookTime: ""
     }
   });
@@ -287,6 +286,7 @@ const CreateRecipe = () => {
                             {t("formTitle.serves")}
                           </Text>
                           <Input
+                            isNumeric={true}
                             variant='secondary'
                             control={formControl}
                             name='serves'

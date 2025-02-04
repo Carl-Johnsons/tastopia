@@ -18,7 +18,7 @@ import BackButton from "@/components/BackButton";
 import Vote from "@/components/common/Vote";
 import { Entypo, Feather } from "@expo/vector-icons";
 import Bookmark from "@/components/common/Bookmark";
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Ingredient from "@/components/screen/community/Ingredient";
 import Step from "@/components/screen/community/Step";
 import { useGetRecipeComment } from "@/api/comment";
@@ -33,6 +33,8 @@ import { useQueryClient } from "react-query";
 import { useRouteGuardExclude } from "@/hooks/auth/useProtected";
 import { ROLE } from "@/slices/auth.slice";
 import Unauthorize from "@/components/common/Unauthorize";
+import SettingRecipe from "@/components/common/SettingRecipe";
+import BottomSheet from "@gorhom/bottom-sheet";
 
 const RecipeDetail = () => {
   const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
@@ -44,6 +46,8 @@ const RecipeDetail = () => {
       </View>
     );
   }
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const queryClient = useQueryClient();
 
@@ -86,7 +90,12 @@ const RecipeDetail = () => {
     refetchRecipeDetail();
     refetchGetRecipeComment();
   };
-  const handleTouchMenu = () => {};
+
+  const handleTouchMenu = () => {
+    console.log("touch menu");
+    bottomSheetRef.current?.expand();
+  };
+
   const handleTouchUser = () => {};
 
   const handleToggleBookmark = () => {
@@ -384,6 +393,12 @@ const RecipeDetail = () => {
           />
         </View>
       )}
+
+      <SettingRecipe
+        id={id}
+        title='Setting'
+        ref={bottomSheetRef}
+      />
     </SafeAreaView>
   );
 };
