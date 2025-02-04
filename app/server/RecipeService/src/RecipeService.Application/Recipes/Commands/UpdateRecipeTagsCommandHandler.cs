@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
@@ -15,11 +16,13 @@ public class UpdateRecipeTagsCommandHandler : IRequestHandler<UpdateRecipeTagsCo
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<UpdateRecipeTagsCommandHandler> _logger;
 
-    public UpdateRecipeTagsCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork)
+    public UpdateRecipeTagsCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<UpdateRecipeTagsCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result> Handle(UpdateRecipeTagsCommand request, CancellationToken cancellationToken)
@@ -56,6 +59,7 @@ public class UpdateRecipeTagsCommandHandler : IRequestHandler<UpdateRecipeTagsCo
             return Result.Success();
         }
         catch (Exception ex) {
+            _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result.Failure(RecipeError.UpdateRecipeFail);
         }
     }

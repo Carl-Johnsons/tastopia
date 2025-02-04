@@ -25,6 +25,7 @@ public static class DependencyInjection
             });
         });
         services.AddSingleton<IConsulRegistryService, ConsulRegistryService>();
+        services.AddScoped<IOffensiveTextCheckerService, OffensiveTextCheckerService>();
         services.AddGrpc();
         services.AddTransient<IRecipeService, CommunityRecipeService>();
         services.AddMassTransitService();

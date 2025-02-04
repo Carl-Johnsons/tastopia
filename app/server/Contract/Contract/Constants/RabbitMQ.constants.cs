@@ -16,7 +16,6 @@ public static class RabbitMQConstant
             public const string GET_RECIPE_DETAILS = "get-recipe-details-queue";
             public const string UPDATE_RECIPE_TAGS = "update-recipe-tags-queue";
             public const string REQUEST_ADD_TAGS = "request-add-tags-queue";
-            public const string GET_ALL_TAGS = "get-all-tags-queue";
             // ======================= OTHER ============================
             public const string SEND_EMAIL = "send-email-queue";
             public const string PUSH_NOTIFICATION = "push-notification-queue";
@@ -42,7 +41,6 @@ public static class RabbitMQConstant
             public const string USER_RESEND_OTP = "user-resend-otp-event";
             // ======================= Recipe ============================
             public const string GET_RECIPE_DETAILS = "get-recipe-details-event";
-            public const string GET_ALL_TAGS = "get-all-tags-event";
             public const string UPDATE_RECIPE_TAGS = "update-recipe-tags-event";
             public const string REQUEST_ADD_TAGS = "request-add-tags-event";
 

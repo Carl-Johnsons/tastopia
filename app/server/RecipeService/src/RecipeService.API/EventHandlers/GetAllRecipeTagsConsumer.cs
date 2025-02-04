@@ -1,6 +1,5 @@
 ﻿using MassTransit;
 using Contract.Event.RecipeEvent;
-using Contract.Common;
 using Contract.Constants;
 using RecipeService.Application.Tags.Queries;
 using AutoMapper;

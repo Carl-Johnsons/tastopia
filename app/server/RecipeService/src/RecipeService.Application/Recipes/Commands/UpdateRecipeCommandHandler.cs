@@ -5,6 +5,7 @@ using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
@@ -54,17 +55,19 @@ public class UpdateStepDTO
 
 public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, Result<Recipe?>>
 {
+    private readonly ILogger<UpdateRecipeCommandHandler> _logger;
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
     private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
 
-    public UpdateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient)
+    public UpdateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, ILogger<UpdateRecipeCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _serviceBus = serviceBus;
         _grpcUploadFileClient = grpcUploadFileClient;
+        _logger = logger;
     }
 
     public async Task<Result<Recipe?>> Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
@@ -173,6 +176,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
         }
         catch (Exception ex)
         {
+            _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             await RollBackImageGrpc(rollbaclUrls);
         }
 
