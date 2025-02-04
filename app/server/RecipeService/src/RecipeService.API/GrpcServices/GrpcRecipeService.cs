@@ -40,6 +40,7 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
         var response = await _sender.Send(new GetRecipeDetailQuery
         {
             RecipeId = Guid.Parse(request.RecipeId),
+            AccountId = Guid.Parse("61c61ac7-291e-4075-9689-666ef05547ed")
         });
         response.ThrowIfFailure();
 

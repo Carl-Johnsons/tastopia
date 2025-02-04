@@ -49,14 +49,6 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
             {
                 return Result<VoteResponse?>.Failure(RecipeError.NotFound);
             }
-
-            _logger.LogInformation("cc");
-            _logger.LogInformation("cc");
-            _logger.LogInformation("cc");
-            _logger.LogInformation("cc");
-            _logger.LogInformation("cc");
-
-
             var recipeVote = recipe.RecipeVotes.Where(rv => rv.AccountId == accountId).FirstOrDefault();
             var vote = (bool)isUpvote ? Vote.Upvote : Vote.Downvote;
             if (recipeVote == null)

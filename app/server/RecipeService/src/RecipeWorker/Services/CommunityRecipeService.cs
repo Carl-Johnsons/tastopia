@@ -1,127 +1,146 @@
 ﻿using RecipeWorker.Interfaces;
 using Contract.Event.RecipeEvent;
-using Contract.DTOs.RecipeDTO;
-using Newtonsoft.Json;
 using RecipeWorker.Utilities;
-
+using RecipeProto;
+using Newtonsoft.Json;
+using RecipeWorker.Constants;
 namespace RecipeWorker.Services;
-
-// Ref: https://stackoverflow.com/questions/31209273/how-do-i-set-return-uri-for-googlewebauthorizationbroker-authorizeasync
-/*
- * When you deploy this to docker you will get an exception that the operating system does not support running the process. Basically, its trying to open a browser on the Metal Box. which is not possible with docker.
-   To solve this. Modify the code to use full absolute path like this:
- * 
- * ```
- * var inputFolderAbsolute = Path.Combine(AppContext.BaseDirectory, "Auth.Store");
-    ...
-    new FileDataStore(inputFolderAbsolute, true)
- * ```
- * Run this application as a console app on your local machine so the browser opens.
-   - Select the account you want to work with
-   - In the bin folder, a new folder and file will be created.
-   - Copy that folder to the root path
-   - Set the file to copy if newer
-   - Deploy to docker
-   - Because the refresh token is saved for the account you selected it will get a new access token and work.
-   - NB: It is possible the refresh token expires to whatever reason. You will have to repeat the steps above
- */
-
 
 public class CommunityRecipeService : IRecipeService
 {
     private readonly IServiceBus _serviceBus;
-    public CommunityRecipeService(IServiceBus serviceBus)
+    private readonly IOffensiveTextCheckerService _textCheckerService;
+    private readonly GrpcRecipe.GrpcRecipeClient _grpcRecipeClient;
+    private readonly ILogger<CommunityRecipeService> _logger;
+    public CommunityRecipeService(GrpcRecipe.GrpcRecipeClient grpcRecipeClient, IServiceBus serviceBus, ILogger<CommunityRecipeService> logger, IOffensiveTextCheckerService textCheckerService)
     {
+        _grpcRecipeClient = grpcRecipeClient;
         _serviceBus = serviceBus;
+        _logger = logger;
+        _textCheckerService = textCheckerService;
     }
 
-    public async Task CheckRecipeAbuse()
+    public async Task CheckRecipeAbuse(Guid recipeId)
     {
+        try {
+            var response = await _grpcRecipeClient.GetRecipeDetailsAsync(new GrpcRecipeIdRequest
+            {
+                RecipeId = recipeId.ToString(),
+            });
+
+            if (response == null)
+            {
+                _logger.LogError("Recipe not found");
+                throw new Exception("Recipe not found");
+            }
+            string text = "";
+
+            text += response.Title + "\n";
+            text += response.Description + "\n";
+            foreach (var i in response.Ingredients)
+            {
+                text += i + ", ";
+            }
+            text += "\n";
+            foreach (var s in response.Steps)
+            {
+                text += s + "\n";
+            }
+
+            var result = await _textCheckerService.CheckOffensiveText(text);
+            if (string.IsNullOrEmpty(result))
+            {
+                _logger.LogError("Cannot get text abusive percent.");
+                throw new Exception("Cannot get text abusive percent.");
+            }
+            var percent = float.Parse(result);
+
+            if(percent >= OffensiveTextCheckerConstants.OFFENSIVE_THRESHOLD)
+            {
+                _logger.LogInformation($"Recipe with id: {recipeId} is valid.");
+                return;
+            }
+
+            _logger.LogInformation($"Recipe with id: {recipeId} is invalid.");
+
+        }
+        catch (Exception ex) {
+            _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
+        }
+
     }
 
     public async Task CheckRecipeIngredients()
     {
+
     }
 
     public async Task CheckRecipeTags(Guid recipeId, List<string> tagValues)
     {
-        //var listRecipeTagCodes = new List<string>();
-        //var listTagValueToBeAdded = new List<string>();
+        var listRecipeTagCodes = new List<string>();
+        var listTagValueToBeAdded = new List<string>();
 
-        //var requestClient = _serviceBus.CreateRequestClient<GetAllTagsEvents>();
-        //var response = await requestClient.GetResponse<TagListDTO>(new GetAllTagsEvents());
-        //if (response == null || response.Message == null)
-        //{
-        //    throw new Exception("Tags not found");
-        //}
+        var response = await _grpcRecipeClient.GetAllTagsAsync(new RecipeProto.GrpcEmpty());
+        if (response == null || response.Tags == null)
+        {
+            _logger.LogError("Tags not found");
+            throw new Exception("Tags not found");
+        }
+        _logger.LogInformation(JsonConvert.SerializeObject(response.Tags, Formatting.Indented));
+        var tags = new Dictionary<string, GrpcTagDTO>();
+        var tagRequesteds = new Dictionary<string, GrpcTagDTO>();
+        foreach (var t in response.Tags)
+        {
+            if (t.Status.ToString() == "Active") tags[t.Value.ToLower()] = t;
+            if (t.Status.ToString() != "Requested") tagRequesteds[t.Value.ToLower()] = t;
+        }
+        List<string> additionTagValues = new List<string>();
 
-        //await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(response.Message, Formatting.Indented));
+        foreach (var value in tagValues)
+        {
+            var v = value.ToLower();
+            if (tags.ContainsKey(v))
+            {
+                listRecipeTagCodes.Add(tags[v].Code);
+            }
+            else if (tagRequesteds.ContainsKey(v))
+            {
+                listRecipeTagCodes.Add(tagRequesteds[v].Code);
+            }
+            else {
+                additionTagValues.Add(value);
+            }
+        }
+        foreach (var value in additionTagValues)
+        {
+            if (!SpellUtility.IsCorrectSpell(value))
+            {
+                await Console.Out.WriteLineAsync($"Tag with value {value} is not valid to be added, so skip this value.");
+                continue;
+            }
+            listTagValueToBeAdded.Add(value);
+        }
 
-        //var tags = response.Message.Tags.Where(t => t.Status.ToString() == "Active").ToDictionary(t => t.Value);
+        if (listRecipeTagCodes.Count != 0)
+        {
+            _logger.LogInformation("upadte tag");
+            await _serviceBus.Publish(new UpdateRecipeTagsEvent
+            {
+                RecipeId = recipeId,
+                TagCodes = listRecipeTagCodes,
+            });
+        }
 
-        //var tagRequesteds = response.Message.Tags.Where(t => t.Status.ToString() != "Active").ToDictionary(t => t.Value);
+        if (listTagValueToBeAdded.Count != 0)
+        {
+            _logger.LogInformation("Add tag");
+            _logger.LogInformation(JsonConvert.SerializeObject(listTagValueToBeAdded, Formatting.Indented));
+            await _serviceBus.Publish(new RequestAddTagsEvent
+            {
+                RecipeId = recipeId,
+                Requests = listTagValueToBeAdded,
+            });
 
-        //foreach (var value in tagValues)
-        //{
-        //    if(!tags.ContainsKey(value))
-        //    {
-        //        await Console.Out.WriteLineAsync($"Tag with value: {value} is not found, so skip this value.");
-        //        continue;
-        //    }
-        //    listRecipeTagCodes.Add(value);
-        //}
-
-
-        //foreach(var value in additionTagValues)
-        //{
-        //    if (!SpellUtility.IsCorrectSpell(value))
-        //    {
-        //        await Console.Out.WriteLineAsync($"Tag with value {value} is not valid to be added, so skip this value.");
-        //        continue;
-        //    }
-
-        //    var isSkip = false;
-        //    await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(tagRequesteds, Formatting.Indented));
-        //    foreach (var tagRequested in tagRequesteds)
-        //    {
-        //        if (tagRequested.Value.Value.ToLower() == value.ToLower()) {
-        //            await Console.Out.WriteLineAsync($"Tag with value {value} is requested, so skip this value.");
-        //            listRecipeTagCodes.Add(tagRequested.Value.Code);
-        //            isSkip = true;
-        //            break;
-        //        }
-        //    }
-
-        //    if(isSkip) continue;
-
-        //    listTagValueToBeAdded.Add(value);
-        //}
-
-        //if(listRecipeTagCodes.Count != 0)
-        //{
-        //    await Console.Out.WriteLineAsync("upadte tag");
-        //    await _serviceBus.Publish(new UpdateRecipeTagsEvent
-        //    {
-        //        RecipeId = recipeId,
-        //        TagCodes = listRecipeTagCodes,
-        //    });
-        //}
-
-        //if(listTagValueToBeAdded.Count != 0)
-        //{
-        //    await Console.Out.WriteLineAsync("Add tag");
-        //    await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(listTagValueToBeAdded, Formatting.Indented));
-        //    await _serviceBus.Publish(new RequestAddTagsEvent
-        //    {
-        //        RecipeId = recipeId,
-        //        Requests = listTagValueToBeAdded,
-        //    });
-
-        //}
-
-
-
+        }
     }
-
-    
 }

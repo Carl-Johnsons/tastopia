@@ -21,6 +21,7 @@ public class ValidateRecipeConsumer : IConsumer<ValidateRecipeEvent>
 
     public async Task Consume(ConsumeContext<ValidateRecipeEvent> context)
     {
+        await _recipeService.CheckRecipeAbuse(context.Message.RecipeId);
         await _recipeService.CheckRecipeTags(context.Message.RecipeId, context.Message.TagValues);
 
         _logger.LogInformation("Message acknowledged");

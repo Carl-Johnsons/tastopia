@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Contract.Common;
 using Contract.Constants;
 using Contract.DTOs.RecipeDTO;
 using Contract.Event.RecipeEvent;
