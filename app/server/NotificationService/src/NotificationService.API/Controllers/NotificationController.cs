@@ -52,6 +52,38 @@ public partial class NotificationController : BaseApiController
         return Created();
     }
 
+    [HttpDelete("expo-push-token/android")]
+    public async Task<IActionResult> RemoveExpoAndroidPushToken()
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new RemoveExpoPushTokenCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Type = Domain.Constants.DeviceType.ANDROID
+        });
+        result.ThrowIfFailure();
+
+        return NoContent();
+    }
+
+    [HttpDelete("expo-push-token/ios")]
+    public async Task<IActionResult> RemoveExpoIOSPushToken()
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new RemoveExpoPushTokenCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Type = Domain.Constants.DeviceType.IOS
+        });
+        result.ThrowIfFailure();
+
+        return NoContent();
+    }
+
     [HttpPost("notify/push")]
     public async Task<IActionResult> NotifyPush([FromBody] NotifyDTO dto)
     {

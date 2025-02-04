@@ -51,6 +51,5 @@ public class PushNotificationCommandHandler : IRequestHandler<PushNotificationCo
         });
 
         return Result.Success();
-
     }
 }
