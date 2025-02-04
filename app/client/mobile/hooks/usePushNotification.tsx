@@ -1,4 +1,20 @@
-import * as Notifications from "expo-notifications";
+import {
+  AndroidImportance,
+  EventSubscription,
+  ExpoPushToken,
+  Notification,
+  NotificationResponse,
+  PermissionStatus,
+  addNotificationReceivedListener,
+  addNotificationResponseReceivedListener,
+  getExpoPushTokenAsync,
+  getLastNotificationResponseAsync,
+  getPermissionsAsync,
+  removeNotificationSubscription,
+  requestPermissionsAsync,
+  setNotificationChannelAsync,
+  setNotificationHandler
+} from "expo-notifications";
 import Constants from "expo-constants";
 import { Alert, Platform } from "react-native";
 import { useEffect, useRef, useState } from "react";
@@ -6,63 +22,62 @@ import { protectedAxiosInstance } from "@/constants/host";
 import { useRouter } from "expo-router";
 
 export interface PushNotificationState {
-  notification?: Notifications.Notification;
-  expoPushToken?: Notifications.ExpoPushToken;
+  notification?: Notification;
+  expoPushToken?: ExpoPushToken;
   registerForPushNotificationAsync: () => Promise<void>;
 }
 
 export const usePushNotification = (): PushNotificationState => {
   const router = useRouter();
 
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldPlaySound: false,
-      shouldShowAlert: true,
-      shouldSetBadge: false
-    })
-  });
+  const [expoPushToken, setExpoPushToken] = useState<ExpoPushToken | undefined>();
+  const [notification, setNotification] = useState<Notification | undefined>();
 
-  const [expoPushToken, setExpoPushToken] = useState<
-    Notifications.ExpoPushToken | undefined
-  >();
-  const [notification, setNotification] = useState<
-    Notifications.Notification | undefined
-  >();
-
-  const notificationListener = useRef<Notifications.EventSubscription>();
-  const responseListener = useRef<Notifications.EventSubscription>();
+  const notificationListener = useRef<EventSubscription>();
+  const responseListener = useRef<EventSubscription>();
 
   const registerForPushNotificationAsync = async () => {
+    setNotificationHandler({
+      handleNotification: async () => ({
+        shouldPlaySound: true,
+        shouldShowAlert: true,
+        shouldSetBadge: true
+      })
+    });
+
     let token;
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    const { status: existingStatus } = await getPermissionsAsync();
     let finalStatus = existingStatus;
 
-    // Request permission again if the status is not granted
-    if (existingStatus !== Notifications.PermissionStatus.GRANTED) {
-      const { status } = await Notifications.requestPermissionsAsync();
+    if (existingStatus !== PermissionStatus.GRANTED) {
+      const { status } = await requestPermissionsAsync();
       finalStatus = status;
     }
 
-    if (finalStatus !== Notifications.PermissionStatus.GRANTED) {
-      Alert.alert("In order to have notification, you have to allowed this permission");
+    if (finalStatus !== PermissionStatus.GRANTED) {
+      Alert.alert(
+        "In order to receive notification, you have to allow the app to send notification."
+      );
       return;
     }
-    token = await Notifications.getExpoPushTokenAsync({
-      projectId: Constants.expoConfig?.extra?.eas?.projectId
-    });
+
+    const projectId =
+      Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+
+    token = await getExpoPushTokenAsync({ projectId });
 
     if (Platform.OS === "android") {
-      Notifications.setNotificationChannelAsync("default", {
-        name: "default",
-        importance: Notifications.AndroidImportance.MAX,
+      await setNotificationChannelAsync("default", {
+        name: "Regular Notifications",
+        importance: AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
         lightColor: "#FF231F7C"
       });
+
       try {
         await protectedAxiosInstance.post("api/notification/expo-push-token/android", {
           expoPushToken: token.data
         });
-        console.log("Register user with push token successfully");
       } catch (err) {
         console.error(
           `Register user with expo push token ${expoPushToken} failed, Please try again`
@@ -70,31 +85,42 @@ export const usePushNotification = (): PushNotificationState => {
         console.error(err);
       }
     }
+
     setExpoPushToken(token);
   };
+
   useEffect(() => {
-    notificationListener.current = Notifications.addNotificationReceivedListener(
-      notification => {
-        setNotification(notification);
+    notificationListener.current = addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    const handleNotificationResponseReceived = (response: NotificationResponse) => {
+      const data = response.notification.request.content.data;
+      const { redirectUri, params } = data;
+
+      if (redirectUri) {
+        router.push({
+          pathname: redirectUri,
+          params: params
+        });
       }
+    };
+
+    getLastNotificationResponseAsync().then(res => {
+      if (res) {
+        handleNotificationResponseReceived(res);
+      }
+    });
+
+    responseListener.current = addNotificationResponseReceivedListener(
+      handleNotificationResponseReceived
     );
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(
-      response => {
-        const data = response.notification.request.content.data;
-        console.log({ data });
-
-        if (data.redirectUri) {
-          router.push({
-            pathname: data.redirectUri,
-            params: data.params
-          });
-        }
-      }
-    );
     return () => {
-      Notifications.removeNotificationSubscription(notificationListener.current!);
-      Notifications.removeNotificationSubscription(responseListener.current!);
+      notificationListener.current &&
+        removeNotificationSubscription(notificationListener.current);
+      responseListener.current &&
+        removeNotificationSubscription(responseListener.current);
     };
   }, []);
 
