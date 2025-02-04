@@ -3,19 +3,27 @@ import { forwardRef, ReactNode, useMemo } from "react";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
-import { AntDesign, Feather, Octicons } from "@expo/vector-icons";
+import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { selectUserId } from "@/slices/user.slice";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   id: string;
+  authorId: string;
   title: string;
 };
 
 const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
   const { c } = useColorizer();
   const { black, white } = colors;
+  const currentUserId = selectUserId();
+  const { t } = useTranslation("component");
 
-  const snapPoints = useMemo(() => ["20%"], []);
+  const isCreatedByCurrentUser = useMemo(
+    () => currentUserId === props.authorId,
+    [currentUserId, props.authorId]
+  );
 
   const onPressEdit = () => {
     router.push({
@@ -24,6 +32,8 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
     });
   };
 
+  const onPressDelete = () => {};
+
   const onPressShare = () => {};
 
   const onPressReport = () => {};
@@ -31,7 +41,6 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
     <BottomSheet
       ref={ref}
       index={-1}
-      snapPoints={snapPoints}
       enablePanDownToClose={true}
       handleIndicatorStyle={{
         backgroundColor: c(colors.black.DEFAULT, colors.white.DEFAULT)
@@ -39,24 +48,46 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
       backgroundStyle={{
         backgroundColor: c(colors.white.DEFAULT, colors.black[100])
       }}
-      backdropComponent={props => <BottomSheetBackdrop {...props} />}
+      backdropComponent={props => (
+        <BottomSheetBackdrop
+          {...props}
+          disappearsOnIndex={-1}
+          appearsOnIndex={0}
+          pressBehavior='close'
+        />
+      )}
     >
       <BottomSheetView>
         <View className='mt-2 px-5 pb-4'>
           <View>
+            {isCreatedByCurrentUser && (
+              <BottomSheetItem
+                title={t("settingRecipe.editRecipe")}
+                icon={
+                  <AntDesign
+                    name='edit'
+                    size={20}
+                    color={c(black.DEFAULT, white.DEFAULT)}
+                  />
+                }
+                onPress={onPressEdit}
+              />
+            )}
+            {isCreatedByCurrentUser && (
+              <BottomSheetItem
+                title={t("settingRecipe.deleteRecipe")}
+                icon={
+                  <MaterialIcons
+                    name='delete-outline'
+                    size={24}
+                    color={c(black.DEFAULT, white.DEFAULT)}
+                  />
+                }
+                onPress={onPressDelete}
+              />
+            )}
             <BottomSheetItem
-              title='Edit post'
-              icon={
-                <AntDesign
-                  name='edit'
-                  size={20}
-                  color={c(black.DEFAULT, white.DEFAULT)}
-                />
-              }
-              onPress={onPressEdit}
-            />
-            <BottomSheetItem
-              title='Share'
+              title={t("settingRecipe.share")}
               icon={
                 <AntDesign
                   name='sharealt'
@@ -66,17 +97,19 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
               }
               onPress={onPressShare}
             />
-            <BottomSheetItem
-              title='Report this post'
-              icon={
-                <Octicons
-                  name='report'
-                  size={20}
-                  color={c(black.DEFAULT, white.DEFAULT)}
-                />
-              }
-              onPress={onPressReport}
-            />
+            {!isCreatedByCurrentUser && (
+              <BottomSheetItem
+                title={t("settingRecipe.reportRecipe")}
+                icon={
+                  <Octicons
+                    name='report'
+                    size={20}
+                    color={c(black.DEFAULT, white.DEFAULT)}
+                  />
+                }
+                onPress={onPressReport}
+              />
+            )}
           </View>
         </View>
       </BottomSheetView>

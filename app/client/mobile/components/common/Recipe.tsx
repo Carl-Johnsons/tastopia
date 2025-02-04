@@ -12,6 +12,7 @@ import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 const Recipe = ({
   bottomSheetRef,
   setCurrentRecipeId,
+  setCurrentAuthorId,
   id,
   authorId,
   recipeImgUrl,
@@ -25,6 +26,7 @@ const Recipe = ({
 }: RecipeType & {
   bottomSheetRef: RefObject<BottomSheetMethods>;
   setCurrentRecipeId: (id: string) => void;
+  setCurrentAuthorId: (id: string) => void;
 }) => {
   const router = useRouter();
   const { c } = useColorizer();
@@ -32,11 +34,12 @@ const Recipe = ({
   const handleOnPress = () => {
     router.push({
       pathname: "/(protected)/community/[id]",
-      params: { id }
+      params: { id, authorId }
     });
   };
   const handleTouchMenu = () => {
     setCurrentRecipeId(id);
+    setCurrentAuthorId(authorId);
     bottomSheetRef.current?.expand();
   };
 
