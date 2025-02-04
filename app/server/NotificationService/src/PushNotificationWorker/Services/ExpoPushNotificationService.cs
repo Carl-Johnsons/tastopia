@@ -17,7 +17,7 @@ public class ExpoPushNotificationService : IPushNotificationService
         _logger = logger;
     }
 
-    public async Task Notify(List<string> expoPushTokens, string message, string? data)
+    public async Task Notify(List<string> expoPushTokens, string message, string? data, string? channelId, string? title)
     {
         var pushTicketReq = new PushTicketRequest()
         {
@@ -25,6 +25,8 @@ public class ExpoPushNotificationService : IPushNotificationService
             PushBadgeCount = 7,
             PushBody = message,
             PushData = data,
+            PushChannelId = channelId,
+            PushTitle = title
         };
         _logger.LogInformation("Request ticket:\n" + JsonConvert.SerializeObject(pushTicketReq, Formatting.Indented));
         var result = await _pushApiClient.PushSendAsync(pushTicketReq);

@@ -14,8 +14,9 @@ public record PushNotificationCommand : IRequest<Result>
     public string Message { get; init; } = null!;
     public List<Guid> RecipientIds { get; init; } = null!;
     public object? Data { get; init; } = null!;
+    public string? Title { get; set; } = null!;
+    public string? ChannelId { get; set; } = null!;
 }
-
 
 public class PushNotificationCommandHandler : IRequestHandler<PushNotificationCommand, Result>
 {
@@ -44,7 +45,9 @@ public class PushNotificationCommandHandler : IRequestHandler<PushNotificationCo
         {
             ExpoPushTokens = tokens,
             Message = request.Message,
-            JsonData = JsonConvert.SerializeObject(request.Data)
+            JsonData = JsonConvert.SerializeObject(request.Data),
+            ChannelId = request.ChannelId,
+            Title = request.Title,
         });
 
         return Result.Success();

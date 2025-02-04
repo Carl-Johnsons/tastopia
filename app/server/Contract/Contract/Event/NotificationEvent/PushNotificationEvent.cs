@@ -13,4 +13,6 @@ public class PushNotificationEvent
     public string Message { get; set; } = null!;
     [JsonProperty("data")]
     public string? JsonData { get; set; } = null!;
+    public string? ChannelId { get; set; } = null!;
+    public string? Title { get; set; } = null!;
 }

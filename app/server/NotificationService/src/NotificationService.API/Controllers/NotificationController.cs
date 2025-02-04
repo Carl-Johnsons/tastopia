@@ -61,7 +61,9 @@ public partial class NotificationController : BaseApiController
         {
             Message = dto.Message,
             RecipientIds = dto.RecipientIds,
-            Data = dto.Data
+            Data = dto.Data,
+            Title = dto.Title,
+            ChannelId = dto.ChannelId,
         });
         result.ThrowIfFailure();
 
@@ -77,7 +79,7 @@ public partial class NotificationController : BaseApiController
         {
             AccountId = Guid.Parse(subjectId!)
         });
-        
+
         result.ThrowIfFailure();
 
         return Ok(result.Value);
