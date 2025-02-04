@@ -1,12 +1,12 @@
 import { Text, TouchableHighlight, View } from "react-native";
-import { forwardRef, ReactNode, useMemo } from "react";
+import { forwardRef, ReactNode } from "react";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
 import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { selectUserId } from "@/slices/user.slice";
 import { useTranslation } from "react-i18next";
+import useIsOwner from "@/hooks/auth/useIsOwner";
 
 type Props = {
   id: string;
@@ -17,18 +17,14 @@ type Props = {
 const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
   const { c } = useColorizer();
   const { black, white } = colors;
-  const currentUserId = selectUserId();
   const { t } = useTranslation("component");
 
-  const isCreatedByCurrentUser = useMemo(
-    () => currentUserId === props.authorId,
-    [currentUserId, props.authorId]
-  );
+  const isCreatedByCurrentUser = useIsOwner(props.authorId);
 
   const onPressEdit = () => {
     router.push({
       pathname: "/(protected)/community/update-recipe",
-      params: { id: props.id }
+      params: { id: props.id, authorId: props.authorId }
     });
   };
 

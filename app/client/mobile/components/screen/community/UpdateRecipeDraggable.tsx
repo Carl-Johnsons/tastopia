@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction, useCallback, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useCallback } from "react";
 import { Text, View, TouchableWithoutFeedback } from "react-native";
 import DraggableFlatList, {
   RenderItemParams,
@@ -6,24 +6,25 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { Entypo } from "@expo/vector-icons";
 import { useTranslation } from "react-i18next";
-import DraggableIngredient from "./DraggableIngredient";
+import DraggableIngredient from "./CreateIngredient";
 import uuid from "react-native-uuid";
-import DraggableStep from "./DraggableStep";
+import DraggableStep from "./CreateDraggableStep";
 import TagList from "./TagList";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import UpdateDraggableStep from "./UpdateDraggableStep";
 
 type DraggableProps = {
   ingredients: CreateIngredientType[];
   setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
-  steps: CreateStepType[];
-  setSteps: Dispatch<SetStateAction<CreateStepType[]>>;
+  steps: UpdateStepType[];
+  setSteps: Dispatch<SetStateAction<UpdateStepType[]>>;
   selectedTags: SelectedTag[];
   setSelectedTags: Dispatch<SetStateAction<SelectedTag[]>>;
   form: ReactNode;
 };
 
-export default function CreateRecipeDraggable({
+export default function UpdateRecipeDraggable({
   ingredients,
   setIngredients,
   steps,
@@ -52,10 +53,10 @@ export default function CreateRecipeDraggable({
   );
 
   const renderStepItem = useCallback(
-    ({ item, drag, isActive }: RenderItemParams<CreateStepType>) => {
+    ({ item, drag, isActive }: RenderItemParams<UpdateStepType>) => {
       return (
         <ScaleDecorator>
-          <DraggableStep
+          <UpdateDraggableStep
             key={item.key}
             stepKey={item.key}
             content={item.content}
@@ -74,7 +75,7 @@ export default function CreateRecipeDraggable({
   };
 
   const handleAddMoreStep = () => {
-    setSteps(prev => [...prev, { key: uuid.v4(), content: "", images: [] }]);
+    setSteps(prev => [...prev, { key: uuid.v4(), content: "", images: {} }]);
   };
 
   return (

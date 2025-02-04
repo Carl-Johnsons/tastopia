@@ -10,6 +10,8 @@ import settingModalEn from "../locales/en/menu/settingModal.json";
 import settingModalVi from "../locales/vi/menu/settingModal.json";
 import createRecipeEn from "../locales/en/createRecipe.json";
 import createRecipeVi from "../locales/vi/createRecipe.json";
+import updateRecipeEn from "../locales/en/updateRecipe.json";
+import updateRecipeVi from "../locales/vi/updateRecipe.json";
 import searchEn from "../locales/en/search.json";
 import searchVi from "../locales/vi/search.json";
 import componentEn from "../locales/en/component.json";
@@ -40,6 +42,8 @@ export default {
   settingModalVi,
   createRecipeEn,
   createRecipeVi,
+  updateRecipeEn,
+  updateRecipeVi,
   searchEn,
   searchVi,
   componentEn,

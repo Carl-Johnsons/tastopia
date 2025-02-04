@@ -1,6 +1,6 @@
 import { StyleSheet, View, TextInput, TouchableOpacity, Alert } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
 import useDebounce from "@/hooks/useDebounce";
@@ -13,7 +13,7 @@ interface DraggableIngredientProps {
   setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
 }
 
-const DraggableIngredient = ({
+const CreateIngredient = ({
   ingredientKey,
   value,
   setIngredients
@@ -26,17 +26,17 @@ const DraggableIngredient = ({
   const [isFocused, setIsFocused] = useState(false);
   const debouncedValue = useDebounce(inputValue, 800);
 
-  const handleChangeText = (text: string) => {
+  const handleChangeText = useCallback((text: string) => {
     setInputValue(text);
-  };
+  }, []);
 
-  const handleRemoveItem = (key: string) => {
+  const handleRemoveItem = useCallback((key: string) => {
     setIngredients(prev => {
       return prev.filter(item => {
         return item.key !== key;
       });
     });
-  };
+  }, []);
 
   const confirmRemoveItem = () => {
     if (inputValue !== "") {
@@ -103,7 +103,7 @@ const DraggableIngredient = ({
   );
 };
 
-export default DraggableIngredient;
+export default CreateIngredient;
 
 const styles = StyleSheet.create({
   container: {
