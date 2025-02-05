@@ -2,6 +2,7 @@
 using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
 using MongoDB.Driver;
+using NotificationService.Domain.Constants;
 using NotificationService.Domain.Errors;
 using NotificationService.Domain.Responses;
 using SmartFormat;
@@ -9,20 +10,24 @@ using UserProto;
 
 namespace NotificationService.Application.Notifications.Queries;
 
-public record GetNotificationsQuery : IRequest<Result<PaginatedNotificationListResponse>>
+public record GetNotificationsQuery : IRequest<Result<PaginatedNotificationListResponse?>>
 {
     public Guid AccountId { get; set; }
     public string Language { get; init; } = "en";
+    public int? Skip { get; init; } = 0;
 }
 
-public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificationsQuery, Result<PaginatedNotificationListResponse>>
+public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificationsQuery, Result<PaginatedNotificationListResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
     private readonly IMapper _mapper;
-    private readonly IPaginateDataUtility<NotificationsResponse, AdvancePaginatedMetadata> _paginateDataUtility;
+    private readonly IPaginateDataUtility<Notification, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public GetNotificationsQueryHandler(IApplicationDbContext context, GrpcUser.GrpcUserClient grpcUserClient, IMapper mapper, IPaginateDataUtility<NotificationsResponse, AdvancePaginatedMetadata> paginateDataUtility)
+    public GetNotificationsQueryHandler(IApplicationDbContext context,
+                                        GrpcUser.GrpcUserClient grpcUserClient,
+                                        IMapper mapper,
+                                        IPaginateDataUtility<Notification, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
         _grpcUserClient = grpcUserClient;
@@ -30,7 +35,7 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
         _paginateDataUtility = paginateDataUtility;
     }
 
-    public async Task<Result<PaginatedNotificationListResponse>> Handle(GetNotificationsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedNotificationListResponse?>> Handle(GetNotificationsQuery request, CancellationToken cancellationToken)
     {
         var database = _context.GetDatabase();
         var nQuery = database.GetCollection<Notification>(nameof(Notification))
@@ -58,9 +63,17 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                 }
             );
 
-        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(notificationQuery.ToList(), Newtonsoft.Json.Formatting.Indented));
+        var totalPage = (notificationQuery.Count() / NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT) + 1;
 
-        var actorIdSets = notificationQuery.SelectMany(n => n.PrimaryActors.Concat(n.SecondaryActors)
+        var paginatedNotificationQuery = _paginateDataUtility.PaginateQuery(notificationQuery, new PaginateParam
+        {
+            Offset = request.Skip * NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT,
+            Limit = NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT
+        });
+
+        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(paginatedNotificationQuery.ToList(), Newtonsoft.Json.Formatting.Indented));
+
+        var actorIdSets = paginatedNotificationQuery.SelectMany(n => n.PrimaryActors.Concat(n.SecondaryActors)
                                                                   .Select(merge => merge.ActorId.ToString()))
                                   .ToHashSet();
 
@@ -82,9 +95,9 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
         }
         if (res == null || mapUsers.Count != actorIdSets.Count)
         {
-            return Result<PaginatedNotificationListResponse>.Failure(NotificationErrors.NotFound, "Actor not found");
+            return Result<PaginatedNotificationListResponse?>.Failure(NotificationErrors.NotFound, "Actor not found");
         }
-        var responses = notificationQuery
+        var responses = paginatedNotificationQuery
                                 .ToList()
                                 .Select(n =>
                                 {
@@ -128,12 +141,12 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
             PaginatedData = responses!,
             Metadata = new AdvancePaginatedMetadata
             {
-                HasNextPage = true,
-                TotalPage = 1
+                HasNextPage = request.Skip >= totalPage,
+                TotalPage = totalPage
             }
         };
 
-        return Result<PaginatedNotificationListResponse>.Success(paginatedResponse);
+        return Result<PaginatedNotificationListResponse?>.Success(paginatedResponse);
     }
 
 }

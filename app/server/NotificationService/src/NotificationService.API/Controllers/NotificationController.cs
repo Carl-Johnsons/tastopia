@@ -103,13 +103,15 @@ public partial class NotificationController : BaseApiController
     }
 
     [HttpGet()]
-    public async Task<IActionResult> GetNotifications()
+    public async Task<IActionResult> GetNotifications(int? skip, string? lang)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new GetNotificationsQuery
         {
-            AccountId = Guid.Parse(subjectId!)
+            AccountId = Guid.Parse(subjectId!),
+            Skip = skip,
+            Language = lang ?? "en"
         });
 
         result.ThrowIfFailure();
