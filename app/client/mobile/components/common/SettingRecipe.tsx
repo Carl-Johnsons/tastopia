@@ -82,7 +82,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
                 onPress={onPressDelete}
               />
             )}
-            <BottomSheetItem
+            {/* <BottomSheetItem
               title={t("settingRecipe.share")}
               icon={
                 <AntDesign
@@ -92,7 +92,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
                 />
               }
               onPress={onPressShare}
-            />
+            /> */}
             {!isCreatedByCurrentUser && (
               <BottomSheetItem
                 title={t("settingRecipe.reportRecipe")}

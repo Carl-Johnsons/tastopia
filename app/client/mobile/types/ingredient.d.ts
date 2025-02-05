@@ -10,7 +10,7 @@ type CreateStepType = {
 };
 
 type UpdateImage = {
-  defaultImages?: string[]; // public url of images api return
+  defaultImages?: string[] | null; // public url of images api return
   additionalImages?: ImageFileType[];
   deleteUrls?: string[];
 };

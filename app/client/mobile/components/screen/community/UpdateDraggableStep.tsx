@@ -77,13 +77,7 @@ const UpdateDraggableStep = ({
     setSteps(prevSteps =>
       prevSteps.map(step =>
         step.key === stepKey
-          ? {
-              ...step,
-              images: {
-                ...step.images,
-                additionalImages: files
-              }
-            }
+          ? { ...step, images: { ...step.images, additionalImages: files } }
           : step
       )
     );
@@ -171,6 +165,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   inputContainer: {
+    marginTop: 8,
     flex: 1,
     gap: 10,
     marginHorizontal: 8,

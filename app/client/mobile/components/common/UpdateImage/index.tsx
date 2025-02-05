@@ -1,7 +1,6 @@
-import React, { memo, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
   Text,
   View,
@@ -22,7 +21,7 @@ import { useTranslation } from "react-i18next";
 import useDarkMode from "@/hooks/useDarkMode";
 import OutsidePressHandler from "react-native-outside-press";
 
-type UploadImageProps = {
+type UpdateImageProps = {
   /**
    * Array of image files to set as default images
    */
@@ -69,7 +68,7 @@ type UploadImageProps = {
   props?: ImagePicker.ImagePickerOptions;
 };
 
-const UploadImage = ({
+const UpdateImage = ({
   images,
   onFileChange,
   isDisabled = false,
@@ -79,7 +78,7 @@ const UploadImage = ({
   innerImageClassName,
   selectionLimit = 5,
   props
-}: UploadImageProps) => {
+}: UpdateImageProps) => {
   const isDarkMode = useDarkMode();
   const { t } = useTranslation("component");
   const [startUploadImage, setStartUploadImage] = useState(false);
@@ -245,4 +244,4 @@ const UploadImage = ({
   );
 };
 
-export default UploadImage;
+export default UpdateImage;

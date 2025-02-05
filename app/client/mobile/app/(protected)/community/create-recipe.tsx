@@ -203,7 +203,7 @@ const CreateRecipe = () => {
     <SafeAreaView
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
-      <View className={`size-full flex-col`}>
+      <View className='size-full flex-col'>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -258,115 +258,112 @@ const CreateRecipe = () => {
               </View>
             )}
 
-            <View>
-              <FormProvider {...formCreateRecipe}>
-                <DraggableFlatList
-                  key={"draggable-flat-list-create-steps"}
-                  data={steps}
-                  onDragEnd={({ data }) => setSteps(data)}
-                  keyExtractor={item => item.key}
-                  renderItem={renderStepItem}
-                  showsVerticalScrollIndicator={false}
-                  ListHeaderComponent={() => {
-                    return (
-                      <View className='gap-4'>
-                        <CreateFormHeader
-                          images={images}
-                          onFileChange={onFileChange}
-                          formControl={formControl}
-                          errors={errors}
-                        />
+            <FormProvider {...formCreateRecipe}>
+              <DraggableFlatList
+                key={"draggable-flat-list-create-steps"}
+                data={steps}
+                style={{ height: "100%" }}
+                onDragEnd={({ data }) => setSteps(data)}
+                keyExtractor={item => item.key}
+                renderItem={renderStepItem}
+                showsVerticalScrollIndicator={false}
+                ListHeaderComponent={() => {
+                  return (
+                    <View className='gap-4'>
+                      <CreateFormHeader
+                        images={images}
+                        onFileChange={onFileChange}
+                        formControl={formControl}
+                        errors={errors}
+                      />
 
-                        {/* Ingredient */}
-                        <View>
-                          <FlatList
-                            scrollEnabled={false}
-                            key={"draggable-flat-list-create-ingredients"}
-                            data={ingredients}
-                            keyExtractor={item => item.key}
-                            renderItem={({ item }) => (
-                              <CreateIngredient
-                                key={item.key}
-                                ingredientKey={item.key}
-                                value={item.value}
-                                setIngredients={setIngredients}
-                              />
-                            )}
-                            showsVerticalScrollIndicator={false}
-                            ListHeaderComponent={() => {
-                              return (
-                                <Text className='body-semibold text-black_white mb-2'>
-                                  {t("formTitle.ingredients")}
-                                </Text>
-                              );
-                            }}
-                            ListFooterComponent={() => {
-                              return (
-                                <View className='h-full flex-1'>
-                                  <View className='flex-center mt-2'>
-                                    <TouchableWithoutFeedback
-                                      onPress={handleAddMoreIngredient}
-                                    >
-                                      <View className='flex-center flex-row gap-1'>
-                                        <Entypo
-                                          name='plus'
-                                          size={24}
-                                          color={c(black.DEFAULT, white.DEFAULT)}
-                                        />
-                                        <Text className='body-semibold text-black_white'>
-                                          {t("formTitle.ingredients")}
-                                        </Text>
-                                      </View>
-                                    </TouchableWithoutFeedback>
-                                  </View>
-                                </View>
-                              );
-                            }}
-                          />
-                        </View>
-
-                        <View className='mt-4'>
-                          <Text className='body-semibold text-black_white mb-2'>
-                            {t("formTitle.method")}
-                          </Text>
-                        </View>
-                      </View>
-                    );
-                  }}
-                  ListFooterComponent={() => {
-                    return (
+                      {/* Ingredient */}
                       <View>
-                        <View className='flex-center mt-2'>
-                          <TouchableWithoutFeedback onPress={handleAddMoreStep}>
-                            <View className='flex-center flex-row gap-1'>
-                              <Entypo
-                                name='plus'
-                                size={24}
-                                color={c(black.DEFAULT, white.DEFAULT)}
-                              />
-                              <Text className='body-semibold text-black_white'>
-                                {t("formTitle.step")}
+                        <FlatList
+                          scrollEnabled={false}
+                          key={"draggable-flat-list-create-ingredients"}
+                          data={ingredients}
+                          keyExtractor={item => item.key}
+                          renderItem={({ item }) => (
+                            <CreateIngredient
+                              key={item.key}
+                              ingredientKey={item.key}
+                              value={item.value}
+                              setIngredients={setIngredients}
+                            />
+                          )}
+                          showsVerticalScrollIndicator={false}
+                          ListHeaderComponent={() => {
+                            return (
+                              <Text className='body-semibold text-black_white mb-2'>
+                                {t("formTitle.ingredients")}
                               </Text>
-                            </View>
-                          </TouchableWithoutFeedback>
-                        </View>
-
-                        {/* Tag */}
-                        <View className='mt-4'>
-                          <Text className='body-semibold text-black_white mb-2'>
-                            {t("formTitle.tag")}
-                          </Text>
-                          <TagList
-                            selectedTags={selectedTags}
-                            setSelectedTags={setSelectedTags}
-                          />
-                        </View>
+                            );
+                          }}
+                          ListFooterComponent={() => {
+                            return (
+                              <View className='flex-center mt-2'>
+                                <TouchableWithoutFeedback
+                                  onPress={handleAddMoreIngredient}
+                                >
+                                  <View className='flex-center flex-row gap-1'>
+                                    <Entypo
+                                      name='plus'
+                                      size={24}
+                                      color={c(black.DEFAULT, white.DEFAULT)}
+                                    />
+                                    <Text className='body-semibold text-black_white'>
+                                      {t("formTitle.ingredients")}
+                                    </Text>
+                                  </View>
+                                </TouchableWithoutFeedback>
+                              </View>
+                            );
+                          }}
+                        />
                       </View>
-                    );
-                  }}
-                />
-              </FormProvider>
-            </View>
+
+                      <View className='mt-4'>
+                        <Text className='body-semibold text-black_white mb-2'>
+                          {t("formTitle.method")}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                }}
+                ListFooterComponent={() => {
+                  return (
+                    <View>
+                      <View className='flex-center mt-2'>
+                        <TouchableWithoutFeedback onPress={handleAddMoreStep}>
+                          <View className='flex-center flex-row gap-1'>
+                            <Entypo
+                              name='plus'
+                              size={24}
+                              color={c(black.DEFAULT, white.DEFAULT)}
+                            />
+                            <Text className='body-semibold text-black_white'>
+                              {t("formTitle.step")}
+                            </Text>
+                          </View>
+                        </TouchableWithoutFeedback>
+                      </View>
+
+                      {/* Tag */}
+                      <View className='mt-4'>
+                        <Text className='body-semibold text-black_white mb-2'>
+                          {t("formTitle.tag")}
+                        </Text>
+                        <TagList
+                          selectedTags={selectedTags}
+                          setSelectedTags={setSelectedTags}
+                        />
+                      </View>
+                    </View>
+                  );
+                }}
+              />
+            </FormProvider>
           </View>
         </KeyboardAvoidingView>
       </View>
@@ -374,4 +371,4 @@ const CreateRecipe = () => {
   );
 };
 
-export default memo(CreateRecipe);
+export default CreateRecipe;
