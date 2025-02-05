@@ -30,7 +30,7 @@ public class GetRecipeStepsQueryHandler : IRequestHandler<GetRecipeStepsQuery, R
         }
 
         var recipe = await _context.Recipes
-                .SingleOrDefaultAsync(r => r.Id == request.RecipeId);
+                .SingleOrDefaultAsync(r => r.Id == request.RecipeId && r.IsActive == true);
 
         if (recipe == null)
         {

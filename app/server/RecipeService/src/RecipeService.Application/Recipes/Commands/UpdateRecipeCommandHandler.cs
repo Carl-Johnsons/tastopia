@@ -114,11 +114,13 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                 files = response.Files;
                 rollbaclUrls = response.Files.Select(f => f.Url).ToList();
             }
-            await _serviceBus.Publish(new DeleteMultipleFileEvent
+            if(deleteUrls != null && deleteUrls.Count != 0)
             {
-                DeleteUrl = deleteUrls
-            });
-
+                await _serviceBus.Publish(new DeleteMultipleFileEvent
+                {
+                    DeleteUrl = deleteUrls
+                });
+            }
             recipe.Serves = request.Serves;
             recipe.CookTime = request.CookTime;
             recipe.Title = request.Title;
