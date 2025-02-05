@@ -1,5 +1,4 @@
-﻿using Contract.Event.TrackingEvent;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
@@ -10,22 +9,19 @@ using UserProto;
 
 namespace RecipeService.Application.Recipes.Queries;
 
-public class GetRecipeDetailQuery : IRequest<Result<RecipeDetailsResponse?>>
+public class GetRecipeDetailForServerQuery : IRequest<Result<RecipeDetailsResponse?>>
 {
     [Required]
     public Guid RecipeId { get; init; }
-
-    [Required]
-    public Guid AccountId { get; init; }
 }
 
-public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery, Result<RecipeDetailsResponse?>>
+public class GetRecipeDetailForServerQueryHandler : IRequestHandler<GetRecipeDetailForServerQuery, Result<RecipeDetailsResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IServiceBus _serviceBus;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
-    public GetRecipeDetailQueryHandler(IApplicationDbContext context,
+    public GetRecipeDetailForServerQueryHandler(IApplicationDbContext context,
                         GrpcUser.GrpcUserClient grpcUserClient,
                         IServiceBus serviceBus)
     {
@@ -34,18 +30,17 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
         _serviceBus = serviceBus;
     }
 
-    public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailQuery request, CancellationToken cancellationToken)
+    public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailForServerQuery request, CancellationToken cancellationToken)
     {
-        var accountId = request.AccountId;
         var recipeId = request.RecipeId;
 
-        if(accountId == Guid.Empty || recipeId == Guid.Empty)
+        if(recipeId == Guid.Empty)
         {
-            return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound, "RecipeId or AccountId not found.");
+            return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound, "RecipeId not found.");
         }
 
         var recipe = await _context.Recipes
-                .SingleOrDefaultAsync(r => r.Id == request.RecipeId && r.IsActive == true);
+                .SingleOrDefaultAsync(r => r.Id == request.RecipeId);
 
         if (recipe == null)
         {
@@ -57,18 +52,6 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
         {
             AccountId = recipe.AuthorId.ToString()
         });
-
-        var vote = recipe.RecipeVotes.Where(v => v.AccountId == accountId).SingleOrDefault();
-        var v = Vote.None;
-        if (vote != null) {
-            v = vote.IsUpvote ? Vote.Upvote : Vote.Downvote;
-        }
-        var bookmark = await _context.UserBookmarkRecipes.Where(bm => bm.AccountId == accountId && bm.RecipeId == recipeId).SingleOrDefaultAsync();
-
-        var isBookmark = false;
-        if(bookmark != null) {
-            isBookmark = true;
-        }
 
         var listString = recipe.Title.ToLower().Split(' ');
 
@@ -96,13 +79,10 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
         var tags = _context.GetDatabase()
             .GetCollection<Domain.Entities.Tag>(nameof(Domain.Entities.Tag))
             .AsQueryable();
-
         var tagQuery = from rt in recipeTags
                        join t in tags on rt.TagId equals t.Id
                        where rt.RecipeId == recipeId && t.Status == TagStatus.Active
                        select t;
-
-
         var result = new RecipeDetailsResponse
         {
             Recipe = recipe,
@@ -111,18 +91,8 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
             AuthorDisplayName = grpcResponse.DisplayName,
             AuthorNumberOfFollower = grpcResponse.TotalFollower ?? 0,
             similarRecipes = similarRecipes,
-            IsBookmarked = isBookmark,
-            Vote = v.ToString(),
             Tags = tagQuery.ToList()
         };
-
-        await _serviceBus.Publish(new CreateUserViewRecipeDetailEvent
-        {
-            AccountId = request.AccountId,
-            RecipeId = request.RecipeId,
-            ViewTime = DateTime.UtcNow,
-        });
-
         return Result<RecipeDetailsResponse?>.Success(result);
     }
 }

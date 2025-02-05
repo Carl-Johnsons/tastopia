@@ -54,15 +54,21 @@ public class CommunityRecipeService : IRecipeService
                 throw new Exception("Cannot get text abusive percent.");
             }
             var percent = float.Parse(result);
+            _logger.LogInformation("==================================================================");
+            _logger.LogInformation("Offensive percent: "+ result);
 
-            if(percent >= OffensiveTextCheckerConstants.OFFENSIVE_THRESHOLD)
+            if (percent < OffensiveTextCheckerConstants.OFFENSIVE_THRESHOLD)
             {
                 _logger.LogInformation($"Recipe with id: {recipeId} is valid.");
                 return;
             }
 
-            _logger.LogInformation($"Recipe with id: {recipeId} is invalid.");
-
+            _logger.LogInformation($"Recipe with id: {recipeId} is invalid so delete this recipe.");
+            await _serviceBus.Publish(new UpdateRecipeIsActiveEvent
+            {
+                RecipeId = recipeId,
+                IsActive = false,
+            });
         }
         catch (Exception ex) {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
@@ -86,7 +92,6 @@ public class CommunityRecipeService : IRecipeService
             _logger.LogError("Tags not found");
             throw new Exception("Tags not found");
         }
-        _logger.LogInformation(JsonConvert.SerializeObject(response.Tags, Formatting.Indented));
         var tags = new Dictionary<string, GrpcTagDTO>();
         var tagRequesteds = new Dictionary<string, GrpcTagDTO>();
         foreach (var t in response.Tags)
@@ -134,7 +139,6 @@ public class CommunityRecipeService : IRecipeService
         if (listTagValueToBeAdded.Count != 0)
         {
             _logger.LogInformation("Add tag");
-            _logger.LogInformation(JsonConvert.SerializeObject(listTagValueToBeAdded, Formatting.Indented));
             await _serviceBus.Publish(new RequestAddTagsEvent
             {
                 RecipeId = recipeId,
