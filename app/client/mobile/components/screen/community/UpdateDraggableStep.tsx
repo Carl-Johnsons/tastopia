@@ -73,11 +73,27 @@ const UpdateDraggableStep = ({
     }
   };
 
-  const onFileChange = (files: ImageFileType[]) => {
+  const onAddImage = (files: ImageFileType[]) => {
     setSteps(prevSteps =>
       prevSteps.map(step =>
         step.key === stepKey
           ? { ...step, images: { ...step.images, additionalImages: files } }
+          : step
+      )
+    );
+  };
+
+  const onDeleteImage = (deleteImageUrl: string) => {
+    setSteps(prevSteps =>
+      prevSteps.map(step =>
+        step.key === stepKey
+          ? {
+              ...step,
+              images: {
+                ...step.images,
+                deleteUrls: [...step.images.deleteUrls!, deleteImageUrl]
+              }
+            }
           : step
       )
     );
@@ -121,7 +137,8 @@ const UpdateDraggableStep = ({
         />
 
         <UpdateImage
-          onFileChange={onFileChange}
+          onAddImage={onAddImage}
+          onDeleteImage={onDeleteImage}
           selectionLimit={3}
           images={images}
         />

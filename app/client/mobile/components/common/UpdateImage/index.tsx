@@ -28,9 +28,14 @@ type UpdateImageProps = {
   images?: UpdateImage;
 
   /**
-   * Function to handle file change (should be setState function)
+   * Function to handle delete image
    */
-  onFileChange: (files: ImageFileType[]) => void;
+  onDeleteImage: (deleteImageUrl: string) => void;
+
+  /**
+   * Function to handle add image
+   */
+  onAddImage: (files: ImageFileType[]) => void;
 
   /**
    * Disable remove image
@@ -70,7 +75,8 @@ type UpdateImageProps = {
 
 const UpdateImage = ({
   images,
-  onFileChange,
+  onAddImage,
+  onDeleteImage,
   isDisabled = false,
   isMultiple = true,
   containerStyle,
@@ -83,7 +89,8 @@ const UpdateImage = ({
   const { t } = useTranslation("component");
   const [startUploadImage, setStartUploadImage] = useState(false);
   const [imageCount, setImageCount] = useState(0);
-  const [fileObjects, setFileObjects] = useState<ImageFileObject[]>([]);
+  const [defaultImages, setDefaultImages] = useState<string[]>();
+  const [fileObjects, setFileObjects] = useState<ImageFileObject[]>([]); // for add new images
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const selectedImageIdRef = useRef<string | null>(null);
@@ -138,7 +145,7 @@ const UpdateImage = ({
       const newFileObjects = [...(fileObjects || []), ...files];
       setStartUploadImage(true);
       setFileObjects(newFileObjects);
-      onFileChange(newFileObjects.map(file => file.file as ImageFileType));
+      onAddImage(newFileObjects.map(file => file.file as ImageFileType));
       setImageCount(prev => prev + files.length);
     }
   };
@@ -157,29 +164,62 @@ const UpdateImage = ({
   const handleRemoveImage = (id: string) => {
     const newFileObjects = fileObjects?.filter(file => file.id !== id);
     setFileObjects(newFileObjects);
-    onFileChange(newFileObjects!.map(file => file.file as ImageFileType));
+    setDefaultImages(prev => prev?.filter(imageUrl => imageUrl !== id));
+    onDeleteImage(id);
     setImageCount(prev => prev - 1);
     setSelectedImageId(null);
     selectedImageIdRef.current === null;
   };
 
-  // useEffect(() => {
-  //   if (images && images.length > 0) {
-  //     const initialFiles = images.map(image => ({
-  //       id: image.uri,
-  //       previewPath: image.uri,
-  //       file: image
-  //     }));
-  //     setFileObjects(initialFiles);
-  //     setImageCount(initialFiles.length);
-  //   }
-  // }, [images]);
+  useEffect(() => {
+    setImageCount(images?.defaultImages?.length ?? 0);
+    setDefaultImages(images?.defaultImages ?? []);
+  }, [images?.defaultImages?.length]);
 
   return (
     <View style={[styles.container, imageCount === 1 && styles.flexOne, containerStyle]}>
       <View style={[styles.wrapper, imageCount === 1 && styles.sizeFull]}>
         {/* Preview image */}
         <View style={styles.previewImage}>
+          {defaultImages?.map(imageUrl => (
+            <TouchableHighlight
+              key={imageUrl}
+              style={[styles.uploadItem, imageCount === 1 && styles.flexOne, imageStyle]}
+              onPress={() => handleImagePress(imageUrl)}
+              underlayColor='transparent'
+            >
+              <OutsidePressHandler
+                disabled={selectedImageIdRef.current !== imageUrl}
+                onOutsidePress={() => {
+                  setSelectedImageId(null);
+                }}
+              >
+                <View>
+                  <Image
+                    source={{ uri: imageUrl }}
+                    style={styles.uploadItemImage}
+                    className={`aspect-[1.6] ${innerImageClassName}`}
+                  />
+                  {selectedImageId === imageUrl && (
+                    <TouchableHighlight
+                      style={styles.removeOverlay}
+                      onPress={() => handleRemoveImage(imageUrl)}
+                      underlayColor='transparent'
+                    >
+                      <View style={styles.removeIconWrapper}>
+                        <AntDesign
+                          name='closecircleo'
+                          size={24}
+                          color={globalStyles.color.light}
+                        />
+                      </View>
+                    </TouchableHighlight>
+                  )}
+                </View>
+              </OutsidePressHandler>
+            </TouchableHighlight>
+          ))}
+
           {fileObjects?.map(fileObject => (
             <TouchableHighlight
               key={fileObject.id}
