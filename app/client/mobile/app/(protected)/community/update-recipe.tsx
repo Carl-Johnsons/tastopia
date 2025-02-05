@@ -22,7 +22,6 @@ import {
   FlatList
 } from "react-native";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { protectedAxiosInstance } from "@/constants/host";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
@@ -32,11 +31,11 @@ import DraggableFlatList, {
   RenderItemParams,
   ScaleDecorator
 } from "react-native-draggable-flatlist";
-import CreateFormHeader from "@/components/screen/community/CreateFormHeader";
 import { useRecipeDetail } from "@/api/recipe";
 import useIsOwner from "@/hooks/auth/useIsOwner";
 import PermissionDenied from "@/components/common/PermissionDenied";
 import UpdateDraggableStep from "@/components/screen/community/UpdateDraggableStep";
+import UpdateFormHeader from "@/components/screen/community/UpdateFormHeader";
 
 const UpdateRecipe = () => {
   const { id, authorId } = useLocalSearchParams<{ id: string; authorId: string }>();
@@ -58,7 +57,11 @@ const UpdateRecipe = () => {
     useRecipeDetail(id);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [images, setImages] = useState<ImageFileType[]>([]);
+  const [images, setImages] = useState<UpdateImage>({
+    additionalImages: [],
+    defaultImages: [],
+    deleteUrls: []
+  });
   const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
   const [ingredients, setIngredients] = useState<CreateIngredientType[]>([
     { key: uuid.v4(), value: "" }
@@ -90,7 +93,29 @@ const UpdateRecipe = () => {
     getValues
   } = formCreateRecipe;
   const onSubmit: SubmitHandler<FormCreateRecipeType> = async formData => {
-    if (images.length < 1) {
+    const validateRecipeImage = () => {
+      if (!images.deleteUrls?.length && !images.additionalImages?.length) {
+        return true;
+      }
+
+      if (images.deleteUrls?.length! > 0 && !images.additionalImages?.length) {
+        Alert.alert(t("validation.image"));
+        return false;
+      }
+
+      if (images.additionalImages?.length! > 1) {
+        Alert.alert(t("validation.onlyOneImage"));
+        return false;
+      }
+
+      return true;
+    };
+
+    if (!validateRecipeImage()) {
+      return;
+    }
+
+    if (images?.defaultImages?.length! < 1 && images?.additionalImages?.length! < 1) {
       Alert.alert(t("validation.image"));
       return;
     }
@@ -113,13 +138,17 @@ const UpdateRecipe = () => {
     data.append("serves", formData.serves);
     data.append("cookTime", formData.cookTime);
 
-    const image = images[0];
+    const image = images.additionalImages?.[0];
 
-    data.append(`recipeImage`, {
-      uri: image.uri,
-      name: image.name,
-      type: image.type || "image/jpeg"
-    } as unknown as Blob);
+    if (image) {
+      data.append(`recipeImage`, {
+        uri: image.uri,
+        name: image.name,
+        type: image.type || "image/jpeg"
+      } as unknown as Blob);
+    } else {
+      data.append(`recipeImage`, "");
+    }
 
     ingredients.forEach((ingredient, index) => {
       data.append(`ingredients[${index}]`, ingredient.value);
@@ -142,36 +171,34 @@ const UpdateRecipe = () => {
       data.append(`tagValues[${index}]`, tag.value);
     });
 
-    try {
-      const { data: response } = await protectedAxiosInstance.post(
-        "http://localhost:5000/api/recipe/create-recipe",
-        data,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        }
-      );
-      Alert.alert("Create recipe successfully!");
-      router.back();
-    } catch (error) {
-      console.error("Error submitting recipe:", error);
-    } finally {
-      setIsLoading(false);
-    }
+    console.log("step", JSON.stringify(steps[0].images, null, 2));
+
+    // try {
+    //   const { data: response } = await protectedAxiosInstance.post(
+    //     "http://localhost:5000/api/recipe/create-recipe",
+    //     data,
+    //     {
+    //       headers: {
+    //         "Content-Type": "multipart/form-data"
+    //       }
+    //     }
+    //   );
+    //   Alert.alert("Create recipe successfully!");
+    //   router.back();
+    // } catch (error) {
+    //   console.error("Error submitting recipe:", error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
-  const handleAddMoreIngredient = useCallback(() => {
+  const handleAddMoreIngredient = () => {
     setIngredients(prev => [...prev, { key: uuid.v4(), value: "" }]);
-  }, []);
+  };
 
-  const handleAddMoreStep = useCallback(() => {
+  const handleAddMoreStep = () => {
     setSteps(prev => [...prev, { key: uuid.v4(), content: "", images: {} }]);
-  }, []);
-
-  const onFileChange = useCallback((files: ImageFileType[]) => {
-    setImages(files);
-  }, []);
+  };
 
   const handleCancel = () => {
     if (
@@ -179,7 +206,8 @@ const UpdateRecipe = () => {
       getValues("description") ||
       getValues("serves") ||
       getValues("title") ||
-      images.length > 0 ||
+      images?.defaultImages?.length! > 0 ||
+      images?.additionalImages?.length! > 0 ||
       (steps.length > 1 && isInputSteps) ||
       (ingredients.length > 1 && isInputIngredient)
     ) {
@@ -223,6 +251,13 @@ const UpdateRecipe = () => {
     setValue("cookTime", recipeDetailData?.recipe.cookTime!);
     setValue("serves", recipeDetailData?.recipe.serves!.toString()!);
 
+    setImages(prev => {
+      return {
+        ...prev,
+        defaultImages: [recipeDetailData?.recipe.imageUrl ?? ""]
+      };
+    });
+
     setIngredients(
       recipeDetailData?.recipe.ingredients.map(ingredient => {
         return {
@@ -255,11 +290,6 @@ const UpdateRecipe = () => {
       </View>
     );
   }
-
-  console.log(
-    "recipeDetailData?.recipe",
-    JSON.stringify(recipeDetailData?.recipe.steps, null, 2)
-  );
 
   return (
     <SafeAreaView
@@ -332,9 +362,9 @@ const UpdateRecipe = () => {
                 ListHeaderComponent={() => {
                   return (
                     <View className='gap-4'>
-                      <CreateFormHeader
+                      <UpdateFormHeader
                         images={images}
-                        onFileChange={onFileChange}
+                        setImages={setImages}
                         formControl={formControl}
                         errors={errors}
                       />
@@ -413,7 +443,7 @@ const UpdateRecipe = () => {
 
                       {/* Tag */}
                       <View className='mt-4'>
-                        <Text className='body-semibold text-black_white mb-2'>
+                        <Text className='body-semibold text-black_white'>
                           {t("formTitle.tag")}
                         </Text>
                         <TagList

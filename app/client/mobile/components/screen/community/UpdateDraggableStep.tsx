@@ -11,10 +11,10 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
 import useDebounce from "@/hooks/useDebounce";
-import UploadImage from "@/components/common/UploadImage";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import UpdateImage from "@/components/common/UpdateImage";
+import { isOnlineImage } from "@/utils/file";
 
 interface UpdateDraggableStepProps {
   stepKey: string;
@@ -84,19 +84,37 @@ const UpdateDraggableStep = ({
   };
 
   const onDeleteImage = (deleteImageUrl: string) => {
-    setSteps(prevSteps =>
-      prevSteps.map(step =>
-        step.key === stepKey
-          ? {
-              ...step,
-              images: {
-                ...step.images,
-                deleteUrls: [...step.images.deleteUrls!, deleteImageUrl]
+    if (isOnlineImage(deleteImageUrl)) {
+      setSteps(prevSteps =>
+        prevSteps.map(step =>
+          step.key === stepKey
+            ? {
+                ...step,
+                images: {
+                  ...step.images,
+                  deleteUrls: [...step.images.deleteUrls!, deleteImageUrl]
+                }
               }
-            }
-          : step
-      )
-    );
+            : step
+        )
+      );
+    } else {
+      setSteps(prevSteps =>
+        prevSteps.map(step =>
+          step.key === stepKey
+            ? {
+                ...step,
+                images: {
+                  ...step.images,
+                  additionalImages: step.images?.additionalImages?.filter(
+                    image => image.uri !== deleteImageUrl
+                  )
+                }
+              }
+            : step
+        )
+      );
+    }
   };
 
   useEffect(() => {

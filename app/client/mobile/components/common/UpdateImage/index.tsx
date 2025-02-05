@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 import { globalStyles } from "../GlobalStyles";
-import { transformPlatformURI } from "@/utils/functions";
+import { getUniqueItemsWithSet, transformPlatformURI } from "@/utils/functions";
 import styles from "./UpdateImage.style";
 import { extensionToMimeType } from "@/utils/file";
 import { AntDesign } from "@expo/vector-icons";
@@ -117,9 +117,9 @@ const UpdateImage = ({
 
     let result = await ImagePicker.launchImageLibraryAsync({
       quality: 1,
-      selectionLimit: selectionLimit - imageCount,
+      selectionLimit: isMultiple ? selectionLimit - imageCount : 1,
       allowsMultipleSelection: isMultiple,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       ...props
     });
 
@@ -172,9 +172,26 @@ const UpdateImage = ({
   };
 
   useEffect(() => {
-    setImageCount(images?.defaultImages?.length ?? 0);
-    setDefaultImages(images?.defaultImages ?? []);
+    const imagesFiltered = getUniqueItemsWithSet(
+      images?.defaultImages!,
+      images?.deleteUrls!
+    );
+
+    setImageCount(imagesFiltered.length + images?.additionalImages?.length!);
+    setDefaultImages(imagesFiltered);
   }, [images?.defaultImages?.length]);
+
+  useEffect(() => {
+    const handledImages = images?.additionalImages?.map(image => {
+      return {
+        id: image.uri,
+        previewPath: image.uri,
+        file: image
+      } as ImageFileObject;
+    });
+
+    setFileObjects(handledImages ?? []);
+  }, [images?.additionalImages?.length]);
 
   return (
     <View style={[styles.container, imageCount === 1 && styles.flexOne, containerStyle]}>
