@@ -14,7 +14,7 @@ public record GetNotificationsQuery : IRequest<Result<PaginatedNotificationListR
 {
     public Guid AccountId { get; set; }
     public string Language { get; init; } = "en";
-    public int? Skip { get; init; } = 0;
+    public int? Skip { get; init; }
 }
 
 public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificationsQuery, Result<PaginatedNotificationListResponse?>>
@@ -37,6 +37,7 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
 
     public async Task<Result<PaginatedNotificationListResponse?>> Handle(GetNotificationsQuery request, CancellationToken cancellationToken)
     {
+        var skip = request.Skip ?? 0;
         var database = _context.GetDatabase();
         var nQuery = database.GetCollection<Notification>(nameof(Notification))
                              .AsQueryable()
@@ -61,87 +62,88 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                     UpdatedAt = n.UpdatedAt,
                     Template = nt
                 }
-            );
+            ).Where(n => n.SecondaryActors.Any(sa => sa.ActorId == request.AccountId
+                                                     && sa.Type.ToString() == EntityType.USER.ToString()));
 
-        var totalPage = (notificationQuery.Count() / NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT) + 1;
-
+        var totalPage = (notificationQuery.Count() + NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT - 1) / NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT;
         var paginatedNotificationQuery = _paginateDataUtility.PaginateQuery(notificationQuery, new PaginateParam
         {
-            Offset = request.Skip * NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT,
+            Offset = skip * NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT,
             Limit = NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT
         });
+        List<NotificationsResponse?> responses = [];
 
-        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(paginatedNotificationQuery.ToList(), Newtonsoft.Json.Formatting.Indented));
-
-        var actorIdSets = paginatedNotificationQuery.SelectMany(n => n.PrimaryActors.Concat(n.SecondaryActors)
-                                                                  .Select(merge => merge.ActorId.ToString()))
-                                  .ToHashSet();
-
-        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(actorIdSets, Newtonsoft.Json.Formatting.Indented));
-        var res = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
+        if (paginatedNotificationQuery.Count() > 0)
         {
-            AccountId = { _mapper.Map<RepeatedField<string>>(actorIdSets) }
-        }, cancellationToken: cancellationToken);
+            var actorIdSets = paginatedNotificationQuery.SelectMany(n => n.PrimaryActors.Concat(n.SecondaryActors)
+                                                                      .Select(merge => merge.ActorId.ToString()))
+                                      .ToHashSet();
 
-        var mapUsers = new Dictionary<Guid, SimpleUser>();
-        foreach (var (key, value) in res.Users)
-        {
-            mapUsers[Guid.Parse(key)] = new SimpleUser
+            var res = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
             {
-                AccountId = Guid.Parse(value.AccountId),
-                AvtUrl = value.AvtUrl,
-                DisplayName = value.DisplayName,
-            };
+                AccountId = { _mapper.Map<RepeatedField<string>>(actorIdSets) }
+            }, cancellationToken: cancellationToken);
+
+            var mapUsers = new Dictionary<Guid, SimpleUser>();
+            foreach (var (key, value) in res.Users)
+            {
+                mapUsers[Guid.Parse(key)] = new SimpleUser
+                {
+                    AccountId = Guid.Parse(value.AccountId),
+                    AvtUrl = value.AvtUrl,
+                    DisplayName = value.DisplayName,
+                };
+            }
+            if (res == null || mapUsers.Count != actorIdSets.Count)
+            {
+                return Result<PaginatedNotificationListResponse?>.Failure(NotificationErrors.NotFound, "Actor not found");
+            }
+            responses = paginatedNotificationQuery
+                                   .ToList()
+                                   .Select(n =>
+                                   {
+                                       if (n == null)
+                                       {
+                                           return null;
+                                       }
+                                       var paNames = n.PrimaryActors.Select(pa => mapUsers[pa.ActorId].DisplayName).ToList();
+                                       var saNames = n.SecondaryActors.Select(sa => mapUsers[sa.ActorId].DisplayName).ToList();
+
+                                       var message = n.Template?.TranslationMessages.GetValueOrDefault(request.Language)
+                                                     ?? "";
+                                       var title = n.Template?.TranslationTitles?.GetValueOrDefault(request.Language)
+                                                   ?? "";
+
+                                       var data = new
+                                       {
+                                           Actors = paNames,
+                                           Targets = saNames,
+                                           IsSelf = true
+                                       };
+
+                                       message = Smart.Format(message, data);
+                                       title = Smart.Format(title);
+
+                                       return new NotificationsResponse
+                                       {
+                                           Id = n.Id,
+                                           CreatedAt = n.CreatedAt,
+                                           UpdatedAt = n.UpdatedAt,
+                                           ImageUrl = n.ImageUrl,
+                                           JsonData = n.JsonData,
+                                           Message = message,
+                                           Title = title
+                                       };
+                                   })
+                                   .ToList();
         }
-        if (res == null || mapUsers.Count != actorIdSets.Count)
-        {
-            return Result<PaginatedNotificationListResponse?>.Failure(NotificationErrors.NotFound, "Actor not found");
-        }
-        var responses = paginatedNotificationQuery
-                                .ToList()
-                                .Select(n =>
-                                {
-                                    if (n == null)
-                                    {
-                                        return null;
-                                    }
-                                    var paNames = n.PrimaryActors.Select(pa => mapUsers[pa.ActorId].DisplayName).ToList();
-                                    var saNames = n.SecondaryActors.Select(sa => mapUsers[sa.ActorId].DisplayName).ToList();
-
-                                    var message = n.Template?.TranslationMessages.GetValueOrDefault(request.Language)
-                                                  ?? "";
-                                    var title = n.Template?.TranslationTitles?.GetValueOrDefault(request.Language)
-                                                ?? "";
-
-                                    var data = new
-                                    {
-                                        Actors = paNames,
-                                        Targets = saNames,
-                                        IsSelf = false
-                                    };
-
-                                    message = Smart.Format(message, data);
-                                    title = Smart.Format(title);
-
-                                    return new NotificationsResponse
-                                    {
-                                        Id = n.Id,
-                                        CreatedAt = n.CreatedAt,
-                                        UpdatedAt = n.UpdatedAt,
-                                        ImageUrl = n.ImageUrl,
-                                        JsonData = n.JsonData,
-                                        Message = message,
-                                        Title = title
-                                    };
-                                })
-                                .ToList();
 
         var paginatedResponse = new PaginatedNotificationListResponse
         {
             PaginatedData = responses!,
             Metadata = new AdvancePaginatedMetadata
             {
-                HasNextPage = request.Skip >= totalPage,
+                HasNextPage = skip < totalPage - 1,
                 TotalPage = totalPage
             }
         };
