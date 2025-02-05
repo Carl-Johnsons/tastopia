@@ -18,6 +18,7 @@ const Community = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
 
   const [currentRecipeId, setCurrentRecipeId] = useState("");
+  const [currentAuthorId, setCurrentAuthorId] = useState("");
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
 
@@ -51,6 +52,7 @@ const Community = () => {
         <Recipe
           {...item}
           setCurrentRecipeId={setCurrentRecipeId}
+          setCurrentAuthorId={setCurrentAuthorId}
           bottomSheetRef={bottomSheetRef}
         />
         {index !== recipes.length - 1 && (
@@ -99,6 +101,7 @@ const Community = () => {
 
       <SettingRecipe
         id={currentRecipeId}
+        authorId={currentAuthorId}
         ref={bottomSheetRef}
         title='Settings'
       />

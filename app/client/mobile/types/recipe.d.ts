@@ -47,7 +47,7 @@ type RecipeDetailType = {
   steps: RecipeStep[];
   comments: null;
   recipeVotes: null;
-  recipeTags: null;
+  recipeTags: string[] | null;
   createdAt: string;
   updatedAt: string;
   id: string;

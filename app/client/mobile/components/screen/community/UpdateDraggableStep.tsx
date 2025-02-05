@@ -14,22 +14,23 @@ import useDebounce from "@/hooks/useDebounce";
 import UploadImage from "@/components/common/UploadImage";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import UpdateImage from "@/components/common/UpdateImage";
 
-interface DraggableStepProps {
+interface UpdateDraggableStepProps {
   stepKey: string;
   content: string;
-  images: ImageFileType[];
+  images: UpdateImage;
   drag: () => void;
-  setSteps: Dispatch<SetStateAction<CreateStepType[]>>;
+  setSteps: Dispatch<SetStateAction<UpdateStepType[]>>;
 }
 
-const DraggableStep = ({
+const UpdateDraggableStep = ({
   stepKey,
   content,
   images,
   drag,
   setSteps
-}: DraggableStepProps) => {
+}: UpdateDraggableStepProps) => {
   const { c } = useColorizer();
   const { black, white } = colors;
 
@@ -74,7 +75,17 @@ const DraggableStep = ({
 
   const onFileChange = (files: ImageFileType[]) => {
     setSteps(prevSteps =>
-      prevSteps.map(step => (step.key === stepKey ? { ...step, images: files } : step))
+      prevSteps.map(step =>
+        step.key === stepKey
+          ? {
+              ...step,
+              images: {
+                ...step.images,
+                additionalImages: files
+              }
+            }
+          : step
+      )
     );
   };
 
@@ -115,10 +126,10 @@ const DraggableStep = ({
           placeholderTextColor='#9CA3AF'
         />
 
-        <UploadImage
+        <UpdateImage
           onFileChange={onFileChange}
           selectionLimit={3}
-          defaultImages={images}
+          images={images}
         />
       </View>
 
@@ -135,7 +146,7 @@ const DraggableStep = ({
   );
 };
 
-export default DraggableStep;
+export default UpdateDraggableStep;
 
 const styles = StyleSheet.create({
   container: {

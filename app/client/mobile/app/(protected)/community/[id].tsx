@@ -56,7 +56,7 @@ const RecipeDetail = () => {
 
   const router = useRouter();
   const { t } = useTranslation("recipeDetail");
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, authorId } = useLocalSearchParams<{ id: string; authorId: string }>();
   const {
     data: recipeDetailData,
     isLoading: isLoadingRecipeDetail,
@@ -396,6 +396,7 @@ const RecipeDetail = () => {
 
       <SettingRecipe
         id={id}
+        authorId={authorId}
         title='Setting'
         ref={bottomSheetRef}
       />

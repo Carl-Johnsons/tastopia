@@ -1,10 +1,11 @@
-import locales from "@/locales";
+import locales from "../locales";
 
 const resources = {
   en: {
     navbar: locales.navbarEn,
     community: locales.communityEn,
     createRecipe: locales.createRecipeEn,
+    updateRecipe: locales.updateRecipeEn,
     search: locales.searchEn,
     menu: locales.menuEn,
     error: locales.errorEn,
@@ -21,6 +22,7 @@ const resources = {
     navbar: locales.navbarVi,
     community: locales.communityVi,
     createRecipe: locales.createRecipeVi,
+    updateRecipe: locales.updateRecipeVi,
     search: locales.searchVi,
     menu: locales.menuVi,
     error: locales.errorVi,

@@ -5,7 +5,7 @@ import { PURGE } from "redux-persist";
 export enum GENDER {
   MALE = "MALE",
   FEMALE = "FEMALE"
-};
+}
 
 export type UserState = {
   accountId?: string;
@@ -31,6 +31,7 @@ const initialState: UserState = {
 };
 
 export const selectUser = () => useAppSelector(state => state.user);
+export const selectUserId = () => useAppSelector(state => state.user.accountId);
 
 export const userSlice = createSlice({
   name: "user",

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
-import { ReactNativeFile } from "apollo-upload-client";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import {
@@ -8,27 +7,31 @@ import {
   View,
   Image,
   TouchableHighlight,
-  Alert,
   StyleProp,
-  ViewStyle
+  ViewStyle,
+  Alert
 } from "react-native";
 
-import styles from "./UpdateImage.style";
 import { globalStyles } from "../GlobalStyles";
-import { FileObject, UpdateMediaType } from "@/helper/types";
-import { convertImagesToRNFile, extensionToMimeType, generateRNFile } from "@/utils/file";
 import { transformPlatformURI } from "@/utils/functions";
+import styles from "./UpdateImage.style";
+import { extensionToMimeType } from "@/utils/file";
+import { AntDesign } from "@expo/vector-icons";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useTranslation } from "react-i18next";
+import useDarkMode from "@/hooks/useDarkMode";
+import OutsidePressHandler from "react-native-outside-press";
 
-type UpdateImageProps = {
+type UploadImageProps = {
   /**
-   * Function to handle file change (should be setState functinn)
+   * Array of image files to set as default images
    */
-  onFileChange: (updateImages: any) => void;
+  images?: UpdateImage;
 
   /**
-   * Before parsing data to component let use convertToImagesURLs to convert image string from API to correct format and make sure it data already loaded
+   * Function to handle file change (should be setState function)
    */
-  defaultImages?: FileObject[];
+  onFileChange: (files: ImageFileType[]) => void;
 
   /**
    * Disable remove image
@@ -46,9 +49,19 @@ type UpdateImageProps = {
   containerStyle?: StyleProp<ViewStyle>;
 
   /**
-   * Image style
+   * Image's wrapper style
    */
   imageStyle?: StyleProp<ViewStyle>;
+
+  /**
+   * The images' class names
+   */
+  innerImageClassName?: string;
+
+  /**
+   *  Maximum number images
+   */
+  selectionLimit?: number;
 
   /**
    * ImagePicker options
@@ -56,24 +69,25 @@ type UpdateImageProps = {
   props?: ImagePicker.ImagePickerOptions;
 };
 
-const UpdateImage = ({
+const UploadImage = ({
+  images,
   onFileChange,
-  defaultImages = [],
   isDisabled = false,
   isMultiple = true,
   containerStyle,
   imageStyle,
-  ...props
-}: UpdateImageProps) => {
-  const [imageCount, setImageCount] = useState(defaultImages.length);
-  const [fileObjects, setFileObjects] = useState<FileObject[]>(
-    defaultImages.length > 0 ? convertImagesToRNFile(defaultImages) : []
-  );
-  const [updateFiles, setUpdateFiles] = useState<UpdateMediaType>({
-    additionalFile: [],
-    fileDeleteUrls: []
-  });
+  innerImageClassName,
+  selectionLimit = 5,
+  props
+}: UploadImageProps) => {
+  const isDarkMode = useDarkMode();
+  const { t } = useTranslation("component");
+  const [startUploadImage, setStartUploadImage] = useState(false);
+  const [imageCount, setImageCount] = useState(0);
+  const [fileObjects, setFileObjects] = useState<ImageFileObject[]>([]);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
+  const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
+  const selectedImageIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -97,7 +111,7 @@ const UpdateImage = ({
 
     let result = await ImagePicker.launchImageLibraryAsync({
       quality: 1,
-      selectionLimit: 5 - imageCount,
+      selectionLimit: selectionLimit - imageCount,
       allowsMultipleSelection: isMultiple,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       ...props
@@ -108,133 +122,127 @@ const UpdateImage = ({
         const fileName =
           asset.fileName ||
           asset.uri.substring(asset.uri.lastIndexOf("/") + 1, asset.uri.length);
-        const type = asset.mimeType || extensionToMimeType(asset.uri.split(".").pop()!);
 
-        const RNFile = generateRNFile(asset.uri, fileName, type);
+        const type = asset.mimeType || extensionToMimeType(asset.uri.split(".").pop()!);
 
         return {
           id: asset.uri,
           previewPath: asset.uri,
-          file: RNFile
+          file: {
+            uri: asset.uri,
+            type,
+            name: fileName
+          }
         };
       });
 
-      if (fileObjects.length + files.length > 5) {
-        return Alert.alert("You can only upload 5 images");
+      const newFileObjects = [...(fileObjects || []), ...files];
+      setStartUploadImage(true);
+      setFileObjects(newFileObjects);
+      onFileChange(newFileObjects.map(file => file.file as ImageFileType));
+      setImageCount(prev => prev + files.length);
+    }
+  };
+
+  const handleImagePress = (id: string) => {
+    if (!isDisabled) {
+      if (selectedImageId === id) {
+        handleRemoveImage(id);
       } else {
-        const newFileObjects = [...(fileObjects || []), ...files];
-        setFileObjects(newFileObjects);
-
-        const newAdditionalFile = [
-          ...updateFiles.additionalFile,
-          ...files.map(file => file.file as ReactNativeFile)
-        ];
-
-        if (newAdditionalFile.length > 5) {
-          return Alert.alert("You can only upload 5 images");
-        } else {
-          setUpdateFiles(prev => ({
-            additionalFile: newAdditionalFile,
-            fileDeleteUrls: prev.fileDeleteUrls
-          }));
-          setImageCount(prev => prev + files.length);
-        }
+        setSelectedImageId(id);
+        selectedImageIdRef.current = id;
       }
     }
   };
 
-  /**
-   * Remove file from API
-   * Remove file that user just uploaded
-   */
   const handleRemoveImage = (id: string) => {
     const newFileObjects = fileObjects?.filter(file => file.id !== id);
     setFileObjects(newFileObjects);
-
-    const fileToRemove = fileObjects?.find(file => file.id === id);
-
-    setUpdateFiles(prev => {
-      const newAdditionalFile = prev.additionalFile.filter(
-        file => file !== fileToRemove?.file
-      );
-
-      const newFileDeleteUrls = [
-        ...prev.fileDeleteUrls,
-        fileToRemove?.previewPath as string
-      ];
-
-      return {
-        additionalFile: defaultImages?.find(
-          defaultImage => defaultImage.file === fileToRemove?.file
-        )
-          ? prev.additionalFile
-          : newAdditionalFile,
-        fileDeleteUrls: defaultImages?.find(
-          defaultImage => defaultImage.previewPath === fileToRemove?.previewPath
-        )
-          ? newFileDeleteUrls
-          : prev.fileDeleteUrls
-      };
-    });
-
+    onFileChange(newFileObjects!.map(file => file.file as ImageFileType));
     setImageCount(prev => prev - 1);
+    setSelectedImageId(null);
+    selectedImageIdRef.current === null;
   };
 
-  useEffect(() => {
-    onFileChange(updateFiles);
-  }, [updateFiles, onFileChange]);
+  // useEffect(() => {
+  //   if (images && images.length > 0) {
+  //     const initialFiles = images.map(image => ({
+  //       id: image.uri,
+  //       previewPath: image.uri,
+  //       file: image
+  //     }));
+  //     setFileObjects(initialFiles);
+  //     setImageCount(initialFiles.length);
+  //   }
+  // }, [images]);
 
   return (
-    <View
-      style={[styles.container, imageCount > 0 && styles.containerActive, containerStyle]}
-    >
-      {/* Preview images */}
-      <View style={styles.previewImage}>
-        {fileObjects?.map(fileObject => (
-          <View
-            style={[styles.uploadItem, imageCount <= 2 && styles.flexOne, imageStyle]}
-            key={fileObject.id}
-          >
+    <View style={[styles.container, imageCount === 1 && styles.flexOne, containerStyle]}>
+      <View style={[styles.wrapper, imageCount === 1 && styles.sizeFull]}>
+        {/* Preview image */}
+        <View style={styles.previewImage}>
+          {fileObjects?.map(fileObject => (
             <TouchableHighlight
-              onPress={() => !isDisabled && handleRemoveImage(fileObject.id)}
-              disabled={isDisabled}
-              style={styles.removeItemButton}
-              underlayColor={"none"}
+              key={fileObject.id}
+              style={[styles.uploadItem, imageCount === 1 && styles.flexOne, imageStyle]}
+              onPress={() => handleImagePress(fileObject.id)}
+              underlayColor='transparent'
             >
-              <MaterialIcons
-                style={styles.removeItemButtonIcon}
-                name='highlight-remove'
-                size={30}
-                color={globalStyles.color.primary}
-              />
+              <OutsidePressHandler
+                disabled={selectedImageIdRef.current !== fileObject.id}
+                onOutsidePress={() => {
+                  setSelectedImageId(null);
+                }}
+              >
+                <View>
+                  <Image
+                    source={{ uri: transformPlatformURI(fileObject.previewPath)! }}
+                    style={styles.uploadItemImage}
+                    className={`aspect-[1.6] ${innerImageClassName}`}
+                  />
+                  {selectedImageId === fileObject.id && (
+                    <TouchableHighlight
+                      style={styles.removeOverlay}
+                      onPress={() => handleRemoveImage(fileObject.id)}
+                      underlayColor='transparent'
+                    >
+                      <View style={styles.removeIconWrapper}>
+                        <AntDesign
+                          name='closecircleo'
+                          size={24}
+                          color={globalStyles.color.light}
+                        />
+                      </View>
+                    </TouchableHighlight>
+                  )}
+                </View>
+              </OutsidePressHandler>
             </TouchableHighlight>
-            <Image
-              source={{ uri: transformPlatformURI(fileObject.previewPath)! }}
-              style={styles.uploadItemImage}
-            />
-          </View>
-        ))}
+          ))}
+        </View>
 
-        {imageCount <= 4 && !isDisabled && (
-          <TouchableHighlight
-            onPress={pickImage}
-            style={styles.uploadButton}
-            underlayColor={globalStyles.color.secondary}
-          >
-            <View style={styles.uploadButtonWrapper}>
-              <FontAwesome
-                name='cloud-upload'
-                size={24}
-                color={globalStyles.color.light}
-              />
-
-              <Text style={styles.uploadButtonText}>Upload</Text>
-            </View>
-          </TouchableHighlight>
-        )}
+        {/* Upload image button */}
+        {((imageCount <= 4 && !isDisabled && isMultiple) ||
+          (imageCount === 0 && !startUploadImage)) &&
+          imageCount < selectionLimit && (
+            <TouchableHighlight
+              onPress={pickImage}
+              style={styles.uploadButton}
+              underlayColor={globalStyles.color.secondary}
+            >
+              <View style={styles.uploadButtonWrapper}>
+                <FontAwesome
+                  name='cloud-upload'
+                  size={24}
+                  color={isDarkMode ? globalStyles.color.dark : globalStyles.color.light}
+                />
+                <Text className='text-white_black body-semibold'>{t("uploadImage")}</Text>
+              </View>
+            </TouchableHighlight>
+          )}
       </View>
     </View>
   );
 };
 
-export default UpdateImage;
+export default UploadImage;
