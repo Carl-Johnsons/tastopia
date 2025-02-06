@@ -9,7 +9,8 @@
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
-        "POST"
+        "POST",
+        "DELETE"
       ],
       "UpstreamPathTemplate": "/api/notification/{everything}",
       "AuthenticationOptions": {

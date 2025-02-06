@@ -20,7 +20,14 @@ public class PushNotificationConsumer : IConsumer<PushNotificationEvent>
 
     public async Task Consume(ConsumeContext<PushNotificationEvent> context)
     {
-        await _pushNotificationService.Notify(context.Message.ExpoPushToken, context.Message.Message);
+        var message = context.Message;
+
+        await _pushNotificationService.Notify(message.ExpoPushTokens,
+                                              message.Message,
+                                              data: message.JsonData,
+                                              title: message.Title,
+                                              channelId: message.ChannelId);
+
         _logger.LogInformation("Push notification message acknowledged");
     }
 }

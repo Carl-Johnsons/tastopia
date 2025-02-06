@@ -1,15 +1,21 @@
-import { router } from "expo-router";
-import { Text } from "react-native";
-import Protected from "./Protected";
-import Button from "./Button";
 import { persistor } from "@/store";
+import { protectedAxiosInstance } from "@/constants/host";
+import { router } from "expo-router";
+import { Platform, Text } from "react-native";
 import { useBounce } from "@/hooks";
 import { useTranslation } from "react-i18next";
+import Button from "./Button";
+import Protected from "./Protected";
 
 export const LogoutButton = () => {
   const { t } = useTranslation("menu");
   const { animate, animatedStyles } = useBounce();
   const logout = async () => {
+    if (Platform.OS === "android")
+      await protectedAxiosInstance.delete("api/notification/expo-push-token/android");
+    else if (Platform.OS === "ios")
+      await protectedAxiosInstance.delete("api/notification/expo-push-token/ios");
+
     animate();
     await persistor.purge();
     router.replace("/welcome");

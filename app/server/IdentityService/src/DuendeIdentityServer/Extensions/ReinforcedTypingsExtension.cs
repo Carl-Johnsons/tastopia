@@ -49,7 +49,8 @@ public static class ReinforcedTypingsExtension
             typeof(RoleGroupPermission)
         ], config =>
         {
-            config.WithPublicProperties()
+            config.FlattenHierarchy()
+                  .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
                   .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");

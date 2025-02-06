@@ -1,10 +1,8 @@
 ﻿
-using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson;
-using System.Reflection;
 using Contract.Extension;
 
 namespace NotificationService.Infrastructure;

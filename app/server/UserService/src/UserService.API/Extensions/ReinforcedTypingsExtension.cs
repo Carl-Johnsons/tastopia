@@ -52,7 +52,8 @@ public static class ReinforcedTypingsExtension
             typeof(UserSetting),
         ], config =>
         {
-            config.WithPublicProperties()
+            config.FlattenHierarchy()
+                  .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
                   .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
