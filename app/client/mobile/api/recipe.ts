@@ -58,7 +58,6 @@ const useRecipeSteps = (recipeId: string) => {
 const useCreateRecipe = () => {
   return useMutation<any, Error, CreateRecipePayloadType>({
     mutationFn: async payload => {
-      console.log("payload", payload);
       const { data } = await protectedAxiosInstance.post(
         "/api/recipe/create-recipe",
         payload,

@@ -134,9 +134,10 @@ const CreateRecipe = () => {
           }
         }
       );
-      Alert.alert("Create recipe successfully!");
+      Alert.alert(t("formTitle.createSuccessfully"));
       router.back();
     } catch (error) {
+      Alert.alert(t("formTitle.createError"));
       console.error("Error submitting recipe:", error);
     } finally {
       setIsLoading(false);
@@ -289,6 +290,7 @@ const CreateRecipe = () => {
                               key={item.key}
                               ingredientKey={item.key}
                               value={item.value}
+                              ingredients={ingredients}
                               setIngredients={setIngredients}
                             />
                           )}

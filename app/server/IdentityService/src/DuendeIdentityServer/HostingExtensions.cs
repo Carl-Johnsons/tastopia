@@ -9,6 +9,7 @@ using IdentityService.Application;
 using IdentityService.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
+using Newtonsoft.Json;
 
 namespace DuendeIdentityServer;
 
@@ -34,7 +35,10 @@ internal static class HostingExtensions
                 .AddRazorRuntimeCompilation();
 
 
-        services.AddControllers();
+        services.AddControllers().AddNewtonsoftJson(options =>
+        {
+            options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
+        });
 
         // Register automapper
         IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();

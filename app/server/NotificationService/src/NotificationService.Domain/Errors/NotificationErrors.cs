@@ -4,12 +4,12 @@ namespace NotificationService.Domain.Errors;
 
 public static class NotificationErrors
 {
-    public static Error CategoryNotFound =>
-            new("NotificationErrors.CategoryNotFound",
+    public static Error NotFound =>
+        new("NotificationErrors.NotFound",
+            StatusCode: (int)HttpStatusCode.NotFound,
+            Message: "Notification not found");
+    public static Error ExpoPushTokenNotFound =>
+            new("NotificationErrors.ExpoPushTokenNotFound",
                 StatusCode: (int)HttpStatusCode.NotFound,
-                Message: "Category not found");
-    public static Error ActionNotFound =>
-            new("NotificationErrors.ActionNotFound",
-                StatusCode: (int)HttpStatusCode.NotFound,
-                Message: "Action not found");
+                Message: "Expo push token not found");
 }
