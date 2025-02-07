@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 package AccountProto;
 
 service GrpcAccount {
@@ -23,4 +25,9 @@ message GrpcAccountDTO {
     string UserName = 2;
     string Email = 3;
     string PhoneNumber = 4;
+    google.protobuf.Timestamp CreatedAt = 5; // DateTime <=> Timestamp
+    google.protobuf.Timestamp UpdatedAt = 6; // DateTime <=> Timestamp
+    bool IsGoogleLinked = 7;
+    bool IsPhoneNumberLinked = 8;
+    bool IsEmailLinked = 9;
 }
