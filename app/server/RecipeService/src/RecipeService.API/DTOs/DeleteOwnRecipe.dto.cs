@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.API.DTOs;
 
-public class DeleteOwnRecipe
+public class DeleteOwnRecipeDTO
 {
     [Required]
     [JsonProperty("recipeId")]

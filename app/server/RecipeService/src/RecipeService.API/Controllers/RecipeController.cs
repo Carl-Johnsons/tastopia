@@ -63,7 +63,7 @@ public class RecipeController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(Recipe), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> DeleteOwnRecipe([FromBody] DeleteOwnRecipe deleteOwnRecipe)
+    public async Task<IActionResult> DeleteOwnRecipe([FromBody] DeleteOwnRecipeDTO deleteOwnRecipeDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
@@ -71,7 +71,7 @@ public class RecipeController : BaseApiController
         var result = await _sender.Send(new DeleteOwnRecipeCommand
         {
             AuthorId = Guid.Parse(subjectId!),
-            RecipeId = deleteOwnRecipe.RecipeId,
+            RecipeId = deleteOwnRecipeDTO.RecipeId,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

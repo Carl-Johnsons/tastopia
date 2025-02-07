@@ -124,6 +124,13 @@ curl --location 'https://localhost:7000/api/recipe/update-recipe' \
 --form 'TagValues[0]="value 0"' \
 --form 'TagValues[1]="value 1"'
 
+**delete own recipe**
+curl --location 'https://localhost:7000/api/recipe/delete-own-recipe' \
+--header 'Content-Type: application/json' \
+--data '{
+"recipeId" : "9895461b-a748-4f8b-8037-7422372e882e"
+}'
+
 # USER
 
 **search user**
