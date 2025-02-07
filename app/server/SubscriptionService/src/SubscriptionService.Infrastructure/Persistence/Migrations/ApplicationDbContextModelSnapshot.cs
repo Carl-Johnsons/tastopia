@@ -50,8 +50,9 @@ namespace SubscriptionService.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("PriceReduction")
                         .HasColumnType("decimal(12,4)");
 
-                    b.Property<int>("ReductionType")
-                        .HasColumnType("integer");
+                    b.Property<string>("ReductionType")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -76,14 +77,16 @@ namespace SubscriptionService.Infrastructure.Persistence.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int>("Method")
-                        .HasColumnType("integer");
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("SettingId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(12,4)");
@@ -130,8 +133,9 @@ namespace SubscriptionService.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(12,4)");
 
-                    b.Property<int>("SubscriptionAccess")
-                        .HasColumnType("integer");
+                    b.Property<string>("SubscriptionAccess")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -168,8 +172,9 @@ namespace SubscriptionService.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("PaymentId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("SubscriptionId")
                         .HasColumnType("uuid");

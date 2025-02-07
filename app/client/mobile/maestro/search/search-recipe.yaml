@@ -1,0 +1,20 @@
+# maestro test ./maestro/search.yaml
+appId: host.exp.exponent
+---
+- runFlow:
+    file: ./expo/init-android.yml
+    when:
+      platform: "Android"
+
+- runFlow:
+    file: ./expo/init-ios.yml
+    when:
+      platform: "iOS"
+- launchApp
+
+- tapOn:
+    id: "SEARCH"
+- tapOn:
+    text: "Nhập tên công thức..."
+- inputText: "a"
+# - assertVisible: "Unfollow"

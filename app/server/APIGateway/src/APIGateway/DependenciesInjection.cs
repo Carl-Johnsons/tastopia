@@ -1,10 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using Ocelot.DependencyInjection;
-using APIGateway.Middleware;
+﻿using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Contract.Utilities;
 using APIGateway.Extensions;
 using Ocelot.Provider.Consul;
+using Contract.Extension;
 
 namespace APIGateway;
 
@@ -20,8 +19,9 @@ public static class DependenciesInjection
         var host = builder.Host;
         var env = builder.Environment;
 
-        builder.ConfigureKestrel();
-        builder.ConfigureSerilog();
+        builder.ConfigureCommonAPIServices();
+
+        services.AddAPIGatewayInfrastructureServices();
 
         config.SetBasePath(env.ContentRootPath)
               .AddEnvironmentVariables();
@@ -51,35 +51,8 @@ public static class DependenciesInjection
 
         services.AddSwaggerServices(config);
 
-        services.AddAuthentication("Bearer")
-            .AddJwtBearer("Bearer", options =>
-            {
-                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
-                var IdentityServerEndpoint = $"https://{IdentityDNS}";
-                Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
+        services.AddAPIGatewayAPIServices();
 
-                options.Authority = IdentityServerEndpoint;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
-                    // Skip the validate issuer signing key
-                    //ValidateIssuerSigningKey = false,
-                    //SignatureValidator = delegate (string token, TokenValidationParameters parameters)
-                    //{
-                    //    var jwt = new JsonWebToken(token);
-
-                    //    return jwt;
-                    //},
-                    //ValidIssuers = [
-                    //    IdentityServerEndpoint
-                    //],
-                };
-                // For development only
-                options.IncludeErrorDetails = true;
-            });
         services.AddCors(options =>
         {
             options.AddPolicy("AllowAnyOriginPolicy",
@@ -95,11 +68,9 @@ public static class DependenciesInjection
         return builder;
     }
 
-    public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
+    public static WebApplication UseAPIServices(this WebApplication app)
     {
         app.UseSerilogServices();
-
-        app.UseMiddleware<HttpsFallbackMiddleware>();
 
         app.UseCors("AllowAnyOriginPolicy");
 
@@ -107,7 +78,18 @@ public static class DependenciesInjection
 
         app.UseAuthorization();
 
+        app.UseRouting();
+        app.UseHealthCheck();
+#pragma warning disable ASP0014 // Suggest using top level route registrations
+        app.UseEndpoints(e =>
+        {
+            e.MapControllers();
+        });
+#pragma warning restore ASP0014 // Suggest using top level route registrations
+
         app.UseOcelot().Wait();
+
+        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_API_GATEWAY", "Not Found"));
         return app;
     }
 }

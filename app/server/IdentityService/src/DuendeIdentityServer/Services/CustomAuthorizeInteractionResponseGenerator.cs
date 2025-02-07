@@ -3,6 +3,7 @@ using Duende.IdentityServer.Configuration;
 using Duende.IdentityServer.ResponseHandling;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Validation;
+using Microsoft.AspNetCore.Authentication;
 using Serilog;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,7 +23,7 @@ public class CustomAuthorizeInteractionResponseGenerator : AuthorizeInteractionR
 
         if (response.IsLogin && request.ClientId == "react.native")
         {
-            Log.Information("Login to google instead default :)");
+            Log.Information("Login to provider instead default login page:)");
 
             var externalProvider = "Google";
             var codeChallenge = request.Raw.Get("code_challenge");
@@ -51,10 +52,11 @@ public class CustomAuthorizeInteractionResponseGenerator : AuthorizeInteractionR
             var redirectUrl = HttpUtility.UrlPathEncode($"/ExternalLogin/Challenge?scheme={externalProvider}&returnUrl={HttpUtility.UrlEncode(returnUrl.ToString())}");
             Log.Information("Constructed redirect Url: " + redirectUrl);
 
+            // Redirect to the external provider
             return new InteractionResponse
             {
-                IsLogin = false, // Disable default login handling
-                RedirectUrl = redirectUrl
+                IsLogin = false,
+                RedirectUrl = $"/ExternalLogin/Challenge?scheme={externalProvider}",
             };
         }
 

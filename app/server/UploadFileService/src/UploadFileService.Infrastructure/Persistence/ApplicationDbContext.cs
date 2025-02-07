@@ -10,14 +10,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
     }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : base(options)
-    {
-    }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(EnvUtility.GetConnectionString(), option =>
+        var connectionString = EnvUtility.GetConnectionString();
+
+        optionsBuilder.UseNpgsql(connectionString, option =>
         {
             option.EnableRetryOnFailure(
                     maxRetryCount: 10,

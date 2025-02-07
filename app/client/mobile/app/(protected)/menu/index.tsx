@@ -3,16 +3,16 @@ import LogoutButton from "@/components/LogoutButton";
 import MenuBg from "@/components/MenuBg";
 import SettingModal from "@/components/SettingModal";
 import { SavedIcon, SettingIcon, VipIcon, UserIcon } from "@/constants/icons";
-import { selectUser } from "@/slices/user.slice";
-import { Avatar } from "@rneui/base";
 import { FC, useCallback, useRef } from "react";
-import { Platform, Text, View, useWindowDimensions } from "react-native";
+import { Text, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SvgProps } from "react-native-svg";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useTranslation } from "react-i18next";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
+import { router } from "expo-router";
+import UserCard from "@/components/screen/menu/UserCard";
 
 const Menu = () => {
   const ITEM_TITLE = ["profile", "saved", "premium", "settings"];
@@ -24,19 +24,36 @@ const Menu = () => {
 
   const openSettingModal = useCallback(() => {
     settingModalRef.current?.present();
-  }, []);
+  }, [settingModalRef]);
 
-  const closeSettingModal = () => {
-    settingModalRef?.current?.close();
-  };
+  const closeSettingModal = useCallback(() => {
+    settingModalRef.current?.close();
+  }, [settingModalRef]);
+
+  const goToProfile = useCallback(() => {
+    router.push("./profile", { relativeToDirectory: true });
+  }, [router]);
+
+  const navigationCallbacks = [
+    goToProfile,
+    useCallback(() => {
+      console.log("Go to saved section.");
+    }, []),
+    useCallback(() => {
+      console.log("Go to subscriptions");
+    }, []),
+    openSettingModal
+  ];
 
   return (
     <>
-      <SafeAreaView style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}>
+      <SafeAreaView
+        style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
+      >
         <View>
           <MenuBg />
-          <View className='absolute top-[8.6vh] flex w-full gap-y-5 bg-white_dark-100 px-4'>
-            <UserCard />
+          <View className='bg-white_dark-100 absolute top-[8.6vh] flex w-full gap-y-5 px-4'>
+            <UserCard onPress={goToProfile} />
             <History />
             <View style={{ paddingBlock: 0.06 * height }}>
               <View
@@ -49,7 +66,7 @@ const Menu = () => {
                     title={item}
                     icon={ITEM_ICON[index]}
                     className='basis-[40%]'
-                    onPress={index === 3 ? openSettingModal : undefined}
+                    onPress={navigationCallbacks[index]}
                   />
                 ))}
               </View>
@@ -58,6 +75,7 @@ const Menu = () => {
           </View>
         </View>
       </SafeAreaView>
+
       <SettingModal
         ref={settingModalRef}
         onClose={closeSettingModal}
@@ -87,7 +105,7 @@ const ItemCard = ({ icon: Icon, title, className, onPress }: ItemCardProps) => {
         width={28}
         height={28}
       />
-      <Text className='text-md font-medium text-black_white'>{t(title)}</Text>
+      <Text className='text-black_white font-medium'>{t(title)}</Text>
     </Button>
   );
 };
@@ -99,9 +117,9 @@ const History = () => {
   return (
     <>
       <View className='flex-row justify-between'>
-        <Text className='font-semibold text-4xl text-black_white'>{t("history")}</Text>
+        <Text className='text-black_white font-semibold text-4xl'>{t("history")}</Text>
         <Button className='flex justify-center rounded-full border border-gray-200 px-4 py-1'>
-          <Text className='font-sans text-black_white'>{t("viewAll")}</Text>
+          <Text className='text-black_white font-sans'>{t("viewAll")}</Text>
         </Button>
       </View>
       <View
@@ -111,34 +129,6 @@ const History = () => {
         <Text className='text-center font-light text-gray-400'>{t("noHistory")}</Text>
       </View>
     </>
-  );
-};
-
-const UserCard = () => {
-  const { displayName, avatarUrl } = selectUser();
-
-  return (
-    <View
-      style={Platform.select({
-        ios: {
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 50
-        },
-        android: { elevation: 20 }
-      })}
-      className='flex-row items-center gap-3 rounded-lg bg-white dark:bg-black-300 px-4 py-1'
-    >
-      <Avatar
-        size={90}
-        rounded
-        source={
-          avatarUrl ? { uri: avatarUrl } : require("../../../assets/images/avatar.png")
-        }
-        containerStyle={avatarUrl && { backgroundColor: "#FFC529" }}
-      />
-      <Text className='font-semibold text-xl text-black_white'>{displayName}</Text>
-    </View>
   );
 };
 

@@ -71,13 +71,64 @@ curl --location 'http://localhost:5000/api/recipe/comment-recipe' \
 "content" : "This recipe is absolutely delicious!"
 }'
 
+**get recipe steps**
+curl --location 'https://localhost:7000/api/recipe/get-recipe-steps' \
+--header 'Content-Type: application/json' \
+--data '{
+"recipeId" : "d2189f90-6991-4901-8195-f0c12d24d900"
+}'
+
+**bookmark recipe**
+curl --location 'https://localhost:7000/api/recipe/bookmark-recipe' \
+--header 'Content-Type: application/json' \
+--data '{
+"recipeId" : "aa626791-ee53-4390-a5a5-94c5b8096f87"
+}'
+
+**get recipe bookmark**
+curl --location 'https://localhost:7000/api/recipe/get-recipe-bookmarks' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0"
+}'
+
+**update recipe**
+lưu ý:
+
+-chỗ recipeImage nếu giữ nguyên không muốn update thì gán bằng null hoặc k tạo trong request còn muốn update thì gán giá trị cho nó.
+-chỗ các steps phải có stepId (steps[n].stepId) nếu như update 1 step cũ, còn thêm 1 step mới thì không cần tạo steps[n].stepId trong request (có thể tham khảo steps[1] và steps[2])
+-các step đã tồn tại sẽ bị xóa nếu như trong request không tìm thấy stepId của nó.
+
+curl --location 'https://localhost:7000/api/recipe/update-recipe' \
+--form 'id="b74abbbf-5238-4aff-8154-2144656be675"' \
+--form 'title="Mì trộn trứng chiên update"' \
+--form 'recipeImage=@"/D:/Images/Anime Image/88f88b7fca92bb8d_93981df87b63ba1d_6975815044573808143215.jpg"' \
+--form 'description="desciription Mì trộn update"' \
+--form 'ingredients[0]="1 quả trứng update"' \
+--form 'ingredients[1]="1 gói mì"' \
+--form 'ingredients[2]="1 muỗng nước tương update"' \
+--form 'steps[0].stepId="04af3c40-2d2a-4f82-8979-c0f2a9a15e82"' \
+--form 'steps[0].ordinalNumber="1"' \
+--form 'steps[0].content="step 1 mì trộn"' \
+--form 'steps[0].Images=@"/D:/Images/Anime Image/2e3321fce05a83cac5945d4283b573fe.jpg"' \
+--form 'steps[0].Images=@"/D:/Images/Anime Image/4caa520c43e4a189c0b0208a23ede849.jpg"' \
+--form 'steps[1].stepId="b976ba2a-3468-4af5-b717-6dc9a2e6eb2f"' \
+--form 'steps[1].ordinalNumber="2"' \
+--form 'steps[1].content="step mi trộn update"' \
+--form 'steps[1].Images=@"/D:/Images/Anime Image/735279.png"' \
+--form 'steps[1].deleteUrls[0]="http://res.cloudinary.com/dhphzuojz/image/upload/v1737285028/file_storage/c89d9023-b1b2-4a75-830b-b1a8f5bec0ac.jpg"' \
+--form 'steps[1].deleteUrls[1]="http://res.cloudinary.com/dhphzuojz/image/upload/v1737285028/file_storage/8dc93c2a-ee57-4989-9333-7510193d54b8.jpg"' \
+--form 'steps[2].ordinalNumber="3"' \
+--form 'steps[2].content="step 3 mì trộn"' \
+--form 'steps[2].Images=@"/D:/Images/Anime Image/2e3321fce05a83cac5945d4283b573fe.jpg"' \
+--form 'TagValues[0]="value 0"' \
+--form 'TagValues[1]="value 1"'
+
 # USER
 
 **search user**
 curl --location 'http://localhost:5003/api/user/search' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkEwNjY2M0NDOTMxNjREQ0QxRDBDMTA0NjAwQURFRjNBIiwidHlwIjoiYXQrand0In0.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDEiLCJuYmYiOjE3MzU4OTEwNDAsImlhdCI6MTczNTg5MTA0MCwiZXhwIjoxNzM4NDgzMDQwLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMDEvcmVzb3VyY2VzIiwic2NvcGUiOlsiZW1haWwiLCJJZGVudGl0eVNlcnZlckFwaSIsIm9wZW5pZCIsInBob25lIiwicHJvZmlsZSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXSwiY2xpZW50X2lkIjoicmVhY3QubmF0aXZlIiwic3ViIjoiNjFjNjFhYzctMjkxZS00MDc1LTk2ODktNjY2ZWYwNTU0N2VkIiwiYXV0aF90aW1lIjoxNzM1ODkxMDQwLCJpZHAiOiJsb2NhbCIsImdpdmVuX25hbWUiOiJhbGljZSIsInBob25lX251bWJlciI6IjAxMjM0NTY3ODkiLCJlbWFpbCI6IkFsaWNlU21pdGhAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJqdGkiOiJGRDQ3Q0ZFNzBBQTM4MEZDRUEzOTkxODkyOTNFMEZCRSJ9.gdKndsWsfhEOc1y2Ao2zOv-YDa6ANmhCRyjn4QPaVo6Weld0Q-OQG1aHYlllFDY3H0h8olnClLRK2bDHGNvIFX*Npza93F2gqdQGYzP1w1KbjuO2R7m0wZB5WVLGqR4tGxfmMHHgbwYAuvfhmHbTJ2hS0kJIKESXAQb7z9lkcNy0ZOMAdcQqbST1-VyxW0lD63azRNW8J-1o8ivCOH-sfhJfFL_oIh3R_7cFOzZJeAVUDrMpOWCbc_rpDfjTAcRGn8zuMaCxu5dccB9WTSo76glV0gGPGC91Xv6PBdNsTXbjlLz7L03hZTUJSCxYJUrYlCfhunSbA1ujS33jaViCNQ' \
---header 'Cookie: .AspNetCore.Identity.Application=CfDJ8EBdLEPnnJ9KsRFMazgNrCfBYzhdkVBzVxb22XZTJBhI6pAt-Vkcje_H9s55E0z4FmfIhbYx16jPsfXEWTTAoOSZ1clD0IaUU-br_5C-92ya1HlCvnRJNHNpFwJWRZ_BKOQn7IQL2XoaHF-AGyBl0tKrVTUX_xs7ZR69AzglN2GwMvwhjpMdZmULtaTrWhYEGQwvXPU0HM_Lkv7F7irlOpzsIpYGn_fZDjErgganqNW4c1EqSfmwdyRVr1nJWxLtJcv4-sWz_zj5zEWJjOXZ7u7BvVNVHrS8SmxOCC-hSm2uHsBLxCqLpTvHeAqULlvGv2ZJfb6G0gI2RnYu-0aqGmv3x221xcSTP80m2izoDML8qMrWIJmNKZWt93NhZOaEoaevoPdtWRAJfj198CUic7NY5fC6nbQiX7xSY3UJetZ0r9yFoTPExeGMzm4er0zD2fhh2ZsKWzEaaYyJsGMOq0CxC_ROCuvbmStTE1O3xcqgu6VCfIPNcKVnPGFhK_Nugo2TxQwuadELGE1bN6I-BR4qOm6pgwkA3PzXJuMWXtPqtvaFdpoJpCvMO2VHEve8dx3HUHnXRdo06HV-ZFq7VdxkBoC9MD5-MnCVZ-S23H75sYNdnU5XXPepVlBlCXD571KQhU0wI4UpsjfuRUCRKBE0ZfMnNjAFwC_oqHpS24ftjNzphUtO*-\_-kRXffmGIMvovN6SE6PJuDHnO6RjUZwOCf8oddRTkFONgBaztRBWzwrSa7I_CjMFHBsYe-b4dCLWTXWArW26FGk_gQEghDrV3rnn3jCnIDsXcw-sgUHAU58PCP8JvbAB5Mf9_Sf91VfniVxRCUai-64wgMhxsHmBE-XvYi7CEWqTSAEGAQJrBVNvyCC_fVGq6YbCmwYyb7NHfAFgEkD5REPyfmWuYTXGR3pHqjJ_mELxBnMm2THoBwxXevHb5v6nRr8NxHSGe9ReWuwLqKQndEv2WllsJYG5d5Zp6lW8h5mqKeZlJK3dKAnjGpUxdZNVEk2QNOXIaLBcb-CdclY6Je85eg-Tl6xLaMc5Y2omUzJoCwnjLTe0Zgx1E8U0zhyrNwf9j2QzirQ; idsrv.session=6FD6ECBD3CC5EFD4322E0B80AA3622F4' \
 --data '{
 "keyword" : "admin",
 "skip" : 0
@@ -85,5 +136,3 @@ curl --location 'http://localhost:5003/api/user/search' \
 
 **get current user**
 curl --location 'http://localhost:5003/api/user/get-current-user-details' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkEwNjY2M0NDOTMxNjREQ0QxRDBDMTA0NjAwQURFRjNBIiwidHlwIjoiYXQrand0In0.eyJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjUwMDEiLCJuYmYiOjE3MzU4OTEwNDAsImlhdCI6MTczNTg5MTA0MCwiZXhwIjoxNzM4NDgzMDQwLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjUwMDEvcmVzb3VyY2VzIiwic2NvcGUiOlsiZW1haWwiLCJJZGVudGl0eVNlcnZlckFwaSIsIm9wZW5pZCIsInBob25lIiwicHJvZmlsZSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXSwiY2xpZW50X2lkIjoicmVhY3QubmF0aXZlIiwic3ViIjoiNjFjNjFhYzctMjkxZS00MDc1LTk2ODktNjY2ZWYwNTU0N2VkIiwiYXV0aF90aW1lIjoxNzM1ODkxMDQwLCJpZHAiOiJsb2NhbCIsImdpdmVuX25hbWUiOiJhbGljZSIsInBob25lX251bWJlciI6IjAxMjM0NTY3ODkiLCJlbWFpbCI6IkFsaWNlU21pdGhAZW1haWwuY29tIiwicm9sZSI6IlVTRVIiLCJqdGkiOiJGRDQ3Q0ZFNzBBQTM4MEZDRUEzOTkxODkyOTNFMEZCRSJ9.gdKndsWsfhEOc1y2Ao2zOv-YDa6ANmhCRyjn4QPaVo6Weld0Q-OQG1aHYlllFDY3H0h8olnClLRK2bDHGNvIFX*Npza93F2gqdQGYzP1w1KbjuO2R7m0wZB5WVLGqR4tGxfmMHHgbwYAuvfhmHbTJ2hS0kJIKESXAQb7z9lkcNy0ZOMAdcQqbST1-VyxW0lD63azRNW8J-1o8ivCOH-sfhJfFL_oIh3R_7cFOzZJeAVUDrMpOWCbc_rpDfjTAcRGn8zuMaCxu5dccB9WTSo76glV0gGPGC91Xv6PBdNsTXbjlLz7L03hZTUJSCxYJUrYlCfhunSbA1ujS33jaViCNQ' \
---header 'Cookie: .AspNetCore.Identity.Application=CfDJ8EBdLEPnnJ9KsRFMazgNrCfBYzhdkVBzVxb22XZTJBhI6pAt-Vkcje_H9s55E0z4FmfIhbYx16jPsfXEWTTAoOSZ1clD0IaUU-br_5C-92ya1HlCvnRJNHNpFwJWRZ_BKOQn7IQL2XoaHF-AGyBl0tKrVTUX_xs7ZR69AzglN2GwMvwhjpMdZmULtaTrWhYEGQwvXPU0HM_Lkv7F7irlOpzsIpYGn_fZDjErgganqNW4c1EqSfmwdyRVr1nJWxLtJcv4-sWz_zj5zEWJjOXZ7u7BvVNVHrS8SmxOCC-hSm2uHsBLxCqLpTvHeAqULlvGv2ZJfb6G0gI2RnYu-0aqGmv3x221xcSTP80m2izoDML8qMrWIJmNKZWt93NhZOaEoaevoPdtWRAJfj198CUic7NY5fC6nbQiX7xSY3UJetZ0r9yFoTPExeGMzm4er0zD2fhh2ZsKWzEaaYyJsGMOq0CxC_ROCuvbmStTE1O3xcqgu6VCfIPNcKVnPGFhK_Nugo2TxQwuadELGE1bN6I-BR4qOm6pgwkA3PzXJuMWXtPqtvaFdpoJpCvMO2VHEve8dx3HUHnXRdo06HV-ZFq7VdxkBoC9MD5-MnCVZ-S23H75sYNdnU5XXPepVlBlCXD571KQhU0wI4UpsjfuRUCRKBE0ZfMnNjAFwC_oqHpS24ftjNzphUtO*-\_-kRXffmGIMvovN6SE6PJuDHnO6RjUZwOCf8oddRTkFONgBaztRBWzwrSa7I_CjMFHBsYe-b4dCLWTXWArW26FGk_gQEghDrV3rnn3jCnIDsXcw-sgUHAU58PCP8JvbAB5Mf9_Sf91VfniVxRCUai-64wgMhxsHmBE-XvYi7CEWqTSAEGAQJrBVNvyCC_fVGq6YbCmwYyb7NHfAFgEkD5REPyfmWuYTXGR3pHqjJ_mELxBnMm2THoBwxXevHb5v6nRr8NxHSGe9ReWuwLqKQndEv2WllsJYG5d5Zp6lW8h5mqKeZlJK3dKAnjGpUxdZNVEk2QNOXIaLBcb-CdclY6Je85eg-Tl6xLaMc5Y2omUzJoCwnjLTe0Zgx1E8U0zhyrNwf9j2QzirQ; idsrv.session=6FD6ECBD3CC5EFD4322E0B80AA3622F4'

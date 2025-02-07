@@ -4,8 +4,15 @@ import { useRouter } from "expo-router";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import InteractionSection from "./InteractionSection";
+import { RefObject, useRef } from "react";
+import BottomSheet from "@gorhom/bottom-sheet";
+import SettingRecipe from "./SettingRecipe";
+import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 const Recipe = ({
+  bottomSheetRef,
+  setCurrentRecipeId,
+  setCurrentAuthorId,
   id,
   authorId,
   recipeImgUrl,
@@ -14,22 +21,31 @@ const Recipe = ({
   authorDisplayName,
   authorAvtUrl,
   voteDiff,
-  numberOfComment
-}: RecipeType) => {
+  numberOfComment,
+  vote
+}: RecipeType & {
+  bottomSheetRef: RefObject<BottomSheetMethods>;
+  setCurrentRecipeId: (id: string) => void;
+  setCurrentAuthorId: (id: string) => void;
+}) => {
   const router = useRouter();
   const { c } = useColorizer();
   const { black, white } = colors;
   const handleOnPress = () => {
     router.push({
       pathname: "/(protected)/community/[id]",
-      params: { id }
+      params: { id, authorId }
     });
   };
-  const handleTouchMenu = () => {};
+  const handleTouchMenu = () => {
+    setCurrentRecipeId(id);
+    setCurrentAuthorId(authorId);
+    bottomSheetRef.current?.expand();
+  };
 
   return (
     <TouchableWithoutFeedback onPress={handleOnPress}>
-      <View className='bg-white_black rounded-3xl pb-4'>
+      <View className='bg-white_black100 rounded-3xl pb-4'>
         <View className='flex-between flex-row px-4 py-2'>
           {authorId && authorDisplayName && authorAvtUrl && (
             <TouchableWithoutFeedback
@@ -50,11 +66,13 @@ const Recipe = ({
           )}
 
           <TouchableWithoutFeedback onPress={handleTouchMenu}>
-            <Feather
-              name='more-horizontal'
-              size={24}
-              color={c(black.DEFAULT, white.DEFAULT)}
-            />
+            <View>
+              <Feather
+                name='more-horizontal'
+                size={24}
+                color={c(black.DEFAULT, white.DEFAULT)}
+              />
+            </View>
           </TouchableWithoutFeedback>
         </View>
         <View className='flex gap-3'>
@@ -81,8 +99,12 @@ const Recipe = ({
               </Text>
             </View>
 
-            {(voteDiff !== undefined || numberOfComment !== undefined) && (
+            {(voteDiff !== undefined ||
+              numberOfComment !== undefined ||
+              vote !== undefined) && (
               <InteractionSection
+                recipeId={id}
+                vote={vote}
                 handleOnPress={handleOnPress}
                 voteDiff={voteDiff}
                 numberOfComment={numberOfComment}

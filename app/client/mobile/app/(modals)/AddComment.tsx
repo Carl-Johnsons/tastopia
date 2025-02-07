@@ -2,8 +2,6 @@ import { selectUser } from "@/slices/user.slice";
 import { useCallback, useEffect, useState } from "react";
 import {
   KeyboardAvoidingView,
-  Modal,
-  ModalProps,
   SafeAreaView,
   StatusBar,
   Text,
@@ -12,19 +10,16 @@ import {
 } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useKeyboard } from "@/hooks/useKeyboard";
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming
-} from "react-native-reanimated";
+import { Easing, useSharedValue, withTiming } from "react-native-reanimated";
 import { ScrollView } from "react-native";
-import { useColorModeValue, useOsValue } from "@/hooks/alternator";
 import { router } from "expo-router";
-import Button from "@/components/Button";
-import { BlurView } from "expo-blur";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
-const CreatePost = () => {
+const AddComment = () => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const user = selectUser();
   const [text, setText] = useState<string>("");
   const { keyboardHeight } = useKeyboard();
@@ -32,7 +27,6 @@ const CreatePost = () => {
   const [isClosing, setIsClosing] = useState<boolean>(false);
 
   const backgroundColor = "#FFFFFF";
-  const textColor = useColorModeValue("#000000", "#FFFFFF");
   const placeholderColor = "text-gray-500";
 
   const animate = useCallback(() => {
@@ -61,19 +55,19 @@ const CreatePost = () => {
           className='h-[60px] flex-row items-center justify-between px-3'
         >
           <Text
-            style={{ color: textColor }}
+            style={{ color: c(black.DEFAULT, white.DEFAULT) }}
             onPress={() => (text.length > 0 ? setIsClosing(true) : router.back())}
           >
             Cancel
           </Text>
           <Text
-            style={{ color: textColor }}
+            style={{ color: c(black.DEFAULT, white.DEFAULT) }}
             className='font-bold'
           >
             Add Comment
           </Text>
           <Text
-            style={{ color: textColor }}
+            style={{ color: c(black.DEFAULT, white.DEFAULT) }}
             onPress={() => (text.length > 0 ? setIsClosing(true) : router.back())}
           >
             Comment
@@ -84,13 +78,13 @@ const CreatePost = () => {
           style={{ borderColor: "#A9A9A9" }}
           className='border border-gray-500/20'
         />
-        <KeyboardAvoidingView behavior={useOsValue("padding", undefined)}>
+        <KeyboardAvoidingView>
           <ScrollView>
             <View className='mt-5 flex-row items-start gap-3'>
               <View className='flex-1 pb-3'>
                 <View className='flex-row justify-between'>
                   <Text
-                    style={{ color: textColor }}
+                    style={{ color: c(black.DEFAULT, white.DEFAULT) }}
                     className='font-bold'
                   >
                     {user.accountUsername}
@@ -111,7 +105,7 @@ const CreatePost = () => {
                   value={text}
                   autoFocus={true}
                   onChangeText={setText}
-                  style={{ color: textColor }}
+                  style={{ color: c(black.DEFAULT, white.DEFAULT) }}
                   maxLength={500}
                 />
               </View>
@@ -123,4 +117,4 @@ const CreatePost = () => {
   );
 };
 
-export default CreatePost;
+export default AddComment;

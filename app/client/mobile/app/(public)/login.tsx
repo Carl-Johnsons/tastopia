@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
-import LoginForm, { LoginFormFields } from "@/components/LoginForm";
+import LoginForm, { LoginFormFields } from "@/components/screen/login/LoginForm";
 import { useLogin } from "@/api/user";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
 import { useAppDispatch } from "@/store/hooks";
@@ -13,6 +13,7 @@ import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
 import { stringify } from "@/utils/debug";
 import useSyncSetting from "@/hooks/user/useSyncSetting";
 import useSyncUser from "@/hooks/user/useSyncUser";
+import { dismissKeyboard } from "@/utils/keyboard";
 
 const Login = () => {
   const isAndroid = Platform.OS === "android";
@@ -44,7 +45,7 @@ const Login = () => {
       },
       onError: error => {
         console.log("Error", stringify(error));
-        Alert.alert("Error", error.message);
+        Alert.alert("Error", "An error has occured. Please try again later.");
       },
       onSettled: () => {
         setIsSubmitting(false);
@@ -57,7 +58,7 @@ const Login = () => {
   };
 
   return (
-    <View className='relative h-full'>
+    <Pressable className='relative h-full' onPress={dismissKeyboard}>
       <CircleBg />
       <View
         className={`absolute ${isAndroid ? "top-[5%]" : "top-[6%]"} flex w-full justify-center gap-[4vh] px-4`}
@@ -98,7 +99,7 @@ const Login = () => {
           />
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

@@ -49,7 +49,7 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
         value={comment}
         autoCapitalize='none'
         placeholder={t("addComment")}
-        className={`flex-1 rounded-3xl border-gray-300 px-2 py-3 focus:border-primary`}
+        className={`text-black_white flex-1 rounded-3xl border-gray-300 px-2 py-3 focus:border-primary`}
         placeholderTextColor={"gray"}
         onChangeText={setComment}
         editable={!isLoading}
@@ -57,6 +57,7 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
 
       {comment.trim() !== "" && (
         <TouchableWithoutFeedback
+          testID='submit_comment_button'
           onPress={handleOnSubmit}
           disabled={isLoading}
         >

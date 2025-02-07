@@ -46,7 +46,6 @@ public class EnvUtility
         var user = DotNetEnv.Env.GetString("POSTGRES_USER", "Not found").Trim();
         var pwd = DotNetEnv.Env.GetString("POSTGRES_PASSWORD", "Not found").Trim();
         var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={pwd};";
-        Console.WriteLine(connectionString);
         return connectionString;
     }
 
@@ -63,7 +62,6 @@ public class EnvUtility
         var user = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_USERNAME", "Not found").Trim();
         var pwd = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_PASSWORD", "Not found").Trim();
         var connectionString = $"mongodb://{user}:{pwd}@{host}:{port}?authSource=admin";
-        Console.WriteLine(connectionString);
         return connectionString;
     }
 
@@ -80,29 +78,22 @@ public class EnvUtility
         var user = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_USERNAME", "Not found").Trim();
         var pwd = DotNetEnv.Env.GetString("MONGO_INITDB_ROOT_PASSWORD", "Not found").Trim();
         var connectionString = $"mongodb://{user}:{pwd}@{host}:{port}";
-        Console.WriteLine(connectionString);
         return connectionString;
     }
 
     /// <summary>
-    ///     Recursively search for the .env file by traversing up to the target parent directory.
     /// </summary>
     /// <param name="folderName"></param>
     /// <param name="envFileName"></param>
     /// <returns>absolute env file path, if not found return null</returns>
     private static string? GetEnvFilePath(string folderName, string envFileName)
     {
-        var currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
-
-        while (currentDirectory != null && currentDirectory.Exists)
+        var currentDirectory = Directory.GetCurrentDirectory();
+        int rootIndex = currentDirectory.IndexOf(folderName);
+        if (rootIndex != -1)
         {
-            if (currentDirectory.Name.Equals(folderName, StringComparison.OrdinalIgnoreCase))
-            {
-                return Path.Combine(currentDirectory.FullName, envFileName);
-            }
-            currentDirectory = currentDirectory.Parent;
+            return Path.Combine(currentDirectory.Substring(0, rootIndex + folderName.Length), envFileName);
         }
-
         return null;
     }
 
@@ -133,7 +124,7 @@ public class EnvUtility
             }
         }
     }
-    
+
     private static Dictionary<string, string> ParseEnvFile(string envPath)
     {
         var envVariables = new Dictionary<string, string>();
@@ -144,7 +135,7 @@ public class EnvUtility
             if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
                 continue;
 
-            var parts = line.Split(new[] { '=' }, 2);
+            var parts = line.Split(['='], 2);
             if (parts.Length == 2)
             {
                 var key = parts[0].Trim();

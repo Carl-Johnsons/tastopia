@@ -28,7 +28,7 @@ const useSearchRecipes = (keyword: string, tagCodes: string[]) => {
   const finalTagCodes = tagCodes.length > 0 ? tagCodes : ["ALL"];
   return useInfiniteQuery<SearchRecipeResponse>({
     queryKey: ["searchRecipes", keyword],
-    enabled: keyword.length > 0,
+    enabled: keyword.length > 0 || tagCodes.length > 0,
     queryFn: async ({ pageParam = 0 }) => {
       const { data } = await protectedAxiosInstance.post<SearchRecipeResponse>(
         "/api/recipe/search-recipe",

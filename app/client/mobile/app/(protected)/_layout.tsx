@@ -5,6 +5,7 @@ import {
   Keyboard,
   ActivityIndicator,
   Platform,
+  TouchableHighlight
 } from "react-native";
 import { Redirect, Tabs, usePathname, useRootNavigationState } from "expo-router";
 import { menuList } from "@/constants/menu";
@@ -65,7 +66,6 @@ const ProtectedLayout = () => {
       display: "flex",
       justifyContent: "flex-start",
       alignItems: "flex-start",
-      borderTopWidth: 1,
       backgroundColor: c(white.DEFAULT, black[100]),
       height: isAndroid ? 64 : 80,
       paddingTop: 10,
@@ -94,7 +94,7 @@ const ProtectedLayout = () => {
           tabBarShowLabel: false,
           tabBarActiveTintColor: primary,
           tabBarInactiveTintColor: c(black.DEFAULT, white.DEFAULT),
-          tabBarStyle: [styles.tabBar, { bottom: isKeyBoardVisible ? -50 : 0 }],
+          tabBarStyle: [styles.tabBar],
           tabBarHideOnKeyboard: false
         }}
       >
@@ -114,7 +114,10 @@ const ProtectedLayout = () => {
                 ...(translateCode && { title: t(translateCode) }),
                 headerShown: false,
                 tabBarIcon: ({ size, focused }) => (
-                  <View style={styles.tabItem}>
+                  <View
+                    style={styles.tabItem}
+                    testID={code}
+                  >
                     {typeof icon === "function"
                       ? icon({
                           focused:

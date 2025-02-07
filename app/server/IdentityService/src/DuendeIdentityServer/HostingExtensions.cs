@@ -1,3 +1,4 @@
+using Contract.Extension;
 using Contract.Utilities;
 using Duende.IdentityServer;
 using Duende.IdentityServer.ResponseHandling;
@@ -6,6 +7,7 @@ using DuendeIdentityServer.Middleware;
 using DuendeIdentityServer.Services;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 
 namespace DuendeIdentityServer;
@@ -20,16 +22,17 @@ internal static class HostingExtensions
         var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");
         var services = builder.Services;
 
-        builder.ConfigureKestrel();
-        builder.ConfigureSerilog();
+        builder.ConfigureCommonAPIServices();
 
         services.AddInfrastructureServices();
         services.AddApplicationServices();
+        services.AddErrorValidation();
         services.AddGrpcServices();
         services.AddSwaggerServices();
 
         services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
+
 
         services.AddControllers();
 
@@ -38,9 +41,7 @@ internal static class HostingExtensions
         services.AddSingleton(mapper);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddSingleton<ISignalRService, SignalRService>();
-        services.AddScoped(typeof(IPaginateDataUtility<,>), typeof(PaginateDataUtility<,>));
-
+        services.AddCommonAPIServices();
         services
             .AddIdentityServer(options =>
             {
@@ -86,9 +87,14 @@ internal static class HostingExtensions
                 options.Scope.Add("profile");
                 options.Scope.Add("email");
 
+                // Map google picture's claim to simple claim for easier query
+                options.ClaimActions.MapJsonKey("picture", "picture");
+
+                options.SaveTokens = true;
+
                 // Config cookie
-                //options.CorrelationCookie.SameSite = SameSiteMode.None;
-                //options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+                options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.None;
             });
 
         services.AddLocalApiAuthentication();
@@ -115,24 +121,25 @@ internal static class HostingExtensions
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
         app.UseSerilogServices();
+        app.UseSwaggerServices();
 
-        if (app.Environment.IsDevelopment())
+        if (EnvUtility.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseSwaggerServices();
-
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
 
-        //app.UseCookiePolicy(new CookiePolicyOptions
-        //{
-        //    MinimumSameSitePolicy = SameSiteMode.None,
-        //    Secure = app.Environment.IsDevelopment()
-        //        ? CookieSecurePolicy.SameAsRequest // Allow http in development
-        //        : CookieSecurePolicy.Always        // Enforce https in production
-        //});
+        app.UseCookiePolicy();
+
+        app.UseCookiePolicy(new CookiePolicyOptions
+        {
+            MinimumSameSitePolicy = SameSiteMode.None,
+            Secure = EnvUtility.IsDevelopment()
+                ? CookieSecurePolicy.SameAsRequest // Allow http in development
+                : CookieSecurePolicy.Always        // Enforce https in production
+        });
 
         app.UseCors("AllowSpecificOrigins");
 
@@ -145,6 +152,7 @@ internal static class HostingExtensions
         app.UseGlobalHandlingErrorMiddleware();
         app.MapRazorPages();
 
+        app.UseHealthCheck();
         // Add a user api endpoint so this will not be a minimal API
 #pragma warning disable ASP0014
         app.UseEndpoints(endpoints =>
@@ -153,10 +161,10 @@ internal static class HostingExtensions
                 .RequireAuthorization();
         });
 
-        var signalRService = app.Services.GetService<ISignalRService>();
-        signalRService!.StartConnectionAsync();
+        //var signalRService = app.Services.GetService<ISignalRService>();
+        //signalRService!.StartConnectionAsync();
 
-        app.UseConsulServiceDiscovery();
+        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
         return app;
     }
 }

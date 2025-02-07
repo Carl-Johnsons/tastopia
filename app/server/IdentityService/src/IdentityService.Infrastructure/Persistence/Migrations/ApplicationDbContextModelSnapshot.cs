@@ -17,7 +17,7 @@ namespace IdentityService.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -33,6 +33,9 @@ namespace IdentityService.Infrastructure.Persistence.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -109,6 +112,9 @@ namespace IdentityService.Infrastructure.Persistence.Migrations
                     b.Property<string>("UnlinkPhoneOTP")
                         .HasMaxLength(6)
                         .HasColumnType("character varying(6)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)

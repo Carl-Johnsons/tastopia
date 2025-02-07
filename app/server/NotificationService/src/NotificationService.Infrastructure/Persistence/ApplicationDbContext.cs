@@ -1,9 +1,13 @@
 ﻿using Contract.Utilities;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MongoDB.Driver;
+using NotificationService.Domain.Entities;
 
 namespace NotificationService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
+    public DbSet<AccountExpoPushToken> AccountExpoPushTokens { get; set; }
     public ApplicationDbContext()
     {
     }
@@ -14,20 +18,51 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbContext Instance => this;
 
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(EnvUtility.GetConnectionString(), option =>
-        {
-            option.EnableRetryOnFailure(
-                    maxRetryCount: 10,
-                    maxRetryDelay: TimeSpan.FromSeconds(15),
-                    errorCodesToAdd: null
-                );
-        });
+        EnvUtility.LoadEnvFile();
+        var db = DotNetEnv.Env.GetString("DB", "NotificationDB").Trim();
+        var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
+
+        optionsBuilder.UseMongoDB(mongoConnectionString, db);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (typeof(BaseMongoDBAuditableEntity).IsAssignableFrom(entityType.ClrType))
+            {
+                var createdAtProperty = entityType.FindProperty("CreatedAt");
+                var updatedAtProperty = entityType.FindProperty("UpdatedAt");
 
+                if (createdAtProperty != null)
+                {
+                    createdAtProperty.SetValueConverter(
+                        new ValueConverter<DateTime, DateTime>(
+                            v => v.ToUniversalTime(),
+                            v => DateTime.SpecifyKind(v, DateTimeKind.Utc)));
+                }
+
+                if (updatedAtProperty != null)
+                {
+                    updatedAtProperty.SetValueConverter(
+                        new ValueConverter<DateTime, DateTime>(
+                            v => v.ToUniversalTime(),
+                            v => DateTime.SpecifyKind(v, DateTimeKind.Utc)));
+                }
+            }
+        }
+        modelBuilder.Entity<AccountExpoPushToken>(e =>
+        {
+            e.Property(e => e.DeviceType)
+             .HasConversion(typeof(string));
+        });
+    }
+
+    public IMongoDatabase GetDatabase()
+    {
+        throw new NotImplementedException();
     }
 }

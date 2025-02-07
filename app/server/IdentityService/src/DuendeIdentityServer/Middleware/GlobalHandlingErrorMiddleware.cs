@@ -1,5 +1,4 @@
-﻿using IdentityService.Domain.Common;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Net;
 
 namespace DuendeIdentityServer.Middleware;

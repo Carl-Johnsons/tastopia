@@ -2,6 +2,7 @@
 using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
@@ -23,16 +24,20 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
+    private readonly ILogger<CommentRecipeCommandHandler> _logger;
+
 
     public CommentRecipeCommandHandler(IApplicationDbContext context,
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        GrpcUser.GrpcUserClient grpcUserClient)
+        GrpcUser.GrpcUserClient grpcUserClient,
+        ILogger<CommentRecipeCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _grpcUserClient = grpcUserClient;
+        _logger = logger;
     }
 
     public async Task<Result<RecipeCommentResponse?>> Handle(CommentRecipeCommand request, CancellationToken cancellationToken)
@@ -45,10 +50,8 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
 
             if (recipeId == null || accountId == null || string.IsNullOrEmpty(content))
             {
-                await Console.Out.WriteLineAsync("*AddCommentFail*********************");
                 return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);
             }
-            await Console.Out.WriteLineAsync();
             var recipe = await _context.Recipes.Where(r => r.Id == recipeId).FirstOrDefaultAsync();
 
             if (recipe == null)
@@ -58,7 +61,6 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
 
             List<string> accountList = [accountId.ToString()!];
 
-            await Console.Out.WriteLineAsync("*GetSimpleUser*********************");
             var response = _grpcUserClient.GetSimpleUser(new GrpcGetSimpleUsersRequest
             {
                 AccountId = { _mapper.Map<RepeatedField<string>>(accountList) }
@@ -112,7 +114,7 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
         }
         catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
+            _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);
         }
     }

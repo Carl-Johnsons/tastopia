@@ -1,16 +1,14 @@
 ﻿using Contract.Common;
 using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Logging;
 using UserService.Domain.Entities;
 namespace UserService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
+
     public ApplicationDbContext()
-    {
-    }
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : base(options)
     {
     }
 
@@ -22,7 +20,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserSetting> UserSettings { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(EnvUtility.GetConnectionString(), option =>
+        var connectionString = EnvUtility.GetConnectionString();
+
+        optionsBuilder.UseNpgsql(connectionString, option =>
         {
             option.EnableRetryOnFailure(
                     maxRetryCount: 10,

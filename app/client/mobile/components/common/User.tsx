@@ -49,18 +49,18 @@ const User = ({
             <Text
               numberOfLines={1}
               ellipsizeMode='tail'
-              className='base-medium'
+              className='base-medium text-black_white'
             >
               {displayName}
             </Text>
             <Text
               numberOfLines={1}
               ellipsizeMode='tail'
-              className='paragraph-medium'
+              className='paragraph-medium text-black_white'
             >
               @{username}
             </Text>
-            <Text className='body-regular'>
+            <Text className='body-regular text-black_white'>
               {abbreviateNumber(numberOfRecipe)}{" "}
               {numberOfRecipe === 1 ? "recipe" : "recipes"}
             </Text>

@@ -1,8 +1,5 @@
-﻿using MongoDB.Bson;
-using RecipeService.Domain.Entities;
-
+﻿using RecipeService.Domain.Entities;
 namespace RecipeService.Domain.Responses;
-
 public class RecipeDetailsResponse
 {
     public Recipe Recipe { get; set; } = null!;
@@ -11,6 +8,9 @@ public class RecipeDetailsResponse
     public string AuthorAvtUrl { get; set; } = null!;
     public int AuthorNumberOfFollower { get; set; } = 0;
     public List<SimilarRecipe> similarRecipes { get; set; } = [];
+    public string Vote { get; set; } = null!;
+    public bool IsBookmarked { get; set; }
+    public List<Tag> Tags { get; set; } = [];
 }
 
 public class SimilarRecipe

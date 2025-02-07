@@ -4,6 +4,7 @@ using Contract.Event.UploadEvent;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
@@ -52,13 +53,16 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
     private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
+    private readonly ILogger<CreateRecipeCommandHandler> _logger;
 
-    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient)
+
+    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, ILogger<CreateRecipeCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _serviceBus = serviceBus;
         _grpcUploadFileClient = grpcUploadFileClient;
+        _logger = logger;
     }
 
     public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
@@ -134,8 +138,8 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         }
         catch (Exception ex)
         {
+            _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             await RollBackImageGrpc(rollbaclUrls);
-            await Console.Out.WriteLineAsync(ex.Message);
         }
 
         return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
@@ -154,7 +158,6 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         {
             DeleteUrl = listUrls,
         });
-        await Console.Out.WriteLineAsync("***Roll back image success!***");
     }
 
     public async Task RollBackImageGrpc(List<string>? urls)
@@ -164,7 +167,6 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         {
             DeleteUrl = urls
         });
-        await Console.Out.WriteLineAsync("***Roll back image success!***");
     }
 
     private Dictionary<string, int> GetImageIndexMap(List<StepDTO> steps)

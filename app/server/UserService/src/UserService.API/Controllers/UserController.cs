@@ -67,6 +67,7 @@ public class UserController : BaseApiController
         {
             AccountId = subjectId != null ? Guid.Parse(subjectId) : Guid.Empty,
             Avatar = dto.Avatar,
+            Username = dto.Username,
             Background = dto.Background,
             DisplayName = dto.DisplayName,
             Gender = dto.Gender,

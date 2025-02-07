@@ -1,5 +1,6 @@
 ﻿using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Logging;
 using SubscriptionService.Domain.Entities;
 
 namespace SubscriptionService.Infrastructure.Persistence;
@@ -7,10 +8,6 @@ namespace SubscriptionService.Infrastructure.Persistence;
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public ApplicationDbContext()
-    {
-    }
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : base(options)
     {
     }
 
@@ -24,7 +21,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(EnvUtility.GetConnectionString(), option =>
+        var connectionString = EnvUtility.GetConnectionString();
+
+        optionsBuilder.UseNpgsql(connectionString, option =>
         {
             option.EnableRetryOnFailure(
                     maxRetryCount: 10,
@@ -70,6 +69,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             e.Property(evt => evt.EndDate)
                 .HasConversion(v => v.ToUniversalTime(),
                                v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
+          
+            e.Property(e => e.ReductionType)
+                      .HasConversion(typeof(string));
         });
 
         modelBuilder.Entity<SubscriptionEvent>(se =>
@@ -96,6 +98,24 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 .WithMany()
                 .HasForeignKey(us => us.PaymentId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            us.Property(e => e.Status)
+                    .HasConversion(typeof(string));
+        });
+
+        modelBuilder.Entity<Payment>(e =>
+        {
+            e.Property(e => e.Status)
+                    .HasConversion(typeof(string));
+
+            e.Property(e => e.Method)
+                    .HasConversion(typeof(string));
+        });
+
+        modelBuilder.Entity<Subscription>(e =>
+        {
+            e.Property(e => e.SubscriptionAccess)
+                    .HasConversion(typeof(string));
         });
     }
 }

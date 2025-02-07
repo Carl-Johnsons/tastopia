@@ -1,4 +1,4 @@
-import {SETTING_VALUE} from "@/slices/setting.slice";
+import { SETTING_VALUE } from "@/constants/settings";
 import i18next from "i18next";
 
 const LANGUAGE = {

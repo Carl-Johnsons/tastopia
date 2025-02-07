@@ -9,8 +9,8 @@ import {
   ViewStyle
 } from "react-native";
 import { Skeleton } from "moti/skeleton";
-import { useColorModeValue } from "@/hooks/alternator";
 import { filterImageSource } from "@/utils/dataFilter";
+import useColorizer from "@/hooks/useColorizer";
 
 interface AvatarProps {
   /** The avatar's size in pixel */
@@ -46,6 +46,7 @@ export const Avatar = (props: AvatarProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(imgSource ? true : false);
   const [isError, setIsError] = useState<boolean>(false);
   const title = useMemo(() => filterTitle(props.alt), [props.alt]);
+  const { c } = useColorizer();
 
   function filterTitle(title: AvatarProps["alt"]) {
     return title && title.length > 0 ? title.charAt(0).toUpperCase() : "";
@@ -60,7 +61,7 @@ export const Avatar = (props: AvatarProps) => {
   return (
     <View>
       <Skeleton
-        colorMode={useColorModeValue("dark", "light")}
+        colorMode={c("dark", "light")}
         show={isLoading}
         radius={"round"}
       >

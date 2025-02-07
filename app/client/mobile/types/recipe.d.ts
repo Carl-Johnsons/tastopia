@@ -19,6 +19,7 @@ type SearchRecipeResponse = {
 type RecipeType = SearchRecipeType & {
   voteDiff?: number;
   numberOfComment?: number;
+  vote?: string;
 };
 
 type RecipeStep = {
@@ -46,10 +47,20 @@ type RecipeDetailType = {
   steps: RecipeStep[];
   comments: null;
   recipeVotes: null;
-  recipeTags: null;
+  recipeTags: string[] | null;
   createdAt: string;
   updatedAt: string;
   id: string;
+};
+
+type RecipeDetailResponse = {
+  recipe: RecipeDetailType;
+  authorUsername: string;
+  authorAvtUrl: string;
+  authorDisplayName: string;
+  authorNumberOfFollower: number;
+  vote: string;
+  isBookmarked: boolean;
 };
 
 type RecipeResponse = {
@@ -62,4 +73,16 @@ type RecipeResponse = {
 
 type CreateRecipePayloadType = {
   data: FormData;
+};
+
+type BookMarkRecipeResponse = {
+  userBookmarkRecipe: {
+    accountId: string;
+    recipeId: string;
+    recipe: null | unknown;
+    createdAt: string;
+    updatedAt: string;
+    id: string;
+  };
+  isBookmark: boolean;
 };

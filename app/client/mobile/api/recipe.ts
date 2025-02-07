@@ -23,20 +23,28 @@ const useRecipesFeed = (filterSelected: string) => {
   });
 };
 
-type RecipeDetailResponse = {
-  recipe: RecipeDetailType;
-  authorUsername: string;
-  authorAvtUrl: string;
-  authorDisplayName: string;
-  authorNumberOfFollower: number;
-};
-
 const useRecipeDetail = (recipeId: string) => {
   return useQuery<RecipeDetailResponse>({
     queryKey: ["recipe", recipeId],
     queryFn: async () => {
       const { data } = await protectedAxiosInstance.post<RecipeDetailResponse>(
         "/api/recipe/get-recipe-details",
+        {
+          recipeId
+        }
+      );
+      return data;
+    },
+    enabled: !!recipeId
+  });
+};
+
+const useRecipeSteps = (recipeId: string) => {
+  return useQuery<RecipeStep[]>({
+    queryKey: ["recipeSteps", recipeId],
+    queryFn: async () => {
+      const { data } = await protectedAxiosInstance.post<RecipeStep[]>(
+        "/api/recipe/get-recipe-steps",
         {
           recipeId
         }
@@ -65,4 +73,34 @@ const useCreateRecipe = () => {
   });
 };
 
-export { useRecipesFeed, useRecipeDetail, useCreateRecipe };
+const useBookmarkRecipe = () => {
+  return useMutation<BookMarkRecipeResponse, Error, { recipeId: string }>({
+    mutationFn: async ({ recipeId }) => {
+      const { data } = await protectedAxiosInstance.post("/api/recipe/bookmark-recipe", {
+        recipeId: recipeId
+      });
+      return data;
+    }
+  });
+};
+
+const useVoteRecipe = () => {
+  return useMutation<any, Error, { recipeId: string; isUpvote: boolean }>({
+    mutationFn: async ({ recipeId, isUpvote }) => {
+      const { data } = await protectedAxiosInstance.post("/api/recipe/vote-recipe", {
+        recipeId: recipeId,
+        isUpvote: isUpvote
+      });
+      return data;
+    }
+  });
+};
+
+export {
+  useRecipesFeed,
+  useRecipeDetail,
+  useRecipeSteps,
+  useCreateRecipe,
+  useBookmarkRecipe,
+  useVoteRecipe
+};

@@ -3,7 +3,7 @@
 project_root=$(pwd)
 
 pull_both_env_file() {
-  local service_path=$ 1
+  local service_path=$1
   local file_name=$2
   echo -e "\e[95mPulling dev and prod $file_name env file...\e[0m"
   cd "$service_path" &&
@@ -38,4 +38,5 @@ pull_both_env_file "./" global_production &&
   pull_both_env_file "./app/server/NotificationService" notification &&
   pull_both_env_file "./app/server/SignalRService" signalR &&
   pull_both_env_file "./app/server/TrackingService" tracking &&
-  pull_both_env_file "./app/server/SubscriptionService" "subscription"
+  pull_both_env_file "./app/server/SubscriptionService" "subscription" &&
+  pull_both_env_file "./app/client/mobile" "mobile"

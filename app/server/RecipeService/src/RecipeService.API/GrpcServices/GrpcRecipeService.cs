@@ -12,14 +12,16 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
 {
     private readonly ISender _sender;
     private readonly IMapper _mapper;
+    private readonly ILogger<GrpcRecipeService> _logger;
 
-    public GrpcRecipeService(ISender sender, IMapper mapper)
+    public GrpcRecipeService(ISender sender, IMapper mapper, ILogger<GrpcRecipeService> logger)
     {
         _sender = sender;
         _mapper = mapper;
+        _logger = logger;
     }
 
-    public override async Task<GrpcListTagDTO> GetAllTags(RecipeProto.GrpcEmpty request, ServerCallContext context)
+    public override async Task<GrpcListTagDTO> GetAllTags(GrpcEmpty request, ServerCallContext context)
     {
         var response = await _sender.Send(new GetAllTagsQuery());
         response.ThrowIfFailure();
@@ -28,26 +30,27 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
         {
             result.Tags.Add(_mapper.Map<GrpcTagDTO>(t));
         }
-        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(result, Formatting.Indented));
+        _logger.LogInformation("Grpc GetAllTags successfully!");
         return result;
     }
 
     public override async Task<GrpcRecipeDetailsDTO> GetRecipeDetails(GrpcRecipeIdRequest request, ServerCallContext context)
     {
-        var response = await _sender.Send(new GetRecipeDetailQuery
+        var response = await _sender.Send(new GetRecipeDetailForServerQuery
         {
-            RecipeId = Guid.Parse(request.RecipeId),
+            RecipeId = Guid.Parse(request.RecipeId)
         });
         response.ThrowIfFailure();
 
         var result = _mapper.Map<GrpcRecipeDetailsDTO>(response.Value!.Recipe);
-        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(result, Formatting.Indented));
+
+        _logger.LogInformation("Grpc GetRecipeDetails successfully!");
         return result;
     }
 
     public override async Task<GrpcMapSimpleRecipes> GetSimpleRecipes(GrpcGetSimpleRecipeRequest request, ServerCallContext context)
     {
-        if (request.AccountId == null || request.RecipeIds == null ||request.RecipeIds.Count == 0)
+        if (request.AccountId == null || request.RecipeIds == null || request.RecipeIds.Count == 0)
         {
             throw new RpcException(new Status(StatusCode.InvalidArgument, "RecipeIds and AccountId must not be null or empty."));
         }
@@ -92,7 +95,8 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
         {
             Recipes = { mapField }
         };
-        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(grpcResult,Formatting.Indented));
+
+        _logger.LogInformation("Grpc GetSimpleRecipes successfully!");
         return grpcResult;
     }
 }

@@ -1,6 +1,6 @@
 import { Image } from "expo-image";
-import React, { memo, useState } from "react";
-import { Text, TouchableWithoutFeedback, View } from "react-native";
+import { memo } from "react";
+import { Platform, Text, TouchableWithoutFeedback, View } from "react-native";
 
 const filterData = [
   {
@@ -25,15 +25,9 @@ const filterData = [
   }
 ];
 
-type FilterItem = {
-  imageUrl: string;
-  value: string;
-};
+type FilterItem = { imageUrl: string; value: string };
 
-type FilterProps = {
-  filterSelected: string;
-  handleSelect: (key: string) => void;
-};
+type FilterProps = { filterSelected: string; handleSelect: (key: string) => void };
 
 const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
   const handleSelectItem = (value: string) => {
@@ -41,39 +35,36 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
   };
 
   return (
-    <View className='flex-row gap-3 flex-center'>
+    <View className='w-max-[400px] flex-center flex-row flex-wrap gap-3'>
       {filterData?.map(item => {
         const isSelected = filterSelected === item.value;
+
         return (
           <TouchableWithoutFeedback
             onPress={() => handleSelectItem(item.value)}
             key={item.value}
           >
             <View
-              className={`flex-center w-[60px] rounded-full border-2 border-primary py-2 ${isSelected ? "bg-primary" : "bg-white"}`}
-            >
-              <View
-                className={`rounded-full p-[0.5px] ${isSelected ? "bg-white" : ""}`}
-                style={{
-                  elevation: isSelected ? 5 : 0,
+              className={`flex-center flex-row gap-2 rounded-full border-2 border-primary px-1 py-1 ${isSelected ? "bg-primary" : "bg-white_black"}`}
+              style={Platform.select({
+                ios: {
                   shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 2
-                }}
-              >
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 30
+                },
+                android: { elevation: 5 }
+              })}
+            >
+              <View className={`rounded-full p-[0.5px] ${isSelected ? "bg-white" : ""}`}>
                 <Image
                   source={item.imageUrl}
-                  style={{
-                    width: 50,
-                    height: 50,
-                    borderRadius: 50
-                  }}
+                  style={{ width: 50, height: 50, borderRadius: 50 }}
                   cachePolicy={"disk"}
                 />
               </View>
               <Text
-                className={`body-medium my-2 py-2 text-center ${isSelected ? "text-white_black" : "text-black_white"}`}
+                className={`body-medium text-center ${isSelected ? "text-white" : "text-black_white"}`}
               >
                 {item.value}
               </Text>

@@ -6,8 +6,8 @@ import { CLIENT_ID, SCOPE } from "@/constants/api";
 import { AxiosError } from "axios";
 import { stringify } from "@/utils/debug";
 import { selectAccessToken } from "@/slices/auth.slice";
-import { SETTING_KEY, SETTING_VALUE } from "@/slices/setting.slice";
 import { UserState } from "@/slices/user.slice";
+import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 
 export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {
@@ -18,7 +18,7 @@ export enum IDENTIFIER_TYPE {
 export const useLogin = () => {
   return useMutation<LoginResponse, Error, LoginParams>({
     mutationKey: ["login"],
-    mutationFn: async (inputs: LoginParams) => {
+    mutationFn: async inputs => {
       const body = new URLSearchParams({
         client_id: CLIENT_ID,
         scope: SCOPE,
@@ -28,11 +28,9 @@ export const useLogin = () => {
       }).toString();
 
       try {
-        const { data } = await axiosInstance.post<LoginResponse>(
-          "/connect/token",
-          body,
-          { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-        );
+        const { data } = await axiosInstance.post<LoginResponse>("/connect/token", body, {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        });
 
         return data;
       } catch (error) {
@@ -82,7 +80,6 @@ export const useGetUserDetails = () => {
     enabled: !!accessToken,
     queryFn: async () => {
       const url = "/api/user/get-current-user-details";
-      console.debug("useGetUserDetails: Fetching data with access token", accessToken);
 
       try {
         const { data } = await protectedAxiosInstance.get(url);
@@ -208,18 +205,58 @@ type Setting = {
 
 type GetUserSettingsResponse = Array<UserSetting>;
 
-
 export const useUpdateSetting = () => {
-  return useMutation<UpdateSettingResponse, Error, { data: UpdateSettingParams }>({
+  return useMutation<UpdateSettingResponse, Error, UpdateSettingParams>({
     mutationKey: ["updateSetting"],
-    mutationFn: async ({ data }) => {
+    mutationFn: async data => {
       const url = "/api/setting";
 
       try {
-        const { data: response } = await protectedAxiosInstance.put<UpdateSettingResponse>(url, data);
+        const { data: response } =
+          await protectedAxiosInstance.put<UpdateSettingResponse>(url, data);
         return response;
       } catch (error) {
         console.debug("useUpdateSetting", stringify(error));
+
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message);
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    }
+  });
+};
+
+export type UpdateUserResponseSuccess = undefined;
+export type UpdateUserResponse = UpdateUserResponseSuccess | IErrorResponseDTO;
+
+export const useUpdateUser = () => {
+  return useMutation<UpdateUserResponse, Error, IUpdateUserDTO>({
+    mutationKey: ["updateUser"],
+    mutationFn: async data => {
+      const url = "/api/user";
+      const body = new FormData();
+
+      Object.entries(data).forEach(([key, value]) => {
+        if (value) {
+          body.append(key, value);
+        }
+      });
+
+      try {
+        const { data: response } = await protectedAxiosInstance.patch<UpdateUserResponse>(
+          url,
+          body,
+          {
+            headers: { "Content-Type": "multipart/form-data" }
+          }
+        );
+
+        return response;
+      } catch (error) {
+        console.debug("useUpdateUser", stringify(error));
 
         if (error instanceof AxiosError) {
           const data = error.response?.data as IErrorResponseDTO;

@@ -4,7 +4,6 @@ using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RecipeProto;
-using RecipeService.Domain.Responses;
 using TrackingService.Domain.Entities;
 using TrackingService.Domain.Errors;
 using TrackingService.Domain.Responses;
@@ -43,9 +42,6 @@ public class GetUserViewRecipeDetaiQueryHandler : IRequestHandler<GetUserViewRec
             return Result<PaginatedUserViewRecipeDetailListResponse?>.Failure(UserViewRecipeDetailError.NotFound, "ACCOUNT ID NULL");
         }
         var viewsQuery = _context.UserViewRecipeDetails.Where(v => v.AccountId == accountId).OrderByDescending(v => v.UpdatedAt).AsQueryable();
-
-        await Console.Out.WriteLineAsync("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:"+skip);
-
         var totalPage = (await viewsQuery.CountAsync() + UserViewRecipeDetailConstant.USER_VIEW_RECIPE_DETAIL_LIMIT - 1) / UserViewRecipeDetailConstant.USER_VIEW_RECIPE_DETAIL_LIMIT;
         viewsQuery = _paginateDataUtility.PaginateQuery(viewsQuery, new PaginateParam
         {

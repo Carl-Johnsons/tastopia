@@ -57,7 +57,7 @@ public class GetRecipeFeedsQueryHandler : IRequestHandler<GetRecipeFeedsQuery, R
         }
 
 
-        var recipesQuery = _context.Recipes.OrderByDescending(r => r.CreatedAt).AsQueryable();
+        var recipesQuery = _context.Recipes.Where(r => r.IsActive == true).OrderByDescending(r => r.CreatedAt).AsQueryable();
 
 
         if (!tagValues.Contains("All"))
@@ -106,6 +106,20 @@ public class GetRecipeFeedsQueryHandler : IRequestHandler<GetRecipeFeedsQuery, R
                 }
             });
 
+        }
+
+
+        var recipeMap = await recipesQuery.ToDictionaryAsync(r => r.Id);
+        var voteDict = new Dictionary<Tuple<Guid, Guid>, Vote>();
+        foreach (var (key, value) in recipeMap)
+        {
+            var vote = recipeMap[key].RecipeVotes.Where(v => v.AccountId == accountId).SingleOrDefault();
+            voteDict.Add(Tuple.Create(key, value.AuthorId), vote != null ? (vote.IsUpvote ? Vote.Upvote : Vote.Downvote) : Vote.None);
+        }
+
+        foreach (var recipe in recipeList)
+        {
+            recipe.Vote = voteDict[Tuple.Create(recipe.Id, recipe.AuthorId)].ToString();
         }
 
         var authorIds = recipesQuery

@@ -20,6 +20,8 @@ import { globalStyles } from "../GlobalStyles";
 import Loader from "../Loader";
 import { formatDate } from "@/utils/format-date";
 import { isFalsy, isNumeric as checkIfNumber } from "@/utils/functions";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 /**
  * - value: if value is Date type, must be in type string and in format "yyyy-MM-dd"
@@ -77,6 +79,9 @@ const Input = ({
   value,
   ...restProps
 }: InputTypes) => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   // For date picker only
@@ -122,7 +127,8 @@ const Input = ({
       isFocused && styles.inputFocused,
       isPassword && styles.inputPassword,
       {
-        backgroundColor: disabled ? "#e9ecef" : globalStyles.color.light
+        backgroundColor: disabled ? "#e9ecef" : globalStyles.color.light,
+        color: `${c(black.DEFAULT, white.DEFAULT)}`
       }
     ];
 

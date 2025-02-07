@@ -8,6 +8,8 @@ using TrackingService.Infrastructure;
 using TrackingService.Application;
 using Contract.Utilities;
 using TrackingService.API.Extensions;
+using Serilog;
+using Contract.Extension;
 
 namespace TrackingService.API;
 
@@ -23,9 +25,11 @@ public static class DependenciesInjection
 
         builder.ConfigureKestrel();
         builder.ConfigureSerilog();
+        builder.ConfigureHealthCheck();
 
         services.AddInfrastructureServices();
         services.AddApplicationServices();
+        services.AddErrorValidation();
         services.AddSwaggerServices();
 
         // Register automapper
@@ -33,54 +37,17 @@ public static class DependenciesInjection
         services.AddSingleton(mapper);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddControllers()
-                // Prevent circular JSON reach max depth of the object when serialization
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                    options.JsonSerializerOptions.WriteIndented = true;
-                }).AddNewtonsoftJson(options =>
-                {
-                    options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
-                });
-
-        services.AddHttpContextAccessor();
-
-        services.AddAuthentication("Bearer")
-            .AddJwtBearer("Bearer", options =>
-            {
-                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
-                var IdentityServerEndpoint = $"https://{IdentityDNS}";
-                Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
-
-                options.Authority = IdentityServerEndpoint;
-                options.RequireHttpsMetadata = false;
-                // Clear default Microsoft's JWT claim mapping
-                // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
-                options.MapInboundClaims = false;
-
-                options.TokenValidationParameters.ValidTypes = ["at+jwt"];
-
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
-                };
-                // For development only
-                options.IncludeErrorDetails = true;
-            });
+        services.AddCommonAPIServices();
 
         services.AddEndpointsApiExplorer();
 
         return builder;
     }
 
-    public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
+    public static WebApplication UseAPIServices(this WebApplication app)
     {
         app.UseSerilogServices();
-        app.UseConsulServiceDiscovery();
+        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_TRACKING", "Not Found"));
 
         app.UseSwaggerServices();
 
@@ -94,15 +61,9 @@ public static class DependenciesInjection
 
         app.UseAuthorization();
 
-        //try
-        //{
-        //    var signalRService = app.Services.GetService<ISignalRService>();
-        //    await signalRService!.StartConnectionAsync();
-        //}
-        //catch (Exception ex)
-        //{
-        //    app.Logger.LogError($"Error connecting to SignalR: {ex.Message}");
-        //}
+        app.UseRouting();
+        app.UseHealthCheck();
+
         return app;
     }
 }

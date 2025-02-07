@@ -27,6 +27,7 @@ message GrpcCreateUserRequest {
     string AccountId = 1;
     string FullName = 2;
     string AccountUsername = 3;
+    string Avatar = 4;
 }
 
 message GrpcSearchUserRequest {

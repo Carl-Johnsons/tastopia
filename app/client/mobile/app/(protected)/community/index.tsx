@@ -1,30 +1,29 @@
-import i18next from "i18next";
-import { useRecipesFeed } from "@/api/recipe";
 import Recipe from "@/components/common/Recipe";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Empty from "@/components/screen/community/Empty";
 import Header from "@/components/screen/community/Header";
-import { globalStyles } from "@/components/common/GlobalStyles";
 import { View, RefreshControl, SafeAreaView, FlatList } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import { router, useFocusEffect } from "expo-router";
-import useDarkMode from "@/hooks/useDarkMode";
+import { router } from "expo-router";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
+import { useRecipesFeed } from "@/api/recipe";
+import BottomSheet from "@gorhom/bottom-sheet";
+import SettingRecipe from "@/components/common/SettingRecipe";
 
 const Community = () => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  const [currentRecipeId, setCurrentRecipeId] = useState("");
+  const [currentAuthorId, setCurrentAuthorId] = useState("");
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
-  const isDarkMode = useDarkMode();
 
-  //TODO: apply loading later
-  const {
-    data,
-    fetchNextPage,
-    hasNextPage,
-    isLoading,
-    isFetchingNextPage,
-    refetch,
-    isRefetching
-  } = useRecipesFeed(filterSelected);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
+    useRecipesFeed(filterSelected);
 
   const handleCreateRecipe = () => {
     router.push("/(protected)/community/create-recipe");
@@ -46,12 +45,20 @@ const Community = () => {
 
   const renderItem = useCallback(
     ({ item, index }: { item: RecipeType; index: number }) => (
-      <>
-        <Recipe {...item} />
+      <View
+        className='px-4'
+        testID='recipe'
+      >
+        <Recipe
+          {...item}
+          setCurrentRecipeId={setCurrentRecipeId}
+          setCurrentAuthorId={setCurrentAuthorId}
+          bottomSheetRef={bottomSheetRef}
+        />
         {index !== recipes.length - 1 && (
           <View className='my-4 h-[1px] w-full bg-gray-300' />
         )}
-      </>
+      </View>
     ),
     [recipes.length]
   );
@@ -67,14 +74,10 @@ const Community = () => {
 
   return (
     <SafeAreaView
-      style={{
-        backgroundColor: isDarkMode ? globalStyles.color.dark : globalStyles.color.light,
-        height: "100%"
-      }}
+      style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
       <FlatList
         removeClippedSubviews
-        style={{ paddingHorizontal: 16 }}
         data={recipes}
         keyExtractor={keyExtractor}
         refreshControl={
@@ -94,6 +97,13 @@ const Community = () => {
         })}
         renderItem={renderItem}
         ListEmptyComponent={() => <Empty />}
+      />
+
+      <SettingRecipe
+        id={currentRecipeId}
+        authorId={currentAuthorId}
+        ref={bottomSheetRef}
+        title='Settings'
       />
     </SafeAreaView>
   );

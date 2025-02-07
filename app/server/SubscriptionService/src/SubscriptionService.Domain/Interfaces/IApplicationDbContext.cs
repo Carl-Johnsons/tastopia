@@ -1,4 +1,5 @@
-﻿using SubscriptionService.Domain.Entities;
+﻿using Contract.Interfaces;
+using SubscriptionService.Domain.Entities;
 
 namespace SubscriptionService.Domain.Interfaces;
 

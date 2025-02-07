@@ -16,7 +16,25 @@ cat > docker-compose.override.yaml <<EOL
 version: '3.8'
 
 services:
+  api-gateway:
+    volumes:
+      - ${CERT_PATH}:/.aspnet/https
+  identity-api:
+    volumes:
+      - ${CERT_PATH}:/.aspnet/https
+  recipe-api:
+    volumes:
+      - ${CERT_PATH}:/.aspnet/https
   user-api:
+    volumes:
+      - ${CERT_PATH}:/.aspnet/https
+  notification-api:
+    volumes:
+      - ${CERT_PATH}:/.aspnet/https
+  upload-api:
+    volumes:
+      - ${CERT_PATH}:/.aspnet/https
+  recipe-worker:
     volumes:
       - ${CERT_PATH}:/.aspnet/https
 EOL
