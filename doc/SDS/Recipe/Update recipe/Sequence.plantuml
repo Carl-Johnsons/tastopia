@@ -1,5 +1,5 @@
 @startuml Sequence
-title "Create recipe"
+title "Update recipe"
 ' Style section
 <style>
   sequenceDiagram {
@@ -20,9 +20,9 @@ participant "<<service>>\n RecipeWorker" as RecipeWorker
 participant "<<service>>\n GerminiAPI" as GerminiAPI
 database MongoDB
 
-User -> MobileUI++: 1. Fill the create recipe form and \n touch Create button
+User -> MobileUI++: 1. Fill the update recipe form and \n touch Update button
 
-MobileUI -> ApiGateway++: 2. Create recipe
+MobileUI -> ApiGateway++: 2. Update recipe
 
 ref over ApiGateway: 3. Verify access token
 
@@ -39,9 +39,9 @@ alt Upload to cloudinary fail
     User <-- MobileUI: 8A.3. Display upload image fail error
 else Upload to cloudinary success 
     RecipeService <-- UploadFileService--: 9. Return recipe's image urls list <<gRPC>>
-    RecipeService -> MongoDB++: 10. Insert data
+    RecipeService -> MongoDB++: 10. Update data
     RecipeService <-- MongoDB--: 11. Return response
-    alt Add recipe to database fail
+    alt Update recipe to database fail
         RecipeService -> RecipeService: 12A. Roll back images
         activate RecipeService
         RecipeService -> Rabbitmq: 12A.1. Publish "DeleteMultipleImageEvent" \n message <<Async>>
@@ -54,17 +54,17 @@ else Upload to cloudinary success
         UploadFileService <-- Cloudinary--: 12A.4. Return response
         destroy UploadFileService
         deactivate UploadFileService
-        ApiGateway <-- RecipeService: 12A.5. Return add recipe fail error
+        ApiGateway <-- RecipeService: 12A.5. Return update recipe fail error
         MobileUI <-- ApiGateway: 12A.6. Forward response
-        User <-- MobileUI: 12A.7. Display add recipe fail error.
-    else Add recipe to database success
+        User <-- MobileUI: 12A.7. Display update recipe fail error.
+    else Update recipe to database success
         RecipeService -> Rabbitmq++: 18. Publish "ValidateRecipeEvent" \n message <<Async>>
         Rabbitmq -> RecipeWorker: 19. Deliver "ValidateRecipeEvent"\n message
         deactivate Rabbitmq
         activate RecipeWorker
-        ApiGateway <-- RecipeService--: 20. Retrun add recipe success
+        ApiGateway <-- RecipeService--: 20. Retrun update recipe success
         MobileUI <-- ApiGateway--: 21. Forward response
-        User <-- MobileUI--: 22. Display add recipe success\n and redirect user to community screen
+        User <-- MobileUI--: 22. Display update recipe success\n and redirect user to community screen
 
         RecipeWorker -> RecipeWorker: 23. Consume message and call \n CheckRecipeAbuse function
         activate RecipeWorker
@@ -96,7 +96,6 @@ else Upload to cloudinary success
             RecipeService -> MongoDB++: 32A.2. Consume message and update data
             RecipeService <-- MongoDB--: 32A.3. Return response
             destroy RecipeService
-
             deactivate RecipeService
         end opt
 
@@ -108,7 +107,6 @@ else Upload to cloudinary success
             RecipeService -> MongoDB++: 33A.2. Consume message and insert data
             RecipeService <-- MongoDB--: 33A.3. Return response
             destroy RecipeService
-
             deactivate RecipeService
         end opt
         deactivate RecipeWorker
