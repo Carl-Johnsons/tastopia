@@ -1,4 +1,5 @@
-﻿using DnsClient.Internal;
+﻿using Contract.Constants;
+using Contract.Event.NotificationEvent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RecipeService.Domain.Entities;
@@ -23,15 +24,21 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<VoteRecipeCommandHandler> _logger;
+    private readonly IServiceBus _serviceBus;
 
-    public VoteRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<VoteRecipeCommandHandler> logger)
+    public VoteRecipeCommandHandler(IApplicationDbContext context,
+                                    IUnitOfWork unitOfWork,
+                                    ILogger<VoteRecipeCommandHandler> logger,
+                                    IServiceBus serviceBus)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _serviceBus = serviceBus;
     }
 
-    public async Task<Result<VoteResponse?>> Handle(VoteRecipeCommand request, CancellationToken cancellationToken)
+    public async Task<Result<VoteResponse?>> Handle(VoteRecipeCommand request,
+                                                    CancellationToken cancellationToken)
     {
         try
         {
@@ -49,13 +56,6 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
             {
                 return Result<VoteResponse?>.Failure(RecipeError.NotFound);
             }
-
-            _logger.LogInformation("cc");
-            _logger.LogInformation("cc");
-            _logger.LogInformation("cc");
-            _logger.LogInformation("cc");
-            _logger.LogInformation("cc");
-
 
             var recipeVote = recipe.RecipeVotes.Where(rv => rv.AccountId == accountId).FirstOrDefault();
             var vote = (bool)isUpvote ? Vote.Upvote : Vote.Downvote;
@@ -89,6 +89,35 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
             }
             await _unitOfWork.SaveChangeAsync();
 
+            // Notify other user
+            if (vote != Vote.None && accountId.Value != recipe.AuthorId)
+            {
+                var templateCode = vote == Vote.Upvote ? NotificationTemplateCode.USER_UPVOTE : NotificationTemplateCode.USER_DOWNVOTE;
+
+                await _serviceBus.Publish(new NotifyUserEvent
+                {
+                    PrimaryActors = [
+                        new ActorDTO
+                        {
+                            ActorId = accountId.Value,
+                            Type = EntityType.USER
+                        }],
+                    SecondaryActors = [
+                        new ActorDTO
+                        {
+                            ActorId = recipe.AuthorId,
+                            Type = EntityType.USER
+                        }],
+                    TemplateCode = templateCode,
+                    Channels = [NOTIFICATION_CHANNEL.DEFAULT],
+                    JsonData = Newtonsoft.Json.JsonConvert.SerializeObject(new
+                    {
+                        redirectUri = $"{CLIENT_URI.MOBILE.COMMUNITY}/{recipeId}"
+                    }),
+                    ImageUrl = recipe.ImageUrl
+                });
+
+            }
             return Result<VoteResponse?>.Success(new VoteResponse
             {
                 Vote = vote,

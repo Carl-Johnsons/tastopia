@@ -117,9 +117,12 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
                 return Result.Failure(NotificationErrors.NotFound, "Actor not found for push notification");
             }
 
+            var recipientIdSet = notification.SecondaryActors.Select(merge => merge.ActorId.ToString())
+                                                             .ToHashSet();
+
             var settingRes = await _grpcUserClient.GetUserSettingAsync(new GrpcGetUserSettingRequest
             {
-                AccountId = { _mapper.Map<RepeatedField<string>>(actorIdSets) }
+                AccountId = { _mapper.Map<RepeatedField<string>>(recipientIdSet) }
             }, cancellationToken: cancellationToken);
 
             var mapUserLanguageSettings = new Dictionary<Guid, string>();
@@ -130,6 +133,8 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
                                                                 ?? "en");
                 mapUserLanguageSettings[Guid.Parse(key)] = languageSetting;
             }
+
+            Console.WriteLine(JsonConvert.SerializeObject(mapUserLanguageSettings, Formatting.Indented));
 
             foreach (var (key, languageCode) in mapUserLanguageSettings)
             {

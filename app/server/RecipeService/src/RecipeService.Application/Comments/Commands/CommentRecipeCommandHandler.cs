@@ -4,7 +4,6 @@ using Contract.DTOs.UserDTO;
 using Contract.Event.NotificationEvent;
 using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
