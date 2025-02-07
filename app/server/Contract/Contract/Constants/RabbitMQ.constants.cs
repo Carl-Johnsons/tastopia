@@ -29,6 +29,10 @@ public static class RabbitMQConstant
 
             // ======================= TRACKING ============================
             public const string CREATE_USER_VIEW_RECIPE_DETAIL = "create-user-view-recipe-detail-queue";
+
+            // ======================= NOTIFICATION ============================
+            public const string NOTIFY_USER = "notify-user-queue";
+
         }
     }
     public static class EXCHANGE
@@ -58,6 +62,9 @@ public static class RabbitMQConstant
 
             // ======================= TRACKING ============================
             public const string CREATE_USER_VIEW_RECIPE_DETAIL = "create-user-view-recipe-detail-event";
+
+            // ======================= NOTIFICATION ============================
+            public const string NOTIFY_USER = "notify-user-event";
         }
 
         public static class TYPE

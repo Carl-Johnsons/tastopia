@@ -1,4 +1,4 @@
-﻿using NotificationService.Domain.Constants;
+﻿using Contract.Constants;
 using NotificationService.Domain.Entities;
 
 namespace NotificationService.Infrastructure.Persistence.Mockup.Data;

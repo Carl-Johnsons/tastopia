@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Contract.Constants;
 using Contract.DTOs.UserDTO;
+using Contract.Event.NotificationEvent;
 using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -22,17 +24,20 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
+    private readonly IServiceBus _serviceBus;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
     public CommentRecipeCommandHandler(IApplicationDbContext context,
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        GrpcUser.GrpcUserClient grpcUserClient)
+        GrpcUser.GrpcUserClient grpcUserClient,
+        IServiceBus serviceBus)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _grpcUserClient = grpcUserClient;
+        _serviceBus = serviceBus;
     }
 
     public async Task<Result<RecipeCommentResponse?>> Handle(CommentRecipeCommand request, CancellationToken cancellationToken)
@@ -105,11 +110,37 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
             _context.Recipes.Update(recipe);
             await _unitOfWork.SaveChangeAsync(cancellationToken);
 
+            // Publish notification to the author of the recipe
+            if (recipe.AuthorId != accountId.Value)
+            {
+                await _serviceBus.Publish(new NotifyUserEvent
+                {
+                    PrimaryActors = [
+                        new ActorDTO
+                        {
+                            ActorId = accountId.Value,
+                            Type = EntityType.USER
+                        }],
+                    SecondaryActors = [
+                        new ActorDTO
+                        {
+                            ActorId = recipe.AuthorId,
+                            Type = EntityType.USER
+                        }],
+                    TemplateCode = NotificationTemplateCode.USER_COMMENT,
+                    Channels = [NOTIFICATION_CHANNEL.DEFAULT],
+                    JsonData = Newtonsoft.Json.JsonConvert.SerializeObject(new
+                    {
+                        redirectUri = $"{CLIENT_URI.MOBILE.COMMUNITY}/{recipeId}"
+                    }),
+                    ImageUrl = recipe.ImageUrl
+                });
+            }
             return Result<RecipeCommentResponse?>.Success(result);
         }
         catch (Exception ex)
         {
-            return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail);
+            return Result<RecipeCommentResponse?>.Failure(CommentError.AddCommentFail, ex.Message);
         }
     }
 }

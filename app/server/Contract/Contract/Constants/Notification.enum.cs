@@ -1,4 +1,4 @@
-﻿namespace NotificationService.Domain.Constants;
+﻿namespace Contract.Constants;
 
 public enum NotificationTemplateCode
 {

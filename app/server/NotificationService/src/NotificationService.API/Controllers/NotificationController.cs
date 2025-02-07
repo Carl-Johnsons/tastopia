@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Contract.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using NotificationService.API.DTOs;
 using NotificationService.Application.Notifications.Commands;
 using NotificationService.Application.Notifications.Queries;
+using NotificationService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace NotificationService.API.Controllers;
@@ -19,6 +21,8 @@ public partial class NotificationController : BaseApiController
     }
 
     [HttpPost("expo-push-token/android")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> SaveExpoAndroidPushToken([FromBody] SaveExpoPushTokenDTO dto)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
@@ -36,6 +40,8 @@ public partial class NotificationController : BaseApiController
     }
 
     [HttpPost("expo-push-token/ios")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> SaveExpoIOSPushToken([FromBody] SaveExpoPushTokenDTO dto)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
@@ -53,6 +59,8 @@ public partial class NotificationController : BaseApiController
     }
 
     [HttpDelete("expo-push-token/android")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> RemoveExpoAndroidPushToken()
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
@@ -69,6 +77,8 @@ public partial class NotificationController : BaseApiController
     }
 
     [HttpDelete("expo-push-token/ios")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> RemoveExpoIOSPushToken()
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
@@ -85,6 +95,8 @@ public partial class NotificationController : BaseApiController
     }
 
     [HttpPost("notify/push")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> NotifyPush([FromBody] NotifyDTO dto)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
@@ -103,6 +115,9 @@ public partial class NotificationController : BaseApiController
     }
 
     [HttpGet()]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedNotificationListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> GetNotifications(int? skip, string? lang)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;

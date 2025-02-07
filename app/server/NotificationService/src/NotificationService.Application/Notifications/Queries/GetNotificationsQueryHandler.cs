@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Contract.Constants;
 using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
 using MongoDB.Driver;

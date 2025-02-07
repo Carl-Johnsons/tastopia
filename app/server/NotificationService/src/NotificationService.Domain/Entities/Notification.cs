@@ -1,6 +1,6 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using Contract.Constants;
+using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.EntityFrameworkCore;
-using NotificationService.Domain.Constants;
 using System.ComponentModel.DataAnnotations;
 
 namespace NotificationService.Domain.Entities;
