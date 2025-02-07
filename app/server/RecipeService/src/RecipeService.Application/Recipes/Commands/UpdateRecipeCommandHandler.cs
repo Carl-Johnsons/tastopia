@@ -83,7 +83,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
             {
                 return Result<Recipe?>.Failure(RecipeError.NullParameter);
             }
-            var recipe = await _context.Recipes.Where(r => r.Id == recipeId).SingleOrDefaultAsync();
+            var recipe = await _context.Recipes.Where(r => r.Id == recipeId && r.IsActive).SingleOrDefaultAsync();
 
             if(recipe == null)
             {

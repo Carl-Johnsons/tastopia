@@ -59,6 +59,24 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
+    [HttpPost("delete-own-recipe")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Recipe), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> DeleteOwnRecipe([FromBody] DeleteOwnRecipe deleteOwnRecipe)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new DeleteOwnRecipeCommand
+        {
+            AuthorId = Guid.Parse(subjectId!),
+            RecipeId = deleteOwnRecipe.RecipeId,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [AllowAnonymous]
     [HttpPost("get-recipe-feed")]
     [Produces("application/json")]
