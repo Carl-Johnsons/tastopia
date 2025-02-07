@@ -92,7 +92,6 @@ const RecipeDetail = () => {
   };
 
   const handleTouchMenu = () => {
-    console.log("touch menu");
     bottomSheetRef.current?.expand();
   };
 

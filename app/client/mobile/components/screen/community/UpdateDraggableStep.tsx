@@ -21,6 +21,7 @@ interface UpdateDraggableStepProps {
   content: string;
   images: UpdateImage;
   drag: () => void;
+  steps: UpdateStepType[];
   setSteps: Dispatch<SetStateAction<UpdateStepType[]>>;
 }
 
@@ -29,6 +30,7 @@ const UpdateDraggableStep = ({
   content,
   images,
   drag,
+  steps,
   setSteps
 }: UpdateDraggableStepProps) => {
   const { c } = useColorizer();
@@ -44,11 +46,16 @@ const UpdateDraggableStep = ({
   };
 
   const handleRemoveItem = (key: string) => {
-    setSteps(prev => {
-      return prev.filter(item => {
-        return item.key !== key;
+    if (steps.length > 1) {
+      setSteps(prev => {
+        return prev.filter(item => {
+          return item.key !== key;
+        });
       });
-    });
+    } else {
+      Alert.alert(t("validation.stepRequired"));
+      return;
+    }
   };
 
   const confirmRemoveItem = () => {
@@ -129,16 +136,18 @@ const UpdateDraggableStep = ({
 
   return (
     <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={confirmRemoveItem}
-      >
-        <AntDesign
-          name='close'
-          size={20}
-          color={globalStyles.color.primary}
-        />
-      </TouchableOpacity>
+      {steps.length > 1 && (
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={confirmRemoveItem}
+        >
+          <AntDesign
+            name='close'
+            size={20}
+            color={globalStyles.color.primary}
+          />
+        </TouchableOpacity>
+      )}
 
       <View style={styles.inputContainer}>
         <TextInput

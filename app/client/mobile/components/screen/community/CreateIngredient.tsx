@@ -10,12 +10,14 @@ import { colors } from "@/constants/colors";
 interface DraggableIngredientProps {
   ingredientKey: string;
   value: string;
+  ingredients: CreateIngredientType[];
   setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
 }
 
 const CreateIngredient = ({
   ingredientKey,
   value,
+  ingredients,
   setIngredients
 }: DraggableIngredientProps) => {
   const { c } = useColorizer();
@@ -31,11 +33,16 @@ const CreateIngredient = ({
   }, []);
 
   const handleRemoveItem = useCallback((key: string) => {
-    setIngredients(prev => {
-      return prev.filter(item => {
-        return item.key !== key;
+    if (ingredients.length > 1) {
+      setIngredients(prev => {
+        return prev.filter(item => {
+          return item.key !== key;
+        });
       });
-    });
+    } else {
+      Alert.alert(t("validation.ingredientRequired"));
+      return;
+    }
   }, []);
 
   const confirmRemoveItem = () => {
@@ -74,16 +81,18 @@ const CreateIngredient = ({
 
   return (
     <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={confirmRemoveItem}
-      >
-        <AntDesign
-          name='close'
-          size={20}
-          color={globalStyles.color.primary}
-        />
-      </TouchableOpacity>
+      {ingredients.length > 1 && (
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={confirmRemoveItem}
+        >
+          <AntDesign
+            name='close'
+            size={20}
+            color={globalStyles.color.primary}
+          />
+        </TouchableOpacity>
+      )}
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -110,6 +119,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "white",
     borderRadius: 8,
     marginVertical: 4,
@@ -131,7 +141,9 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flex: 1,
-    marginHorizontal: 8
+    justifyContent: "center",
+    marginHorizontal: 8,
+    minHeight: 34
   },
   input: {
     padding: 4,

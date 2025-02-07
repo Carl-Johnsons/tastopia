@@ -16,7 +16,6 @@ import { getUniqueItemsWithSet, transformPlatformURI } from "@/utils/functions";
 import styles from "./UpdateImage.style";
 import { extensionToMimeType } from "@/utils/file";
 import { AntDesign } from "@expo/vector-icons";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import useDarkMode from "@/hooks/useDarkMode";
 import OutsidePressHandler from "react-native-outside-press";

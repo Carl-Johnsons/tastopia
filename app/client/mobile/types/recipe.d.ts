@@ -47,7 +47,7 @@ type RecipeDetailType = {
   steps: RecipeStep[];
   comments: null;
   recipeVotes: null;
-  recipeTags: string[] | null;
+  recipeTags: TagType[] | null;
   createdAt: string;
   updatedAt: string;
   id: string;
@@ -61,6 +61,7 @@ type RecipeDetailResponse = {
   authorNumberOfFollower: number;
   vote: string;
   isBookmarked: boolean;
+  tags: TagType[] | null;
 };
 
 type RecipeResponse = {

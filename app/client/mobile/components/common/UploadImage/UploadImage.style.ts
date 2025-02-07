@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
 
   uploadItemImage: {
-    width: "100%",
+    width: "100%"
   },
 
   removeOverlay: {
