@@ -41,7 +41,7 @@ public record UpdateRecipeCommand : IRequest<Result<Recipe?>>
 
 public class UpdateStepDTO
 {
-    public Guid? StepId { get; init; }
+    public Guid StepId { get; init; }
 
     [Required]
     public int OrdinalNumber { get; init; }
@@ -137,7 +137,8 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                 var s = recipe.Steps.Where(s => s.Id == step.StepId).SingleOrDefault();
                 if (s == null) {
                     s = new Step();
-                    s.Id = Guid.NewGuid();
+                    s.Id = step.StepId != Guid.Empty ? step.StepId : Guid.NewGuid();
+                    await Console.Out.WriteLineAsync("id cua step moi:"+ step.StepId);
                     s.AttachedImageUrls = [];
                     s.CreatedAt = DateTime.Now;
                 }
@@ -242,10 +243,11 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
             deleteUrls.Add(recipe.ImageUrl);
         }
 
-        var stepIds = steps.Where(s => s.StepId != null || s.StepId != Guid.Empty).Select(s => s.StepId).ToList();
+        var stepIds = steps.Where(s => s.StepId != Guid.Empty).Select(s => s.StepId).ToList();
 
         foreach(var step in recipe.Steps)
         {
+            //if update steps contain recipe step
             if (stepIds != null && stepIds.Count != 0 && stepIds.Contains(step.Id))
             {
                 var updateStep = steps.Where(s => s.StepId == step.Id).SingleOrDefault();
@@ -255,6 +257,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                 }
                 if(updateStep.DeleteUrls == null || updateStep.DeleteUrls.Count == 0)
                 {
+                    Console.WriteLine("bi null roi neeeeeeeeeeeeeeeeeeeeeeeeeee");
                     continue;
                 }
                 deleteUrls.AddRange(updateStep.DeleteUrls);
