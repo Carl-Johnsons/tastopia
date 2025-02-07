@@ -9,7 +9,7 @@ service GrpcUser {
     rpc GetSimpleUser(GrpcGetSimpleUsersRequest) returns (GrpcGetSimpleUsersDTO);
     rpc GetUserDetail(GrpcAccountIdRequest) returns (GrpcUserDetailDTO);
     rpc SearchUser(GrpcSearchUserRequest) returns (GrpcListAccountIds);
-    rpc GetUserSetting(GrpcAccountIdRequest) returns (GrpcUserSetting);
+    rpc GetUserSetting(GrpcGetUserSettingRequest) returns (GrpcUserSetting);
     // This will throw exception when user can't be created
     rpc CreateUser(GrpcCreateUserRequest) returns (GrpcEmpty);
 }
@@ -18,6 +18,10 @@ message GrpcEmpty {}
 
 message GrpcAccountIdRequest {
     string AccountId = 1;
+}
+
+message GrpcGetUserSettingRequest {
+    repeated string AccountId = 1; // HashSet<Guid> represented as repeated strings
 }
 
 message GrpcGetSimpleUsersRequest {
@@ -69,7 +73,11 @@ message GrpcUserDetailDTO {
 }
 
 message GrpcUserSetting {
-    map<string, GrpcSetting> SettingMap = 1; // Dictionary <=> MapField
+    map<string, GrpcSettingCollection> SettingMap = 1; // Dictionary <=> MapField
+}
+
+message GrpcSettingCollection {
+  repeated GrpcSetting Settings = 1;
 }
 
 message GrpcSetting {

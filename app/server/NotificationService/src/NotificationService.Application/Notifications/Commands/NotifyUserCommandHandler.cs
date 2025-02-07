@@ -2,6 +2,7 @@
 using Contract.Constants;
 using Contract.DTOs.UserDTO;
 using Contract.Event.NotificationEvent;
+using Contract.Utilities;
 using Google.Protobuf.Collections;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -20,7 +21,6 @@ public record NotifyUserCommand : IRequest<Result>
     public List<string> Channels { get; set; } = [];
     public string? JsonData { get; set; }
     public string? ImageUrl { get; set; }
-    public string PushNotificationLanguage { get; set; } = "en";
 }
 
 public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Result>
@@ -116,34 +116,53 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
             {
                 return Result.Failure(NotificationErrors.NotFound, "Actor not found for push notification");
             }
-            var paNames = notification.PrimaryActors.Select(pa => mapUsers[pa.ActorId].DisplayName).ToList();
-            var saNames = notification.SecondaryActors.Select(sa => mapUsers[sa.ActorId].DisplayName).ToList();
-            var message = template.TranslationMessages.GetValueOrDefault(request.PushNotificationLanguage)
-                          ?? "";
-            var title = notification.Template?.TranslationTitles?.GetValueOrDefault(request.PushNotificationLanguage)
-                        ?? "";
-            var data = new
+
+            var settingRes = await _grpcUserClient.GetUserSettingAsync(new GrpcGetUserSettingRequest
             {
-                Actors = paNames,
-                Targets = saNames,
-                IsSelf = true
-            };
+                AccountId = { _mapper.Map<RepeatedField<string>>(actorIdSets) }
+            }, cancellationToken: cancellationToken);
 
-            message = Smart.Format(message, data);
-            title = Smart.Format(title);
+            var mapUserLanguageSettings = new Dictionary<Guid, string>();
 
-            var tokens = expoPushTokens.Select(ept => ept.ExpoPushToken).ToList();
-
-            foreach (var channel in channels)
+            foreach (var (key, value) in settingRes.SettingMap)
             {
-                await _serviceBus.Publish(new PushNotificationEvent
+                var languageSetting = LanguageUtility.ToIso6391(value.Settings.SingleOrDefault(s => s.SettingCode == "LANGUAGE")?.SettingValue
+                                                                ?? "en");
+                mapUserLanguageSettings[Guid.Parse(key)] = languageSetting;
+            }
+
+            foreach (var (key, languageCode) in mapUserLanguageSettings)
+            {
+                var paNames = notification.PrimaryActors.Select(pa => mapUsers[pa.ActorId].DisplayName).ToList();
+                var saNames = notification.SecondaryActors.Select(sa => mapUsers[sa.ActorId].DisplayName).ToList();
+                var message = template.TranslationMessages.GetValueOrDefault(languageCode)
+                              ?? "";
+                var title = notification.Template?.TranslationTitles?.GetValueOrDefault(languageCode)
+                            ?? "";
+                var data = new
                 {
-                    ExpoPushTokens = tokens,
-                    Message = message,
-                    JsonData = jsonData,
-                    ChannelId = channel,
-                    Title = title,
-                });
+                    Actors = paNames,
+                    Targets = saNames,
+                    IsSelf = true
+                };
+
+                message = Smart.Format(message, data);
+                title = Smart.Format(title);
+
+                var tokens = expoPushTokens.Select(ept => ept.ExpoPushToken).ToList();
+
+                foreach (var channel in channels)
+                {
+                    await _serviceBus.Publish(new PushNotificationEvent
+                    {
+                        ExpoPushTokens = tokens,
+                        Message = message,
+                        JsonData = jsonData,
+                        ChannelId = channel,
+                        Title = title,
+                    });
+                }
+
             }
         }
 
