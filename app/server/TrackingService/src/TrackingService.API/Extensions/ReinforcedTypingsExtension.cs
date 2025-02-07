@@ -18,6 +18,7 @@ public static class ReinforcedTypingsExtension
 
         // Substitute C# type to typescript type
         builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
+        builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
 
         // Common type
         builder.ExportAsInterfaces([
@@ -34,7 +35,8 @@ public static class ReinforcedTypingsExtension
             typeof(GetUserViewRecipeDetailHistoryDTO)
         ], config =>
         {
-            config.WithPublicProperties()
+            config.FlattenHierarchy()
+                  .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
                   .ExportTo("tracking.interface.d.ts");

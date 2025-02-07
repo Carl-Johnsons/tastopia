@@ -6,6 +6,9 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="SmartFormat.NET" Version="3.5.3" />
+		<PackageReference Include="DotNetEnv" Version="3.0.0" />
 		<PackageReference Include="MediatR" Version="12.2.0" />
 		<!-- Grpc dependencies -->
 		<PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
