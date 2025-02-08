@@ -56,7 +56,6 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
             {
                 return Result<VoteResponse?>.Failure(RecipeError.NotFound);
             }
-
             var recipeVote = recipe.RecipeVotes.Where(rv => rv.AccountId == accountId).FirstOrDefault();
             var vote = (bool)isUpvote ? Vote.Upvote : Vote.Downvote;
             if (recipeVote == null)

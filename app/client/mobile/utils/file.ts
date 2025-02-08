@@ -27,4 +27,12 @@ const extensionToMimeType = (extension: string) => {
   return mimeTypes[extension.toLowerCase()] || "application/octet-stream";
 };
 
-export { extensionToMimeType };
+const isOnlineImage = (url: string) => {
+  if (typeof url !== "string" || !url.trim()) return false;
+
+  const urlPattern = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp)(\?.*)?)$/i;
+
+  return urlPattern.test(url);
+};
+
+export { extensionToMimeType, isOnlineImage };

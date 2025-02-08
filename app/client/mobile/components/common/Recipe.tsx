@@ -4,8 +4,15 @@ import { useRouter } from "expo-router";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import InteractionSection from "./InteractionSection";
+import { RefObject, useRef } from "react";
+import BottomSheet from "@gorhom/bottom-sheet";
+import SettingRecipe from "./SettingRecipe";
+import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 const Recipe = ({
+  bottomSheetRef,
+  setCurrentRecipeId,
+  setCurrentAuthorId,
   id,
   authorId,
   recipeImgUrl,
@@ -16,17 +23,25 @@ const Recipe = ({
   voteDiff,
   numberOfComment,
   vote
-}: RecipeType) => {
+}: RecipeType & {
+  bottomSheetRef: RefObject<BottomSheetMethods>;
+  setCurrentRecipeId: (id: string) => void;
+  setCurrentAuthorId: (id: string) => void;
+}) => {
   const router = useRouter();
   const { c } = useColorizer();
   const { black, white } = colors;
   const handleOnPress = () => {
     router.push({
       pathname: "/(protected)/community/[id]",
-      params: { id }
+      params: { id, authorId }
     });
   };
-  const handleTouchMenu = () => {};
+  const handleTouchMenu = () => {
+    setCurrentRecipeId(id);
+    setCurrentAuthorId(authorId);
+    bottomSheetRef.current?.expand();
+  };
 
   return (
     <TouchableWithoutFeedback onPress={handleOnPress}>

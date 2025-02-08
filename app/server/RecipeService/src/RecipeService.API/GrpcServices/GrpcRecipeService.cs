@@ -31,22 +31,20 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
             result.Tags.Add(_mapper.Map<GrpcTagDTO>(t));
         }
         _logger.LogInformation("Grpc GetAllTags successfully!");
-        _logger.LogInformation(JsonConvert.SerializeObject(result, Formatting.Indented));
         return result;
     }
 
     public override async Task<GrpcRecipeDetailsDTO> GetRecipeDetails(GrpcRecipeIdRequest request, ServerCallContext context)
     {
-        var response = await _sender.Send(new GetRecipeDetailQuery
+        var response = await _sender.Send(new GetRecipeDetailForServerQuery
         {
-            RecipeId = Guid.Parse(request.RecipeId),
+            RecipeId = Guid.Parse(request.RecipeId)
         });
         response.ThrowIfFailure();
 
         var result = _mapper.Map<GrpcRecipeDetailsDTO>(response.Value!.Recipe);
 
         _logger.LogInformation("Grpc GetRecipeDetails successfully!");
-        _logger.LogInformation(JsonConvert.SerializeObject(result, Formatting.Indented));
         return result;
     }
 
@@ -99,7 +97,6 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
         };
 
         _logger.LogInformation("Grpc GetSimpleRecipes successfully!");
-        _logger.LogInformation(JsonConvert.SerializeObject(grpcResult, Formatting.Indented));
         return grpcResult;
     }
 }

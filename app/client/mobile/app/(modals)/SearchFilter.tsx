@@ -41,7 +41,7 @@ const SearchFilter = () => {
   const selectedTagsStore = useAppSelector(selectSearchTags);
 
   const [searchValue, setSearchValue] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<SearchTagType[]>();
+  const [searchResults, setSearchResults] = useState<TagType[]>();
   const [selectedTags, setSelectedTags] = useState<SelectedTag[]>(selectedTagsStore);
 
   const textInputRef = useRef<TextInput>(null);

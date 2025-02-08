@@ -56,9 +56,8 @@ const useRecipeSteps = (recipeId: string) => {
 };
 
 const useCreateRecipe = () => {
-  return useMutation<any, Error, CreateRecipePayloadType>({
+  return useMutation<IRecipe, Error, CreateRecipePayloadType>({
     mutationFn: async payload => {
-      console.log("payload", payload);
       const { data } = await protectedAxiosInstance.post(
         "/api/recipe/create-recipe",
         payload,
@@ -96,11 +95,26 @@ const useVoteRecipe = () => {
   });
 };
 
+const useDeleteOwnRecipe = () => {
+  return useMutation<any, Error, { recipeId: string }>({
+    mutationFn: async ({ recipeId }) => {
+      const { data } = await protectedAxiosInstance.post(
+        "/api/recipe/delete-own-recipe",
+        {
+          recipeId: recipeId
+        }
+      );
+      return data;
+    }
+  });
+};
+
 export {
   useRecipesFeed,
   useRecipeDetail,
   useRecipeSteps,
   useCreateRecipe,
   useBookmarkRecipe,
-  useVoteRecipe
+  useVoteRecipe,
+  useDeleteOwnRecipe
 };

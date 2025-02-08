@@ -41,8 +41,9 @@ public class UpdateRecipeDTO
 
 public class UpdateStepDTO
 {
+    [Required]
     [JsonProperty("stepId")]
-    public Guid? StepId { get; set; }
+    public Guid StepId { get; set; }
 
     [Required]
     [JsonProperty("ordinalNumber")]

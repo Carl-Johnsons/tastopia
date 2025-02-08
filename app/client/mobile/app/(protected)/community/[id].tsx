@@ -18,7 +18,7 @@ import BackButton from "@/components/BackButton";
 import Vote from "@/components/common/Vote";
 import { Entypo, Feather } from "@expo/vector-icons";
 import Bookmark from "@/components/common/Bookmark";
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Ingredient from "@/components/screen/community/Ingredient";
 import Step from "@/components/screen/community/Step";
 import { useGetRecipeComment } from "@/api/comment";
@@ -33,6 +33,9 @@ import { useQueryClient } from "react-query";
 import { useRouteGuardExclude } from "@/hooks/auth/useProtected";
 import { ROLE } from "@/slices/auth.slice";
 import Unauthorize from "@/components/common/Unauthorize";
+import SettingRecipe from "@/components/common/SettingRecipe";
+import BottomSheet from "@gorhom/bottom-sheet";
+import NotFound from "@/app/+not-found";
 
 const RecipeDetail = () => {
   const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
@@ -45,20 +48,22 @@ const RecipeDetail = () => {
     );
   }
 
+  const bottomSheetRef = useRef<BottomSheet>(null);
   const queryClient = useQueryClient();
-
   const { c } = useColorizer();
   const { black, white } = colors;
 
   const router = useRouter();
   const { t } = useTranslation("recipeDetail");
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, authorId } = useLocalSearchParams<{ id: string; authorId: string }>();
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const {
     data: recipeDetailData,
     isLoading: isLoadingRecipeDetail,
     refetch: refetchRecipeDetail,
     isRefetching: isRefetchingRecipeDetail
   } = useRecipeDetail(id);
+
   const sortedSteps = useMemo(() => {
     return recipeDetailData?.recipe.steps.sort(
       (a, b) => a.ordinalNumber - b.ordinalNumber
@@ -80,13 +85,15 @@ const RecipeDetail = () => {
     commentData?.pages.flatMap(page => page.paginatedData) ?? []
   );
 
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-
   const handleRefresh = () => {
     refetchRecipeDetail();
     refetchGetRecipeComment();
   };
-  const handleTouchMenu = () => {};
+
+  const handleTouchMenu = () => {
+    bottomSheetRef.current?.expand();
+  };
+
   const handleTouchUser = () => {};
 
   const handleToggleBookmark = () => {
@@ -147,6 +154,10 @@ const RecipeDetail = () => {
         />
       </View>
     );
+  }
+
+  if (!isLoadingRecipeDetail && !recipeDetailData?.recipe.id) {
+    return <NotFound />;
   }
 
   return (
@@ -384,6 +395,13 @@ const RecipeDetail = () => {
           />
         </View>
       )}
+
+      <SettingRecipe
+        id={id}
+        authorId={authorId}
+        title='Setting'
+        ref={bottomSheetRef}
+      />
     </SafeAreaView>
   );
 };

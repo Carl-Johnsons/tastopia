@@ -10,6 +10,7 @@ public class RecipeDetailsResponse
     public List<SimilarRecipe> similarRecipes { get; set; } = [];
     public string Vote { get; set; } = null!;
     public bool IsBookmarked { get; set; }
+    public List<Tag> Tags { get; set; } = [];
 }
 
 public class SimilarRecipe

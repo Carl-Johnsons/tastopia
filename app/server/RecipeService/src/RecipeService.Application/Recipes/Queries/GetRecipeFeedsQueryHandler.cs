@@ -57,7 +57,7 @@ public class GetRecipeFeedsQueryHandler : IRequestHandler<GetRecipeFeedsQuery, R
         }
 
 
-        var recipesQuery = _context.Recipes.OrderByDescending(r => r.CreatedAt).AsQueryable();
+        var recipesQuery = _context.Recipes.Where(r => r.IsActive == true).OrderByDescending(r => r.CreatedAt).AsQueryable();
 
 
         if (!tagValues.Contains("All"))
