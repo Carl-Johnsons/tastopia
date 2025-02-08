@@ -5,6 +5,7 @@ using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
@@ -40,7 +41,7 @@ public record UpdateRecipeCommand : IRequest<Result<Recipe?>>
 
 public class UpdateStepDTO
 {
-    public Guid? StepId { get; init; }
+    public Guid StepId { get; init; }
 
     [Required]
     public int OrdinalNumber { get; init; }
@@ -54,17 +55,19 @@ public class UpdateStepDTO
 
 public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, Result<Recipe?>>
 {
+    private readonly ILogger<UpdateRecipeCommandHandler> _logger;
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
     private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
 
-    public UpdateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient)
+    public UpdateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, ILogger<UpdateRecipeCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _serviceBus = serviceBus;
         _grpcUploadFileClient = grpcUploadFileClient;
+        _logger = logger;
     }
 
     public async Task<Result<Recipe?>> Handle(UpdateRecipeCommand request, CancellationToken cancellationToken)
@@ -80,7 +83,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
             {
                 return Result<Recipe?>.Failure(RecipeError.NullParameter);
             }
-            var recipe = await _context.Recipes.Where(r => r.Id == recipeId).SingleOrDefaultAsync();
+            var recipe = await _context.Recipes.Where(r => r.Id == recipeId && r.IsActive).SingleOrDefaultAsync();
 
             if(recipe == null)
             {
@@ -111,11 +114,13 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                 files = response.Files;
                 rollbaclUrls = response.Files.Select(f => f.Url).ToList();
             }
-            await _serviceBus.Publish(new DeleteMultipleFileEvent
+            if(deleteUrls != null && deleteUrls.Count != 0)
             {
-                DeleteUrl = deleteUrls
-            });
-
+                await _serviceBus.Publish(new DeleteMultipleFileEvent
+                {
+                    DeleteUrl = deleteUrls
+                });
+            }
             recipe.Serves = request.Serves;
             recipe.CookTime = request.CookTime;
             recipe.Title = request.Title;
@@ -132,7 +137,8 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                 var s = recipe.Steps.Where(s => s.Id == step.StepId).SingleOrDefault();
                 if (s == null) {
                     s = new Step();
-                    s.Id = Guid.NewGuid();
+                    s.Id = step.StepId != Guid.Empty ? step.StepId : Guid.NewGuid();
+                    await Console.Out.WriteLineAsync("id cua step moi:"+ step.StepId);
                     s.AttachedImageUrls = [];
                     s.CreatedAt = DateTime.Now;
                 }
@@ -173,6 +179,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
         }
         catch (Exception ex)
         {
+            _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             await RollBackImageGrpc(rollbaclUrls);
         }
 
@@ -236,10 +243,11 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
             deleteUrls.Add(recipe.ImageUrl);
         }
 
-        var stepIds = steps.Where(s => s.StepId != null || s.StepId != Guid.Empty).Select(s => s.StepId).ToList();
+        var stepIds = steps.Where(s => s.StepId != Guid.Empty).Select(s => s.StepId).ToList();
 
         foreach(var step in recipe.Steps)
         {
+            //if update steps contain recipe step
             if (stepIds != null && stepIds.Count != 0 && stepIds.Contains(step.Id))
             {
                 var updateStep = steps.Where(s => s.StepId == step.Id).SingleOrDefault();
@@ -249,6 +257,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                 }
                 if(updateStep.DeleteUrls == null || updateStep.DeleteUrls.Count == 0)
                 {
+                    Console.WriteLine("bi null roi neeeeeeeeeeeeeeeeeeeeeeeeeee");
                     continue;
                 }
                 deleteUrls.AddRange(updateStep.DeleteUrls);

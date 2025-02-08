@@ -1,54 +1,49 @@
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Alert
-} from "react-native";
-import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { StyleSheet, View, TextInput, TouchableOpacity, Alert } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
 import useDebounce from "@/hooks/useDebounce";
-import UploadImage from "@/components/common/UploadImage";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 
-interface DraggableStepProps {
-  stepKey: string;
-  content: string;
-  images: ImageFileType[];
-  drag: () => void;
-  setSteps: Dispatch<SetStateAction<CreateStepType[]>>;
+interface DraggableIngredientProps {
+  ingredientKey: string;
+  value: string;
+  ingredients: CreateIngredientType[];
+  setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
 }
 
-const DraggableStep = ({
-  stepKey,
-  content,
-  images,
-  drag,
-  setSteps
-}: DraggableStepProps) => {
+const CreateIngredient = ({
+  ingredientKey,
+  value,
+  ingredients,
+  setIngredients
+}: DraggableIngredientProps) => {
   const { c } = useColorizer();
   const { black, white } = colors;
 
   const { t } = useTranslation("createRecipe");
-  const [inputValue, setInputValue] = useState(content);
+  const [inputValue, setInputValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
   const debouncedValue = useDebounce(inputValue, 800);
 
-  const handleChangeText = (text: string) => {
+  const handleChangeText = useCallback((text: string) => {
     setInputValue(text);
-  };
+  }, []);
 
-  const handleRemoveItem = (key: string) => {
-    setSteps(prev => {
-      return prev.filter(item => {
-        return item.key !== key;
+  const handleRemoveItem = useCallback((key: string) => {
+    if (ingredients.length > 1) {
+      setIngredients(prev => {
+        return prev.filter(item => {
+          return item.key !== key;
+        });
       });
-    });
-  };
+    } else {
+      Alert.alert(t("validation.ingredientRequired"));
+      return;
+    }
+  }, []);
 
   const confirmRemoveItem = () => {
     if (inputValue !== "") {
@@ -62,44 +57,42 @@ const DraggableStep = ({
           {
             text: t("removeIngredientAlert.delete"),
             onPress: () => {
-              handleRemoveItem(stepKey);
+              handleRemoveItem(ingredientKey);
             }
           }
         ]
       );
     } else {
-      handleRemoveItem(stepKey);
+      handleRemoveItem(ingredientKey);
     }
-  };
-
-  const onFileChange = (files: ImageFileType[]) => {
-    setSteps(prevSteps =>
-      prevSteps.map(step => (step.key === stepKey ? { ...step, images: files } : step))
-    );
   };
 
   useEffect(() => {
-    if (debouncedValue !== content) {
-      setSteps(prevSteps =>
-        prevSteps.map(step =>
-          step.key === stepKey ? { ...step, content: debouncedValue } : step
+    if (debouncedValue !== value) {
+      setIngredients(prevIngredients =>
+        prevIngredients.map(ingredient =>
+          ingredient.key === ingredientKey
+            ? { ...ingredient, value: debouncedValue }
+            : ingredient
         )
       );
     }
-  }, [debouncedValue, stepKey, setSteps]);
+  }, [debouncedValue, ingredientKey, setIngredients]);
 
   return (
     <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={confirmRemoveItem}
-      >
-        <AntDesign
-          name='close'
-          size={20}
-          color={globalStyles.color.primary}
-        />
-      </TouchableOpacity>
+      {ingredients.length > 1 && (
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={confirmRemoveItem}
+        >
+          <AntDesign
+            name='close'
+            size={20}
+            color={globalStyles.color.primary}
+          />
+        </TouchableOpacity>
+      )}
 
       <View style={styles.inputContainer}>
         <TextInput
@@ -111,41 +104,28 @@ const DraggableStep = ({
           }
           value={inputValue}
           onChangeText={handleChangeText}
-          placeholder={t("formPlaceholder.steps")}
+          placeholder={t("formPlaceholder.ingredients")}
           placeholderTextColor='#9CA3AF'
         />
-
-        <UploadImage
-          onFileChange={onFileChange}
-          selectionLimit={3}
-          defaultImages={images}
-        />
       </View>
-
-      <TouchableWithoutFeedback onLongPress={drag}>
-        <View style={styles.dragHandle}>
-          <MaterialCommunityIcons
-            name='drag-vertical'
-            size={24}
-            color='#6B7280'
-          />
-        </View>
-      </TouchableWithoutFeedback>
     </View>
   );
 };
 
-export default DraggableStep;
+export default CreateIngredient;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
     borderRadius: 8,
     marginVertical: 4,
     paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingVertical: 8,
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2
@@ -161,9 +141,9 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flex: 1,
-    gap: 10,
+    justifyContent: "center",
     marginHorizontal: 8,
-    paddingBottom: 4
+    minHeight: 34
   },
   input: {
     padding: 4,

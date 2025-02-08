@@ -20,9 +20,13 @@ public class MappingConfig
             config.CreateMap<DTOs.StepDTO, Application.Recipes.Commands.StepDTO>().ReverseMap();
 
             config.CreateMap<RecipeDetailsDTO, Recipe>()
-                .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)).ReverseMap();
-
-
+                .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps))
+                .ForMember(dest => dest.CookTime, opt => opt.MapFrom(src => src.CookTime))
+                .ReverseMap()
+                .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps))
+                .ForMember(dest => dest.CookTime, opt =>
+                    opt.MapFrom(src => !string.IsNullOrEmpty(src.CookTime) ? src.CookTime : ""));
+            
             config.CreateMap<UpdateRecipeDTO, UpdateRecipeCommand>()
                 .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)).ReverseMap();
 
@@ -32,9 +36,13 @@ public class MappingConfig
                 .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)).ReverseMap();
 
             //Grpc mapping
-
             config.CreateMap<GrpcRecipeDetailsDTO, Recipe>()
-                .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)).ReverseMap();
+                .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps))
+                .ForMember(dest => dest.CookTime, opt => opt.MapFrom(src => src.CookTime))
+                .ReverseMap()
+                .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps))
+                .ForMember(dest => dest.CookTime, opt =>
+                    opt.MapFrom(src => !string.IsNullOrEmpty(src.CookTime) ? src.CookTime : ""));
 
             config.CreateMap<GrpcStepDTO, Step>().ReverseMap();
 
