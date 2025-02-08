@@ -5,7 +5,7 @@ import { View, Image, Text } from "react-native";
 const Unauthorize = memo(() => {
   const { t } = useTranslation("component");
   return (
-    <View className='flex-center h-[70%] gap-2'>
+    <View className='flex-center bg-white_black100 h-[70%] gap-2'>
       <Image
         source={require("../../assets/icons/noResult.png")}
         style={{ width: 130, height: 130 }}

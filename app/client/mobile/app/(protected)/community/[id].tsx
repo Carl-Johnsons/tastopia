@@ -35,6 +35,7 @@ import { ROLE } from "@/slices/auth.slice";
 import Unauthorize from "@/components/common/Unauthorize";
 import SettingRecipe from "@/components/common/SettingRecipe";
 import BottomSheet from "@gorhom/bottom-sheet";
+import NotFound from "@/app/+not-found";
 
 const RecipeDetail = () => {
   const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
@@ -63,6 +64,7 @@ const RecipeDetail = () => {
     refetch: refetchRecipeDetail,
     isRefetching: isRefetchingRecipeDetail
   } = useRecipeDetail(id);
+
   const sortedSteps = useMemo(() => {
     return recipeDetailData?.recipe.steps.sort(
       (a, b) => a.ordinalNumber - b.ordinalNumber
@@ -155,6 +157,10 @@ const RecipeDetail = () => {
         />
       </View>
     );
+  }
+
+  if (!isLoadingRecipeDetail && !recipeDetailData?.recipe.id) {
+    return <NotFound />;
   }
 
   return (
