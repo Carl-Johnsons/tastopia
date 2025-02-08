@@ -49,15 +49,14 @@ const RecipeDetail = () => {
   }
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-
   const queryClient = useQueryClient();
-
   const { c } = useColorizer();
   const { black, white } = colors;
 
   const router = useRouter();
   const { t } = useTranslation("recipeDetail");
   const { id, authorId } = useLocalSearchParams<{ id: string; authorId: string }>();
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const {
     data: recipeDetailData,
     isLoading: isLoadingRecipeDetail,
@@ -85,8 +84,6 @@ const RecipeDetail = () => {
   const [comments, setComments] = useState(
     commentData?.pages.flatMap(page => page.paginatedData) ?? []
   );
-
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
   const handleRefresh = () => {
     refetchRecipeDetail();
