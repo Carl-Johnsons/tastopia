@@ -1,46 +1,22 @@
-import { Feather } from "@expo/vector-icons";
-import { View, Text, Image, TouchableWithoutFeedback } from "react-native";
 import { useRouter } from "expo-router";
-import useColorizer from "@/hooks/useColorizer";
-import { colors } from "@/constants/colors";
-import InteractionSection from "./InteractionSection";
-import { RefObject, useRef } from "react";
-import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { View, Text, Image, TouchableWithoutFeedback } from "react-native";
 
-const Recipe = ({
-  bottomSheetRef,
-  setCurrentRecipeId,
-  setCurrentAuthorId,
+const SearchRecipeResult = ({
   id,
   authorId,
   recipeImgUrl,
   title,
   description,
   authorDisplayName,
-  authorAvtUrl,
-  voteDiff,
-  numberOfComment,
-  vote
-}: RecipeType & {
-  bottomSheetRef: RefObject<BottomSheetMethods>;
-  setCurrentRecipeId: (id: string) => void;
-  setCurrentAuthorId: (id: string) => void;
-}) => {
+  authorAvtUrl
+}: RecipeType) => {
   const router = useRouter();
-  const { c } = useColorizer();
-  const { black, white } = colors;
   const handleOnPress = () => {
     router.push({
       pathname: "/(protected)/community/[id]",
-      params: { id }
+      params: { id, authorId }
     });
   };
-  const handleTouchMenu = () => {
-    setCurrentRecipeId(id);
-    setCurrentAuthorId(authorId);
-    bottomSheetRef.current?.expand();
-  };
-
   return (
     <TouchableWithoutFeedback onPress={handleOnPress}>
       <View className='bg-white_black100 rounded-3xl pb-4'>
@@ -62,16 +38,6 @@ const Recipe = ({
               </View>
             </TouchableWithoutFeedback>
           )}
-
-          <TouchableWithoutFeedback onPress={handleTouchMenu}>
-            <View>
-              <Feather
-                name='more-horizontal'
-                size={24}
-                color={c(black.DEFAULT, white.DEFAULT)}
-              />
-            </View>
-          </TouchableWithoutFeedback>
         </View>
         <View className='flex gap-3'>
           <Image
@@ -96,18 +62,6 @@ const Recipe = ({
                 {description}
               </Text>
             </View>
-
-            {(voteDiff !== undefined ||
-              numberOfComment !== undefined ||
-              vote !== undefined) && (
-              <InteractionSection
-                recipeId={id}
-                vote={vote}
-                handleOnPress={handleOnPress}
-                voteDiff={voteDiff}
-                numberOfComment={numberOfComment}
-              />
-            )}
           </View>
         </View>
       </View>
@@ -115,4 +69,4 @@ const Recipe = ({
   );
 };
 
-export default Recipe;
+export default SearchRecipeResult;
