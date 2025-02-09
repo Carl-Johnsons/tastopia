@@ -1,33 +1,35 @@
 @startuml ResultAndError
+together {
+    class Result {
+        +IsFailure: bool
+        +IsSuccess: bool
+        +IEnumerable<Error> Errors
+        #Result(bool isSuccess, IEnumerable<Error> errors)
+        #Result(bool isSuccess, Error error)
+        +ThrowIfFailure(): void
+        {static} +Success(): Result
+        {static} +Failure(Error err): Result
+        {static} +Failure(Error err, string customMessage): Result
+        {static} +Failure(IEnumerable<Error> errs): Result
+    }
 
-class Result {
-    +IsFailure: bool
-    +IsSuccess: bool
-    +IEnumerable<Error> Errors
-    #Result(bool isSuccess, IEnumerable<Error> errors)
-    #Result(bool isSuccess, Error error)
-    +ThrowIfFailure(): void
-    {static} +Success(): Result
-    {static} +Failure(Error err): Result
-    {static} +Failure(Error err, string customMessage): Result
-    {static} +Failure(IEnumerable<Error> errs): Result
+    class "Result<T>" {
+        +Value: T
+        {static} +Success(T value): Result<T>
+        {static} +Failure(Error error): Result<T?>
+        {static} +Failure(Error err, string customMessage): Result<T?>
+        {static} +Failure(IEnumerable<Error> errs): Result<T?>
+    }
+
+    class Error {
+        +Code: string
+        +StatusCode: int
+        +Message: string
+        {static} +None: Error
+        {static} +implicit operator Result(Error err): Result
+    }
 }
 
-class "Result<T>" {
-    +Value: T
-    {static} +Success(T value): Result<T>
-    {static} +Failure(Error error): Result<T?>
-    {static} +Failure(Error err, string customMessage): Result<T?>
-    {static} +Failure(IEnumerable<Error> errs): Result<T?>
-}
-
-class Error {
-    +Code: string
-    +StatusCode: int
-    +Message: string
-    {static} +None: Error
-    {static} +implicit operator Result(Error err): Result
-}
 Result "1" --"1..*" Error
 Result <|-- "Result<T>"
 @enduml

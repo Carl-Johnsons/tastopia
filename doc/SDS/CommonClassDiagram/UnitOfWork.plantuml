@@ -1,0 +1,11 @@
+@startuml UnitOfWork
+interface IUnitOfWork {
+    Task SaveChangeAsync(CancellationToken cancellationToken = default)
+}
+
+class UnitOfWork implements IUnitOfWork{
+    -_context: ApplicationDbContext
+    +Task SaveChangeAsync(CancellationToken cancellationToken = default)
+}
+
+@enduml
