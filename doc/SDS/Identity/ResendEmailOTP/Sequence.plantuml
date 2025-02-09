@@ -36,22 +36,26 @@ alt if user's email is null
     MobileUI <-- ApiGateway: 7A.2. Forward response
     User <-- MobileUI: 7A.3. Display error
 else
-    IdentityService -> Rabbitmq++: 8. Publish "UserResendOTPEvent"\n message <<Async>>
-
-    ApiGateway <-- IdentityService--: 9. return success status code
-    MobileUI <-- ApiGateway--: 10. Forward response
-    User <-- MobileUI--: 11. Display alert\n resend OTP successfully
-
-    Rabbitmq --> NotificationService++: 12. Deliver "UserResendOTPEvent"\n message
+    IdentityService -> Rabbitmq: 8. Publish "UserResendOTPEvent"\n message <<Async>>
+    activate Rabbitmq
+    Rabbitmq --> NotificationService: 9. Deliver "UserResendOTPEvent"\n message
     deactivate Rabbitmq
-    NotificationService -> Rabbitmq++: 13. Consume event and publish \n "SendEmailEvent" message <<Async>>
+    activate NotificationService
+    NotificationService -> Rabbitmq: 10. Consume event and publish \n "SendEmailEvent" message <<Async>>
     deactivate NotificationService
-    Rabbitmq --> EmailWorker++: 14. Deliver "SendEmailEvent"\n message
+    activate Rabbitmq
+    Rabbitmq --> EmailWorker: 11. Deliver "SendEmailEvent"\n message
     deactivate Rabbitmq
-    EmailWorker -> Gmail: 15. Send OTP email\n to specified email
-    activate Gmail
+    activate EmailWorker
+    EmailWorker -> Gmail: 12. Send OTP email\n to specified email
     deactivate EmailWorker
+    activate Gmail
+  
+    ApiGateway <-- IdentityService--: 13. return success status code
     deactivate Gmail
+    destroy Gmail
+    MobileUI <-- ApiGateway--: 14. Forward response
+    User <-- MobileUI--: 15. Display alert\n resend OTP successfully
 end
 
 @enduml

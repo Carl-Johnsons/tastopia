@@ -5,9 +5,10 @@
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 50
-skinparam ranksep 50
+skinparam nodesep 25
+skinparam ranksep 25
 hide circle
+
 class BaseApiController {
     #_sender: ISender
     #_httpContextAccessor: HttpContextAccessor

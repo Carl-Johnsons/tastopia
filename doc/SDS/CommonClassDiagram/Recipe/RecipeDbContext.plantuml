@@ -14,40 +14,38 @@ class BaseMongoDBAuditableEntity extends BaseMongoDBEntity {
     +DateTime UpdatedAt
 }
 
-together {
-    class Recipe extends BaseMongoDBAuditableEntity {
-        +AuthorId: Guid
-        +Title: string
-        +Description: string
-        +ImageUrl: string
-        +Ingredients: List<string>
-        +CookTime: string?
-        +Serves: int?
-        +VoteDiff: int
-        +NumberOfComment: int
-        +IsActive: bool
-        +TotalView: int
-        +Steps: List<Step>
-        +Comments: List<Comment>
-        +RecipeVotes: List<RecipeVote>
-    }
+class Recipe extends BaseMongoDBAuditableEntity {
+    +AuthorId: Guid
+    +Title: string
+    +Description: string
+    +ImageUrl: string
+    +Ingredients: List<string>
+    +CookTime: string?
+    +Serves: int?
+    +VoteDiff: int
+    +NumberOfComment: int
+    +IsActive: bool
+    +TotalView: int
+    +Steps: List<Step>
+    +Comments: List<Comment>
+    +RecipeVotes: List<RecipeVote>
+}
 
-    class Step extends BaseMongoDBAuditableEntity {
-        +OrdinalNumber: int
-        +Content: string
-        +AttachedImageUrls: List<string>?
-    }
+class Step extends BaseMongoDBAuditableEntity {
+    +OrdinalNumber: int
+    +Content: string
+    +AttachedImageUrls: List<string>?
+}
 
-    class Comment extends BaseMongoDBAuditableEntity {
-        Content: string
-        AccountId: Guid
-        IsActive: bool
-    }
+class Comment extends BaseMongoDBAuditableEntity {
+    Content: string
+    AccountId: Guid
+    IsActive: bool
+}
 
-    class RecipeVote extends BaseMongoDBEntity {
-        AccountId: Guid
-        IsUpvote: bool
-    }
+class RecipeVote extends BaseMongoDBEntity {
+    AccountId: Guid
+    IsUpvote: bool
 }
 
 class Tag extends BaseMongoDBAuditableEntity {
@@ -111,13 +109,13 @@ class DbContext #black;line:white;text:white
 
 IMongoDbContext o-- DbContext
 
-IApplicationDbContext o-- "DbSet<T>"
-IApplicationDbContext o-- Recipe
-IApplicationDbContext o-- Tag
-IApplicationDbContext o-- RecipeTag
-IApplicationDbContext o-- UserBookmarkRecipe
-IApplicationDbContext o-- UserReportRecipe
-IApplicationDbContext o-- UserReportComment
+' IApplicationDbContext o-- "DbSet<T>"
+' IApplicationDbContext o-- Recipe
+' IApplicationDbContext o-- Tag
+' IApplicationDbContext o-- RecipeTag
+' IApplicationDbContext o-- UserBookmarkRecipe
+' IApplicationDbContext o-- UserReportRecipe
+' IApplicationDbContext o-- UserReportComment
 
 ApplicationDbContext o-- "DbSet<T>"
 ApplicationDbContext o-- Recipe
@@ -126,6 +124,25 @@ ApplicationDbContext o-- RecipeTag
 ApplicationDbContext o-- UserBookmarkRecipe
 ApplicationDbContext o-- UserReportRecipe
 ApplicationDbContext o-- UserReportComment
+
+' =========== Style ==============
+
+ApplicationDbContext o-[hidden]down- "DbSet<T>"
+ApplicationDbContext o-[hidden]down- Recipe
+ApplicationDbContext o-[hidden]down- Tag
+ApplicationDbContext o-[hidden]down- RecipeTag
+ApplicationDbContext o-[hidden]down- UserBookmarkRecipe
+
+BaseMongoDBAuditableEntity -[hidden]right- BaseMongoDBEntity 
+BaseMongoDBAuditableEntity -[hidden]up- Recipe 
+BaseMongoDBAuditableEntity -[hidden]up- Step 
+BaseMongoDBAuditableEntity -[hidden]up- Comment 
+BaseMongoDBEntity -[hidden]up- RecipeVote 
+BaseMongoDBAuditableEntity -[hidden]up- Tag 
+BaseMongoDBEntity -[hidden]up- RecipeTag 
+BaseMongoDBAuditableEntity -[hidden]up- UserBookmarkRecipe 
+BaseMongoDBAuditableEntity -[hidden]up- UserReportRecipe
+BaseMongoDBAuditableEntity -[hidden]up- UserReportComment 
 
 Recipe *--"1.." Step
 Recipe *--"1.." Comment

@@ -22,7 +22,6 @@ remove IDbContext
 remove BaseEntity
 remove IdentityDbContext<ApplicationAccount>
 
-
 class BaseApiController {
     #_sender: ISender
     #_httpContextAccessor: HttpContextAccessor
@@ -115,9 +114,9 @@ AccountController "1"--"1" RegisterAccountCommand
 RegisterAccountCommand "1"--"1" AccountMethod
 RegisterAccountCommand --|> "IRequest<TResponse>"
 
-RegisterAccountCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
 RegisterAccountCommandHandler "1" o--"1" RegisterAccountCommand
 RegisterAccountCommandHandler "1" o--"1" TokenResponse
+RegisterAccountCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
 RegisterAccountCommandHandler "1" o--"1" ApplicationAccount
 RegisterAccountCommandHandler "1" o--"1" GrpcCreateUserRequest
 RegisterAccountCommandHandler "1" o--"1" HttpClient
