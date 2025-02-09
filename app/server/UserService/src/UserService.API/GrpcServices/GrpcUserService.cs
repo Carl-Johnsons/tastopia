@@ -34,7 +34,7 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
 
         var accountIdSets = request.AccountId.Select(Guid.Parse).ToHashSet();
 
-        var response = await _sender.Send(new GetSimpleUsersCommand
+        var response = await _sender.Send(new GetSimpleUsersQuery
         {
             AccountIds = accountIdSets,
         });

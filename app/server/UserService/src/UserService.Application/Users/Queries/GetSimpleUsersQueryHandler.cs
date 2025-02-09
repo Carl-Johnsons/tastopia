@@ -4,26 +4,26 @@ using System.ComponentModel.DataAnnotations;
 using UserService.Domain.Entities;
 using UserService.Domain.Errors;
 
-namespace UserService.Application.Users.Commands;
+namespace UserService.Application.Users.Queries;
 
-public record GetSimpleUsersCommand : IRequest<Result<List<User>?>>
+public record GetSimpleUsersQuery : IRequest<Result<List<User>?>>
 {
     [Required]
     public HashSet<Guid> AccountIds { get; init; } = null!;
 }
-public class GetSimpleUsersCommandHandler : IRequestHandler<GetSimpleUsersCommand, Result<List<User>?>>
+public class GetSimpleUsersQueryHandler : IRequestHandler<GetSimpleUsersQuery, Result<List<User>?>>
 {
     private readonly IApplicationDbContext _context;
 
-    public GetSimpleUsersCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork)
+    public GetSimpleUsersQueryHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<Result<List<User>?>> Handle(GetSimpleUsersCommand request, CancellationToken cancellationToken)
+    public async Task<Result<List<User>?>> Handle(GetSimpleUsersQuery request, CancellationToken cancellationToken)
     {
         var accountIds = request.AccountIds;
-        if(accountIds == null || accountIds.Count == 0)
+        if (accountIds == null || accountIds.Count == 0)
         {
             return Result<List<User>?>.Failure(UserError.NotFound);
         }
@@ -36,7 +36,8 @@ public class GetSimpleUsersCommandHandler : IRequestHandler<GetSimpleUsersComman
                 DisplayName = user.DisplayName,
                 AvatarUrl = user.AvatarUrl
             }).ToListAsync();
-        if(users == null || users.Count == 0) { 
+        if (users == null || users.Count == 0)
+        {
             return Result<List<User>?>.Failure(UserError.NotFound);
         }
         return Result<List<User>?>.Success(users);

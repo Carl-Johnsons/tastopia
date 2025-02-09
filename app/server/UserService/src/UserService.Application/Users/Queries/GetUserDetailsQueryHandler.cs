@@ -21,7 +21,6 @@ public class GetUserDetailsQueryHandler : IRequestHandler<GetUserDetailsQuery, R
 
     public GetUserDetailsQueryHandler(IApplicationDbContext context,
         IMapper mapper,
-        IServiceBus serviceBus,
         GrpcAccount.GrpcAccountClient grpcAccountClient)
     {
         _context = context;
