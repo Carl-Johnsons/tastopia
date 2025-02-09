@@ -281,14 +281,14 @@ const RecipeDetail = () => {
                       </View>
                     </TouchableWithoutFeedback>
 
-                    <Text className='body-paragraph text-black_white'>
+                    <Text className='paragraph-regular text-black_white'>
                       {recipeDetailData.recipe.description}
                     </Text>
 
                     <View className='gap-3'>
                       <View className='bg-black_white h-[1.4px] w-full'></View>
                       <View className='flex-center'>
-                        <Text className='body-semibold text-black_white'>
+                        <Text className='paragraph-semibold text-black_white'>
                           {recipeDetailData.recipe.cookTime}
                         </Text>
                       </View>
@@ -299,7 +299,7 @@ const RecipeDetail = () => {
                       <Text className='base-semibold text-black_white mb-1'>
                         {t("ingredient")}
                       </Text>
-                      <Text className='body-regular text-black_white'>
+                      <Text className='paragraph-regular text-black_white'>
                         {t("for")} {recipeDetailData.recipe.serves}{" "}
                         {recipeDetailData.recipe.serves === 1
                           ? t("serving")

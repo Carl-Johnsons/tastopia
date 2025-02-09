@@ -57,7 +57,7 @@ const SearchRecipeResult = ({
               <Text
                 numberOfLines={4}
                 ellipsizeMode='tail'
-                className='body-regular text-black_white'
+                className='paragraph-regular text-black_white'
               >
                 {description}
               </Text>
