@@ -1,5 +1,6 @@
 @startuml ClassDiagram
 !include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
 skinparam classAttributeIconSize 0
@@ -87,8 +88,6 @@ CommentRecipeCommandHandler "1" o-- "1" GrpcUserClient
 CommentRecipeCommandHandler "1" o-- "1" GrpcGetSimpleUsersRequest
 CommentRecipeCommandHandler "1" o-- "1" IServiceBus
 CommentRecipeCommandHandler "1"--"1" CommentError
-
-IUnitOfWork <|.. UnitOfWork
 
 Error "1" --"1..*" CommentError
 @enduml

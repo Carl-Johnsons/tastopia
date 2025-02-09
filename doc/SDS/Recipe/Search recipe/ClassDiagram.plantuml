@@ -1,4 +1,11 @@
 @startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
 skinparam classAttributeIconSize 0
 hide circle
 
@@ -30,13 +37,6 @@ interface IMapper{
     #Map<TDestination>(object source): TDestination
 }
 
-interface IPaginateDataUtility{
-    #PaginateQuery(IQueryable<Type> query, PaginateParam param) :IQueryable<Type>
-}
-class PaginateDataUtility{
-    +PaginateQuery(IQueryable<Type> query, PaginateParam param) :IQueryable<Type>
-}
-PaginateDataUtility -up-|> IPaginateDataUtility
 class PaginatedSearchRecipeListResponse{
 }
 class BasePaginatedResponse{
@@ -45,63 +45,10 @@ class BasePaginatedResponse{
 }
 PaginatedSearchRecipeListResponse --|> BasePaginatedResponse
 
-interface IApplicationDbContext {
-    +Recipes: DbSet<Recipe>
-    +Tags: DbSet<Tag>
-    +RecipeTags: DbSet<RecipeTag>
-    +UserBookmarkRecipes: DbSet<UserBookmarkRecipe>
-    +UserReportRecipes: DbSet<UserReportRecipe>
-    +UserReportComments: DbSet<UserReportComment>
-}
-
-class ApplicationDbContext {
-    +Recipes: DbSet<Recipe>
-    +Tags: DbSet<Tag>
-    +RecipeTags: DbSet<RecipeTag>
-    +UserBookmarkRecipes: DbSet<UserBookmarkRecipe>
-    +UserReportRecipes: DbSet<UserReportRecipe>
-    +UserReportComments: DbSet<UserReportComment>
-    #OnConfiguring(DbContextOptionsBuilder optionsBuilder): void
-    #OnModelCreating(ModelBuilder modelBuilder): void
-}
-
-class Result {
-    +bool IsFailure
-    +bool IsSuccess
-    +IEnumerable<Error> Errors
-    #Result(bool isSuccess, IEnumerable<Error> errors)
-    #Result(bool isSuccess, Error error)
-    +ThrowIfFailure(): void
-    {static} +Success(): Result
-    {static} +Failure(Error err): Result
-    {static} +Failure(IEnumerable<Error> errs): Result
-}
-
-class "Result<T>" {
-    +T Value
-    {static} +Success(T value): Result<T>
-    {static} +Failure(Error error): Result<T?>
-    {static} +Failure(IEnumerable<Error> errs): Result<T?>
-}
-
-class Error {
-    {static} +None: Error
-    {static} +implicit operator Result(Error err): Result
-}
-
 class SearchRecipesDTO{
     +Skip: int
     +TagCodes: List<string>?
     +Keyword: string
-}
-
-interface IUnitOfWork {
-    Task SaveChangeAsync(CancellationToken cancellationToken = default)
-}
-
-class UnitOfWork {
-    -_context: ApplicationDbContext
-    +Task SaveChangeAsync(CancellationToken cancellationToken = default)
 }
 
 class RecipeError {
@@ -111,81 +58,6 @@ class RecipeError {
     {static} +UpdateRecipeFail: Error
 }
 
-class BaseMongoDBEntity {
-    +Guid Id
-}
-
-class BaseMongoDBAuditableEntity{
-    +DateTime CreatedAt
-    +DateTime UpdatedAt
-}
-
-class Recipe {
-    +AuthorId: Guid
-    +Title: string
-    +Description: string
-    +ImageUrl: string
-    +Ingredients: List<string>
-    +CookTime: string?
-    +Serves: int?
-    +VoteDiff: int
-    +NumberOfComment: int
-    +IsActive: bool
-    +TotalView: int
-    +Steps: List<Step>
-    +Comments: List<Comment>
-    +RecipeVotes: List<RecipeVote>
-}
-
-class Step{
-    +OrdinalNumber: int
-    +Content: string
-    +AttachedImageUrls: List<string>?
-}
-
-class Comment{
-    Content: string
-    AccountId: Guid
-    IsActive: bool
-}
-
-class RecipeVote{
-    AccountId: Guid
-    IsUpvote: bool
-}
-
-class Tag{
-    +Value: string
-    +Code: string
-    +Category: enum
-    +Status: enum
-    +ImageUrl: string
-}
-
-class RecipeTag{
-    +RecipeId: Guid
-    +TagId: Guid
-}
-
-class UserBookmarkRecipe{
-    +AccountId: Guid
-    +RecipeId: Guid
-}
-
-class UserReportRecipe{
-    +AccountId: Guid
-    +RecipeId: Guid
-    +Reason: string
-    +Status: enum
-}
-
-class UserReportComment{
-    +AccountId: Guid
-    +CommentId: Guid
-    +Reason: string
-    +Status: enum
-}
-
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" SearchRecipesDTO
 RecipeController "1"--"1" SearchRecipesQuery
@@ -193,42 +65,19 @@ RecipeController "1"--"1" SearchRecipesQuery
 SearchRecipesQueryHandler "1"--"1" SearchRecipesQuery
 SearchRecipesQueryHandler "1"--"1" Result
 SearchRecipesQueryHandler "1"--"1" PaginatedSearchRecipeListResponse
-SearchRecipesQueryHandler "1" o-- "1" IUnitOfWork
+SearchRecipesQueryHandler "1"--"1" GrpcGetSimpleUsersRequest
+SearchRecipesQueryHandler "1"--"1" GrpcSearchUserRequest
 SearchRecipesQueryHandler "1" o-- "1" IApplicationDbContext
 SearchRecipesQueryHandler "1" o-- "1" IMapper
 SearchRecipesQueryHandler "1" o-- "1" GrpcUserClient
 SearchRecipesQueryHandler "1" o-- "1" IPaginateDataUtility
 SearchRecipesQueryHandler "1"--"1" RecipeError
 
-IUnitOfWork <|.. UnitOfWork
-IApplicationDbContext <|.. ApplicationDbContext
-
-Result "1" --"1..*" Error
-Result <|-- "Result<T>"
 Error "1" --"1..*" RecipeError
 
-ApplicationDbContext "1" o--"1..*" Recipe
-ApplicationDbContext "1" o--"1..*" Tag
-ApplicationDbContext "1" o--"1..*" RecipeTag
-ApplicationDbContext "1" o--"1..*" UserBookmarkRecipe
-ApplicationDbContext "1" o--"1..*" UserReportComment
-ApplicationDbContext "1" o--"1..*" UserReportRecipe
-
-Recipe --|> BaseMongoDBAuditableEntity
-Step --|> BaseMongoDBAuditableEntity
-Comment --|> BaseMongoDBAuditableEntity
-RecipeVote --|> BaseMongoDBEntity
-Tag --|> BaseMongoDBAuditableEntity
-RecipeTag --|> BaseMongoDBAuditableEntity
-UserBookmarkRecipe --|> BaseMongoDBAuditableEntity
-UserReportRecipe --|> BaseMongoDBAuditableEntity
-UserReportComment --|> BaseMongoDBAuditableEntity
-
-
-
-Recipe *--"1.." Step
-Recipe *--"1.." Comment
-Recipe *--"1.." RecipeVote
-
-BaseMongoDBAuditableEntity --|> BaseMongoDBEntity
+together {
+    class GrpcSearchUserRequest #DarkBlue;line:white;text:white
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
 @enduml
