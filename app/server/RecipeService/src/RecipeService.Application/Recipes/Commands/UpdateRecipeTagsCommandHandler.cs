@@ -43,7 +43,7 @@ public class UpdateRecipeTagsCommandHandler : IRequestHandler<UpdateRecipeTagsCo
                 return Result.Failure(RecipeError.UpdateRecipeFail);
             }
             var recipeTags = new List<RecipeTag>();
-
+            _context.RecipeTags.RemoveRange(_context.RecipeTags.Where(rt => rt.RecipeId == recipeId));
             foreach (var tag in tags)
             {
                 recipeTags.Add(new RecipeTag
@@ -53,7 +53,6 @@ public class UpdateRecipeTagsCommandHandler : IRequestHandler<UpdateRecipeTagsCo
                     TagId = tag.Id
                 });
             }
-
             _context.RecipeTags.AddRange(recipeTags);
             await _unitOfWork.SaveChangeAsync();
             return Result.Success();

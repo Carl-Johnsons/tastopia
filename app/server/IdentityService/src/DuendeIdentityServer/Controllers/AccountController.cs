@@ -2,6 +2,8 @@
 using Duende.IdentityServer.Extensions;
 using IdentityService.Application.Account.Commands;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Text.Json;
 using static Duende.IdentityServer.IdentityServerConstants;
 
@@ -27,7 +29,7 @@ public class AccountController : BaseApiController
         command.Method = AccountMethod.Email;
         var result = await _sender.Send(command);
         result.ThrowIfFailure();
-        return Ok(result.Value?.Json);
+        return Ok(JToken.Parse(result.Value?.Json.GetRawText()!));
     }
 
     [AllowAnonymous]
@@ -41,7 +43,7 @@ public class AccountController : BaseApiController
         command.Method = AccountMethod.Phone;
         var result = await _sender.Send(command);
         result.ThrowIfFailure();
-        return Ok(result.Value?.Json);
+        return Ok(JToken.Parse(result.Value?.Json.GetRawText()!));
     }
 
     [HttpPost("verify/email")]

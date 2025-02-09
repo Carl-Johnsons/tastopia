@@ -36,8 +36,11 @@ import useIsOwner from "@/hooks/auth/useIsOwner";
 import PermissionDenied from "@/components/common/PermissionDenied";
 import UpdateDraggableStep from "@/components/screen/community/UpdateDraggableStep";
 import UpdateFormHeader from "@/components/screen/community/UpdateFormHeader";
+import { protectedAxiosInstance } from "@/constants/host";
+import { useQueryClient } from "react-query";
 
 const UpdateRecipe = () => {
+  const queryClient = useQueryClient();
   const { id, authorId } = useLocalSearchParams<{ id: string; authorId: string }>();
   const isCreatedByCurrentUser = useIsOwner(authorId);
 
@@ -71,10 +74,10 @@ const UpdateRecipe = () => {
   ]);
 
   const isInputIngredient = useMemo(
-    () => ingredients.some(ingredient => ingredient.value !== ""),
-    [ingredients.length]
+    () => ingredients.some(ingredient => ingredient.value),
+    [ingredients]
   );
-  const isInputSteps = useMemo(() => steps.some(step => step.content !== ""), [steps]);
+  const isInputSteps = useMemo(() => steps.some(step => step.content), [steps]);
 
   const formCreateRecipe = useForm<FormCreateRecipeType>({
     resolver: yupResolver(createRecipeSchema),
@@ -133,6 +136,7 @@ const UpdateRecipe = () => {
     setIsLoading(true);
     const data = new FormData();
 
+    data.append("id", id);
     data.append("title", formData.title);
     data.append("description", formData.description);
     data.append("serves", formData.serves);
@@ -146,50 +150,57 @@ const UpdateRecipe = () => {
         name: image.name,
         type: image.type || "image/jpeg"
       } as unknown as Blob);
-    } else {
-      data.append(`recipeImage`, "");
     }
 
     ingredients.forEach((ingredient, index) => {
       data.append(`ingredients[${index}]`, ingredient.value);
     });
+
     steps.forEach((step, index) => {
+      data.append(`steps[${index}].stepId`, step.key);
       data.append(`steps[${index}].ordinalNumber`, String(index + 1));
       data.append(`steps[${index}].content`, step.content);
-      // if (step.images.length > 0) {
-      //   step.images.forEach(image => {
-      //     data.append(`steps[${index}].Images`, {
-      //       uri: image.uri,
-      //       name: image.name,
-      //       type: image.type
-      //     } as any);
-      //   });
-      // }
+
+      if (step.images?.additionalImages?.length ?? 0 > 0) {
+        step.images?.additionalImages?.forEach(image => {
+          data.append(`steps[${index}].Images`, {
+            uri: image.uri,
+            name: image.name,
+            type: image.type
+          } as any);
+        });
+      }
+
+      if (step.images?.deleteUrls?.length ?? 0 > 0) {
+        step.images?.deleteUrls?.forEach((deleteUrl, deleteUrlsIndex) => {
+          data.append(`steps[${index}].deleteUrls[${deleteUrlsIndex}]`, deleteUrl);
+        });
+      }
     });
 
     selectedTags.forEach((tag, index) => {
       data.append(`tagValues[${index}]`, tag.value);
     });
 
-    console.log("step", JSON.stringify(steps[0].images, null, 2));
-
-    // try {
-    //   const { data: response } = await protectedAxiosInstance.post(
-    //     "http://localhost:5000/api/recipe/create-recipe",
-    //     data,
-    //     {
-    //       headers: {
-    //         "Content-Type": "multipart/form-data"
-    //       }
-    //     }
-    //   );
-    //   Alert.alert("Create recipe successfully!");
-    //   router.back();
-    // } catch (error) {
-    //   console.error("Error submitting recipe:", error);
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    try {
+      const { data: _response } = await protectedAxiosInstance.post(
+        "http://localhost:5000/api/recipe/update-recipe",
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+      Alert.alert(t("formTitle.updateSuccessfully"));
+      queryClient.invalidateQueries({ queryKey: ["recipe", id] });
+      router.back();
+    } catch (error) {
+      Alert.alert(t("formTitle.updateError"));
+      console.error("Error submitting recipe:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleAddMoreIngredient = () => {
@@ -197,7 +208,18 @@ const UpdateRecipe = () => {
   };
 
   const handleAddMoreStep = () => {
-    setSteps(prev => [...prev, { key: uuid.v4(), content: "", images: {} }]);
+    setSteps(prev => [
+      ...prev,
+      {
+        key: uuid.v4(),
+        content: "",
+        images: {
+          defaultImages: [],
+          additionalImages: [],
+          deleteUrls: []
+        }
+      }
+    ]);
   };
 
   const handleCancel = () => {
@@ -237,12 +259,13 @@ const UpdateRecipe = () => {
             content={item.content}
             images={item.images}
             drag={drag}
+            steps={steps}
             setSteps={setSteps}
           />
         </ScaleDecorator>
       );
     },
-    [setSelectedTags]
+    [steps, setSelectedTags]
   );
 
   useEffect(() => {
@@ -277,6 +300,16 @@ const UpdateRecipe = () => {
           additionalImages: []
         }
       })) ?? []
+    );
+
+    setSelectedTags(
+      recipeDetailData?.tags?.map(tag => {
+        return {
+          id: tag.id,
+          code: tag.code,
+          value: tag.value
+        };
+      }) || []
     );
   }, [isLoadingRecipeDetail]);
 
@@ -381,6 +414,7 @@ const UpdateRecipe = () => {
                               key={item.key}
                               ingredientKey={item.key}
                               value={item.value}
+                              ingredients={ingredients}
                               setIngredients={setIngredients}
                             />
                           )}
@@ -442,7 +476,7 @@ const UpdateRecipe = () => {
                       </View>
 
                       {/* Tag */}
-                      <View className='mt-4'>
+                      <View className='my-4'>
                         <Text className='body-semibold text-black_white'>
                           {t("formTitle.tag")}
                         </Text>

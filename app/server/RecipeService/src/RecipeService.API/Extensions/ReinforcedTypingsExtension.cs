@@ -27,6 +27,7 @@ public static class ReinforcedTypingsExtension
 
         // Substitute C# type to typescript type
         builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
+        builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
 
         // Common type
         builder.ExportAsInterfaces([
@@ -43,6 +44,9 @@ public static class ReinforcedTypingsExtension
             typeof(CommentRecipeDTO),
             typeof(CreateRecipeDTO),
             typeof(StepDTO),
+            typeof(UpdateRecipeDTO),
+            typeof(UpdateStepDTO),
+            typeof(DeleteOwnRecipeDTO),
             typeof(GetRecipeCommentsDTO),
             typeof(GetRecipeDetailDTO),
             typeof(GetRecipeFeedsDTO),
@@ -64,7 +68,8 @@ public static class ReinforcedTypingsExtension
             typeof(GetRecipeStepsDTO)
         ], config =>
         {
-            config.WithPublicProperties()
+            config.FlattenHierarchy()
+                  .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
                   .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");

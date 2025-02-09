@@ -7,7 +7,6 @@ import { AntDesign } from "@expo/vector-icons";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import { VoteType } from "@/constants/recipe";
-import { useQueryClient } from "react-query";
 import { useVoteRecipe } from "@/api/recipe";
 
 type VoteProps = {
@@ -17,9 +16,7 @@ type VoteProps = {
 };
 
 const Vote = ({ vote, voteDiff, recipeId }: VoteProps) => {
-  const queryClient = useQueryClient();
   const { mutateAsync: voteMutation, isLoading: isVoting } = useVoteRecipe();
-
   const [votes, setVotes] = useState(voteDiff);
   const [upvoted, setUpvoted] = useState(vote === VoteType.UPVOTE);
   const [downvoted, setDownvoted] = useState(vote === VoteType.DOWNVOTE);
@@ -49,46 +46,6 @@ const Vote = ({ vote, voteDiff, recipeId }: VoteProps) => {
               bounceAnimation(upvoteBounceValue);
             }
             setVotes(newVotes);
-
-            // /** Update recipe detail cache */
-            // queryClient.setQueryData(["recipe", recipeId], (oldData: unknown) => {
-            //   if (!oldData) return oldData;
-            //   return {
-            //     ...oldData,
-            //     vote: data.vote
-            //   };
-            // });
-
-            // /** Update feed cache */
-            // queryClient.invalidateQueries("recipes");
-            // queryClient.setQueryData(["recipes"], (oldData: any) => {
-            //   if (!oldData) return oldData;
-
-            //   const newPaginatedData = oldData.pages[0].paginatedData.map(
-            //     (recipe: RecipeType) => {
-            //       if (recipe.id === recipeId) {
-            //         return {
-            //           ...recipe,
-            //           vote: data.vote,
-            //           voteDiff: newVotes
-            //         };
-            //       } else {
-            //         return recipe;
-            //       }
-            //     }
-            //   );
-
-            //   return {
-            //     ...oldData,
-            //     pages: [
-            //       {
-            //         ...oldData.pages[0],
-            //         paginatedData: newPaginatedData
-            //       },
-            //       ...oldData.pages.slice(1)
-            //     ]
-            //   };
-            // });
           },
           onError: error => {
             console.log("Vote error", JSON.stringify(error, null, 2));
@@ -119,34 +76,6 @@ const Vote = ({ vote, voteDiff, recipeId }: VoteProps) => {
               bounceAnimation(downvoteBounceValue);
             }
             setVotes(newVotes);
-
-            /** Update recipe detail cache */
-            queryClient.setQueryData(["recipe", recipeId], (oldData: unknown) => {
-              if (!oldData) return oldData;
-              return {
-                ...oldData,
-                vote: data.vote
-              };
-            });
-
-            /** Update feed cache */
-            queryClient.setQueryData(["recipes"], (oldData: any) => {
-              if (!oldData) return oldData;
-
-              const updatedFeed = oldData.paginatedData.map((recipe: RecipeType) => {
-                if (recipe.id === recipeId) {
-                  return {
-                    ...recipe,
-                    vote: data.vote,
-                    voteDiff: newVotes
-                  };
-                } else {
-                  return recipe;
-                }
-              });
-
-              return updatedFeed;
-            });
           },
           onError: error => {
             console.log("Vote error", JSON.stringify(error, null, 2));

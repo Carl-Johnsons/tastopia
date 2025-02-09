@@ -1,4 +1,4 @@
-import { Text, TouchableHighlight, View } from "react-native";
+import { Alert, Text, TouchableHighlight, View } from "react-native";
 import { forwardRef, ReactNode } from "react";
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
 import { colors } from "@/constants/colors";
@@ -7,17 +7,30 @@ import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import useIsOwner from "@/hooks/auth/useIsOwner";
+import { useDeleteOwnRecipe, useRecipesFeed } from "@/api/recipe";
+import {
+  InfiniteData,
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters
+} from "react-query";
 
 type Props = {
   id: string;
   authorId: string;
   title: string;
+  refetch?: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<InfiniteData<RecipeResponse>, unknown>>;
 };
 
 const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
   const { c } = useColorizer();
   const { black, white } = colors;
   const { t } = useTranslation("component");
+  const { mutateAsync: deleteOwnRecipe, isLoading: isDeletingOwnRecipe } =
+    useDeleteOwnRecipe();
+  const { refetch } = useRecipesFeed("All");
 
   const isCreatedByCurrentUser = useIsOwner(props.authorId);
 
@@ -28,7 +41,37 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
     });
   };
 
-  const onPressDelete = () => {};
+  const onPressDelete = () => {
+    if (!isDeletingOwnRecipe) {
+      Alert.alert(
+        t("settingRecipe.confirmDeleteRecipeTitle"),
+        t("settingRecipe.confirmDeleteRecipeDescription"),
+        [
+          {
+            text: t("cancel")
+          },
+          {
+            text: t("ok"),
+            onPress: () => {
+              deleteOwnRecipe(
+                { recipeId: props.id },
+                {
+                  onSuccess: async data => {
+                    Alert.alert(t("settingRecipe.deleteRecipeSuccessfully"));
+                    refetch();
+                    router.navigate("/(protected)");
+                  },
+                  onError: error => {
+                    Alert.alert(t("settingRecipe.deleteRecipeFail"));
+                  }
+                }
+              );
+            }
+          }
+        ]
+      );
+    }
+  };
 
   const onPressShare = () => {};
 
