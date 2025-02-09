@@ -4,7 +4,7 @@ type SelectedTag = {
   value: string;
 };
 
-type SearchTagType = {
+type TagType = {
   id: string;
   value: string;
   code: string;
@@ -17,7 +17,7 @@ type SearchTagType = {
 };
 
 type SearchTagResponse = {
-  paginatedData: SearchTagType[];
+  paginatedData: TagType[];
   metadata: {
     hasNextPage: boolean;
     totalPage: number;

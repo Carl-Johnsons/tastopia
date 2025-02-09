@@ -16,6 +16,7 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  Alert,
   FlatList,
   Keyboard,
   RefreshControl,
@@ -37,7 +38,7 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
   const { t } = useTranslation("search");
 
   const [searchValue, setSearchValue] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<SearchTagType[]>();
+  const [searchResults, setSearchResults] = useState<TagType[]>();
 
   const textInputRef = useRef<TextInput>(null);
   const isDarkMode = useDarkMode();
@@ -90,14 +91,19 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const handleCreateNew = useCallback(() => {
-    setSelectedTags(prev => [
-      ...prev,
-      { id: uuid.v4(), code: "NEW-TAG", value: searchValue.trim() }
-    ]);
+    if (selectedTags.find(tag => tag.value === searchValue.trim())) {
+      Alert.alert(t("tagAdded"));
+      return;
+    } else {
+      setSelectedTags(prev => [
+        ...prev,
+        { id: uuid.v4(), code: "NEW-TAG", value: searchValue.trim() }
+      ]);
+    }
   }, [searchValue, setSelectedTags]);
 
   const handleRemoveTag = useCallback(
-    (code: string, id: string) => {
+    (id: string) => {
       setSelectedTags(prev =>
         prev.filter(t => {
           return t.id !== id;

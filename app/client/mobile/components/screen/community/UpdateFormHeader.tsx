@@ -85,7 +85,7 @@ const UpdateFormHeader = ({
           errors={[t(errors.description?.message ?? "")]}
         />
       </View>
-      <View className='flex-center flex-row gap-6'>
+      <View className='flex flex-row justify-center gap-6'>
         <View className='flex-1'>
           <Text className='body-semibold text-black_white'>{t("formTitle.serves")}</Text>
           <Input

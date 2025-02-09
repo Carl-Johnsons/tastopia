@@ -7,6 +7,7 @@ import { Feather } from "@expo/vector-icons";
 import { globalStyles } from "./GlobalStyles";
 import { useCreateComment } from "@/api/comment";
 import { useTranslation } from "react-i18next";
+import { selectUser } from "@/slices/user.slice";
 
 type AddCommentSectionProps = {
   recipeId: string;
@@ -17,6 +18,7 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
   const { t } = useTranslation("recipeDetail");
   const [comment, setComment] = useState("");
   const { mutate: createComment, isLoading } = useCreateComment();
+  const { avatarUrl } = selectUser();
 
   const handleOnSubmit = useCallback(() => {
     if (!comment.trim()) return;
@@ -41,7 +43,7 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
   return (
     <View className='flex-row items-center gap-3'>
       <Image
-        source={require("../../assets/images/avatar.png")}
+        source={{ uri: avatarUrl }}
         style={{ width: 24, height: 24, borderRadius: 100 }}
       />
 
@@ -53,6 +55,8 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
         placeholderTextColor={"gray"}
         onChangeText={setComment}
         editable={!isLoading}
+        onSubmitEditing={handleOnSubmit}
+        returnKeyType='send'
       />
 
       {comment.trim() !== "" && (

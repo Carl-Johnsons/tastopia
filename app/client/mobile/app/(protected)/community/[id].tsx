@@ -35,6 +35,7 @@ import { ROLE } from "@/slices/auth.slice";
 import Unauthorize from "@/components/common/Unauthorize";
 import SettingRecipe from "@/components/common/SettingRecipe";
 import BottomSheet from "@gorhom/bottom-sheet";
+import NotFound from "@/app/+not-found";
 
 const RecipeDetail = () => {
   const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
@@ -48,21 +49,21 @@ const RecipeDetail = () => {
   }
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-
   const queryClient = useQueryClient();
-
   const { c } = useColorizer();
   const { black, white } = colors;
 
   const router = useRouter();
   const { t } = useTranslation("recipeDetail");
   const { id, authorId } = useLocalSearchParams<{ id: string; authorId: string }>();
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const {
     data: recipeDetailData,
     isLoading: isLoadingRecipeDetail,
     refetch: refetchRecipeDetail,
     isRefetching: isRefetchingRecipeDetail
   } = useRecipeDetail(id);
+
   const sortedSteps = useMemo(() => {
     return recipeDetailData?.recipe.steps.sort(
       (a, b) => a.ordinalNumber - b.ordinalNumber
@@ -84,15 +85,12 @@ const RecipeDetail = () => {
     commentData?.pages.flatMap(page => page.paginatedData) ?? []
   );
 
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-
   const handleRefresh = () => {
     refetchRecipeDetail();
     refetchGetRecipeComment();
   };
 
   const handleTouchMenu = () => {
-    console.log("touch menu");
     bottomSheetRef.current?.expand();
   };
 
@@ -156,6 +154,10 @@ const RecipeDetail = () => {
         />
       </View>
     );
+  }
+
+  if (!isLoadingRecipeDetail && !recipeDetailData?.recipe.id) {
+    return <NotFound />;
   }
 
   return (
