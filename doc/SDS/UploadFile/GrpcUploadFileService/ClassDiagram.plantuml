@@ -5,10 +5,17 @@ skinparam linetype polyline
 skinparam nodesep 50
 skinparam ranksep 50
 skinparam classAttributeIconSize 0
+skinparam classBackgroundColor LightSalmon
+skinparam classBorderColor While
+skinparam classFontColor While
+skinparam classAttributeFontColor While
 
 hide circle
 
-class GrpcUploadFileService {
+class GrpcUploadFileBase #Black;line:white;text:white
+
+
+class GrpcUploadFileService extends GrpcUploadFileBase {
     #_sender: ISender
     #_logger: ILogger
     #_fileUtility: IFileUtility
@@ -154,4 +161,5 @@ UpdateMultipleImageFileCommand -[hidden]down-|> UpdateMultipleImageFileCommandHa
 CreateMultipleImageFileCommand -[hidden]down-|> CreateMultipleImageFileCommandHandler
 
 Error "1" --"1..*" CloudinaryFileError
+
 @enduml

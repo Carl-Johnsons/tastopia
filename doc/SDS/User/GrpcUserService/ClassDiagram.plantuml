@@ -1,9 +1,19 @@
 @startuml GrpcUserSerciveClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+skinparam classBackgroundColor DarkBlue
+skinparam classBorderColor While
+skinparam classFontColor While
+skinparam classAttributeFontColor While
+
 hide circle
 
-class GrpcUserService {
+class GrpcUserService extends GrpcUserBase{
     #_sender: ISender
     #_logger: ILogger
     #_mapper: IMapper
@@ -54,56 +64,6 @@ class SearchSimpleUserQueryHandler {
 
 interface IMapper{
     #Map<TDestination>(object source): TDestination
-}
-
-interface IApplicationDbContext {
-    +Users: DbSet<User>
-    +UserFollows: DbSet<UserFollow>
-    +UserReports: DbSet<UserReport>
-    +Settings: DbSet<Setting>
-    +UserSettings: DbSet<UserSetting>
-}
-
-class ApplicationDbContext {
-    +Users: DbSet<User>
-    +UserFollows: DbSet<UserFollow>
-    +UserReports: DbSet<UserReport>
-    +Settings: DbSet<Setting>
-    +UserSettings: DbSet<UserSetting>
-    #OnConfiguring(DbContextOptionsBuilder optionsBuilder): void
-    #OnModelCreating(ModelBuilder modelBuilder): void
-}
-
-interface IUnitOfWork {
-    #SaveChangeAsync(CancellationToken cancellationToken): Task
-}
-
-class UnitOfWork{
-    #SaveChangeAsync(CancellationToken cancellationToken): Task
-}
-
-class Result {
-    +bool IsFailure
-    +bool IsSuccess
-    +IEnumerable<Error> Errors
-    #Result(bool isSuccess, IEnumerable<Error> errors)
-    #Result(bool isSuccess, Error error)
-    +ThrowIfFailure(): void
-    {static} +Success(): Result
-    {static} +Failure(Error err): Result
-    {static} +Failure(IEnumerable<Error> errs): Result
-}
-
-class "Result<T>" {
-    +T Value
-    {static} +Success(T value): Result<T>
-    {static} +Failure(Error error): Result<T?>
-    {static} +Failure(IEnumerable<Error> errs): Result<T?>
-}
-
-class Error {
-    {static} +None: Error
-    {static} +implicit operator Result(Error err): Result
 }
 
 ' Grpc DTO
@@ -191,61 +151,10 @@ class UserError {
     {static} +DeleteUserFail: Error
 }
 
-class BaseEntity {
-    +Guid Id
-}
-
-class BaseAuditableEntity{
-    +DateTime CreatedAt
-    +DateTime UpdatedAt
-}
-
-class User {
-    +AuthorId: Guid
-    +DisplayName: string
-    +AvatarUrl: string
-    +BackgroundUrl: string
-    +Dob: DateTime?
-    +Gender: string?
-    +Bio: string?
-    +Address: string?
-    +TotalFollowers: int?
-    +TotalFollowing: int?
-    +TotalRecipes: int?
-    +IsAccountAcitive: bool
-    +AccountUserName: string
-    +IsAdmin: bool
-}
-
-class UserFollow{
-    +FollowerId: Guid
-    +FollowingId: Guid
-    +Follower: User
-    +Following: User
-}
-
-class UserReport{
-    +AccountId: Guid
-    +ReportedId: Guid
-    +Reason: string
-    +Status: enum
-    +User: User
-    +Reported: User
-}
-
-class Setting{
-    +Code: string
-    +Description: string
-    +DataType: enum
-    +DefaultValue: string
-}
-
-class UserSetting{
-    +AccountId: Guid
-    +SettingId: Guid
-    +SettingValue: string
-    +User: User
-    +Setting: Setting   
+together {
+    class GrpcUserBase #Black;line:white;text:white
+    class GrpcAccountIdRequest #DarkViolet;line:white;text:white
+    class GrpcAccountClient #DarkViolet;line:white;text:white
 }
 
 GrpcUserService -[hidden]down-|> GetSimpleUsersQuery
@@ -258,7 +167,6 @@ GetUserDetailsQuery -[hidden]down-|> GetUserDetailsQueryHandler
 CreateUserCommand -[hidden]down-|> CreateUserCommandHandler
 SearchSimpleUserQuery -[hidden]down-|> SearchSimpleUserQueryHandler
 
-
 GrpcUserService "1"--"1" GrpcGetSimpleUsersDTO
 GrpcUserService "1"--"1" GrpcGetSimpleUsersRequest
 GrpcUserService "1"--"1" GetSimpleUsersQuery
@@ -266,7 +174,6 @@ GrpcUserService "1"--"1" GrpcSimpleUser
 GrpcUserService "1"--"1" GrpcGetSimpleUsersDTO
 
 GrpcUserService "1"--"1" GrpcUserDetailDTO
-GrpcUserService "1"--"1" GrpcAccountIdRequest
 GrpcUserService "1"--"1" GetUserDetailsQuery
 GrpcUserService "1"--"1" GetUserDetailsResponse
 GrpcUserService "1"--"1" GrpcUserDetailDTO
@@ -282,13 +189,14 @@ GrpcUserService "1"--"1" SearchSimpleUserQuery
 
 GetSimpleUsersQueryHandler "1"--"1" GetSimpleUsersQuery
 GetSimpleUsersQueryHandler "1"--"1" User
-GetSimpleUsersQueryHandler "1"--"1" Result
+GetSimpleUsersQueryHandler "1"----"1" Result
 GetSimpleUsersQueryHandler "1" o-- "1" IApplicationDbContext
 GetSimpleUsersQueryHandler "1"--"1" UserError
 
 GetUserDetailsQueryHandler "1"--"1" GetUserDetailsQuery
 GetUserDetailsQueryHandler "1"--"1" GetUserDetailsResponse
-GetUserDetailsQueryHandler "1"--"1" Result
+GetUserDetailsQueryHandler "1"----"1" Result
+GetUserDetailsQueryHandler "1"--"1" GrpcAccountIdRequest
 GetUserDetailsQueryHandler "1" o-- "1" IApplicationDbContext
 GetUserDetailsQueryHandler "1" o-- "1" IMapper
 GetUserDetailsQueryHandler "1" o-- "1" GrpcAccountClient
@@ -296,35 +204,14 @@ GetUserDetailsQueryHandler "1"--"1" UserError
 
 CreateUserCommandHandler "1"--"1" CreateUserCommand
 CreateUserCommandHandler "1"--"1" User
-CreateUserCommandHandler "1"--"1" Result
+CreateUserCommandHandler "1"----"1" Result
 CreateUserCommandHandler "1" o-- "1" IApplicationDbContext
 CreateUserCommandHandler "1" o-- "1" IUnitOfWork
 CreateUserCommandHandler "1"--"1" UserError
 
 SearchSimpleUserQueryHandler "1"--"1" SearchSimpleUserQuery
-SearchSimpleUserQueryHandler "1"--"1" Result
+SearchSimpleUserQueryHandler "1"----"1" Result
 SearchSimpleUserQueryHandler "1" o-- "1" IApplicationDbContext
 SearchSimpleUserQueryHandler "1"--"1" UserError
 
-IApplicationDbContext <|.. ApplicationDbContext
-IUnitOfWork <|.. UnitOfWork
-
-Result "1" --"1..*" Error
-Result <|-- "Result<T>"
-Error "1" --"1..*" UserError
-
-ApplicationDbContext "1" o--"1..*" User
-ApplicationDbContext "1" o--"1..*" Setting
-ApplicationDbContext "1" o--"1..*" UserFollow
-ApplicationDbContext "1" o--"1..*" UserReport
-ApplicationDbContext "1" o--"1..*" UserSetting
-
-UserFollow "1" -- "1" User
-UserReport "1" -- "1" User
-UserSetting "1" -- "1" User
-UserSetting "1" -- "1" Setting
-
-Setting --|> BaseEntity
-UserReport --|> BaseAuditableEntity
-BaseAuditableEntity --|> BaseEntity
 @enduml
