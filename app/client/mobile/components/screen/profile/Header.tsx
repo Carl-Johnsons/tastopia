@@ -64,7 +64,8 @@ export default function Header() {
 
                 <View>
                   <Text className='font-secondary-roman text-sm text-white'>
-                    {followerCounts} follower{followerCounts % 2 === 0 && followerCounts !== 0 ? "s" : ""}
+                    {followerCounts} follower
+                    {followerCounts % 2 === 0 && followerCounts !== 0 ? "s" : ""}
                   </Text>
 
                   <View className='flex-row items-center gap-1'>
