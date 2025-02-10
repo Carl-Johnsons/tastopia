@@ -1,5 +1,4 @@
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 type IngredientProps = {
   ingredient: string;
@@ -7,7 +6,7 @@ type IngredientProps = {
 const Ingredient = ({ ingredient }: IngredientProps) => {
   return (
     <View className='gap-2'>
-      <Text className='text-black_white'>{ingredient}</Text>
+      <Text className='paragraph-regular text-black_white'>{ingredient}</Text>
       <View className='h-[1px] w-full bg-gray-400'></View>
     </View>
   );

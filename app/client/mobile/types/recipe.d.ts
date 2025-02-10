@@ -53,6 +53,12 @@ type RecipeDetailType = {
   id: string;
 };
 
+type SimilarRecipe = {
+  recipeId: string;
+  imageUrl: string;
+  title: string;
+};
+
 type RecipeDetailResponse = {
   recipe: RecipeDetailType;
   authorUsername: string;
@@ -62,6 +68,7 @@ type RecipeDetailResponse = {
   vote: string;
   isBookmarked: boolean;
   tags: TagType[] | null;
+  similarRecipes: SimilarRecipe[];
 };
 
 type RecipeResponse = {

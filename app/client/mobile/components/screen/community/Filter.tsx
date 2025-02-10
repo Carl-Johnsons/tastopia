@@ -25,8 +25,6 @@ const filterData = [
   }
 ];
 
-type FilterItem = { imageUrl: string; value: string };
-
 type FilterProps = { filterSelected: string; handleSelect: (key: string) => void };
 
 const Filter = ({ filterSelected, handleSelect }: FilterProps) => {

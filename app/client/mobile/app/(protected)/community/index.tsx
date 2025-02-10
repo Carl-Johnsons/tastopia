@@ -16,7 +16,6 @@ const Community = () => {
   const { black, white } = colors;
 
   const bottomSheetRef = useRef<BottomSheet>(null);
-
   const [currentRecipeId, setCurrentRecipeId] = useState("");
   const [currentAuthorId, setCurrentAuthorId] = useState("");
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
@@ -103,7 +102,6 @@ const Community = () => {
         id={currentRecipeId}
         authorId={currentAuthorId}
         ref={bottomSheetRef}
-        title='Settings'
       />
     </SafeAreaView>
   );

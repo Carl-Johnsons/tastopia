@@ -58,7 +58,10 @@ const Login = () => {
   };
 
   return (
-    <Pressable className='relative h-full' onPress={dismissKeyboard}>
+    <Pressable
+      className='relative h-full'
+      onPress={dismissKeyboard}
+    >
       <CircleBg />
       <View
         className={`absolute ${isAndroid ? "top-[5%]" : "top-[6%]"} flex w-full justify-center gap-[4vh] px-4`}
@@ -74,7 +77,7 @@ const Login = () => {
           isLoading={isSubmitting}
         />
         <Pressable onPress={navigateToSignUpScreen}>
-          <Text className='text-center font-medium text-sm text-gray-300'>
+          <Text className='text-center font-medium text-lg text-gray-300'>
             Don’t have an account?{" "}
             <Text className='font-medium text-primary'>Sign Up</Text>
           </Text>
@@ -82,7 +85,7 @@ const Login = () => {
 
         <View className='flex-row items-center justify-center gap-5'>
           <View className='h-[1px] grow bg-gray-300' />
-          <Text className='text-center font-medium text-sm text-gray-300'>
+          <Text className='text-center font-medium text-lg text-gray-300'>
             Sign in with
           </Text>
           <View className='h-[1px] grow bg-gray-300' />

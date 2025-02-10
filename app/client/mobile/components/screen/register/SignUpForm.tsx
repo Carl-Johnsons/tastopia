@@ -30,7 +30,7 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
   return (
     <View className={`gap-[2vh] ${className}`}>
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>Full name</Text>
+        <Text className='mb-3 font-sans text-lg text-gray-600'>Full name</Text>
         <Controller
           name='fullName'
           control={control}
@@ -49,7 +49,9 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
       </View>
 
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>E-mail or phone number</Text>
+        <Text className='mb-3 font-sans text-lg text-gray-600'>
+          E-mail or phone number
+        </Text>
         <Controller
           name='identifier'
           control={control}
@@ -67,7 +69,7 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
       </View>
 
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>Password</Text>
+        <Text className='mb-3 font-sans text-lg text-gray-600'>Password</Text>
         <Controller
           name='password'
           control={control}
