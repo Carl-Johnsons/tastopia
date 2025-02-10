@@ -62,8 +62,8 @@ VoteRecipeCommandHandler "1"--"1" VoteRecipeCommand
 VoteRecipeCommandHandler "1"--"1" Result
 VoteRecipeCommandHandler "1" o-- "1" IUnitOfWork
 VoteRecipeCommandHandler "1" o-- "1" IApplicationDbContext
-VoteRecipeCommandHandler "1"--"1" RecipeError
+VoteRecipeCommandHandler "1"--"1..*" RecipeError
 
-BaseMongoDBAuditableEntity --|> BaseMongoDBEntity
+Error "1" --"1..*" RecipeError
 
 @enduml

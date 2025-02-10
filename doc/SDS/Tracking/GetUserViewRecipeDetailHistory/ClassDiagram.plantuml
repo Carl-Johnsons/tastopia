@@ -86,8 +86,8 @@ GetUserViewRecipeDetaiQueryHandler "1" o-- "1" IApplicationDbContext
 GetUserViewRecipeDetaiQueryHandler "1" o-- "1" IPaginateDataUtility
 GetUserViewRecipeDetaiQueryHandler "1" o-- "1" IMapper
 GetUserViewRecipeDetaiQueryHandler "1" o-- "1" GrpcRecipeClient
-GetUserViewRecipeDetaiQueryHandler "1"--"1.." UserViewRecipeDetailError
-GetUserViewRecipeDetaiQueryHandler "1"--"1.." UserViewRecipeDetailResponse
+GetUserViewRecipeDetaiQueryHandler "1"--"1..*" UserViewRecipeDetailError
+GetUserViewRecipeDetaiQueryHandler "1"--"1" UserViewRecipeDetailResponse
 
 
 Error "1" --"1..*" UserViewRecipeDetailError

@@ -169,29 +169,29 @@ class TagError {
 }
 
 GrpcRecipeService "1"--"1" GrpcEmpty
-GrpcRecipeService "1"--"1" GrpcTagDTO
-GrpcRecipeService "1"--"1" GrpcListTagDTO
-GrpcRecipeService "1"--"1" Tag
+GrpcRecipeService "1"--"1..*" GrpcTagDTO
+GrpcRecipeService "1"--"1..*" GrpcListTagDTO
+GrpcRecipeService "1"--"1..*" Tag
 GrpcRecipeService "1"--"1" GetAllTagsQuery
 
 GrpcRecipeService "1"--"1" GrpcRecipeIdRequest
-GrpcRecipeService "1"--"1" GrpcRecipeDetailsDTO
-GrpcRecipeService "1"--"1" GrpcStepDTO
-GrpcRecipeService "1"--"1" GrpcCommentDTO
+GrpcRecipeService "1"--"1..*" GrpcRecipeDetailsDTO
+GrpcRecipeService "1"--"1..*" GrpcStepDTO
+GrpcRecipeService "1"--"1..*" GrpcCommentDTO
 GrpcRecipeService "1"--"1" RecipeDetailsResponse
 GrpcRecipeService "1"--"1" GetRecipeDetailForServerQuery
 
 GrpcRecipeService "1"--"1" GrpcGetSimpleRecipeRequest
 GrpcRecipeService "1"--"1" GrpcMapSimpleRecipes
-GrpcRecipeService "1"--"1" GrpcSimpleRecipe
+GrpcRecipeService "1"--"1..*" GrpcSimpleRecipe
 GrpcRecipeService "1"--"1" SimpleRecipeResponse
 GrpcRecipeService "1"--"1" GetSimpleRecipesQuery
 
 GetAllTagsQueryHandler "1"--"1" GetAllTagsQuery
-GetAllTagsQueryHandler "1"--"1" Tag
+GetAllTagsQueryHandler "1"--"1..*" Tag
 GetAllTagsQueryHandler "1"---"1" Result
 GetAllTagsQueryHandler "1" o-- "1" IApplicationDbContext
-GetAllTagsQueryHandler "1"--"1" TagError
+GetAllTagsQueryHandler "1"--"1..*" TagError
 
 GetRecipeDetailForServerQueryHandler "1"--"1" GetRecipeDetailForServerQuery
 GetRecipeDetailForServerQueryHandler "1"--"1" RecipeDetailsResponse
@@ -201,7 +201,7 @@ GetRecipeDetailForServerQueryHandler "1" o-- "1" IApplicationDbContext
 GetRecipeDetailForServerQueryHandler "1" o---- "1" IMapper
 GetRecipeDetailForServerQueryHandler "1" o-- "1" IServiceBus
 GetRecipeDetailForServerQueryHandler "1" o-- "1" GrpcUserClient
-GetRecipeDetailForServerQueryHandler "1"----"1" RecipeError
+GetRecipeDetailForServerQueryHandler "1"----"1..*" RecipeError
 
 GetSimpleRecipesQueryHandler "1"--"1" GetSimpleRecipesQuery
 GetSimpleRecipesQueryHandler "1"--"1" SimpleRecipeResponse
@@ -210,7 +210,7 @@ GetSimpleRecipesQueryHandler "1"---"1" GrpcGetSimpleUsersRequest
 GetSimpleRecipesQueryHandler "1" o-- "1" IApplicationDbContext
 GetSimpleRecipesQueryHandler "1" o---- "1" IMapper
 GetSimpleRecipesQueryHandler "1" o-- "1" GrpcUserClient
-GetSimpleRecipesQueryHandler "1"----"1" RecipeError
+GetSimpleRecipesQueryHandler "1"----"1..*" RecipeError
 
 GrpcRecipeDetailsDTO *--"1..*" GrpcStepDTO
 GrpcRecipeDetailsDTO *--"1..*" GrpcCommentDTO

@@ -77,11 +77,11 @@ RecipeController "1"--"1" GetRecipeDetailQuery
 
 GetRecipeDetailQueryHandler "1"--"1" GetRecipeDetailQuery
 GetRecipeDetailQueryHandler "1"--"1" Result
-GetRecipeDetailQueryHandler "1"--"1" RecipeDetailsResponse
+GetRecipeDetailQueryHandler "1"--"1..*" RecipeDetailsResponse
 GetRecipeDetailQueryHandler "1" o-- "1" IApplicationDbContext
 GetRecipeDetailQueryHandler "1" o-- "1" GrpcUserClient
 GetRecipeDetailQueryHandler "1" o-- "1" IServiceBus
-GetRecipeDetailQueryHandler "1"--"1" RecipeError
+GetRecipeDetailQueryHandler "1"--"1..*" RecipeError
 
 Error "1" --"1..*" RecipeError
 

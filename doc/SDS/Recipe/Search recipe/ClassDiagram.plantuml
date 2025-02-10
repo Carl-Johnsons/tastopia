@@ -71,7 +71,7 @@ SearchRecipesQueryHandler "1" o-- "1" IApplicationDbContext
 SearchRecipesQueryHandler "1" o-- "1" IMapper
 SearchRecipesQueryHandler "1" o-- "1" GrpcUserClient
 SearchRecipesQueryHandler "1" o-- "1" IPaginateDataUtility
-SearchRecipesQueryHandler "1"--"1" RecipeError
+SearchRecipesQueryHandler "1"--"1..*" RecipeError
 
 Error "1" --"1..*" RecipeError
 
