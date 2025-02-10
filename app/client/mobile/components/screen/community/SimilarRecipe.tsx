@@ -23,7 +23,7 @@ const SimilarRecipe = ({ recipeId, imageUrl, title }: SimilarRecipeProps) => {
           className='h-[120px] w-full rounded-xl'
           resizeMode='cover'
         />
-        <Text className='body-semibold uppercase text-white'>{title}</Text>
+        <Text className='body-semibold text-black_white uppercase'>{title}</Text>
       </View>
     </TouchableWithoutFeedback>
   );

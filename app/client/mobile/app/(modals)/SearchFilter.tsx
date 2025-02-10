@@ -28,9 +28,9 @@ import {
   TouchableWithoutFeedback,
   View,
   Image,
-  Alert
+  Alert,
+  SafeAreaView
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const SearchFilter = () => {
   const { c } = useColorizer();
@@ -129,10 +129,8 @@ const SearchFilter = () => {
   }, [data]);
 
   return (
-    <SafeAreaView
-      style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
-    >
-      <View className={`size-full flex-col`}>
+    <SafeAreaView style={{ backgroundColor: c(white.DEFAULT, black[100]) }}>
+      <View className={`size-full`}>
         <View
           style={{ marginTop: StatusBar.currentHeight }}
           className='flex-between mb-4 h-[60px] flex-row items-center border-b-[0.6px] border-gray-400 px-6'
