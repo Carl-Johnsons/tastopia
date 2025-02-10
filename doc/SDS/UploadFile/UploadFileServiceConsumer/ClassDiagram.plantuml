@@ -1,0 +1,83 @@
+@startuml GrpcRecipeSerciveClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+
+hide circle
+
+class UploadFileServiceConsumer {
+    #_sender: ISender
+    #_logger: ILogger
+    +DeleteMultipleFileConsumer(ConsumeContext<DeleteMultipleFileEvent> context): async Task
+}
+
+
+class Cloudinary #Black;line:white;text:white{
+}
+
+class DeletionResult #Black;line:white;text:white {
+}
+
+class DeletionParams #Black;line:white;text:white{
+}
+
+interface IFileUtility {
+    #GetFileType(string fileName): enum
+    #GetPublicIdByUrl(string url): string?
+    #ConvertGrpcFileStreamToIFormFileAsync(List<GrpcFileStreamDTO> streams): Task<List<IFormFile>>
+    #ConvertFileStreamDTOToIFormFileAsync(List<FileStreamDTO> streams): Task<List<IFormFile>>
+}
+
+class FileUtility Implements IFileUtility {
+    +GetFileType(string fileName): enum
+    +GetPublicIdByUrl(string url): string?
+    +ConvertGrpcFileStreamToIFormFileAsync(List<GrpcFileStreamDTO> streams): Task<List<IFormFile>>
+    +ConvertFileStreamDTOToIFormFileAsync(List<FileStreamDTO> streams): Task<List<IFormFile>>
+}
+
+class DeleteMultipleImageFileCommand {
+    +DeleteUrls: List<string>?
+}
+
+class DeleteMultipleImageFileCommandHandler{
+    -_fileUtility: IFileUtility
+    -_cloudinary: Cloudinary
+    +Handle(DeleteMultipleImageFileCommand request, CancellationToken cancellationToken): async Task<Result>
+}
+
+' Event DTO
+class DeleteMultipleFileEvent{
+    +DeleteUrls: List<string>
+}
+
+class CloudinaryFileError {
+    {static} +NotFound: Error
+    {static} +UploadToCloudFail: Error
+    {static} +DeleteToCloudFail: Error
+    {static} +FileListContainNull: Error
+    {static} +FileListTooLarge(long MaxSize, long FileSize): Error
+    {static} +InvalidFile(string Type, string ChosenFileType): Error
+}
+
+UploadFileServiceConsumer "1"--"1" DeleteMultipleFileEvent
+UploadFileServiceConsumer "1"--"1" DeleteMultipleImageFileCommand
+
+DeleteMultipleImageFileCommandHandler "1"--"1" DeleteMultipleImageFileCommand
+UpdateMultipleImageFileCommandHandler "1"----"1..*" Result
+UpdateMultipleImageFileCommandHandler "1" o---- "1" IFileUtility
+UpdateMultipleImageFileCommandHandler "1" o-- "1" Cloudinary
+UpdateMultipleImageFileCommandHandler "1"--"1..*" CloudinaryFileError
+UpdateMultipleImageFileCommandHandler "1"--"1..*" DeletionResult
+UpdateMultipleImageFileCommandHandler "1"--"1..*" DeletionParams
+
+
+' =================STYLE=================
+UploadFileServiceConsumer -[hidden]down-|> DeleteMultipleImageFileCommand
+
+DeleteMultipleImageFileCommand -[hidden]down-|> DeleteMultipleImageFileCommandHandler
+
+Error "1" --"1..*" CloudinaryFileError
+@enduml
