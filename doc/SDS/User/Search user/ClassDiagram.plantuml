@@ -1,0 +1,106 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+together {
+    class BaseApiController {
+        #_sender: ISender
+        #_httpContextAccessor: HttpContextAccessor
+    }
+
+    class UserController {
+        +SearchUser(SearchUserDTO searchUser): async Task<IActionResult>
+    }
+
+    class SearchUsersCommand {
+        +AccountId: Guid
+        +Skip: int
+        +Keyword: string
+    }
+
+    class SearchUserDTO {
+        +Skip: int
+        +Keyword: string
+    }
+}
+
+class SearchUsersCommandHandler {
+    - _context : IApplicationDbContext
+    - _paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata> 
+    + SearchUsersCommandHandler(context: IApplicationDbContext, paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata>)
+    + Handle(request: SearchUsersCommand, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class PaginatedSearchUserListResponse
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    + PaginatedData: IEnumerable<Type>
+    + Metadata: MetadataType
+}
+
+class CommonPaginatedMetadata {
+    + TotalPage: int
+
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    + HasNextPage: bool
+}
+
+
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+class USER_CONSTANTS {
+    {static} +USER_LIMIT: int
+}
+
+class SearchUserResponse {
+    - Id : Guid
+    - AvtUrl : string
+    - DisplayName : string
+    - Username : string
+    - NumberOfRecipe : int
+    - IsFollowing : bool
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+
+UserController --|> BaseApiController
+UserController "1"--"1" SearchUsersCommand
+UserController "1"--"1" SearchUserDTO
+SearchUsersCommand --|> "IRequest<TResponse>"
+
+SearchUsersCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+SearchUsersCommandHandler "1" o--"1" SearchUsersCommand
+SearchUsersCommandHandler "1" o--"1" UserError
+SearchUsersCommandHandler "1" o--"1" IPaginateDataUtility
+SearchUsersCommandHandler "1" o--"1" IApplicationDbContext
+SearchUsersCommandHandler "1" o--"1" USER_CONSTANTS
+SearchUsersCommandHandler "1" o--"1" SearchUserResponse
+SearchUsersCommandHandler "1" o--"1" Result
+SearchUsersCommandHandler "1" o--"1" AdvancePaginatedMetadata
+SearchUsersCommandHandler "1" o--"1" PaginatedSearchUserListResponse
+
+"BasePaginatedResponse<Type,MetadataType>" "1" <|-up-"1" PaginatedSearchUserListResponse
+
+' Style
+CommonPaginatedMetadata -[hidden]up- AdvancePaginatedMetadata
+
+Error "1" --"1" UserError
+
+@enduml

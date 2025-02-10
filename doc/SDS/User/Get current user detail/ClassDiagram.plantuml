@@ -79,6 +79,6 @@ GetUserDetailsQueryHandler "1" o--"1" GrpcAccountIdRequest
 GetUserDetailsQueryHandler "1" o--"1" GrpcAccountClient
 GetUserDetailsQueryHandler "1" o--"1" Result
 
-Error "1" --"1..*" UserError
+Error "1" --"1" UserError
 
 @enduml
