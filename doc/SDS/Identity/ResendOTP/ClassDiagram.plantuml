@@ -79,12 +79,6 @@ class UserResendOTPEvent{
 }
 
 !include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml 
-remove Permission
-remove Group
-remove RoleGroupPermission
-remove IdentityRole
-remove BaseEntity
-
 
 ' =========== Library class ===========
 interface "IRequest<TResponse>" #black;line:white;text:white
