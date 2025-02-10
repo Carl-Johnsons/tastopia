@@ -1,0 +1,84 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class UserController {
+    +GetCurrentUserDetails(): async Task<IActionResult>
+}
+
+class GetUserDetailsQuery {
+    +Guid AccountId
+}
+
+class GetUserDetailsQueryHandler {
+    - _mapper : IMapper
+    - _context : IApplicationDbContext
+    - _grpcAccountClient: GrpcAccountClient 
+    + GetUserDetailsQueryHandler(context: IApplicationDbContext, mapper: IMapper, grpcAccountClient: grpcAccountClient)
+    + Handle(request: GetUserDetailsQuery, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class GetUserDetailsResponse {
+    - AccountId : Guid
+    - DisplayName : string
+    - AvatarUrl : string
+    - BackgroundUrl : string
+    - Dob : DateTime
+    - Gender : string
+    - Bio : string
+    - Address : string
+    - TotalFollwer : int
+    - TotalFollowing : int
+    - TotalRecipe : int
+    - IsAccountActive : bool
+    - AccountUsername : string
+    - IsAdmin : bool
+    - AccountEmail : string
+    - AccountPhoneNumber : string
+}
+
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+' =========== Microservice class ===========
+together {
+    class GrpcAccountIdRequest #DarkViolet;line:white;text:white
+    class GrpcAccountClient #DarkViolet;line:white;text:white
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+
+UserController --|> BaseApiController
+UserController "1"--"1" GetUserDetailsQuery
+GetUserDetailsQuery --|> "IRequest<TResponse>"
+
+GetUserDetailsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetUserDetailsQueryHandler "1" o--"1" GetUserDetailsQuery
+GetUserDetailsQueryHandler "1" o--"1" UserError
+GetUserDetailsQueryHandler "1" o--"1" IApplicationDbContext
+GetUserDetailsQueryHandler "1" o--"1" GetUserDetailsResponse
+GetUserDetailsQueryHandler "1" o--"1" GrpcAccountIdRequest
+GetUserDetailsQueryHandler "1" o--"1" GrpcAccountClient
+GetUserDetailsQueryHandler "1" o--"1" Result
+
+Error "1" --"1..*" UserError
+
+@enduml
