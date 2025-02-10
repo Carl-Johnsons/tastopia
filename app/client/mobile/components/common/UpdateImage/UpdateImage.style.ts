@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   },
 
   wrapper: {
-    flexDirection: "column",
+    flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",
     justifyContent: "center",
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
 
   uploadItem: {
     position: "relative",
-    width: "31%",
+    flex: 1,
     borderRadius: 5,
     borderColor: globalStyles.color.light,
     overflow: "hidden"
