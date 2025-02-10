@@ -1,0 +1,111 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+remove UserReport
+remove UserFollow
+remove BaseAuditableEntity
+
+together {
+    class BaseApiController {
+        #_sender: ISender
+        #_httpContextAccessor: HttpContextAccessor
+    }
+
+    class SettingController {
+        +UpdateSetting(UpdateSettingDTO dto): async Task<IActionResult>
+    }
+
+    class UpdateSettingDTO {
+        +Settings: List<SettingObjectDTO>
+    }
+
+    class UpdateSettingCommand {
+        +Settings: List<SettingObject>
+        +AccountId: Guid
+    }
+
+
+    class UpdateSettingCommand {
+        +Guid AccountId
+    }
+}
+
+class SettingObjectDTO {
+    +Key: string
+    +Value: string
+}
+
+class SettingObject {
+    +Key: string
+    +Value: string
+}
+
+enum SETTING_KEY {
+    LANGUAGE,
+    DARK_MODE,
+    NOTIFICATION_COMMENT,
+    NOTIFICATION_VOTE,
+    NOTIFICATION_FOLLOW,
+}
+
+class SETTING_VALUE
+
+enum SETTING_VALUE::LANGUAGE {
+    VIETNAMESE
+    ENGLISH
+}
+
+enum SETTING_VALUE::BOOLEAN {
+    TRUE
+    FALSE
+}
+
+class UpdateSettingCommandHandler {
+    - _context : IApplicationDbContext
+    + _unitOfWork : IUnitOfWork
+    +UpdateSettingCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork)
+    +Handle(UpdateSettingCommand request, CancellationToken cancellationToken) : Task<Result>
+}
+
+class SettingError {
+    {static} +InvalidSettingKey: Error
+    {static} +InvalidSettingValue: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+UpdateSettingDTO "1" *-- "1..*" SettingObjectDTO
+UpdateSettingCommand "1" *-- "1..*" SettingObject
+
+SETTING_VALUE *-- "1..*" SETTING_VALUE::LANGUAGE
+SETTING_VALUE *-- "1..*" SETTING_VALUE::BOOLEAN
+
+SettingController --|> BaseApiController
+SettingController --|> UpdateSettingDTO
+SettingController "1"--"1" UpdateSettingCommand
+UpdateSettingCommand --|> "IRequest<TResponse>"
+
+UpdateSettingCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateSettingCommandHandler "1" o--"1" UpdateSettingCommand
+UpdateSettingCommandHandler "1" o--"1" SettingError
+UpdateSettingCommandHandler "1" o--"1" IApplicationDbContext
+UpdateSettingCommandHandler "1" o--"1" UserSetting
+UpdateSettingCommandHandler "1" o--"1" IUnitOfWork
+UpdateSettingCommandHandler "1" o--"1" Result
+UpdateSettingCommandHandler "1" o--"1" SETTING_KEY
+UpdateSettingCommandHandler "1" o--"1" SETTING_VALUE
+
+Error "1" -up-"1" SettingError
+
+@enduml
