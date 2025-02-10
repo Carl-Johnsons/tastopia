@@ -24,6 +24,7 @@ class GetRecipeDetailQuery {
 }
 
 class GetRecipeDetailQueryHandler {
+    -_serviceBus: IServiceBus
     -_context: IApplicationDbContext
     -_grpcUserClient: GrpcUserClient
     +Handle(GetRecipeDetailQuery request, CancellationToken cancellationToken): async Task<Result<RecipeDetailsResponse?>> 
@@ -67,6 +68,7 @@ class RecipeError {
 }
 
 together {
+    class CreateUserViewRecipeDetailEvent #CadetBlue;line:white;text:white
     class GrpcAccountIdRequest #DarkBlue;line:white;text:white
     class GrpcUserClient #DarkBlue;line:white;text:white
 }
@@ -77,11 +79,12 @@ RecipeController "1"--"1" GetRecipeDetailQuery
 
 GetRecipeDetailQueryHandler "1"--"1" GetRecipeDetailQuery
 GetRecipeDetailQueryHandler "1"--"1" Result
-GetRecipeDetailQueryHandler "1"--"1" RecipeDetailsResponse
+GetRecipeDetailQueryHandler "1"--"1..*" RecipeDetailsResponse
 GetRecipeDetailQueryHandler "1" o-- "1" IApplicationDbContext
 GetRecipeDetailQueryHandler "1" o-- "1" GrpcUserClient
 GetRecipeDetailQueryHandler "1" o-- "1" IServiceBus
-GetRecipeDetailQueryHandler "1"--"1" RecipeError
+GetRecipeDetailQueryHandler "1"--"1..*" RecipeError
+GetRecipeDetailQueryHandler "1"--"1" CreateUserViewRecipeDetailEvent
 
 Error "1" --"1..*" RecipeError
 

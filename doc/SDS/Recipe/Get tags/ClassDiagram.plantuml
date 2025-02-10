@@ -62,14 +62,7 @@ GetTagsQueryHandler "1"--"1" Result
 GetTagsQueryHandler "1"--"1" PaginatedTagListResponse
 GetTagsQueryHandler "1" o-- "1" IApplicationDbContext
 GetTagsQueryHandler "1" o-- "1" IPaginateDataUtility
-GetTagsQueryHandler "1"--"1" TagError
-
-ApplicationDbContext "1" o--"1..*" Recipe
-ApplicationDbContext "1" o--"1..*" Tag
-ApplicationDbContext "1" o--"1..*" RecipeTag
-ApplicationDbContext "1" o--"1..*" UserBookmarkRecipe
-ApplicationDbContext "1" o--"1..*" UserReportComment
-ApplicationDbContext "1" o--"1..*" UserReportRecipe
+GetTagsQueryHandler "1"--"1..*" TagError
 
 Error "1" --"1..*" TagError
 @enduml

@@ -42,15 +42,6 @@ class CommentRecipeDTO{
     +Content: string
 }
 
-interface IUnitOfWork {
-    Task SaveChangeAsync(CancellationToken cancellationToken = default)
-}
-
-class UnitOfWork {
-    -_context: ApplicationDbContext
-    +Task SaveChangeAsync(CancellationToken cancellationToken = default)
-}
-
 class RecipeCommentResponse{
     +Id: Guid
     +AccountId: Guid
@@ -80,14 +71,14 @@ RecipeController "1"--"1" CommentRecipeCommand
 
 CommentRecipeCommandHandler "1"--"1" CommentRecipeCommand
 CommentRecipeCommandHandler "1"--"1" Result
-CommentRecipeCommandHandler "1"--"1" RecipeCommentResponse
+CommentRecipeCommandHandler "1"--"1..*" RecipeCommentResponse
 CommentRecipeCommandHandler "1" o-- "1" IUnitOfWork
 CommentRecipeCommandHandler "1" o-- "1" IApplicationDbContext
 CommentRecipeCommandHandler "1" o-- "1" IMapper
 CommentRecipeCommandHandler "1" o-- "1" GrpcUserClient
 CommentRecipeCommandHandler "1" o-- "1" GrpcGetSimpleUsersRequest
 CommentRecipeCommandHandler "1" o-- "1" IServiceBus
-CommentRecipeCommandHandler "1"--"1" CommentError
+CommentRecipeCommandHandler "1"--"1..*" CommentError
 
 Error "1" --"1..*" CommentError
 @enduml
