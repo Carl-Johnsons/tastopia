@@ -1,4 +1,5 @@
 ﻿using Contract.DTOs;
+using NotificationService.Domain.Responses;
 using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using System.Reflection;
@@ -6,7 +7,7 @@ using System.Text;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 namespace NotificationService.API.Extensions;
 
-// RecipeService.API.Extensions.ReinforcedTypingsExtension.ConfigureReinforcedTypings
+// NotificationService.API.Extensions.ReinforcedTypingsExtension.ConfigureReinforcedTypings
 public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "notification";
@@ -29,7 +30,9 @@ public static class ReinforcedTypingsExtension
 
         // Common type
         builder.ExportAsInterfaces([
-            typeof(ErrorResponseDTO)
+            typeof(ErrorResponseDTO),
+            typeof(AdvancePaginatedMetadata),
+            typeof(CommonPaginatedMetadata),
         ], config =>
         {
             config.WithPublicProperties()
@@ -38,7 +41,11 @@ public static class ReinforcedTypingsExtension
                   .ExportTo("interfaces/common.interface.d.ts");
         });
         // DTO and Entites
-        builder.ExportAsInterfaces([], config =>
+        builder.ExportAsInterfaces(
+        [
+            typeof(PaginatedNotificationListResponse),
+            typeof(NotificationsResponse),
+        ], config =>
         {
             config.FlattenHierarchy()
                   .WithPublicProperties()
