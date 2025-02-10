@@ -85,7 +85,8 @@ const ProtectedLayout = () => {
     tabItem: {
       width: 80,
       padding: 0,
-      justifyContent: "center"
+      justifyContent: "center",
+      alignItems: "center"
     }
   });
 
