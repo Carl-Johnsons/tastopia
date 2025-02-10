@@ -54,6 +54,7 @@ const RecipeDetail = () => {
   const queryClient = useQueryClient();
   const { c } = useColorizer();
   const { black, white } = colors;
+  const LOAD_MORE_TIMES = 5;
 
   const router = useRouter();
   const { t } = useTranslation("recipeDetail");
@@ -124,10 +125,17 @@ const RecipeDetail = () => {
     }
   };
 
-  const handleLoadMoreComment = useCallback(() => {
-    if (!isFetchingNextPage && hasNextPage) {
-      fetchNextPage();
-    }
+  const handleLoadMoreComment = useCallback(async () => {
+    let callTimes = 1;
+    const loadAllComments = async () => {
+      if (hasNextPage && !isFetchingNextPage && callTimes <= LOAD_MORE_TIMES) {
+        callTimes++;
+        await fetchNextPage();
+        loadAllComments();
+      }
+    };
+
+    loadAllComments();
   }, [isFetchingNextPage, hasNextPage, fetchNextPage]);
 
   const setParentState = useCallback((comment: CommentType) => {
