@@ -42,15 +42,6 @@ class CommentRecipeDTO{
     +Content: string
 }
 
-interface IUnitOfWork {
-    Task SaveChangeAsync(CancellationToken cancellationToken = default)
-}
-
-class UnitOfWork {
-    -_context: ApplicationDbContext
-    +Task SaveChangeAsync(CancellationToken cancellationToken = default)
-}
-
 class RecipeCommentResponse{
     +Id: Guid
     +AccountId: Guid
