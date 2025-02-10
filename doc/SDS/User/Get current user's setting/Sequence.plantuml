@@ -1,0 +1,36 @@
+@startuml Sequence
+title "Get user setting"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n UserService" as UserService
+database Postgresql
+
+User -> MobileUI ++: 1. Open the app and login
+MobileUI -> ApiGateway ++: 2. Get current user setting
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> UserService ++: 4. Forward request
+UserService -> Postgresql ++: 5. Query data
+UserService <-- Postgresql--: 6. Return response
+
+ApiGateway <-- UserService--: 7. Return user setting
+MobileUI <-- ApiGateway--: 8. Forward response
+User <-- MobileUI--: 9. Save user setting\n to async storage
+
+@enduml

@@ -1,0 +1,92 @@
+@startuml AccountDbContext
+
+together {
+    interface IApplicationDbContext {
+        +UserLogins : DbSet<IdentityUserLogin<string>>
+        +Permissions : DbSet<Permission>
+        +Groups : DbSet<Group>
+        +RoleGroupPermissions : DbSet<RoleGroupPermission>
+    }
+
+    interface IDbContext {
+        +Instance : DbContext
+    }
+    ' ========= Entity class =========
+    class BaseEntity {
+        +Id : Guid
+    }
+
+    class ApplicationAccount extends IdentityUser {
+        +EmailOTP: string
+        +UnlinkEmailOTP: string
+        +EmailOTPCreated: DateTime
+        +EmailOTPExpiry: DateTime
+        +PhoneOTP: string
+        +UnlinkPhoneOTP: string
+        +PhoneOTPCreated: DateTime
+        +PhoneOTPExpiry: DateTime
+        +RequestOTPCount: int
+        +IsActive: bool
+        +CreatedAt: DateTime
+        +UpdatedAt: DateTime
+    }
+
+    class Permission extends BaseEntity {
+        +Code : String
+        +Value : String
+        +Description : String
+    }
+    class Group extends BaseEntity {
+        +Code : String
+        +Name : String
+        +Description : String
+    }
+
+    class RoleGroupPermission extends BaseEntity {
+        +RoleId : String
+        +PermissionId : Guid
+        +GroupId : Guid
+        +Role : IdentityRole
+        +Permission : Permission
+        +Group : Group
+    }
+
+    ' ========= Library class =========
+    interface IDisposable #black;line:white;text:white
+    class "DbSet<T>" #black;line:white;text:white
+    class "IdentityUserLogin<T>" #black;line:white;text:white
+    class IdentityRole #black;line:white;text:white
+    class DbContext #black;line:white;text:white
+    class IdentityUser #black;line:white;text:white
+    class "IdentityDbContext<ApplicationAccount>" #black;line:white;text:white
+
+    class ApplicationDbContext extends "IdentityDbContext<ApplicationAccount>" implements IApplicationDbContext {
+        +Permissions : DbSet<Permission>
+        +Groups : DbSet<Group>
+        +RoleGroupPermissions : DbSet<RoleGroupPermission>
+        +Instance : DbContext
+        #OnConfiguring(optionsBuilder : DbContextOptionsBuilder) : void
+        #OnModelCreating(modelBuilder : ModelBuilder) : void
+    }
+}
+
+IDbContext ..|> IDisposable
+IDbContext o-- DbContext
+
+IApplicationDbContext ..|> IDbContext
+IApplicationDbContext o-- "DbSet<T>"
+IApplicationDbContext o-- "IdentityUserLogin<T>"
+IApplicationDbContext o-- ApplicationAccount
+IApplicationDbContext o-- Permission
+IApplicationDbContext o-- Group
+IApplicationDbContext o-- RoleGroupPermission
+
+ApplicationDbContext o-- ApplicationAccount
+ApplicationDbContext o-- Permission
+ApplicationDbContext o-- Group
+ApplicationDbContext o-- RoleGroupPermission
+
+RoleGroupPermission o-- IdentityRole
+RoleGroupPermission o-- Permission
+RoleGroupPermission o-- Group
+@enduml

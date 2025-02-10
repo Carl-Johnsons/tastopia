@@ -1,0 +1,99 @@
+@startuml Sequence
+title "Update current user's information"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n UserService" as UserService
+participant "<<service>>\n UploadService" as UploadService
+participant "<<service>>\n Cloudinary" as Cloudinary
+database Postgresql
+
+User -> MobileUI ++: 1. Change user's information\n and touch Update
+MobileUI -> ApiGateway ++: 2. Update user
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> UserService ++: 4. Forward request
+UserService -> Postgresql ++: 5. Query data
+UserService <-- Postgresql--: 6. Return response
+
+alt if user not found
+  ApiGateway <-- UserService: 7A.1. Return NotFound Error
+  MobileUI <-- ApiGateway: 7A.2. Forward error
+  User <-- MobileUI: 7A.3. Display error
+else if updated gender not FEMALE or MALE
+  ApiGateway <-- UserService: 7A.1. Return NullParameters Error
+  MobileUI <-- ApiGateway: 7A.2. Forward error
+  User <-- MobileUI: 7A.3. Display error   
+else if updated username already exist
+  ApiGateway <-- UserService: 7B.2. Return UsernameAlreadyExisted Error
+  MobileUI <-- ApiGateway: 7B.3. Forward error
+  User <-- MobileUI: 7C.4. Display error
+else
+  UserService -> IdentityService++: call grpc to update\n user's username <<gRPC>>
+  IdentityService -> Postgresql++: query data
+  IdentityService <-- Postgresql--: return response
+  alt if account not found
+    UserService <-- IdentityService: return NotFound Error <<gRPC>>
+    ApiGateway <-- UserService: 7B.2. Return NotFound Error
+    MobileUI <-- ApiGateway: 7B.3. Forward error
+    User <-- MobileUI: 7C.4. Display error
+  else if updated username is already exist
+    UserService <-- IdentityService: return UsernameAlreadyExisted Error <<gRPC>>
+    ApiGateway <-- UserService: 7B.2. Return UsernameAlreadyExisted Error
+    MobileUI <-- ApiGateway: 7B.3. Forward error
+    User <-- MobileUI: 7C.4. Display error
+  else
+    IdentityService -> Postgresql++: update user's username
+    IdentityService <-- Postgresql--: return response
+    alt if update didn't success
+        UserService <-- IdentityService: return UpdateAccountFailed Error <<gRPC>>
+        ApiGateway <-- UserService: 7B.2. Return UpdateAccountFailed Error
+        MobileUI <-- ApiGateway: 7B.3. Forward error
+        User <-- MobileUI: 7C.4. Display error
+    else
+        UserService <-- IdentityService--: return success <<gRPC>>
+        UserService -> UploadService++: Update avatar and background image
+        UploadService -> Cloudinary++: Upload images
+        UploadService <-- Cloudinary--: return response
+        UserService <-- UploadService--: forward response
+
+        alt if upload image fail
+            ApiGateway <-- UserService: 7B.2. Return NullParameters Error
+            MobileUI <-- ApiGateway: 7B.3. Forward error
+            User <-- MobileUI: 7C.4. Display error
+        else
+            UserService -> Postgresql++: 8. Update user's data
+            UserService <-- Postgresql--: 9. return response
+            
+            alt if update did not success
+                ApiGateway <-- UserService: 7B.2. Return UpdateAccountFailed Error
+                MobileUI <-- ApiGateway: 7B.3. Forward error
+                User <-- MobileUI: 7C.4. Display error
+            else
+                ApiGateway <-- UserService--: 10. Return success status code
+                MobileUI <-- ApiGateway--: 11. Forward response
+                User <-- MobileUI--: 12. Display update successfully
+            end
+        end
+    end
+  end
+
+
+end
+
+@enduml
