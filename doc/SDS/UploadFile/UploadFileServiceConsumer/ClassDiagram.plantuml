@@ -66,12 +66,12 @@ UploadFileServiceConsumer "1"--"1" DeleteMultipleFileEvent
 UploadFileServiceConsumer "1"--"1" DeleteMultipleImageFileCommand
 
 DeleteMultipleImageFileCommandHandler "1"--"1" DeleteMultipleImageFileCommand
-UpdateMultipleImageFileCommandHandler "1"----"1..*" Result
-UpdateMultipleImageFileCommandHandler "1" o---- "1" IFileUtility
-UpdateMultipleImageFileCommandHandler "1" o-- "1" Cloudinary
-UpdateMultipleImageFileCommandHandler "1"--"1..*" CloudinaryFileError
-UpdateMultipleImageFileCommandHandler "1"--"1..*" DeletionResult
-UpdateMultipleImageFileCommandHandler "1"--"1..*" DeletionParams
+DeleteMultipleImageFileCommandHandler "1"----"1..*" Result
+DeleteMultipleImageFileCommandHandler "1" o---- "1" IFileUtility
+DeleteMultipleImageFileCommandHandler "1" o-- "1" Cloudinary
+DeleteMultipleImageFileCommandHandler "1"--"1..*" CloudinaryFileError
+DeleteMultipleImageFileCommandHandler "1"--"1..*" DeletionResult
+DeleteMultipleImageFileCommandHandler "1"--"1..*" DeletionParams
 
 
 ' =================STYLE=================
