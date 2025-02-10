@@ -7,10 +7,16 @@ skinparam linetype polyline
 skinparam nodesep 50
 skinparam ranksep 50
 skinparam classAttributeIconSize 0
+skinparam classBackgroundColor Green
+skinparam classBorderColor While
+skinparam classFontColor While
+skinparam classAttributeFontColor While
 
 hide circle
 
-class GrpcRecipeService {
+class GrpcRecipeBase #Black;line:white;text:white
+
+class GrpcRecipeService extends GrpcRecipeBase {
     #_sender: ISender
     #_logger: ILogger
     #_mapper: IMapper

@@ -71,8 +71,8 @@ class UserViewRecipeDetailError {
 }
 
 together {
-    class GrpcGetSimpleRecipeRequest #DarkGreen;line:white;text:white
-    class GrpcRecipeClient #DarkGreen;line:white;text:white
+    class GrpcGetSimpleRecipeRequest #Green;line:white;text:white
+    class GrpcRecipeClient #Green;line:white;text:white
 }
 
 TrackingController --|> BaseApiController
