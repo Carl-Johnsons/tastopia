@@ -108,6 +108,33 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
+    [AllowAnonymous]
+    [HttpPost("get-recipe-feed-by-author-id")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedRecipeFeedsListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetRecipeFeedByAccountId([FromBody] GetRecipeFeedsByAuthorIdDTO getRecipeFeedsByAuthorIdDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var accountId = Guid.Empty;
+
+        if (!string.IsNullOrEmpty(subjectId))
+        {
+            accountId = Guid.Parse(subjectId!);
+        }
+
+        var result = await _sender.Send(new GetRecipeFeedsByAuthorIdQuery
+        {
+            Skip = getRecipeFeedsByAuthorIdDTO.Skip,
+            AuthorId = getRecipeFeedsByAuthorIdDTO.AuthorId,
+            AccountId = accountId
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [HttpPost("search-recipe")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedSearchRecipeListResponse), 200)]
