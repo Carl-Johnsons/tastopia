@@ -56,6 +56,25 @@ public class UserController : BaseApiController
         return Ok(result.Value);
     }
 
+    [HttpPost("get-user-following")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedSimpleUserListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetUserFollowing([FromBody] GetUserFollowingsDTO getUserFollowingsDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new GetUserFollowingsQuery
+        {
+            AccountId = subjectId != null ? Guid.Parse(subjectId) : null,
+            Skip = getUserFollowingsDTO.Skip,
+            Keyword = getUserFollowingsDTO.Keyword,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [HttpGet("get-current-user-details")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(GetUserDetailsResponse), 200)]

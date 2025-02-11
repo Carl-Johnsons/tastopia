@@ -151,3 +151,18 @@ curl --location 'http://localhost:5003/api/user/search' \
 
 **get current user**
 curl --location 'http://localhost:5003/api/user/get-current-user-details' \
+
+**get user followers**
+curl --location 'https://localhost:7000/api/user/get-user-follower' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0",
+"keyword" : ""
+}'
+**get user followings**
+curl --location 'https://localhost:7000/api/user/get-user-following' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0",
+"keyword" : ""
+}'
