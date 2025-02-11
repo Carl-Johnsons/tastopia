@@ -131,6 +131,14 @@ curl --location 'https://localhost:7000/api/recipe/delete-own-recipe' \
 "recipeId" : "9895461b-a748-4f8b-8037-7422372e882e"
 }'
 
+**get recipe feeds by author id**
+curl --location 'https://localhost:7000/api/recipe/get-recipe-feed-by-author-id' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0",
+"authorId" : "61c61ac7-291e-4075-9689-666ef05547ed"
+}'
+
 # USER
 
 **search user**
