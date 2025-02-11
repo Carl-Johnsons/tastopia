@@ -64,7 +64,8 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                     Template = nt
                 }
             ).Where(n => n.SecondaryActors.Any(sa => sa.ActorId == request.AccountId
-                                                     && sa.Type.ToString() == EntityType.USER.ToString()));
+                                                     && sa.Type.ToString() == EntityType.USER.ToString()))
+            .OrderByDescending(n => n.CreatedAt);
 
         var totalPage = (notificationQuery.Count() + NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT - 1) / NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT;
         var paginatedNotificationQuery = _paginateDataUtility.PaginateQuery(notificationQuery, new PaginateParam
@@ -132,6 +133,7 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                                            UpdatedAt = n.UpdatedAt,
                                            ImageUrl = n.ImageUrl,
                                            JsonData = n.JsonData,
+                                           Code = n.Template?.TemplateCode.ToString() ?? "General",
                                            Message = message,
                                            Title = title
                                        };
