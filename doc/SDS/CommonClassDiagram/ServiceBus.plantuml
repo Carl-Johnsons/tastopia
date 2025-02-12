@@ -1,0 +1,13 @@
+@startuml ServiceBus
+interface IServiceBus {
+    #Publish<T>(T eventMessage): Task
+}
+
+class MassTransitServiceBus{
+    -_bus: IBus 
+    +Publish<T>(T eventMessage): Task
+}
+
+IServiceBus <|.. MassTransitServiceBus
+
+@enduml

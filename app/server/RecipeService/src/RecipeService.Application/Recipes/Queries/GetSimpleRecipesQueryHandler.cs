@@ -54,20 +54,21 @@ public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuer
 
         if (recipes == null || recipes.Count == 0)
         {
-            return Result<List<SimpleRecipeResponse>?>.Failure(RecipeError.NotFound);
+            return Result<List<SimpleRecipeResponse>?>.Success([]);
+
         }
 
         var recipeMap = await _context.Recipes.Where(r => recipeIds.Contains(r.Id)).ToDictionaryAsync(r => r.Id);
-        var voteDict = new Dictionary<Tuple<Guid, Guid>, Vote>();
+        var voteDict = new Dictionary<Guid, Vote>();
         foreach (var (key, value) in recipeMap)
         {
             var vote = recipeMap[key].RecipeVotes.Where(v => v.AccountId == accountId).SingleOrDefault();
-            voteDict.Add(Tuple.Create(key, value.AuthorId), vote != null ? (vote.IsUpvote ? Vote.Upvote : Vote.Downvote) : Vote.None);
+            voteDict.Add(key, vote != null ? (vote.IsUpvote ? Vote.Upvote : Vote.Downvote) : Vote.None);
         }
 
         foreach (var recipe in recipes)
         {
-            recipe.Vote = voteDict[Tuple.Create(recipe.Id, recipe.AuthorId)];
+            recipe.Vote = voteDict[recipe.Id];
         }
 
         var authorIds = recipes

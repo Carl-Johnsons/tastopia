@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using TrackingService.Domain.Entities;
 using TrackingService.Domain.Errors;
@@ -16,11 +17,13 @@ public class CreateUserVewRecipeDetailCommandHandler : IRequestHandler<CreateUse
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ILogger<CreateUserVewRecipeDetailCommandHandler> _logger;
 
-    public CreateUserVewRecipeDetailCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork)
+    public CreateUserVewRecipeDetailCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<CreateUserVewRecipeDetailCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task<Result> Handle(CreateUserVewRecipeDetailCommand request, CancellationToken cancellationToken)
@@ -59,6 +62,7 @@ public class CreateUserVewRecipeDetailCommandHandler : IRequestHandler<CreateUse
         }
         catch(Exception ex)
         {
+            _logger.LogError(JsonConvert.SerializeObject(ex));
             return Result.Failure(UserViewRecipeDetailError.AddUserViewRecipeDetailFail);
         }
     }

@@ -42,6 +42,7 @@ else Recipe is existed
     activate TrackingService
     TrackingService -> MongoDB++: 10. Consume event and \n add user's view to DB
     TrackingService <-- MongoDB--: 11. Return response
+    destroy TrackingService
     deactivate TrackingService
 
     RecipeService -> UserService++: 12. gRPC call to get user's \n information <<gRPC>>

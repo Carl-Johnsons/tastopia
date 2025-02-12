@@ -131,6 +131,14 @@ curl --location 'https://localhost:7000/api/recipe/delete-own-recipe' \
 "recipeId" : "9895461b-a748-4f8b-8037-7422372e882e"
 }'
 
+**get recipe feeds by author id**
+curl --location 'https://localhost:7000/api/recipe/get-recipe-feed-by-author-id' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0",
+"authorId" : "61c61ac7-291e-4075-9689-666ef05547ed"
+}'
+
 # USER
 
 **search user**
@@ -143,3 +151,35 @@ curl --location 'http://localhost:5003/api/user/search' \
 
 **get current user**
 curl --location 'http://localhost:5003/api/user/get-current-user-details' \
+
+**get user followers**
+curl --location 'https://localhost:7000/api/user/get-user-follower' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0",
+"keyword" : ""
+}'
+**get user followings**
+curl --location 'https://localhost:7000/api/user/get-user-following' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0",
+"keyword" : ""
+}'
+
+# TRACKING
+
+**Get user view recipe detail history**
+curl --location 'https://localhost:7000/api/tracking/get-user-view-recipe-detail-history' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0"
+}'
+
+**Search user view recipe detail history**
+curl --location 'https://localhost:7000/api/tracking/search-user-view-recipe-detail-history' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0",
+"keyword": "egg"
+}'
