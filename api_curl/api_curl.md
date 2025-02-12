@@ -166,3 +166,20 @@ curl --location 'https://localhost:7000/api/user/get-user-following' \
 "skip" : "0",
 "keyword" : ""
 }'
+
+# TRACKING
+
+**Get user view recipe detail history**
+curl --location 'https://localhost:7000/api/tracking/get-user-view-recipe-detail-history' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0"
+}'
+
+**Search user view recipe detail history**
+curl --location 'https://localhost:7000/api/tracking/search-user-view-recipe-detail-history' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0",
+"keyword": "egg"
+}'

@@ -53,15 +53,15 @@ public static class DependenciesInjection
 
         app.UseHttpsRedirection();
 
+        app.UseRouting();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.MapControllers();
 
         app.UseGlobalHandlingErrorMiddleware();
 
-        app.UseAuthentication();
-
-        app.UseAuthorization();
-
-        app.UseRouting();
         app.UseHealthCheck();
 
         return app;

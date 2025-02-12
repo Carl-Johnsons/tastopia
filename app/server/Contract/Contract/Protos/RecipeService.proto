@@ -6,7 +6,7 @@ service GrpcRecipe {
     rpc GetAllTags(GrpcEmpty) returns (GrpcListTagDTO);
     rpc GetRecipeDetails(GrpcRecipeIdRequest) returns (GrpcRecipeDetailsDTO);
     rpc GetSimpleRecipes(GrpcGetSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
-
+    rpc SearchSimpleRecipes(GrpcSearchSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
 }
 ////////////////////////// COMMON
 message GrpcEmpty {}
@@ -18,6 +18,12 @@ message GrpcRecipeIdRequest{
 message GrpcGetSimpleRecipeRequest {
     string AccountId = 1;
     repeated string RecipeIds = 2; 
+}
+
+message GrpcSearchSimpleRecipeRequest {
+    string AccountId = 1;
+    repeated string RecipeIds = 2; 
+    string Keyword = 3;
 }
 ///////////////////////// Entity DTO
 message GrpcRecipeDetailsDTO{

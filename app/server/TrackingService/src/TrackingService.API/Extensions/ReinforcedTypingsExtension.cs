@@ -32,7 +32,8 @@ public static class ReinforcedTypingsExtension
         });
         // DTO 
         builder.ExportAsInterfaces([
-            typeof(GetUserViewRecipeDetailHistoryDTO)
+            typeof(GetUserViewRecipeDetailHistoryDTO),
+            typeof(SearchUserViewRecipeDetailHistoryDTO)
         ], config =>
         {
             config.FlattenHierarchy()

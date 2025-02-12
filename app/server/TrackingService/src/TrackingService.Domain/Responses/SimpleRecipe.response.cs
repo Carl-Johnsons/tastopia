@@ -1,6 +1,6 @@
 ﻿namespace TrackingService.Domain.Responses;
 
-public class UserViewRecipeDetailResponse
+public class SimpleRecipeResponse
 {
     public Guid Id { get; set; }
     public Guid AuthorId { get; set; }
