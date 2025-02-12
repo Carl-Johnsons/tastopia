@@ -4,9 +4,9 @@ import {
 } from "@/schemas/create-recipe";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { memo, useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import uuid from "react-native-uuid";
 
 import {
@@ -34,26 +34,21 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import CreateDraggableStep from "@/components/screen/community/CreateDraggableStep";
 import CreateFormHeader from "@/components/screen/community/CreateFormHeader";
+import { useRecipesFeed } from "@/api/recipe";
 
 const CreateRecipe = () => {
   const { c } = useColorizer();
   const { black, white } = colors;
+  const { refetch } = useRecipesFeed("All");
 
   const { t } = useTranslation("createRecipe");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [images, setImages] = useState<ImageFileType[]>([]);
   const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
-  const [ingredients, setIngredients] = useState<CreateIngredientType[]>([
-    { key: uuid.v4(), value: "" }
-  ]);
   const [steps, setSteps] = useState<CreateStepType[]>([
     { key: uuid.v4(), content: "", images: [] }
   ]);
 
-  const isInputIngredient = useMemo(
-    () => ingredients.some(ingredient => ingredient.value !== ""),
-    [ingredients.length]
-  );
   const isInputSteps = useMemo(() => steps.some(step => step.content !== ""), [steps]);
 
   const formCreateRecipe = useForm<FormCreateRecipeType>({
@@ -61,7 +56,8 @@ const CreateRecipe = () => {
     defaultValues: {
       title: "",
       description: "",
-      cookTime: ""
+      cookTime: "",
+      ingredients: [{ key: uuid.v4(), value: "" }]
     }
   });
 
@@ -71,7 +67,21 @@ const CreateRecipe = () => {
     handleSubmit,
     getValues
   } = formCreateRecipe;
+
+  const {
+    fields: ingredientsFields,
+    append: appendIngredient,
+    remove
+  } = useFieldArray({
+    control: formControl,
+    name: "ingredients"
+  });
+
   const onSubmit: SubmitHandler<FormCreateRecipeType> = async formData => {
+    const isInputIngredient = formData.ingredients?.some(ingredient => {
+      return ingredient.value;
+    });
+
     if (images.length < 1) {
       Alert.alert(t("validation.image"));
       return;
@@ -89,12 +99,10 @@ const CreateRecipe = () => {
 
     setIsLoading(true);
     const data = new FormData();
-
     data.append("title", formData.title);
     data.append("description", formData.description);
-    data.append("serves", formData.serves);
+    data.append("serves", formData.serves.toString());
     data.append("cookTime", formData.cookTime);
-
     const image = images[0];
 
     data.append(`recipeImage`, {
@@ -102,9 +110,8 @@ const CreateRecipe = () => {
       name: image.name,
       type: image.type || "image/jpeg"
     } as unknown as Blob);
-
-    ingredients.forEach((ingredient, index) => {
-      data.append(`ingredients[${index}]`, ingredient.value);
+    formData.ingredients?.forEach((ingredient, index) => {
+      data.append(`ingredients[${index}]`, ingredient.value ?? "");
     });
     steps.forEach((step, index) => {
       data.append(`steps[${index}].ordinalNumber`, String(index + 1));
@@ -119,7 +126,6 @@ const CreateRecipe = () => {
         });
       }
     });
-
     selectedTags.forEach((tag, index) => {
       data.append(`tagValues[${index}]`, tag.value);
     });
@@ -135,6 +141,7 @@ const CreateRecipe = () => {
         }
       );
       Alert.alert(t("formTitle.createSuccessfully"));
+      refetch();
       router.back();
     } catch (error) {
       Alert.alert(t("formTitle.createError"));
@@ -145,8 +152,8 @@ const CreateRecipe = () => {
   };
 
   const handleAddMoreIngredient = useCallback(() => {
-    setIngredients(prev => [...prev, { key: uuid.v4(), value: "" }]);
-  }, []);
+    appendIngredient({ key: uuid.v4(), value: "" });
+  }, [appendIngredient]);
 
   const handleAddMoreStep = useCallback(() => {
     setSteps(prev => [...prev, { key: uuid.v4(), content: "", images: [] }]);
@@ -163,8 +170,7 @@ const CreateRecipe = () => {
       getValues("serves") ||
       getValues("title") ||
       images.length > 0 ||
-      (steps.length > 1 && isInputSteps) ||
-      (ingredients.length > 1 && isInputIngredient)
+      (steps.length > 1 && isInputSteps)
     ) {
       Alert.alert(t("confirmModal.title"), t("confirmModal.description"), [
         {
@@ -283,15 +289,13 @@ const CreateRecipe = () => {
                         <FlatList
                           scrollEnabled={false}
                           key={"draggable-flat-list-create-ingredients"}
-                          data={ingredients}
-                          keyExtractor={item => item.key}
-                          renderItem={({ item }) => (
+                          data={ingredientsFields}
+                          keyExtractor={item => item.key ?? uuid.v4()}
+                          renderItem={({ item, index }) => (
                             <CreateIngredient
                               key={item.key}
-                              ingredientKey={item.key}
-                              value={item.value}
-                              ingredients={ingredients}
-                              setIngredients={setIngredients}
+                              index={index}
+                              remove={remove}
                             />
                           )}
                           showsVerticalScrollIndicator={false}

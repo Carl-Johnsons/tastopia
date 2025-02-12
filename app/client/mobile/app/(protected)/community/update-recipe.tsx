@@ -38,6 +38,7 @@ import UpdateDraggableStep from "@/components/screen/community/UpdateDraggableSt
 import UpdateFormHeader from "@/components/screen/community/UpdateFormHeader";
 import { protectedAxiosInstance } from "@/constants/host";
 import { useQueryClient } from "react-query";
+import UpdateIngredient from "@/components/screen/community/UpdateIngredient";
 
 const UpdateRecipe = () => {
   const queryClient = useQueryClient();
@@ -410,7 +411,7 @@ const UpdateRecipe = () => {
                           data={ingredients}
                           keyExtractor={item => item.key}
                           renderItem={({ item }) => (
-                            <CreateIngredient
+                            <UpdateIngredient
                               key={item.key}
                               ingredientKey={item.key}
                               value={item.value}
