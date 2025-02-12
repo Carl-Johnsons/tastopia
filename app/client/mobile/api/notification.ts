@@ -3,17 +3,12 @@ import { SETTING_VALUE } from "@/constants/settings";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { selectSetting } from "@/slices/setting.slice";
 import { AxiosError } from "axios";
-import { useEffect } from "react";
 import { useQuery } from "react-query";
 
 export const useGetNotification = () => {
   const accessToken = selectAccessToken();
   const { LANGUAGE } = selectSetting();
   const SKIP = 0;
-
-  useEffect(() => {
-    console.log("Language:", LANGUAGE);
-  }, [LANGUAGE]);
 
   return useQuery<IPaginatedNotificationListResponse, Error>({
     queryKey: "getNotification",

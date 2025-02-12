@@ -134,11 +134,11 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
                         }],
                     TemplateCode = NotificationTemplateCode.USER_COMMENT,
                     Channels = [NOTIFICATION_CHANNEL.DEFAULT],
-                    JsonData = Newtonsoft.Json.JsonConvert.SerializeObject(new
+                    JsonData = JsonConvert.SerializeObject(new
                     {
                         redirectUri = $"{CLIENT_URI.MOBILE.COMMUNITY}/{recipeId}"
                     }),
-                    ImageUrl = recipe.ImageUrl
+                    ImageUrl = user.AvtUrl
                 });
             }
             return Result<RecipeCommentResponse?>.Success(result);
