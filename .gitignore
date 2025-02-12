@@ -416,6 +416,9 @@ data/*
 doc/**/*.svg
 doc/**/*.bkp
 doc/plantuml.jar
+!doc/Graphviz-12.2.1-win64/**
+out/**/*.png
+out/doc
 
 # credentials
 **/credentials.json

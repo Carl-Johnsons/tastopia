@@ -18,7 +18,6 @@ import {
 type Props = {
   id: string;
   authorId: string;
-  title: string;
   refetch?: <TPageData>(
     options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
   ) => Promise<QueryObserverResult<InfiniteData<RecipeResponse>, unknown>>;
@@ -125,17 +124,6 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
                 onPress={onPressDelete}
               />
             )}
-            {/* <BottomSheetItem
-              title={t("settingRecipe.share")}
-              icon={
-                <AntDesign
-                  name='sharealt'
-                  size={20}
-                  color={c(black.DEFAULT, white.DEFAULT)}
-                />
-              }
-              onPress={onPressShare}
-            /> */}
             {!isCreatedByCurrentUser && (
               <BottomSheetItem
                 title={t("settingRecipe.reportRecipe")}

@@ -1,12 +1,8 @@
-import {
-  FormCreateRecipeType,
-  schema as createRecipeSchema
-} from "@/schemas/create-recipe";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import uuid from "react-native-uuid";
 
 import {
@@ -25,7 +21,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
-import CreateIngredient from "@/components/screen/community/CreateIngredient";
 import TagList from "@/components/screen/community/TagList";
 import DraggableFlatList, {
   RenderItemParams,
@@ -38,6 +33,8 @@ import UpdateDraggableStep from "@/components/screen/community/UpdateDraggableSt
 import UpdateFormHeader from "@/components/screen/community/UpdateFormHeader";
 import { protectedAxiosInstance } from "@/constants/host";
 import { useQueryClient } from "react-query";
+import UpdateIngredient from "@/components/screen/community/UpdateIngredient";
+import { FormUpdateRecipeType, schema } from "@/schemas/update-recipe";
 
 const UpdateRecipe = () => {
   const queryClient = useQueryClient();
@@ -66,25 +63,15 @@ const UpdateRecipe = () => {
     deleteUrls: []
   });
   const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
-  const [ingredients, setIngredients] = useState<CreateIngredientType[]>([
-    { key: uuid.v4(), value: "" }
-  ]);
-  const [steps, setSteps] = useState<UpdateStepType[]>([
-    { key: uuid.v4(), content: "", images: {} }
-  ]);
 
-  const isInputIngredient = useMemo(
-    () => ingredients.some(ingredient => ingredient.value),
-    [ingredients]
-  );
-  const isInputSteps = useMemo(() => steps.some(step => step.content), [steps]);
-
-  const formCreateRecipe = useForm<FormCreateRecipeType>({
-    resolver: yupResolver(createRecipeSchema),
+  const formUpdateRecipe = useForm<FormUpdateRecipeType>({
+    resolver: yupResolver(schema),
     defaultValues: {
       title: "",
       description: "",
-      cookTime: ""
+      cookTime: "",
+      ingredients: [{ key: uuid.v4(), value: "" }],
+      steps: [{ key: uuid.v4(), content: "", images: {} }]
     }
   });
 
@@ -94,8 +81,35 @@ const UpdateRecipe = () => {
     handleSubmit,
     setValue,
     getValues
-  } = formCreateRecipe;
-  const onSubmit: SubmitHandler<FormCreateRecipeType> = async formData => {
+  } = formUpdateRecipe;
+
+  const {
+    fields: ingredientsFields,
+    append: appendIngredient,
+    remove: removeIngredient
+  } = useFieldArray({
+    control: formControl,
+    name: "ingredients"
+  });
+
+  const {
+    fields: stepsFields,
+    append: appendStep,
+    remove: removeStep
+  } = useFieldArray({
+    control: formControl,
+    name: "steps"
+  });
+
+  const onSubmit: SubmitHandler<FormUpdateRecipeType> = async formData => {
+    const isInputIngredient = formData.ingredients?.some(ingredient => {
+      return ingredient.value;
+    });
+
+    const isInputStep = formData.steps?.some(step => {
+      return step.content;
+    });
+
     const validateRecipeImage = () => {
       if (!images.deleteUrls?.length && !images.additionalImages?.length) {
         return true;
@@ -128,7 +142,7 @@ const UpdateRecipe = () => {
       return;
     }
 
-    if (!isInputSteps) {
+    if (!isInputStep) {
       Alert.alert(t("validation.step"));
       return;
     }
@@ -139,7 +153,7 @@ const UpdateRecipe = () => {
     data.append("id", id);
     data.append("title", formData.title);
     data.append("description", formData.description);
-    data.append("serves", formData.serves);
+    data.append("serves", formData.serves.toString());
     data.append("cookTime", formData.cookTime);
 
     const image = images.additionalImages?.[0];
@@ -152,11 +166,11 @@ const UpdateRecipe = () => {
       } as unknown as Blob);
     }
 
-    ingredients.forEach((ingredient, index) => {
+    formData.ingredients?.forEach((ingredient, index) => {
       data.append(`ingredients[${index}]`, ingredient.value);
     });
 
-    steps.forEach((step, index) => {
+    formData.steps?.forEach((step, index) => {
       data.append(`steps[${index}].stepId`, step.key);
       data.append(`steps[${index}].ordinalNumber`, String(index + 1));
       data.append(`steps[${index}].content`, step.content);
@@ -173,7 +187,7 @@ const UpdateRecipe = () => {
 
       if (step.images?.deleteUrls?.length ?? 0 > 0) {
         step.images?.deleteUrls?.forEach((deleteUrl, deleteUrlsIndex) => {
-          data.append(`steps[${index}].deleteUrls[${deleteUrlsIndex}]`, deleteUrl);
+          data.append(`steps[${index}].deleteUrls[${deleteUrlsIndex}]`, deleteUrl ?? "");
         });
       }
     });
@@ -203,54 +217,38 @@ const UpdateRecipe = () => {
     }
   };
 
-  const handleAddMoreIngredient = () => {
-    setIngredients(prev => [...prev, { key: uuid.v4(), value: "" }]);
-  };
+  const handleAddMoreIngredient = useCallback(() => {
+    appendIngredient({ key: uuid.v4(), value: "" });
+  }, [appendIngredient]);
 
-  const handleAddMoreStep = () => {
-    setSteps(prev => [
-      ...prev,
+  const handleAddMoreStep = useCallback(() => {
+    appendStep({
+      key: uuid.v4(),
+      content: "",
+      images: {
+        defaultImages: [],
+        deleteUrls: [],
+        additionalImages: []
+      }
+    });
+  }, []);
+
+  const handleCancel = () => {
+    Alert.alert(t("confirmModal.title"), t("confirmModal.description"), [
       {
-        key: uuid.v4(),
-        content: "",
-        images: {
-          defaultImages: [],
-          additionalImages: [],
-          deleteUrls: []
+        text: t("confirmModal.cancel")
+      },
+      {
+        text: t("confirmModal.ok"),
+        onPress: () => {
+          router.back();
         }
       }
     ]);
   };
 
-  const handleCancel = () => {
-    if (
-      getValues("cookTime") ||
-      getValues("description") ||
-      getValues("serves") ||
-      getValues("title") ||
-      images?.defaultImages?.length! > 0 ||
-      images?.additionalImages?.length! > 0 ||
-      (steps.length > 1 && isInputSteps) ||
-      (ingredients.length > 1 && isInputIngredient)
-    ) {
-      Alert.alert(t("confirmModal.title"), t("confirmModal.description"), [
-        {
-          text: t("confirmModal.cancel")
-        },
-        {
-          text: t("confirmModal.ok"),
-          onPress: () => {
-            router.back();
-          }
-        }
-      ]);
-    } else {
-      router.back();
-    }
-  };
-
   const renderStepItem = useCallback(
-    ({ item, drag, isActive }: RenderItemParams<UpdateStepType>) => {
+    ({ item, drag, isActive, getIndex }: RenderItemParams<UpdateStepType>) => {
       return (
         <ScaleDecorator>
           <UpdateDraggableStep
@@ -259,20 +257,20 @@ const UpdateRecipe = () => {
             content={item.content}
             images={item.images}
             drag={drag}
-            steps={steps}
-            setSteps={setSteps}
+            index={getIndex()!}
+            remove={removeStep}
           />
         </ScaleDecorator>
       );
     },
-    [steps, setSelectedTags]
+    [setSelectedTags]
   );
 
   useEffect(() => {
     setValue("title", recipeDetailData?.recipe.title!);
     setValue("description", recipeDetailData?.recipe.description!);
     setValue("cookTime", recipeDetailData?.recipe.cookTime!);
-    setValue("serves", recipeDetailData?.recipe.serves!.toString()!);
+    setValue("serves", recipeDetailData?.recipe.serves!);
 
     setImages(prev => {
       return {
@@ -281,7 +279,8 @@ const UpdateRecipe = () => {
       };
     });
 
-    setIngredients(
+    setValue(
+      "ingredients",
       recipeDetailData?.recipe.ingredients.map(ingredient => {
         return {
           key: uuid.v4(),
@@ -290,7 +289,8 @@ const UpdateRecipe = () => {
       }) ?? []
     );
 
-    setSteps(
+    setValue(
+      "steps",
       recipeDetailData?.recipe.steps.map(step => ({
         key: step.id,
         content: step.content,
@@ -383,12 +383,12 @@ const UpdateRecipe = () => {
               </View>
             )}
 
-            <FormProvider {...formCreateRecipe}>
+            <FormProvider {...formUpdateRecipe}>
               <DraggableFlatList
                 key={"draggable-flat-list-create-steps"}
-                data={steps}
+                data={stepsFields}
                 style={{ height: "100%" }}
-                onDragEnd={({ data }) => setSteps(data)}
+                onDragEnd={({ data }) => setValue("steps", data)}
                 keyExtractor={item => item.key}
                 renderItem={renderStepItem}
                 showsVerticalScrollIndicator={false}
@@ -407,15 +407,14 @@ const UpdateRecipe = () => {
                         <FlatList
                           scrollEnabled={false}
                           key={"draggable-flat-list-create-ingredients"}
-                          data={ingredients}
+                          data={ingredientsFields}
                           keyExtractor={item => item.key}
-                          renderItem={({ item }) => (
-                            <CreateIngredient
+                          renderItem={({ item, index }) => (
+                            <UpdateIngredient
                               key={item.key}
-                              ingredientKey={item.key}
                               value={item.value}
-                              ingredients={ingredients}
-                              setIngredients={setIngredients}
+                              index={index}
+                              remove={removeIngredient}
                             />
                           )}
                           showsVerticalScrollIndicator={false}

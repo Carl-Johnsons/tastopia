@@ -8,7 +8,8 @@ import {
   RefreshControl,
   Alert,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  FlatList
 } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { globalStyles } from "@/components/common/GlobalStyles";
@@ -36,6 +37,7 @@ import Unauthorize from "@/components/common/Unauthorize";
 import SettingRecipe from "@/components/common/SettingRecipe";
 import BottomSheet from "@gorhom/bottom-sheet";
 import NotFound from "@/app/+not-found";
+import SimilarRecipe from "@/components/screen/community/SimilarRecipe";
 
 const RecipeDetail = () => {
   const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
@@ -52,10 +54,11 @@ const RecipeDetail = () => {
   const queryClient = useQueryClient();
   const { c } = useColorizer();
   const { black, white } = colors;
+  const LOAD_MORE_TIMES = 5;
 
   const router = useRouter();
   const { t } = useTranslation("recipeDetail");
-  const { id, authorId } = useLocalSearchParams<{ id: string; authorId: string }>();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const {
     data: recipeDetailData,
@@ -122,10 +125,17 @@ const RecipeDetail = () => {
     }
   };
 
-  const handleLoadMoreComment = useCallback(() => {
-    if (!isFetchingNextPage && hasNextPage) {
-      fetchNextPage();
-    }
+  const handleLoadMoreComment = useCallback(async () => {
+    let callTimes = 1;
+    const loadAllComments = async () => {
+      if (hasNextPage && !isFetchingNextPage && callTimes <= LOAD_MORE_TIMES) {
+        callTimes++;
+        await fetchNextPage();
+        loadAllComments();
+      }
+    };
+
+    loadAllComments();
   }, [isFetchingNextPage, hasNextPage, fetchNextPage]);
 
   const setParentState = useCallback((comment: CommentType) => {
@@ -179,7 +189,7 @@ const RecipeDetail = () => {
               />
             }
           >
-            <View className='px-4'>
+            <View className='mb-10 px-4'>
               <Suspense
                 fallback={
                   <ActivityIndicator
@@ -279,14 +289,14 @@ const RecipeDetail = () => {
                       </View>
                     </TouchableWithoutFeedback>
 
-                    <Text className='body-paragraph text-black_white'>
+                    <Text className='paragraph-regular text-black_white'>
                       {recipeDetailData.recipe.description}
                     </Text>
 
                     <View className='gap-3'>
                       <View className='bg-black_white h-[1.4px] w-full'></View>
                       <View className='flex-center'>
-                        <Text className='body-semibold text-black_white'>
+                        <Text className='paragraph-semibold text-black_white'>
                           {recipeDetailData.recipe.cookTime}
                         </Text>
                       </View>
@@ -297,7 +307,7 @@ const RecipeDetail = () => {
                       <Text className='base-semibold text-black_white mb-1'>
                         {t("ingredient")}
                       </Text>
-                      <Text className='body-regular text-black_white'>
+                      <Text className='paragraph-regular text-black_white'>
                         {t("for")} {recipeDetailData.recipe.serves}{" "}
                         {recipeDetailData.recipe.serves === 1
                           ? t("serving")
@@ -381,6 +391,37 @@ const RecipeDetail = () => {
                         </View>
                       )}
                     </View>
+
+                    {recipeDetailData.similarRecipes.length > 0 && (
+                      <>
+                        <View className='h-[1px] w-full bg-primary'></View>
+
+                        <View className='gap-6'>
+                          <Text className='base-bold text-black_white text-center'>
+                            {t("similarRecipes")}
+                          </Text>
+
+                          <FlatList
+                            scrollEnabled={false}
+                            data={recipeDetailData.similarRecipes}
+                            keyExtractor={item => item.recipeId}
+                            showsVerticalScrollIndicator={false}
+                            numColumns={2}
+                            columnWrapperStyle={{
+                              justifyContent: "space-between",
+                              paddingHorizontal: 0
+                            }}
+                            renderItem={({ item, index }) => (
+                              <View
+                                className={`mb-4 w-[48%] ${index % 2 === 0 ? "mr-[4%]" : ""}`}
+                              >
+                                <SimilarRecipe {...item} />
+                              </View>
+                            )}
+                          />
+                        </View>
+                      </>
+                    )}
                   </View>
                 </View>
               </Suspense>
@@ -398,8 +439,7 @@ const RecipeDetail = () => {
 
       <SettingRecipe
         id={id}
-        authorId={authorId}
-        title='Setting'
+        authorId={recipeDetailData?.recipe.authorId}
         ref={bottomSheetRef}
       />
     </SafeAreaView>

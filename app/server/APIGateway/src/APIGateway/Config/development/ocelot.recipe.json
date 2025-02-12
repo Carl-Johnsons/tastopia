@@ -19,6 +19,20 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
+      "DownstreamPathTemplate": "/api/recipe/get-recipe-feed-by-author-id",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/recipe/get-recipe-feed-by-author-id",
+      "SwaggerKey": "recipe"
+    },
+    {
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/recipe/search-recipe",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [

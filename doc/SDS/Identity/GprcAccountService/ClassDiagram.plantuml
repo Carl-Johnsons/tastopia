@@ -1,0 +1,85 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+remove IApplicationDbContext
+remove ApplicationDbContext
+remove Permission
+remove Group
+remove RoleGroupPermission
+remove IDisposable
+remove DbSet<T>
+remove IdentityUserLogin<T>
+remove IdentityRole
+remove DbContext
+remove IDbContext
+remove BaseEntity
+remove IdentityDbContext<ApplicationAccount>
+
+class GrpcAccountService #DarkViolet;line:White;text:White extends GrpcAccountBase {
+    -_sender: ISender
+    -_mapper: IMapper
+    -_logger: ILogger<GrpcAccountService>
+    +GrpcAccountService(ISender sender, IMapper mapper, ILogger<GrpcAccountService> logger)
+    +GetAccountDetail(GrpcAccountIdRequest request, ServerCallContext context): async Task<GrpcAccountDTO>
+    +UpdateAccount(GrpcUpdateAccountRequest request, ServerCallContext context): async Task<GrpcEmpty>
+}
+
+class GrpcAccountIdRequest #DarkViolet;line:White;text:White
+class GrpcUpdateAccountRequest #DarkViolet;line:White;text:White
+
+class GetAccountDetailQuery implements "IRequest<TResponse>" {
+    +Ids: HashSet<Guid>
+}
+
+class GetAccountDetailQueryHandler {
+    -_userManager: UserManager<ApplicationAccount>
+    +GetAccountDetailQueryHandler(UserManager<ApplicationAccount> userManager)
+    +Handle(GetAccountDetailQuery request, CancellationToken cancellationToken): async Task<Result<List<ApplicationAccount>?>>
+}
+
+class UpdateAccountCommand implements "IRequest<TResponse>" {
+    +AccountId: Guid
+    +Username: string
+}
+
+class UpdateAccountCommandHandler {
+    -_userManager: UserManager<ApplicationAccount>
+    +UpdateAccountCommandHandler(UserManager<ApplicationAccount> userManager)    
+    +Handle(UpdateAccountCommand request, CancellationToken cancellationToken): async Task<Result>
+}
+
+class AccountError {
+    {static} +NotFound: Error
+    {static} +UsernameAlreadyExisted: Error
+    {static} +UpdateAccountFailed: Error
+}
+
+' ========== Library class ==========
+class ServerCallContext #Black;line:White;text:White
+class GrpcAccountBase #Black;line:White;text:White
+class "UserManager<TUser>" #Black;line:White;text:White
+interface "IRequest<TResponse>" #Black;line:White;text:White
+interface "IRequestHandler<TRequest, TResponse>" #Black;line:White;text:White
+' ========== Library class ==========
+
+GrpcAccountService "1" o-- "1" GrpcAccountIdRequest
+GrpcAccountService "1" o-- "1" GrpcUpdateAccountRequest
+GrpcAccountService "1" o-- "1" ServerCallContext
+GrpcAccountService "1" o-- "1" GetAccountDetailQuery
+
+GetAccountDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetAccountDetailQueryHandler "1" o-- "1" GetAccountDetailQuery
+GetAccountDetailQueryHandler "1" o-- "1..*" ApplicationAccount
+GetAccountDetailQueryHandler "1" o-- "1" "UserManager<TUser>"
+
+UpdateAccountCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateAccountCommandHandler "1" o-- "1" UpdateAccountCommand
+UpdateAccountCommandHandler "1" o-- "1" AccountError
+UpdateAccountCommandHandler "1" o-- "1" "UserManager<TUser>"
+UpdateAccountCommandHandler "1" o-- "1" ApplicationAccount
+@enduml

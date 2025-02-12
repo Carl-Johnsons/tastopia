@@ -1,0 +1,62 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+remove UserReport
+remove UserFollow
+remove BaseAuditableEntity
+
+together {
+    class BaseApiController {
+        #_sender: ISender
+        #_httpContextAccessor: HttpContextAccessor
+    }
+
+    class SettingController {
+        +GetSetting(): async Task<IActionResult>
+    }
+
+    class GetUserSettingQuery {
+        +Guid AccountId
+    }
+}
+
+class GetUserSettingQueryHandler {
+    - _context : IApplicationDbContext
+    + GetUserSettingQueryHandler(IApplicationDbContext context)
+    +Handle(GetUserSettingQuery request, CancellationToken cancellationToken) : Task<Result<List<UserSetting>>>
+}
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+
+SettingController --|> BaseApiController
+SettingController "1"--"1" GetUserSettingQuery
+GetUserSettingQuery --|> "IRequest<TResponse>"
+
+GetUserSettingQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetUserSettingQueryHandler "1" o--"1" GetUserSettingQuery
+GetUserSettingQueryHandler "1" o--"1" UserError
+GetUserSettingQueryHandler "1" o--"1" IApplicationDbContext
+GetUserSettingQueryHandler "1" o--"1" UserSetting
+GetUserSettingQueryHandler "1" o--"1" Result
+
+Error "1" --"1" UserError
+
+@enduml

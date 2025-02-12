@@ -113,7 +113,7 @@ const UploadImage = ({
       quality: 1,
       selectionLimit: selectionLimit - imageCount,
       allowsMultipleSelection: isMultiple,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       ...props
     });
 
