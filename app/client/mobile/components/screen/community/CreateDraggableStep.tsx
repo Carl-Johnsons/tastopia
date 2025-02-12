@@ -7,14 +7,13 @@ import {
   Alert
 } from "react-native";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
-import useDebounce from "@/hooks/useDebounce";
 import UploadImage from "@/components/common/UploadImage";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
-import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { CreateRecipeFormValue } from "@/schemas/create-recipe";
 
 interface CreateDraggableStepProps {
@@ -42,13 +41,8 @@ const CreateDraggableStep = ({
   const [inputValue, setInputValue] = useState(content);
   const [isFocused, setIsFocused] = useState(false);
 
-  const handleChangeText = (text: string) => {
-    setInputValue(text);
-  };
-
   const handleRemoveItem = useCallback(() => {
     if (index !== undefined) {
-      console.log("call this one", index);
       remove(index);
     }
   }, [index, remove]);

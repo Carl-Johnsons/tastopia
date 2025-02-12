@@ -1,44 +1,33 @@
 import { StyleSheet, View, TextInput, TouchableOpacity, Alert } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
-import useDebounce from "@/hooks/useDebounce";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import { Controller, useFormContext } from "react-hook-form";
 
 interface DraggableIngredientProps {
-  ingredientKey: string;
   value: string;
-  ingredients: CreateIngredientType[];
-  setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
+  index: number;
+  remove: (index: number) => void;
 }
 
-const UpdateIngredient = ({
-  ingredientKey,
-  value,
-  ingredients,
-  setIngredients
-}: DraggableIngredientProps) => {
+const UpdateIngredient = ({ value, index, remove }: DraggableIngredientProps) => {
   const { c } = useColorizer();
   const { black, white } = colors;
 
+  const { control, getValues } = useFormContext();
   const { t } = useTranslation("createRecipe");
   const [inputValue, setInputValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
-  const debouncedValue = useDebounce(inputValue, 800);
+  const ingredients = getValues("ingredients");
 
-  const handleChangeText = useCallback((text: string) => {
-    setInputValue(text);
-  }, []);
-
-  const handleRemoveItem = useCallback((key: string) => {
+  const handleRemoveItem = useCallback(() => {
     if (ingredients.length > 1) {
-      setIngredients(prev => {
-        return prev.filter(item => {
-          return item.key !== key;
-        });
-      });
+      if (index !== undefined) {
+        remove(index);
+      }
     } else {
       Alert.alert(t("validation.ingredientRequired"));
       return;
@@ -57,27 +46,15 @@ const UpdateIngredient = ({
           {
             text: t("removeIngredientAlert.delete"),
             onPress: () => {
-              handleRemoveItem(ingredientKey);
+              handleRemoveItem();
             }
           }
         ]
       );
     } else {
-      handleRemoveItem(ingredientKey);
+      handleRemoveItem();
     }
   };
-
-  useEffect(() => {
-    if (debouncedValue !== value) {
-      setIngredients(prevIngredients =>
-        prevIngredients.map(ingredient =>
-          ingredient.key === ingredientKey
-            ? { ...ingredient, value: debouncedValue }
-            : ingredient
-        )
-      );
-    }
-  }, [debouncedValue, ingredientKey, setIngredients]);
 
   return (
     <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
@@ -95,17 +72,26 @@ const UpdateIngredient = ({
       )}
 
       <View style={styles.inputContainer}>
-        <TextInput
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          style={
-            (isFocused ? [styles.input, styles.inputFocused] : styles.input,
-            { color: `${c(black.DEFAULT, white.DEFAULT)}` })
-          }
-          value={inputValue}
-          onChangeText={handleChangeText}
-          placeholder={t("formPlaceholder.ingredients")}
-          placeholderTextColor='#9CA3AF'
+        <Controller
+          control={control}
+          name={`ingredients.${index}.value`}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => {
+                onBlur();
+                setIsFocused(false);
+              }}
+              style={
+                (isFocused ? [styles.input, styles.inputFocused] : styles.input,
+                { color: `${c(black.DEFAULT, white.DEFAULT)}` })
+              }
+              value={value}
+              onChangeText={onChange}
+              placeholder={t("formPlaceholder.ingredients")}
+              placeholderTextColor='#9CA3AF'
+            />
+          )}
         />
       </View>
     </View>

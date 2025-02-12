@@ -1,13 +1,11 @@
 import { StyleSheet, View, TextInput, TouchableOpacity, Alert } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
-import useDebounce from "@/hooks/useDebounce";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
-import { Control, Controller, FieldErrors, useFormContext } from "react-hook-form";
-import ErrorValidationMessages from "@/components/common/ErrorValidationMessages";
+import { Controller, useFormContext } from "react-hook-form";
 
 interface DraggableIngredientProps {
   index: number;
@@ -18,15 +16,22 @@ const CreateIngredient = ({ index, remove }: DraggableIngredientProps) => {
   const { c } = useColorizer();
   const { black, white } = colors;
   const { t } = useTranslation("createRecipe");
-  const [isFocused, setIsFocused] = useState(false);
 
   const { control } = useFormContext();
+  const { getValues } = useFormContext();
+  const [isFocused, setIsFocused] = useState(false);
+  const ingredients = getValues("ingredients");
 
   const handleRemoveItem = useCallback(() => {
-    if (index !== undefined) {
-      remove(index);
+    if (ingredients.length > 1) {
+      if (index !== undefined) {
+        remove(index);
+      }
+    } else {
+      Alert.alert(t("validation.ingredientRequired"));
+      return;
     }
-  }, [index, remove]);
+  }, []);
 
   const confirmRemoveItem = () => {
     Alert.alert(
@@ -47,16 +52,18 @@ const CreateIngredient = ({ index, remove }: DraggableIngredientProps) => {
   return (
     <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
       {/* Remove button */}
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={confirmRemoveItem}
-      >
-        <AntDesign
-          name='close'
-          size={20}
-          color={globalStyles.color.primary}
-        />
-      </TouchableOpacity>
+      {ingredients.length > 1 && (
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={confirmRemoveItem}
+        >
+          <AntDesign
+            name='close'
+            size={20}
+            color={globalStyles.color.primary}
+          />
+        </TouchableOpacity>
+      )}
 
       {/* Input field */}
       <View style={styles.inputContainer}>
