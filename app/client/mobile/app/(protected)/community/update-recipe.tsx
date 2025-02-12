@@ -347,7 +347,7 @@ const UpdateRecipe = () => {
               </View>
             </TouchableWithoutFeedback>
 
-            <View className='items-center'>
+            <View className='absolute left-1/2 -translate-x-1/3 items-center'>
               <Text className='text-black_white paragraph-medium'>
                 {t("screens.title")}
               </Text>
