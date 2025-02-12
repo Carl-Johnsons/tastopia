@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import useDebounce from "@/hooks/useDebounce";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
-import { Controller, FieldErrors, useFormContext } from "react-hook-form";
+import { Control, Controller, FieldErrors, useFormContext } from "react-hook-form";
 import ErrorValidationMessages from "@/components/common/ErrorValidationMessages";
 
 interface DraggableIngredientProps {

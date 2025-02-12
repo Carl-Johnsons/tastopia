@@ -45,11 +45,6 @@ const CreateRecipe = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [images, setImages] = useState<ImageFileType[]>([]);
   const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
-  const [steps, setSteps] = useState<CreateStepType[]>([
-    { key: uuid.v4(), content: "", images: [] }
-  ]);
-
-  const isInputSteps = useMemo(() => steps.some(step => step.content !== ""), [steps]);
 
   const formCreateRecipe = useForm<FormCreateRecipeType>({
     resolver: yupResolver(createRecipeSchema),
@@ -57,7 +52,8 @@ const CreateRecipe = () => {
       title: "",
       description: "",
       cookTime: "",
-      ingredients: [{ key: uuid.v4(), value: "" }]
+      ingredients: [{ key: uuid.v4(), value: "" }],
+      steps: [{ key: uuid.v4(), content: "", images: [] }]
     }
   });
 
@@ -65,21 +61,35 @@ const CreateRecipe = () => {
     control: formControl,
     formState: { errors },
     handleSubmit,
-    getValues
+    getValues,
+    setValue
   } = formCreateRecipe;
 
   const {
     fields: ingredientsFields,
     append: appendIngredient,
-    remove
+    remove: removeIngredient
   } = useFieldArray({
     control: formControl,
     name: "ingredients"
   });
 
+  const {
+    fields: stepsFields,
+    append: appendStep,
+    remove: removeStep
+  } = useFieldArray({
+    control: formControl,
+    name: "steps"
+  });
+
   const onSubmit: SubmitHandler<FormCreateRecipeType> = async formData => {
     const isInputIngredient = formData.ingredients?.some(ingredient => {
       return ingredient.value;
+    });
+
+    const isInputStep = formData.steps?.some(step => {
+      return step.content;
     });
 
     if (images.length < 1) {
@@ -92,7 +102,7 @@ const CreateRecipe = () => {
       return;
     }
 
-    if (!isInputSteps) {
+    if (!isInputStep) {
       Alert.alert(t("validation.step"));
       return;
     }
@@ -111,12 +121,13 @@ const CreateRecipe = () => {
       type: image.type || "image/jpeg"
     } as unknown as Blob);
     formData.ingredients?.forEach((ingredient, index) => {
-      data.append(`ingredients[${index}]`, ingredient.value ?? "");
+      data.append(`ingredients[${index}]`, ingredient.value);
     });
-    steps.forEach((step, index) => {
+    formData.steps?.forEach((step, index) => {
+      console.log("step", step);
       data.append(`steps[${index}].ordinalNumber`, String(index + 1));
       data.append(`steps[${index}].content`, step.content);
-      if (step.images.length > 0) {
+      if (step?.images?.length && step.images.length > 0) {
         step.images.forEach(image => {
           data.append(`steps[${index}].Images`, {
             uri: image.uri,
@@ -156,7 +167,7 @@ const CreateRecipe = () => {
   }, [appendIngredient]);
 
   const handleAddMoreStep = useCallback(() => {
-    setSteps(prev => [...prev, { key: uuid.v4(), content: "", images: [] }]);
+    appendStep({ key: uuid.v4(), content: "", images: [] });
   }, []);
 
   const onFileChange = useCallback((files: ImageFileType[]) => {
@@ -169,8 +180,7 @@ const CreateRecipe = () => {
       getValues("description") ||
       getValues("serves") ||
       getValues("title") ||
-      images.length > 0 ||
-      (steps.length > 1 && isInputSteps)
+      images.length > 0
     ) {
       Alert.alert(t("confirmModal.title"), t("confirmModal.description"), [
         {
@@ -189,7 +199,7 @@ const CreateRecipe = () => {
   };
 
   const renderStepItem = useCallback(
-    ({ item, drag, isActive }: RenderItemParams<CreateStepType>) => {
+    ({ item, drag, isActive, getIndex }: RenderItemParams<CreateStepType>) => {
       return (
         <ScaleDecorator>
           <CreateDraggableStep
@@ -198,7 +208,8 @@ const CreateRecipe = () => {
             content={item.content}
             images={item.images}
             drag={drag}
-            setSteps={setSteps}
+            index={getIndex()!}
+            remove={removeStep}
           />
         </ScaleDecorator>
       );
@@ -257,7 +268,7 @@ const CreateRecipe = () => {
           {/* Form */}
           <View className='relative flex-1 px-6'>
             {isLoading && (
-              <View className='flex-center absolute left-6 z-10 size-full bg-transparent'>
+              <View className='flex-center absolute left-6 z-10 size-full'>
                 <ActivityIndicator
                   size={"large"}
                   color={globalStyles.color.primary}
@@ -268,9 +279,9 @@ const CreateRecipe = () => {
             <FormProvider {...formCreateRecipe}>
               <DraggableFlatList
                 key={"draggable-flat-list-create-steps"}
-                data={steps}
+                data={stepsFields}
                 style={{ height: "100%" }}
-                onDragEnd={({ data }) => setSteps(data)}
+                onDragEnd={({ data }) => setValue("steps", data)}
                 keyExtractor={item => item.key}
                 renderItem={renderStepItem}
                 showsVerticalScrollIndicator={false}
@@ -295,7 +306,7 @@ const CreateRecipe = () => {
                             <CreateIngredient
                               key={item.key}
                               index={index}
-                              remove={remove}
+                              remove={removeIngredient}
                             />
                           )}
                           showsVerticalScrollIndicator={false}
