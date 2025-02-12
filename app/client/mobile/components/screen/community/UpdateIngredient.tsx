@@ -1,51 +1,38 @@
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Alert
-} from "react-native";
-import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { StyleSheet, View, TextInput, TouchableOpacity, Alert } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
 import { useCallback, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
-import UploadImage from "@/components/common/UploadImage";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import { Controller, useFormContext } from "react-hook-form";
-import { CreateRecipeFormValue } from "@/schemas/create-recipe";
 
-interface CreateDraggableStepProps {
+interface DraggableIngredientProps {
+  value: string;
   index: number;
-  stepKey: string;
-  content: string;
-  images: ImageFileType[];
-  drag: () => void;
   remove: (index: number) => void;
 }
 
-const CreateDraggableStep = ({
-  index,
-  stepKey,
-  content,
-  images,
-  drag,
-  remove
-}: CreateDraggableStepProps) => {
+const UpdateIngredient = ({ value, index, remove }: DraggableIngredientProps) => {
   const { c } = useColorizer();
   const { black, white } = colors;
 
-  const { control, getValues, setValue } = useFormContext();
+  const { control, getValues } = useFormContext();
   const { t } = useTranslation("createRecipe");
-  const [inputValue, setInputValue] = useState(content);
+  const [inputValue, setInputValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
+  const ingredients = getValues("ingredients");
 
   const handleRemoveItem = useCallback(() => {
-    if (index !== undefined) {
-      remove(index);
+    if (ingredients.length > 1) {
+      if (index !== undefined) {
+        remove(index);
+      }
+    } else {
+      Alert.alert(t("validation.ingredientRequired"));
+      return;
     }
-  }, [index, remove]);
+  }, []);
 
   const confirmRemoveItem = () => {
     if (inputValue !== "") {
@@ -69,32 +56,25 @@ const CreateDraggableStep = ({
     }
   };
 
-  const onFileChange = (files: ImageFileType[]) => {
-    const steps = getValues("steps") ?? [];
-    const updatedSteps: CreateRecipeFormValue["steps"] = steps.map(
-      (step: NonNullable<CreateRecipeFormValue["steps"]>[number]) =>
-        step.key === stepKey ? { ...step, images: files } : step
-    );
-    setValue("steps", updatedSteps);
-  };
-
   return (
     <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={confirmRemoveItem}
-      >
-        <AntDesign
-          name='close'
-          size={20}
-          color={globalStyles.color.primary}
-        />
-      </TouchableOpacity>
+      {ingredients.length > 1 && (
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={confirmRemoveItem}
+        >
+          <AntDesign
+            name='close'
+            size={20}
+            color={globalStyles.color.primary}
+          />
+        </TouchableOpacity>
+      )}
 
       <View style={styles.inputContainer}>
         <Controller
           control={control}
-          name={`steps.${index}.content`}
+          name={`ingredients.${index}.value`}
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               onFocus={() => setIsFocused(true)}
@@ -108,43 +88,30 @@ const CreateDraggableStep = ({
               }
               value={value}
               onChangeText={onChange}
-              placeholder={t("formPlaceholder.steps")}
+              placeholder={t("formPlaceholder.ingredients")}
               placeholderTextColor='#9CA3AF'
             />
           )}
         />
-
-        <UploadImage
-          onFileChange={onFileChange}
-          selectionLimit={3}
-          defaultImages={images}
-        />
       </View>
-
-      <TouchableWithoutFeedback onLongPress={drag}>
-        <View style={styles.dragHandle}>
-          <MaterialCommunityIcons
-            name='drag-vertical'
-            size={24}
-            color='#6B7280'
-          />
-        </View>
-      </TouchableWithoutFeedback>
     </View>
   );
 };
 
-export default CreateDraggableStep;
+export default UpdateIngredient;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
     borderRadius: 8,
     marginVertical: 4,
     paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingVertical: 8,
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2
@@ -159,11 +126,10 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   inputContainer: {
-    marginTop: 8,
     flex: 1,
-    gap: 10,
+    justifyContent: "center",
     marginHorizontal: 8,
-    paddingBottom: 4
+    minHeight: 34
   },
   input: {
     padding: 4,

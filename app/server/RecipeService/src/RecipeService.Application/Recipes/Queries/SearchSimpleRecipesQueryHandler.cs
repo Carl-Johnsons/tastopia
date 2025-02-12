@@ -10,35 +10,51 @@ using MongoDB.Driver;
 
 namespace RecipeService.Application.Recipes.Queries;
 
-public class GetSimpleRecipesQuery : IRequest<Result<List<SimpleRecipeResponse>?>>
+public class SearchSimpleRecipesQuery : IRequest<Result<List<SimpleRecipeResponse>?>>
 {
     public Guid AccountId { get; set; }
     public HashSet<Guid> RecipeIds { get; set; } = null!;
+    public string Keyword { get; set; } = null!;
 }
 
-public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuery, Result<List<SimpleRecipeResponse>?>>
+public class SearchSimpleRecipesQueryHandler : IRequestHandler<SearchSimpleRecipesQuery, Result<List<SimpleRecipeResponse>?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
-    public GetSimpleRecipesQueryHandler(IApplicationDbContext context, IMapper mapper, GrpcUserClient grpcUserClient)
+    public SearchSimpleRecipesQueryHandler(IApplicationDbContext context, IMapper mapper, GrpcUserClient grpcUserClient)
     {
         _context = context;
         _mapper = mapper;
         _grpcUserClient = grpcUserClient;
     }
 
-    public async Task<Result<List<SimpleRecipeResponse>?>> Handle(GetSimpleRecipesQuery request, CancellationToken cancellationToken)
+    public async Task<Result<List<SimpleRecipeResponse>?>> Handle(SearchSimpleRecipesQuery request, CancellationToken cancellationToken)
     {
         var accountId = request.AccountId;
         var recipeIds = request.RecipeIds;
+        var keyword = request.Keyword;
 
         if(accountId == Guid.Empty || recipeIds == null || recipeIds.Count == 0)
         {
             return Result<List<SimpleRecipeResponse>?>.Failure(RecipeError.NotFound, "AccountId and RecipeIds cannot be null or empty.");
         }
-        var recipes = await _context.Recipes.Where(r => recipeIds.Contains(r.Id)).Select(r => new SimpleRecipeResponse
+
+        var recipeQuery = _context.Recipes.Where(r => r.IsActive && recipeIds.Contains(r.Id)).AsQueryable();
+
+        if(!string.IsNullOrEmpty(keyword))
+        {
+            keyword = keyword.ToLower();
+            recipeQuery = recipeQuery.Where(r =>
+                r.Title.ToLower().Contains(keyword) ||
+                r.Description.ToLower().Contains(keyword) ||
+                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(keyword)) ||
+                r.Steps.Any(step => step.Content.ToLower().Contains(keyword))
+            );
+        }
+
+        var recipes = await recipeQuery.Select(r => new SimpleRecipeResponse
         {
             Id = r.Id,
             AuthorId = r.AuthorId,
@@ -55,10 +71,9 @@ public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuer
         if (recipes == null || recipes.Count == 0)
         {
             return Result<List<SimpleRecipeResponse>?>.Success([]);
-
         }
 
-        var recipeMap = await _context.Recipes.Where(r => recipeIds.Contains(r.Id)).ToDictionaryAsync(r => r.Id);
+        var recipeMap = await recipeQuery.ToDictionaryAsync(r => r.Id);
         var voteDict = new Dictionary<Guid, Vote>();
         foreach (var (key, value) in recipeMap)
         {

@@ -18,4 +18,9 @@ public class UserError
             Message: "Some parameter is null check the server's log for full errors",
             StatusCode: (int)HttpStatusCode.InternalServerError);
 
+    public static Error FollowFail =>
+    new("UserError.FollowFail",
+        Message: "User follow fail.",
+        StatusCode: (int)HttpStatusCode.InternalServerError);
+
 }

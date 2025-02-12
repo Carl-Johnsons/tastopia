@@ -7,93 +7,79 @@ import {
   Alert
 } from "react-native";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
-import useDebounce from "@/hooks/useDebounce";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import UpdateImage from "@/components/common/UpdateImage";
 import { isOnlineImage } from "@/utils/file";
+import { Controller, useFormContext } from "react-hook-form";
+import { UpdateRecipeFormValue } from "@/schemas/update-recipe";
 
 interface UpdateDraggableStepProps {
+  index: number;
   stepKey: string;
   content: string;
   images: UpdateImage;
   drag: () => void;
-  steps: UpdateStepType[];
-  setSteps: Dispatch<SetStateAction<UpdateStepType[]>>;
+  remove: (index: number) => void;
 }
 
 const UpdateDraggableStep = ({
+  index,
   stepKey,
   content,
   images,
   drag,
-  steps,
-  setSteps
+  remove
 }: UpdateDraggableStepProps) => {
   const { c } = useColorizer();
   const { black, white } = colors;
 
+  const { control, getValues, setValue } = useFormContext();
   const { t } = useTranslation("createRecipe");
-  const [inputValue, setInputValue] = useState(content);
   const [isFocused, setIsFocused] = useState(false);
-  const debouncedValue = useDebounce(inputValue, 800);
+  const steps = getValues("steps");
 
-  const handleChangeText = (text: string) => {
-    setInputValue(text);
-  };
-
-  const handleRemoveItem = (key: string) => {
-    if (steps.length > 1) {
-      setSteps(prev => {
-        return prev.filter(item => {
-          return item.key !== key;
-        });
-      });
-    } else {
-      Alert.alert(t("validation.stepRequired"));
-      return;
+  const handleRemoveItem = useCallback(() => {
+    if (index !== undefined) {
+      remove(index);
     }
-  };
+  }, [index, remove]);
 
   const confirmRemoveItem = () => {
-    if (inputValue !== "") {
-      Alert.alert(
-        t("removeIngredientAlert.title"),
-        t("removeIngredientAlert.description"),
-        [
-          {
-            text: t("removeIngredientAlert.cancel")
-          },
-          {
-            text: t("removeIngredientAlert.delete"),
-            onPress: () => {
-              handleRemoveItem(stepKey);
-            }
+    Alert.alert(
+      t("removeIngredientAlert.title"),
+      t("removeIngredientAlert.description"),
+      [
+        {
+          text: t("removeIngredientAlert.cancel")
+        },
+        {
+          text: t("removeIngredientAlert.delete"),
+          onPress: () => {
+            handleRemoveItem();
           }
-        ]
-      );
-    } else {
-      handleRemoveItem(stepKey);
-    }
+        }
+      ]
+    );
   };
 
   const onAddImage = (files: ImageFileType[]) => {
-    setSteps(prevSteps =>
-      prevSteps.map(step =>
+    const updatedSteps: UpdateRecipeFormValue["steps"] = steps.map(
+      (step: NonNullable<UpdateRecipeFormValue["steps"]>[number]) =>
         step.key === stepKey
           ? { ...step, images: { ...step.images, additionalImages: files } }
           : step
-      )
     );
+    setValue("steps", updatedSteps);
   };
 
   const onDeleteImage = (deleteImageUrl: string) => {
     if (isOnlineImage(deleteImageUrl)) {
-      setSteps(prevSteps =>
-        prevSteps.map(step =>
+      const updatedSteps: UpdateRecipeFormValue["steps"] = steps.map(
+        (step: NonNullable<UpdateRecipeFormValue["steps"]>[number]) =>
           step.key === stepKey
             ? {
                 ...step,
@@ -103,11 +89,11 @@ const UpdateDraggableStep = ({
                 }
               }
             : step
-        )
       );
+      setValue("steps", updatedSteps);
     } else {
-      setSteps(prevSteps =>
-        prevSteps.map(step =>
+      const updatedSteps: UpdateRecipeFormValue["steps"] = steps.map(
+        (step: NonNullable<UpdateRecipeFormValue["steps"]>[number]) =>
           step.key === stepKey
             ? {
                 ...step,
@@ -119,20 +105,10 @@ const UpdateDraggableStep = ({
                 }
               }
             : step
-        )
       );
+      setValue("steps", updatedSteps);
     }
   };
-
-  useEffect(() => {
-    if (debouncedValue !== content) {
-      setSteps(prevSteps =>
-        prevSteps.map(step =>
-          step.key === stepKey ? { ...step, content: debouncedValue } : step
-        )
-      );
-    }
-  }, [debouncedValue, stepKey, setSteps]);
 
   return (
     <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
@@ -150,17 +126,26 @@ const UpdateDraggableStep = ({
       )}
 
       <View style={styles.inputContainer}>
-        <TextInput
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          style={
-            (isFocused ? [styles.input, styles.inputFocused] : styles.input,
-            { color: `${c(black.DEFAULT, white.DEFAULT)}` })
-          }
-          value={inputValue}
-          onChangeText={handleChangeText}
-          placeholder={t("formPlaceholder.steps")}
-          placeholderTextColor='#9CA3AF'
+        <Controller
+          control={control}
+          name={`steps.${index}.content`}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => {
+                onBlur();
+                setIsFocused(false);
+              }}
+              style={
+                (isFocused ? [styles.input, styles.inputFocused] : styles.input,
+                { color: `${c(black.DEFAULT, white.DEFAULT)}` })
+              }
+              value={value}
+              onChangeText={onChange}
+              placeholder={t("formPlaceholder.steps")}
+              placeholderTextColor='#9CA3AF'
+            />
+          )}
         />
 
         <UpdateImage

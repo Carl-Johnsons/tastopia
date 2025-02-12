@@ -3,20 +3,14 @@ import Input from "@/components/common/Input";
 import { useTranslation } from "react-i18next";
 import { Control, FieldErrors } from "react-hook-form";
 import UpdateImage from "@/components/common/UpdateImage";
-import { Dispatch, memo, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { isOnlineImage } from "@/utils/file";
-
-type HeaderFormFields = {
-  title: string;
-  description: string;
-  serves: string;
-  cookTime: string;
-};
+import { UpdateRecipeFormValue } from "@/schemas/update-recipe";
 
 type FormHeaderProps = {
   images: UpdateImage;
-  formControl: Control<HeaderFormFields, any>;
-  errors: FieldErrors<HeaderFormFields>;
+  formControl: Control<UpdateRecipeFormValue, any>;
+  errors: FieldErrors<UpdateRecipeFormValue>;
   setImages: Dispatch<SetStateAction<UpdateImage>>;
 };
 

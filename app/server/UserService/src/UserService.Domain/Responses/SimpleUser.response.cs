@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UserService.Domain.Responses;
 
-public class SearchUserResponse
+public class SimpleUserResponse
 {
     [Required]
     [JsonProperty("id")]

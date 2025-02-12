@@ -1,66 +1,53 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 using UserService.Domain.Entities;
 using UserService.Domain.Errors;
 using UserService.Domain.Responses;
 
-namespace UserService.Application.Users.Commands;
+namespace UserService.Application.Users.Queries;
 
-public class SearchUsersCommand : IRequest<Result<PaginatedSimpleUserListResponse?>>
+public class GetUserFollowingsQuery : IRequest<Result<PaginatedSimpleUserListResponse?>>
 {
-    [Required]
-    public int? Skip { get; init; }
-
-    [Required]
-    public string? Keyword { get; init; }
-
-    [Required]
-    public Guid? AccountId { get; init; }
+    public string Keyword { get; set; } = null!;
+    public int? Skip { get; set; } = null!;
+    public Guid? AccountId { get; set; }
 }
 
-public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Result<PaginatedSimpleUserListResponse?>>
+public class GetUserFollowingsQueryHandler : IRequestHandler<GetUserFollowingsQuery, Result<PaginatedSimpleUserListResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaginateDataUtility<User, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public SearchUsersCommandHandler(IApplicationDbContext context, IPaginateDataUtility<User, AdvancePaginatedMetadata> paginateDataUtility)
+
+    public GetUserFollowingsQueryHandler(IApplicationDbContext context, IPaginateDataUtility<User, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;
     }
 
-    public async Task<Result<PaginatedSimpleUserListResponse?>> Handle(SearchUsersCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedSimpleUserListResponse?>> Handle(GetUserFollowingsQuery request, CancellationToken cancellationToken)
     {
-        var skip = request.Skip;
         var keyword = request.Keyword;
+        var skip = request.Skip;
         var accountId = request.AccountId;
 
-        if(skip == null || keyword == null)
+        if (skip == null || accountId == null || accountId == Guid.Empty)
         {
-            return Result<PaginatedSimpleUserListResponse?>.Failure(UserError.NotFound);
+            return Result<PaginatedSimpleUserListResponse?>.Failure(UserError.NullParameters, "skip or accountId is null!");
         }
+        var userQuery = _context.UserFollows.Where(f => f.FollowerId == accountId).Join(_context.Users,
+                follow => follow.FollowingId,
+                user => user.AccountId,
+                (follow, user) => user
+        ).AsQueryable();
 
-        keyword = keyword.ToLower();
-
-        if(keyword == "")
+        if(!string.IsNullOrEmpty(keyword))
         {
-            return Result<PaginatedSimpleUserListResponse?>.Success(new PaginatedSimpleUserListResponse
-            {
-                PaginatedData = [],
-                Metadata = new AdvancePaginatedMetadata
-                {
-                    HasNextPage = false,
-                    TotalPage = 0,
-                }
-            });
-        }
-
-        var userQuery = _context.Users.Where(u => u.AccountId != accountId).OrderByDescending(u => u.DisplayName).AsQueryable();
-
-        userQuery = userQuery.Where(u => u.IsAccountActive && !u.IsAdmin &&
+            keyword = keyword.ToLower();
+            userQuery = userQuery.Where(u => u.IsAccountActive && !u.IsAdmin &&
                                         (u.DisplayName.ToLower().Contains(keyword) ||
                                          u.AccountUsername.ToLower().Contains(keyword)
-                                        )); 
+                                        ));
+        }
 
         var totalPage = (await userQuery.CountAsync() + USER_CONSTANTS.USER_LIMIT - 1) / USER_CONSTANTS.USER_LIMIT;
 
@@ -70,10 +57,6 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
             Limit = USER_CONSTANTS.USER_LIMIT
         });
 
-        var isFollowingMap = new Dictionary<Guid, bool>();
-
-        var currentUserFollowings = await _context.UserFollows.Where(uf => uf.FollowerId == accountId).ToDictionaryAsync(uf => uf.FollowingId);
-
         var userList = await userQuery.Select(u => new SimpleUserResponse
         {
             Id = u.AccountId,
@@ -81,7 +64,7 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
             Username = u.AccountUsername,
             DisplayName = u.DisplayName,
             NumberOfRecipe = u.TotalRecipe ?? 0,
-            IsFollowing = currentUserFollowings != null && currentUserFollowings.ContainsKey(u.AccountId),
+            IsFollowing = true,
         }).ToListAsync();
 
         if (userList == null || !userList.Any())
