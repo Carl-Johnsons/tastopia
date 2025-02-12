@@ -13,8 +13,8 @@ export const useChangeLanguage = () => {
    * @param lang - The language to change to.
    *
    */
-  const changeLanguage = (lang: SETTING_VALUE.LANGUAGE) => {
-    i18next.changeLanguage(LANGUAGE[lang]);
+  const changeLanguage = async (lang: SETTING_VALUE.LANGUAGE) => {
+    await i18next.changeLanguage(LANGUAGE[lang]);
   };
 
   return { changeLanguage };

@@ -14,10 +14,12 @@ export const LogoutButton = () => {
   const role = selectRole();
 
   const logout = async () => {
-    if (Platform.OS === "android" && role !== ROLE.GUEST)
-      await protectedAxiosInstance.delete("api/notification/expo-push-token/android");
-    else if (Platform.OS === "ios")
-      await protectedAxiosInstance.delete("api/notification/expo-push-token/ios");
+    if (role !== ROLE.GUEST) {
+      if (Platform.OS === "android")
+        await protectedAxiosInstance.delete("api/notification/expo-push-token/android");
+      else if (Platform.OS === "ios")
+        await protectedAxiosInstance.delete("api/notification/expo-push-token/ios");
+    }
 
     animate();
     await persistor.purge();

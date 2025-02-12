@@ -56,6 +56,7 @@ import { useColorScheme } from "nativewind";
 import useColorizer from "@/hooks/useColorizer";
 import { router } from "expo-router";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
+import { useQueryClient } from "react-query";
 
 type SettingModalProps = {
   ref: RefObject<BottomSheetMethods>;
@@ -394,6 +395,7 @@ const LanguageSetting = () => {
   const { mutateAsync: updateSetting } = useUpdateSetting();
   const languague = selectLanguageSetting();
   const { changeLanguage } = useChangeLanguage();
+  const queryClient = useQueryClient();
 
   const setLanguage = async (value: SETTING_VALUE.LANGUAGE) => {
     const oldValue = JSON.stringify(value);
@@ -420,8 +422,10 @@ const LanguageSetting = () => {
     await updateSetting(
       { ...data },
       {
-        onSuccess: () => {
-          changeLanguage(value);
+        onSuccess: async () => {
+          await changeLanguage(value);
+          await queryClient.invalidateQueries({ queryKey: ["getNotification"] });
+          console.log("Invalidated notification");
         },
         onError: () => {
           dispatch(
