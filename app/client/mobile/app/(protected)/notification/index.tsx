@@ -1,8 +1,8 @@
-import Header from "@/components/screen/notificaiton/Header";
-import NotificationList from "@/components/screen/notificaiton/NotificationList";
+import Header from "@/components/screen/notification/Header";
+import NotificationList from "@/components/screen/notification/NotificationList";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Notification = () => {

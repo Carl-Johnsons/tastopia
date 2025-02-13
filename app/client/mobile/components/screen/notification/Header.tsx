@@ -1,19 +1,16 @@
-import Button from "@/components/Button";
 import { colors } from "@/constants/colors";
 import { ArrowBackIcon } from "@/constants/icons";
 import useColorizer from "@/hooks/useColorizer";
-import { selectUpdateProfile } from "@/slices/menu/profile/updateProfileForm.slice";
 import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, StyleSheet, View } from "react-native";
 
 export default function Header() {
   const { t } = useTranslation("notification");
   const { c } = useColorizer();
-  const { black, white, primary } = colors;
-  const { isLoading } = selectUpdateProfile();
-  const [tab, setTab] = useState<NotificationTab>("Community");
+  const { black, white } = colors;
+  const [notificationType, setNotificationType] = useState<NotificationType>("Community");
 
   const styles = StyleSheet.create({
     wrapper: {
@@ -52,16 +49,16 @@ export default function Header() {
       <View className='w-full flex-row'>
         <View style={styles.tabWrapper}>
           <Tab
-            label={t("Community")}
+            label={"Community"}
             value={"Community"}
-            isActive={tab === "Community"}
+            isActive={notificationType === "Community"}
           />
         </View>
         <View style={styles.tabWrapper}>
           <Tab
-            label={t("System")}
+            label={"System"}
             value={"System"}
-            isActive={tab === "System"}
+            isActive={notificationType === "System"}
           />
         </View>
       </View>
@@ -69,7 +66,7 @@ export default function Header() {
   );
 }
 
-type NotificationTab = "Community" | "System";
+type NotificationType = "Community" | "System";
 
 const Tab = ({
   isActive,
@@ -77,7 +74,7 @@ const Tab = ({
 }: {
   isActive: boolean;
   label: string;
-  value: NotificationTab;
+  value: NotificationType;
 }) => {
   const handlePress = () => {
     console.log("Pressed");
