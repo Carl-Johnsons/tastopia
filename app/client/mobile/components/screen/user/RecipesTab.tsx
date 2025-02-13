@@ -1,5 +1,7 @@
 import {
+  ActivityIndicator,
   FlatList,
+  Platform,
   RefreshControl,
   SafeAreaView,
   StyleSheet,
@@ -14,12 +16,14 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import Empty from "../community/Empty";
 import SettingRecipe from "@/components/common/SettingRecipe";
+import { colors } from "@/constants/colors";
 
 type RecipesTabProps = {
   accountId: string;
 };
 
 const RecipesTab = ({ accountId }: RecipesTabProps) => {
+  const { primary } = colors;
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [currentRecipeId, setCurrentRecipeId] = useState("");
   const [currentAuthorId, setCurrentAuthorId] = useState("");
@@ -92,6 +96,9 @@ const RecipesTab = ({ accountId }: RecipesTabProps) => {
           onEndReachedThreshold={0.1}
           renderItem={renderItem}
           ListEmptyComponent={() => <Empty />}
+          contentContainerStyle={{
+            paddingBottom: Platform.select({ ios: 240 })
+          }}
         />
 
         <SettingRecipe

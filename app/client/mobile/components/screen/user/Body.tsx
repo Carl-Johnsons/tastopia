@@ -11,7 +11,7 @@ type BodyProps = {
 };
 
 const Body = ({ accountId }: BodyProps) => {
-  const { t } = useTranslation("");
+  const { t } = useTranslation("profile");
 
   const tabs = [
     {
@@ -25,7 +25,7 @@ const Body = ({ accountId }: BodyProps) => {
   ];
 
   return (
-    <View className='h-full flex-1'>
+    <View className={`h-full ${Platform.select({ ios: "", android: "flex-1" })}`}>
       <CustomTab
         variant='primary'
         tabItems={tabs}
