@@ -198,3 +198,8 @@ curl --location 'https://localhost:7000/api/tracking/search-user-view-recipe-det
 "skip" : "0",
 "keyword": "egg"
 }'
+
+**get user search recipe keyword history**
+lưu ý: nó xài method là GET
+
+curl --location 'https://localhost:7000/api/tracking/get-user-search-recipe-history' \
