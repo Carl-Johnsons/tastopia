@@ -37,4 +37,7 @@ public class GetUserDetailsResponse
     //Account
     public string? AccountEmail { get; set; }
     public string? AccountPhoneNumber { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+
 }
