@@ -1,6 +1,7 @@
 import { useGetUserByAccountId } from "@/api/user";
 import NotFound from "@/app/+not-found";
 import { globalStyles } from "@/components/common/GlobalStyles";
+import Body from "@/components/screen/user/Body";
 import Header from "@/components/screen/user/Header";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
@@ -52,6 +53,7 @@ const Profile = () => {
         accountUsername={accountDetailData.accountUsername}
         bio={accountDetailData.bio ?? ""}
       />
+      <Body accountId={accountDetailData.accountId} />
     </SafeAreaView>
   );
 };

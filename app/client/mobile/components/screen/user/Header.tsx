@@ -38,7 +38,7 @@ export default function Header({
   }, [router]);
 
   return (
-    <View className='h-[33vh]'>
+    <View>
       <ImageBackground
         imageStyle={{ opacity: 10 }}
         source={backgroundUrl}

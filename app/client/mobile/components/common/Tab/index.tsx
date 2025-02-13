@@ -2,6 +2,8 @@ import { View, StyleSheet } from "react-native";
 import React, { ReactElement } from "react";
 import { Tab, TabView } from "@rneui/themed";
 import { globalStyles } from "../GlobalStyles";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 type ItemProps = {
   title: string;
@@ -16,14 +18,21 @@ type TabProps = {
   [key: string]: any; // for TabView props: https://reactnativeelements.com/docs/next/components/tabview
 };
 
-const Tab = ({ variant = "primary", tabItems, tabViews, ...rest }: TabProps) => {
+const CustomTab = ({ variant = "primary", tabItems, tabViews, ...rest }: TabProps) => {
+  const { c } = useColorizer();
+  const { white, black, gray } = colors;
+  const textColor = c(gray[700], gray[700]);
+  const textColorActive = c(black.DEFAULT, white.DEFAULT);
   const [index, setIndex] = React.useState(0);
   return (
     <View style={{ flex: 1 }}>
       <Tab
         value={index}
         onChange={e => setIndex(e)}
-        style={{ backgroundColor: "white" }}
+        style={{
+          justifyContent: "center",
+          alignItems: "center"
+        }}
         indicatorStyle={{
           opacity: 0
         }}
@@ -34,22 +43,33 @@ const Tab = ({ variant = "primary", tabItems, tabViews, ...rest }: TabProps) => 
             <Tab.Item
               key={idx + item.title}
               title={item.title}
+              buttonStyle={[
+                { borderBottomWidth: 2, borderColor: "transparent" },
+                isActive && {
+                  borderBottomWidth: 2,
+                  borderColor: globalStyles.color.primary
+                }
+              ]}
               titleStyle={[
                 item.titleStyle,
+                {
+                  color: textColor,
+                  textTransform: "capitalize"
+                },
                 isActive && {
                   color:
                     variant === "primary"
-                      ? globalStyles.color.primary
-                      : globalStyles.color.secondary
+                      ? textColorActive
+                      : globalStyles.color.disableOpacity
                 }
               ]}
               icon={item.iconStyle}
               style={[
+                variant === "primary" && styles.primary,
                 isActive &&
-                  (variant === "primary" ? styles.primaryActive : styles.secondaryActive),
-                variant === "primary" && styles.primary
+                  (variant === "primary" ? styles.primaryActive : styles.secondaryActive)
               ]}
-            />
+            ></Tab.Item>
           );
         })}
       </Tab>
@@ -68,17 +88,12 @@ const Tab = ({ variant = "primary", tabItems, tabViews, ...rest }: TabProps) => 
   );
 };
 
-export default Tab;
+export default CustomTab;
 
 const styles = StyleSheet.create({
-  primary: {
-    marginHorizontal: 10,
-    marginVertical: 6
-  },
+  primary: {},
   primaryActive: {
-    borderWidth: 0.2,
-    borderColor: globalStyles.color.bsBodyColor,
-    borderRadius: 6
+    borderColor: globalStyles.color.primary
   },
   secondaryActive: {
     backgroundColor: globalStyles.color.primaryOpacity
