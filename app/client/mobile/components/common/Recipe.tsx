@@ -48,7 +48,10 @@ const Recipe = ({
           {authorId && authorDisplayName && authorAvtUrl && (
             <TouchableWithoutFeedback
               onPress={() => {
-                console.log("go to user detail");
+                router.push({
+                  pathname: "/(protected)/user/[id]",
+                  params: { id: authorId }
+                });
               }}
             >
               <View className='flex-center flex-row gap-2'>

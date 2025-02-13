@@ -4,6 +4,7 @@ import { Image } from "expo-image";
 import { abbreviateNumber } from "@/utils/format";
 import { useFollowUnfollowUser } from "@/api/user";
 import { useTranslation } from "react-i18next";
+import { router } from "expo-router";
 
 type UserProps = {
   id: string;
@@ -51,7 +52,10 @@ const User = ({
     <TouchableWithoutFeedback
       key={id}
       onPress={() => {
-        console.log("press user card");
+        router.push({
+          pathname: "/(protected)/user/[id]",
+          params: { id }
+        });
       }}
     >
       <View className='flex-row items-start justify-between gap-16'>
