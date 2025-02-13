@@ -159,12 +159,20 @@ curl --location 'https://localhost:7000/api/user/get-user-follower' \
 "skip" : "0",
 "keyword" : ""
 }'
+
 **get user followings**
 curl --location 'https://localhost:7000/api/user/get-user-following' \
 --header 'Content-Type: application/json' \
 --data '{
 "skip" : "0",
 "keyword" : ""
+}'
+
+**get user follow**
+curl --location 'https://localhost:7000/api/user/follow-user' \
+--header 'Content-Type: application/json' \
+--data '{
+"accountId" : "bb06e4ec-f371-45d5-804e-22c65c77f67d"
 }'
 
 # TRACKING
