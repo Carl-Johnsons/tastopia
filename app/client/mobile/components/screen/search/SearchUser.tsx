@@ -21,6 +21,7 @@ import { filterUniqueItems } from "@/utils/dataFilter";
 import { useTranslation } from "react-i18next";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import { useQueryClient } from "react-query";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -31,6 +32,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const { c } = useColorizer();
   const { black, white } = colors;
 
+  const queryClient = useQueryClient();
   const { t } = useTranslation("search");
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchResults, setSearchResults] = useState<SearchUserResultType[]>();
@@ -90,6 +92,10 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const invalidateSearch = () => {
+    queryClient.invalidateQueries({ queryKey: ["searchUsers", debouncedValue] });
+  };
+
   useEffect(() => {
     if (data?.pages) {
       const uniqueData = filterUniqueItems(data.pages);
@@ -146,9 +152,6 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
             )}
           </View>
         </TouchableWithoutFeedback>
-        {/* <TouchableWithoutFeedback onPress={handleFilter}>
-          <Filter />
-        </TouchableWithoutFeedback> */}
       </View>
 
       {/* Result section */}
@@ -177,7 +180,10 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
             }}
             renderItem={({ item, index }) => (
               <>
-                <User {...item} />
+                <User
+                  {...item}
+                  invalidateSearch={invalidateSearch}
+                />
                 {searchResults !== undefined && index !== searchResults.length - 1 && (
                   <View className='my-4 h-[1px] w-full bg-gray-300' />
                 )}

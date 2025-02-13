@@ -268,3 +268,20 @@ export const useUpdateUser = () => {
     }
   });
 };
+
+type FollowUnfollowUserResponse = {
+  followerId: string;
+  followingId: string;
+  isFollowing: boolean;
+};
+
+export const useFollowUnfollowUser = () => {
+  return useMutation<FollowUnfollowUserResponse, Error, { accountId: string }>({
+    mutationFn: async ({ accountId }) => {
+      const { data } = await protectedAxiosInstance.post("/api/user/follow-user", {
+        accountId: accountId
+      });
+      return data;
+    }
+  });
+};

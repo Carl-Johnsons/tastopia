@@ -168,7 +168,7 @@ curl --location 'https://localhost:7000/api/user/get-user-following' \
 "keyword" : ""
 }'
 
-**get user follow**
+**follow user**
 curl --location 'https://localhost:7000/api/user/follow-user' \
 --header 'Content-Type: application/json' \
 --data '{
