@@ -18,7 +18,7 @@ public class GetUserDetailsResponse
 
     public string? Address { get; set; }
 
-    public virtual int? TotalFollwer { get; set; }
+    public virtual int? TotalFollower { get; set; }
 
     public virtual int? TotalFollowing { get; set; }
 

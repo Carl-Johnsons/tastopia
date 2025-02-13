@@ -96,7 +96,7 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
             Gender = user.Gender,
             IsAccountActive = user.IsAccountActive,
             IsAdmin = user.IsAdmin,
-            TotalFollower = user.TotalFollwer ?? 0,
+            TotalFollower = user.TotalFollower ?? 0,
             TotalFollowing = user.TotalFollowing ?? 0,
             TotalRecipe = user.TotalRecipe ?? 0,
         };
