@@ -60,14 +60,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, redirect_slashes=False)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Change this to your frontend domain in production
-    allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 names = dict()
 for i in open("names.txt").read().splitlines():
     names[i.split('_')[0]] = i.split('_')[1]
@@ -77,7 +69,7 @@ async def health():
     return {"status": "ok"}
 
 
-@app.post("/predict")
+@app.post("/api/ingredient-predict")
 async def predict(file: UploadFile = File(...)):
     # Read image
     image = Image.open(io.BytesIO(await file.read()))
@@ -98,7 +90,7 @@ async def predict(file: UploadFile = File(...)):
     return {"classifications": classifications}
 
 
-@app.post("/predict_box")
+@app.post("/api/ingredient-predict/box")
 async def predict(file: UploadFile = File(...)):
     # Read image
     image = Image.open(io.BytesIO(await file.read()))
