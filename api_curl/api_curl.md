@@ -139,6 +139,14 @@ curl --location 'https://localhost:7000/api/recipe/get-recipe-feed-by-author-id'
 "authorId" : "61c61ac7-291e-4075-9689-666ef05547ed"
 }'
 
+**get account recipe comment**
+curl --location 'https://localhost:7000/api/recipe/get-account-recipe-comments' \
+--header 'Content-Type: application/json' \
+--data '{
+"accountId" : "61c61ac7-291e-4075-9689-666ef05547ed",
+"skip" : 0
+}'
+
 # USER
 
 **search user**

@@ -222,6 +222,21 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
+    [HttpPost("get-account-recipe-comments")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAccountRecipeCommentListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetAccountRecipeComments([FromBody] GetAccountRecipeCommentsDTO getAccountRecipeCommentsDTO)
+    {
+        var result = await _sender.Send(new GetAccountRecipeCommentsQuery
+        {
+            AccountId = getAccountRecipeCommentsDTO.AccountId,
+            Skip = getAccountRecipeCommentsDTO.Skip
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
 
     [HttpPost("comment-recipe")]
     [Produces("application/json")]
