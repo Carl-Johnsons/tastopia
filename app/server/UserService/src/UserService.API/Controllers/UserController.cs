@@ -37,6 +37,32 @@ public class UserController : BaseApiController
         return Ok(result.Value);
     }
 
+    [AllowAnonymous]
+    [HttpPost("get-user-detail-by-account-id")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(GetUserDetailsResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetUserDetailByAccountId([FromBody] GetUserDetailByAccountIdDTO getUserDetailByAccountIdDTO)
+    {
+
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var currentAccountId = Guid.Empty;
+
+        if (!string.IsNullOrEmpty(subjectId))
+        {
+            currentAccountId = Guid.Parse(subjectId);
+        }
+
+        var result = await _sender.Send(new GetUserDetailsQuery
+        {
+            AccountId = getUserDetailByAccountIdDTO.AccountId,
+            CurrentAccountId = currentAccountId
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [HttpPost("get-user-follower")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedSimpleUserListResponse), 200)]

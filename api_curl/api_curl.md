@@ -175,6 +175,13 @@ curl --location 'https://localhost:7000/api/user/follow-user' \
 "accountId" : "bb06e4ec-f371-45d5-804e-22c65c77f67d"
 }'
 
+**get user detail by account id**
+curl --location 'https://localhost:7000/api/user/get-user-detail-by-account-id' \
+--header 'Content-Type: application/json' \
+--data '{
+"accountId" : "bb06e4ec-f371-45d5-804e-22c65c77f67d"
+}'
+
 # TRACKING
 
 **Get user view recipe detail history**
