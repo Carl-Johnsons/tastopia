@@ -1,7 +1,6 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ImageProps, TouchableWithoutFeedback, View, Image } from "react-native";
 import ImageView from "react-native-image-viewing";
-import Avatar from "./Avatar";
 import { filterImageSource } from "@/utils/dataFilter";
 
 type PreviewImageProps = {
@@ -11,6 +10,7 @@ type PreviewImageProps = {
   height?: number;
   alt?: string;
   titleClassName?: string;
+  defaultImage?: any;
 } & ImageProps;
 
 const PreviewImage = (props: PreviewImageProps) => {
@@ -18,7 +18,7 @@ const PreviewImage = (props: PreviewImageProps) => {
     () => filterImageSource(props.imgUrl),
     [props.imgUrl]
   );
-  const { className, width = 100, height = 100, titleClassName = "", alt = "" } = props;
+  const { className, width = 100, height = 100 } = props;
 
   const [visible, setIsVisible] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -31,7 +31,7 @@ const PreviewImage = (props: PreviewImageProps) => {
     <View>
       <TouchableWithoutFeedback onPress={handleToggle}>
         <Image
-          source={{ uri: imgUrl }}
+          source={isError || !imgUrl ? props.defaultImage : { uri: imgUrl }}
           className={className}
           style={{ width, height }}
           onError={() => setIsError(true)}

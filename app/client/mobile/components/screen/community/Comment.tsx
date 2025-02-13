@@ -1,15 +1,21 @@
 import { Image } from "expo-image";
-import { useTranslation } from "react-i18next";
+import { router } from "expo-router";
 import { Text, View, TouchableWithoutFeedback } from "react-native";
 
 type CommentProps = {
+  accountId: string;
   avatarUrl: string;
   displayName: string;
   content: string;
 };
 
-const Comment = ({ avatarUrl, displayName, content }: CommentProps) => {
-  const handleTouchUser = () => {};
+const Comment = ({ accountId, avatarUrl, displayName, content }: CommentProps) => {
+  const handleTouchUser = () => {
+    router.push({
+      pathname: "/(protected)/user/[id]",
+      params: { id: accountId }
+    });
+  };
   return (
     <View className='flex-row gap-3'>
       <TouchableWithoutFeedback onPress={handleTouchUser}>

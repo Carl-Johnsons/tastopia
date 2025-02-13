@@ -1,8 +1,7 @@
 import Button from "@/components/Button";
+import PreviewImage from "@/components/common/PreviewImage";
 import { colors } from "@/constants/colors";
 import { ArrowBackIcon, DotIcon, ShareIcon } from "@/constants/icons";
-import { selectUser } from "@/slices/user.slice";
-import { Avatar } from "@rneui/base";
 import { ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -10,12 +9,27 @@ import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { View, Text } from "react-native";
 
-export default function Header() {
-  const { t } = useTranslation("profile");
-  const { displayName, accountUsername, avatarUrl, totalFollower } = selectUser();
-  const { backgroundUrl, bio } = selectUser();
-  const { black, white } = colors;
+type HeaderProps = {
+  displayName: string;
+  avatarUrl: string;
+  backgroundUrl: string;
+  totalRecipe: number | undefined;
+  totalFollower?: number;
+  accountUsername: string;
+  bio: string;
+};
 
+export default function Header({
+  displayName,
+  avatarUrl,
+  backgroundUrl,
+  totalRecipe,
+  totalFollower,
+  accountUsername,
+  bio
+}: HeaderProps) {
+  const { t } = useTranslation("profile");
+  const { black, white } = colors;
   const followerCounts = totalFollower || 0;
   const joinDate = "1 Jan 2025";
 
@@ -48,28 +62,34 @@ export default function Header() {
             <View className='flex-row items-center justify-between'>
               <View className='flex gap-y-5'>
                 <View className='bg-white_black flex aspect-square w-[100px] items-center justify-center rounded-full'>
-                  <Avatar
-                    size={90}
-                    rounded
-                    source={
-                      avatarUrl
-                        ? { uri: avatarUrl }
-                        : require("../../../assets/images/avatar.png")
-                    }
-                    containerStyle={avatarUrl && { backgroundColor: "#FFC529" }}
+                  <PreviewImage
+                    imgUrl={avatarUrl}
+                    className='size-[90px] rounded-full border-2 border-white bg-[#FFC529]'
+                    defaultImage={require("../../../assets/images/avatar.png")}
                   />
                 </View>
 
-                <Text className='font-semibold text-xl text-white'>{displayName}</Text>
+                <Text className='font-semibold text-2xl text-white'>{displayName}</Text>
 
                 <View>
-                  <Text className='font-secondary-roman text-sm text-white'>
-                    {followerCounts} follower
-                    {followerCounts % 2 === 0 && followerCounts !== 0 ? "s" : ""}
+                  {totalRecipe && totalRecipe > 0 && (
+                    <Text className='font-secondary-roman text-lg text-white'>
+                      {totalRecipe}{" "}
+                      {totalRecipe % 2 === 0 && totalRecipe !== 0
+                        ? t("recipes")
+                        : t("recipe")}
+                    </Text>
+                  )}
+
+                  <Text className='font-secondary-roman text-lg text-white'>
+                    {followerCounts}{" "}
+                    {followerCounts % 2 === 0 && followerCounts !== 0
+                      ? t("follower")
+                      : t("followers")}
                   </Text>
 
                   <View className='flex-row items-center gap-1'>
-                    <Text className='font-secondary-roman text-sm text-gray-200'>
+                    <Text className='font-secondary-roman text-lg text-gray-200'>
                       @{accountUsername}
                     </Text>
                     <DotIcon
@@ -77,12 +97,12 @@ export default function Header() {
                       height={4}
                       color={white.DEFAULT}
                     />
-                    <Text className='font-secondary-roman text-sm text-gray-200'>
+                    <Text className='font-secondary-roman text-lg text-gray-200'>
                       {joinDate}
                     </Text>
                   </View>
                   {bio && (
-                    <Text className='font-secondary-roman text-sm text-gray-200'>
+                    <Text className='font-secondary-roman text-lg text-gray-200'>
                       {bio}
                     </Text>
                   )}
@@ -90,7 +110,7 @@ export default function Header() {
               </View>
 
               <Button
-                className='rounded-full border border-white p-2'
+                className='rounded-full border border-white px-4 py-3'
                 onPress={goToUpdateProfile}
               >
                 <Text className='font-sans text-white'>{t("update")}</Text>

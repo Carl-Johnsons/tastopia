@@ -361,6 +361,7 @@ const RecipeDetail = () => {
                             comment.isActive && (
                               <Comment
                                 key={comment.id}
+                                accountId={comment.accountId}
                                 avatarUrl={comment.avatarUrl}
                                 displayName={comment.displayName}
                                 content={comment.content}
