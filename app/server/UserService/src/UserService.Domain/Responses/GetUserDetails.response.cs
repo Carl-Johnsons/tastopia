@@ -30,6 +30,10 @@ public class GetUserDetailsResponse
 
     public bool IsAdmin { get; set; } = false;
 
+    public bool IsFollowing { get; set; } = false;
+
+    public bool IsCurrentUser { get; set; } = false;
+
     //Account
     public string? AccountEmail { get; set; }
     public string? AccountPhoneNumber { get; set; }
