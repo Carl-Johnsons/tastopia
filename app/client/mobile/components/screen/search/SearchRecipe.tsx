@@ -18,13 +18,15 @@ import useDarkMode from "@/hooks/useDarkMode";
 import { Image } from "expo-image";
 import { useSearchRecipes } from "@/api/search";
 import { router } from "expo-router";
-import Recipe from "@/components/common/Recipe";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { selectSearchTagCodes } from "@/slices/searchRecipe.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useTranslation } from "react-i18next";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import BottomSheet from "@gorhom/bottom-sheet";
+import SettingRecipe from "@/components/common/SettingRecipe";
+import SearchRecipeResult from "../community/SearchRecipeResult";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -48,6 +50,7 @@ const ResultSection = memo(
     handleLoadMore
   }: ResultSectionProps) => {
     const { t } = useTranslation("search");
+
     return (
       <View className='mt-6'>
         <FlatList
@@ -73,7 +76,7 @@ const ResultSection = memo(
           }}
           renderItem={({ item, index }) => (
             <>
-              <Recipe {...item} />
+              <SearchRecipeResult {...item} />
               {searchResults !== undefined && index !== searchResults.length - 1 && (
                 <View className='my-4 h-[1px] w-full bg-gray-300' />
               )}
@@ -150,7 +153,6 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
   const handleCancel = useCallback(() => {
     setSearchValue("");
-    // dispatch(addKeyword(""));
     setOnFocus(false);
     Keyboard.dismiss();
     if (tagCodes.length <= 0) setSearchResults([]);
@@ -159,7 +161,6 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const handleSearch = useCallback(
     (text: string) => {
       setSearchValue(text);
-      // dispatch(addKeyword(tex
     },
     [dispatch]
   );
@@ -182,15 +183,6 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
     }
   }, [data, tagCodes]);
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (searchValue !== "" || tagCodes.length > 0) {
-  //       refetch();
-  //     }
-
-  //     return () => {};
-  //   }, [])
-  // );
   return (
     <View>
       {/* Search input */}

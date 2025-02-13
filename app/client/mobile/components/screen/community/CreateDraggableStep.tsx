@@ -7,48 +7,45 @@ import {
   Alert
 } from "react-native";
 import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
-import useDebounce from "@/hooks/useDebounce";
 import UploadImage from "@/components/common/UploadImage";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import { Controller, useFormContext } from "react-hook-form";
+import { CreateRecipeFormValue } from "@/schemas/create-recipe";
 
 interface CreateDraggableStepProps {
+  index: number;
   stepKey: string;
   content: string;
   images: ImageFileType[];
   drag: () => void;
-  setSteps: Dispatch<SetStateAction<CreateStepType[]>>;
+  remove: (index: number) => void;
 }
 
 const CreateDraggableStep = ({
+  index,
   stepKey,
   content,
   images,
   drag,
-  setSteps
+  remove
 }: CreateDraggableStepProps) => {
   const { c } = useColorizer();
   const { black, white } = colors;
 
+  const { control, getValues, setValue } = useFormContext();
   const { t } = useTranslation("createRecipe");
   const [inputValue, setInputValue] = useState(content);
   const [isFocused, setIsFocused] = useState(false);
-  const debouncedValue = useDebounce(inputValue, 800);
 
-  const handleChangeText = (text: string) => {
-    setInputValue(text);
-  };
-
-  const handleRemoveItem = (key: string) => {
-    setSteps(prev => {
-      return prev.filter(item => {
-        return item.key !== key;
-      });
-    });
-  };
+  const handleRemoveItem = useCallback(() => {
+    if (index !== undefined) {
+      remove(index);
+    }
+  }, [index, remove]);
 
   const confirmRemoveItem = () => {
     if (inputValue !== "") {
@@ -62,31 +59,24 @@ const CreateDraggableStep = ({
           {
             text: t("removeIngredientAlert.delete"),
             onPress: () => {
-              handleRemoveItem(stepKey);
+              handleRemoveItem();
             }
           }
         ]
       );
     } else {
-      handleRemoveItem(stepKey);
+      handleRemoveItem();
     }
   };
 
   const onFileChange = (files: ImageFileType[]) => {
-    setSteps(prevSteps =>
-      prevSteps.map(step => (step.key === stepKey ? { ...step, images: files } : step))
+    const steps = getValues("steps") ?? [];
+    const updatedSteps: CreateRecipeFormValue["steps"] = steps.map(
+      (step: NonNullable<CreateRecipeFormValue["steps"]>[number]) =>
+        step.key === stepKey ? { ...step, images: files } : step
     );
+    setValue("steps", updatedSteps);
   };
-
-  useEffect(() => {
-    if (debouncedValue !== content) {
-      setSteps(prevSteps =>
-        prevSteps.map(step =>
-          step.key === stepKey ? { ...step, content: debouncedValue } : step
-        )
-      );
-    }
-  }, [debouncedValue, stepKey, setSteps]);
 
   return (
     <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
@@ -102,17 +92,26 @@ const CreateDraggableStep = ({
       </TouchableOpacity>
 
       <View style={styles.inputContainer}>
-        <TextInput
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          style={
-            (isFocused ? [styles.input, styles.inputFocused] : styles.input,
-            { color: `${c(black.DEFAULT, white.DEFAULT)}` })
-          }
-          value={inputValue}
-          onChangeText={handleChangeText}
-          placeholder={t("formPlaceholder.steps")}
-          placeholderTextColor='#9CA3AF'
+        <Controller
+          control={control}
+          name={`steps.${index}.content`}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => {
+                onBlur();
+                setIsFocused(false);
+              }}
+              style={
+                (isFocused ? [styles.input, styles.inputFocused] : styles.input,
+                { color: `${c(black.DEFAULT, white.DEFAULT)}` })
+              }
+              value={value}
+              onChangeText={onChange}
+              placeholder={t("formPlaceholder.steps")}
+              placeholderTextColor='#9CA3AF'
+            />
+          )}
         />
 
         <UploadImage

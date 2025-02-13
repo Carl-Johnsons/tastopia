@@ -1,0 +1,62 @@
+@startuml TrackingDbContext
+
+interface IMongoDbContext extends IDisposable {
+    +Instance : DbContext
+    +GetDatabase() : IMongoDatabase
+}
+' ========= Entity class =========
+class BaseMongoDBEntity {
+    +Id : Guid
+}
+
+class BaseMongoDBAuditableEntity extends BaseMongoDBEntity {
+    +DateTime CreatedAt
+    +DateTime UpdatedAt
+}
+
+class UserViewRecipeDetail extends BaseMongoDBAuditableEntity {
+    +AuthorId: Guid
+    +RecipeId: Guid
+}
+
+interface IApplicationDbContext extends IMongoDbContext {
+    + UserViewRecipeDetails : DbSet<UserViewRecipeDetail>
+}
+class ApplicationDbContext extends DbContext implements IApplicationDbContext {
+    +DbSet<UserViewRecipeDetail> UserViewRecipeDetails
+    +Instance : DbContext
+    +ApplicationDbContext()
+    +ApplicationDbContext(options : DbContextOptions<ApplicationDbContext>)
+    +OnConfiguring(optionsBuilder : DbContextOptionsBuilder) : void
+    +OnModelCreating(modelBuilder : ModelBuilder) : void
+    +GetDatabase() : IMongoDatabase
+}
+
+' ========= Library class =========
+interface IDisposable #black;line:white;text:white
+class "DbSet<T>" #black;line:white;text:white
+class DbContext #black;line:white;text:white
+
+IMongoDbContext o-- DbContext
+
+' IApplicationDbContext o-- "DbSet<T>"
+' IApplicationDbContext o-- Recipe
+' IApplicationDbContext o-- Tag
+' IApplicationDbContext o-- RecipeTag
+' IApplicationDbContext o-- UserBookmarkRecipe
+' IApplicationDbContext o-- UserReportRecipe
+' IApplicationDbContext o-- UserReportComment
+
+ApplicationDbContext o-- "DbSet<T>"
+ApplicationDbContext o-- UserViewRecipeDetail
+
+' =========== Style ==============
+
+ApplicationDbContext o-[hidden]down- "DbSet<T>"
+ApplicationDbContext o-[hidden]down- UserViewRecipeDetail
+
+BaseMongoDBAuditableEntity -[hidden]right- BaseMongoDBEntity 
+BaseMongoDBAuditableEntity -[hidden]up- UserViewRecipeDetail 
+
+
+@enduml

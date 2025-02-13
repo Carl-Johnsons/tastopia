@@ -1,0 +1,22 @@
+@startuml FileUtility
+class FileUtility {
+    {static} +ConvertIFormFileToGrpcFileStreamDTOAsync(List<IFormFile> files): async Task<List<GrpcFileStreamDTO>>
+    {static} +ConvertIFormFileToFileStreamDTOAsync(List<IFormFile> files): Task<List<FileStreamDTO>>
+}
+
+class GrpcFileStreamDTO #LightSalmon;line:white;text:white
+
+class FileStreamDTO
+{
+    +FileName: string 
+    +ContentType: string
+    +Stream: byte[]
+}
+
+interface IFormFile #black;line:white;text:white
+
+FileUtility "1" o-- "1..*" FileStreamDTO
+FileUtility "1" o-- "1..*" IFormFile
+FileUtility "1" o-- "1..*" GrpcFileStreamDTO
+
+@enduml

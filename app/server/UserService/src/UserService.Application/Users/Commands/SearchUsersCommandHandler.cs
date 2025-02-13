@@ -6,7 +6,7 @@ using UserService.Domain.Responses;
 
 namespace UserService.Application.Users.Commands;
 
-public class SearchUsersCommand : IRequest<Result<PaginatedSearchUserListResponse?>>
+public class SearchUsersCommand : IRequest<Result<PaginatedSimpleUserListResponse?>>
 {
     [Required]
     public int? Skip { get; init; }
@@ -18,7 +18,7 @@ public class SearchUsersCommand : IRequest<Result<PaginatedSearchUserListRespons
     public Guid? AccountId { get; init; }
 }
 
-public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Result<PaginatedSearchUserListResponse?>>
+public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Result<PaginatedSimpleUserListResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaginateDataUtility<User, AdvancePaginatedMetadata> _paginateDataUtility;
@@ -29,7 +29,7 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
         _paginateDataUtility = paginateDataUtility;
     }
 
-    public async Task<Result<PaginatedSearchUserListResponse?>> Handle(SearchUsersCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedSimpleUserListResponse?>> Handle(SearchUsersCommand request, CancellationToken cancellationToken)
     {
         var skip = request.Skip;
         var keyword = request.Keyword;
@@ -37,14 +37,14 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
 
         if(skip == null || keyword == null)
         {
-            return Result<PaginatedSearchUserListResponse?>.Failure(UserError.NotFound);
+            return Result<PaginatedSimpleUserListResponse?>.Failure(UserError.NotFound);
         }
 
         keyword = keyword.ToLower();
 
         if(keyword == "")
         {
-            return Result<PaginatedSearchUserListResponse?>.Success(new PaginatedSearchUserListResponse
+            return Result<PaginatedSimpleUserListResponse?>.Success(new PaginatedSimpleUserListResponse
             {
                 PaginatedData = [],
                 Metadata = new AdvancePaginatedMetadata
@@ -74,7 +74,7 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
 
         var currentUserFollowings = await _context.UserFollows.Where(uf => uf.FollowerId == accountId).ToDictionaryAsync(uf => uf.FollowingId);
 
-        var userList = await userQuery.Select(u => new SearchUserResponse
+        var userList = await userQuery.Select(u => new SimpleUserResponse
         {
             Id = u.AccountId,
             AvtUrl = u.AvatarUrl,
@@ -86,7 +86,7 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
 
         if (userList == null || !userList.Any())
         {
-            return Result<PaginatedSearchUserListResponse?>.Success(new PaginatedSearchUserListResponse
+            return Result<PaginatedSimpleUserListResponse?>.Success(new PaginatedSimpleUserListResponse
             {
                 PaginatedData = [],
                 Metadata = new AdvancePaginatedMetadata
@@ -104,7 +104,7 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
             hasNextPage = false;
         }
 
-        var paginatedResponse = new PaginatedSearchUserListResponse
+        var paginatedResponse = new PaginatedSimpleUserListResponse
         {
             PaginatedData = userList,
             Metadata = new AdvancePaginatedMetadata
@@ -113,6 +113,6 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
                 HasNextPage = hasNextPage
             }
         };
-        return Result<PaginatedSearchUserListResponse?>.Success(paginatedResponse);
+        return Result<PaginatedSimpleUserListResponse?>.Success(paginatedResponse);
     }
 }

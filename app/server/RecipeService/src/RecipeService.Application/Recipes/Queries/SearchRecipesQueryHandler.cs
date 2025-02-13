@@ -76,10 +76,12 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
 
             var searchAuthorIds = searchUserResponse.AccountIds.ToHashSet();
 
+            keyword = keyword.ToLower();
             recipesQuery = recipesQuery.Where(r =>
-                r.Title.ToLower().Contains(keyword.ToLower()) ||
-                r.Description.ToLower().Contains(keyword.ToLower()) ||
-                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(keyword.ToLower())) ||
+                r.Title.ToLower().Contains(keyword) ||
+                r.Description.ToLower().Contains(keyword) ||
+                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(keyword)) ||
+                r.Steps.Any(step => step.Content.ToLower().Contains(keyword)) ||
                 searchAuthorIds.Contains(r.AuthorId.ToString())
             );
         }

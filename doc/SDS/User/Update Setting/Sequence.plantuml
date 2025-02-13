@@ -1,0 +1,48 @@
+@startuml Sequence
+title "Update current user's setting"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n UserService" as UserService
+database Postgresql
+
+User -> MobileUI ++: 1. Change the setting
+MobileUI -> ApiGateway ++: 2. Update user's setting
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> UserService ++: 4. Forward request
+UserService -> Postgresql ++: 5. Query data
+UserService <-- Postgresql--: 6. Return response
+
+alt if setting key is invalid 
+  ApiGateway <-- UserService: 7A.1. Return InvalidSettingKey Error
+  MobileUI <-- ApiGateway: 7A.2. Forward error
+  User <-- MobileUI: 7A.3. Display error
+else if setting value is invalid 
+  ApiGateway <-- UserService: 7B.2. Return InvalidSettingValue
+  MobileUI <-- ApiGateway: 7B.3. Forward error
+  User <-- MobileUI: 7C.4. Display error
+else
+  UserService --> Postgresql++: 8. Insert user's setting data
+  UserService <-- Postgresql--: 9. return response
+  ApiGateway <-- UserService--: 10. Return success status code
+  MobileUI <-- ApiGateway--: 11. Forward response
+  User <-- MobileUI--: 12. Display update setting successfully
+end
+
+@enduml

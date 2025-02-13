@@ -17,7 +17,8 @@ public static class ReinforcedTypingsExtension
         builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
         // DTO 
         builder.ExportAsInterfaces([
-            typeof(GetUserViewRecipeDetailHistoryDTO)
+            typeof(GetUserViewRecipeDetailHistoryDTO),
+            typeof(SearchUserViewRecipeDetailHistoryDTO)
         ], config =>
         {
             config.FlattenHierarchy()

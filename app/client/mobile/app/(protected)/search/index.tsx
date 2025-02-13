@@ -15,7 +15,7 @@ const Search = () => {
 
   const { t } = useTranslation("search");
   const [onFocus, setOnFocus] = useState<boolean>(false);
-  const [isSearchingUser, setIsSearchingUser] = useState(true);
+  const [isSearchingUser, setIsSearchingUser] = useState(false);
 
   const handleFocus = (isFocus: boolean) => {
     setOnFocus(true);

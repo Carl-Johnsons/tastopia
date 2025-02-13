@@ -33,7 +33,9 @@ export const LoginForm = (props: LoginFormProps) => {
   return (
     <View className={`gap-[2vh] ${props.className}`}>
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>E-mail or phone number</Text>
+        <Text className='mb-3 font-sans text-lg text-gray-600'>
+          E-mail or phone number
+        </Text>
         <Controller
           name='identifier'
           control={control}
@@ -52,7 +54,7 @@ export const LoginForm = (props: LoginFormProps) => {
       </View>
 
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>Password</Text>
+        <Text className='mb-3 font-sans text-lg text-gray-600'>Password</Text>
         <Controller
           name='password'
           control={control}
@@ -71,7 +73,7 @@ export const LoginForm = (props: LoginFormProps) => {
         ) : null}
       </View>
 
-      <Text className='text-center font-medium text-sm text-primary'>
+      <Text className='text-center font-medium text-lg text-primary'>
         Forgot password?
       </Text>
 

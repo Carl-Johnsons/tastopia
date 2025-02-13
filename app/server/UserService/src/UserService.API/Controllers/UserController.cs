@@ -20,7 +20,7 @@ public class UserController : BaseApiController
     [AllowAnonymous]
     [HttpPost("search")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedSearchUserListResponse), 200)]
+    [ProducesResponseType(typeof(PaginatedSimpleUserListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> SearchUser([FromBody] SearchUserDTO searchUser)
     {
@@ -32,6 +32,44 @@ public class UserController : BaseApiController
             AccountId = subjectId != null ? Guid.Parse(subjectId) : null,
             Skip = searchUser.Skip,
             Keyword = searchUser.Keyword,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("get-user-follower")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedSimpleUserListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetUserFollower([FromBody] GetUserFollowersDTO getUserFollowersDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new GetUserFollowersQuery
+        {
+            AccountId = subjectId != null ? Guid.Parse(subjectId) : null,
+            Skip = getUserFollowersDTO.Skip,
+            Keyword = getUserFollowersDTO.Keyword,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("get-user-following")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedSimpleUserListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetUserFollowing([FromBody] GetUserFollowingsDTO getUserFollowingsDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new GetUserFollowingsQuery
+        {
+            AccountId = subjectId != null ? Guid.Parse(subjectId) : null,
+            Skip = getUserFollowingsDTO.Skip,
+            Keyword = getUserFollowingsDTO.Keyword,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -49,6 +87,24 @@ public class UserController : BaseApiController
         var result = await _sender.Send(new GetUserDetailsQuery
         {
             AccountId = subjectId != null ? Guid.Parse(subjectId) : Guid.Empty,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("follow-user")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(FollowUserResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> FollowUser([FromBody] FollowUserDTO followUserDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new FollowUserCommand
+        {
+            AccountId = subjectId != null ? Guid.Parse(subjectId) : Guid.Empty,
+            FollowingId = followUserDTO.AccountId,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

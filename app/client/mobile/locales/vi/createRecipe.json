@@ -24,7 +24,12 @@
   "validation": {
     "title": "Vui lòng nhập tiêu đề công thức",
     "description": "Vui lòng nhập mô tả công thức",
-    "serves": "Vui lòng nhập số khẩu phần ăn",
+    "serves": {
+      "required": "Vui lòng nhập số khẩu phần ăn",
+      "typeError": "Số khẩu phần ăn phải là một số",
+      "positive": "Số khẩu phần ăn phải là một số dương",
+      "integer": "Số khẩu phần ăn phải là một số nguyên"
+    },
     "cookTime": "Vui lòng nhập thời gian nấu",
     "image": "Vui tải lên ảnh món ăn",
     "step": "Vui lòng nhập bước nấu ăn",

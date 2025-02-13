@@ -27,19 +27,23 @@ else
     IdentityService <-- UserService--: 10. return success <<gRPC>>
 
     IdentityService -> Rabbitmq++: 11. Publish "UserRegisterEvent" message <<Async>>
-    ApiGateway <-- IdentityService--: 12. return success status code
-    MobileUI <-- ApiGateway--: 13. Forward response
-    User <-- MobileUI--: 14. Display alert create account\n successfully and redirect user to\n community screen
-
-    Rabbitmq --> NotificationService++: 15. Deliver "UserRegisterEvent"\n message
+    Rabbitmq --> NotificationService: 12. Deliver "UserRegisterEvent"\n message
+    activate NotificationService
     deactivate Rabbitmq
-    NotificationService -> Rabbitmq++: 16. Consume event and publish \n "SendEmailEvent" message <<Async>>
+    NotificationService -> Rabbitmq: 13. Consume event and publish \n "SendEmailEvent" message <<Async>>
+    activate Rabbitmq
     deactivate NotificationService
-    Rabbitmq --> EmailWorker++: 17. Deliver "SendEmailEvent"\n message
+    Rabbitmq --> EmailWorker: 14. Deliver "SendEmailEvent"\n message
     deactivate Rabbitmq
-    EmailWorker -> Gmail++: 18. Send OTP email\n to specified email
+    activate EmailWorker
+    EmailWorker -> Gmail: 15. Send OTP email\n to specified email
     deactivate EmailWorker
+    activate Gmail
+    ApiGateway <-- IdentityService--: 16. return success status code
     deactivate Gmail
+    destroy Gmail
+    MobileUI <-- ApiGateway--: 17. Forward response
+    User <-- MobileUI--: 18. Display alert create account\n successfully and redirect user to\n community screen
 end
 
 @enduml

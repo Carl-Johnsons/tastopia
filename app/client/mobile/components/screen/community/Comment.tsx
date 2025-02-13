@@ -18,11 +18,11 @@ const Comment = ({ avatarUrl, displayName, content }: CommentProps) => {
           style={{ width: 26, height: 26, borderRadius: 100 }}
         />
       </TouchableWithoutFeedback>
-      <View className='w-full max-w-[90%] flex-col gap-2'>
+      <View className='w-full max-w-[90%] flex-col gap-1'>
         <TouchableWithoutFeedback onPress={handleTouchUser}>
-          <Text className='text-black_white'>{displayName}</Text>
+          <Text className='text-black_white paragraph-regular'>{displayName}</Text>
         </TouchableWithoutFeedback>
-        <Text className='text-black_white'>{content}</Text>
+        <Text className='text-black_white paragraph-regular'>{content}</Text>
       </View>
     </View>
   );

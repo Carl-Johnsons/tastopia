@@ -1,0 +1,217 @@
+@startuml GrpcUserSerciveClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+skinparam classBackgroundColor DarkBlue
+skinparam classBorderColor While
+skinparam classFontColor While
+skinparam classAttributeFontColor While
+
+hide circle
+
+class GrpcUserService extends GrpcUserBase{
+    #_sender: ISender
+    #_logger: ILogger
+    #_mapper: IMapper
+    +GetSimpleUser(GrpcGetSimpleUsersRequest request, ServerCallContext context): async Task<GrpcGetSimpleUsersDTO>
+    +GetUserDetail(GrpcAccountIdRequest request, ServerCallContext context): async Task<GrpcUserDetailDTO>
+    +CreateUser(GrpcCreateUserRequest request, ServerCallContext context): async Task<GrpcEmpty>
+    +SearchUser(GrpcSearchUserRequest request, ServerCallContext context): async Task<GrpcListAccountIds>
+}
+
+class GetSimpleUsersQuery {
+    +AccountId: Guid
+}
+
+class GetUserDetailsQuery {
+    +AccountId: Guid
+}
+
+class CreateUserCommand {
+    +User: User
+}
+
+class SearchSimpleUserQuery{
+    +Keyword: string
+}
+
+class GetSimpleUsersQueryHandler {
+    -_context: IApplicationDbContext
+    +Handle(GetSimpleUsersQuery request, CancellationToken cancellationToken): async Task<Result<<List<User>?>> 
+}
+
+class GetUserDetailsQueryHandler {
+    -_context: IApplicationDbContext
+    -_mapper: IMapper
+    -_grpcAccountClient: GrpcAccountClient
+    +Handle(GetUserDetailsQuery request, CancellationToken cancellationToken): async Task<Result<GetUserDetailsResponse?>> 
+}
+
+class CreateUserCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +Handle(CreateUserCommand request, CancellationToken cancellationToken): async Task<Result<User?>> 
+}
+
+class SearchSimpleUserQueryHandler {
+    -_context: IApplicationDbContext
+    +Handle(SearchSimpleUserQuery request, CancellationToken cancellationToken): async Task<Result<<List<Guid>?>> 
+}
+
+interface IMapper{
+    #Map<TDestination>(object source): TDestination
+}
+
+' Grpc DTO
+class GrpcEmpty{
+}
+
+class GrpcGetSimpleUsersRequest{
+    +AccountId: HashSet<Guid>
+}
+
+class GrpcAccountIdRequest{
+    +AccountId: Guid
+}
+
+class GrpcSearchUserRequest{
+    +Keyword: string
+}
+
+class GrpcCreateUserRequest{
+    +AccountId: string
+    +FullName: string
+    +AccountUserName: string
+    +Avatar: string
+}
+
+class GrpcListAccountIds{
+    +AccountIds: List<Guid>
+}
+
+class GrpcSimpleUser{
+    +AccountId: Guid
+    +DisplayName: string
+    +AvtUrl: string
+}
+
+class GrpcUserDetailDTO{
+    +AccountId: Guid
+    +DisplayName: string
+    +AvatarUrl: string
+    +BackgroundUrl: string
+    +Dob: DateTime
+    +Gender: string
+    +Bio: string
+    +Address: string
+    +TotalFollowers: int
+    +TotalFollowing: int
+    +TotalRecipes: int
+    +IsAccountAcitive: bool
+    +AccountUserName: string
+    +IsAdmin: bool
+    +AccountEmail: string
+    +AccountPhoneNumber: string
+}
+
+class GrpcGetSimpleUsersDTO{
+    Users: Dictionary<string, GrpcSimpleUser>
+}
+
+' DTO
+class GetUserDetailsResponse{
+    +AccountId: Guid
+    +DisplayName: string
+    +AvatarUrl: string
+    +BackgroundUrl: string
+    +Dob: DateTime
+    +Gender: string
+    +Bio: string
+    +Address: string
+    +TotalFollowers: int
+    +TotalFollowing: int
+    +TotalRecipes: int
+    +IsAccountAcitive: bool
+    +AccountUserName: string
+    +IsAdmin: bool
+    +AccountEmail: string
+    +AccountPhoneNumber: string
+}
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +AlreadyExistUser: Error
+    {static} +NullParameters: Error
+    {static} +AddUserFail: Error
+    {static} +UpdateUserFail: Error
+    {static} +DeleteUserFail: Error
+}
+
+together {
+    class GrpcUserBase #Black;line:white;text:white
+    class GrpcAccountIdRequest #DarkViolet;line:white;text:white
+    class GrpcAccountClient #DarkViolet;line:white;text:white
+}
+
+GrpcUserService -[hidden]down-|> GetSimpleUsersQuery
+GrpcUserService -[hidden]down-|> GetUserDetailsQuery
+GrpcUserService -[hidden]down-|> CreateUserCommand
+GrpcUserService -[hidden]down-|> SearchSimpleUserQuery
+
+GetSimpleUsersQuery -[hidden]down-|> GetSimpleUsersQueryHandler
+GetUserDetailsQuery -[hidden]down-|> GetUserDetailsQueryHandler
+CreateUserCommand -[hidden]down-|> CreateUserCommandHandler
+SearchSimpleUserQuery -[hidden]down-|> SearchSimpleUserQueryHandler
+
+GrpcUserService "1"--"1" GrpcGetSimpleUsersDTO
+GrpcUserService "1"--"1" GrpcGetSimpleUsersRequest
+GrpcUserService "1"--"1" GetSimpleUsersQuery
+GrpcUserService "1"--"1" GrpcSimpleUser
+GrpcUserService "1"--"1" GrpcGetSimpleUsersDTO
+
+GrpcUserService "1"--"1" GrpcUserDetailDTO
+GrpcUserService "1"--"1" GetUserDetailsQuery
+GrpcUserService "1"--"1" GetUserDetailsResponse
+GrpcUserService "1"--"1" GrpcUserDetailDTO
+
+GrpcUserService "1"--"1" GrpcEmpty
+GrpcUserService "1"--"1" GrpcCreateUserRequest
+GrpcUserService "1"--"1" User
+GrpcUserService "1"--"1" CreateUserCommand
+
+GrpcUserService "1"--"1" GrpcListAccountIds
+GrpcUserService "1"--"1" GrpcSearchUserRequest
+GrpcUserService "1"--"1" SearchSimpleUserQuery
+
+GetSimpleUsersQueryHandler "1"--"1" GetSimpleUsersQuery
+GetSimpleUsersQueryHandler "1"--"1" User
+GetSimpleUsersQueryHandler "1"----"1" Result
+GetSimpleUsersQueryHandler "1" o-- "1" IApplicationDbContext
+GetSimpleUsersQueryHandler "1"--"1" UserError
+
+GetUserDetailsQueryHandler "1"--"1" GetUserDetailsQuery
+GetUserDetailsQueryHandler "1"--"1" GetUserDetailsResponse
+GetUserDetailsQueryHandler "1"----"1" Result
+GetUserDetailsQueryHandler "1"--"1" GrpcAccountIdRequest
+GetUserDetailsQueryHandler "1" o-- "1" IApplicationDbContext
+GetUserDetailsQueryHandler "1" o-- "1" IMapper
+GetUserDetailsQueryHandler "1" o-- "1" GrpcAccountClient
+GetUserDetailsQueryHandler "1"--"1" UserError
+
+CreateUserCommandHandler "1"--"1" CreateUserCommand
+CreateUserCommandHandler "1"--"1" User
+CreateUserCommandHandler "1"----"1" Result
+CreateUserCommandHandler "1" o-- "1" IApplicationDbContext
+CreateUserCommandHandler "1" o-- "1" IUnitOfWork
+CreateUserCommandHandler "1"--"1" UserError
+
+SearchSimpleUserQueryHandler "1"--"1" SearchSimpleUserQuery
+SearchSimpleUserQueryHandler "1"----"1" Result
+SearchSimpleUserQueryHandler "1" o-- "1" IApplicationDbContext
+SearchSimpleUserQueryHandler "1"--"1" UserError
+
+@enduml

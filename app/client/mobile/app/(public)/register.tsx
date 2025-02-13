@@ -99,7 +99,7 @@ const Register = () => {
           isLoading={isSubmitting}
         />
         <Pressable onPress={navigateToSignInScreen}>
-          <Text className='text-center font-medium text-sm text-gray-300'>
+          <Text className='text-center font-medium text-lg text-gray-300'>
             Already have an account?{" "}
             <Text className='font-medium text-primary'>Login</Text>
           </Text>
@@ -107,7 +107,7 @@ const Register = () => {
 
         <View className='flex-row items-center justify-center gap-5'>
           <View className='h-[1px] grow bg-gray-300' />
-          <Text className='text-center font-medium text-sm text-gray-300'>
+          <Text className='text-center font-medium text-lg text-gray-300'>
             Sign in with
           </Text>
           <View className='h-[1px] grow bg-gray-300' />

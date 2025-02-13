@@ -95,21 +95,21 @@ const Welcome = () => {
           <Animated.View className='mt-[20vh] flex gap-3.5'>
             <Animated.Text
               style={textStyles[0]}
-              className='font-bold text-5xl text-black'
+              className='font-bold text-6xl text-black'
             >
               Welcome to
             </Animated.Text>
 
             <Animated.Text
               style={textStyles[1]}
-              className='font-bold text-4xl text-primary'
+              className='font-bold text-5xl text-primary'
             >
               Tastopia
             </Animated.Text>
 
             <Animated.Text
               style={textStyles[2]}
-              className='font-sans text-lg text-white'
+              className='font-sans text-xl text-white'
             >
               Where Flavors Unite
             </Animated.Text>
@@ -118,7 +118,7 @@ const Welcome = () => {
           <View className='absolute bottom-[6vh] left-3.5 flex w-full gap-4'>
             <View className='flex-row items-center justify-center gap-5'>
               <View className='h-[1px] grow bg-gray-300' />
-              <Animated.Text className='text-center font-medium text-sm text-gray-300'>
+              <Animated.Text className='text-center font-medium text-lg text-gray-300'>
                 Sign in with
               </Animated.Text>
               <View className='h-[1px] grow bg-gray-300' />
@@ -143,7 +143,7 @@ const Welcome = () => {
             </Button>
 
             <Pressable onPress={navigateToLoginScreen}>
-              <Text className='text-center font-medium text-sm text-gray-300'>
+              <Text className='text-center font-medium text-lg text-gray-300'>
                 Already have an account?{" "}
                 <Text className='font-medium text-white underline'>Sign In</Text>
               </Text>

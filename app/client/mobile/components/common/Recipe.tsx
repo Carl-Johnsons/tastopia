@@ -5,8 +5,6 @@ import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import InteractionSection from "./InteractionSection";
 import { RefObject, useRef } from "react";
-import BottomSheet from "@gorhom/bottom-sheet";
-import SettingRecipe from "./SettingRecipe";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 const Recipe = ({
@@ -34,7 +32,7 @@ const Recipe = ({
   const handleOnPress = () => {
     router.push({
       pathname: "/(protected)/community/[id]",
-      params: { id, authorId }
+      params: { id }
     });
   };
   const handleTouchMenu = () => {
@@ -93,7 +91,7 @@ const Recipe = ({
               <Text
                 numberOfLines={4}
                 ellipsizeMode='tail'
-                className='body-regular text-black_white'
+                className='paragraph-regular text-black_white'
               >
                 {description}
               </Text>
