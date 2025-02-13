@@ -1,15 +1,17 @@
 import "react-native-reanimated";
-import axios from "axios";
+import { Canvas, rect, DiffRect, rrect } from "@shopify/react-native-skia";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "expo-router";
 import { Worklets } from "react-native-worklets-core";
 import {
+  Alert,
+  GestureResponderEvent,
+  Image,
   StyleSheet,
-  View,
   Text,
   TouchableOpacity,
-  Image,
-  GestureResponderEvent
+  View
 } from "react-native";
-import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Camera,
   CameraDevice,
@@ -19,10 +21,15 @@ import {
   runAtTargetFps,
   useFrameProcessor
 } from "react-native-vision-camera";
-import { Canvas, rect, DiffRect, rrect } from "@shopify/react-native-skia";
+import {
+  useIngredientPredictBoxMutation,
+  useIngredientPredictMutation
+} from "@/api/ingredient-predict";
+
 var RNFS = require("react-native-fs");
 
 const Capture = () => {
+  const router = useRouter();
   const [isActive, setIsActive] = useState(true);
   const [deviceCode, setDeviceCode] = useState<CameraPosition>("back");
   const devices = Camera.getAvailableCameraDevices();
@@ -31,12 +38,25 @@ const Capture = () => {
   const [prediction, setPrediction] = useState("");
   const [isImageView, setIsImageView] = useState(false);
   const [capturedImage, setCapturedImage] = useState("");
-  const [boxes, setBoxes] = useState([]);
+  const { mutateAsync: predictAsync } = useIngredientPredictMutation();
+  const { mutateAsync: predictBoxAsync } = useIngredientPredictBoxMutation();
+  const [boxes, setBoxes] = useState<number[][]>([]);
 
-  const cameraPermissionStatus = Camera.getCameraPermissionStatus();
-  if (cameraPermissionStatus != "granted") {
-    Camera.requestCameraPermission();
-  }
+  const requestPermissionAsync = async () => {
+    let finalPermissionStatus = Camera.getCameraPermissionStatus();
+    if (finalPermissionStatus != "granted") {
+      finalPermissionStatus = await Camera.requestCameraPermission();
+    }
+
+    if (finalPermissionStatus != "granted") {
+      Alert.alert("In order to use the camera you must allowed camera permission!");
+      router.back();
+    }
+  };
+
+  useEffect(() => {
+    requestPermissionAsync();
+  }, []);
 
   const flipCamera = () => {
     if (deviceCode == "back") {
@@ -78,7 +98,6 @@ const Capture = () => {
 
       setIsImageView(true);
 
-      let formData = new FormData();
       // const image = await fetch(`file://${snapshot.path}`);
       // const blob = await image.blob();
 
@@ -87,42 +106,12 @@ const Capture = () => {
         type: "image/jpeg",
         name: "file"
       };
-      formData.append("file", file as unknown as Blob);
+      const predictResponse = await predictAsync({ file: file as unknown as Blob });
+      setPrediction(predictResponse.classifications[0].name);
       setCapturedImage(`file://${snapshot.path}`);
 
-      const url = "/predict";
-      const res = await axios.request({
-        url: url,
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-          accept: "application/json"
-        },
-        data: formData
-      });
-      if (res) {
-        setPrediction(res.data.classifications[0]["name"]);
-      } else {
-        console.error("Error sending frame to server:", res);
-      }
-
-      const url1 = "/predict_box";
-      const res1 = await axios.request({
-        url: url1,
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-          accept: "application/json"
-        },
-        data: formData
-      });
-      if (res1) {
-        // console.log(res1.data);aa
-        if (isImageView) setBoxes(res1.data.boxes);
-      } else {
-        console.error("Error sending frame to server:", res);
-      }
-
+      const predictBoxResponse = await predictBoxAsync({ file: file as unknown as Blob });
+      if (isImageView) setBoxes(predictBoxResponse.boxes);
       RNFS.unlink(snapshot.path);
     } catch (error) {
       console.error("Error capturing image:", error);
@@ -151,26 +140,9 @@ const Capture = () => {
       // const blob = await response.blob();
       // formData.append("file", blob);
       // console.log(formData);
+      const predictResponse = await predictAsync({ file: file as unknown as Blob });
 
-      const url = "/predict";
-      const res = await axios.request({
-        url: url,
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-          accept: "application/json"
-        },
-        data: formData
-      });
-      if (res) {
-        // console.log(
-        //   "Frame sent to server:",
-        //   res.data.classifications[0]["name"]
-        // );
-        setPrediction(res.data.classifications[0]["name"]);
-      } else {
-        console.error("Error sending frame to server:", res);
-      }
+      setPrediction(predictResponse.classifications[0].name);
 
       RNFS.unlink(snapshot.path);
     } catch (error) {
