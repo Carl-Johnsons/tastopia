@@ -68,12 +68,13 @@ const RecipesTab = ({ accountId }: RecipesTabProps) => {
   }, [data]);
 
   return (
-    <TabView.Item style={{ width: "100%", height: "68%" }}>
+    <TabView.Item style={{ width: "100%", height: "100%", flex: 1 }}>
       <SafeAreaView
         style={{
           width: "100%",
           height: "100%",
-          alignItems: "center"
+          alignItems: "center",
+          flex: 1
         }}
       >
         <FlatList

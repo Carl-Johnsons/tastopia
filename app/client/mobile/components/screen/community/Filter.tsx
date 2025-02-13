@@ -45,21 +45,7 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
             <View
               className={`flex-center flex-row gap-2 rounded-full border-2 border-primary px-1 py-1 ${isSelected ? "bg-primary" : "bg-white_black"}`}
             >
-              <View
-                className={`rounded-full p-[0.5px] ${isSelected ? "bg-white" : ""}`}
-                style={
-                  !isSelected &&
-                  Platform.select({
-                    ios: {
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 10
-                    },
-                    android: { elevation: 5 }
-                  })
-                }
-              >
+              <View className={`rounded-full p-[0.5px] ${isSelected ? "bg-white" : ""}`}>
                 <Image
                   source={item.imageUrl}
                   style={[{ width: 50, height: 50, borderRadius: 50 }]}

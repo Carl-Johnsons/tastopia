@@ -25,7 +25,7 @@ const Body = ({ accountId }: BodyProps) => {
   ];
 
   return (
-    <View className='h-full'>
+    <View className='h-full flex-1'>
       <CustomTab
         variant='primary'
         tabItems={tabs}
