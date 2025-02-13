@@ -8,17 +8,18 @@ import { colors } from "@/constants/colors";
 import { Controller, useFormContext } from "react-hook-form";
 
 interface DraggableIngredientProps {
+  value: string;
   index: number;
   remove: (index: number) => void;
 }
 
-const CreateIngredient = ({ index, remove }: DraggableIngredientProps) => {
+const UpdateIngredient = ({ value, index, remove }: DraggableIngredientProps) => {
   const { c } = useColorizer();
   const { black, white } = colors;
-  const { t } = useTranslation("createRecipe");
 
-  const { control } = useFormContext();
-  const { getValues } = useFormContext();
+  const { control, getValues } = useFormContext();
+  const { t } = useTranslation("createRecipe");
+  const [inputValue, setInputValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
   const ingredients = getValues("ingredients");
 
@@ -34,24 +35,29 @@ const CreateIngredient = ({ index, remove }: DraggableIngredientProps) => {
   }, []);
 
   const confirmRemoveItem = () => {
-    Alert.alert(
-      t("removeIngredientAlert.title"),
-      t("removeIngredientAlert.description"),
-      [
-        {
-          text: t("removeIngredientAlert.cancel")
-        },
-        {
-          text: t("removeIngredientAlert.delete"),
-          onPress: handleRemoveItem
-        }
-      ]
-    );
+    if (inputValue !== "") {
+      Alert.alert(
+        t("removeIngredientAlert.title"),
+        t("removeIngredientAlert.description"),
+        [
+          {
+            text: t("removeIngredientAlert.cancel")
+          },
+          {
+            text: t("removeIngredientAlert.delete"),
+            onPress: () => {
+              handleRemoveItem();
+            }
+          }
+        ]
+      );
+    } else {
+      handleRemoveItem();
+    }
   };
 
   return (
     <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
-      {/* Remove button */}
       {ingredients.length > 1 && (
         <TouchableOpacity
           style={styles.iconContainer}
@@ -65,7 +71,6 @@ const CreateIngredient = ({ index, remove }: DraggableIngredientProps) => {
         </TouchableOpacity>
       )}
 
-      {/* Input field */}
       <View style={styles.inputContainer}>
         <Controller
           control={control}
@@ -77,11 +82,10 @@ const CreateIngredient = ({ index, remove }: DraggableIngredientProps) => {
                 onBlur();
                 setIsFocused(false);
               }}
-              style={[
-                styles.input,
-                isFocused && styles.inputFocused,
-                { color: c(black.DEFAULT, white.DEFAULT) }
-              ]}
+              style={
+                (isFocused ? [styles.input, styles.inputFocused] : styles.input,
+                { color: `${c(black.DEFAULT, white.DEFAULT)}` })
+              }
               value={value}
               onChangeText={onChange}
               placeholder={t("formPlaceholder.ingredients")}
@@ -94,7 +98,7 @@ const CreateIngredient = ({ index, remove }: DraggableIngredientProps) => {
   );
 };
 
-export default CreateIngredient;
+export default UpdateIngredient;
 
 const styles = StyleSheet.create({
   container: {
