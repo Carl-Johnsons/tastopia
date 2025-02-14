@@ -288,7 +288,7 @@ export const useFollowUnfollowUser = () => {
 
 export const useGetUserByAccountId = (accountId: string) => {
   return useQuery<IGetUserDetailsResponse>({
-    queryKey: ["recipe", accountId],
+    queryKey: ["user", accountId],
     queryFn: async () => {
       const { data } = await protectedAxiosInstance.post<IGetUserDetailsResponse>(
         "/api/user/get-user-detail-by-account-id",

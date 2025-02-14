@@ -1,32 +1,39 @@
 import {
-  ActivityIndicator,
   FlatList,
   Platform,
   RefreshControl,
   SafeAreaView,
   StyleSheet,
-  Text,
   View
 } from "react-native";
 import { TabView } from "@rneui/themed";
 import { useRecipesFeedByAuthorId } from "@/api/recipe";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState
+} from "react";
 import Recipe from "@/components/common/Recipe";
-import BottomSheet from "@gorhom/bottom-sheet";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import Empty from "../community/Empty";
-import SettingRecipe from "@/components/common/SettingRecipe";
-import { colors } from "@/constants/colors";
+import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 type RecipesTabProps = {
   accountId: string;
+  bottomSheetRef: RefObject<BottomSheetMethods>;
+  setCurrentRecipeId: Dispatch<SetStateAction<string>>;
+  setCurrentAuthorId: Dispatch<SetStateAction<string>>;
 };
 
-const RecipesTab = ({ accountId }: RecipesTabProps) => {
-  const { primary } = colors;
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const [currentRecipeId, setCurrentRecipeId] = useState("");
-  const [currentAuthorId, setCurrentAuthorId] = useState("");
+const RecipesTab = ({
+  accountId,
+  bottomSheetRef,
+  setCurrentAuthorId,
+  setCurrentRecipeId
+}: RecipesTabProps) => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
@@ -72,7 +79,7 @@ const RecipesTab = ({ accountId }: RecipesTabProps) => {
   }, [data]);
 
   return (
-    <TabView.Item style={{ width: "100%", height: "100%", flex: 1 }}>
+    <TabView.Item style={{ width: "100%", height: "100%", flex: 1, marginTop: 16 }}>
       <SafeAreaView
         style={{
           width: "100%",
@@ -95,16 +102,14 @@ const RecipesTab = ({ accountId }: RecipesTabProps) => {
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.1}
           renderItem={renderItem}
-          ListEmptyComponent={() => <Empty />}
+          ListEmptyComponent={() => (
+            <View style={{ flex: 1, marginTop: 50 }}>
+              <Empty type='emptyRecipe' />
+            </View>
+          )}
           contentContainerStyle={{
             paddingBottom: Platform.select({ ios: 240 })
           }}
-        />
-
-        <SettingRecipe
-          id={currentRecipeId}
-          authorId={currentAuthorId}
-          ref={bottomSheetRef}
         />
       </SafeAreaView>
     </TabView.Item>

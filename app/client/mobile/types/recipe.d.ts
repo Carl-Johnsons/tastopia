@@ -94,3 +94,11 @@ type BookMarkRecipeResponse = {
   };
   isBookmark: boolean;
 };
+
+interface ICommentResponse {
+  paginatedData: IAccountRecipeCommentResponse[];
+  metadata: {
+    hasNextPage: boolean;
+    totalPage: number;
+  };
+}
