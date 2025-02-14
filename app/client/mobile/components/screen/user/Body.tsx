@@ -1,16 +1,25 @@
 import { globalStyles } from "@/components/common/GlobalStyles";
 import CustomTab from "@/components/common/Tab";
-import { TabView } from "@rneui/themed";
 import { useTranslation } from "react-i18next";
-import { Text, View, StyleSheet, SafeAreaView, Platform } from "react-native";
+import { View, StyleSheet, Platform } from "react-native";
 import RecipesTab from "./RecipesTab";
 import CommentsTab from "./CommentsTab";
+import { Dispatch, RefObject, SetStateAction } from "react";
+import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 type BodyProps = {
   accountId: string;
+  bottomSheetRef: RefObject<BottomSheetMethods>;
+  setCurrentRecipeId: Dispatch<SetStateAction<string>>;
+  setCurrentAuthorId: Dispatch<SetStateAction<string>>;
 };
 
-const Body = ({ accountId }: BodyProps) => {
+const Body = ({
+  accountId,
+  bottomSheetRef,
+  setCurrentAuthorId,
+  setCurrentRecipeId
+}: BodyProps) => {
   const { t } = useTranslation("profile");
 
   const tabs = [
@@ -33,6 +42,9 @@ const Body = ({ accountId }: BodyProps) => {
           <RecipesTab
             key='RecipesTab'
             accountId={accountId}
+            bottomSheetRef={bottomSheetRef}
+            setCurrentRecipeId={setCurrentRecipeId}
+            setCurrentAuthorId={setCurrentAuthorId}
           />,
           <CommentsTab
             key='CommentsTab'

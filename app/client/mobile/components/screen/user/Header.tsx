@@ -1,15 +1,18 @@
+import { useFollowUnfollowUser } from "@/api/user";
 import Button from "@/components/Button";
 import PreviewImage from "@/components/common/PreviewImage";
 import { colors } from "@/constants/colors";
 import { ArrowBackIcon, DotIcon, ShareIcon } from "@/constants/icons";
+import { formatDate } from "@/utils/format-date";
 import { ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View, Text } from "react-native";
+import { View, Text, Alert } from "react-native";
 
 type HeaderProps = {
+  accountId: string;
   displayName: string;
   avatarUrl: string;
   backgroundUrl: string;
@@ -17,25 +20,50 @@ type HeaderProps = {
   totalFollower?: number;
   accountUsername: string;
   bio: string;
+  createdAt: string;
+  isCurrentUser: boolean;
+  isFollowing: boolean;
 };
 
 export default function Header({
+  accountId,
   displayName,
   avatarUrl,
   backgroundUrl,
   totalRecipe,
   totalFollower,
   accountUsername,
-  bio
+  bio,
+  createdAt,
+  isCurrentUser,
+  isFollowing
 }: HeaderProps) {
   const { t } = useTranslation("profile");
   const { black, white } = colors;
   const followerCounts = totalFollower || 0;
-  const joinDate = "1 Jan 2025";
+  const [followed, setIsFollowed] = useState<boolean>(isFollowing);
+  const { mutateAsync: followUser, isLoading } = useFollowUnfollowUser();
 
   const goToUpdateProfile = useCallback(() => {
     router.push("/(protected)/menu/profile/updateProfile");
   }, [router]);
+
+  const handleFollowUnFollow = () => {
+    if (!isLoading) {
+      followUser(
+        { accountId },
+        {
+          onSuccess: async data => {
+            setIsFollowed(data.isFollowing);
+          },
+          onError: async error => {
+            console.log("Follow unfollow error", JSON.stringify(error, null, 2));
+            Alert.alert(t("followUnfollowError"));
+          }
+        }
+      );
+    }
+  };
 
   return (
     <View>
@@ -98,7 +126,7 @@ export default function Header({
                       color={white.DEFAULT}
                     />
                     <Text className='font-secondary-roman text-lg text-gray-200'>
-                      {joinDate}
+                      {formatDate(createdAt)}
                     </Text>
                   </View>
                   {bio && (
@@ -109,12 +137,23 @@ export default function Header({
                 </View>
               </View>
 
-              <Button
-                className='rounded-full border border-white px-4 py-3'
-                onPress={goToUpdateProfile}
-              >
-                <Text className='font-sans text-white'>{t("update")}</Text>
-              </Button>
+              {isCurrentUser ? (
+                <Button
+                  className='rounded-full border border-white px-4 py-3'
+                  onPress={goToUpdateProfile}
+                >
+                  <Text className='font-sans text-white'>{t("update")}</Text>
+                </Button>
+              ) : (
+                <Button
+                  className='rounded-full border border-white px-4 py-3'
+                  onPress={handleFollowUnFollow}
+                >
+                  <Text className='font-sans text-white'>
+                    {followed ? t("unfollow") : t("follow")}
+                  </Text>
+                </Button>
+              )}
             </View>
           </View>
         </LinearGradient>

@@ -1,11 +1,14 @@
 import { useGetUserByAccountId } from "@/api/user";
 import NotFound from "@/app/+not-found";
 import { globalStyles } from "@/components/common/GlobalStyles";
+import SettingRecipe from "@/components/common/SettingRecipe";
 import Body from "@/components/screen/user/Body";
 import Header from "@/components/screen/user/Header";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
+import BottomSheet from "@gorhom/bottom-sheet";
 import { useLocalSearchParams } from "expo-router";
+import { useRef, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -14,12 +17,11 @@ const Profile = () => {
   const { black, white } = colors;
   const { id: accountId } = useLocalSearchParams();
 
-  const {
-    data: accountDetailData,
-    isLoading: isLoadingAccountDetail,
-    refetch: refetchAccountDetail,
-    isRefetching: isRefetchingAccountDetail
-  } = useGetUserByAccountId(accountId as string);
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const [currentRecipeId, setCurrentRecipeId] = useState("");
+  const [currentAuthorId, setCurrentAuthorId] = useState("");
+  const { data: accountDetailData, isLoading: isLoadingAccountDetail } =
+    useGetUserByAccountId(accountId as string);
 
   if (isLoadingAccountDetail) {
     return (
@@ -45,6 +47,7 @@ const Profile = () => {
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
       <Header
+        accountId={accountDetailData.accountId}
         displayName={accountDetailData.displayName}
         avatarUrl={accountDetailData.avatarUrl}
         backgroundUrl={accountDetailData.backgroundUrl}
@@ -52,8 +55,21 @@ const Profile = () => {
         totalFollower={accountDetailData.totalFollower}
         accountUsername={accountDetailData.accountUsername}
         bio={accountDetailData.bio ?? ""}
+        createdAt={accountDetailData.createdAt}
+        isCurrentUser={accountDetailData.isCurrentUser}
+        isFollowing={accountDetailData.isFollowing}
       />
-      <Body accountId={accountDetailData.accountId} />
+      <Body
+        accountId={accountDetailData.accountId}
+        bottomSheetRef={bottomSheetRef}
+        setCurrentRecipeId={setCurrentRecipeId}
+        setCurrentAuthorId={setCurrentAuthorId}
+      />
+      <SettingRecipe
+        id={currentRecipeId}
+        authorId={currentAuthorId}
+        ref={bottomSheetRef}
+      />
     </SafeAreaView>
   );
 };

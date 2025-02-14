@@ -45,6 +45,28 @@ const useRecipesFeedByAuthorId = (authorId: string) => {
   });
 };
 
+const useCommentsByAuthorId = (authorId: string) => {
+  return useInfiniteQuery<ICommentResponse>({
+    queryKey: ["commentsByAuthorId", authorId],
+    queryFn: async ({ pageParam = 0 }) => {
+      const { data } = await protectedAxiosInstance.post<ICommentResponse>(
+        "/api/recipe/get-account-recipe-comments",
+        {
+          skip: pageParam.toString(),
+          authorId: authorId
+        }
+      );
+      return data;
+    },
+    getNextPageParam: (lastPage, pages) => {
+      if (!lastPage.metadata.hasNextPage) {
+        return undefined;
+      }
+      return pages.length;
+    }
+  });
+};
+
 const useRecipeDetail = (recipeId: string) => {
   return useQuery<RecipeDetailResponse>({
     queryKey: ["recipe", recipeId],
@@ -134,6 +156,7 @@ const useDeleteOwnRecipe = () => {
 export {
   useRecipesFeed,
   useRecipesFeedByAuthorId,
+  useCommentsByAuthorId,
   useRecipeDetail,
   useRecipeSteps,
   useCreateRecipe,
