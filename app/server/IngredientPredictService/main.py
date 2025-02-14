@@ -14,6 +14,8 @@ import uvicorn
 with open("log_config.yaml", "r") as f:
     log_config = yaml.safe_load(f.read())
 logging.config.dictConfig(log_config)
+logging.addLevelName(logging.INFO, "Information")
+logging.addLevelName(logging.WARNING, "Warning")
 
 # Load the YOLO model
 model = YOLO("./model/best.pt")

@@ -3,7 +3,9 @@ disable_existing_loggers: True
 formatters:
   colored:
     "()": colorlog.ColoredFormatter
-    format: '%(log_color)s[%(asctime)s %(levelname)s]%(reset)s %(name)s - %(message)s'
+    format: |
+     %(log_color)s[%(asctime)s %(levelname)s]%(reset)s %(name)s
+     %(message)s
     datefmt: '%H:%M:%S'
     log_colors:
       DEBUG: "cyan"
