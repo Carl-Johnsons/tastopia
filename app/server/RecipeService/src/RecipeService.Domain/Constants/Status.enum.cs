@@ -1,5 +1,4 @@
 ﻿namespace RecipeService.Domain.Constants;
-
 public enum TagStatus
 {
     Requested,

@@ -147,6 +147,22 @@ curl --location 'https://localhost:7000/api/recipe/get-account-recipe-comments' 
 "skip" : 0
 }'
 
+**user report recipe**
+curl --location 'https://localhost:7000/api/recipe/user-report-recipe' \
+--header 'Content-Type: application/json' \
+--data '{
+"recipeId" : "8e607e5c-8dbf-455b-9f5b-9c56e2d79a63",
+"reason" : "vô duyên quá đi"
+}'
+
+**user report comment**
+curl --location 'https://localhost:7000/api/recipe/user-report-comment' \
+--header 'Content-Type: application/json' \
+--data '{
+"commentId" : "f5811409-bac1-4a3d-96e9-714a16e91d18",
+"reason" : "vô duyên quá đi"
+}'
+
 # USER
 
 **search user**

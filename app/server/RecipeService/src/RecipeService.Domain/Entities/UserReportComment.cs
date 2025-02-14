@@ -1,4 +1,5 @@
-﻿using MongoDB.EntityFrameworkCore;
+﻿using Contract.Constants;
+using MongoDB.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.Domain.Entities;
@@ -17,8 +18,5 @@ public class UserReportComment : BaseMongoDBAuditableEntity
     public string Reason { get; set; } = null!;
 
     [Required]
-    [MaxLength(20)]
-    public string Status { get; set; } = "Pending";
-
-    public virtual Comment? Comment { get; set; }
+    public ReportStatus Status { get; set; } = ReportStatus.Pending;
 }

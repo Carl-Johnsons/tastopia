@@ -9,12 +9,12 @@ using RecipeService.Application.Recipes.Queries;
 using RecipeService.Application.Tags.Queries;
 using RecipeService.Application.UserBookmarkRecipes.Commands;
 using RecipeService.Application.UserBookmarkRecipes.Queries;
+using RecipeService.Application.UserReportComments.Commands;
+using RecipeService.Application.UserReportRecipes.Commands;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
-
 namespace RecipeService.API.Controllers;
-
 [Route("api/recipe")]
 [ApiController]
 [Authorize]
@@ -304,6 +304,44 @@ public class RecipeController : BaseApiController
         {
             AccountId = Guid.Parse(subjectId!),
             Skip = getRecipeBookmarkDTO.Skip
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("user-report-recipe")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(UserReportRecipe), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UserReportRecipe([FromBody] UserReportRecipeDTO userReportRecipeDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new UserReportRecipeCommand
+        {
+            ReporterId = Guid.Parse(subjectId!),
+            RecipeId = userReportRecipeDTO.RecipeId,
+            Reason = userReportRecipeDTO.Reason,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("user-report-comment")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(UserReportComment), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UserReportRecipe([FromBody] UserReportCommentDTO userReportCommentDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new UserReportCommentCommand
+        {
+            ReporterId = Guid.Parse(subjectId!),
+            CommentId = userReportCommentDTO.CommentId,
+            Reason = userReportCommentDTO.Reason,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
