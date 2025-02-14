@@ -10,6 +10,9 @@ public class PaginatedTagListResponse : BasePaginatedResponse<Tag, AdvancePagina
 
 public class PaginatedRecipeCommentListResponse : BasePaginatedResponse<RecipeCommentResponse, AdvancePaginatedMetadata>;
 
+public class PaginatedAccountRecipeCommentListResponse : BasePaginatedResponse<AccountRecipeCommentResponse, AdvancePaginatedMetadata>;
+
+
 
 
 

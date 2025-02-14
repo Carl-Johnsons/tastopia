@@ -28,7 +28,7 @@ public class UserData
                 DisplayName = "Kian",
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
-                TotalFollwer = 1,
+                TotalFollower = 1,
                 AccountUsername = "kian1234"
                 
 
@@ -54,7 +54,7 @@ public class UserData
                 DisplayName = "An",
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
-                TotalFollwer = 1,
+                TotalFollower = 1,
                 AccountUsername = "an1234"
 
             },
@@ -84,7 +84,7 @@ public class UserData
                 DisplayName = "Lainey",
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
-                TotalFollwer = 1,
+                TotalFollower = 1,
                 AccountUsername = "lainey1234"
 
             },
@@ -93,7 +93,7 @@ public class UserData
                 DisplayName = "Willa",
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/orvtiv8oxehgwbvmt403.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
-                TotalFollwer = 1,
+                TotalFollower = 1,
                 AccountUsername = "willa1234"
             },
             //more 20 user

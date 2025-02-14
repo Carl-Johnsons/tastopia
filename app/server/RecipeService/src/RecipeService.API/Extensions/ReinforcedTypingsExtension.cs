@@ -1,6 +1,7 @@
 ﻿using RecipeService.API.DTOs;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
+using RecipeService.Domain.Responses;
 using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using System.Reflection;
@@ -65,7 +66,9 @@ public static class ReinforcedTypingsExtension
             typeof(UserReportRecipe),
             typeof(BookmarkRecipeDTO),
             typeof(GetRecipeBookmarkDTO),
-            typeof(GetRecipeStepsDTO)
+            typeof(GetRecipeStepsDTO),
+            typeof(GetAccountRecipeCommentsDTO),
+            typeof(AccountRecipeCommentResponse),
         ], config =>
         {
             config.FlattenHierarchy()

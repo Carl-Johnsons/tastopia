@@ -92,7 +92,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                     b.Property<int?>("TotalFollowing")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("TotalFollwer")
+                    b.Property<int?>("TotalFollower")
                         .HasColumnType("integer");
 
                     b.Property<int?>("TotalRecipe")
