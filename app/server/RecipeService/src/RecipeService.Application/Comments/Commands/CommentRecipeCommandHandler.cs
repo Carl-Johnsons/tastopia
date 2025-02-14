@@ -4,6 +4,7 @@ using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using RecipeService.Application.Recipes.Commands;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
@@ -24,14 +25,14 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
-    private readonly ILogger<CommentRecipeCommandHandler> _logger;
+    private readonly ILogger<PublishUserSearchRecipeCommandHandler> _logger;
 
 
     public CommentRecipeCommandHandler(IApplicationDbContext context,
         IUnitOfWork unitOfWork,
         IMapper mapper,
         GrpcUser.GrpcUserClient grpcUserClient,
-        ILogger<CommentRecipeCommandHandler> logger)
+        ILogger<PublishUserSearchRecipeCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;

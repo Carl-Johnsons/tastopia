@@ -163,6 +163,13 @@ curl --location 'https://localhost:7000/api/recipe/user-report-comment' \
 "reason" : "vô duyên quá đi"
 }'
 
+**create user search recipe keyword**
+curl --location 'https://localhost:7000/api/recipe/create-user-search-recipe' \
+--header 'Content-Type: application/json' \
+--data '{
+"keyword" : "Valentine"
+}'
+
 # USER
 
 **search user**
