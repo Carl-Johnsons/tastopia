@@ -12,13 +12,14 @@ import { useCommentsByAuthorId } from "@/api/recipe";
 import { useCallback, useEffect, useState } from "react";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import Empty from "../community/Empty";
+import Comment from "./Comment";
 
 type CommentsTabProps = {
   accountId: string;
 };
 
 const CommentsTab = ({ accountId }: CommentsTabProps) => {
-  const [comments, setComments] = useState<IComment[]>([]);
+  const [comments, setComments] = useState<IAccountRecipeCommentResponse[]>([]);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
     useCommentsByAuthorId(accountId);
 
@@ -33,12 +34,12 @@ const CommentsTab = ({ accountId }: CommentsTabProps) => {
   };
 
   const renderItem = useCallback(
-    ({ item, index }: { item: IComment; index: number }) => (
+    ({ item, index }: { item: IAccountRecipeCommentResponse; index: number }) => (
       <View
-        className='px-4'
+        className='w-full'
         testID='comment'
       >
-        <Text>{item.content}</Text>
+        <Comment {...item} />
         {index !== comments.length - 1 && (
           <View className='my-4 h-[1px] w-full bg-gray-300' />
         )}
@@ -57,7 +58,15 @@ const CommentsTab = ({ accountId }: CommentsTabProps) => {
   }, [data]);
 
   return (
-    <TabView.Item style={{ width: "100%", height: "100%", flex: 1, marginTop: 16 }}>
+    <TabView.Item
+      style={{
+        width: "100%",
+        height: "100%",
+        flex: 1,
+        marginTop: 16,
+        paddingHorizontal: 12
+      }}
+    >
       <SafeAreaView
         style={{
           width: "100%",
@@ -67,6 +76,7 @@ const CommentsTab = ({ accountId }: CommentsTabProps) => {
         }}
       >
         <FlatList
+          showsVerticalScrollIndicator={false}
           removeClippedSubviews
           data={comments}
           keyExtractor={keyExtractor}

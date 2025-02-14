@@ -57,8 +57,8 @@ const Menu = () => {
             <History />
             <View style={{ paddingBlock: 0.06 * height }}>
               <View
-                className='flex-row flex-wrap gap-6'
-                style={{ columnGap: 8 }}
+                className='flex-row flex-wrap gap-4'
+                style={{ columnGap: 12 }}
               >
                 {ITEM_TITLE.map((item, index) => (
                   <ItemCard

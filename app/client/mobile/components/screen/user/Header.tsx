@@ -80,11 +80,11 @@ export default function Header({
                 color={white.DEFAULT}
                 onPress={router.back}
               />
-              <ShareIcon
+              {/* <ShareIcon
                 width={28}
                 height={28}
                 color={white.DEFAULT}
-              />
+              /> */}
             </View>
 
             <View className='flex-row items-center justify-between'>
