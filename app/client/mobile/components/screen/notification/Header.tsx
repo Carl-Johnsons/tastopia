@@ -1,16 +1,22 @@
 import { colors } from "@/constants/colors";
 import { ArrowBackIcon } from "@/constants/icons";
 import useColorizer from "@/hooks/useColorizer";
+import {
+  NotificationType,
+  saveNotificationData,
+  selectNotificationType
+} from "@/slices/notification.slice";
+import { useAppDispatch } from "@/store/hooks";
 import { router } from "expo-router";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, StyleSheet, View } from "react-native";
+import Animated, { LinearTransition } from "react-native-reanimated";
 
 export default function Header() {
   const { t } = useTranslation("notification");
   const { c } = useColorizer();
   const { black, white } = colors;
-  const [notificationType, setNotificationType] = useState<NotificationType>("Community");
+  const notificationType = selectNotificationType();
 
   const styles = StyleSheet.create({
     wrapper: {
@@ -66,18 +72,19 @@ export default function Header() {
   );
 }
 
-type NotificationType = "Community" | "System";
-
 const Tab = ({
   isActive,
-  label
+  label,
+  value
 }: {
   isActive: boolean;
   label: string;
   value: NotificationType;
 }) => {
+  const dispatch = useAppDispatch();
+
   const handlePress = () => {
-    console.log("Pressed");
+    dispatch(saveNotificationData({ type: value }));
   };
 
   const styles = StyleSheet.create({
@@ -90,16 +97,20 @@ const Tab = ({
   });
 
   return (
-    <Pressable
-      onPress={handlePress}
-      className={`w-full items-center justify-center ${isActive && "border-primary"}`}
+    <Animated.View
       style={[isActive && styles.activeWrapper, styles.wrapper]}
+      className={`${isActive && "border-primary"}`}
     >
-      <Text
-        className={`font-medium text-xl text-gray-500 ${isActive && "text-black_white"}`}
+      <Pressable
+        onPress={handlePress}
+        className='h-full w-full items-center justify-center'
       >
-        {label}
-      </Text>
-    </Pressable>
+        <Text
+          className={`font-medium text-xl text-gray-500 ${isActive && "text-black_white"}`}
+        >
+          {label}
+        </Text>
+      </Pressable>
+    </Animated.View>
   );
 };
