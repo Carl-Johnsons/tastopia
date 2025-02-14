@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
@@ -34,6 +35,13 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
             if (reporterId == Guid.Empty || commentId == Guid.Empty || string.IsNullOrEmpty(reason))
             {
                 return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NullParameter);
+            }
+
+            var comment = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable().SelectMany(r => r.Comments).Where(c => c.Id == commentId).SingleOrDefault();
+
+            if (comment == null)
+            {
+                return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.AddUserReportCommentFail, "Not found comment");
             }
 
             var report = _context.UserReportComments.Where(r => r.AccountId == reporterId && r.CommentId == commentId).FirstOrDefault();

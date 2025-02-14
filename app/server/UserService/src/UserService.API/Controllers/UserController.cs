@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
+using UserService.Application.UserReports.Commands;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
 using UserService.Domain.Responses;
@@ -158,5 +159,24 @@ public class UserController : BaseApiController
 
         result.ThrowIfFailure();
         return NoContent();
+    }
+
+    [HttpPost("user-report-user")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(UserReportUserResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UserReportUser([FromBody] UserReportUserDTO userReportUserDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new UserReportUserCommand
+        {
+            ReporterId = Guid.Parse(subjectId!),
+            ReportedId = userReportUserDTO.AccountId,
+            Reason = userReportUserDTO.Reason,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
     }
 }

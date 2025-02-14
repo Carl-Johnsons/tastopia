@@ -206,6 +206,14 @@ curl --location 'https://localhost:7000/api/user/get-user-detail-by-account-id' 
 "accountId" : "bb06e4ec-f371-45d5-804e-22c65c77f67d"
 }'
 
+**user report user**
+curl --location 'https://localhost:7000/api/user/user-report-user' \
+--header 'Content-Type: application/json' \
+--data '{
+"accountId" : "594a3fc8-3d24-4305-a9d7-569586d0604e",
+"reason" : "vô duyên quá đi"
+}'
+
 # TRACKING
 
 **Get user view recipe detail history**

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Contract.Constants;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UserService.Domain.Entities;
@@ -18,7 +19,7 @@ public class UserReport : BaseAuditableEntity
 
     [Required]
     [MaxLength(20)]
-    public string Status { get; set; } = null!;
+    public ReportStatus Status { get; set; } = ReportStatus.Pending;
 
     public virtual User? User { get; set; }
     public virtual User? Reported { get; set; }

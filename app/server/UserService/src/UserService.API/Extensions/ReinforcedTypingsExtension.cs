@@ -59,6 +59,8 @@ public static class ReinforcedTypingsExtension
             typeof(GetUserDetailsResponse),
             typeof(PaginatedSimpleUserListResponse),
             typeof(SimpleUserResponse),
+            typeof(UserReportUserDTO),
+            typeof(UserReportUserResponse),
         ], config =>
         {
             config.FlattenHierarchy()

@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
@@ -35,6 +37,11 @@ public class UserReportRecipeCommandHandler : IRequestHandler<UserReportRecipeCo
             if (reporterId == Guid.Empty || recipeId == Guid.Empty || string.IsNullOrEmpty(reason))
             {
                 return Result<UserReportRecipeResponse?>.Failure(UserReportRecipeError.NullParameter);
+            }
+            var recipe = await _context.Recipes.Where(r => r.Id == recipeId).SingleOrDefaultAsync();
+            if (recipe == null)
+            {
+                return Result<UserReportRecipeResponse?>.Failure(UserReportRecipeError.AddUserReportRecipeFail, "Not found recipe");
             }
 
             var report = _context.UserReportRecipes.Where(r => r.AccountId == reporterId && r.RecipeId == recipeId).FirstOrDefault();
