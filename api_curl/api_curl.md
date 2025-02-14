@@ -1,7 +1,7 @@
 # RECIPE
 
 **create recipe**
-curl --location 'http://localhost:5000/api/recipe/create-recipe' \
+curl --location 'https://localhost:7000/api/recipe/create-recipe' \
 --form 'title="title test 1"' \
 --form 'recipeImage=@"/D:/Images/Anime Image/0baca657530fd9c5_9d9622b58f6f65a2_5617415044574976143215.jpg"' \
 --form 'description="desciription test 1"' \
@@ -19,7 +19,7 @@ curl --location 'http://localhost:5000/api/recipe/create-recipe' \
 --form 'additionTagValues[0]="AdditionTagValues 0"' \
 --form 'AdditionTagValues[1]="AdditionTagValues 1"'
 **search recipe**
-curl --location 'http://localhost:5000/api/recipe/search-recipe' \
+curl --location 'https://localhost:7000/api/recipe/search-recipe' \
 --header 'Content-Type: application/json' \
 --data '{
 "skip" : "0",
@@ -27,14 +27,14 @@ curl --location 'http://localhost:5000/api/recipe/search-recipe' \
 "keyword" : ""
 }'
 **get recipe feeds**
-curl --location 'http://localhost:5000/api/recipe/get-recipe-feed' \
+curl --location 'https://localhost:7000/api/recipe/get-recipe-feed' \
 --header 'Content-Type: application/json' \
 --data '{
 "skip" : "0",
 "tagvalues" : ["All"]
 }'
 **get tags**
-curl --location 'http://localhost:5000/api/recipe/get-tag' \
+curl --location 'https://localhost:7000/api/recipe/get-tag' \
 --header 'Content-Type: application/json' \
 --data '{
 "skip" : 0,
@@ -43,20 +43,20 @@ curl --location 'http://localhost:5000/api/recipe/get-tag' \
 "category" : "INGREDIENT"
 }'
 **vote recipe**
-curl --location 'http://localhost:5000/api/recipe/vote-recipe' \
+curl --location 'https://localhost:7000/api/recipe/vote-recipe' \
 --header 'Content-Type: application/json' \
 --data '{
 "isUpvote" : false,
 "recipeId" : "d2189f90-6991-4901-8195-f0c12d24d900"
 }'
 **get recipe details**
-curl --location 'http://localhost:5000/api/recipe/get-recipe-details' \
+curl --location 'https://localhost:7000/api/recipe/get-recipe-details' \
 --header 'Content-Type: application/json' \
 --data '{
 "recipeId" : "3e7ff177-b9d9-4789-b1b2-bce1c1b7955e"
 }'
 **get recipe comments**
-curl --location 'http://localhost:5000/api/recipe/get-recipe-comments' \
+curl --location 'https://localhost:7000/api/recipe/get-recipe-comments' \
 --header 'Content-Type: application/json' \
 --data '{
 "recipeId": "d2189f90-6991-4901-8195-f0c12d24d900",
@@ -64,7 +64,7 @@ curl --location 'http://localhost:5000/api/recipe/get-recipe-comments' \
 }'
 
 **comment recipe**
-curl --location 'http://localhost:5000/api/recipe/comment-recipe' \
+curl --location 'https://localhost:7000/api/recipe/comment-recipe' \
 --header 'Content-Type: application/json' \
 --data '{
 "recipeId" : "d2189f90-6991-4901-8195-f0c12d24d900",
@@ -166,7 +166,7 @@ curl --location 'https://localhost:7000/api/recipe/user-report-comment' \
 # USER
 
 **search user**
-curl --location 'http://localhost:5003/api/user/search' \
+curl --location 'https://localhost:7000/api/user/search' \
 --header 'Content-Type: application/json' \
 --data '{
 "keyword" : "admin",
@@ -174,7 +174,7 @@ curl --location 'http://localhost:5003/api/user/search' \
 }'
 
 **get current user**
-curl --location 'http://localhost:5003/api/user/get-current-user-details' \
+curl --location 'https://localhost:7000/api/user/get-current-user-details' \
 
 **get user followers**
 curl --location 'https://localhost:7000/api/user/get-user-follower' \
