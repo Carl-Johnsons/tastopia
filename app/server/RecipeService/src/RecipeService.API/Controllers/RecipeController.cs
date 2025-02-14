@@ -311,7 +311,7 @@ public class RecipeController : BaseApiController
 
     [HttpPost("user-report-recipe")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(UserReportRecipe), 200)]
+    [ProducesResponseType(typeof(UserReportRecipeResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> UserReportRecipe([FromBody] UserReportRecipeDTO userReportRecipeDTO)
     {
@@ -330,7 +330,7 @@ public class RecipeController : BaseApiController
 
     [HttpPost("user-report-comment")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(UserReportComment), 200)]
+    [ProducesResponseType(typeof(UserReportCommentResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> UserReportRecipe([FromBody] UserReportCommentDTO userReportCommentDTO)
     {

@@ -2,15 +2,16 @@
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
+using RecipeService.Domain.Responses;
 namespace RecipeService.Application.UserReportComments.Commands;
-public class UserReportCommentCommand : IRequest<Result<UserReportComment?>>
+public class UserReportCommentCommand : IRequest<Result<UserReportCommentResponse?>>
 {
     public Guid ReporterId { get; set; }
     public Guid CommentId { get; set; }
     public string Reason { get; set; } = null!;
 }
 
-public class UserReportCommentCommandHandler : IRequestHandler<UserReportCommentCommand, Result<UserReportComment?>>
+public class UserReportCommentCommandHandler : IRequestHandler<UserReportCommentCommand, Result<UserReportCommentResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
@@ -23,7 +24,7 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
         _logger = logger;
     }
 
-    public async Task<Result<UserReportComment?>> Handle(UserReportCommentCommand request, CancellationToken cancellationToken)
+    public async Task<Result<UserReportCommentResponse?>> Handle(UserReportCommentCommand request, CancellationToken cancellationToken)
     {
         try {
             var reporterId = request.ReporterId;
@@ -32,14 +33,19 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
 
             if (reporterId == Guid.Empty || commentId == Guid.Empty || string.IsNullOrEmpty(reason))
             {
-                return Result<UserReportComment?>.Failure(UserReportCommentError.NullParameter);
+                return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NullParameter);
             }
 
             var report = _context.UserReportComments.Where(r => r.AccountId == reporterId && r.CommentId == commentId).FirstOrDefault();
-
             if (report != null)
             {
-                return Result<UserReportComment?>.Failure(UserReportCommentError.AddUserReportCommentFail, "This report is adready added before.");
+                _context.UserReportComments.Remove(report);
+                await _unitOfWork.SaveChangeAsync();
+                return Result<UserReportCommentResponse?>.Success(new UserReportCommentResponse
+                {
+                    Report = report,
+                    IsRemoved = true,
+                });
             }
 
             report = new UserReportComment
@@ -53,11 +59,15 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
 
             _context.UserReportComments.Add(report);
             await _unitOfWork.SaveChangeAsync();
-            return Result<UserReportComment?>.Success(report);
+            return Result<UserReportCommentResponse?>.Success(new UserReportCommentResponse
+            {
+                Report = report,
+                IsRemoved = false
+            });
         }
         catch (Exception ex) {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
-            return Result<UserReportComment?>.Failure(UserReportCommentError.AddUserReportCommentFail, ex.Message);
+            return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.AddUserReportCommentFail, ex.Message);
         }
     }
 }

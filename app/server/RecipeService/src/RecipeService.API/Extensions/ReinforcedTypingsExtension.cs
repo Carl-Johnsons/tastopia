@@ -69,6 +69,11 @@ public static class ReinforcedTypingsExtension
             typeof(GetRecipeStepsDTO),
             typeof(GetAccountRecipeCommentsDTO),
             typeof(AccountRecipeCommentResponse),
+            typeof(UserReportRecipeDTO),
+            typeof(UserReportRecipeResponse),
+            typeof(UserReportCommentDTO),
+            typeof(UserReportCommentResponse),
+
         ], config =>
         {
             config.FlattenHierarchy()
