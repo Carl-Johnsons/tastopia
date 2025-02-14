@@ -27,7 +27,7 @@ public class UserController : BaseApiController
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
-        var result = await _sender.Send(new SearchUsersCommand
+        var result = await _sender.Send(new SearchUsersQuery
         {
             AccountId = subjectId != null ? Guid.Parse(subjectId) : null,
             Skip = searchUser.Skip,
