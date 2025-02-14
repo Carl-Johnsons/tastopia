@@ -225,5 +225,8 @@ curl --location 'https://localhost:7000/api/tracking/search-user-view-recipe-det
 
 **get user search recipe keyword history**
 lưu ý: nó xài method là GET
-
 curl --location 'https://localhost:7000/api/tracking/get-user-search-recipe-history' \
+
+**get user search user keyword history**
+lưu ý: nó xài method là GET
+curl --location 'https://localhost:7000/api/tracking/get-user-search-user-history' \
