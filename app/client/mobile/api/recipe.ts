@@ -23,6 +23,28 @@ const useRecipesFeed = (filterSelected: string) => {
   });
 };
 
+const useRecipesFeedByAuthorId = (authorId: string) => {
+  return useInfiniteQuery<RecipeResponse>({
+    queryKey: ["recipesByAuthorId", authorId],
+    queryFn: async ({ pageParam = 0 }) => {
+      const { data } = await protectedAxiosInstance.post<RecipeResponse>(
+        "/api/recipe/get-recipe-feed-by-author-id",
+        {
+          skip: pageParam.toString(),
+          authorId: authorId
+        }
+      );
+      return data;
+    },
+    getNextPageParam: (lastPage, pages) => {
+      if (!lastPage.metadata.hasNextPage) {
+        return undefined;
+      }
+      return pages.length;
+    }
+  });
+};
+
 const useRecipeDetail = (recipeId: string) => {
   return useQuery<RecipeDetailResponse>({
     queryKey: ["recipe", recipeId],
@@ -111,6 +133,7 @@ const useDeleteOwnRecipe = () => {
 
 export {
   useRecipesFeed,
+  useRecipesFeedByAuthorId,
   useRecipeDetail,
   useRecipeSteps,
   useCreateRecipe,
