@@ -51,12 +51,19 @@ public static class ConsulExtension
             await consulClient.Agent.ServiceRegister(registration);
         });
 
-
+        // Graceful shutdown handling
         lifetime.ApplicationStopping.Register(async () =>
         {
             Log.Information("Unregistering from Consul");
             await consulClient.Agent.ServiceDeregister(registration.ID);
         });
+        // Handle SIGINT (Ctrl+C) and SIGTERM
+        AppDomain.CurrentDomain.ProcessExit += async (sender, eventArgs) =>
+        {
+            Log.Information("Application is exiting. Deregistering from Consul...");
+            await consulClient.Agent.ServiceDeregister(serviceId);
+        };
+
         return app;
     }
 }
