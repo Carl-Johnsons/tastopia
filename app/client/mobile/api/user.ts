@@ -318,3 +318,16 @@ export const useReportUserReason = (language: string) => {
     enabled: !!language
   });
 };
+
+export const useReportUser = () => {
+  return useMutation<IUserReportUserResponse, Error, IUserReportUserDTO>({
+    mutationFn: async ({ accountId, reasonCodes, additionalDetails }) => {
+      const { data } = await protectedAxiosInstance.post("/api/user/user-report-user", {
+        accountId,
+        reasonCodes,
+        additionalDetails
+      });
+      return data;
+    }
+  });
+};
