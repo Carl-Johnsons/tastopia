@@ -1,11 +1,13 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+
 namespace RecipeService.API.DTOs;
-public class CommentRecipeDTO
+public class UpdateCommentDTO
 {
     [Required]
-    [JsonProperty("recipeId")]
-    public Guid RecipeId { get; set; }
+    [JsonProperty("commentId")]
+    public Guid CommentId { get; set; }
+
     [Required]
     [JsonProperty("content")]
     public string Content { get; set; } = null!;

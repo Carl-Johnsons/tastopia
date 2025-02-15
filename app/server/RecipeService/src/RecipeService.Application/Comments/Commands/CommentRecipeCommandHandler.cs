@@ -14,7 +14,6 @@ namespace RecipeService.Application.Comments.Commands;
 public class CommentRecipeCommand : IRequest<Result<RecipeCommentResponse?>>
 {
     public Guid? RecipeId { get; init; }
-
     public Guid? AccountId { get; init; }
     public string? Content { get; init; }
 }
@@ -25,14 +24,14 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
-    private readonly ILogger<PublishUserSearchRecipeCommandHandler> _logger;
+    private readonly ILogger<CommentRecipeCommandHandler> _logger;
 
 
     public CommentRecipeCommandHandler(IApplicationDbContext context,
         IUnitOfWork unitOfWork,
         IMapper mapper,
         GrpcUser.GrpcUserClient grpcUserClient,
-        ILogger<PublishUserSearchRecipeCommandHandler> logger)
+        ILogger<CommentRecipeCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;

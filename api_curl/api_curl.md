@@ -71,6 +71,21 @@ curl --location 'https://localhost:7000/api/recipe/comment-recipe' \
 "content" : "This recipe is absolutely delicious!"
 }'
 
+**delete comment**
+curl --location 'https://localhost:7000/api/recipe/delete-comment' \
+--header 'Content-Type: application/json' \
+--data '{
+"commentId" : "075e4eb9-c2f2-43b7-97a9-2ecc4ea6d62e"
+}'
+
+**update comment**
+curl --location 'https://localhost:7000/api/recipe/update-comment' \
+--header 'Content-Type: application/json' \
+--data '{
+"content" : "test comment update!",
+"commentId" : "075e4eb9-c2f2-43b7-97a9-2ecc4ea6d62e"
+}'
+
 **get recipe steps**
 curl --location 'https://localhost:7000/api/recipe/get-recipe-steps' \
 --header 'Content-Type: application/json' \
