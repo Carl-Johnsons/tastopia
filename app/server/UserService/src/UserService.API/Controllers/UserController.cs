@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
+using UserService.Application.ReportReasons.Queries;
 using UserService.Application.UserReports.Commands;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
@@ -174,7 +175,22 @@ public class UserController : BaseApiController
         {
             ReporterId = Guid.Parse(subjectId!),
             ReportedId = userReportUserDTO.AccountId,
-            Reason = userReportUserDTO.Reason,
+            ReasonCodes = userReportUserDTO.ReasonCodes,
+            AdditionalDetails = userReportUserDTO.AdditionalDetails,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("get-report-reasons")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(ReportReasonResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetReportReason([FromBody] GetReportReasonsDTO getReportReasonsDTO)
+    {
+        var result = await _sender.Send(new GetReportReasonsQuery
+        {
+            Language = getReportReasonsDTO.Language,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

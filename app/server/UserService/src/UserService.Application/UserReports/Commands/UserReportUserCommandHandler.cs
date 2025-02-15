@@ -9,7 +9,8 @@ public class UserReportUserCommand : IRequest<Result<UserReportUserResponse?>>
 {
     public Guid ReporterId { get; set; }
     public Guid ReportedId { get; set; }
-    public string Reason { get; set; } = null!;
+    public List<string> ReasonCodes { get; set; } = null!;
+    public string? AdditionalDetails { get; set; }
 }
 
 public class UserReportUserCommandHandler : IRequestHandler<UserReportUserCommand, Result<UserReportUserResponse?>>
@@ -31,9 +32,10 @@ public class UserReportUserCommandHandler : IRequestHandler<UserReportUserComman
         {
             var reporterId = request.ReporterId;
             var reportedId = request.ReportedId;
-            var reason = request.Reason;
+            var reasonCodes = request.ReasonCodes;
+            var AdditionalDetails = request.AdditionalDetails;
 
-            if (reporterId == Guid.Empty || reportedId == Guid.Empty || string.IsNullOrEmpty(reason))
+            if (reporterId == Guid.Empty || reportedId == Guid.Empty || reasonCodes == null || reasonCodes.Count == 0)
             {
                 return Result<UserReportUserResponse?>.Failure(UserReportError.NullParameter);
             }
@@ -66,11 +68,14 @@ public class UserReportUserCommandHandler : IRequestHandler<UserReportUserComman
                 });
             }
 
+            var codes = ReportReasonData.ReportUserReasons.Where(r => reasonCodes.Contains(r.Code)).Select(r => r.Code).ToList();
+
             report = new UserReport
             {
                 AccountId = reporterId,
                 ReportedId = reportedId,
-                Reason = reason,
+                ReasonCodes = codes,
+                AdditionalDetails = AdditionalDetails,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
             };

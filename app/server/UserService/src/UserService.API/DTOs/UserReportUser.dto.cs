@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
+using UserService.API.ValidationAttributes;
 
 namespace UserService.API.DTOs;
 
@@ -10,6 +11,9 @@ public class UserReportUserDTO
     public Guid AccountId { get; set; }
 
     [Required]
-    [JsonProperty("reason")]
-    public string Reason { get; set; } = null!;
+    [JsonProperty("reasonCodes")]
+    [NonEmptyList]
+    public List<string> ReasonCodes { get; set; } = null!;
+    [JsonProperty("additionalDetails")]
+    public string? AdditionalDetails { get; set; }
 }

@@ -152,7 +152,8 @@ curl --location 'https://localhost:7000/api/recipe/user-report-recipe' \
 --header 'Content-Type: application/json' \
 --data '{
 "recipeId" : "8e607e5c-8dbf-455b-9f5b-9c56e2d79a63",
-"reason" : "vô duyên quá đi"
+"reasonCodes" : ["INAPPROPRIATE_CONTENT", "SPAM_ADVERTISEMENT", "HARASSMENT", "EXPLICIT_CONTENT"],
+"additionalDetails" : "Ôi sợ quá, sợ quá hãy ban nó đi."
 }'
 
 **user report comment**
@@ -160,7 +161,16 @@ curl --location 'https://localhost:7000/api/recipe/user-report-comment' \
 --header 'Content-Type: application/json' \
 --data '{
 "commentId" : "f5811409-bac1-4a3d-96e9-714a16e91d18",
-"reason" : "vô duyên quá đi"
+"reasonCodes" : ["SPAM_COMMENT", "SCAM_COMMENT", "HARASSMENT_COMMENT", "OFFENSIVE_COMMENT"],
+"additionalDetails" : "Ôi sợ quá, sợ quá hãy ban nó đi."
+}'
+
+**get report reasons**
+curl --location 'https://localhost:7000/api/recipe/get-report-reasons' \
+--header 'Content-Type: application/json' \
+--data '{
+"language" : "Vietnamese",
+"reportType" : "Recipe"
 }'
 
 **create user search recipe keyword**
@@ -218,7 +228,15 @@ curl --location 'https://localhost:7000/api/user/user-report-user' \
 --header 'Content-Type: application/json' \
 --data '{
 "accountId" : "594a3fc8-3d24-4305-a9d7-569586d0604e",
-"reason" : "vô duyên quá đi"
+"reasonCodes" : ["SPAM_USER", "HARASSMENT_USER", "SCAM_USER", "BOT_USER"],
+"additionalDetails" : "Ôi sợ quá, sợ quá hãy ban nó đi."
+}'
+
+**get report reasons**
+curl --location 'https://localhost:7000/api/user/get-report-reasons' \
+--header 'Content-Type: application/json' \
+--data '{
+"language" : "Vietnamese"
 }'
 
 # TRACKING

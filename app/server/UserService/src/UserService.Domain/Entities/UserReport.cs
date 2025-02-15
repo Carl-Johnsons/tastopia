@@ -12,10 +12,11 @@ public class UserReport : BaseAuditableEntity
 
     [Required]
     public Guid ReportedId { get; set; }
-
     [Required]
+    public List<string> ReasonCodes { get; set; } = null!;
+
     [MaxLength(300)]
-    public string Reason { get; set; } = null!;
+    public string? AdditionalDetails { get; set; } = null!;
 
     [Required]
     [MaxLength(20)]
