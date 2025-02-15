@@ -82,7 +82,7 @@ const RecipesTab = ({
         height: "100%",
         flex: 1,
         marginTop: 16,
-        paddingHorizontal: 12
+        paddingHorizontal: 8
       }}
     >
       <SafeAreaView

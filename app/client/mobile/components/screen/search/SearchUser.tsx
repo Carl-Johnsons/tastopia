@@ -16,12 +16,13 @@ import { AntDesign } from "@expo/vector-icons";
 import useDarkMode from "@/hooks/useDarkMode";
 import User from "@/components/common/User";
 import { Image } from "expo-image";
-import { useSearchUsers } from "@/api/search";
+import { useSearchUserHistory, useSearchUsers } from "@/api/search";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { useTranslation } from "react-i18next";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import { useQueryClient } from "react-query";
+import uuid from "react-native-uuid";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -41,6 +42,8 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const isDarkMode = useDarkMode();
   const debouncedValue = useDebounce(searchValue, 800);
 
+  const { data: searchUserHistoryData, isLoading: isLoadingUserHistory } =
+    useSearchUserHistory();
   const {
     data,
     isFetched,
@@ -153,6 +156,14 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
           </View>
         </TouchableWithoutFeedback>
       </View>
+
+      {/* History section */}
+      {/* <FlatList
+        data={searchUserHistoryData}
+        keyExtractor={item => uuid.v4()}
+        showsVerticalScrollIndicator={false}
+
+      /> */}
 
       {/* Result section */}
       {searchValue !== "" && (
