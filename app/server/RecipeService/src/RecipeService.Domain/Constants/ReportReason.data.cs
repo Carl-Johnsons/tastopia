@@ -17,21 +17,9 @@ public class ReportReasonData
         },
         new RecipeReason
         {
-            Code = "HATE_SPEECH",
-            Eng = "Hate speech",
-            Vn = "Nội dung kích động thù địch"
-        },
-        new RecipeReason
-        {
             Code = "HARASSMENT",
             Eng = "Harassment or bullying",
             Vn = "Quấy rối hoặc bắt nạt"
-        },
-        new RecipeReason
-        {
-            Code = "MISINFORMATION",
-            Eng = "Misinformation or misleading content",
-            Vn = "Thông tin sai lệch hoặc gây hiểu lầm"
         },
         new RecipeReason
         {
@@ -53,12 +41,6 @@ public class ReportReasonData
         },
         new RecipeReason
         {
-            Code = "ANIMAL_CRUELTY",
-            Eng = "Animal cruelty-related content",
-            Vn = "Nội dung liên quan đến hành hạ động vật"
-        },
-        new RecipeReason
-        {
             Code = "OFFENSIVE_LANGUAGE",
             Eng = "Offensive language",
             Vn = "Ngôn ngữ xúc phạm"
@@ -69,12 +51,6 @@ public class ReportReasonData
             Eng = "Recipe may pose health risks",
             Vn = "Công thức có thể gây hại cho sức khỏe"
         },
-        new RecipeReason
-        {
-            Code = "INCORRECT_RECIPE",
-            Eng = "Incorrect or non-functional recipe",
-            Vn = "Công thức sai hoặc không thể thực hiện"
-        }
     };
 
     public static List<CommentReason> CommentReportReasons = new List<CommentReason>
@@ -84,18 +60,6 @@ public class ReportReasonData
             Code = "SPAM_COMMENT",
             Vn = "Bình luận chứa spam hoặc quảng cáo",
             Eng = "Spam or advertisement comment"
-        },
-        new CommentReason
-        {
-            Code = "HATE_SPEECH_COMMENT",
-            Vn = "Bình luận mang tính kích động thù địch",
-            Eng = "Hate speech comment"
-        },
-        new CommentReason
-        {
-            Code = "HARASSMENT_COMMENT",
-            Vn = "Bình luận quấy rối hoặc bắt nạt",
-            Eng = "Harassment or bullying comment"
         },
         new CommentReason
         {
