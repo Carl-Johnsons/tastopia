@@ -18,16 +18,13 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamPathTemplate": "/api/ingredient-predict/box",
+      "DownstreamPathTemplate": "/api/ingredient-predict/{everything}",
       "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
+        "GET",
         "POST"
       ],
-      "UpstreamPathTemplate": "/api/ingredient-predict/box",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKeys": [ "Bearer" ],
-        "AllowedScopes": [ "openid" ]
-      },
+      "UpstreamPathTemplate": "/api/ingredient-predict/{everything}",
       "SwaggerKey": "user"
     }
   ]

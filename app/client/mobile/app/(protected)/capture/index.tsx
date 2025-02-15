@@ -1,8 +1,9 @@
-import "react-native-reanimated";
+// import "react-native-reanimated";
 import { Canvas, rect, DiffRect, rrect } from "@shopify/react-native-skia";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "expo-router";
 import { Worklets } from "react-native-worklets-core";
+import { EncodingType, readAsStringAsync } from "expo-file-system";
 import {
   Alert,
   GestureResponderEvent,
@@ -19,12 +20,15 @@ import {
   Frame,
   getCameraDevice,
   runAtTargetFps,
+  useCameraDevices,
   useFrameProcessor
 } from "react-native-vision-camera";
 import {
   useIngredientPredictBoxMutation,
   useIngredientPredictMutation
 } from "@/api/ingredient-predict";
+import { transformPlatformURI } from "@/utils/functions";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 var RNFS = require("react-native-fs");
 
@@ -32,7 +36,7 @@ const Capture = () => {
   const router = useRouter();
   const [isActive, setIsActive] = useState(true);
   const [deviceCode, setDeviceCode] = useState<CameraPosition>("back");
-  const devices = Camera.getAvailableCameraDevices();
+  const devices = useCameraDevices();
   const [device, setDevice] = useState<CameraDevice | undefined>(undefined);
   const camera = useRef<Camera>(null);
   const [prediction, setPrediction] = useState("");
@@ -41,6 +45,28 @@ const Capture = () => {
   const { mutateAsync: predictAsync } = useIngredientPredictMutation();
   const { mutateAsync: predictBoxAsync } = useIngredientPredictBoxMutation();
   const [boxes, setBoxes] = useState<number[][]>([]);
+
+  const ws = useRef(
+    new WebSocket(transformPlatformURI("ws://localhost:5009/ws/video"))
+  ).current;
+
+  useEffect(() => {
+    ws.onopen = () => {
+      console.log("WebSocket connection opened.");
+    };
+    ws.onmessage = event => {
+      // console.log("Received message:", event.data);
+      const response = JSON.parse(event.data) as IngredientStreamResponse;
+      setPrediction(response.classifications[0].name);
+      // setBoxes(response.boxes);
+    };
+    ws.onerror = error => {
+      console.error("WebSocket error:", error);
+    };
+    ws.onclose = () => {
+      console.log("WebSocket closed.");
+    };
+  }, [ws]);
 
   const requestPermissionAsync = async () => {
     let finalPermissionStatus = Camera.getCameraPermissionStatus();
@@ -78,7 +104,7 @@ const Capture = () => {
     }
   }, [deviceCode]);
 
-  const captureImage = async () => {
+  const captureImage = useCallback(async () => {
     if (isImageView) {
       setIsImageView(false);
       setPrediction("");
@@ -89,7 +115,7 @@ const Capture = () => {
     setBoxes([]);
 
     try {
-      if (!camera) return;
+      if (!camera.current) return;
       // const snapshot = await camera.current!.takeSnapshot({
       //   quality: 90,
       // });
@@ -109,46 +135,52 @@ const Capture = () => {
       const predictResponse = await predictAsync({ file: file as unknown as Blob });
       setPrediction(predictResponse.classifications[0].name);
       setCapturedImage(`file://${snapshot.path}`);
+      // console.log(`file://${snapshot.path}`);
+      // console.log(predictResponse.classifications[0].name);
 
       const predictBoxResponse = await predictBoxAsync({ file: file as unknown as Blob });
-      if (isImageView) setBoxes(predictBoxResponse.boxes);
+      setBoxes(predictBoxResponse.boxes);
+      // console.log(predictBoxResponse.boxes);
+      // console.log(isImageView);
+
       RNFS.unlink(snapshot.path);
     } catch (error) {
       console.error("Error capturing image:", error);
     }
-  };
+  }, [camera.current]);
 
-  async function sendFrameToServer(frame: Frame) {
-    try {
-      if (!camera) return;
-      // const file = await camera.current!.takePhoto();
+  const sendFrameToServer = useCallback(
+    async (frame: Frame) => {
+      if (!camera.current) return;
+      try {
+        const snapshot = await camera.current!.takeSnapshot({
+          quality: 90
+        });
+        let fileUri = snapshot.path;
+        if (!fileUri.startsWith("file://")) {
+          fileUri = "file://" + fileUri;
+        }
 
-      const snapshot = await camera.current!.takeSnapshot({
-        quality: 90
-      });
+        const base64Image = await readAsStringAsync(fileUri, {
+          encoding: EncodingType.Base64
+        });
 
-      let formData = new FormData();
-      const file = {
-        uri: `file://${snapshot.path}`,
-        type: "image/jpeg",
-        name: "file"
-      };
-      formData.append("file", file as unknown as Blob);
+        const binaryString = atob(base64Image);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        const arrayBuffer = bytes.buffer;
+        ws.send(arrayBuffer);
 
-      // let formData = new FormData();
-      // const response = await fetch(`file://${snapshot.path}`);
-      // const blob = await response.blob();
-      // formData.append("file", blob);
-      // console.log(formData);
-      const predictResponse = await predictAsync({ file: file as unknown as Blob });
-
-      setPrediction(predictResponse.classifications[0].name);
-
-      RNFS.unlink(snapshot.path);
-    } catch (error) {
-      console.error("Error sending frame to server:", error);
-    }
-  }
+        RNFS.unlink(snapshot.path);
+      } catch (error) {
+        console.error("Error sending frame to server:", error);
+      }
+    },
+    [camera.current]
+  );
 
   const sendFrameToServerJS = Worklets.createRunOnJS(sendFrameToServer);
 
@@ -174,7 +206,7 @@ const Capture = () => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={{ position: "relative", height: 500 }}>
         <View style={{ height: "100%" }}>
           {isActive &&
@@ -192,7 +224,7 @@ const Capture = () => {
                 style={styles.camera}
                 isActive={isActive}
                 device={device}
-                frameProcessor={frameProcessor}
+                // frameProcessor={frameProcessor}
                 pixelFormat='rgb'
                 enableFpsGraph={true}
                 ref={camera}
@@ -264,13 +296,13 @@ const Capture = () => {
         <TouchableOpacity>
           <Text
             style={styles.toggle_button}
-            onPress={captureImage}
+            // onPress={captureImage}
           >
             Take photo
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
