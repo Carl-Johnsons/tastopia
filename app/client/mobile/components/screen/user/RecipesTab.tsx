@@ -51,10 +51,7 @@ const RecipesTab = ({
 
   const renderItem = useCallback(
     ({ item, index }: { item: RecipeType; index: number }) => (
-      <View
-        className='px-4'
-        testID='recipe'
-      >
+      <View testID='recipe'>
         <Recipe
           {...item}
           setCurrentRecipeId={setCurrentRecipeId}
@@ -79,7 +76,15 @@ const RecipesTab = ({
   }, [data]);
 
   return (
-    <TabView.Item style={{ width: "100%", height: "100%", flex: 1, marginTop: 16 }}>
+    <TabView.Item
+      style={{
+        width: "100%",
+        height: "100%",
+        flex: 1,
+        marginTop: 16,
+        paddingHorizontal: 8
+      }}
+    >
       <SafeAreaView
         style={{
           width: "100%",
@@ -89,6 +94,7 @@ const RecipesTab = ({
         }}
       >
         <FlatList
+          showsVerticalScrollIndicator={false}
           removeClippedSubviews
           data={recipes}
           keyExtractor={keyExtractor}

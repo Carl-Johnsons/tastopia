@@ -45,15 +45,15 @@ const useRecipesFeedByAuthorId = (authorId: string) => {
   });
 };
 
-const useCommentsByAuthorId = (authorId: string) => {
+const useCommentsByAuthorId = (accountId: string) => {
   return useInfiniteQuery<ICommentResponse>({
-    queryKey: ["commentsByAuthorId", authorId],
+    queryKey: ["commentsByAuthorId", accountId],
     queryFn: async ({ pageParam = 0 }) => {
       const { data } = await protectedAxiosInstance.post<ICommentResponse>(
         "/api/recipe/get-account-recipe-comments",
         {
           skip: pageParam.toString(),
-          authorId: authorId
+          accountId: accountId
         }
       );
       return data;

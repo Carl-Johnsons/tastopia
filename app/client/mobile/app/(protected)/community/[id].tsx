@@ -97,7 +97,12 @@ const RecipeDetail = () => {
     bottomSheetRef.current?.expand();
   };
 
-  const handleTouchUser = () => {};
+  const handleTouchUser = () => {
+    router.push({
+      pathname: "/(protected)/user/[id]",
+      params: { id: recipeDetailData?.recipe.authorId ?? "" }
+    });
+  };
 
   const handleToggleBookmark = () => {
     if (!isBookmarking) {

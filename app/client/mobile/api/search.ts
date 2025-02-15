@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery, useQuery } from "react-query";
 import { protectedAxiosInstance } from "@/constants/host";
 
 const useSearchUsers = (keyword: string) => {
@@ -75,4 +75,38 @@ const useSearchTags = (keyword: string, tagCodes: string[], category: string) =>
   });
 };
 
-export { useSearchUsers, useSearchRecipes, useSearchTags };
+type SearchHistory = {
+  value: string[];
+};
+
+const useSearchRecipeHistory = () => {
+  return useQuery<SearchHistory>({
+    queryKey: ["recipeHistory"],
+    queryFn: async () => {
+      const { data } = await protectedAxiosInstance.post<SearchHistory>(
+        "/api/tracking/get-user-search-recipe-history"
+      );
+      return data;
+    }
+  });
+};
+
+const useSearchUserHistory = () => {
+  return useQuery<SearchHistory>({
+    queryKey: ["recipeHistory"],
+    queryFn: async () => {
+      const { data } = await protectedAxiosInstance.post<SearchHistory>(
+        "/api/tracking/get-user-search-recipe-history"
+      );
+      return data;
+    }
+  });
+};
+
+export {
+  useSearchUsers,
+  useSearchRecipes,
+  useSearchTags,
+  useSearchRecipeHistory,
+  useSearchUserHistory
+};

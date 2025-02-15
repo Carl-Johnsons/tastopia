@@ -13,6 +13,7 @@ import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
 import { router } from "expo-router";
 import UserCard from "@/components/screen/menu/UserCard";
+import { selectUser } from "@/slices/user.slice";
 
 const Menu = () => {
   const ITEM_TITLE = ["profile", "saved", "premium", "settings"];
@@ -21,6 +22,7 @@ const Menu = () => {
   const settingModalRef = useRef<BottomSheetModal>(null);
   const { c } = useColorizer();
   const { black, white } = colors;
+  const { accountId } = selectUser();
 
   const openSettingModal = useCallback(() => {
     settingModalRef.current?.present();
@@ -31,7 +33,10 @@ const Menu = () => {
   }, [settingModalRef]);
 
   const goToProfile = useCallback(() => {
-    router.push("./profile", { relativeToDirectory: true });
+    router.push({
+      pathname: "/(protected)/user/[id]",
+      params: { id: accountId ?? "" }
+    });
   }, [router]);
 
   const navigationCallbacks = [
@@ -57,8 +62,8 @@ const Menu = () => {
             <History />
             <View style={{ paddingBlock: 0.06 * height }}>
               <View
-                className='flex-row flex-wrap gap-6'
-                style={{ columnGap: 8 }}
+                className='flex-row flex-wrap gap-4'
+                style={{ columnGap: 12 }}
               >
                 {ITEM_TITLE.map((item, index) => (
                   <ItemCard
