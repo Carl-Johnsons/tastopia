@@ -203,6 +203,17 @@ const useReportComment = () => {
   });
 };
 
+const useDeleteComment = () => {
+  return useMutation<any, Error, { commentId: string }>({
+    mutationFn: async ({ commentId }) => {
+      const { data } = await protectedAxiosInstance.post("/api/recipe/delete-comment", {
+        commentId: commentId
+      });
+      return data;
+    }
+  });
+};
+
 export {
   useRecipesFeed,
   useRecipesFeedByAuthorId,
@@ -215,5 +226,6 @@ export {
   useDeleteOwnRecipe,
   useReportRecipeCommentReason,
   useReportRecipe,
-  useReportComment
+  useReportComment,
+  useDeleteComment
 };

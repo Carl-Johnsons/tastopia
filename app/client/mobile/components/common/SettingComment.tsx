@@ -19,17 +19,11 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import useIsOwner from "@/hooks/auth/useIsOwner";
 import {
-  useDeleteOwnRecipe,
-  useRecipesFeed,
+  useDeleteComment,
   useReportComment,
   useReportRecipeCommentReason
 } from "@/api/recipe";
-import {
-  InfiniteData,
-  QueryObserverResult,
-  RefetchOptions,
-  RefetchQueryFilters
-} from "react-query";
+import { useQueryClient } from "react-query";
 import { useProtectedExclude } from "@/hooks/auth/useProtected";
 import { ROLE } from "@/slices/auth.slice";
 import { ItemCard } from "../SettingModal";
@@ -41,10 +35,9 @@ import { LANGUAGES } from "@/constants/languages";
 
 type Props = {
   id: string;
+  recipeId?: string;
   authorId: string;
-  refetch?: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<InfiniteData<RecipeResponse>, unknown>>;
+  deleteComment?: (commentId: string) => void;
 };
 
 enum Settings {
@@ -58,11 +51,10 @@ const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
   const { c } = useColorizer();
   const { black, white } = colors;
   const { t } = useTranslation("component", { keyPrefix: "settingComment" });
-  const { refetch } = useRecipesFeed("All");
+  const queryClient = useQueryClient();
   const [currentSetting, setCurrentSetting] = useState<SettingState>(Settings.INITIAL);
   const isCreatedByCurrentUser = useIsOwner(props.authorId);
-  const { mutateAsync: deleteOwnRecipe, isLoading: isDeletingOwnRecipe } =
-    useDeleteOwnRecipe();
+  const { mutateAsync: deleteComment, isLoading: isDeletingComment } = useDeleteComment();
 
   const changeSetting = (setting: SettingState) => {
     switch (setting) {
@@ -90,7 +82,8 @@ const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
   }, [ROLE.GUEST]);
 
   const onPressDelete = useProtectedExclude(() => {
-    if (!isDeletingOwnRecipe) {
+    console.log("this function called");
+    if (!isDeletingComment) {
       Alert.alert(t("confirmDeleteCommentTitle"), t("confirmDeleteCommentDescription"), [
         {
           text: t("cancel")
@@ -98,14 +91,21 @@ const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
         {
           text: t("ok"),
           onPress: () => {
-            deleteOwnRecipe(
-              { recipeId: props.id },
+            deleteComment(
+              { commentId: props.id },
               {
                 onSuccess: async data => {
-                  Alert.alert(t("deleteCommentSuccessfully"));
-                  refetch();
-                  router.navigate("/(protected)");
+                  queryClient.invalidateQueries({
+                    queryKey: ["comments", props.recipeId]
+                  });
+                  queryClient.invalidateQueries({
+                    queryKey: ["commentsByAuthorId", props.authorId]
+                  });
+                  if (props.deleteComment) {
+                    props.deleteComment(props.id);
+                  }
                   closeModal();
+                  Alert.alert(t("deleteCommentSuccessfully"));
                 },
                 onError: error => {
                   Alert.alert(t("deleteCommentFail"));

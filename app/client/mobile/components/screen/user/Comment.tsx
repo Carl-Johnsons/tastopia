@@ -44,7 +44,7 @@ const Comment = ({
   return (
     isActive && (
       <TouchableWithoutFeedback onPress={handleOnPres}>
-        <View className='bg-white_black100 gap-2'>
+        <View className='bg-white_black100 w-[94vw] gap-2'>
           <View className='flex-between flex-row'>
             <Text className='text-black_white text-xl'>{recipeTitle}</Text>
             <TouchableWithoutFeedback onPress={handleTouchMenu}>

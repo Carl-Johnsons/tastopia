@@ -152,6 +152,17 @@ const RecipeDetail = () => {
     setComments(prev => [comment, ...prev]);
   }, []);
 
+  const deleteComment = useCallback(
+    (commentId: string) => {
+      setComments(prev => {
+        const newComments = prev.filter(comment => comment.id !== commentId);
+
+        return newComments;
+      });
+    },
+    [setComments]
+  );
+
   useEffect(() => {
     if (commentData?.pages) {
       const uniqueComments = filterUniqueItems(commentData.pages);
@@ -457,8 +468,10 @@ const RecipeDetail = () => {
 
       <SettingComment
         id={currentCommentId}
+        recipeId={recipeDetailData.recipe.id}
         authorId={currentCommentAuthorId}
         ref={bottomSheetCommentRef}
+        deleteComment={deleteComment}
       />
     </SafeAreaView>
   );
