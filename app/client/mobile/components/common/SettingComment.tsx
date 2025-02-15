@@ -21,7 +21,7 @@ import useIsOwner from "@/hooks/auth/useIsOwner";
 import {
   useDeleteOwnRecipe,
   useRecipesFeed,
-  useReportRecipe,
+  useReportComment,
   useReportRecipeCommentReason
 } from "@/api/recipe";
 import {
@@ -54,10 +54,10 @@ enum Settings {
 
 type SettingState = Settings;
 
-const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
+const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
   const { c } = useColorizer();
   const { black, white } = colors;
-  const { t } = useTranslation("component");
+  const { t } = useTranslation("component", { keyPrefix: "settingComment" });
   const { refetch } = useRecipesFeed("All");
   const [currentSetting, setCurrentSetting] = useState<SettingState>(Settings.INITIAL);
   const isCreatedByCurrentUser = useIsOwner(props.authorId);
@@ -91,34 +91,30 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
 
   const onPressDelete = useProtectedExclude(() => {
     if (!isDeletingOwnRecipe) {
-      Alert.alert(
-        t("settingRecipe.confirmDeleteRecipeTitle"),
-        t("settingRecipe.confirmDeleteRecipeDescription"),
-        [
-          {
-            text: t("cancel")
-          },
-          {
-            text: t("ok"),
-            onPress: () => {
-              deleteOwnRecipe(
-                { recipeId: props.id },
-                {
-                  onSuccess: async data => {
-                    Alert.alert(t("settingRecipe.deleteRecipeSuccessfully"));
-                    refetch();
-                    router.navigate("/(protected)");
-                    closeModal();
-                  },
-                  onError: error => {
-                    Alert.alert(t("settingRecipe.deleteRecipeFail"));
-                  }
+      Alert.alert(t("confirmDeleteCommentTitle"), t("confirmDeleteCommentDescription"), [
+        {
+          text: t("cancel")
+        },
+        {
+          text: t("ok"),
+          onPress: () => {
+            deleteOwnRecipe(
+              { recipeId: props.id },
+              {
+                onSuccess: async data => {
+                  Alert.alert(t("deleteCommentSuccessfully"));
+                  refetch();
+                  router.navigate("/(protected)");
+                  closeModal();
+                },
+                onError: error => {
+                  Alert.alert(t("deleteCommentFail"));
                 }
-              );
-            }
+              }
+            );
           }
-        ]
-      );
+        }
+      ]);
     }
   }, [ROLE.GUEST]);
 
@@ -155,7 +151,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
             <View>
               {isCreatedByCurrentUser && (
                 <BottomSheetItem
-                  title={t("settingRecipe.editRecipe")}
+                  title={t("editComment")}
                   icon={
                     <AntDesign
                       name='edit'
@@ -169,7 +165,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
 
               {isCreatedByCurrentUser && (
                 <BottomSheetItem
-                  title={t("settingRecipe.deleteRecipe")}
+                  title={t("deleteComment")}
                   icon={
                     <MaterialIcons
                       name='delete-outline'
@@ -183,7 +179,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
 
               {!isCreatedByCurrentUser && (
                 <BottomSheetItem
-                  title={t("settingRecipe.reportRecipe")}
+                  title={t("reportComment")}
                   icon={
                     <Octicons
                       name='report'
@@ -199,7 +195,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
 
           {currentSetting === Settings.REPORT && (
             <ReportSetting
-              recipeId={props.id}
+              commentId={props.id}
               changeSetting={changeSetting}
               closeModal={closeModal}
             />
@@ -246,12 +242,12 @@ type Report = {
 };
 
 type ReportSettingProps = {
-  recipeId: string;
+  commentId: string;
   changeSetting: (setting: SettingState) => void;
   closeModal: () => void;
 };
 
-const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingProps) => {
+const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingProps) => {
   const { c } = useColorizer();
   const { black, white, primary } = colors;
   const { t } = useTranslation("report");
@@ -261,10 +257,10 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
     additionalDetails: ""
   });
 
-  const { mutateAsync: reportMutate, isLoading: isReporting } = useReportRecipe();
-  const { data: reportRecipeReasons, isLoading } = useReportRecipeCommentReason(
+  const { mutateAsync: reportMutate, isLoading: isReporting } = useReportComment();
+  const { data: reportCommentReasons, isLoading } = useReportRecipeCommentReason(
     currentLanguage === "vi" ? LANGUAGES.VIETNAMESE : LANGUAGES.ENGLISH,
-    REPORT_TYPE.RECIPE
+    REPORT_TYPE.COMMENT
   );
   const handleChangeText = (additionalDetails: string) => {
     setReport(prev => {
@@ -284,7 +280,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
     if (!isLoading && !isReporting) {
       reportMutate(
         {
-          recipeId: recipeId,
+          commentId: commentId,
           reasonCodes: [...report.reasonCodes],
           additionalDetails: report.additionalDetails
         },
@@ -293,7 +289,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
             Alert.alert(t("reportSuccessfully"));
             closeModal();
           },
-          onError: async error => {
+          onError: async _error => {
             Alert.alert(t("reportFail"));
           }
         }
@@ -347,7 +343,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
 
       <View>
         <FlatList
-          data={reportRecipeReasons}
+          data={reportCommentReasons}
           keyExtractor={item => item.code}
           renderItem={({ item }) => (
             <ItemCard
@@ -379,4 +375,4 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
   );
 };
 
-export default SettingRecipe;
+export default SettingComment;

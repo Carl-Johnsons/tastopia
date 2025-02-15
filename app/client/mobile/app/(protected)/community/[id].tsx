@@ -39,6 +39,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import NotFound from "@/app/+not-found";
 import SimilarRecipe from "@/components/screen/community/SimilarRecipe";
 import Loading from "@/components/common/Loading";
+import SettingComment from "@/components/common/SettingComment";
 
 const RecipeDetail = () => {
   const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
@@ -52,6 +53,7 @@ const RecipeDetail = () => {
   }
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetCommentRef = useRef<BottomSheet>(null);
   const queryClient = useQueryClient();
   const { c } = useColorizer();
   const { black, white } = colors;
@@ -61,6 +63,8 @@ const RecipeDetail = () => {
   const { t } = useTranslation("recipeDetail");
   const { id } = useLocalSearchParams<{ id: string }>();
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+  const [currentCommentId, setCurrentCommentId] = useState("");
+  const [currentCommentAuthorId, setCurrentCommentAuthorId] = useState("");
   const {
     data: recipeDetailData,
     isLoading: isLoadingRecipeDetail,
@@ -364,6 +368,14 @@ const RecipeDetail = () => {
                                 avatarUrl={comment.avatarUrl}
                                 displayName={comment.displayName}
                                 content={comment.content}
+                                commentId={comment.id}
+                                bottomSheetRef={bottomSheetCommentRef}
+                                setCurrentCommentId={(id: string) => {
+                                  setCurrentCommentId(id);
+                                }}
+                                setCurrentCommentAuthorId={(id: string) => {
+                                  setCurrentCommentAuthorId(id);
+                                }}
                               />
                             )
                           );
@@ -441,6 +453,12 @@ const RecipeDetail = () => {
         id={id}
         authorId={recipeDetailData?.recipe.authorId}
         ref={bottomSheetRef}
+      />
+
+      <SettingComment
+        id={currentCommentId}
+        authorId={currentCommentAuthorId}
+        ref={bottomSheetCommentRef}
       />
     </SafeAreaView>
   );
