@@ -10,15 +10,21 @@ import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 type BodyProps = {
   accountId: string;
   bottomSheetRef: RefObject<BottomSheetMethods>;
+  bottomSheetCommentRef: RefObject<BottomSheetMethods>;
   setCurrentRecipeId: Dispatch<SetStateAction<string>>;
   setCurrentAuthorId: Dispatch<SetStateAction<string>>;
+  setCurrentCommentId: Dispatch<SetStateAction<string>>;
+  setCurrentCommentAuthorId: Dispatch<SetStateAction<string>>;
 };
 
 const Body = ({
   accountId,
   bottomSheetRef,
+  bottomSheetCommentRef,
   setCurrentAuthorId,
-  setCurrentRecipeId
+  setCurrentRecipeId,
+  setCurrentCommentId,
+  setCurrentCommentAuthorId
 }: BodyProps) => {
   const { t } = useTranslation("profile");
 
@@ -49,6 +55,9 @@ const Body = ({
           <CommentsTab
             key='CommentsTab'
             accountId={accountId}
+            bottomSheetCommentRef={bottomSheetCommentRef}
+            setCurrentCommentId={setCurrentCommentId}
+            setCurrentCommentAuthorId={setCurrentCommentAuthorId}
           />
         ]}
       />
