@@ -9,8 +9,6 @@ using System.ComponentModel.DataAnnotations;
 using static UserProto.GrpcUser;
 using UserProto;
 using AutoMapper;
-using Contract.Event.TrackingEvent;
-
 namespace RecipeService.Application.Recipes.Queries;
 
 public class SearchRecipesQuery : IRequest<Result<PaginatedSearchRecipeListResponse?>>
@@ -71,12 +69,6 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
 
         if (!string.IsNullOrEmpty(keyword))
         {
-            await _serviceBus.Publish(new CreateUserSearchRecipeEvent{
-                AccountId = accountId,
-                Keyword = keyword,
-                SearchTime = DateTime.UtcNow
-            });
-
             var searchUserResponse = await _grpcUserClient.SearchUserAsync(new GrpcSearchUserRequest
             {
                 Keyword = keyword,

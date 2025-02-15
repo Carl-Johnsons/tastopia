@@ -4,6 +4,7 @@ public class AccountRecipeCommentResponse
 {
     public Guid Id { get; set; }
     public Guid AccountId { get; set; }
+    public Guid RecipeId { get; set; }
     public string DisplayName { get; set; } = null!;
     public string Content { get; set; } = null!;
     public string RecipeTitle { get; set; } = null!;

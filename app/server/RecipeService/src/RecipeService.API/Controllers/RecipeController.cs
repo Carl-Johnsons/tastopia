@@ -346,4 +346,22 @@ public class RecipeController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    [HttpPost("create-user-search-recipe")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(string), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> CreateUserSearchRecipe([FromBody] CreateUserSearchRecipeDTO createUserSearchRecipeDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new PublishUserSearchRecipeCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Keyword = createUserSearchRecipeDTO.Keyword
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
 }
