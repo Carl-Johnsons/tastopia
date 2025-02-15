@@ -153,6 +153,56 @@ const useDeleteOwnRecipe = () => {
   });
 };
 
+const useReportRecipeCommentReason = (language: string, reportType: string) => {
+  return useQuery<ReportRecipeCommentReasonResponse>({
+    queryKey: ["reportRecipeReason", language, reportType],
+    queryFn: async () => {
+      const { data } =
+        await protectedAxiosInstance.post<ReportRecipeCommentReasonResponse>(
+          "/api/recipe/get-report-reasons",
+          {
+            language,
+            reportType
+          }
+        );
+      return data;
+    },
+    enabled: !!language && !!reportType
+  });
+};
+
+const useReportRecipe = () => {
+  return useMutation<IUserReportRecipeResponse, Error, IUserReportRecipeDTO>({
+    mutationFn: async ({ recipeId, reasonCodes, additionalDetails }) => {
+      const { data } = await protectedAxiosInstance.post(
+        "/api/recipe/user-report-recipe",
+        {
+          recipeId,
+          reasonCodes,
+          additionalDetails
+        }
+      );
+      return data;
+    }
+  });
+};
+
+const useReportComment = () => {
+  return useMutation<IUserReportCommentResponse, Error, IUserReportCommentDTO>({
+    mutationFn: async ({ commentId, reasonCodes, additionalDetails }) => {
+      const { data } = await protectedAxiosInstance.post(
+        "/api/recipe/user-report-comment",
+        {
+          commentId,
+          reasonCodes,
+          additionalDetails
+        }
+      );
+      return data;
+    }
+  });
+};
+
 export {
   useRecipesFeed,
   useRecipesFeedByAuthorId,
@@ -162,5 +212,8 @@ export {
   useCreateRecipe,
   useBookmarkRecipe,
   useVoteRecipe,
-  useDeleteOwnRecipe
+  useDeleteOwnRecipe,
+  useReportRecipeCommentReason,
+  useReportRecipe,
+  useReportComment
 };

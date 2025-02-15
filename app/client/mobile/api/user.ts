@@ -301,3 +301,20 @@ export const useGetUserByAccountId = (accountId: string) => {
     enabled: !!accountId
   });
 };
+
+export const useReportUserReason = (language: string) => {
+  return useQuery<ReportRecipeCommentReasonResponse>({
+    queryKey: ["reportUserReason", language],
+    queryFn: async () => {
+      const { data } =
+        await protectedAxiosInstance.post<ReportRecipeCommentReasonResponse>(
+          "/api/user/get-report-reasons",
+          {
+            language
+          }
+        );
+      return data;
+    },
+    enabled: !!language
+  });
+};

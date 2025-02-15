@@ -38,6 +38,7 @@ import SettingRecipe from "@/components/common/SettingRecipe";
 import BottomSheet from "@gorhom/bottom-sheet";
 import NotFound from "@/app/+not-found";
 import SimilarRecipe from "@/components/screen/community/SimilarRecipe";
+import Loading from "@/components/common/Loading";
 
 const RecipeDetail = () => {
   const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
@@ -161,14 +162,7 @@ const RecipeDetail = () => {
   }, [recipeDetailData]);
 
   if (isLoadingRecipeDetail || isLoadingGetRecipeComment) {
-    return (
-      <View className='bg-white_black100 flex-1 items-center justify-center'>
-        <ActivityIndicator
-          size='large'
-          color={globalStyles.color.primary}
-        />
-      </View>
-    );
+    return <Loading />;
   }
 
   if (!isLoadingRecipeDetail && !recipeDetailData?.recipe.id) {

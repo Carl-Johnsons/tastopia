@@ -6,14 +6,23 @@ import {
   View
 } from "react-native";
 import { forwardRef, ReactNode, useState } from "react";
-import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from "@gorhom/bottom-sheet";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetView,
+  useBottomSheetModal
+} from "@gorhom/bottom-sheet";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
 import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import useIsOwner from "@/hooks/auth/useIsOwner";
-import { useDeleteOwnRecipe, useRecipesFeed } from "@/api/recipe";
+import {
+  useDeleteOwnRecipe,
+  useRecipesFeed,
+  useReportRecipe,
+  useReportRecipeCommentReason
+} from "@/api/recipe";
 import {
   InfiniteData,
   QueryObserverResult,
@@ -28,6 +37,10 @@ import Input from "@/components/common/Input";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import i18n from "@/i18n/i18next";
+import { REPORT_TYPE } from "@/constants/settings";
+import Loading from "./Loading";
+import { LANGUAGES } from "@/constants/languages";
 
 type Props = {
   id: string;
@@ -49,6 +62,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
   const { black, white } = colors;
   const { t } = useTranslation("component");
   const { refetch } = useRecipesFeed("All");
+  const { dismiss } = useBottomSheetModal();
   const [currentSetting, setCurrentSetting] = useState<SettingState>(Settings.INITIAL);
   const isCreatedByCurrentUser = useIsOwner(props.authorId);
   const { mutateAsync: deleteOwnRecipe, isLoading: isDeletingOwnRecipe } =
@@ -67,11 +81,17 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
     }
   };
 
+  const closeModal = () => {
+    setCurrentSetting(Settings.INITIAL);
+    dismiss();
+  };
+
   const onPressEdit = useProtectedExclude(() => {
     router.push({
       pathname: "/(protected)/community/update-recipe",
       params: { id: props.id, authorId: props.authorId }
     });
+    closeModal();
   }, [ROLE.GUEST]);
 
   const onPressDelete = useProtectedExclude(() => {
@@ -93,6 +113,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
                     Alert.alert(t("settingRecipe.deleteRecipeSuccessfully"));
                     refetch();
                     router.navigate("/(protected)");
+                    closeModal();
                   },
                   onError: error => {
                     Alert.alert(t("settingRecipe.deleteRecipeFail"));
@@ -179,7 +200,11 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
           )}
 
           {currentSetting === Settings.REPORT && (
-            <ReportSetting changeSetting={changeSetting} />
+            <ReportSetting
+              recipeId={props.id}
+              changeSetting={changeSetting}
+              closeModal={closeModal}
+            />
           )}
         </View>
       </BottomSheetView>
@@ -223,22 +248,30 @@ type Report = {
 };
 
 type ReportSettingProps = {
+  recipeId: string;
   changeSetting: (setting: SettingState) => void;
+  closeModal: () => void;
 };
 
 const reportSchema = yup.object().shape({
   additionalDetails: yup.string().default("")
 });
 
-const ReportSetting = ({ changeSetting }: ReportSettingProps) => {
+const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingProps) => {
   const { c } = useColorizer();
   const { black, white } = colors;
   const { t } = useTranslation("report");
-
+  const currentLanguage = i18n.languages[0];
   const [report, setReport] = useState<Report>({
     reasonCodes: new Set(),
     additionalDetails: ""
   });
+
+  const { mutateAsync: reportMutate, isLoading: isReporting } = useReportRecipe();
+  const { data: reportRecipeReasons, isLoading } = useReportRecipeCommentReason(
+    currentLanguage === "vi" ? LANGUAGES.VIETNAMESE : LANGUAGES.ENGLISH,
+    REPORT_TYPE.RECIPE
+  );
 
   const formReport = useForm<{ additionalDetails: string }>({
     resolver: yupResolver(reportSchema),
@@ -246,6 +279,7 @@ const ReportSetting = ({ changeSetting }: ReportSettingProps) => {
       additionalDetails: ""
     }
   });
+
   const {
     control,
     formState: { errors },
@@ -253,7 +287,24 @@ const ReportSetting = ({ changeSetting }: ReportSettingProps) => {
   } = formReport;
 
   const onSubmit: SubmitHandler<{ additionalDetails: string }> = async formData => {
-    console.log("form data", formData);
+    if (!isLoading && !isReporting) {
+      reportMutate(
+        {
+          recipeId: recipeId,
+          reasonCodes: [...report.reasonCodes],
+          additionalDetails: formData.additionalDetails
+        },
+        {
+          onSuccess: async _data => {
+            Alert.alert(t("reportSuccessfully"));
+            closeModal();
+          },
+          onError: async _error => {
+            Alert.alert(t("reportFail"));
+          }
+        }
+      );
+    }
   };
 
   const handleSelectReason = (reasonCode: string) => {
@@ -272,6 +323,13 @@ const ReportSetting = ({ changeSetting }: ReportSettingProps) => {
       };
     });
   };
+
+  if (isLoading)
+    return (
+      <View className='min-h-[100px]'>
+        <Loading />
+      </View>
+    );
 
   return (
     <View>
@@ -294,22 +352,21 @@ const ReportSetting = ({ changeSetting }: ReportSettingProps) => {
       </View>
 
       <View>
-        <ItemCard
-          title={t("English")}
-          className='justify-between'
-          additionalIcon={report.reasonCodes.has("test1") ? CheckCircleIcon : undefined}
-          onPress={() => {
-            handleSelectReason("test1");
-          }}
-        />
-        <ItemCard
-          title={t("English")}
-          className='justify-between'
-          additionalIcon={report.reasonCodes.has("test2") ? CheckCircleIcon : undefined}
-          onPress={() => {
-            handleSelectReason("test2");
-          }}
-        />
+        {reportRecipeReasons?.map(reason => {
+          return (
+            <ItemCard
+              key={reason.code}
+              title={reason.content}
+              className='justify-between'
+              additionalIcon={
+                report.reasonCodes.has(reason.code) ? CheckCircleIcon : undefined
+              }
+              onPress={() => {
+                handleSelectReason(reason.code);
+              }}
+            />
+          );
+        })}
 
         <View className='mt-2 px-5'>
           <Input
