@@ -258,6 +258,43 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
+    [HttpPost("delete-comment")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Comment), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> DeleteComment([FromBody] DeleteCommentDTO deleteCommentDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new DeleteCommentCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            CommentId = deleteCommentDTO.CommentId,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("update-comment")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Comment), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UpdateComment([FromBody] UpdateCommentDTO updateCommentDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new UpdateCommentCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            CommentId = updateCommentDTO.CommentId,
+            Content = updateCommentDTO.Content,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [HttpPost("get-recipe-steps")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<Step>), 200)]
