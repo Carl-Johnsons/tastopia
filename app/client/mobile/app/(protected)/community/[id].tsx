@@ -38,6 +38,8 @@ import SettingRecipe from "@/components/common/SettingRecipe";
 import BottomSheet from "@gorhom/bottom-sheet";
 import NotFound from "@/app/+not-found";
 import SimilarRecipe from "@/components/screen/community/SimilarRecipe";
+import Loading from "@/components/common/Loading";
+import SettingComment from "@/components/common/SettingComment";
 
 const RecipeDetail = () => {
   const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
@@ -51,6 +53,7 @@ const RecipeDetail = () => {
   }
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetCommentRef = useRef<BottomSheet>(null);
   const queryClient = useQueryClient();
   const { c } = useColorizer();
   const { black, white } = colors;
@@ -60,6 +63,8 @@ const RecipeDetail = () => {
   const { t } = useTranslation("recipeDetail");
   const { id } = useLocalSearchParams<{ id: string }>();
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+  const [currentComment, setCurrentComment] = useState<CommentCustomType>();
+  const [currentCommentAuthorId, setCurrentCommentAuthorId] = useState("");
   const {
     data: recipeDetailData,
     isLoading: isLoadingRecipeDetail,
@@ -147,6 +152,28 @@ const RecipeDetail = () => {
     setComments(prev => [comment, ...prev]);
   }, []);
 
+  const deleteComment = useCallback(
+    (commentId: string) => {
+      setComments(prev => {
+        const newComments = prev.filter(comment => comment.id !== commentId);
+
+        return newComments;
+      });
+    },
+    [setComments]
+  );
+
+  const updateComment = useCallback(
+    (commentId: string, content: string) => {
+      setComments(prev =>
+        prev.map(comment =>
+          comment.id === commentId ? { ...comment, content } : comment
+        )
+      );
+    },
+    [setComments]
+  );
+
   useEffect(() => {
     if (commentData?.pages) {
       const uniqueComments = filterUniqueItems(commentData.pages);
@@ -161,14 +188,7 @@ const RecipeDetail = () => {
   }, [recipeDetailData]);
 
   if (isLoadingRecipeDetail || isLoadingGetRecipeComment) {
-    return (
-      <View className='bg-white_black100 flex-1 items-center justify-center'>
-        <ActivityIndicator
-          size='large'
-          color={globalStyles.color.primary}
-        />
-      </View>
-    );
+    return <Loading />;
   }
 
   if (!isLoadingRecipeDetail && !recipeDetailData?.recipe.id) {
@@ -370,6 +390,14 @@ const RecipeDetail = () => {
                                 avatarUrl={comment.avatarUrl}
                                 displayName={comment.displayName}
                                 content={comment.content}
+                                commentId={comment.id}
+                                bottomSheetRef={bottomSheetCommentRef}
+                                setCurrentComment={(comment: CommentCustomType) => {
+                                  setCurrentComment(comment);
+                                }}
+                                setCurrentCommentAuthorId={(id: string) => {
+                                  setCurrentCommentAuthorId(id);
+                                }}
                               />
                             )
                           );
@@ -448,6 +476,18 @@ const RecipeDetail = () => {
         authorId={recipeDetailData?.recipe.authorId}
         ref={bottomSheetRef}
       />
+
+      {currentComment?.id && currentComment?.content && (
+        <SettingComment
+          id={currentComment.id}
+          recipeId={id}
+          content={currentComment.content}
+          authorId={currentCommentAuthorId}
+          ref={bottomSheetCommentRef}
+          deleteComment={deleteComment}
+          updateComment={updateComment}
+        />
+      )}
     </SafeAreaView>
   );
 };

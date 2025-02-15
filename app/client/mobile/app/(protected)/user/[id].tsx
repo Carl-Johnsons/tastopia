@@ -1,6 +1,7 @@
 import { useGetUserByAccountId } from "@/api/user";
 import NotFound from "@/app/+not-found";
 import { globalStyles } from "@/components/common/GlobalStyles";
+import SettingComment from "@/components/common/SettingComment";
 import SettingRecipe from "@/components/common/SettingRecipe";
 import Body from "@/components/screen/user/Body";
 import Header from "@/components/screen/user/Header";
@@ -18,8 +19,14 @@ const Profile = () => {
   const { id: accountId } = useLocalSearchParams();
 
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetCommentRef = useRef<BottomSheet>(null);
   const [currentRecipeId, setCurrentRecipeId] = useState("");
   const [currentAuthorId, setCurrentAuthorId] = useState("");
+  const [currentComment, setCurrentComment] = useState<CommentCustomType>({
+    id: "",
+    content: ""
+  });
+  const [currentCommentAuthorId, setCurrentCommentAuthorId] = useState("");
   const { data: accountDetailData, isLoading: isLoadingAccountDetail } =
     useGetUserByAccountId(accountId as string);
 
@@ -62,14 +69,26 @@ const Profile = () => {
       <Body
         accountId={accountDetailData.accountId}
         bottomSheetRef={bottomSheetRef}
+        bottomSheetCommentRef={bottomSheetCommentRef}
         setCurrentRecipeId={setCurrentRecipeId}
         setCurrentAuthorId={setCurrentAuthorId}
+        setCurrentComment={setCurrentComment}
+        setCurrentCommentAuthorId={setCurrentCommentAuthorId}
       />
       <SettingRecipe
         id={currentRecipeId}
         authorId={currentAuthorId}
         ref={bottomSheetRef}
       />
+      {currentComment?.id && currentComment?.content && (
+        <SettingComment
+          id={currentComment.id}
+          recipeId={currentRecipeId}
+          content={currentComment.content}
+          authorId={currentCommentAuthorId}
+          ref={bottomSheetCommentRef}
+        />
+      )}
     </SafeAreaView>
   );
 };

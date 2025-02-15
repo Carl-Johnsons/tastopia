@@ -35,6 +35,7 @@ import { protectedAxiosInstance } from "@/constants/host";
 import { useQueryClient } from "react-query";
 import UpdateIngredient from "@/components/screen/community/UpdateIngredient";
 import { FormUpdateRecipeType, schema } from "@/schemas/update-recipe";
+import Loading from "@/components/common/Loading";
 
 const UpdateRecipe = () => {
   const queryClient = useQueryClient();
@@ -314,14 +315,7 @@ const UpdateRecipe = () => {
   }, [isLoadingRecipeDetail]);
 
   if (isLoadingRecipeDetail) {
-    return (
-      <View className='bg-white_black100 flex-1 items-center justify-center'>
-        <ActivityIndicator
-          size='large'
-          color={globalStyles.color.primary}
-        />
-      </View>
-    );
+    return <Loading />;
   }
 
   return (

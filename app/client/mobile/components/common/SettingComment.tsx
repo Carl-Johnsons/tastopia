@@ -19,17 +19,12 @@ import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import useIsOwner from "@/hooks/auth/useIsOwner";
 import {
-  useDeleteOwnRecipe,
-  useRecipesFeed,
-  useReportRecipe,
-  useReportRecipeCommentReason
+  useDeleteComment,
+  useReportComment,
+  useReportRecipeCommentReason,
+  useUpdateComment
 } from "@/api/recipe";
-import {
-  InfiniteData,
-  QueryObserverResult,
-  RefetchOptions,
-  RefetchQueryFilters
-} from "react-query";
+import { useQueryClient } from "react-query";
 import { useProtectedExclude } from "@/hooks/auth/useProtected";
 import { ROLE } from "@/slices/auth.slice";
 import { ItemCard } from "../SettingModal";
@@ -41,28 +36,29 @@ import { LANGUAGES } from "@/constants/languages";
 
 type Props = {
   id: string;
+  recipeId?: string;
   authorId: string;
-  refetch?: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<InfiniteData<RecipeResponse>, unknown>>;
+  content: string;
+  deleteComment?: (commentId: string) => void;
+  updateComment?: (commentId: string, content: string) => void;
 };
 
 enum Settings {
   "INITIAL",
-  "REPORT"
+  "REPORT",
+  "UPDATE"
 }
 
 type SettingState = Settings;
 
-const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
+const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
   const { c } = useColorizer();
   const { black, white } = colors;
-  const { t } = useTranslation("component");
-  const { refetch } = useRecipesFeed("All");
+  const { t } = useTranslation("component", { keyPrefix: "settingComment" });
+  const queryClient = useQueryClient();
   const [currentSetting, setCurrentSetting] = useState<SettingState>(Settings.INITIAL);
   const isCreatedByCurrentUser = useIsOwner(props.authorId);
-  const { mutateAsync: deleteOwnRecipe, isLoading: isDeletingOwnRecipe } =
-    useDeleteOwnRecipe();
+  const { mutateAsync: deleteComment, isLoading: isDeletingComment } = useDeleteComment();
 
   const changeSetting = (setting: SettingState) => {
     switch (setting) {
@@ -71,6 +67,9 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
         break;
       case Settings.REPORT:
         setCurrentSetting(Settings.REPORT);
+        break;
+      case Settings.UPDATE:
+        setCurrentSetting(Settings.UPDATE);
         break;
       default:
         setCurrentSetting(Settings.INITIAL);
@@ -82,43 +81,42 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
   };
 
   const onPressEdit = useProtectedExclude(() => {
-    router.push({
-      pathname: "/(protected)/community/update-recipe",
-      params: { id: props.id, authorId: props.authorId }
-    });
-    closeModal();
+    changeSetting(Settings.UPDATE);
   }, [ROLE.GUEST]);
 
   const onPressDelete = useProtectedExclude(() => {
-    if (!isDeletingOwnRecipe) {
-      Alert.alert(
-        t("settingRecipe.confirmDeleteRecipeTitle"),
-        t("settingRecipe.confirmDeleteRecipeDescription"),
-        [
-          {
-            text: t("cancel")
-          },
-          {
-            text: t("ok"),
-            onPress: () => {
-              deleteOwnRecipe(
-                { recipeId: props.id },
-                {
-                  onSuccess: async data => {
-                    Alert.alert(t("settingRecipe.deleteRecipeSuccessfully"));
-                    refetch();
-                    router.navigate("/(protected)");
-                    closeModal();
-                  },
-                  onError: error => {
-                    Alert.alert(t("settingRecipe.deleteRecipeFail"));
+    if (!isDeletingComment) {
+      Alert.alert(t("confirmDeleteCommentTitle"), t("confirmDeleteCommentDescription"), [
+        {
+          text: t("cancel")
+        },
+        {
+          text: t("ok"),
+          onPress: () => {
+            deleteComment(
+              { commentId: props.id },
+              {
+                onSuccess: async data => {
+                  queryClient.invalidateQueries({
+                    queryKey: ["comments", props.recipeId]
+                  });
+                  queryClient.invalidateQueries({
+                    queryKey: ["commentsByAuthorId", props.authorId]
+                  });
+                  if (props.deleteComment) {
+                    props.deleteComment(props.id);
                   }
+                  closeModal();
+                  Alert.alert(t("deleteCommentSuccessfully"));
+                },
+                onError: error => {
+                  Alert.alert(t("deleteCommentFail"));
                 }
-              );
-            }
+              }
+            );
           }
-        ]
-      );
+        }
+      ]);
     }
   }, [ROLE.GUEST]);
 
@@ -155,7 +153,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
             <View>
               {isCreatedByCurrentUser && (
                 <BottomSheetItem
-                  title={t("settingRecipe.editRecipe")}
+                  title={t("editComment")}
                   icon={
                     <AntDesign
                       name='edit'
@@ -169,7 +167,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
 
               {isCreatedByCurrentUser && (
                 <BottomSheetItem
-                  title={t("settingRecipe.deleteRecipe")}
+                  title={t("deleteComment")}
                   icon={
                     <MaterialIcons
                       name='delete-outline'
@@ -183,7 +181,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
 
               {!isCreatedByCurrentUser && (
                 <BottomSheetItem
-                  title={t("settingRecipe.reportRecipe")}
+                  title={t("reportComment")}
                   icon={
                     <Octicons
                       name='report'
@@ -199,9 +197,21 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
 
           {currentSetting === Settings.REPORT && (
             <ReportSetting
-              recipeId={props.id}
+              commentId={props.id}
               changeSetting={changeSetting}
               closeModal={closeModal}
+            />
+          )}
+
+          {currentSetting === Settings.UPDATE && (
+            <UpdateSetting
+              authorId={props.authorId}
+              recipeId={props.recipeId ?? ""}
+              commentId={props.id}
+              content={props.content}
+              closeModal={closeModal}
+              changeSetting={changeSetting}
+              updateComment={props.updateComment}
             />
           )}
         </View>
@@ -246,12 +256,12 @@ type Report = {
 };
 
 type ReportSettingProps = {
-  recipeId: string;
+  commentId: string;
   changeSetting: (setting: SettingState) => void;
   closeModal: () => void;
 };
 
-const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingProps) => {
+const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingProps) => {
   const { c } = useColorizer();
   const { black, white, primary } = colors;
   const { t } = useTranslation("report");
@@ -261,10 +271,10 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
     additionalDetails: ""
   });
 
-  const { mutateAsync: reportMutate, isLoading: isReporting } = useReportRecipe();
-  const { data: reportRecipeReasons, isLoading } = useReportRecipeCommentReason(
+  const { mutateAsync: reportMutate, isLoading: isReporting } = useReportComment();
+  const { data: reportCommentReasons, isLoading } = useReportRecipeCommentReason(
     currentLanguage === "vi" ? LANGUAGES.VIETNAMESE : LANGUAGES.ENGLISH,
-    REPORT_TYPE.RECIPE
+    REPORT_TYPE.COMMENT
   );
   const handleChangeText = (additionalDetails: string) => {
     setReport(prev => {
@@ -284,7 +294,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
     if (!isLoading && !isReporting) {
       reportMutate(
         {
-          recipeId: recipeId,
+          commentId: commentId,
           reasonCodes: [...report.reasonCodes],
           additionalDetails: report.additionalDetails
         },
@@ -293,7 +303,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
             Alert.alert(t("reportSuccessfully"));
             closeModal();
           },
-          onError: async error => {
+          onError: async _error => {
             Alert.alert(t("reportFail"));
           }
         }
@@ -341,13 +351,15 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
         </View>
 
         <TouchableWithoutFeedback onPress={() => handleSubmit()}>
-          <Text className='font-semibold text-xl text-primary'>{t("send")}</Text>
+          <View>
+            <Text className='font-semibold text-xl text-primary'>{t("send")}</Text>
+          </View>
         </TouchableWithoutFeedback>
       </View>
 
       <View>
         <FlatList
-          data={reportRecipeReasons}
+          data={reportCommentReasons}
           keyExtractor={item => item.code}
           renderItem={({ item }) => (
             <ItemCard
@@ -379,4 +391,105 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
   );
 };
 
-export default SettingRecipe;
+type UpdateSettingProps = {
+  authorId: string;
+  recipeId: string;
+  commentId: string;
+  content: string;
+  closeModal: () => void;
+  changeSetting: (setting: SettingState) => void;
+  updateComment?: (commentId: string, content: string) => void;
+};
+
+const UpdateSetting = ({
+  authorId,
+  recipeId,
+  commentId,
+  content: defaultContent,
+  changeSetting,
+  closeModal,
+  updateComment
+}: UpdateSettingProps) => {
+  const { c } = useColorizer();
+  const { black, white, primary } = colors;
+  const { t } = useTranslation("report", { keyPrefix: "update" });
+  const [content, setContent] = useState(defaultContent);
+  const queryClient = useQueryClient();
+  const { mutateAsync: updateMutate, isLoading: isUpdating } = useUpdateComment();
+
+  const handleChangeText = (content: string) => {
+    setContent(content);
+  };
+
+  const handleSubmit = () => {
+    if (!content) {
+      Alert.alert(t("required"));
+      return;
+    }
+
+    if (!isUpdating) {
+      updateMutate(
+        {
+          commentId,
+          content
+        },
+        {
+          onSuccess: async _data => {
+            Alert.alert(t("updateSuccessfully"));
+            queryClient.invalidateQueries({
+              queryKey: ["commentsByAuthorId", authorId]
+            });
+            if (updateComment) {
+              updateComment(commentId, content);
+            }
+            closeModal();
+          },
+          onError: async _error => {
+            Alert.alert(t("updateFail"));
+          }
+        }
+      );
+    }
+  };
+
+  return (
+    <View>
+      <View className='relative mb-4 flex-row justify-between px-5'>
+        <TouchableWithoutFeedback onPress={() => changeSetting(Settings.INITIAL)}>
+          <ArrowBackIcon
+            color={c(black.DEFAULT, white.DEFAULT)}
+            width={22}
+            height={22}
+          />
+        </TouchableWithoutFeedback>
+
+        <View className='absolute left-1/2 -translate-x-1/3 items-center'>
+          <Text className='text-black_white font-semibold text-xl'>{t("title")}</Text>
+        </View>
+
+        <TouchableWithoutFeedback onPress={() => handleSubmit()}>
+          <View>
+            <Text className='font-semibold text-xl text-primary'>{t("update")}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+
+      <View>
+        <View className='mt-2 px-5'>
+          <BottomSheetTextInput
+            value={content}
+            onChangeText={handleChangeText}
+            style={{
+              borderBottomWidth: 2,
+              borderBottomColor: primary,
+              color: c(black.DEFAULT, white.DEFAULT)
+            }}
+            placeholder={t("placeholder")}
+          />
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export default SettingComment;

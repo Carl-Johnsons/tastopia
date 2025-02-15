@@ -1,24 +1,32 @@
-import {
-  FlatList,
-  Platform,
-  RefreshControl,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
+import { FlatList, Platform, RefreshControl, SafeAreaView, View } from "react-native";
 import { TabView } from "@rneui/themed";
 import { useCommentsByAuthorId } from "@/api/recipe";
-import { useCallback, useEffect, useState } from "react";
+import {
+  Dispatch,
+  RefObject,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState
+} from "react";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import Empty from "../community/Empty";
 import Comment from "./Comment";
+import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 type CommentsTabProps = {
   accountId: string;
+  bottomSheetCommentRef: RefObject<BottomSheetMethods>;
+  setCurrentComment: Dispatch<SetStateAction<CommentCustomType>>;
+  setCurrentCommentAuthorId: Dispatch<SetStateAction<string>>;
 };
 
-const CommentsTab = ({ accountId }: CommentsTabProps) => {
+const CommentsTab = ({
+  accountId,
+  bottomSheetCommentRef,
+  setCurrentComment,
+  setCurrentCommentAuthorId
+}: CommentsTabProps) => {
   const [comments, setComments] = useState<IAccountRecipeCommentResponse[]>([]);
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
     useCommentsByAuthorId(accountId);
@@ -39,7 +47,12 @@ const CommentsTab = ({ accountId }: CommentsTabProps) => {
         className='w-full'
         testID='comment'
       >
-        <Comment {...item} />
+        <Comment
+          {...item}
+          bottomSheetCommentRef={bottomSheetCommentRef}
+          setCurrentComment={setCurrentComment}
+          setCurrentCommentAuthorId={setCurrentCommentAuthorId}
+        />
         {index !== comments.length - 1 && (
           <View className='my-4 h-[1px] w-full bg-gray-300' />
         )}
@@ -105,5 +118,3 @@ const CommentsTab = ({ accountId }: CommentsTabProps) => {
 };
 
 export default CommentsTab;
-
-const styles = StyleSheet.create({});
