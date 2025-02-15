@@ -12,20 +12,14 @@ public class ReportReasonData
         new ReportUserReason
         {
             Code = "FAKE_USER",
-            Eng = "Fake or impersonation account",
-            Vn = "Tài khoản giả mạo hoặc danh tính không có thật"
-        },
-        new ReportUserReason
-        {
-            Code = "HATE_SPEECH_USER",
-            Eng = "Hate speech user",
-            Vn = "Người dùng đăng nội dung kích động thù địch"
+            Eng = "Fake account",
+            Vn = "Tài khoản giả mạo"
         },
         new ReportUserReason
         {
             Code = "HARASSMENT_USER",
-            Eng = "Harassment or bullying user",
-            Vn = "Người dùng quấy rối hoặc bắt nạt người khác"
+            Eng = "Harassment user",
+            Vn = "Người dùng quấy rối người khác"
         },
         new ReportUserReason
         {
@@ -44,24 +38,6 @@ public class ReportReasonData
             Code = "EXPLICIT_USER",
             Eng = "Explicit content user (18+)",
             Vn = "Người dùng đăng nội dung nhạy cảm (18+)"
-        },
-        new ReportUserReason
-        {
-            Code = "MISINFORMATION_USER",
-            Eng = "Misinformation or misleading user",
-            Vn = "Người dùng lan truyền thông tin sai lệch"
-        },
-        new ReportUserReason
-        {
-            Code = "MULTI_ACCOUNT_ABUSE",
-            Eng = "Multi-account abuse",
-            Vn = "Lạm dụng nhiều tài khoản"
-        },
-        new ReportUserReason
-        {
-            Code = "BOT_USER",
-            Eng = "Bot or automated account",
-            Vn = "Tài khoản có dấu hiệu là bot"
         }
     };
 }
