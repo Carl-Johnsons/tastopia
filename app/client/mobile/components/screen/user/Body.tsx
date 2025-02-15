@@ -13,7 +13,7 @@ type BodyProps = {
   bottomSheetCommentRef: RefObject<BottomSheetMethods>;
   setCurrentRecipeId: Dispatch<SetStateAction<string>>;
   setCurrentAuthorId: Dispatch<SetStateAction<string>>;
-  setCurrentCommentId: Dispatch<SetStateAction<string>>;
+  setCurrentComment: Dispatch<SetStateAction<CommentCustomType>>;
   setCurrentCommentAuthorId: Dispatch<SetStateAction<string>>;
 };
 
@@ -23,7 +23,7 @@ const Body = ({
   bottomSheetCommentRef,
   setCurrentAuthorId,
   setCurrentRecipeId,
-  setCurrentCommentId,
+  setCurrentComment,
   setCurrentCommentAuthorId
 }: BodyProps) => {
   const { t } = useTranslation("profile");
@@ -56,7 +56,7 @@ const Body = ({
             key='CommentsTab'
             accountId={accountId}
             bottomSheetCommentRef={bottomSheetCommentRef}
-            setCurrentCommentId={setCurrentCommentId}
+            setCurrentComment={setCurrentComment}
             setCurrentCommentAuthorId={setCurrentCommentAuthorId}
           />
         ]}

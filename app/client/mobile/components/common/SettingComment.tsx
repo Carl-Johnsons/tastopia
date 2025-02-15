@@ -21,7 +21,8 @@ import useIsOwner from "@/hooks/auth/useIsOwner";
 import {
   useDeleteComment,
   useReportComment,
-  useReportRecipeCommentReason
+  useReportRecipeCommentReason,
+  useUpdateComment
 } from "@/api/recipe";
 import { useQueryClient } from "react-query";
 import { useProtectedExclude } from "@/hooks/auth/useProtected";
@@ -37,12 +38,15 @@ type Props = {
   id: string;
   recipeId?: string;
   authorId: string;
+  content: string;
   deleteComment?: (commentId: string) => void;
+  updateComment?: (commentId: string, content: string) => void;
 };
 
 enum Settings {
   "INITIAL",
-  "REPORT"
+  "REPORT",
+  "UPDATE"
 }
 
 type SettingState = Settings;
@@ -64,6 +68,9 @@ const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
       case Settings.REPORT:
         setCurrentSetting(Settings.REPORT);
         break;
+      case Settings.UPDATE:
+        setCurrentSetting(Settings.UPDATE);
+        break;
       default:
         setCurrentSetting(Settings.INITIAL);
     }
@@ -74,15 +81,10 @@ const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
   };
 
   const onPressEdit = useProtectedExclude(() => {
-    router.push({
-      pathname: "/(protected)/community/update-recipe",
-      params: { id: props.id, authorId: props.authorId }
-    });
-    closeModal();
+    changeSetting(Settings.UPDATE);
   }, [ROLE.GUEST]);
 
   const onPressDelete = useProtectedExclude(() => {
-    console.log("this function called");
     if (!isDeletingComment) {
       Alert.alert(t("confirmDeleteCommentTitle"), t("confirmDeleteCommentDescription"), [
         {
@@ -198,6 +200,18 @@ const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
               commentId={props.id}
               changeSetting={changeSetting}
               closeModal={closeModal}
+            />
+          )}
+
+          {currentSetting === Settings.UPDATE && (
+            <UpdateSetting
+              authorId={props.authorId}
+              recipeId={props.recipeId ?? ""}
+              commentId={props.id}
+              content={props.content}
+              closeModal={closeModal}
+              changeSetting={changeSetting}
+              updateComment={props.updateComment}
             />
           )}
         </View>
@@ -337,7 +351,9 @@ const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingPr
         </View>
 
         <TouchableWithoutFeedback onPress={() => handleSubmit()}>
-          <Text className='font-semibold text-xl text-primary'>{t("send")}</Text>
+          <View>
+            <Text className='font-semibold text-xl text-primary'>{t("send")}</Text>
+          </View>
         </TouchableWithoutFeedback>
       </View>
 
@@ -370,6 +386,107 @@ const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingPr
             </View>
           }
         />
+      </View>
+    </View>
+  );
+};
+
+type UpdateSettingProps = {
+  authorId: string;
+  recipeId: string;
+  commentId: string;
+  content: string;
+  closeModal: () => void;
+  changeSetting: (setting: SettingState) => void;
+  updateComment?: (commentId: string, content: string) => void;
+};
+
+const UpdateSetting = ({
+  authorId,
+  recipeId,
+  commentId,
+  content: defaultContent,
+  changeSetting,
+  closeModal,
+  updateComment
+}: UpdateSettingProps) => {
+  const { c } = useColorizer();
+  const { black, white, primary } = colors;
+  const { t } = useTranslation("report", { keyPrefix: "update" });
+  const [content, setContent] = useState(defaultContent);
+  const queryClient = useQueryClient();
+  const { mutateAsync: updateMutate, isLoading: isUpdating } = useUpdateComment();
+
+  const handleChangeText = (content: string) => {
+    setContent(content);
+  };
+
+  const handleSubmit = () => {
+    if (!content) {
+      Alert.alert(t("required"));
+      return;
+    }
+
+    if (!isUpdating) {
+      updateMutate(
+        {
+          commentId,
+          content
+        },
+        {
+          onSuccess: async _data => {
+            Alert.alert(t("updateSuccessfully"));
+            queryClient.invalidateQueries({
+              queryKey: ["commentsByAuthorId", authorId]
+            });
+            if (updateComment) {
+              updateComment(commentId, content);
+            }
+            closeModal();
+          },
+          onError: async _error => {
+            Alert.alert(t("updateFail"));
+          }
+        }
+      );
+    }
+  };
+
+  return (
+    <View>
+      <View className='relative mb-4 flex-row justify-between px-5'>
+        <TouchableWithoutFeedback onPress={() => changeSetting(Settings.INITIAL)}>
+          <ArrowBackIcon
+            color={c(black.DEFAULT, white.DEFAULT)}
+            width={22}
+            height={22}
+          />
+        </TouchableWithoutFeedback>
+
+        <View className='absolute left-1/2 -translate-x-1/3 items-center'>
+          <Text className='text-black_white font-semibold text-xl'>{t("title")}</Text>
+        </View>
+
+        <TouchableWithoutFeedback onPress={() => handleSubmit()}>
+          <View>
+            <Text className='font-semibold text-xl text-primary'>{t("update")}</Text>
+          </View>
+        </TouchableWithoutFeedback>
+      </View>
+
+      <View>
+        <View className='mt-2 px-5'>
+          <BottomSheetTextInput
+            value={content}
+            onChangeText={handleChangeText}
+            style={{
+              borderBottomWidth: 2,
+              borderBottomColor: primary,
+              color: c(black.DEFAULT, white.DEFAULT)
+            }}
+            placeholder={t("placeholder")}
+          />
+        </View>
       </View>
     </View>
   );

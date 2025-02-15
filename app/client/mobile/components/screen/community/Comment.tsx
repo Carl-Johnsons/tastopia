@@ -22,11 +22,11 @@ const Comment = ({
   content,
   commentId,
   setCurrentCommentAuthorId,
-  setCurrentCommentId,
+  setCurrentComment,
   bottomSheetRef
 }: CommentProps & {
   bottomSheetRef: RefObject<BottomSheetMethods>;
-  setCurrentCommentId: (id: string) => void;
+  setCurrentComment: (comment: CommentCustomType) => void;
   setCurrentCommentAuthorId: (id: string) => void;
 }) => {
   const { c } = useColorizer();
@@ -40,7 +40,10 @@ const Comment = ({
   };
 
   const handleTouchMenu = () => {
-    setCurrentCommentId(commentId);
+    setCurrentComment({
+      id: commentId,
+      content: content
+    });
     setCurrentCommentAuthorId(accountId);
     bottomSheetRef.current?.expand();
   };

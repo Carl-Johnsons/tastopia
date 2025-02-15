@@ -18,11 +18,11 @@ const Comment = ({
   createdAt,
   isActive,
   bottomSheetCommentRef,
-  setCurrentCommentId,
+  setCurrentComment,
   setCurrentCommentAuthorId
 }: IAccountRecipeCommentResponse & {
   bottomSheetCommentRef: RefObject<BottomSheetMethods>;
-  setCurrentCommentId: Dispatch<SetStateAction<string>>;
+  setCurrentComment: Dispatch<SetStateAction<CommentCustomType>>;
   setCurrentCommentAuthorId: Dispatch<SetStateAction<string>>;
 }) => {
   const { c } = useColorizer();
@@ -36,7 +36,7 @@ const Comment = ({
   };
 
   const handleTouchMenu = () => {
-    setCurrentCommentId(id);
+    setCurrentComment({ id, content });
     setCurrentCommentAuthorId(accountId);
     bottomSheetCommentRef.current?.expand();
   };

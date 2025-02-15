@@ -63,7 +63,7 @@ const RecipeDetail = () => {
   const { t } = useTranslation("recipeDetail");
   const { id } = useLocalSearchParams<{ id: string }>();
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-  const [currentCommentId, setCurrentCommentId] = useState("");
+  const [currentComment, setCurrentComment] = useState<CommentCustomType>();
   const [currentCommentAuthorId, setCurrentCommentAuthorId] = useState("");
   const {
     data: recipeDetailData,
@@ -159,6 +159,17 @@ const RecipeDetail = () => {
 
         return newComments;
       });
+    },
+    [setComments]
+  );
+
+  const updateComment = useCallback(
+    (commentId: string, content: string) => {
+      setComments(prev =>
+        prev.map(comment =>
+          comment.id === commentId ? { ...comment, content } : comment
+        )
+      );
     },
     [setComments]
   );
@@ -381,8 +392,8 @@ const RecipeDetail = () => {
                                 content={comment.content}
                                 commentId={comment.id}
                                 bottomSheetRef={bottomSheetCommentRef}
-                                setCurrentCommentId={(id: string) => {
-                                  setCurrentCommentId(id);
+                                setCurrentComment={(comment: CommentCustomType) => {
+                                  setCurrentComment(comment);
                                 }}
                                 setCurrentCommentAuthorId={(id: string) => {
                                   setCurrentCommentAuthorId(id);
@@ -466,13 +477,17 @@ const RecipeDetail = () => {
         ref={bottomSheetRef}
       />
 
-      <SettingComment
-        id={currentCommentId}
-        recipeId={recipeDetailData.recipe.id}
-        authorId={currentCommentAuthorId}
-        ref={bottomSheetCommentRef}
-        deleteComment={deleteComment}
-      />
+      {currentComment?.id && currentComment?.content && (
+        <SettingComment
+          id={currentComment.id}
+          recipeId={id}
+          content={currentComment.content}
+          authorId={currentCommentAuthorId}
+          ref={bottomSheetCommentRef}
+          deleteComment={deleteComment}
+          updateComment={updateComment}
+        />
+      )}
     </SafeAreaView>
   );
 };

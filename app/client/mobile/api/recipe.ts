@@ -203,6 +203,23 @@ const useReportComment = () => {
   });
 };
 
+type UpdateComment = {
+  content: string;
+  commentId: string;
+};
+
+const useUpdateComment = () => {
+  return useMutation<any, Error, UpdateComment>({
+    mutationFn: async ({ commentId, content }) => {
+      const { data } = await protectedAxiosInstance.post("/api/recipe/update-comment", {
+        commentId,
+        content
+      });
+      return data;
+    }
+  });
+};
+
 const useDeleteComment = () => {
   return useMutation<any, Error, { commentId: string }>({
     mutationFn: async ({ commentId }) => {
@@ -227,5 +244,6 @@ export {
   useReportRecipeCommentReason,
   useReportRecipe,
   useReportComment,
+  useUpdateComment,
   useDeleteComment
 };

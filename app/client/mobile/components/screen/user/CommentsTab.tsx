@@ -17,14 +17,14 @@ import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 type CommentsTabProps = {
   accountId: string;
   bottomSheetCommentRef: RefObject<BottomSheetMethods>;
-  setCurrentCommentId: Dispatch<SetStateAction<string>>;
+  setCurrentComment: Dispatch<SetStateAction<CommentCustomType>>;
   setCurrentCommentAuthorId: Dispatch<SetStateAction<string>>;
 };
 
 const CommentsTab = ({
   accountId,
   bottomSheetCommentRef,
-  setCurrentCommentId,
+  setCurrentComment,
   setCurrentCommentAuthorId
 }: CommentsTabProps) => {
   const [comments, setComments] = useState<IAccountRecipeCommentResponse[]>([]);
@@ -50,7 +50,7 @@ const CommentsTab = ({
         <Comment
           {...item}
           bottomSheetCommentRef={bottomSheetCommentRef}
-          setCurrentCommentId={setCurrentCommentId}
+          setCurrentComment={setCurrentComment}
           setCurrentCommentAuthorId={setCurrentCommentAuthorId}
         />
         {index !== comments.length - 1 && (

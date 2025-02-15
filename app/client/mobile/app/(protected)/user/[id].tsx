@@ -22,7 +22,10 @@ const Profile = () => {
   const bottomSheetCommentRef = useRef<BottomSheet>(null);
   const [currentRecipeId, setCurrentRecipeId] = useState("");
   const [currentAuthorId, setCurrentAuthorId] = useState("");
-  const [currentCommentId, setCurrentCommentId] = useState("");
+  const [currentComment, setCurrentComment] = useState<CommentCustomType>({
+    id: "",
+    content: ""
+  });
   const [currentCommentAuthorId, setCurrentCommentAuthorId] = useState("");
   const { data: accountDetailData, isLoading: isLoadingAccountDetail } =
     useGetUserByAccountId(accountId as string);
@@ -69,7 +72,7 @@ const Profile = () => {
         bottomSheetCommentRef={bottomSheetCommentRef}
         setCurrentRecipeId={setCurrentRecipeId}
         setCurrentAuthorId={setCurrentAuthorId}
-        setCurrentCommentId={setCurrentCommentId}
+        setCurrentComment={setCurrentComment}
         setCurrentCommentAuthorId={setCurrentCommentAuthorId}
       />
       <SettingRecipe
@@ -77,11 +80,15 @@ const Profile = () => {
         authorId={currentAuthorId}
         ref={bottomSheetRef}
       />
-      <SettingComment
-        id={currentCommentId}
-        authorId={currentCommentAuthorId}
-        ref={bottomSheetCommentRef}
-      />
+      {currentComment?.id && currentComment?.content && (
+        <SettingComment
+          id={currentComment.id}
+          recipeId={currentRecipeId}
+          content={currentComment.content}
+          authorId={currentCommentAuthorId}
+          ref={bottomSheetCommentRef}
+        />
+      )}
     </SafeAreaView>
   );
 };
