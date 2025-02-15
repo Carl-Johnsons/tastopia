@@ -228,7 +228,15 @@ curl --location 'https://localhost:7000/api/user/user-report-user' \
 --header 'Content-Type: application/json' \
 --data '{
 "accountId" : "594a3fc8-3d24-4305-a9d7-569586d0604e",
-"reason" : "vô duyên quá đi"
+"reasonCodes" : ["SPAM_USER", "HARASSMENT_USER", "SCAM_USER", "BOT_USER"],
+"additionalDetails" : "Ôi sợ quá, sợ quá hãy ban nó đi."
+}'
+
+**get report reasons**
+curl --location 'https://localhost:7000/api/user/get-report-reasons' \
+--header 'Content-Type: application/json' \
+--data '{
+"language" : "Vietnamese"
 }'
 
 # TRACKING

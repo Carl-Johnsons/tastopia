@@ -73,6 +73,7 @@ public static class ReinforcedTypingsExtension
             typeof(UserReportRecipeResponse),
             typeof(UserReportCommentDTO),
             typeof(UserReportCommentResponse),
+            typeof(ReportReasonResponse),
 
         ], config =>
         {
