@@ -6,6 +6,7 @@ using RecipeService.Application.Comments.Commands;
 using RecipeService.Application.Comments.Queries;
 using RecipeService.Application.Recipes.Commands;
 using RecipeService.Application.Recipes.Queries;
+using RecipeService.Application.ReportReasons.Queries;
 using RecipeService.Application.Tags.Queries;
 using RecipeService.Application.UserBookmarkRecipes.Commands;
 using RecipeService.Application.UserBookmarkRecipes.Queries;
@@ -322,7 +323,8 @@ public class RecipeController : BaseApiController
         {
             ReporterId = Guid.Parse(subjectId!),
             RecipeId = userReportRecipeDTO.RecipeId,
-            Reason = userReportRecipeDTO.Reason,
+            ReasonCodes = userReportRecipeDTO.ReasonCodes,
+            AdditionalDetails = userReportRecipeDTO.AdditionalDetails,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -332,7 +334,7 @@ public class RecipeController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(UserReportCommentResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> UserReportRecipe([FromBody] UserReportCommentDTO userReportCommentDTO)
+    public async Task<IActionResult> UserReportComment([FromBody] UserReportCommentDTO userReportCommentDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
@@ -341,7 +343,8 @@ public class RecipeController : BaseApiController
         {
             ReporterId = Guid.Parse(subjectId!),
             CommentId = userReportCommentDTO.CommentId,
-            Reason = userReportCommentDTO.Reason,
+            ReasonCodes = userReportCommentDTO.ReasonCodes,
+            AdditionalDetails = userReportCommentDTO.AdditionalDetails,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -360,6 +363,21 @@ public class RecipeController : BaseApiController
         {
             AccountId = Guid.Parse(subjectId!),
             Keyword = createUserSearchRecipeDTO.Keyword
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("get-report-reasons")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(ReportReasonResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetReportReasons([FromBody] GetReportReasonsDTO getReportReasonsDTO)
+    {
+        var result = await _sender.Send(new GetReportReasonsQuery
+        {
+            Language = getReportReasonsDTO.Language,
+            ReportType = getReportReasonsDTO.ReportType,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

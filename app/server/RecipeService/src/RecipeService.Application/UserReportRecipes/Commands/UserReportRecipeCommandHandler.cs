@@ -5,13 +5,13 @@ using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
-
 namespace RecipeService.Application.UserReportRecipes.Commands;
 public class UserReportRecipeCommand : IRequest<Result<UserReportRecipeResponse?>>
 {
     public Guid ReporterId { get; set; }
     public Guid RecipeId { get; set; }
-    public string Reason { get; set; } = null!;
+    public List<string> ReasonCodes { get; set; } = null!;
+    public string? AdditionalDetails { get; set; }
 }
 
 public class UserReportRecipeCommandHandler : IRequestHandler<UserReportRecipeCommand, Result<UserReportRecipeResponse?>>
@@ -32,16 +32,17 @@ public class UserReportRecipeCommandHandler : IRequestHandler<UserReportRecipeCo
         try {
             var reporterId = request.ReporterId;
             var recipeId = request.RecipeId;
-            var reason = request.Reason;
+            var reasonCodes = request.ReasonCodes;
+            var additionalDetails = request.AdditionalDetails;
 
-            if (reporterId == Guid.Empty || recipeId == Guid.Empty || string.IsNullOrEmpty(reason))
+            if (reporterId == Guid.Empty || recipeId == Guid.Empty || reasonCodes == null || reasonCodes.Count == 0)
             {
                 return Result<UserReportRecipeResponse?>.Failure(UserReportRecipeError.NullParameter);
             }
             var recipe = await _context.Recipes.Where(r => r.Id == recipeId).SingleOrDefaultAsync();
             if (recipe == null)
             {
-                return Result<UserReportRecipeResponse?>.Failure(UserReportRecipeError.AddUserReportRecipeFail, "Not found recipe");
+                return Result<UserReportRecipeResponse?>.Failure(UserReportRecipeError.NotFound, "Not found recipe");
             }
 
             var report = _context.UserReportRecipes.Where(r => r.AccountId == reporterId && r.RecipeId == recipeId).FirstOrDefault();
@@ -57,11 +58,17 @@ public class UserReportRecipeCommandHandler : IRequestHandler<UserReportRecipeCo
                 });
             }
 
+            var codes = ReportReasonData.RecipeReportReasons.Where(r => reasonCodes.Contains(r.Code)).Select(r => r.Code).ToList();
+            if (codes == null || codes.Count == 0) {
+                return Result<UserReportRecipeResponse?>.Failure(UserReportRecipeError.NotFound, "Not found reason codes");
+            }
+
             report = new UserReportRecipe
             {
                 AccountId = reporterId,
                 RecipeId = recipeId,
-                Reason = reason,
+                ReasonCodes = codes,
+                AdditionalDetails = additionalDetails,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
             };

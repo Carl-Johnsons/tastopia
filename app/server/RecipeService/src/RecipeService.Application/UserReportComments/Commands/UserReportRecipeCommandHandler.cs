@@ -9,7 +9,8 @@ public class UserReportCommentCommand : IRequest<Result<UserReportCommentRespons
 {
     public Guid ReporterId { get; set; }
     public Guid CommentId { get; set; }
-    public string Reason { get; set; } = null!;
+    public List<string> ReasonCodes { get; set; } = null!;
+    public string? AdditionalDetails { get; set; }
 }
 
 public class UserReportCommentCommandHandler : IRequestHandler<UserReportCommentCommand, Result<UserReportCommentResponse?>>
@@ -30,9 +31,10 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
         try {
             var reporterId = request.ReporterId;
             var commentId = request.CommentId;
-            var reason = request.Reason;
+            var reasonCodes = request.ReasonCodes;
+            var additionalDetails = request.AdditionalDetails;
 
-            if (reporterId == Guid.Empty || commentId == Guid.Empty || string.IsNullOrEmpty(reason))
+            if (reporterId == Guid.Empty || commentId == Guid.Empty || reasonCodes == null || reasonCodes.Count == 0)
             {
                 return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NullParameter);
             }
@@ -41,7 +43,7 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
 
             if (comment == null)
             {
-                return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.AddUserReportCommentFail, "Not found comment");
+                return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NotFound, "Not found comment");
             }
 
             var report = _context.UserReportComments.Where(r => r.AccountId == reporterId && r.CommentId == commentId).FirstOrDefault();
@@ -56,11 +58,17 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
                 });
             }
 
+            var codes = ReportReasonData.CommentReportReasons.Where(r => reasonCodes.Contains(r.Code)).Select(r => r.Code).ToList();
+            if (codes == null || codes.Count == 0) {
+                return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NotFound, "Not found reason codes.");
+            }
+
             report = new UserReportComment
             {
                 AccountId = reporterId,
                 CommentId = commentId,
-                Reason = reason,
+                ReasonCodes = codes,
+                AdditionalDetails = additionalDetails,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
             };
