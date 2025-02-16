@@ -184,7 +184,7 @@ curl --location 'https://localhost:7000/api/recipe/user-report-comment' \
 curl --location 'https://localhost:7000/api/recipe/get-report-reasons' \
 --header 'Content-Type: application/json' \
 --data '{
-"language" : "Vietnamese",
+"language" : "vi",
 "reportType" : "Recipe"
 }'
 
@@ -251,7 +251,7 @@ curl --location 'https://localhost:7000/api/user/user-report-user' \
 curl --location 'https://localhost:7000/api/user/get-report-reasons' \
 --header 'Content-Type: application/json' \
 --data '{
-"language" : "Vietnamese"
+"language" : "vi"
 }'
 
 # TRACKING

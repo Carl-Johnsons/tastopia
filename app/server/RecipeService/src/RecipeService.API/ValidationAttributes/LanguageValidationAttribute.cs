@@ -1,10 +1,11 @@
 ﻿namespace RecipeService.API.ValidationAttributes;
 
+using Contract.Constants;
 using System.ComponentModel.DataAnnotations;
 
 public class LanguageValidationAttribute : ValidationAttribute
 {
-    private static readonly string[] AllowedValues = { "English", "Vietnamese"};
+    private static readonly string[] AllowedValues = { LanguageValidation.En, LanguageValidation.Vi};
 
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {

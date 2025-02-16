@@ -1,10 +1,10 @@
 ﻿namespace UserService.API.ValidationAttributes;
-
 using System.ComponentModel.DataAnnotations;
+using Contract.Constants;
 
 public class LanguageValidationAttribute : ValidationAttribute
 {
-    private static readonly string[] AllowedValues = { "English", "Vietnamese" };
+    private static readonly string[] AllowedValues = { LanguageValidation.En, LanguageValidation.Vi };
 
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
