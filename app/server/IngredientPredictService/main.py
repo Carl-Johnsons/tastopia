@@ -1,6 +1,7 @@
-from fastapi import FastAPI, File, UploadFile
+import asyncio
+import json
+from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect
 from contextlib import asynccontextmanager
-from fastapi.middleware.cors import CORSMiddleware
 from ultralytics import YOLO
 from PIL import Image
 import logging
@@ -90,6 +91,54 @@ async def predict(file: UploadFile = File(...)):
             })
 
     return {"classifications": classifications}
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            # Echo the data back, for instance
+            await websocket.send_text(f"Echo: {data}")
+    except WebSocketDisconnect:
+        print("Client disconnected")
+
+@app.websocket("/ws/video")
+async def processVideo(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            # Receive a frame as binary data.
+            frame_bytes = await websocket.receive_bytes()
+            try:
+                # Convert the binary frame to an image.
+                image = Image.open(io.BytesIO(frame_bytes))
+            except Exception as e:
+                # If the frame data is invalid, send an error back.
+                await websocket.send_text(json.dumps({"error": f"Invalid image data: {str(e)}"}))
+                continue
+            
+            # Process the image with your model (e.g., YOLO detection).
+            results = model(image, verbose=False)
+            predictions = []
+            for result in results:
+                for cls, conf in zip(result.probs.top5, result.probs.top5conf):
+                    predictions.append({
+                        "class": result.names[cls],
+                        "confidence": float(conf),
+                        "name": names[result.names[cls]]
+                    })
+
+            boxResults = box_model(image, verbose=False)
+            
+            # Send back the prediction for this frame.
+            await websocket.send_text(json.dumps({"classifications": predictions,
+                                                  "boxes": boxResults[0].boxes.xyxyn.tolist()}))
+            
+            # Optionally throttle the frame rate.
+            await asyncio.sleep(0.1)
+    except WebSocketDisconnect:
+        print("Client disconnected")
 
 
 @app.post("/api/ingredient-predict/box")
