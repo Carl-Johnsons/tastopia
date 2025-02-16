@@ -58,16 +58,6 @@ public class SearchUsersQueryHandler : IRequestHandler<SearchUsersQuery, Result<
             });
         }
 
-        if(accountId != null && accountId != Guid.Empty)
-        {
-            await _serviceBus.Publish(new CreateUserSearchUserEvent
-            {
-                AccountId = accountId.Value,
-                Keyword = keyword,
-                SearchTime = DateTime.UtcNow,
-            });
-        }
-
         var userQuery = _context.Users.Where(u => u.AccountId != accountId).OrderByDescending(u => u.DisplayName).AsQueryable();
 
         userQuery = userQuery.Where(u => u.IsAccountActive && !u.IsAdmin &&
