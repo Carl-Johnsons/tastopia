@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,11 +14,12 @@ public class DeleteMultipleImageFileCommandHandler : IRequestHandler<DeleteMulti
 {
     private readonly Cloudinary _cloudinary;
     private readonly IFileUtility _fileUtility;
-
-    public DeleteMultipleImageFileCommandHandler(Cloudinary cloudinary, IFileUtility fileUtility)
+    private readonly ILogger<DeleteMultipleImageFileCommandHandler> _logger;
+    public DeleteMultipleImageFileCommandHandler(Cloudinary cloudinary, IFileUtility fileUtility, ILogger<DeleteMultipleImageFileCommandHandler> logger)
     {
         _cloudinary = cloudinary;
         _fileUtility = fileUtility;
+        _logger = logger;
     }
 
     public async Task<Result> Handle(DeleteMultipleImageFileCommand request, CancellationToken cancellationToken)
@@ -41,7 +43,6 @@ public class DeleteMultipleImageFileCommandHandler : IRequestHandler<DeleteMulti
             {
                 if (string.IsNullOrEmpty(publicId))
                 {
-                    await Console.Out.WriteLineAsync($"Not have permission to delete, so skip 1 image!");
                     return;
                 }
                 var deleteParams = new DeletionParams(publicId)
@@ -58,7 +59,7 @@ public class DeleteMultipleImageFileCommandHandler : IRequestHandler<DeleteMulti
         }
         catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
+            _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result.Failure(CloudinaryFileError.DeleteToCloudFail);
         }
     }

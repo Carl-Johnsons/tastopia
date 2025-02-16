@@ -1,0 +1,31 @@
+{
+  "updateProfile": "Update Profile",
+  "save": "Save",
+  "displayName": {
+    "title": "Display name",
+    "description": "This will be displayed to viewers of your profile page and does not change your username.",
+    "error": {
+      "required": "Display name is required."
+    }
+  },
+  "username": {
+    "title": "Username",
+    "error": {
+      "required": "Username is required.",
+      "duplicated": "This username has already been taken.",
+      "matches": "Username can only contain letters, numbers, underscores, hyphens, and periods.",
+      "min": "Username must be at least 6 characters long.",
+      "max": "Username cannot exceed 30 characters."
+    }
+  },
+  "bio": {
+    "title": "Bio",
+    "placeholder": "A little description about yourself"
+  },
+  "gender": {
+    "title": "Gender",
+    "prompt": "Please select your gender",
+    "male": "Male",
+    "female": "Female"
+  }
+}

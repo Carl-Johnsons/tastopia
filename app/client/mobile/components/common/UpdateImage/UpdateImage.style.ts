@@ -8,11 +8,12 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
 
-  containerActive: {
-    borderRadius: 5,
-    borderWidth: 3,
-    borderColor: globalStyles.color.primary,
-    margin: 10
+  wrapper: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12
   },
 
   previewImage: {
@@ -20,35 +21,45 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     alignItems: "center",
     justifyContent: "center",
-    gap: 6,
-    padding: 6
+    gap: 6
   },
 
   uploadItem: {
     position: "relative",
-    width: "31%",
-    borderWidth: 2,
+    flex: 1,
     borderRadius: 5,
-    borderColor: globalStyles.color.light
+    borderColor: globalStyles.color.light,
+    overflow: "hidden"
   },
 
   uploadItemImage: {
-    width: "100%",
-    height: 80
+    width: "100%"
   },
 
-  removeItemButton: {
+  removeOverlay: {
     position: "absolute",
-    top: -2,
-    right: -2,
-    zIndex: 1
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center"
   },
 
-  removeItemButtonIcon: {},
+  removeIconWrapper: {
+    alignItems: "center",
+    justifyContent: "center"
+  },
+
+  removeText: {
+    color: globalStyles.color.light,
+    fontSize: 12,
+    fontWeight: "bold"
+  },
 
   uploadButton: {
     backgroundColor: globalStyles.color.primary,
-    width: 100,
     height: 40,
     marginRight: 10,
     justifyContent: "center",
@@ -71,6 +82,11 @@ const styles = StyleSheet.create({
 
   flexOne: {
     flex: 1
+  },
+
+  sizeFull: {
+    width: "100%",
+    height: "100%"
   }
 });
 

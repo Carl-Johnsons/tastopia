@@ -4,5 +4,5 @@ public interface IRecipeService
 {
     Task CheckRecipeIngredients();
     Task CheckRecipeTags(Guid recipeId, List<string> tagValues);
-    Task CheckRecipeAbuse();
+    Task CheckRecipeAbuse(Guid recipeId);
 }

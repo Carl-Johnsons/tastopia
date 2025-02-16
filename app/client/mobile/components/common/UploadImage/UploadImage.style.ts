@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   },
 
   wrapper: {
-    flexDirection: "column",
+    flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "center",
     justifyContent: "center",
@@ -26,16 +26,14 @@ const styles = StyleSheet.create({
 
   uploadItem: {
     position: "relative",
-    width: "31%",
-    borderWidth: 2,
+    flex: 1,
     borderRadius: 5,
     borderColor: globalStyles.color.light,
     overflow: "hidden"
   },
 
   uploadItemImage: {
-    width: "100%",
-    aspectRatio: 1.6
+    width: "100%"
   },
 
   removeOverlay: {
@@ -62,7 +60,6 @@ const styles = StyleSheet.create({
 
   uploadButton: {
     backgroundColor: globalStyles.color.primary,
-    width: 100,
     height: 40,
     marginRight: 10,
     justifyContent: "center",

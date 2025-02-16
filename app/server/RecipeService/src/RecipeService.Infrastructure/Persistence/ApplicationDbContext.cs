@@ -1,5 +1,7 @@
 using Contract.Utilities;
+using DnsClient.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using MongoDB.EntityFrameworkCore.Extensions;
 using RecipeService.Domain.Entities;
@@ -8,6 +10,19 @@ namespace RecipeService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
+    private readonly ILogger<ApplicationDbContext> _logger;
+
+    public ApplicationDbContext(ILogger<ApplicationDbContext> logger)
+    {
+        _logger = logger;
+    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, ILogger<ApplicationDbContext> logger)
+        : base(options)
+    {
+        _logger = logger;
+    }
+
+
     public DbSet<Recipe> Recipes { get; set; }
     public DbSet<Domain.Entities.Tag> Tags { get; set; }
 
@@ -19,13 +34,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserReportComment> UserReportComments { get; set; }
 
     public DbContext Instance => this;
-    public ApplicationDbContext()
-    {
-    }
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : base(options)
-    {
-    }
+
     /**
      * <summary>
      * BsonSerializer use to make mongo driver understand guid
@@ -33,10 +42,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
      */
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        
         EnvUtility.LoadEnvFile();
         var db = DotNetEnv.Env.GetString("DB", "RecipeDB").Trim();
         var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
+
+        _logger.LogInformation($"DB Connection string: {mongoConnectionString}");
 
         optionsBuilder.UseMongoDB(mongoConnectionString, db);
     }
@@ -73,9 +83,19 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             {
                 entity.Property(e => e.Status)
                       .HasConversion(typeof(string));
-        });
+            });
         modelBuilder.Entity<UserReportComment>();
+        modelBuilder.Entity<UserReportComment>(entity =>
+        {
+            entity.Property(e => e.Status)
+                  .HasConversion(typeof(string));
+        });
         modelBuilder.Entity<UserReportRecipe>();
+        modelBuilder.Entity<UserReportRecipe>(entity =>
+        {
+            entity.Property(e => e.Status)
+                  .HasConversion(typeof(string));
+        });
         modelBuilder.Entity<RecipeTag>().ToCollection("RecipeTag");
     }
 

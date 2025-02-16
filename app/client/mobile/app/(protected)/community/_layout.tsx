@@ -14,8 +14,15 @@ export default function CommunityLayout() {
           animation: "slide_from_bottom"
         }}
       />
+      <Stack.Screen
+        name='update-recipe'
+        options={{
+          animation: "slide_from_bottom"
+        }}
+      />
       <Stack.Screen name='index' />
       <Stack.Screen name='[id]' />
+      <Stack.Screen name='cooking-mode' />
     </Stack>
   );
 }

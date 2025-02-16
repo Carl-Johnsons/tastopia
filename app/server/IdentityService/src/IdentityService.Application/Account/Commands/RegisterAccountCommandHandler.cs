@@ -1,14 +1,12 @@
 ﻿using Contract.Constants;
-using Contract.Utilities;
 using IdentityModel.Client;
-using IdentityService.Domain.Common;
 using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using UserProto;
-using static UserProto.GrpcUser;
 
 namespace IdentityService.Application.Account.Commands;
 
@@ -29,14 +27,20 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
     private readonly UserManager<ApplicationAccount> _userManager;
     private readonly IServiceBus _serviceBus;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
+    private readonly IConsulRegistryService _consulRegistryService;
+    private readonly ILogger<RegisterAccountCommandHandler> _logger;
 
     public RegisterAccountCommandHandler(UserManager<ApplicationAccount> userManager,
         IServiceBus serviceBus,
-        GrpcUser.GrpcUserClient grpcUserClient)
+        GrpcUser.GrpcUserClient grpcUserClient,
+        IConsulRegistryService consulRegistryService,
+        ILogger<RegisterAccountCommandHandler> logger)
     {
         _userManager = userManager;
         _serviceBus = serviceBus;
         _grpcUserClient = grpcUserClient;
+        _consulRegistryService = consulRegistryService;
+        _logger = logger;
     }
 
     public async Task<Result<TokenResponse?>> Handle(RegisterAccountCommand request, CancellationToken cancellationToken)
@@ -48,7 +52,7 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
             case AccountMethod.Phone:
                 return await RegisterByPhone(request, cancellationToken);
             default:
-                return Result<TokenResponse?>.Failure(AccountError.CreateAccountFailed,"Wrong account method");
+                return Result<TokenResponse?>.Failure(AccountError.CreateAccountFailed, "Wrong account method");
         }
     }
 
@@ -85,6 +89,7 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
             AccountId = acc.Id,
             AccountUsername = username,
             FullName = request.FullName,
+            Avatar = ""
         });
 
         await _serviceBus.Publish(new UserRegisterEvent
@@ -163,15 +168,14 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
     // User name can be username or email or password
     private async Task<TokenResponse> RequestTokenAsync(string username, string password)
     {
-        EnvUtility.LoadEnvFile();
         var client = new HttpClient();
-        var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
-        var IdentityServerEndpoint = $"https://{IdentityDNS}";
 
-        Console.WriteLine(IdentityServerEndpoint);
+        var uri = _consulRegistryService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not found"));
+
+        _logger.LogInformation(uri!.ToString());
         var discovery = await client.GetDiscoveryDocumentAsync(new DiscoveryDocumentRequest
         {
-            Address = IdentityServerEndpoint,
+            Address = uri!.ToString(),
             Policy = new DiscoveryPolicy
             {
                 RequireHttps = false

@@ -7,6 +7,7 @@ import { Feather } from "@expo/vector-icons";
 import { globalStyles } from "./GlobalStyles";
 import { useCreateComment } from "@/api/comment";
 import { useTranslation } from "react-i18next";
+import { selectUser } from "@/slices/user.slice";
 
 type AddCommentSectionProps = {
   recipeId: string;
@@ -17,6 +18,7 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
   const { t } = useTranslation("recipeDetail");
   const [comment, setComment] = useState("");
   const { mutate: createComment, isLoading } = useCreateComment();
+  const { avatarUrl } = selectUser();
 
   const handleOnSubmit = useCallback(() => {
     if (!comment.trim()) return;
@@ -41,7 +43,7 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
   return (
     <View className='flex-row items-center gap-3'>
       <Image
-        source={require("../../assets/images/avatar.png")}
+        source={{ uri: avatarUrl }}
         style={{ width: 24, height: 24, borderRadius: 100 }}
       />
 
@@ -49,14 +51,17 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
         value={comment}
         autoCapitalize='none'
         placeholder={t("addComment")}
-        className={`flex-1 rounded-3xl border-gray-300 px-2 py-3 focus:border-primary`}
+        className={`text-black_white flex-1 rounded-3xl border-gray-300 px-2 py-3 focus:border-primary`}
         placeholderTextColor={"gray"}
         onChangeText={setComment}
         editable={!isLoading}
+        onSubmitEditing={handleOnSubmit}
+        returnKeyType='send'
       />
 
       {comment.trim() !== "" && (
         <TouchableWithoutFeedback
+          testID='submit_comment_button'
           onPress={handleOnSubmit}
           disabled={isLoading}
         >

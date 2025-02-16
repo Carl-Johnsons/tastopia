@@ -1,0 +1,42 @@
+@startuml Sequence
+title "Verify account sequence diagram"
+
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<coordinator>>\nApiGateWay" as ApiGateway
+participant "<<service>>\nIdentityService" as IdentityService
+database Postgresql
+
+User -> MobileUI ++: 1. Touch the verify\n account button
+MobileUI -> ApiGateway ++: 2. Request verify account
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Verify Access Token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> IdentityService ++: 4. Forward request
+IdentityService -> Postgresql ++: 5. Get user data
+IdentityService <-- Postgresql --: 6. return response
+
+alt if user's OTP is invalid
+    ApiGateway <-- IdentityService: 7A.1. return resend OTP fail
+    MobileUI <-- ApiGateway: 7A.2. forward response
+    User <-- MobileUI: 7A.3. display error
+else
+    IdentityService -> Postgresql ++: 8. update Account status
+    IdentityService <-- Postgresql --: 9. return response
+    ApiGateway <-- IdentityService --: 10. return success status code
+    MobileUI <-- ApiGateway --: 11. Forward response
+    User <-- MobileUI --: 12. Display alert\n resend OTP successfully
+end
+
+@enduml

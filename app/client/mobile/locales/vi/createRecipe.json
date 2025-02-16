@@ -10,7 +10,8 @@
     "method": "Cách Làm",
     "step": "Bước Làm",
     "tag": "Nhãn",
-    "createSuccessFull": "Tạo công thức thànhh công"
+    "createSuccessfully": "Tạo công thức thành công",
+    "createError": "Tạo công thức thất bại"
   },
   "formPlaceholder": {
     "title": "Nhập tiêu đề công thức...",
@@ -21,13 +22,20 @@
     "steps": "Thêm bước nấu ăn..."
   },
   "validation": {
-    "title": "Vui lòng nhập tiêu đề công thức.",
-    "description": "Vui lòng nhập mô tả công thức.",
-    "serves": "Vui lòng nhập số khẩu phần ăn.",
-    "cookTime": "Vui lòng nhập thời gian nấu.",
-    "image": "Vui tải lên ảnh món ăn.",
-    "step": "Vui lòng nhập bước nấu ăn.",
-    "ingredient": "Vui lòng nhập nguyên liệu."
+    "title": "Vui lòng nhập tiêu đề công thức",
+    "description": "Vui lòng nhập mô tả công thức",
+    "serves": {
+      "required": "Vui lòng nhập số khẩu phần ăn",
+      "typeError": "Số khẩu phần ăn phải là một số",
+      "positive": "Số khẩu phần ăn phải là một số dương",
+      "integer": "Số khẩu phần ăn phải là một số nguyên"
+    },
+    "cookTime": "Vui lòng nhập thời gian nấu",
+    "image": "Vui tải lên ảnh món ăn",
+    "step": "Vui lòng nhập bước nấu ăn",
+    "stepRequired": "Công thức phải có ít nhất một bước nấu ăn",
+    "ingredient": "Vui lòng nhập nguyên liệu",
+    "ingredientRequired": "Công thức phải có ít nhất một nguyên liệu"
   },
   "removeIngredientAlert": {
     "title": "Xoá nguyên liệu",

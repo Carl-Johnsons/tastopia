@@ -13,12 +13,12 @@ public static class RabbitMQConstant
             public const string UNLINK_ACCOUNT = "unlink-account-queue";
             public const string USER_RESEND_OTP = "user-resend-otp-queue";
             // ======================= Recipe ============================
-            public const string GET_RECIPE_DETAILS = "get-recipe-details-queue";
             public const string UPDATE_RECIPE_TAGS = "update-recipe-tags-queue";
+            public const string UPDATE_RECIPE_IS_ACTIVE = "update-recipe-is-active-queue";
             public const string REQUEST_ADD_TAGS = "request-add-tags-queue";
-            public const string GET_ALL_TAGS = "get-all-tags-queue";
             // ======================= OTHER ============================
             public const string SEND_EMAIL = "send-email-queue";
+            public const string PUSH_NOTIFICATION = "push-notification-queue";
             public const string VALIDATE_RECIPE = "validate-recipe-queue";
 
             // ======================= FILE ============================
@@ -28,6 +28,11 @@ public static class RabbitMQConstant
 
             // ======================= TRACKING ============================
             public const string CREATE_USER_VIEW_RECIPE_DETAIL = "create-user-view-recipe-detail-queue";
+            // ======================= NOTIFICATION ============================
+            public const string NOTIFY_USER = "notify-user-queue";
+            public const string CREATE_USER_SEARCH_RECIPE = "create-user-search-recipe-queue";
+            public const string CREATE_USER_SEARCH_USER = "create-user-search-user-queue";
+
         }
     }
     public static class EXCHANGE
@@ -40,13 +45,12 @@ public static class RabbitMQConstant
             public const string UNLINK_ACCOUNT = "unlink-account-event";
             public const string USER_RESEND_OTP = "user-resend-otp-event";
             // ======================= Recipe ============================
-            public const string GET_RECIPE_DETAILS = "get-recipe-details-event";
-            public const string GET_ALL_TAGS = "get-all-tags-event";
             public const string UPDATE_RECIPE_TAGS = "update-recipe-tags-event";
+            public const string UPDATE_RECIPE_IS_ACTIVE = "update-recipe-is-active-event";
             public const string REQUEST_ADD_TAGS = "request-add-tags-event";
-
             // ======================= OTHER ============================
             public const string SEND_EMAIL = "send-email-event";
+            public const string PUSH_NOTIFICATION = "push-notification-event";
             public const string VALIDATE_RECIPE = "validate-recipe-event";
 
             // ======================= FILE ============================
@@ -56,6 +60,10 @@ public static class RabbitMQConstant
 
             // ======================= TRACKING ============================
             public const string CREATE_USER_VIEW_RECIPE_DETAIL = "create-user-view-recipe-detail-event";
+            // ======================= NOTIFICATION ============================
+            public const string NOTIFY_USER = "notify-user-event";
+            public const string CREATE_USER_SEARCH_RECIPE = "create-user-search-recipe-event";
+            public const string CREATE_USER_SEARCH_USER = "create-user-search-user-event";
         }
 
         public static class TYPE

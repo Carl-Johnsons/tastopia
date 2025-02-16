@@ -1,11 +1,7 @@
 import { Alert, Platform, Pressable, Text, View } from "react-native";
 import { router } from "expo-router";
 import { useAppDispatch } from "@/store/hooks";
-import {
-  ROLE,
-  saveAuthData,
-  selectVerifyIdentifier
-} from "@/slices/auth.slice";
+import { ROLE, saveAuthData, selectVerifyIdentifier } from "@/slices/auth.slice";
 import {
   useVerify,
   useResendVerifyCode,
@@ -14,7 +10,7 @@ import {
   IDENTIFIER_TYPE,
   VerifyParams
 } from "@/api/user";
-import VerifyForm from "@/components/VerifyForm";
+import VerifyForm from "@/components/screen/verify/VerifyForm";
 import CircleBg from "@/components/CircleBg";
 import BackButton from "@/components/BackButton";
 import { getIdentifierType } from "@/utils/checker";
@@ -33,22 +29,22 @@ const Verify = () => {
   const getUserDetails = useGetUserDetails();
   const getUserSettings = useGetUserSettings();
 
-    const fetchUserData = async () => {
-      const { data: user } = await getUserDetails.refetch();
-      dispatch(saveUserData({ ...user }));
+  const fetchUserData = async () => {
+    const { data: user } = await getUserDetails.refetch();
+    dispatch(saveUserData({ ...user }));
 
-      const { data: settings } = await getUserSettings.refetch();
-      const UNION_SETTING: any = {};
+    const { data: settings } = await getUserSettings.refetch();
+    const UNION_SETTING: any = {};
 
-      settings?.map(item => {
-        const key = item.setting.code;
-        const value = item.settingValue;
+    settings?.map(item => {
+      const key = item.setting.code;
+      const value = item.settingValue;
 
-        UNION_SETTING[key] = value;
-      });
+      UNION_SETTING[key] = value;
+    });
 
-      dispatch(saveSettingData(UNION_SETTING));
-    };
+    dispatch(saveSettingData(UNION_SETTING));
+  };
 
   const onSubmit = async (data: VerifyParams) => {
     verify(data, {
@@ -97,7 +93,7 @@ const Verify = () => {
         <Text className='font-sans font-semibold text-4xl text-black'>
           Verification Code
         </Text>
-        <Text className='font-sans text-sm text-gray-300'>
+        <Text className='font-sans text-lg text-gray-300'>
           Please type the verification code sent to{"\n"}
           <Text className='text-primary'>{identifier}</Text>
         </Text>
@@ -109,7 +105,7 @@ const Verify = () => {
         />
 
         <Pressable onPress={resendCode}>
-          <Text className='text-center'>
+          <Text className='text-center text-lg'>
             I don’t recevie a code! <Text className='text-primary'>Please resend</Text>
           </Text>
         </Pressable>

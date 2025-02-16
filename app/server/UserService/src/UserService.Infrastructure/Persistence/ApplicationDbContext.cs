@@ -6,11 +6,8 @@ namespace UserService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
+
     public ApplicationDbContext()
-    {
-    }
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-    : base(options)
     {
     }
 
@@ -22,7 +19,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserSetting> UserSettings { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(EnvUtility.GetConnectionString(), option =>
+        var connectionString = EnvUtility.GetConnectionString();
+
+        optionsBuilder.UseNpgsql(connectionString, option =>
         {
             option.EnableRetryOnFailure(
                     maxRetryCount: 10,
@@ -96,6 +95,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 .WithMany()
                 .HasForeignKey(e => e.ReportedId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(e => e.Status)
+                .HasConversion(typeof(string));
         });
 
         modelBuilder.Entity<Setting>(entity =>

@@ -1,46 +1,66 @@
-﻿using Reinforced.Typings.Ast.TypeNames;
+﻿using Contract.Extension;
 using Reinforced.Typings.Fluent;
 using UserService.API.DTOs;
+using UserService.Domain.Entities;
+using UserService.Domain.Errors;
+using UserService.Domain.Responses;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 namespace UserService.API.Extensions;
 
 // UserService.API.Extensions.ReinforcedTypingsExtension.ConfigureReinforcedTypings
 public static class ReinforcedTypingsExtension
 {
+    private static string FILE_NAME = "user";
+    private static string EXPORT_FILE_PATH = "../../../../client/mobile/generated";
+
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {
-        builder.Global(config =>
-        {
-            config.CamelCaseForProperties()
-                  .AutoOptionalProperties()
-                  .ExportPureTypings(typings: true);
-        });
+        Directory.CreateDirectory(EXPORT_FILE_PATH);
 
-        // Substitute C# type to typescript type
-        builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
+        //Custom export file
+        List<Type> errorsTypes = [
+            typeof(SettingError),
+            typeof(UserError)
+        ];
 
-        // Common type
-        builder.ExportAsInterfaces([
-            typeof(ErrorResponseDTO)
-        ], config =>
-        {
-            config.WithPublicProperties()
-                  .AutoI()
-                  .DontIncludeToNamespace()
-                  .ExportTo("common.interface.d.ts");
-        });
-        // DTO 
+        builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
+        // DTO and entities
         builder.ExportAsInterfaces([
             typeof(SearchUserDTO),
             typeof(UpdateSettingDTO),
             typeof(SettingObjectDTO),
-            typeof(UpdateUserDTO)
+            typeof(UpdateUserDTO),
+            typeof(FollowUserDTO),
+            typeof(GetUserDetailByAccountIdDTO),
+            typeof(GetUserFollowersDTO),
+            typeof(GetUserFollowingsDTO),
+            typeof(User),
+            typeof(Setting),
+            typeof(UserFollow),
+            typeof(UserReport),
+            typeof(UserSetting),
+            typeof(FollowUserResponse),
+            typeof(GetUserDetailsResponse),
+            typeof(PaginatedSimpleUserListResponse),
+            typeof(SimpleUserResponse),
+            typeof(UserReportUserDTO),
+            typeof(UserReportUserResponse),
+            typeof(ReportReasonResponse),
         ], config =>
         {
-            config.WithPublicProperties()
+            config.FlattenHierarchy()
+                  .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo("user.interface.d.ts");
+                  .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
+        });
+
+        builder.ExportAsEnums([], config =>
+        {
+            config.FlattenHierarchy()
+                  .DontIncludeToNamespace()
+                  .UseString()
+                  .ExportTo($"enums/{FILE_NAME}.enum.ts");
         });
     }
 }

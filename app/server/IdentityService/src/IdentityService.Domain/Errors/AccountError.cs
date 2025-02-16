@@ -1,5 +1,4 @@
-﻿
-using System.Net;
+﻿using System.Net;
 
 namespace IdentityService.Domain.Errors;
 
@@ -14,7 +13,7 @@ public class AccountError
             StatusCode: (int)HttpStatusCode.NotFound,
             Message: "Account's email not found!");
     public static Error PhoneNotFound =>
-        new("AccountError.EmailNotFound",
+        new("AccountError.PhoneNotFound",
             StatusCode: (int)HttpStatusCode.NotFound,
             Message: "Account's email not found!");
     public static Error EmailAlreadyExisted =>
@@ -70,4 +69,12 @@ public class AccountError
         new("AccountError.UnlinkAccountFailed",
             StatusCode: (int)HttpStatusCode.InternalServerError,
             Message: "Unlink Account Failed");
+    public static Error UsernameAlreadyExisted =>
+        new("AccountError.UsernameAlreadyExisted",
+            StatusCode: (int)HttpStatusCode.BadRequest,
+            Message: "Username already existed");
+    public static Error UpdateAccountFailed =>
+        new("AccountError.UpdateAccountFailed",
+            StatusCode: (int)HttpStatusCode.BadRequest,
+            Message: "Operation update account failed");
 }

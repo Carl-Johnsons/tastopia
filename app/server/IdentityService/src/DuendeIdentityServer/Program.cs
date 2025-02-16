@@ -3,13 +3,6 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
 using Serilog;
 
-Log.Logger = new LoggerConfiguration()
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
-
-Log.Information("Starting up");
-
 try
 {
     var builder = WebApplication.CreateBuilder(args);
@@ -27,12 +20,12 @@ try
     {
         foreach (var address in addresses)
         {
-            Console.WriteLine($"API is listening on: {address}");
+            Log.Information($"API is listening on: {address}");
         }
     }
     else
     {
-        Console.WriteLine("Could not retrieve server addresses.");
+        Log.Information("Could not retrieve server addresses.");
     }
 
     app.WaitForShutdown();

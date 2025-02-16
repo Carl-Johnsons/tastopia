@@ -1,9 +1,9 @@
-import { API_HOST } from "@/constants/host";
+import { API_URI } from "@/constants/host";
 import Constants from "expo-constants";
 import { useState } from "react";
 
 const { expoConfig } = Constants;
-const hostUri: string = API_HOST || expoConfig?.hostUri?.split(":")[0] || "10.0.2.2";
+const hostUri: string = API_URI || expoConfig?.hostUri?.split(":")[0] || "10.0.2.2";
 
 interface UseApiHostResult {
   /** The api's host */

@@ -10,7 +10,8 @@
     "method": "Method",
     "step": "Step",
     "tag": "Tag",
-    "createSuccessFull": "Create recipe successfully"
+    "createSuccessfully": "Create recipe successfully",
+    "createError": "Create recipe fail"
   },
   "formPlaceholder": {
     "title": "Enter recipe title...",
@@ -21,13 +22,20 @@
     "steps": "Write your cooking step..."
   },
   "validation": {
-    "title": "Please enter recipe title.",
-    "description": "Please enter recipe description.",
-    "serves": "Please enter recipe serves.",
-    "cookTime": "Please enter recipe cook time.",
-    "image": "Please upload recipe image.",
-    "step": "Please enter cooking step.",
-    "ingredient": "Please enter ingredient."
+    "title": "Please enter recipe title",
+    "description": "Please enter recipe description",
+    "serves": {
+      "required": "Please enter recipe serves",
+      "typeError": "Recipe serves must be a number",
+      "positive": "Recipe serves must be a positive number",
+      "integer": "Recipe serves must be a whole number"
+    },
+    "cookTime": "Please enter recipe cook time",
+    "image": "Please upload recipe image",
+    "step": "Please enter cooking step",
+    "stepRequired": "Recipe must have at least one step",
+    "ingredient": "Please enter ingredient",
+    "ingredientRequired": "Recipe must have at least one ingredient"
   },
   "removeIngredientAlert": {
     "title": "Remove ingredient",

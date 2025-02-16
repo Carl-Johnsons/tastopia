@@ -2,13 +2,13 @@ declare module "*.jpg";
 declare module "*.jpeg";
 declare module "*.png";
 
-export type ImageFileType = {
+type ImageFileType = {
   uri: string;
   type: string;
   name: string;
 };
 
-export type FileObject = {
+type ImageFileObject = {
   id: string;
   previewPath: string;
   file?: ImageFileType;

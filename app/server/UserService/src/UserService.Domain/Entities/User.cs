@@ -28,7 +28,7 @@ public class User
 
         //Viture
 
-        public virtual int? TotalFollwer {  get; set; }
+        public virtual int? TotalFollower {  get; set; }
 
         public virtual int? TotalFollowing { get; set; }
 

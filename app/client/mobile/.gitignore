@@ -25,3 +25,10 @@ ios
 
 # generate typescript files 
 generated/*
+.env*
+.flaskenv*
+!.env.project
+!.env.vault
+
+# Google firebase notification secret
+google-services.json

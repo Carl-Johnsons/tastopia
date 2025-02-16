@@ -1,0 +1,101 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AccountController {
+    +VerifyEmail(VerifyAccountDTO dto): async Task<IActionResult>
+    +VerifyPhone(VerifyAccountDTO dto): async Task<IActionResult>
+}
+
+class VerifyAccountCommand {
+    +Guid AccountId
+    +String OTP
+    +AccountMethod Method
+    +VerifyAccountMethod VerifyMethod
+}
+
+class VerifyAccountCommandHandler {
+    - _userManager : UserManager<ApplicationAccount>
+    - _context : IApplicationDbContext
+    + VerifyAccountCommandHandler(userManager: UserManager<ApplicationAccount>, context: IApplicationDbContext)
+    + Handle(request: VerifyAccountCommand, cancellationToken: CancellationToken) : Task<Result>
+    - VerifyEmail(request: VerifyAccountCommand, cancellationToken: CancellationToken) : Task<Result>
+    - VerifyPhone(request: VerifyAccountCommand, cancellationToken: CancellationToken) : Task<Result>
+    - VerifyUnlinkEmail(request: VerifyAccountCommand, cancellationToken: CancellationToken) : Task<Result>
+    - VerifyUnlinkPhone(request: VerifyAccountCommand, cancellationToken: CancellationToken) : Task<Result>
+    - VerifyUnlinkGoogle(request: VerifyAccountCommand, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class AccountError {
+    {static} +NotFound: Error
+    {static} +VerifyFailed: Error
+    {static} +EmailAlreadyConfirmed: Error
+    {static} +InvalidOTP: Error
+    {static} +OTPExpired: Error
+    {static} +PhoneAlreadyConfirmed: Error
+    {static} +EmailNotConfirmed: Error
+    {static} +PhoneNotConfirmed: Error
+}
+
+enum AccountMethod {
+    Phone
+    Email
+    Username
+    Google
+}
+
+enum VerifyAccountMethod
+{
+    Verify,
+    Unlink
+}
+
+!include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml 
+remove Permission
+remove Group
+remove RoleGroupPermission
+remove IdentityRole
+remove BaseEntity
+
+' =========== DTO class ===========
+class VerifyAccountDTO {
+    +OTP: string
+    +VerifyMethod: VerifyAccountMethod
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+class "UserManager<TUser>" #black;line:white;text:white
+' =========== Library class ===========
+
+VerifyAccountDTO "1" o--"1" VerifyAccountMethod
+
+AccountController --|> BaseApiController
+AccountController "1"--"1" VerifyAccountDTO
+AccountController "1"--"1" VerifyAccountCommand
+VerifyAccountCommand "1"--"1" AccountMethod
+VerifyAccountCommand "1"--"1" VerifyAccountMethod
+VerifyAccountCommand --|> "IRequest<TResponse>"
+
+VerifyAccountCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+VerifyAccountCommandHandler "1" o--"1" VerifyAccountCommand
+VerifyAccountCommandHandler "1" o---"1" ApplicationAccount
+VerifyAccountCommandHandler "1" o--"1" AccountError
+VerifyAccountCommandHandler "1" o--"1" Result
+VerifyAccountCommandHandler "1" o--"1" "UserManager<TUser>"
+
+Error "1" --"1..*" AccountError
+
+@enduml

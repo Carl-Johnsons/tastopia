@@ -14,7 +14,6 @@
     },
     "ios": {
       "supportsTablet": true,
-      "package": "com.tastopia.app",
       "bundleIdentifier": "com.tastopia.app"
     },
     "android": {
@@ -24,9 +23,8 @@
       },
       "package": "com.tastopia.app",
       "softwareKeyboardLayoutMode": "pan",
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "permissions": ["android.permission.RECORD_AUDIO"],
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -53,9 +51,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "fea3bdfc-96cf-4eda-b1d4-66bd8bd3b7e3"
+        "projectId": "389ac2a8-e3f8-43bd-90fe-7349353aa99f"
       }
     },
-    "owner": "quoczuong"
+    "owner": "tastopia"
   }
 }

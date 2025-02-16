@@ -1,0 +1,115 @@
+@startuml UserDbContext
+
+interface IDbContext extends IDisposable {
+    +Instance : DbContext
+}
+' ========= Entity class =========
+class BaseEntity {
+    +Id : Guid
+}
+
+class BaseAuditableEntity extends BaseEntity {
+    +DateTime CreatedAt
+    +DateTime UpdatedAt
+}
+
+class User {
+    + AccountId : Guid
+    + DisplayName : string
+    + AvatarUrl : string
+    + BackgroundUrl : string
+    + Dob : DateTime
+    + Gender : string
+    + Bio : string
+    + Address : string
+    + TotalFollwer : int
+    + TotalFollowing : int
+    + TotalRecipe : int
+    + IsAccountActive : bool
+    + AccountUsername : string
+    + IsAdmin : bool
+}
+
+class Setting extends BaseEntity {
+    + Code: string
+    + Description: string
+    + DataType: SettingDataType
+    + DefaultValue: string
+}
+
+enum SettingDataType
+{
+    String,
+    Integer,
+    Boolean,
+    DateTime
+}
+
+class UserFollow {
+    + FollowerId : Guid
+    + FollowingId : Guid
+    + Follower : User
+    + Following : User
+}
+
+class UserReport {
+    + AccountId : Guid
+    + ReportedId : Guid
+    + Reason : string
+    + Status : string
+    + User : User
+    + Reported : User
+}
+
+class UserSetting {
+    + AccountId : Guid
+    + SettingId : Guid
+    + SettingValue : string
+    + User : User
+    + Setting : Setting
+}
+
+interface IApplicationDbContext extends IDbContext {
+    + Users : DbSet<User>
+    + UserReports : DbSet<UserReport>
+    + UserFollows : DbSet<UserFollow>
+    + Settings : DbSet<Setting>
+    + UserSettings : DbSet<UserSetting>
+}
+
+class ApplicationDbContext extends DbContext implements IApplicationDbContext {
+    + Users : DbSet<User>
+    + UserReports : DbSet<UserReport>
+    + UserFollows : DbSet<UserFollow>
+    + Settings : DbSet<Setting>
+    + UserSettings : DbSet<UserSetting>
+    + Instance : DbContext
+    + ApplicationDbContext()
+    + ApplicationDbContext(options : DbContextOptions<ApplicationDbContext>)
+    + OnConfiguring(optionsBuilder : DbContextOptionsBuilder) : void
+    + OnModelCreating(modelBuilder : ModelBuilder) : void
+}
+
+' ========= Library class =========
+interface IDisposable #black;line:white;text:white
+class "DbSet<T>" #black;line:white;text:white
+class DbContext #black;line:white;text:white
+
+IDbContext o-- DbContext
+
+ApplicationDbContext o-- "DbSet<T>"
+ApplicationDbContext o-- Setting
+ApplicationDbContext o-- User
+ApplicationDbContext o-- UserFollow
+ApplicationDbContext o-- UserReport
+ApplicationDbContext o-- UserSetting
+
+Setting *-- SettingDataType
+UserSetting *-- Setting
+UserSetting *-- User
+UserFollow *-- User
+' =========== Style ==============
+
+ApplicationDbContext o-[hidden]down- "DbSet<T>"
+
+@enduml

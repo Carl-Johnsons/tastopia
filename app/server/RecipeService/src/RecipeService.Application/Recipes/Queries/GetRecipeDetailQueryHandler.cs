@@ -1,6 +1,8 @@
 ﻿using Contract.Event.TrackingEvent;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Driver;
 using Newtonsoft.Json;
+using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
@@ -39,25 +41,34 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
 
         if(accountId == Guid.Empty || recipeId == Guid.Empty)
         {
-            return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound);
+            return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound, "RecipeId or AccountId not found.");
         }
 
         var recipe = await _context.Recipes
-                .SingleOrDefaultAsync(r => r.Id == request.RecipeId);
+                .SingleOrDefaultAsync(r => r.Id == request.RecipeId && r.IsActive == true);
 
         if (recipe == null)
         {
             return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound);
         }
         recipe.Steps = recipe.Steps.OrderBy(s => s.OrdinalNumber).ToList();
-        recipe.Comments = [];
-        recipe.RecipeVotes = [];
 
         var grpcResponse = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
         {
             AccountId = recipe.AuthorId.ToString()
         });
 
+        var vote = recipe.RecipeVotes.Where(v => v.AccountId == accountId).SingleOrDefault();
+        var v = Vote.None;
+        if (vote != null) {
+            v = vote.IsUpvote ? Vote.Upvote : Vote.Downvote;
+        }
+        var bookmark = await _context.UserBookmarkRecipes.Where(bm => bm.AccountId == accountId && bm.RecipeId == recipeId).SingleOrDefaultAsync();
+
+        var isBookmark = false;
+        if(bookmark != null) {
+            isBookmark = true;
+        }
 
         var listString = recipe.Title.ToLower().Split(' ');
 
@@ -75,6 +86,23 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
                 Title = r.Title
             }).Take(6).ToList();
 
+        recipe.RecipeVotes = [];
+        recipe.Comments = [];
+
+        var recipeTags = _context.GetDatabase()
+            .GetCollection<RecipeTag>(nameof(RecipeTag))
+            .AsQueryable();
+
+        var tags = _context.GetDatabase()
+            .GetCollection<Domain.Entities.Tag>(nameof(Domain.Entities.Tag))
+            .AsQueryable();
+
+        var tagQuery = from rt in recipeTags
+                       join t in tags on rt.TagId equals t.Id
+                       where rt.RecipeId == recipeId && t.Status == TagStatus.Active
+                       select t;
+
+
         var result = new RecipeDetailsResponse
         {
             Recipe = recipe,
@@ -82,7 +110,10 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
             AuthorAvtUrl = grpcResponse.AvatarUrl,
             AuthorDisplayName = grpcResponse.DisplayName,
             AuthorNumberOfFollower = grpcResponse.TotalFollower ?? 0,
-            similarRecipes = similarRecipes
+            similarRecipes = similarRecipes,
+            IsBookmarked = isBookmark,
+            Vote = v.ToString(),
+            Tags = tagQuery.ToList()
         };
 
         await _serviceBus.Publish(new CreateUserViewRecipeDetailEvent

@@ -1,8 +1,6 @@
-﻿using Contract.Common;
-using Contract.Constants;
+﻿using Contract.Constants;
 using Contract.Event.RecipeEvent;
 using MassTransit;
-using Newtonsoft.Json;
 using RecipeService.Application.Recipes.Commands;
 
 namespace RecipeService.API.EventHandlers;
@@ -20,7 +18,6 @@ public class RequestAddTagsConsumer : IConsumer<RequestAddTagsEvent>
 
     public async Task Consume(ConsumeContext<RequestAddTagsEvent> context)
     {
-        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(context.Message.Requests)+"***********************");
         var result = await _sender.Send(new RequestAddTagsCommand
         {
             RecipeId = context.Message.RecipeId,

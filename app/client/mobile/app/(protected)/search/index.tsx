@@ -4,21 +4,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import SearchUser from "@/components/screen/search/SearchUser";
 import SearchRecipe from "@/components/screen/search/SearchRecipe";
-import {
-  Text,
-  TouchableWithoutFeedback,
-  Keyboard,
-  TouchableOpacity,
-  View
-} from "react-native";
-import useDarkMode from "@/hooks/useDarkMode";
+import { Text, TouchableWithoutFeedback, Keyboard, View } from "react-native";
 import { useTranslation } from "react-i18next";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 const Search = () => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const { t } = useTranslation("search");
-  const isDarkMode = useDarkMode();
   const [onFocus, setOnFocus] = useState<boolean>(false);
-  const [isSearchingUser, setIsSearchingUser] = useState(true);
+  const [isSearchingUser, setIsSearchingUser] = useState(false);
 
   const handleFocus = (isFocus: boolean) => {
     setOnFocus(true);
@@ -37,9 +34,7 @@ const Search = () => {
         style={{
           marginBottom: 90,
           paddingHorizontal: 16,
-          backgroundColor: isDarkMode
-            ? globalStyles.color.dark
-            : globalStyles.color.light,
+          backgroundColor: c(white.DEFAULT, black[100]),
           height: "100%"
         }}
       >

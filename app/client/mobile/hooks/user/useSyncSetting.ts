@@ -1,5 +1,6 @@
 import { UpdateSettingParams, useGetUserSettings, useUpdateSetting } from "@/api/user";
-import { saveSettingData, selectSetting, SETTING_KEY } from "@/slices/setting.slice";
+import { SETTING_KEY } from "@/constants/settings";
+import { saveSettingData, selectSetting } from "@/slices/setting.slice";
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -36,7 +37,7 @@ const useSyncSetting = () => {
     };
 
     await mutateAsync(
-      { data },
+      { ...data },
       {
         onSuccess: () => {
           setStatus("success");

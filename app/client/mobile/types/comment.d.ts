@@ -10,6 +10,11 @@ type CommentType = {
   isActive: boolean;
 };
 
+type CommentCustomType = {
+  id: string;
+  content: string;
+};
+
 type GetRecipeCommentResponse = {
   paginatedData: CommentType[];
   metadata: {

@@ -20,4 +20,16 @@ public class RecipeError
             new("RecipeError.UpdateRecipeFail",
             Message: "Update recipe fail",
             StatusCode: (int)HttpStatusCode.InternalServerError);
+    public static Error VoteFail =>
+            new("RecipeError.VoteFail",
+            Message: "Update recipe fail",
+            StatusCode: (int)HttpStatusCode.InternalServerError);
+    public static Error NullParameter =>
+        new("RecipeError.NullParameter",
+        Message: "Null Parameter",
+        StatusCode: (int)HttpStatusCode.InternalServerError);
+    public static Error PermissionDeny =>
+        new("RecipeError.PermissionDeny",
+        Message: "Permission Deny",
+        StatusCode: (int)HttpStatusCode.InternalServerError);
 }

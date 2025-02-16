@@ -1,4 +1,6 @@
-﻿using Reinforced.Typings.Ast.TypeNames;
+﻿using Contract.Constants;
+using Contract.Extension;
+using IdentityService.Domain.Errors;
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 namespace DuendeIdentityServer.Extensions;
@@ -6,39 +8,44 @@ namespace DuendeIdentityServer.Extensions;
 // DuendeIdentityServer.Extensions.ReinforcedTypingsExtension.ConfigureReinforcedTypings
 public static class ReinforcedTypingsExtension
 {
+    private static string FILE_NAME = "identity";
+    private static string EXPORT_FILE_PATH = "../../../../client/mobile/generated";
+
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {
-        builder.Global(config =>
-        {
-            config.CamelCaseForProperties()
-                  .AutoOptionalProperties()
-                  .ExportPureTypings(typings: true);
-        });
+        Directory.CreateDirectory(EXPORT_FILE_PATH);
+        // Custom export file
+        List<Type> errorsTypes = [
+            typeof(AccountError)
+        ];
 
-        // Substitute C# type to typescript type
-        builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
-
-        // Common type
-        builder.ExportAsInterfaces([
-            typeof(ErrorResponseDTO)
-        ], config =>
-        {
-            config.WithPublicProperties()
-                  .AutoI()
-                  .DontIncludeToNamespace()
-                  .ExportTo("common.interface.d.ts");
-        });
-        // DTO 
+        builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
+        
+        // DTO and Entities
         builder.ExportAsInterfaces([
             typeof(LinkAccountDTO),
             typeof(RegisterAccountDTO),
-            typeof(VerifyAccountDTO)
+            typeof(VerifyAccountDTO),
+            typeof(ApplicationAccount),
+            typeof(Group),
+            typeof(Permission),
+            typeof(RoleGroupPermission)
         ], config =>
         {
-            config.WithPublicProperties()
+            config.FlattenHierarchy()
+                  .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo("identity.interface.d.ts");
+                  .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
         });
+
+        builder.ExportAsEnums([], config =>
+        {
+            config.FlattenHierarchy()
+                  .DontIncludeToNamespace()
+                  .UseString()
+                  .ExportTo($"enums/{FILE_NAME}.enum.ts");
+        });
+
     }
 }

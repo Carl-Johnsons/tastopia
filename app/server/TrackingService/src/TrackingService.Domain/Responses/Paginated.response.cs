@@ -1,8 +1,7 @@
-﻿using TrackingService.Domain.Responses;
+﻿namespace TrackingService.Domain.Responses;
 
-namespace RecipeService.Domain.Responses;
+public class PaginatedUserViewRecipeDetailListResponse : BasePaginatedResponse<SimpleRecipeResponse, AdvancePaginatedMetadata>;
 
-public class PaginatedUserViewRecipeDetailListResponse : BasePaginatedResponse<UserViewRecipeDetailResponse, AdvancePaginatedMetadata>;
 
 
 

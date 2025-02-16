@@ -1,9 +1,12 @@
-﻿using Contract.Event.RecipeEvent;
+﻿using Contract.Constants;
+using Contract.Event.RecipeEvent;
 using MassTransit;
 using RecipeService.Application.Recipes.Commands;
 
 namespace RecipeService.API.EventHandlers;
 
+[QueueName(RabbitMQConstant.QUEUE.NAME.UPDATE_RECIPE_TAGS,
+exchangeName: RabbitMQConstant.EXCHANGE.NAME.UPDATE_RECIPE_TAGS)]
 public class UpdateRecipeTagsConsumer : IConsumer<UpdateRecipeTagsEvent>
 {
     private readonly ISender _sender;

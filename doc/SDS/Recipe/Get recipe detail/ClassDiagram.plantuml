@@ -1,0 +1,91 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +GetRecipeDetails([FromBody] GetRecipeDetailDTO getRecipeDetailDTO): async Task<IActionResult>
+}
+
+class GetRecipeDetailQuery {
+    +RecipeId: Guid
+    +AccountId: Guid
+}
+
+class GetRecipeDetailQueryHandler {
+    -_serviceBus: IServiceBus
+    -_context: IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient
+    +Handle(GetRecipeDetailQuery request, CancellationToken cancellationToken): async Task<Result<RecipeDetailsResponse?>> 
+}
+
+class RecipeDetailsResponse{
+    +Recipe: Recipe
+    +AuthorUsername: string
+    +AuthorDisplayName: string
+    +AuthorAvtUrl: string
+    +AuthorNumberOfFollower: int
+    +similarRecipes: List<SimilarRecipe>
+}
+
+class SimilarRecipe{
+    +RecipeId: Guid
+    +ImageUrl: string
+    +Title: Title
+}
+
+RecipeDetailsResponse o--"1.." SimilarRecipe
+
+interface IApplicationDbContext {
+    +Recipes: DbSet<Recipe>
+    +Tags: DbSet<Tag>
+    +RecipeTags: DbSet<RecipeTag>
+    +UserBookmarkRecipes: DbSet<UserBookmarkRecipe>
+    +UserReportRecipes: DbSet<UserReportRecipe>
+    +UserReportComments: DbSet<UserReportComment>
+}
+
+class GetRecipeDetailDTO{
+    +RecipeId: Guid
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+
+together {
+    class CreateUserViewRecipeDetailEvent #CadetBlue;line:white;text:white
+    class GrpcAccountIdRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" GetRecipeDetailDTO
+RecipeController "1"--"1" GetRecipeDetailQuery
+
+GetRecipeDetailQueryHandler "1"--"1" GetRecipeDetailQuery
+GetRecipeDetailQueryHandler "1"--"1" Result
+GetRecipeDetailQueryHandler "1"--"1..*" RecipeDetailsResponse
+GetRecipeDetailQueryHandler "1" o-- "1" IApplicationDbContext
+GetRecipeDetailQueryHandler "1" o-- "1" GrpcUserClient
+GetRecipeDetailQueryHandler "1" o-- "1" IServiceBus
+GetRecipeDetailQueryHandler "1"--"1..*" RecipeError
+GetRecipeDetailQueryHandler "1"--"1" CreateUserViewRecipeDetailEvent
+
+Error "1" --"1..*" RecipeError
+
+@enduml

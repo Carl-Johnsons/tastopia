@@ -16,36 +16,120 @@ import useDebounce from "@/hooks/useDebounce";
 import { AntDesign } from "@expo/vector-icons";
 import useDarkMode from "@/hooks/useDarkMode";
 import { Image } from "expo-image";
-import { useSearchRecipes } from "@/api/search";
-import { router, useFocusEffect } from "expo-router";
-import Recipe from "@/components/common/Recipe";
-import { filterUniqueItems } from "@/utils/dataFilter";
 import {
-  addKeyword,
-  selectSearchKeyword,
-  selectSearchTagCodes
-} from "@/slices/searchRecipe.slice";
+  createUserSearchRecipeKeyword,
+  useSearchRecipeHistory,
+  useSearchRecipes
+} from "@/api/search";
+import { router } from "expo-router";
+import { filterUniqueItems } from "@/utils/dataFilter";
+import { selectSearchTagCodes } from "@/slices/searchRecipe.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useTranslation } from "react-i18next";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
+import SearchRecipeResult from "../community/SearchRecipeResult";
+import SearchHistory from "./SearchHistory";
+import uuid from "react-native-uuid";
 
 type SearchUserProps = {
   onFocus: boolean;
   setOnFocus: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+type ResultSectionProps = {
+  searchResults: SearchRecipeType[] | undefined;
+  isRefetching: boolean;
+  isDoneSearching: boolean;
+  onRefresh: () => Promise<void>;
+  handleLoadMore: () => Promise<void>;
+  handleSelectSearchResult: () => void;
+};
+
+const ResultSection = memo(
+  ({
+    searchResults,
+    isRefetching,
+    isDoneSearching,
+    onRefresh,
+    handleLoadMore,
+    handleSelectSearchResult
+  }: ResultSectionProps) => {
+    const { t } = useTranslation("search");
+
+    return (
+      <View className='mt-6'>
+        <FlatList
+          data={searchResults}
+          keyExtractor={item => item.id}
+          refreshControl={
+            <RefreshControl
+              refreshing={isRefetching}
+              tintColor={globalStyles.color.primary}
+              onRefresh={onRefresh}
+            />
+          }
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.1}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          ListHeaderComponent={() => {
+            return (
+              <Text className='h3-bold text-black_white mb-2'>
+                {t("searchResultTitle.recipe")}
+              </Text>
+            );
+          }}
+          renderItem={({ item, index }) => (
+            <>
+              <SearchRecipeResult
+                {...item}
+                handleSelectSearchResult={handleSelectSearchResult}
+              />
+              {searchResults !== undefined && index !== searchResults.length - 1 && (
+                <View className='my-4 h-[1px] w-full bg-gray-300' />
+              )}
+            </>
+          )}
+          ListEmptyComponent={() => {
+            return isDoneSearching && searchResults?.length === 0 ? (
+              <View className='flex-center mt-10 gap-2'>
+                <Image
+                  source={require("../../../assets/icons/noResult.png")}
+                  style={{ width: 130, height: 130 }}
+                />
+                <Text className='paragraph-medium text-black_white text-center'>
+                  {t("notFound")}
+                </Text>
+              </View>
+            ) : (
+              <View></View>
+            );
+          }}
+        />
+      </View>
+    );
+  }
+);
+
 const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
+  const { c } = useColorizer();
+  const { black, white } = colors;
+
   const { t } = useTranslation("search");
   const dispatch = useAppDispatch();
   const tagCodes = useAppSelector(selectSearchTagCodes);
-  const searchKeyword = useAppSelector(selectSearchKeyword);
 
-  const [searchValue, setSearchValue] = useState<string>(searchKeyword);
+  const [searchValue, setSearchValue] = useState<string>("");
   const [searchResults, setSearchResults] = useState<SearchRecipeType[]>();
 
   const textInputRef = useRef<TextInput>(null);
   const isDarkMode = useDarkMode();
   const debouncedValue = useDebounce(searchValue, 800);
 
+  const { mutateAsync: createSearchHistory } = createUserSearchRecipeKeyword();
+  const { data: searchRecipeHistoryData, isLoading: isLoadingSearchRecipeHistory } =
+    useSearchRecipeHistory();
   const {
     data,
     isFetched,
@@ -58,8 +142,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   } = useSearchRecipes(debouncedValue, tagCodes);
 
   const isDoneSearching =
-    searchValue !== "" &&
-    debouncedValue !== "" &&
+    ((searchValue !== "" && debouncedValue !== "") || tagCodes.length > 0) &&
     isFetched &&
     !isRefetching &&
     !isSearching &&
@@ -82,16 +165,14 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
   const handleCancel = useCallback(() => {
     setSearchValue("");
-    dispatch(addKeyword(""));
-    setSearchResults([]);
     setOnFocus(false);
     Keyboard.dismiss();
+    if (tagCodes.length <= 0) setSearchResults([]);
   }, [dispatch, setOnFocus]);
 
   const handleSearch = useCallback(
     (text: string) => {
       setSearchValue(text);
-      dispatch(addKeyword(text));
     },
     [dispatch]
   );
@@ -100,28 +181,27 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
     await refetch();
   }, [refetch]);
 
-  const handleLoadMore = useCallback(() => {
+  const handleLoadMore = useCallback(async () => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  const handleSelectSearchHistory = (item: string) => {
+    setSearchValue(item);
+  };
+
+  const handleSelectSearchResult = () => {
+    createSearchHistory({ keyword: searchValue });
+  };
+
   useEffect(() => {
-    if (data?.pages && searchKeyword !== "" && searchValue !== "") {
+    if (data?.pages && (searchValue !== "" || tagCodes.length > 0)) {
       const uniqueData = filterUniqueItems(data.pages);
       setSearchResults(uniqueData);
+      refetch();
     }
-  }, [data]);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (searchKeyword !== "" && searchValue !== "") {
-        refetch();
-      }
-
-      return () => {};
-    }, [searchKeyword])
-  );
+  }, [data, tagCodes]);
 
   return (
     <View>
@@ -132,12 +212,13 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
             <Feather
               name='search'
               size={20}
-              color='black'
+              color={c(black.DEFAULT, white.DEFAULT)}
             />
             <TextInput
               autoCapitalize='none'
               ref={textInputRef}
               className='h-full w-[86%]'
+              style={{ color: c(black.DEFAULT, white.DEFAULT) }}
               value={searchValue}
               onPress={() => handleFocus(true)}
               onChangeText={handleSearch}
@@ -175,47 +256,41 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
         </TouchableWithoutFeedback>
       </View>
 
-      {/* Result section */}
-      {searchValue !== "" && (
-        <View className='mt-6 pb-[200px]'>
-          <Text className='h3-bold mb-2'>{t("searchResultTitle.recipe")}</Text>
-
-          <FlatList
-            data={searchResults}
-            keyExtractor={item => item.id}
-            refreshControl={
-              <RefreshControl
-                refreshing={isRefetching}
-                tintColor={globalStyles.color.primary}
-                onRefresh={onRefresh}
+      {/* History section */}
+      {!isLoadingSearchRecipeHistory && searchRecipeHistoryData && searchValue === "" && (
+        <FlatList
+          data={searchRecipeHistoryData.value}
+          keyExtractor={_item => uuid.v4()}
+          scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
+          style={{
+            marginTop: 20,
+            marginLeft: 10
+          }}
+          contentContainerStyle={{
+            gap: 10
+          }}
+          renderItem={item => {
+            return (
+              <SearchHistory
+                item={item.item}
+                handleSelectHistory={handleSelectSearchHistory}
               />
-            }
-            onEndReached={handleLoadMore}
-            onEndReachedThreshold={0.1}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item, index }) => (
-              <>
-                <Recipe {...item} />
-                {searchResults !== undefined && index !== searchResults.length - 1 && (
-                  <View className='my-4 h-[1px] w-full bg-gray-300' />
-                )}
-              </>
-            )}
-            ListEmptyComponent={() => {
-              return isDoneSearching && searchResults?.length === 0 ? (
-                <View className='flex-center mt-10 gap-2'>
-                  <Image
-                    source={require("../../../assets/icons/noResult.png")}
-                    style={{ width: 130, height: 130 }}
-                  />
-                  <Text className='paragraph-medium text-center'>{t("notFound")}</Text>
-                </View>
-              ) : (
-                <View></View>
-              );
-            }}
-          />
-        </View>
+            );
+          }}
+        />
+      )}
+
+      {/* Result section */}
+      {(searchValue !== "" || tagCodes.length > 0) && (
+        <ResultSection
+          searchResults={searchResults}
+          isDoneSearching={isDoneSearching}
+          isRefetching={isRefetching}
+          onRefresh={onRefresh}
+          handleLoadMore={handleLoadMore}
+          handleSelectSearchResult={handleSelectSearchResult}
+        />
       )}
     </View>
   );

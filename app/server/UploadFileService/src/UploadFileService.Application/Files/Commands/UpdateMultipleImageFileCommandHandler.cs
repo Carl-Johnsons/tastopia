@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net;
 using UploadFileService.Application.Utilities;
@@ -17,12 +18,14 @@ public class UpdateMultipleImageFileCommandHandler : IRequestHandler<UpdateMulti
     private readonly IFileUtility _fileUtility;
     private readonly Cloudinary _cloudinary;
     private readonly ApplicationFileUtility _applicationFileUtility;
+    private readonly ILogger<UpdateMultipleImageFileCommandHandler> _logger;
 
-    public UpdateMultipleImageFileCommandHandler(Cloudinary cloudinary, IFileUtility fileUtility, ApplicationFileUtility applicationFileUtility)
+    public UpdateMultipleImageFileCommandHandler(Cloudinary cloudinary, IFileUtility fileUtility, ApplicationFileUtility applicationFileUtility, ILogger<UpdateMultipleImageFileCommandHandler> logger)
     {
         _cloudinary = cloudinary;
         _fileUtility = fileUtility;
         _applicationFileUtility = applicationFileUtility;
+        _logger = logger;
     }
 
     public async Task<Result<List<FileResponse>?>> Handle(UpdateMultipleImageFileCommand request, CancellationToken cancellationToken)
@@ -133,9 +136,8 @@ public class UpdateMultipleImageFileCommandHandler : IRequestHandler<UpdateMulti
         }
         catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
+            _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<List<FileResponse>?>.Failure(CloudinaryFileError.UploadToCloudFail);
-
         }
     }
 
@@ -151,7 +153,6 @@ public class UpdateMultipleImageFileCommandHandler : IRequestHandler<UpdateMulti
             {
                 if (string.IsNullOrEmpty(publicId))
                 {
-                    await Console.Out.WriteLineAsync("Not have permission to delete, so skip 1 image.");
                     return;
                 }
                 var deleteParams = new DeletionParams(publicId)
@@ -164,7 +165,7 @@ public class UpdateMultipleImageFileCommandHandler : IRequestHandler<UpdateMulti
             return;
         } catch (Exception ex)
         {
-            await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(ex, Formatting.Indented));
+            _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return;
         }
     }

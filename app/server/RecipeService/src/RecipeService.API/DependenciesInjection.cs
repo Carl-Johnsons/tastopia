@@ -1,13 +1,11 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.Text.Json.Serialization;
-using RecipeService.Application;
+﻿using RecipeService.Application;
 using RecipeService.Infrastructure;
 using RecipeService.API.Middleware;
-using Newtonsoft.Json;
 using AutoMapper;
 using RecipeService.API.Configs;
 using Contract.Utilities;
 using RecipeService.API.Extensions;
+using Contract.Extension;
 
 namespace RecipeService.API;
 
@@ -18,11 +16,8 @@ public static class DependenciesInjection
     {
         EnvUtility.LoadEnvFile();
         var services = builder.Services;
-        var config = builder.Configuration;
-        var host = builder.Host;
 
-        builder.ConfigureKestrel();
-        builder.ConfigureSerilog();
+        builder.ConfigureCommonAPIServices();
 
         services.AddInfrastructureServices();
         services.AddApplicationServices();
@@ -34,52 +29,16 @@ public static class DependenciesInjection
         services.AddSingleton(mapper);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddControllers()
-                // Prevent circular JSON reach max depth of the object when serialization
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                    options.JsonSerializerOptions.WriteIndented = true;
-                }).AddNewtonsoftJson(options =>
-                {
-                    options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
-                });
-
-        services.AddHttpContextAccessor();
-
-        services.AddAuthentication("Bearer")
-            .AddJwtBearer("Bearer", options =>
-            {
-                var IdentityDNS = DotNetEnv.Env.GetString("IDENTITY_SERVER_HOST", "localhost:7001").Replace("\"", "");
-                var IdentityServerEndpoint = $"https://{IdentityDNS}";
-                Console.WriteLine("Connect to Identity Provider: " + IdentityServerEndpoint);
-
-                options.Authority = IdentityServerEndpoint;
-                // Clear default Microsoft's JWT claim mapping
-                // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
-                options.MapInboundClaims = false;
-
-                options.TokenValidationParameters.ValidTypes = ["at+jwt"];
-
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = false,
-                    ValidateIssuer = false,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
-                };
-                // For development only
-                options.IncludeErrorDetails = true;
-            });
+        services.AddCommonAPIServices();
 
         services.AddEndpointsApiExplorer();
         return builder;
     }
 
-    public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
+    public static WebApplication UseAPIServices(this WebApplication app)
     {
         app.UseSerilogServices();
-        app.UseConsulServiceDiscovery();
+        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_RECIPE", "Not Found"));
 
         app.UseSwaggerServices();
 
@@ -94,6 +53,9 @@ public static class DependenciesInjection
         app.UseAuthentication();
 
         app.UseAuthorization();
+
+        app.UseRouting();
+        app.UseHealthCheck();
 
         //try
         //{

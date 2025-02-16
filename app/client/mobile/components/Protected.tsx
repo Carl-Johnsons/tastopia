@@ -34,16 +34,16 @@ export const Protected = ({
   const isExcluded = excludedRoles?.includes(currentUserRole);
   const hasAccess = (roles && isGranted) || (excludedRoles && !isExcluded);
 
-  const checkLogin = () => {
-    !hasAccess && router.push("/login");
+  const navigateToLoginScreen = () => {
+    router.push("/login");
   };
 
   const content = (() => {
-    if (requiredLogin) {
+    if (requiredLogin && !hasAccess) {
       return (
         <Pressable
-          onPress={checkLogin}
-          onStartShouldSetResponderCapture={() => true}
+          onPress={!hasAccess ? navigateToLoginScreen : undefined}
+          onStartShouldSetResponderCapture={() => !hasAccess}
         >
           {children}
         </Pressable>

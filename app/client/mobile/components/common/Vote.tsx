@@ -1,55 +1,89 @@
-import { useState, useRef } from "react";
-import { View, Text, Animated, Pressable } from "react-native";
-import { DownvoteIcon, UpvoteIcon } from "./SVG";
+import { useState, useRef, useEffect } from "react";
+import { View, Text, Animated, Pressable, Alert } from "react-native";
 import { globalStyles } from "./GlobalStyles";
 import { ROLE } from "@/slices/auth.slice";
 import useProtected, { useProtectedExclude } from "@/hooks/auth/useProtected";
 import { AntDesign } from "@expo/vector-icons";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
+import { VoteType } from "@/constants/recipe";
+import { useVoteRecipe } from "@/api/recipe";
 
 type VoteProps = {
+  vote: string;
   voteDiff: number;
+  recipeId: string;
 };
 
-const Vote = ({ voteDiff }: VoteProps) => {
+const Vote = ({ vote, voteDiff, recipeId }: VoteProps) => {
+  const { mutateAsync: voteMutation, isLoading: isVoting } = useVoteRecipe();
   const [votes, setVotes] = useState(voteDiff);
-  const [upvoted, setUpvoted] = useState(false);
-  const [downvoted, setDownvoted] = useState(false);
+  const [upvoted, setUpvoted] = useState(vote === VoteType.UPVOTE);
+  const [downvoted, setDownvoted] = useState(vote === VoteType.DOWNVOTE);
+  const { black, white, primary } = colors;
+  const { c } = useColorizer();
 
   const upvoteBounceValue = useRef(new Animated.Value(1)).current;
   const downvoteBounceValue = useRef(new Animated.Value(1)).current;
 
   const handleUpvote = useProtectedExclude(() => {
-    let newVotes = votes;
-    if (upvoted) {
-      newVotes -= 1;
-      setUpvoted(false);
-    } else {
-      newVotes += 1;
-      if (downvoted) {
-        newVotes += 1;
-        setDownvoted(false);
-      }
-      setUpvoted(true);
-      bounceAnimation(upvoteBounceValue);
+    if (!isVoting) {
+      voteMutation(
+        { recipeId: recipeId, isUpvote: true },
+        {
+          onSuccess: async data => {
+            let newVotes = votes;
+            if (upvoted) {
+              newVotes -= 1;
+              setUpvoted(false);
+            } else {
+              newVotes += 1;
+              if (downvoted) {
+                newVotes += 1;
+                setDownvoted(false);
+              }
+              setUpvoted(true);
+              bounceAnimation(upvoteBounceValue);
+            }
+            setVotes(newVotes);
+          },
+          onError: error => {
+            console.log("Vote error", JSON.stringify(error, null, 2));
+            Alert.alert("Error", error.message);
+          }
+        }
+      );
     }
-    setVotes(newVotes);
   }, [ROLE.GUEST]);
 
   const handleDownvote = useProtected(() => {
-    let newVotes = votes;
-    if (downvoted) {
-      newVotes += 1;
-      setDownvoted(false);
-    } else {
-      newVotes -= 1;
-      if (upvoted) {
-        newVotes -= 1;
-        setUpvoted(false);
-      }
-      setDownvoted(true);
-      bounceAnimation(downvoteBounceValue);
+    if (!isVoting) {
+      voteMutation(
+        { recipeId: recipeId, isUpvote: false },
+        {
+          onSuccess: async data => {
+            let newVotes = votes;
+            if (downvoted) {
+              newVotes += 1;
+              setDownvoted(false);
+            } else {
+              newVotes -= 1;
+              if (upvoted) {
+                newVotes -= 1;
+                setUpvoted(false);
+              }
+              setDownvoted(true);
+              bounceAnimation(downvoteBounceValue);
+            }
+            setVotes(newVotes);
+          },
+          onError: error => {
+            console.log("Vote error", JSON.stringify(error, null, 2));
+            Alert.alert("Error", error.message);
+          }
+        }
+      );
     }
-    setVotes(newVotes);
   }, [ROLE.USER]);
 
   const bounceAnimation = (value: any) => {
@@ -68,6 +102,21 @@ const Vote = ({ voteDiff }: VoteProps) => {
     return votes.toString().length * 9;
   };
 
+  const upvoteForegound = c(
+    upvoted ? primary : black.DEFAULT,
+    upvoted ? primary : white.DEFAULT
+  );
+  const downvoteForegound = c(
+    downvoted ? globalStyles.color.primary : globalStyles.color.dark,
+    downvoted ? globalStyles.color.primary : globalStyles.color.light
+  );
+
+  useEffect(() => {
+    setVotes(voteDiff);
+    setUpvoted(vote === VoteType.UPVOTE);
+    setDownvoted(vote === VoteType.DOWNVOTE);
+  }, [vote, voteDiff, recipeId]);
+
   return (
     <View className='rounded-3xl border-[0.5px] border-gray-300'>
       <View className='flex flex-row items-center justify-center'>
@@ -84,14 +133,22 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 flexDirection: "row"
               }}
             >
-              <AntDesign
-                name='like2'
-                size={16}
-                color={upvoted ? globalStyles.color.primary : globalStyles.color.dark}
-              />
+              {upvoted ? (
+                <AntDesign
+                  name='like1'
+                  size={16}
+                  color={upvoteForegound}
+                />
+              ) : (
+                <AntDesign
+                  name='like2'
+                  size={16}
+                  color={upvoteForegound}
+                />
+              )}
             </Animated.View>
             <Text
-              className={`color-black_white mx-2 text-center`}
+              className={`text-black_white mx-2 text-center`}
               style={{ width: getDigitCount(votes) }}
             >
               {isNaN(votes) ? "" : votes}
@@ -114,11 +171,19 @@ const Vote = ({ voteDiff }: VoteProps) => {
                 flexDirection: "row"
               }}
             >
-              <AntDesign
-                name='dislike2'
-                size={16}
-                color={downvoted ? globalStyles.color.primary : globalStyles.color.dark}
-              />
+              {downvoted ? (
+                <AntDesign
+                  name='dislike1'
+                  size={16}
+                  color={downvoteForegound}
+                />
+              ) : (
+                <AntDesign
+                  name='dislike2'
+                  size={16}
+                  color={downvoteForegound}
+                />
+              )}
             </Animated.View>
           </View>
         </Pressable>

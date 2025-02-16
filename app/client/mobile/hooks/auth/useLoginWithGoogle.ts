@@ -1,11 +1,27 @@
-import { AuthSessionResult, makeRedirectUri, useAuthRequest, useAutoDiscovery } from "expo-auth-session";
+import {
+  TokenResponse,
+  exchangeCodeAsync,
+  makeRedirectUri,
+  useAuthRequest,
+  useAutoDiscovery
+} from "expo-auth-session";
+import { API_GATEWAY_HOST } from "@/constants/host";
 import { maybeCompleteAuthSession } from "expo-web-browser";
-import { useApiHost } from "./useApiHost";
+import { transformPlatformURI } from "@/utils/functions";
+import { useState } from "react";
+import Constants from "expo-constants";
+import { CLIENT_ID, SCOPE } from "@/constants/api";
+import { useTranslation } from "react-i18next";
+import { Alert, Platform } from "react-native";
+import { stringify } from "@/utils/debug";
+import { useDispatch } from "react-redux";
+import { ROLE, saveAuthData } from "@/slices/auth.slice";
+import useSyncSetting from "../user/useSyncSetting";
+import useSyncUser from "../user/useSyncUser";
+import { router } from "expo-router";
 
 interface UseLoginWithGoogleResult {
-  /** The response object */
-  response: AuthSessionResult | null;
-  /** Initializes the Google login flow. */
+  /** Initialize the Google login flow. */
   loginWithGoogle: () => Promise<void>;
 }
 
@@ -15,36 +31,94 @@ interface UseLoginWithGoogleResult {
  * @param initialValue The initial image data object
  */
 export const useLoginWithGoogle = (): UseLoginWithGoogleResult => {
-  const { host } = useApiHost();
-  const discoveryUrl = `http://${host}:5001`;
+  const discoveryUrl = transformPlatformURI(`http://${API_GATEWAY_HOST}:5001`);
   const discovery = useAutoDiscovery(discoveryUrl);
-  const redirectUri = makeRedirectUri();
-  const base64_state = btoa(Math.random().toString());
+  const { t: te } = useTranslation("loginWithGoogle", { keyPrefix: "error" });
+  const { t: ti } = useTranslation("loginWithGoogle", { keyPrefix: "info" });
 
-  const [_request, response, promptAsync] = useAuthRequest(
+  const iosBundleId = Constants.expoConfig?.ios?.bundleIdentifier;
+  const androidPackage = Constants.expoConfig?.android?.package;
+
+  const [base64_state] = useState(() => btoa(Math.random().toString()));
+
+  const redirectUri = makeRedirectUri({
+    scheme: Platform.select({
+      ios: iosBundleId,
+      android: androidPackage
+    })
+  });
+
+  const [request, _, promptAsync] = useAuthRequest(
     {
-      clientId: "react.native",
+      clientId: CLIENT_ID,
       redirectUri,
-      scopes: ["openid", "profile", "email", "offline_access"],
+      scopes: SCOPE.split(" "),
       state: base64_state
     },
     discovery
   );
 
   const loginWithGoogle = async () => {
-    console.log("Initing google flow");
+    if (!request) {
+      return;
+    }
 
-    console.log("Start login flow");
-    console.log("redirectUri", redirectUri);
+    try {
+      console.log("Start login flow");
+      console.log("redirectUri", redirectUri);
+      maybeCompleteAuthSession();
 
-    maybeCompleteAuthSession();
-    await promptAsync();
+      const result = await promptAsync();
 
-    console.log("End login flow");
-    console.log("Data:", JSON.stringify(response, null, 2));
+      if (result.type === "dismiss" || result.type === "cancel") {
+        return Alert.alert(ti("title"), ti("cancel"));
+      } else if (result.type === "error") {
+        return Alert.alert(te("title"), te("error"));
+      }
+
+      if (request && result?.type === "success" && discovery) {
+        const tokenResponse = await exchangeCodeAsync(
+          {
+            clientId: CLIENT_ID,
+            redirectUri,
+            code: result.params.code,
+            extraParams: request.codeVerifier
+              ? { code_verifier: request.codeVerifier }
+              : undefined
+          },
+          discovery
+        );
+
+        await saveData(tokenResponse);
+        router.navigate("/(protected)");
+      }
+    } catch (error) {
+      Alert.alert(te("title"), te("error"));
+      console.debug("Authorization error:", stringify(error));
+    }
   };
 
-  return { loginWithGoogle, response };
+  const dispatch = useDispatch();
+  const { upload: uploadSettings } = useSyncSetting();
+  const { fetch: fetchUser } = useSyncUser();
+
+  const saveData = async (tokens: TokenResponse) => {
+    console.log("Tokens", stringify(tokens));
+    const { accessToken, refreshToken } = tokens;
+
+    dispatch(
+      saveAuthData({
+        accessToken,
+        refreshToken,
+        role: ROLE.USER
+      })
+    );
+
+    await uploadSettings();
+    await fetchUser();
+  };
+
+  return { loginWithGoogle };
 };
 
 export default useLoginWithGoogle;

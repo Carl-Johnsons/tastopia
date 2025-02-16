@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 import * as ImagePicker from "expo-image-picker";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -12,13 +12,15 @@ import {
   Alert
 } from "react-native";
 
-import { FileObject, ImageFileType } from "@/types/image";
 import { globalStyles } from "../GlobalStyles";
 import { transformPlatformURI } from "@/utils/functions";
 import styles from "./UploadImage.style";
 import { extensionToMimeType } from "@/utils/file";
 import { AntDesign } from "@expo/vector-icons";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { useTranslation } from "react-i18next";
+import useDarkMode from "@/hooks/useDarkMode";
+import OutsidePressHandler from "react-native-outside-press";
 
 type UploadImageProps = {
   /**
@@ -47,9 +49,14 @@ type UploadImageProps = {
   containerStyle?: StyleProp<ViewStyle>;
 
   /**
-   * Image style
+   * Image's wrapper style
    */
   imageStyle?: StyleProp<ViewStyle>;
+
+  /**
+   * The images' class names
+   */
+  innerImageClassName?: string;
 
   /**
    *  Maximum number images
@@ -69,14 +76,18 @@ const UploadImage = ({
   isMultiple = true,
   containerStyle,
   imageStyle,
+  innerImageClassName,
   selectionLimit = 5,
   props
 }: UploadImageProps) => {
+  const isDarkMode = useDarkMode();
+  const { t } = useTranslation("component");
   const [startUploadImage, setStartUploadImage] = useState(false);
   const [imageCount, setImageCount] = useState(0);
-  const [fileObjects, setFileObjects] = useState<FileObject[]>([]);
+  const [fileObjects, setFileObjects] = useState<ImageFileObject[]>([]);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
+  const selectedImageIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -102,7 +113,7 @@ const UploadImage = ({
       quality: 1,
       selectionLimit: selectionLimit - imageCount,
       allowsMultipleSelection: isMultiple,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       ...props
     });
 
@@ -135,7 +146,12 @@ const UploadImage = ({
 
   const handleImagePress = (id: string) => {
     if (!isDisabled) {
-      setSelectedImageId(selectedImageId === id ? null : id);
+      if (selectedImageId === id) {
+        handleRemoveImage(id);
+      } else {
+        setSelectedImageId(id);
+        selectedImageIdRef.current = id;
+      }
     }
   };
 
@@ -145,12 +161,7 @@ const UploadImage = ({
     onFileChange(newFileObjects!.map(file => file.file as ImageFileType));
     setImageCount(prev => prev - 1);
     setSelectedImageId(null);
-  };
-
-  const handleDismiss = () => {
-    if (selectedImageId !== null) {
-      setSelectedImageId(null);
-    }
+    selectedImageIdRef.current === null;
   };
 
   useEffect(() => {
@@ -177,27 +188,35 @@ const UploadImage = ({
               onPress={() => handleImagePress(fileObject.id)}
               underlayColor='transparent'
             >
-              <View>
-                <Image
-                  source={{ uri: transformPlatformURI(fileObject.previewPath)! }}
-                  style={styles.uploadItemImage}
-                />
-                {selectedImageId === fileObject.id && (
-                  <TouchableHighlight
-                    style={styles.removeOverlay}
-                    onPress={() => handleRemoveImage(fileObject.id)}
-                    underlayColor='transparent'
-                  >
-                    <View style={styles.removeIconWrapper}>
-                      <AntDesign
-                        name='closecircleo'
-                        size={24}
-                        color={globalStyles.color.light}
-                      />
-                    </View>
-                  </TouchableHighlight>
-                )}
-              </View>
+              <OutsidePressHandler
+                disabled={selectedImageIdRef.current !== fileObject.id}
+                onOutsidePress={() => {
+                  setSelectedImageId(null);
+                }}
+              >
+                <View>
+                  <Image
+                    source={{ uri: transformPlatformURI(fileObject.previewPath)! }}
+                    style={styles.uploadItemImage}
+                    className={`aspect-[1.6] ${innerImageClassName}`}
+                  />
+                  {selectedImageId === fileObject.id && (
+                    <TouchableHighlight
+                      style={styles.removeOverlay}
+                      onPress={() => handleRemoveImage(fileObject.id)}
+                      underlayColor='transparent'
+                    >
+                      <View style={styles.removeIconWrapper}>
+                        <AntDesign
+                          name='closecircleo'
+                          size={24}
+                          color={globalStyles.color.light}
+                        />
+                      </View>
+                    </TouchableHighlight>
+                  )}
+                </View>
+              </OutsidePressHandler>
             </TouchableHighlight>
           ))}
         </View>
@@ -215,9 +234,9 @@ const UploadImage = ({
                 <FontAwesome
                   name='cloud-upload'
                   size={24}
-                  color={globalStyles.color.light}
+                  color={isDarkMode ? globalStyles.color.dark : globalStyles.color.light}
                 />
-                <Text style={styles.uploadButtonText}>Upload</Text>
+                <Text className='text-white_black body-semibold'>{t("uploadImage")}</Text>
               </View>
             </TouchableHighlight>
           )}

@@ -1,0 +1,69 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +VoteRecipe([FromBody] VoteRecipeDTO voteRecipeDTO): async Task<IActionResult>
+}
+
+class VoteRecipeCommand {
+    +IsUpvote: bool
+    +AccountId: Guid
+    +RecipeId: Guid
+}
+
+class VoteRecipeCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +Handle(VoteRecipeCommand request, CancellationToken cancellationToken): async Task<Result> 
+}
+
+class VoteRecipeDTO{
+    +IsUpvote: bool
+    +AccountId: Guid
+    +RecipeId: Guid
+}
+
+class RecipeCommentResponse{
+    +Id: Guid
+    +AccountId: Guid
+    +DisplayName: string
+    +Content: string
+    +AvatarUrl: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+    +IsActive: bool
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" VoteRecipeDTO
+RecipeController "1"--"1" VoteRecipeCommand
+
+VoteRecipeCommandHandler "1"--"1" VoteRecipeCommand
+VoteRecipeCommandHandler "1"--"1" Result
+VoteRecipeCommandHandler "1" o-- "1" IUnitOfWork
+VoteRecipeCommandHandler "1" o-- "1" IApplicationDbContext
+VoteRecipeCommandHandler "1"--"1..*" RecipeError
+
+Error "1" --"1..*" RecipeError
+
+@enduml

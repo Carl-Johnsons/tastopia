@@ -1,22 +1,19 @@
-import { useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Keyboard,
-  ActivityIndicator,
-  Platform,
-} from "react-native";
-import { Redirect, Tabs, usePathname, useRootNavigationState } from "expo-router";
-import { menuList } from "@/constants/menu";
-import { useTranslation } from "react-i18next";
-import { selectRole } from "@/slices/auth.slice";
-import { COMMUNITY_PATH, MAIN_PATH } from "@/constants/paths";
-import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import { COMMUNITY_PATH, MAIN_PATH } from "@/constants/paths";
+import { menuList } from "@/constants/menu";
+import { Redirect, Tabs, usePathname, useRootNavigationState } from "expo-router";
+import { ROLE, selectRole } from "@/slices/auth.slice";
+import { useEffect, useState } from "react";
+import { usePushNotification } from "@/hooks";
+import { useTranslation } from "react-i18next";
+import { View, StyleSheet, Keyboard, ActivityIndicator, Platform } from "react-native";
+import useColorizer from "@/hooks/useColorizer";
 
 const isAndroid = Platform.OS === "android";
 
 const ProtectedLayout = () => {
+  const { registerForPushNotificationAsync } = usePushNotification();
+
   const { t } = useTranslation("menu");
   const { c } = useColorizer();
   const { black, white, primary } = colors;
@@ -47,6 +44,12 @@ const ProtectedLayout = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (role !== ROLE.GUEST) {
+      registerForPushNotificationAsync();
+    }
+  }, [role]);
+
   if (!role) {
     return !navigationState?.key ? (
       <View className='h-full justify-center'>
@@ -65,7 +68,6 @@ const ProtectedLayout = () => {
       display: "flex",
       justifyContent: "flex-start",
       alignItems: "flex-start",
-      borderTopWidth: 1,
       backgroundColor: c(white.DEFAULT, black[100]),
       height: isAndroid ? 64 : 80,
       paddingTop: 10,
@@ -83,7 +85,8 @@ const ProtectedLayout = () => {
     tabItem: {
       width: 80,
       padding: 0,
-      justifyContent: "center"
+      justifyContent: "center",
+      alignItems: "center"
     }
   });
 
@@ -94,7 +97,7 @@ const ProtectedLayout = () => {
           tabBarShowLabel: false,
           tabBarActiveTintColor: primary,
           tabBarInactiveTintColor: c(black.DEFAULT, white.DEFAULT),
-          tabBarStyle: [styles.tabBar, { bottom: isKeyBoardVisible ? -50 : 0 }],
+          tabBarStyle: [styles.tabBar],
           tabBarHideOnKeyboard: false
         }}
       >
@@ -114,7 +117,10 @@ const ProtectedLayout = () => {
                 ...(translateCode && { title: t(translateCode) }),
                 headerShown: false,
                 tabBarIcon: ({ size, focused }) => (
-                  <View style={styles.tabItem}>
+                  <View
+                    style={styles.tabItem}
+                    testID={code}
+                  >
                     {typeof icon === "function"
                       ? icon({
                           focused:

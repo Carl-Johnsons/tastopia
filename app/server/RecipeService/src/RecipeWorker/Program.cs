@@ -1,20 +1,24 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using RecipeWorker;
 using RecipeWorker.Extensions;
-using RecipeWorker.Interfaces;
-using RecipeWorker.Services;
-using RecipeWorker.Utilities;
-
-EnvUtility.LoadEnvFile();
 
 var builder = Host.CreateDefaultBuilder(args)
+    .ConfigureSerilog()
     .ConfigureWebHostDefaults(webBuilder =>
     {
         webBuilder.ConfigureKestrel();
+        webBuilder.ConfigureServices(services =>
+        {
+            services.AddWorkerServices();
+        });
+        webBuilder.Configure(app =>
+        {
+            app.UseRouting();
+        });
     })
     .ConfigureServices((context, services) =>
     {
-        services.AddWorkerServices();
-        services.AddTransient<IRecipeService, CommunityRecipeService>();
         services.AddHostedService<Worker>();
     });
 

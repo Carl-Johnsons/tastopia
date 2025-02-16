@@ -1,0 +1,81 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 25
+skinparam ranksep 25
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +GetRecipeFeed([FromBody] GetRecipeFeedsDTO getRecipeFeedsDTO): async Task<IActionResult>
+}
+
+class GetRecipeFeedsQuery {
+    +Skip: int
+    +TagValues: List<string>?
+    +RecipeId: Guid
+    +AccountId: Guid
+}
+
+class GetRecipeFeedsQueryHandler {
+    -_context: IApplicationDbContext
+    -_mapper: IMapper
+    -_grpcUserClient: GrpcUserClient
+    -_paginateDataUtility: IPaginateDataUtility
+    +Handle(GetRecipeFeedsQuery request, CancellationToken cancellationToken): async Task<Result<PaginatedRecipeFeedsListResponse?>> 
+}
+
+interface IMapper{
+    #Map<TDestination>(object source): TDestination
+}
+
+class GetRecipeFeedsDTO {
+    +Skip: int
+    +TagValues: List<string>
+}
+
+class PaginatedRecipeFeedsListResponse
+
+class "BasePaginatedResponse<Type, MetadataType>" {
+    +PaginatedData : IEnumerable<Type>
+    +Metadata: MetadataType?
+}
+PaginatedRecipeFeedsListResponse --|> "BasePaginatedResponse<Type, MetadataType>"
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+
+' =========== Microservice class ===========
+together {
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" GetRecipeFeedsDTO 
+RecipeController "1"--"1" GetRecipeFeedsQuery
+
+GetRecipeFeedsQueryHandler "1"--"1" GetRecipeFeedsQuery
+GetRecipeFeedsQueryHandler "1"--"1" Result
+GetRecipeFeedsQueryHandler "1"--"1" PaginatedRecipeFeedsListResponse
+GetRecipeFeedsQueryHandler "1" o-- "1" IUnitOfWork
+GetRecipeFeedsQueryHandler "1" o-- "1" IApplicationDbContext
+GetRecipeFeedsQueryHandler "1" o-- "1" IMapper
+GetRecipeFeedsQueryHandler "1" o-- "1" GrpcUserClient
+GetRecipeFeedsQueryHandler "1" o-- "1" IPaginateDataUtility
+GetRecipeFeedsQueryHandler "1"--"1..*" RecipeError
+
+Error "1" --"1..*" RecipeError
+@enduml
