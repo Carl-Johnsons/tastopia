@@ -10,5 +10,6 @@ public class UpdateCommentDTO
 
     [Required]
     [JsonProperty("content")]
+    [MaxLength(500)]
     public string Content { get; set; } = null!;
 }

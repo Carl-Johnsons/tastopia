@@ -7,9 +7,7 @@ using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
 using UserProto;
-
 namespace RecipeService.Application.Recipes.Queries;
-
 public class GetRecipeDetailQuery : IRequest<Result<RecipeDetailsResponse?>>
 {
     [Required]
@@ -73,11 +71,12 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
         var listString = recipe.Title.ToLower().Split(' ');
 
         var similarRecipes = _context.Recipes.Where(
-            r => r.Id != recipe.Id &&
+            r => r.Id != recipe.Id && r.IsActive &&
                 (
                  listString.Any(word => r.Title.ToLower().Contains(word)) ||
                  listString.Any(word => r.Description.ToLower().Contains(word)) ||
-                 listString.Any(word => r.Ingredients.Any(i => i.ToLower().Contains(word)))
+                 listString.Any(word => r.Ingredients.Any(i => i.ToLower().Contains(word))) ||
+                 listString.Any(word => r.Steps.Any(i => i.Content.ToLower().Contains(word)))
                 )
             ).OrderByDescending(r => r.CreatedAt).Select(r => new SimilarRecipe
             {

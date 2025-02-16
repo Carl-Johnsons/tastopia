@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using RecipeService.API.ValidationAttributes;
 using System.ComponentModel.DataAnnotations;
 namespace RecipeService.API.DTOs;
 
@@ -9,6 +10,7 @@ public class UpdateRecipeDTO
     public Guid Id { get; set; }
 
     [JsonProperty("recipeImage")]
+    [MaxFileSize(4)]
     public IFormFile? RecipeImage { get; set; }
 
     [Required]
@@ -29,10 +31,14 @@ public class UpdateRecipeDTO
 
     [Required]
     [JsonProperty("ingredients")]
+    [MaxLengthList(50)]
+    [NonEmptyList]
     public List<string> Ingredients { get; set; } = null!;
 
     [Required]
     [JsonProperty("steps")]
+    [MaxLengthList(15)]
+    [NonEmptyList]
     public List<UpdateStepDTO> Steps { get; set; } = null!;
 
     [JsonProperty("tagValues")]
@@ -55,6 +61,7 @@ public class UpdateStepDTO
     public string Content { get; set; } = null!;
 
     [JsonProperty("images")]
+    [MaxFileSizeList(4)]
     public List<IFormFile>? Images { get; set; }
 
     [JsonProperty("deleteUrls")]
