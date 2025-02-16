@@ -2,7 +2,7 @@ import { colors } from "@/constants/colors";
 import { COMMUNITY_PATH, MAIN_PATH } from "@/constants/paths";
 import { menuList } from "@/constants/menu";
 import { Redirect, Tabs, usePathname, useRootNavigationState } from "expo-router";
-import { selectRole } from "@/slices/auth.slice";
+import { ROLE, selectRole } from "@/slices/auth.slice";
 import { useEffect, useState } from "react";
 import { usePushNotification } from "@/hooks";
 import { useTranslation } from "react-i18next";
@@ -45,10 +45,10 @@ const ProtectedLayout = () => {
   }, []);
 
   useEffect(() => {
-    if (role) {
+    if (role !== ROLE.GUEST) {
       registerForPushNotificationAsync();
     }
-  }, []);
+  }, [role]);
 
   if (!role) {
     return !navigationState?.key ? (

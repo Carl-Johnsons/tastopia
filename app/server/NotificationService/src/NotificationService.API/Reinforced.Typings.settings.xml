@@ -34,7 +34,7 @@
 			in attributes and in fluent methods then configuration from fluent methods will
 			be used.
 		-->
-		<RtConfigurationMethod>TrackingService.API.Extensions.ReinforcedTypingsExtension.ConfigureReinforcedTypings</RtConfigurationMethod>
+		<RtConfigurationMethod>NotificationService.API.Extensions.ReinforcedTypingsExtension.ConfigureReinforcedTypings</RtConfigurationMethod>
 
 		<!--
 			By default all of your typings will be located in single file specified by RtTargetFile.
@@ -54,8 +54,7 @@
 			Note that in case of using RtDivideTypesAmongFiles, RtTargetFile parameter will 
 			NOT be used anymore.
 		-->
-		<RtTargetDirectory>..\..\..\..\client\mobile\generated</RtTargetDirectory>
-
+		<RtTargetDirectory>../../../../client/mobile/generated</RtTargetDirectory>
 
 		<!--
 			Disables typescript compilation in solution. 

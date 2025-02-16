@@ -8,6 +8,10 @@ public static class NotificationErrors
         new("NotificationErrors.NotFound",
             StatusCode: (int)HttpStatusCode.NotFound,
             Message: "Notification not found");
+    public static Error TemplateNotFound =>
+        new("NotificationErrors.TemplateNotFound",
+            StatusCode: (int)HttpStatusCode.NotFound,
+            Message: "Notification template not found");
     public static Error ExpoPushTokenNotFound =>
             new("NotificationErrors.ExpoPushTokenNotFound",
                 StatusCode: (int)HttpStatusCode.NotFound,

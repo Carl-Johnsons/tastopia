@@ -2,7 +2,6 @@
 using Duende.IdentityServer.Extensions;
 using IdentityService.Application.Account.Commands;
 using Microsoft.AspNetCore.Authorization;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Text.Json;
 using static Duende.IdentityServer.IdentityServerConstants;
