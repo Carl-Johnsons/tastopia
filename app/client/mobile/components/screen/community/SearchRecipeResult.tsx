@@ -8,10 +8,14 @@ const SearchRecipeResult = ({
   title,
   description,
   authorDisplayName,
-  authorAvtUrl
-}: RecipeType) => {
+  authorAvtUrl,
+  handleSelectSearchResult
+}: RecipeType & {
+  handleSelectSearchResult: () => void;
+}) => {
   const router = useRouter();
   const handleOnPress = () => {
+    handleSelectSearchResult();
     router.push({
       pathname: "/(protected)/community/[id]",
       params: { id, authorId }

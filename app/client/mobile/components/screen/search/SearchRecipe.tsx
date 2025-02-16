@@ -16,7 +16,11 @@ import useDebounce from "@/hooks/useDebounce";
 import { AntDesign } from "@expo/vector-icons";
 import useDarkMode from "@/hooks/useDarkMode";
 import { Image } from "expo-image";
-import { useSearchRecipes } from "@/api/search";
+import {
+  createUserSearchRecipeKeyword,
+  useSearchRecipeHistory,
+  useSearchRecipes
+} from "@/api/search";
 import { router } from "expo-router";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { selectSearchTagCodes } from "@/slices/searchRecipe.slice";
@@ -24,9 +28,9 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useTranslation } from "react-i18next";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
-import BottomSheet from "@gorhom/bottom-sheet";
-import SettingRecipe from "@/components/common/SettingRecipe";
 import SearchRecipeResult from "../community/SearchRecipeResult";
+import SearchHistory from "./SearchHistory";
+import uuid from "react-native-uuid";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -39,6 +43,7 @@ type ResultSectionProps = {
   isDoneSearching: boolean;
   onRefresh: () => Promise<void>;
   handleLoadMore: () => Promise<void>;
+  handleSelectSearchResult: () => void;
 };
 
 const ResultSection = memo(
@@ -47,7 +52,8 @@ const ResultSection = memo(
     isRefetching,
     isDoneSearching,
     onRefresh,
-    handleLoadMore
+    handleLoadMore,
+    handleSelectSearchResult
   }: ResultSectionProps) => {
     const { t } = useTranslation("search");
 
@@ -76,7 +82,10 @@ const ResultSection = memo(
           }}
           renderItem={({ item, index }) => (
             <>
-              <SearchRecipeResult {...item} />
+              <SearchRecipeResult
+                {...item}
+                handleSelectSearchResult={handleSelectSearchResult}
+              />
               {searchResults !== undefined && index !== searchResults.length - 1 && (
                 <View className='my-4 h-[1px] w-full bg-gray-300' />
               )}
@@ -118,6 +127,9 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const isDarkMode = useDarkMode();
   const debouncedValue = useDebounce(searchValue, 800);
 
+  const { mutateAsync: createSearchHistory } = createUserSearchRecipeKeyword();
+  const { data: searchRecipeHistoryData, isLoading: isLoadingSearchRecipeHistory } =
+    useSearchRecipeHistory();
   const {
     data,
     isFetched,
@@ -174,6 +186,14 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
       fetchNextPage();
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const handleSelectSearchHistory = (item: string) => {
+    setSearchValue(item);
+  };
+
+  const handleSelectSearchResult = () => {
+    createSearchHistory({ keyword: searchValue });
+  };
 
   useEffect(() => {
     if (data?.pages && (searchValue !== "" || tagCodes.length > 0)) {
@@ -236,6 +256,31 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
         </TouchableWithoutFeedback>
       </View>
 
+      {/* History section */}
+      {!isLoadingSearchRecipeHistory && searchRecipeHistoryData && searchValue === "" && (
+        <FlatList
+          data={searchRecipeHistoryData.value}
+          keyExtractor={_item => uuid.v4()}
+          scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
+          style={{
+            marginTop: 20,
+            marginLeft: 10
+          }}
+          contentContainerStyle={{
+            gap: 10
+          }}
+          renderItem={item => {
+            return (
+              <SearchHistory
+                item={item.item}
+                handleSelectHistory={handleSelectSearchHistory}
+              />
+            );
+          }}
+        />
+      )}
+
       {/* Result section */}
       {(searchValue !== "" || tagCodes.length > 0) && (
         <ResultSection
@@ -244,6 +289,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
           isRefetching={isRefetching}
           onRefresh={onRefresh}
           handleLoadMore={handleLoadMore}
+          handleSelectSearchResult={handleSelectSearchResult}
         />
       )}
     </View>

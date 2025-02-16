@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery } from "react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { protectedAxiosInstance } from "@/constants/host";
 
 const useSearchUsers = (keyword: string) => {
@@ -81,9 +81,9 @@ type SearchHistory = {
 
 const useSearchRecipeHistory = () => {
   return useQuery<SearchHistory>({
-    queryKey: ["recipeHistory"],
+    queryKey: ["recipeSearchHistory"],
     queryFn: async () => {
-      const { data } = await protectedAxiosInstance.post<SearchHistory>(
+      const { data } = await protectedAxiosInstance.get<SearchHistory>(
         "/api/tracking/get-user-search-recipe-history"
       );
       return data;
@@ -93,10 +93,38 @@ const useSearchRecipeHistory = () => {
 
 const useSearchUserHistory = () => {
   return useQuery<SearchHistory>({
-    queryKey: ["recipeHistory"],
+    queryKey: ["userSearchHistory"],
     queryFn: async () => {
-      const { data } = await protectedAxiosInstance.post<SearchHistory>(
-        "/api/tracking/get-user-search-recipe-history"
+      const { data } = await protectedAxiosInstance.get<SearchHistory>(
+        "/api/tracking/get-user-search-user-history"
+      );
+      return data;
+    }
+  });
+};
+
+const createUserSearchRecipeKeyword = () => {
+  return useMutation<string, Error, { keyword: string }>({
+    mutationFn: async ({ keyword }) => {
+      const { data } = await protectedAxiosInstance.post(
+        "/api/recipe/create-user-search-recipe",
+        {
+          keyword: keyword
+        }
+      );
+      return data;
+    }
+  });
+};
+
+const createUserSearchUserKeyword = () => {
+  return useMutation<string, Error, { keyword: string }>({
+    mutationFn: async ({ keyword }) => {
+      const { data } = await protectedAxiosInstance.post(
+        "/api/user/create-user-search-user",
+        {
+          keyword: keyword
+        }
       );
       return data;
     }
@@ -108,5 +136,7 @@ export {
   useSearchRecipes,
   useSearchTags,
   useSearchRecipeHistory,
-  useSearchUserHistory
+  useSearchUserHistory,
+  createUserSearchRecipeKeyword,
+  createUserSearchUserKeyword
 };

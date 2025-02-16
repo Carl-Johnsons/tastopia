@@ -111,14 +111,12 @@ export default function Header({
                 <Text className='font-semibold text-2xl text-white'>{displayName}</Text>
 
                 <View>
-                  {totalRecipe && totalRecipe > 0 && (
-                    <Text className='font-secondary-roman text-lg text-white'>
-                      {totalRecipe}{" "}
-                      {totalRecipe % 2 === 0 && totalRecipe !== 0
-                        ? t("recipes")
-                        : t("recipe")}
-                    </Text>
-                  )}
+                  <Text className='font-secondary-roman text-lg text-white'>
+                    {totalRecipe}{" "}
+                    {totalRecipe && totalRecipe % 2 === 0 && totalRecipe !== 0
+                      ? t("recipes")
+                      : t("recipe")}
+                  </Text>
 
                   <Text className='font-secondary-roman text-lg text-white'>
                     {followerCounts}{" "}

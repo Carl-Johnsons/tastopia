@@ -14,6 +14,7 @@ type UserProps = {
   numberOfRecipe: number;
   isFollowing: boolean;
   invalidateSearch: () => void;
+  handleSelectSearchResult: () => void;
 };
 
 const User = ({
@@ -23,7 +24,8 @@ const User = ({
   username,
   numberOfRecipe,
   isFollowing,
-  invalidateSearch
+  invalidateSearch,
+  handleSelectSearchResult
 }: UserProps) => {
   const { t } = useTranslation("search");
 
@@ -52,6 +54,7 @@ const User = ({
     <TouchableWithoutFeedback
       key={id}
       onPress={() => {
+        handleSelectSearchResult();
         router.push({
           pathname: "/(protected)/user/[id]",
           params: { id }

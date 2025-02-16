@@ -16,13 +16,18 @@ import { AntDesign } from "@expo/vector-icons";
 import useDarkMode from "@/hooks/useDarkMode";
 import User from "@/components/common/User";
 import { Image } from "expo-image";
-import { useSearchUserHistory, useSearchUsers } from "@/api/search";
+import {
+  createUserSearchUserKeyword,
+  useSearchUserHistory,
+  useSearchUsers
+} from "@/api/search";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { useTranslation } from "react-i18next";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import { useQueryClient } from "react-query";
 import uuid from "react-native-uuid";
+import SearchHistory from "./SearchHistory";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -42,8 +47,9 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const isDarkMode = useDarkMode();
   const debouncedValue = useDebounce(searchValue, 800);
 
-  const { data: searchUserHistoryData, isLoading: isLoadingUserHistory } =
+  const { data: searchUserHistoryData, isLoading: isLoadingSearchUserHistory } =
     useSearchUserHistory();
+  const { mutateAsync: createSearchHistory } = createUserSearchUserKeyword();
   const {
     data,
     isFetched,
@@ -97,6 +103,14 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
   const invalidateSearch = () => {
     queryClient.invalidateQueries({ queryKey: ["searchUsers", debouncedValue] });
+  };
+
+  const handleSelectSearchHistory = (item: string) => {
+    setSearchValue(item);
+  };
+
+  const handleSelectSearchResult = () => {
+    createSearchHistory({ keyword: searchValue });
   };
 
   useEffect(() => {
@@ -158,12 +172,29 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
       </View>
 
       {/* History section */}
-      {/* <FlatList
-        data={searchUserHistoryData}
-        keyExtractor={item => uuid.v4()}
-        showsVerticalScrollIndicator={false}
-
-      /> */}
+      {!isLoadingSearchUserHistory && searchUserHistoryData && searchValue === "" && (
+        <FlatList
+          data={searchUserHistoryData.value}
+          keyExtractor={_item => uuid.v4()}
+          scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
+          style={{
+            marginTop: 20,
+            marginLeft: 10
+          }}
+          contentContainerStyle={{
+            gap: 10
+          }}
+          renderItem={item => {
+            return (
+              <SearchHistory
+                item={item.item}
+                handleSelectHistory={handleSelectSearchHistory}
+              />
+            );
+          }}
+        />
+      )}
 
       {/* Result section */}
       {searchValue !== "" && (
@@ -194,6 +225,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
                 <User
                   {...item}
                   invalidateSearch={invalidateSearch}
+                  handleSelectSearchResult={handleSelectSearchResult}
                 />
                 {searchResults !== undefined && index !== searchResults.length - 1 && (
                   <View className='my-4 h-[1px] w-full bg-gray-300' />
