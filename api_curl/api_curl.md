@@ -254,6 +254,13 @@ curl --location 'https://localhost:7000/api/user/get-report-reasons' \
 "language" : "vi"
 }'
 
+**create user search user keyword**
+curl --location 'https://localhost:7000/api/user/create-user-search-user' \
+--header 'Content-Type: application/json' \
+--data '{
+"keyword" : "kian"
+}'
+
 # TRACKING
 
 **Get user view recipe detail history**

@@ -29,15 +29,13 @@ public class SearchRecipesQuery : IRequest<Result<PaginatedSearchRecipeListRespo
 public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Result<PaginatedSearchRecipeListResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> _paginateDataUtility;
     private readonly IMapper _mapper;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
-    public SearchRecipesQueryHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility, GrpcUserClient grpcUserClient, IMapper mapper)
+    public SearchRecipesQueryHandler(IApplicationDbContext context, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility, GrpcUserClient grpcUserClient, IMapper mapper)
     {
         _context = context;
-        _serviceBus = serviceBus;
         _paginateDataUtility = paginateDataUtility;
         _grpcUserClient = grpcUserClient;
         _mapper = mapper;

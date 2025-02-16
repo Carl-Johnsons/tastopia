@@ -23,13 +23,11 @@ public class SearchUsersQueryHandler : IRequestHandler<SearchUsersQuery, Result<
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaginateDataUtility<User, AdvancePaginatedMetadata> _paginateDataUtility;
-    private readonly IServiceBus _serviceBus;
 
-    public SearchUsersQueryHandler(IApplicationDbContext context, IPaginateDataUtility<User, AdvancePaginatedMetadata> paginateDataUtility, IServiceBus serviceBus)
+    public SearchUsersQueryHandler(IApplicationDbContext context, IPaginateDataUtility<User, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;
-        _serviceBus = serviceBus;
     }
 
     public async Task<Result<PaginatedSimpleUserListResponse?>> Handle(SearchUsersQuery request, CancellationToken cancellationToken)
@@ -55,16 +53,6 @@ public class SearchUsersQueryHandler : IRequestHandler<SearchUsersQuery, Result<
                     HasNextPage = false,
                     TotalPage = 0,
                 }
-            });
-        }
-
-        if(accountId != null && accountId != Guid.Empty)
-        {
-            await _serviceBus.Publish(new CreateUserSearchUserEvent
-            {
-                AccountId = accountId.Value,
-                Keyword = keyword,
-                SearchTime = DateTime.UtcNow,
             });
         }
 
