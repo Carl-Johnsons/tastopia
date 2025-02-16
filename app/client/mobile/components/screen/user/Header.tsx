@@ -3,13 +3,15 @@ import Button from "@/components/Button";
 import PreviewImage from "@/components/common/PreviewImage";
 import { colors } from "@/constants/colors";
 import { ArrowBackIcon, DotIcon, ShareIcon } from "@/constants/icons";
+import useIsOwner from "@/hooks/auth/useIsOwner";
 import { formatDate } from "@/utils/format-date";
+import { Feather } from "@expo/vector-icons";
 import { ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { View, Text, Alert } from "react-native";
+import { View, Text, Alert, TouchableWithoutFeedback } from "react-native";
 
 type HeaderProps = {
   accountId: string;
@@ -23,6 +25,7 @@ type HeaderProps = {
   createdAt: string;
   isCurrentUser: boolean;
   isFollowing: boolean;
+  handleTouchMenu: () => void;
 };
 
 export default function Header({
@@ -36,13 +39,15 @@ export default function Header({
   bio,
   createdAt,
   isCurrentUser,
-  isFollowing
+  isFollowing,
+  handleTouchMenu
 }: HeaderProps) {
   const { t } = useTranslation("profile");
   const { black, white } = colors;
   const followerCounts = totalFollower || 0;
   const [followed, setIsFollowed] = useState<boolean>(isFollowing);
   const { mutateAsync: followUser, isLoading } = useFollowUnfollowUser();
+  const isOwnedByCurrentUser = useIsOwner(accountId);
 
   const goToUpdateProfile = useCallback(() => {
     router.push("/(protected)/menu/profile/updateProfile");
@@ -80,11 +85,17 @@ export default function Header({
                 color={white.DEFAULT}
                 onPress={router.back}
               />
-              {/* <ShareIcon
-                width={28}
-                height={28}
-                color={white.DEFAULT}
-              /> */}
+              {!isOwnedByCurrentUser && (
+                <TouchableWithoutFeedback onPress={handleTouchMenu}>
+                  <View>
+                    <Feather
+                      name='more-horizontal'
+                      size={28}
+                      color={white.DEFAULT}
+                    />
+                  </View>
+                </TouchableWithoutFeedback>
+              )}
             </View>
 
             <View className='flex-row items-center justify-between'>
@@ -100,14 +111,12 @@ export default function Header({
                 <Text className='font-semibold text-2xl text-white'>{displayName}</Text>
 
                 <View>
-                  {totalRecipe && totalRecipe > 0 && (
-                    <Text className='font-secondary-roman text-lg text-white'>
-                      {totalRecipe}{" "}
-                      {totalRecipe % 2 === 0 && totalRecipe !== 0
-                        ? t("recipes")
-                        : t("recipe")}
-                    </Text>
-                  )}
+                  <Text className='font-secondary-roman text-lg text-white'>
+                    {totalRecipe}{" "}
+                    {totalRecipe && totalRecipe % 2 === 0 && totalRecipe !== 0
+                      ? t("recipes")
+                      : t("recipe")}
+                  </Text>
 
                   <Text className='font-secondary-roman text-lg text-white'>
                     {followerCounts}{" "}

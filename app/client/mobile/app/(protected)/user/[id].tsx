@@ -3,6 +3,7 @@ import NotFound from "@/app/+not-found";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import SettingComment from "@/components/common/SettingComment";
 import SettingRecipe from "@/components/common/SettingRecipe";
+import SettingUser from "@/components/common/SettingUser";
 import Body from "@/components/screen/user/Body";
 import Header from "@/components/screen/user/Header";
 import { colors } from "@/constants/colors";
@@ -20,6 +21,7 @@ const Profile = () => {
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetCommentRef = useRef<BottomSheet>(null);
+  const bottomSheetUserRef = useRef<BottomSheet>(null);
   const [currentRecipeId, setCurrentRecipeId] = useState("");
   const [currentAuthorId, setCurrentAuthorId] = useState("");
   const [currentComment, setCurrentComment] = useState<CommentCustomType>({
@@ -29,6 +31,10 @@ const Profile = () => {
   const [currentCommentAuthorId, setCurrentCommentAuthorId] = useState("");
   const { data: accountDetailData, isLoading: isLoadingAccountDetail } =
     useGetUserByAccountId(accountId as string);
+
+  const handleTouchMenu = () => {
+    bottomSheetUserRef.current?.expand();
+  };
 
   if (isLoadingAccountDetail) {
     return (
@@ -65,6 +71,7 @@ const Profile = () => {
         createdAt={accountDetailData.createdAt}
         isCurrentUser={accountDetailData.isCurrentUser}
         isFollowing={accountDetailData.isFollowing}
+        handleTouchMenu={handleTouchMenu}
       />
       <Body
         accountId={accountDetailData.accountId}
@@ -89,6 +96,11 @@ const Profile = () => {
           ref={bottomSheetCommentRef}
         />
       )}
+      <SettingUser
+        id={currentRecipeId}
+        authorId={accountId as string}
+        ref={bottomSheetUserRef}
+      />
     </SafeAreaView>
   );
 };

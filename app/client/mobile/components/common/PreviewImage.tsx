@@ -11,6 +11,7 @@ type PreviewImageProps = {
   alt?: string;
   titleClassName?: string;
   defaultImage?: any;
+  isFill?: boolean;
 } & ImageProps;
 
 const PreviewImage = (props: PreviewImageProps) => {
@@ -33,7 +34,7 @@ const PreviewImage = (props: PreviewImageProps) => {
         <Image
           source={isError || !imgUrl ? props.defaultImage : { uri: imgUrl }}
           className={className}
-          style={{ width, height }}
+          style={{ width: props.isFill ? "100%" : width, height }}
           onError={() => setIsError(true)}
         />
       </TouchableWithoutFeedback>

@@ -14,16 +14,10 @@ import BottomSheet, {
 } from "@gorhom/bottom-sheet";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
-import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
+import { Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import useIsOwner from "@/hooks/auth/useIsOwner";
-import {
-  useDeleteOwnRecipe,
-  useRecipesFeed,
-  useReportRecipe,
-  useReportRecipeCommentReason
-} from "@/api/recipe";
 import {
   InfiniteData,
   QueryObserverResult,
@@ -35,9 +29,9 @@ import { ROLE } from "@/slices/auth.slice";
 import { ItemCard } from "../SettingModal";
 import { ArrowBackIcon, CheckCircleIcon } from "@/constants/icons";
 import i18n from "@/i18n/i18next";
-import { REPORT_TYPE } from "@/constants/settings";
 import Loading from "./Loading";
 import { LANGUAGES } from "@/constants/languages";
+import { useReportUser, useReportUserReason } from "@/api/user";
 
 type Props = {
   id: string;
@@ -54,15 +48,12 @@ enum Settings {
 
 type SettingState = Settings;
 
-const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
+const SettingUser = forwardRef<BottomSheet, Props>((props, ref) => {
   const { c } = useColorizer();
   const { black, white } = colors;
   const { t } = useTranslation("component");
-  const { refetch } = useRecipesFeed("All");
   const [currentSetting, setCurrentSetting] = useState<SettingState>(Settings.INITIAL);
   const isCreatedByCurrentUser = useIsOwner(props.authorId);
-  const { mutateAsync: deleteOwnRecipe, isLoading: isDeletingOwnRecipe } =
-    useDeleteOwnRecipe();
 
   const changeSetting = (setting: SettingState) => {
     switch (setting) {
@@ -80,47 +71,6 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
   const closeModal = () => {
     changeSetting(Settings.INITIAL);
   };
-
-  const onPressEdit = useProtectedExclude(() => {
-    router.push({
-      pathname: "/(protected)/community/update-recipe",
-      params: { id: props.id, authorId: props.authorId }
-    });
-    closeModal();
-  }, [ROLE.GUEST]);
-
-  const onPressDelete = useProtectedExclude(() => {
-    if (!isDeletingOwnRecipe) {
-      Alert.alert(
-        t("settingRecipe.confirmDeleteRecipeTitle"),
-        t("settingRecipe.confirmDeleteRecipeDescription"),
-        [
-          {
-            text: t("cancel")
-          },
-          {
-            text: t("ok"),
-            onPress: () => {
-              deleteOwnRecipe(
-                { recipeId: props.id },
-                {
-                  onSuccess: async data => {
-                    Alert.alert(t("settingRecipe.deleteRecipeSuccessfully"));
-                    refetch();
-                    router.navigate("/(protected)");
-                    closeModal();
-                  },
-                  onError: error => {
-                    Alert.alert(t("settingRecipe.deleteRecipeFail"));
-                  }
-                }
-              );
-            }
-          }
-        ]
-      );
-    }
-  }, [ROLE.GUEST]);
 
   const onPressReport = useProtectedExclude(() => {
     changeSetting(Settings.REPORT);
@@ -153,37 +103,9 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
         <View className='mt-2 px-5 pb-4'>
           {currentSetting === Settings.INITIAL && (
             <View>
-              {isCreatedByCurrentUser && (
-                <BottomSheetItem
-                  title={t("settingRecipe.editRecipe")}
-                  icon={
-                    <AntDesign
-                      name='edit'
-                      size={20}
-                      color={c(black.DEFAULT, white.DEFAULT)}
-                    />
-                  }
-                  onPress={onPressEdit}
-                />
-              )}
-
-              {isCreatedByCurrentUser && (
-                <BottomSheetItem
-                  title={t("settingRecipe.deleteRecipe")}
-                  icon={
-                    <MaterialIcons
-                      name='delete-outline'
-                      size={24}
-                      color={c(black.DEFAULT, white.DEFAULT)}
-                    />
-                  }
-                  onPress={onPressDelete}
-                />
-              )}
-
               {!isCreatedByCurrentUser && (
                 <BottomSheetItem
-                  title={t("settingRecipe.reportRecipe")}
+                  title={t("settingUser.reportUser")}
                   icon={
                     <Octicons
                       name='report'
@@ -199,7 +121,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
 
           {currentSetting === Settings.REPORT && (
             <ReportSetting
-              recipeId={props.id}
+              accountId={props.authorId}
               changeSetting={changeSetting}
               closeModal={closeModal}
             />
@@ -246,12 +168,12 @@ type Report = {
 };
 
 type ReportSettingProps = {
-  recipeId: string;
+  accountId: string;
   changeSetting: (setting: SettingState) => void;
   closeModal: () => void;
 };
 
-const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingProps) => {
+const ReportSetting = ({ accountId, changeSetting, closeModal }: ReportSettingProps) => {
   const { c } = useColorizer();
   const { black, white, primary } = colors;
   const { t } = useTranslation("report");
@@ -261,11 +183,8 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
     additionalDetails: ""
   });
 
-  const { mutateAsync: reportMutate, isLoading: isReporting } = useReportRecipe();
-  const { data: reportRecipeReasons, isLoading } = useReportRecipeCommentReason(
-    currentLanguage,
-    REPORT_TYPE.RECIPE
-  );
+  const { mutateAsync: reportMutate, isLoading: isReporting } = useReportUser();
+  const { data: reportRecipeReasons, isLoading } = useReportUserReason(currentLanguage);
   const handleChangeText = (additionalDetails: string) => {
     setReport(prev => {
       return {
@@ -284,7 +203,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
     if (!isLoading && !isReporting) {
       reportMutate(
         {
-          recipeId: recipeId,
+          accountId: accountId,
           reasonCodes: [...report.reasonCodes],
           additionalDetails: report.additionalDetails
         },
@@ -326,7 +245,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
     );
 
   return (
-    <View className='min-h-[500px]'>
+    <View className='min-h-[400px]'>
       <View className='relative mb-4 flex-row justify-between px-5'>
         <TouchableWithoutFeedback onPress={() => changeSetting(Settings.INITIAL)}>
           <View>
@@ -383,4 +302,4 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
   );
 };
 
-export default SettingRecipe;
+export default SettingUser;

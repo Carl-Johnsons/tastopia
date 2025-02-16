@@ -7,7 +7,7 @@ import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
@@ -17,17 +17,30 @@ import {
   SafeAreaView,
   Switch,
   Platform,
-  FlatList
+  FlatList,
+  Alert
 } from "react-native";
+import * as Speech from "expo-speech";
+import i18n from "@/i18n/i18next";
+import { EN_VOICE, VI_VOICE } from "@/constants/voice";
+import { LANGUAGE_CODES } from "@/constants/languages";
+import languagedetect from "languagedetect";
+import { compareLanguages } from "@/utils/language";
+
+const REPEAT_AFTER = 10000;
 
 const CookingMode = () => {
   const { t } = useTranslation("cookingMode");
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data, isLoading, refetch, isRefetching } = useRecipeSteps(id);
+  const { data, isLoading, isRefetching } = useRecipeSteps(id);
 
+  const isActiveSpeakingRef = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<LANGUAGE_CODES>();
   const [isActiveSpeaking, setIsActiveSpeaking] = useState(false);
   const [isActiveVoiceCommand, setIsActiveVoiceCommand] = useState(false);
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [totalSpeak, setTotalSpeak] = useState<number>(0);
 
   const sortedSteps = useMemo(() => {
     return data?.sort((a, b) => a.ordinalNumber - b.ordinalNumber);
@@ -59,28 +72,124 @@ const CookingMode = () => {
   );
 
   const handleToggleSpeaking = () => {
-    setIsActiveSpeaking(prev => !prev);
+    const detectLanguage = new languagedetect();
+    const stepLanguage = detectLanguage.detect(
+      (sortedSteps && sortedSteps[currentStep - 1]?.content) ?? ""
+    )[0];
+    const isSameLanguage = compareLanguages(i18n.languages[0], stepLanguage[0]);
+
+    if (!selectedLanguage && !isSameLanguage) {
+      Alert.alert(t("titleChangeLanguage"), t("descriptionChangeLanguage"), [
+        {
+          text: t("english"),
+          onPress: () => {
+            setSelectedLanguage(LANGUAGE_CODES.EN);
+            setIsActiveSpeaking(prev => !prev);
+          }
+        },
+        {
+          text: t("vietnamese"),
+          onPress: () => {
+            setSelectedLanguage(LANGUAGE_CODES.VI);
+            setIsActiveSpeaking(prev => !prev);
+          }
+        }
+      ]);
+    } else {
+      setIsActiveSpeaking(prev => !prev);
+    }
   };
 
   const handleToggleVoiceCommand = () => {
     setIsActiveVoiceCommand(prev => !prev);
   };
 
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
+  const handleBack = async () => {
+    await Speech.stop();
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
+
+    setCurrentStep(prev => (prev === 1 ? data?.length || 1 : prev - 1));
   };
-  const handleNext = () => {
-    if (currentStep < data?.length!) {
-      setCurrentStep(prev => prev + 1);
+
+  const handleNext = async () => {
+    await Speech.stop();
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
     }
+
+    setCurrentStep(prev => (prev === data?.length ? 1 : prev + 1));
   };
 
   const sliderData =
     sortedSteps
       ?.find(item => item.ordinalNumber === currentStep)
       ?.attachedImageUrls?.filter(item => item) || [];
+
+  useEffect(() => {
+    const isMounted = true;
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    Speech.stop();
+
+    isActiveSpeakingRef.current = isActiveSpeaking;
+
+    const speakStep = async (step: number) => {
+      try {
+        await Speech.stop();
+
+        if (!isActiveSpeakingRef.current || !sortedSteps?.length || !isMounted) return;
+
+        const stepToSpeak =
+          step.toString() + " " + (sortedSteps[step - 1]?.content ?? "");
+
+        Speech.speak(stepToSpeak, {
+          voice:
+            selectedLanguage === LANGUAGE_CODES.VI
+              ? VI_VOICE.identifier
+              : EN_VOICE.identifier,
+          rate: 0.7,
+          onDone: () => {
+            if (isActiveSpeakingRef.current && isMounted) {
+              if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+                timeoutRef.current = null;
+              }
+
+              timeoutRef.current = setTimeout(() => {
+                setTotalSpeak(prevStep =>
+                  prevStep >= sortedSteps.length ? 1 : prevStep + 1
+                );
+              }, REPEAT_AFTER);
+            }
+          }
+        });
+      } catch (error) {
+        console.error("Speech error:", error);
+      }
+    };
+
+    if (isActiveSpeaking && sortedSteps?.length) {
+      speakStep(currentStep);
+    }
+
+    return () => {
+      const cleanup = async () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+        await Speech.stop();
+      };
+      cleanup();
+    };
+  }, [isActiveSpeaking, currentStep, sortedSteps, totalSpeak]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: c(white.DEFAULT, black[100]) }}>
@@ -123,11 +232,11 @@ const CookingMode = () => {
                     {t("voiceCommand")}
                   </Text>
                   <Switch
-                    testID='active-speaking-switch'
+                    testID='active-voice-switch'
                     trackColor={{ false: `${inactiveTrackColor}`, true: `${primary}` }}
-                    thumbColor={isActiveSpeaking ? `${thumbColor}` : `${thumbColor}`}
-                    onValueChange={handleToggleSpeaking}
-                    value={isActiveSpeaking}
+                    thumbColor={isActiveVoiceCommand ? `${thumbColor}` : `${thumbColor}`}
+                    onValueChange={handleToggleVoiceCommand}
+                    value={isActiveVoiceCommand}
                   />
                 </View>
 
@@ -139,11 +248,11 @@ const CookingMode = () => {
                   />
                   <Text className='body-regular text-black_white'>{t("speaking")}</Text>
                   <Switch
-                    testID='active-voice-switch'
+                    testID='active-speaking-switch'
                     trackColor={{ false: `${inactiveTrackColor}`, true: `${primary}` }}
-                    thumbColor={isActiveVoiceCommand ? `${thumbColor}` : `${thumbColor}`}
-                    onValueChange={handleToggleVoiceCommand}
-                    value={isActiveVoiceCommand}
+                    thumbColor={isActiveSpeaking ? `${thumbColor}` : `${thumbColor}`}
+                    onValueChange={handleToggleSpeaking}
+                    value={isActiveSpeaking}
                   />
                 </View>
               </View>

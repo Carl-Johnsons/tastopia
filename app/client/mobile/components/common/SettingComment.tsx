@@ -273,7 +273,7 @@ const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingPr
 
   const { mutateAsync: reportMutate, isLoading: isReporting } = useReportComment();
   const { data: reportCommentReasons, isLoading } = useReportRecipeCommentReason(
-    currentLanguage === "vi" ? LANGUAGES.VIETNAMESE : LANGUAGES.ENGLISH,
+    currentLanguage,
     REPORT_TYPE.COMMENT
   );
   const handleChangeText = (additionalDetails: string) => {
@@ -339,11 +339,13 @@ const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingPr
     <View className='min-h-[500px]'>
       <View className='relative mb-4 flex-row justify-between px-5'>
         <TouchableWithoutFeedback onPress={() => changeSetting(Settings.INITIAL)}>
-          <ArrowBackIcon
-            color={c(black.DEFAULT, white.DEFAULT)}
-            width={22}
-            height={22}
-          />
+          <View>
+            <ArrowBackIcon
+              color={c(black.DEFAULT, white.DEFAULT)}
+              width={22}
+              height={22}
+            />
+          </View>
         </TouchableWithoutFeedback>
 
         <View className='absolute left-1/2 -translate-x-1/3 items-center'>
@@ -456,11 +458,13 @@ const UpdateSetting = ({
     <View>
       <View className='relative mb-4 flex-row justify-between px-5'>
         <TouchableWithoutFeedback onPress={() => changeSetting(Settings.INITIAL)}>
-          <ArrowBackIcon
-            color={c(black.DEFAULT, white.DEFAULT)}
-            width={22}
-            height={22}
-          />
+          <View>
+            <ArrowBackIcon
+              color={c(black.DEFAULT, white.DEFAULT)}
+              width={22}
+              height={22}
+            />
+          </View>
         </TouchableWithoutFeedback>
 
         <View className='absolute left-1/2 -translate-x-1/3 items-center'>
