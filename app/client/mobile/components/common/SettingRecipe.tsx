@@ -263,7 +263,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
 
   const { mutateAsync: reportMutate, isLoading: isReporting } = useReportRecipe();
   const { data: reportRecipeReasons, isLoading } = useReportRecipeCommentReason(
-    currentLanguage === "vi" ? LANGUAGES.VIETNAMESE : LANGUAGES.ENGLISH,
+    currentLanguage,
     REPORT_TYPE.RECIPE
   );
   const handleChangeText = (additionalDetails: string) => {

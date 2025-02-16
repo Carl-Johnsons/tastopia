@@ -273,7 +273,7 @@ const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingPr
 
   const { mutateAsync: reportMutate, isLoading: isReporting } = useReportComment();
   const { data: reportCommentReasons, isLoading } = useReportRecipeCommentReason(
-    currentLanguage === "vi" ? LANGUAGES.VIETNAMESE : LANGUAGES.ENGLISH,
+    currentLanguage,
     REPORT_TYPE.COMMENT
   );
   const handleChangeText = (additionalDetails: string) => {

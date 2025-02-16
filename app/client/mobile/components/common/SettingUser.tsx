@@ -184,9 +184,7 @@ const ReportSetting = ({ accountId, changeSetting, closeModal }: ReportSettingPr
   });
 
   const { mutateAsync: reportMutate, isLoading: isReporting } = useReportUser();
-  const { data: reportRecipeReasons, isLoading } = useReportUserReason(
-    currentLanguage === "vi" ? LANGUAGES.VIETNAMESE : LANGUAGES.ENGLISH
-  );
+  const { data: reportRecipeReasons, isLoading } = useReportUserReason(currentLanguage);
   const handleChangeText = (additionalDetails: string) => {
     setReport(prev => {
       return {
