@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
     minHeight: 34
   },
   input: {
+    fontSize: 15,
     padding: 4,
     backgroundColor: "transparent",
     borderWidth: 0,

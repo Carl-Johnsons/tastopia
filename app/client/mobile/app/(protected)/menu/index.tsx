@@ -13,6 +13,7 @@ import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
 import { router } from "expo-router";
 import UserCard from "@/components/screen/menu/UserCard";
+import { selectUser } from "@/slices/user.slice";
 
 const Menu = () => {
   const ITEM_TITLE = ["profile", "saved", "premium", "settings"];
@@ -21,6 +22,7 @@ const Menu = () => {
   const settingModalRef = useRef<BottomSheetModal>(null);
   const { c } = useColorizer();
   const { black, white } = colors;
+  const { accountId } = selectUser();
 
   const openSettingModal = useCallback(() => {
     settingModalRef.current?.present();
@@ -31,7 +33,10 @@ const Menu = () => {
   }, [settingModalRef]);
 
   const goToProfile = useCallback(() => {
-    router.push("./profile", { relativeToDirectory: true });
+    router.push({
+      pathname: "/(protected)/user/[id]",
+      params: { id: accountId ?? "" }
+    });
   }, [router]);
 
   const navigationCallbacks = [
@@ -57,8 +62,8 @@ const Menu = () => {
             <History />
             <View style={{ paddingBlock: 0.06 * height }}>
               <View
-                className='flex-row flex-wrap gap-6'
-                style={{ columnGap: 8 }}
+                className='flex-row flex-wrap gap-4'
+                style={{ columnGap: 12 }}
               >
                 {ITEM_TITLE.map((item, index) => (
                   <ItemCard
@@ -116,8 +121,8 @@ const History = () => {
 
   return (
     <>
-      <View className='flex-row justify-between'>
-        <Text className='text-black_white font-semibold text-4xl'>{t("history")}</Text>
+      <View className='flex-row items-center justify-between'>
+        <Text className='text-black_white font-semibold text-3xl'>{t("history")}</Text>
         <Button className='flex justify-center rounded-full border border-gray-200 px-4 py-1'>
           <Text className='text-black_white font-sans text-lg'>{t("viewAll")}</Text>
         </Button>
@@ -126,7 +131,7 @@ const History = () => {
         className='flex justify-center'
         style={{ height: 0.1 * height }}
       >
-        <Text className='text-center font-light text-xl text-gray-400'>
+        <Text className='text-center font-light text-xl text-gray-500'>
           {t("noHistory")}
         </Text>
       </View>

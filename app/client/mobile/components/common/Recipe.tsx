@@ -43,12 +43,15 @@ const Recipe = ({
 
   return (
     <TouchableWithoutFeedback onPress={handleOnPress}>
-      <View className='bg-white_black100 rounded-3xl pb-4'>
+      <View className='bg-white_black100 w-[94vw] rounded-3xl pb-4'>
         <View className='flex-between flex-row px-4 py-2'>
           {authorId && authorDisplayName && authorAvtUrl && (
             <TouchableWithoutFeedback
               onPress={() => {
-                console.log("go to user detail");
+                router.push({
+                  pathname: "/(protected)/user/[id]",
+                  params: { id: authorId }
+                });
               }}
             >
               <View className='flex-center flex-row gap-2'>
@@ -79,7 +82,7 @@ const Recipe = ({
             style={{ width: "100%", height: 240, borderRadius: 10 }}
           />
 
-          <View className='gap-3 px-4'>
+          <View className='gap-3'>
             <View className='gap-1'>
               <Text
                 numberOfLines={1}

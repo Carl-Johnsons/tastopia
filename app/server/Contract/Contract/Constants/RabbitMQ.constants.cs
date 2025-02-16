@@ -28,6 +28,9 @@ public static class RabbitMQConstant
 
             // ======================= TRACKING ============================
             public const string CREATE_USER_VIEW_RECIPE_DETAIL = "create-user-view-recipe-detail-queue";
+            public const string CREATE_USER_SEARCH_RECIPE = "create-user-search-recipe-queue";
+            public const string CREATE_USER_SEARCH_USER = "create-user-search-user-queue";
+
         }
     }
     public static class EXCHANGE
@@ -55,6 +58,8 @@ public static class RabbitMQConstant
 
             // ======================= TRACKING ============================
             public const string CREATE_USER_VIEW_RECIPE_DETAIL = "create-user-view-recipe-detail-event";
+            public const string CREATE_USER_SEARCH_RECIPE = "create-user-search-recipe-event";
+            public const string CREATE_USER_SEARCH_USER = "create-user-search-user-event";
         }
 
         public static class TYPE

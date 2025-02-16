@@ -1,12 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Contract.Event.TrackingEvent;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using UserService.Domain.Entities;
 using UserService.Domain.Errors;
 using UserService.Domain.Responses;
 
-namespace UserService.Application.Users.Commands;
+namespace UserService.Application.Users.Queries;
 
-public class SearchUsersCommand : IRequest<Result<PaginatedSimpleUserListResponse?>>
+public class SearchUsersQuery : IRequest<Result<PaginatedSimpleUserListResponse?>>
 {
     [Required]
     public int? Skip { get; init; }
@@ -18,31 +19,31 @@ public class SearchUsersCommand : IRequest<Result<PaginatedSimpleUserListRespons
     public Guid? AccountId { get; init; }
 }
 
-public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Result<PaginatedSimpleUserListResponse?>>
+public class SearchUsersQueryHandler : IRequestHandler<SearchUsersQuery, Result<PaginatedSimpleUserListResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaginateDataUtility<User, AdvancePaginatedMetadata> _paginateDataUtility;
 
-    public SearchUsersCommandHandler(IApplicationDbContext context, IPaginateDataUtility<User, AdvancePaginatedMetadata> paginateDataUtility)
+    public SearchUsersQueryHandler(IApplicationDbContext context, IPaginateDataUtility<User, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;
     }
 
-    public async Task<Result<PaginatedSimpleUserListResponse?>> Handle(SearchUsersCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedSimpleUserListResponse?>> Handle(SearchUsersQuery request, CancellationToken cancellationToken)
     {
         var skip = request.Skip;
         var keyword = request.Keyword;
         var accountId = request.AccountId;
 
-        if(skip == null || keyword == null)
+        if (skip == null || keyword == null)
         {
             return Result<PaginatedSimpleUserListResponse?>.Failure(UserError.NotFound);
         }
 
         keyword = keyword.ToLower();
 
-        if(keyword == "")
+        if (keyword == "")
         {
             return Result<PaginatedSimpleUserListResponse?>.Success(new PaginatedSimpleUserListResponse
             {
@@ -60,7 +61,7 @@ public class SearchUsersCommandHandler : IRequestHandler<SearchUsersCommand, Res
         userQuery = userQuery.Where(u => u.IsAccountActive && !u.IsAdmin &&
                                         (u.DisplayName.ToLower().Contains(keyword) ||
                                          u.AccountUsername.ToLower().Contains(keyword)
-                                        )); 
+                                        ));
 
         var totalPage = (await userQuery.CountAsync() + USER_CONSTANTS.USER_LIMIT - 1) / USER_CONSTANTS.USER_LIMIT;
 

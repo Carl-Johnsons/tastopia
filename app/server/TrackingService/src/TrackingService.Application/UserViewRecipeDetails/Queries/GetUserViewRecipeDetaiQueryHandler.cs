@@ -75,10 +75,6 @@ public class GetUserViewRecipeDetaiQueryHandler : IRequestHandler<GetUserViewRec
 
         if (response.Recipes == null || response.Recipes.Count != views.Count)
         {
-            _logger.LogInformation("========================================================");
-            _logger.LogInformation("Recipe:" + response.Recipes.Count + "| view:" + views.Count);
-            _logger.LogInformation("========================================================");
-
             return Result<PaginatedUserViewRecipeDetailListResponse?>.Failure(UserViewRecipeDetailError.NotFound, "Not found simple recipes");
         }
 

@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipeService.Application.Recipes.Commands;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
+using UserService.Application.ReportReasons.Queries;
+using UserService.Application.UserReports.Commands;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
 using UserService.Domain.Responses;
@@ -27,11 +30,37 @@ public class UserController : BaseApiController
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
-        var result = await _sender.Send(new SearchUsersCommand
+        var result = await _sender.Send(new SearchUsersQuery
         {
             AccountId = subjectId != null ? Guid.Parse(subjectId) : null,
             Skip = searchUser.Skip,
             Keyword = searchUser.Keyword,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("get-user-detail-by-account-id")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(GetUserDetailsResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetUserDetailByAccountId([FromBody] GetUserDetailByAccountIdDTO getUserDetailByAccountIdDTO)
+    {
+
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var currentAccountId = Guid.Empty;
+
+        if (!string.IsNullOrEmpty(subjectId))
+        {
+            currentAccountId = Guid.Parse(subjectId);
+        }
+
+        var result = await _sender.Send(new GetUserDetailsQuery
+        {
+            AccountId = getUserDetailByAccountIdDTO.AccountId,
+            CurrentAccountId = currentAccountId
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -132,5 +161,58 @@ public class UserController : BaseApiController
 
         result.ThrowIfFailure();
         return NoContent();
+    }
+
+    [HttpPost("user-report-user")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(UserReportUserResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UserReportUser([FromBody] UserReportUserDTO userReportUserDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new UserReportUserCommand
+        {
+            ReporterId = Guid.Parse(subjectId!),
+            ReportedId = userReportUserDTO.AccountId,
+            ReasonCodes = userReportUserDTO.ReasonCodes,
+            AdditionalDetails = userReportUserDTO.AdditionalDetails,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("get-report-reasons")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(ReportReasonResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetReportReason([FromBody] GetReportReasonsDTO getReportReasonsDTO)
+    {
+        var result = await _sender.Send(new GetReportReasonsQuery
+        {
+            Language = getReportReasonsDTO.Language,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+
+    [HttpPost("create-user-search-user")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(string), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> CreateUserSearchUser([FromBody] CreateUserSearchUserDTO createUserSearchUserDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new PublishUserSearchUserCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Keyword = createUserSearchUserDTO.Keyword
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
     }
 }

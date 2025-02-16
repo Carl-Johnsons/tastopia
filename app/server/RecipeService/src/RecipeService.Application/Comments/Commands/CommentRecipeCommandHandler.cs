@@ -4,6 +4,7 @@ using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using RecipeService.Application.Recipes.Commands;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
@@ -13,7 +14,6 @@ namespace RecipeService.Application.Comments.Commands;
 public class CommentRecipeCommand : IRequest<Result<RecipeCommentResponse?>>
 {
     public Guid? RecipeId { get; init; }
-
     public Guid? AccountId { get; init; }
     public string? Content { get; init; }
 }

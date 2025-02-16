@@ -10,7 +10,8 @@ import {
   MAIN_PATH,
   MENU_PATH,
   NOTIFICATION_PATH,
-  SEARCH_PATH
+  SEARCH_PATH,
+  USER_PATH
 } from "@/constants/paths";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "./colors";
@@ -222,6 +223,26 @@ export const menuList: Menu[] = [
         includeInMainTab: {
           position: 5
         }
+      },
+      {
+        path: USER_PATH,
+        icon: ({ color, focused }) => (
+          <TabIcon
+            icon={
+              <Feather
+                name='menu'
+                size={24}
+                color={color}
+              />
+            }
+            color={color}
+            translateCode='user'
+            focused={focused}
+          />
+        ),
+        code: "USER",
+        translateCode: "user",
+        hidden: true
       }
     ]
   }

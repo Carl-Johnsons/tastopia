@@ -1,6 +1,7 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
@@ -18,12 +19,14 @@ public class CreateMultipleImageFileCommandHandler : IRequestHandler<CreateMulti
     private readonly IFileUtility _fileUtility;
     private readonly Cloudinary _cloudinary;
     private readonly ApplicationFileUtility _applicationFileUtility;
+    private readonly ILogger<CreateMultipleImageFileCommandHandler> _logger;
 
-    public CreateMultipleImageFileCommandHandler(Cloudinary cloudinary, IFileUtility fileUtility, ApplicationFileUtility applicationFileUtility)
+    public CreateMultipleImageFileCommandHandler(Cloudinary cloudinary, IFileUtility fileUtility, ApplicationFileUtility applicationFileUtility, ILogger<CreateMultipleImageFileCommandHandler> logger)
     {
         _cloudinary = cloudinary;
         _fileUtility = fileUtility;
         _applicationFileUtility = applicationFileUtility;
+        _logger = logger;
     }
 
     public async Task<Result<List<FileResponse>?>> Handle(CreateMultipleImageFileCommand request, CancellationToken cancellationToken)
@@ -117,7 +120,7 @@ public class CreateMultipleImageFileCommandHandler : IRequestHandler<CreateMulti
         }
         catch (Exception ex)
         {
-
+            _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             await _applicationFileUtility.RollBackImageFile(uploadResults.Select(u => u.PublicId).ToList());
             return Result<List<FileResponse>?>.Failure(CloudinaryFileError.UploadToCloudFail);
         }

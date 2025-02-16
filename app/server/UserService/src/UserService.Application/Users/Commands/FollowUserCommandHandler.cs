@@ -63,7 +63,7 @@ public class FollowUserCommandHandler : IRequestHandler<FollowUserCommand, Resul
                 };
 
                 follower.TotalFollowing += 1;
-                following.TotalFollwer += 1;
+                following.TotalFollower += 1;
 
                 _context.UserFollows.Add(follow);
             }
@@ -71,7 +71,7 @@ public class FollowUserCommandHandler : IRequestHandler<FollowUserCommand, Resul
             {
                 isFollowing = false;
                 follower.TotalFollowing -= 1;
-                following.TotalFollwer -= 1;
+                following.TotalFollower -= 1;
                 _context.UserFollows.Remove(follow);
             }
             await _unitOfWork.SaveChangeAsync();
