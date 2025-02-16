@@ -1,9 +1,9 @@
 import { protectedAxiosInstance } from "@/constants/host";
-import { useInfiniteQuery, useMutation, useQuery } from "react-query";
+import { useInfiniteQuery, useMutation } from "react-query";
 
 const useGetRecipeComment = (id: string) => {
   return useInfiniteQuery<GetRecipeCommentResponse>({
-    queryKey: ["recipes", id],
+    queryKey: ["comments", id],
     queryFn: async ({ pageParam = 0 }) => {
       const { data } = await protectedAxiosInstance.post<GetRecipeCommentResponse>(
         "/api/recipe/get-recipe-comments",

@@ -1,7 +1,6 @@
 ﻿using Contract.Common;
 using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.Extensions.Logging;
 using UserService.Domain.Entities;
 namespace UserService.Infrastructure.Persistence;
 
@@ -96,6 +95,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 .WithMany()
                 .HasForeignKey(e => e.ReportedId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(e => e.Status)
+                .HasConversion(typeof(string));
         });
 
         modelBuilder.Entity<Setting>(entity =>

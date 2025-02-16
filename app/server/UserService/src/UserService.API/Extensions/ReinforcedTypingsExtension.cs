@@ -3,6 +3,7 @@ using Reinforced.Typings.Fluent;
 using UserService.API.DTOs;
 using UserService.Domain.Entities;
 using UserService.Domain.Errors;
+using UserService.Domain.Responses;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 namespace UserService.API.Extensions;
 
@@ -29,11 +30,22 @@ public static class ReinforcedTypingsExtension
             typeof(UpdateSettingDTO),
             typeof(SettingObjectDTO),
             typeof(UpdateUserDTO),
+            typeof(FollowUserDTO),
+            typeof(GetUserDetailByAccountIdDTO),
+            typeof(GetUserFollowersDTO),
+            typeof(GetUserFollowingsDTO),
             typeof(User),
             typeof(Setting),
             typeof(UserFollow),
             typeof(UserReport),
             typeof(UserSetting),
+            typeof(FollowUserResponse),
+            typeof(GetUserDetailsResponse),
+            typeof(PaginatedSimpleUserListResponse),
+            typeof(SimpleUserResponse),
+            typeof(UserReportUserDTO),
+            typeof(UserReportUserResponse),
+            typeof(ReportReasonResponse),
         ], config =>
         {
             config.FlattenHierarchy()

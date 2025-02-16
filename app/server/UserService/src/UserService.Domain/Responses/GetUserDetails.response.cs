@@ -18,7 +18,7 @@ public class GetUserDetailsResponse
 
     public string? Address { get; set; }
 
-    public virtual int? TotalFollwer { get; set; }
+    public virtual int? TotalFollower { get; set; }
 
     public virtual int? TotalFollowing { get; set; }
 
@@ -30,7 +30,14 @@ public class GetUserDetailsResponse
 
     public bool IsAdmin { get; set; } = false;
 
+    public bool IsFollowing { get; set; } = false;
+
+    public bool IsCurrentUser { get; set; } = false;
+
     //Account
     public string? AccountEmail { get; set; }
     public string? AccountPhoneNumber { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+
 }

@@ -8,10 +8,14 @@ const SearchRecipeResult = ({
   title,
   description,
   authorDisplayName,
-  authorAvtUrl
-}: RecipeType) => {
+  authorAvtUrl,
+  handleSelectSearchResult
+}: RecipeType & {
+  handleSelectSearchResult: () => void;
+}) => {
   const router = useRouter();
   const handleOnPress = () => {
+    handleSelectSearchResult();
     router.push({
       pathname: "/(protected)/community/[id]",
       params: { id, authorId }
@@ -24,7 +28,10 @@ const SearchRecipeResult = ({
           {authorId && authorDisplayName && authorAvtUrl && (
             <TouchableWithoutFeedback
               onPress={() => {
-                console.log("go to user detail");
+                router.push({
+                  pathname: "/(protected)/user/[id]",
+                  params: { id: authorId }
+                });
               }}
             >
               <View className='flex-center flex-row gap-2'>

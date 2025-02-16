@@ -21,6 +21,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         _logger = logger;
     }
     public DbSet<UserViewRecipeDetail> UserViewRecipeDetails { get; set; }
+    public DbSet<UserSearchRecipe> UserSearchRecipes { get; set; }
+    public DbSet<UserSearchUser> UserSearchUsers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

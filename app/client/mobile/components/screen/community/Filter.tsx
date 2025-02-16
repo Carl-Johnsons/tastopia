@@ -44,20 +44,11 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
           >
             <View
               className={`flex-center flex-row gap-2 rounded-full border-2 border-primary px-1 py-1 ${isSelected ? "bg-primary" : "bg-white_black"}`}
-              style={Platform.select({
-                ios: {
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 30
-                },
-                android: { elevation: 5 }
-              })}
             >
               <View className={`rounded-full p-[0.5px] ${isSelected ? "bg-white" : ""}`}>
                 <Image
                   source={item.imageUrl}
-                  style={{ width: 50, height: 50, borderRadius: 50 }}
+                  style={[{ width: 50, height: 50, borderRadius: 50 }]}
                   cachePolicy={"disk"}
                 />
               </View>

@@ -1,6 +1,6 @@
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormProvider, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import uuid from "react-native-uuid";
@@ -35,6 +35,7 @@ import { protectedAxiosInstance } from "@/constants/host";
 import { useQueryClient } from "react-query";
 import UpdateIngredient from "@/components/screen/community/UpdateIngredient";
 import { FormUpdateRecipeType, schema } from "@/schemas/update-recipe";
+import Loading from "@/components/common/Loading";
 
 const UpdateRecipe = () => {
   const queryClient = useQueryClient();
@@ -314,14 +315,7 @@ const UpdateRecipe = () => {
   }, [isLoadingRecipeDetail]);
 
   if (isLoadingRecipeDetail) {
-    return (
-      <View className='bg-white_black100 flex-1 items-center justify-center'>
-        <ActivityIndicator
-          size='large'
-          color={globalStyles.color.primary}
-        />
-      </View>
-    );
+    return <Loading />;
   }
 
   return (
@@ -347,7 +341,7 @@ const UpdateRecipe = () => {
               </View>
             </TouchableWithoutFeedback>
 
-            <View className='items-center'>
+            <View className='absolute left-1/2 -translate-x-1/3 items-center'>
               <Text className='text-black_white paragraph-medium'>
                 {t("screens.title")}
               </Text>

@@ -268,3 +268,66 @@ export const useUpdateUser = () => {
     }
   });
 };
+
+type FollowUnfollowUserResponse = {
+  followerId: string;
+  followingId: string;
+  isFollowing: boolean;
+};
+
+export const useFollowUnfollowUser = () => {
+  return useMutation<FollowUnfollowUserResponse, Error, { accountId: string }>({
+    mutationFn: async ({ accountId }) => {
+      const { data } = await protectedAxiosInstance.post("/api/user/follow-user", {
+        accountId: accountId
+      });
+      return data;
+    }
+  });
+};
+
+export const useGetUserByAccountId = (accountId: string) => {
+  return useQuery<IGetUserDetailsResponse>({
+    queryKey: ["user", accountId],
+    queryFn: async () => {
+      const { data } = await protectedAxiosInstance.post<IGetUserDetailsResponse>(
+        "/api/user/get-user-detail-by-account-id",
+        {
+          accountId: accountId
+        }
+      );
+      return data;
+    },
+    enabled: !!accountId
+  });
+};
+
+export const useReportUserReason = (language: string) => {
+  return useQuery<ReportRecipeCommentReasonResponse>({
+    queryKey: ["reportUserReason", language],
+    queryFn: async () => {
+      const { data } =
+        await protectedAxiosInstance.post<ReportRecipeCommentReasonResponse>(
+          "/api/user/get-report-reasons",
+          {
+            language
+          }
+        );
+      return data;
+    },
+    enabled: !!language
+  });
+};
+
+export const useReportUser = () => {
+  return useMutation<IUserReportUserResponse, Error, IUserReportUserDTO>({
+    mutationFn: async ({ accountId, reasonCodes, additionalDetails }) => {
+      const { data } = await protectedAxiosInstance.post("/api/user/user-report-user", {
+        accountId,
+        reasonCodes,
+        additionalDetails
+      });
+      return data;
+    }
+  });
+};

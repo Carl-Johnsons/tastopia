@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { protectedAxiosInstance } from "@/constants/host";
 
 const useSearchUsers = (keyword: string) => {
@@ -75,4 +75,68 @@ const useSearchTags = (keyword: string, tagCodes: string[], category: string) =>
   });
 };
 
-export { useSearchUsers, useSearchRecipes, useSearchTags };
+type SearchHistory = {
+  value: string[];
+};
+
+const useSearchRecipeHistory = () => {
+  return useQuery<SearchHistory>({
+    queryKey: ["recipeSearchHistory"],
+    queryFn: async () => {
+      const { data } = await protectedAxiosInstance.get<SearchHistory>(
+        "/api/tracking/get-user-search-recipe-history"
+      );
+      return data;
+    }
+  });
+};
+
+const useSearchUserHistory = () => {
+  return useQuery<SearchHistory>({
+    queryKey: ["userSearchHistory"],
+    queryFn: async () => {
+      const { data } = await protectedAxiosInstance.get<SearchHistory>(
+        "/api/tracking/get-user-search-user-history"
+      );
+      return data;
+    }
+  });
+};
+
+const createUserSearchRecipeKeyword = () => {
+  return useMutation<string, Error, { keyword: string }>({
+    mutationFn: async ({ keyword }) => {
+      const { data } = await protectedAxiosInstance.post(
+        "/api/recipe/create-user-search-recipe",
+        {
+          keyword: keyword
+        }
+      );
+      return data;
+    }
+  });
+};
+
+const createUserSearchUserKeyword = () => {
+  return useMutation<string, Error, { keyword: string }>({
+    mutationFn: async ({ keyword }) => {
+      const { data } = await protectedAxiosInstance.post(
+        "/api/user/create-user-search-user",
+        {
+          keyword: keyword
+        }
+      );
+      return data;
+    }
+  });
+};
+
+export {
+  useSearchUsers,
+  useSearchRecipes,
+  useSearchTags,
+  useSearchRecipeHistory,
+  useSearchUserHistory,
+  createUserSearchRecipeKeyword,
+  createUserSearchUserKeyword
+};

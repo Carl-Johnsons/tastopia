@@ -12,7 +12,8 @@ import { View, Text } from "react-native";
 
 export default function Header() {
   const { t } = useTranslation("profile");
-  const { displayName, accountUsername, avatarUrl, totalFollower } = selectUser();
+  const { displayName, accountUsername, avatarUrl, totalFollower, accountId } =
+    selectUser();
   const { backgroundUrl, bio } = selectUser();
   const { black, white } = colors;
 

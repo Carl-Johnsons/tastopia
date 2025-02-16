@@ -201,6 +201,7 @@ const styles = StyleSheet.create({
     paddingBottom: 4
   },
   input: {
+    fontSize: 15,
     padding: 4,
     backgroundColor: "transparent",
     borderWidth: 0,

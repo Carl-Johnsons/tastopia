@@ -37,7 +37,7 @@ namespace UserService.Infrastructure.Persistence.Migrations
                     Gender = table.Column<string>(type: "text", nullable: true),
                     Bio = table.Column<string>(type: "text", nullable: true),
                     Address = table.Column<string>(type: "text", nullable: true),
-                    TotalFollwer = table.Column<int>(type: "integer", nullable: true),
+                    TotalFollower = table.Column<int>(type: "integer", nullable: true),
                     TotalFollowing = table.Column<int>(type: "integer", nullable: true),
                     TotalRecipe = table.Column<int>(type: "integer", nullable: true),
                     IsAccountActive = table.Column<bool>(type: "boolean", nullable: false),
