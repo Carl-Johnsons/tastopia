@@ -57,7 +57,7 @@ const Recipe = ({
               <View className='flex-center flex-row gap-2'>
                 <Image
                   source={{ uri: authorAvtUrl }}
-                  className='size-[30px] rounded-full'
+                  className='mr-1 size-[30px] rounded-full'
                 />
                 <Text className='paragraph-medium text-black_white'>
                   {authorDisplayName}
