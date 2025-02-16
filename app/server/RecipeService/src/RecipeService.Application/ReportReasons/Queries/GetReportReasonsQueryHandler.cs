@@ -1,5 +1,6 @@
 ﻿using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
+using Contract.Constants;
 
 namespace RecipeService.Application.ReportReasons.Queries;
 public class GetReportReasonsQuery : IRequest<Result<List<ReportReasonResponse>?>>
@@ -22,9 +23,9 @@ public class GetReportReasonsQueryHandler : IRequestHandler<GetReportReasonsQuer
 
         if (type == "Recipe")
         {
-            var reasons = lang == "English"
-                ? ReportReasonData.RecipeReportReasons.Select(r => new ReportReasonResponse { Code = r.Code, Content = r.Eng }).ToList()
-                : ReportReasonData.RecipeReportReasons.Select(r => new ReportReasonResponse { Code = r.Code, Content = r.Vn }).ToList();
+            var reasons = lang == LanguageValidation.En
+                ? ReportReasonData.RecipeReportReasons.Select(r => new ReportReasonResponse { Code = r.Code, Content = r.En }).ToList()
+                : ReportReasonData.RecipeReportReasons.Select(r => new ReportReasonResponse { Code = r.Code, Content = r.Vi }).ToList();
 
             if(reasons == null || reasons.Count == 0)
             {
@@ -36,9 +37,9 @@ public class GetReportReasonsQueryHandler : IRequestHandler<GetReportReasonsQuer
 
         if (type == "Comment")
         {
-            var reasons = lang == "English"
-                ? ReportReasonData.CommentReportReasons.Select(r => new ReportReasonResponse { Code = r.Code, Content = r.Eng }).ToList()
-                : ReportReasonData.CommentReportReasons.Select(r => new ReportReasonResponse { Code = r.Code, Content = r.Vn }).ToList();
+            var reasons = lang == LanguageValidation.En
+                ? ReportReasonData.CommentReportReasons.Select(r => new ReportReasonResponse { Code = r.Code, Content = r.En }).ToList()
+                : ReportReasonData.CommentReportReasons.Select(r => new ReportReasonResponse { Code = r.Code, Content = r.Vi }).ToList();
 
             if (reasons == null || reasons.Count == 0)
             {
