@@ -40,6 +40,7 @@ import NotFound from "@/app/+not-found";
 import SimilarRecipe from "@/components/screen/community/SimilarRecipe";
 import Loading from "@/components/common/Loading";
 import SettingComment from "@/components/common/SettingComment";
+import PreviewImage from "@/components/common/PreviewImage";
 
 const RecipeDetail = () => {
   const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
@@ -239,9 +240,12 @@ const RecipeDetail = () => {
                       }}
                     />
                   </View>
-                  <Image
-                    source={recipeDetailData.recipe.imageUrl}
-                    style={{ height: 200, borderRadius: 10 }}
+                  <PreviewImage
+                    imgUrl={recipeDetailData.recipe.imageUrl}
+                    className='h-[200] rounded-lg'
+                    height={200}
+                    isFill={true}
+                    defaultImage={require("../../../assets/images/avatar.png")}
                   />
                 </View>
 
@@ -292,7 +296,12 @@ const RecipeDetail = () => {
                       <View className='flex-row items-center gap-1'>
                         <Image
                           source={{ uri: recipeDetailData.authorAvtUrl }}
-                          style={{ width: 36, height: 36, borderRadius: 100 }}
+                          style={{
+                            width: 36,
+                            height: 36,
+                            borderRadius: 100,
+                            marginRight: 8
+                          }}
                         />
                         <Text className='base-medium text-black_white'>
                           {recipeDetailData.authorDisplayName}
