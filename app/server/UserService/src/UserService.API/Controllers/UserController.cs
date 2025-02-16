@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipeService.Application.Recipes.Commands;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
 using UserService.Application.ReportReasons.Queries;
@@ -191,6 +192,25 @@ public class UserController : BaseApiController
         var result = await _sender.Send(new GetReportReasonsQuery
         {
             Language = getReportReasonsDTO.Language,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+
+    [HttpPost("create-user-search-user")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(string), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> CreateUserSearchUser([FromBody] CreateUserSearchUserDTO createUserSearchUserDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new PublishUserSearchUserCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Keyword = createUserSearchUserDTO.Keyword
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
