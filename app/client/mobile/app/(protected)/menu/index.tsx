@@ -42,7 +42,7 @@ const Menu = () => {
   const navigationCallbacks = [
     goToProfile,
     useCallback(() => {
-      console.log("Go to saved section.");
+      router.push("/(protected)/menu/bookmark")
     }, []),
     useCallback(() => {
       console.log("Go to subscriptions");

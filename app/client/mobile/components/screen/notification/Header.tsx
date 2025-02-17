@@ -10,7 +10,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, StyleSheet, View } from "react-native";
-import Animated, { LinearTransition } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
 export default function Header() {
   const { t } = useTranslation("notification");

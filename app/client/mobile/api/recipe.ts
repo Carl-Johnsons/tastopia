@@ -231,6 +231,27 @@ const useDeleteComment = () => {
   });
 };
 
+const useGetBookmarks = () => {
+  return useInfiniteQuery<RecipeResponse>({
+    queryKey: ["bookmarks"],
+    queryFn: async ({ pageParam = 0 }) => {
+      const { data } = await protectedAxiosInstance.post<RecipeResponse>(
+        "/api/recipe/get-recipe-bookmarks",
+        {
+          skip: pageParam.toString()
+        }
+      );
+      return data;
+    },
+    getNextPageParam: (lastPage, pages) => {
+      if (!lastPage.metadata.hasNextPage) {
+        return undefined;
+      }
+      return pages.length;
+    }
+  });
+};
+
 export {
   useRecipesFeed,
   useRecipesFeedByAuthorId,
@@ -245,5 +266,6 @@ export {
   useReportRecipe,
   useReportComment,
   useUpdateComment,
-  useDeleteComment
+  useDeleteComment,
+  useGetBookmarks
 };
