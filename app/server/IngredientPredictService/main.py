@@ -5,18 +5,22 @@ from contextlib import asynccontextmanager
 from ultralytics import YOLO
 from PIL import Image
 import logging
+import time
 import random
 import httpx
 import logging.config
 import yaml
 import io
 import uvicorn
+from ConnectionManager import ConnectionManager
 
 with open("log_config.yaml", "r") as f:
     log_config = yaml.safe_load(f.read())
 logging.config.dictConfig(log_config)
 logging.addLevelName(logging.INFO, "Information")
 logging.addLevelName(logging.WARNING, "Warning")
+
+connection_manager = ConnectionManager()
 
 # Load the YOLO model
 model = YOLO("./model/best.pt")
@@ -92,6 +96,7 @@ async def predict(file: UploadFile = File(...)):
 
     return {"classifications": classifications}
 
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
@@ -103,23 +108,32 @@ async def websocket_endpoint(websocket: WebSocket):
     except WebSocketDisconnect:
         print("Client disconnected")
 
-@app.websocket("/ws/video")
-async def processVideo(websocket: WebSocket):
-    await websocket.accept()
+@app.websocket("/ws/video/{user_id}")
+async def processVideo(websocket: WebSocket,user_id: str):
+    await connection_manager.connect(websocket, user_id)
     try:
         while True:
-            # Receive a frame as binary data.
+            start = time.perf_counter()
+
+            # Receive frame bytes.
             frame_bytes = await websocket.receive_bytes()
+            recv_time = time.perf_counter()
+
             try:
                 # Convert the binary frame to an image.
                 image = Image.open(io.BytesIO(frame_bytes))
+                image.load()  # Ensure the image data is fully loaded.
             except Exception as e:
-                # If the frame data is invalid, send an error back.
-                await websocket.send_text(json.dumps({"error": f"Invalid image data: {str(e)}"}))
+                await websocket.send_text(
+                    json.dumps({"error": f"Invalid image data: {str(e)}"})
+                )
                 continue
-            
-            # Process the image with your model (e.g., YOLO detection).
+            conv_time = time.perf_counter()
+
+            # Process the image with your model.
             results = model(image, verbose=False)
+            model_time = time.perf_counter()
+
             predictions = []
             for result in results:
                 for cls, conf in zip(result.probs.top5, result.probs.top5conf):
@@ -130,14 +144,27 @@ async def processVideo(websocket: WebSocket):
                     })
 
             boxResults = box_model(image, verbose=False)
-            
-            # Send back the prediction for this frame.
-            await websocket.send_text(json.dumps({"classifications": predictions,
-                                                  "boxes": boxResults[0].boxes.xyxyn.tolist()}))
-            
+            box_time = time.perf_counter()
+
+            # Optionally send back the prediction for this frame.
+            await websocket.send_text(json.dumps({
+                "classifications": predictions,
+                "boxes": boxResults[0].boxes.xyxyn.tolist()
+            }))
+
+            end = time.perf_counter()
+
+            # Log timings.
+            print(f"Receive Time: {recv_time - start:.4f} sec")
+            print(f"Conversion Time: {conv_time - recv_time:.4f} sec")
+            print(f"Model Inference Time: {model_time - conv_time:.4f} sec")
+            print(f"Box Model Time: {box_time - model_time:.4f} sec")
+            print(f"Total Processing Time: {end - start:.4f} sec\n")
+
             # Optionally throttle the frame rate.
             await asyncio.sleep(0.1)
     except WebSocketDisconnect:
+        connection_manager.disconnect(websocket, user_id)
         print("Client disconnected")
 
 
