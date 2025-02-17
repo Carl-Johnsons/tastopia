@@ -5,12 +5,14 @@ import useColorizer from "@/hooks/useColorizer";
 import { Avatar } from "@rneui/base";
 import { router, useFocusEffect, usePathname } from "expo-router";
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator, FlatList } from "react-native";
 
 export default function NotificationList() {
   const { data, isLoading, refetch, isStale } = useGetNotification();
   const { primary } = colors;
+  const { t } = useTranslation("notification");
 
   const fetchData = useCallback(() => {
     if (isStale) {
@@ -37,8 +39,8 @@ export default function NotificationList() {
 
   if (data?.paginatedData?.length && data?.paginatedData?.length === 0) {
     return (
-      <View className='flex-center h-full w-full'>
-        <Text>No notifications available.</Text>
+      <View className='text-black_white flex-center h-full w-full'>
+        <Text>{t("noNotification")}</Text>
       </View>
     );
   }
@@ -113,11 +115,11 @@ export const Notification = ({
     <Pressable
       onPress={handlePress}
       style={isOddItem && styles.oddWrapper}
-      className={`relative flex-row gap-2 p-2`}
+      className={`relative flex-row gap-2 p-4`}
     >
       <View className='relative'>
         <Avatar
-          size={80}
+          size={70}
           rounded
           source={
             imageUrl ? { uri: imageUrl } : require("../../../assets/images/avatar.png")
