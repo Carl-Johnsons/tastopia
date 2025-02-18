@@ -69,9 +69,9 @@ const Login = () => {
         <BackButton
           onPress={router.back}
           style={animatedStyles}
-          className='w-[38px] rounded-xl border border-black dark:border-white bg-white_black200 px-4 py-3.5'
+          className='bg-white_black200 w-[38px] rounded-xl border border-black px-4 py-3.5 dark:border-white'
         />
-        <Text className='font-sans font-semibold text-4xl text-black_white'>Login</Text>
+        <Text className='text-black_white font-sans font-semibold text-4xl'>Login</Text>
         <LoginForm
           onSubmit={onSubmit}
           isLoading={isSubmitting}
