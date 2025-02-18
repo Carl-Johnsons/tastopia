@@ -10,6 +10,7 @@ using RecipeService.Application.ReportReasons.Queries;
 using RecipeService.Application.Tags.Queries;
 using RecipeService.Application.UserBookmarkRecipes.Commands;
 using RecipeService.Application.UserBookmarkRecipes.Queries;
+using RecipeService.Application.UserRecipeBins.Queries;
 using RecipeService.Application.UserReportComments.Commands;
 using RecipeService.Application.UserReportRecipes.Commands;
 using RecipeService.Domain.Entities;
@@ -73,6 +74,24 @@ public class RecipeController : BaseApiController
         {
             AuthorId = Guid.Parse(subjectId!),
             RecipeId = deleteOwnRecipeDTO.RecipeId,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("restore-own-recipe")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Recipe), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> RestoreOwnRecipe([FromBody] RestoreOwnRecipeDTO restoreOwnRecipeDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new RestoreOwnRecipeCommand
+        {
+            AuthorId = Guid.Parse(subjectId!),
+            RecipeId = restoreOwnRecipeDTO.RecipeId,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -325,8 +344,6 @@ public class RecipeController : BaseApiController
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
-
-
     }
 
     [HttpPost("get-recipe-bookmarks")]
@@ -342,6 +359,24 @@ public class RecipeController : BaseApiController
         {
             AccountId = Guid.Parse(subjectId!),
             Skip = getRecipeBookmarkDTO.Skip
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("get-recipe-bin")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedRecipeFeedsListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetRecipeBins([FromBody] GetUserRecipeBinsDTO getUserRecipeBinsDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new GetUserRecipeBinsQuery
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Skip = getUserRecipeBinsDTO.Skip
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

@@ -13,5 +13,5 @@ public interface IApplicationDbContext : IMongoDbContext
     public DbSet<UserBookmarkRecipe> UserBookmarkRecipes { get; set; }
     public DbSet<UserReportRecipe> UserReportRecipes { get; set; }
     public DbSet<UserReportComment> UserReportComments { get; set; }
-
+    public DbSet<UserRecipeBin> UserRecipeBins { get; set; }
 }
