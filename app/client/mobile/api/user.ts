@@ -8,6 +8,7 @@ import { stringify } from "@/utils/debug";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { UserState } from "@/slices/user.slice";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
+import { IRegisterAccountDTO } from "@/generated/interfaces/identity.interface";
 
 export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {
@@ -104,7 +105,7 @@ export const useRegister = () => {
   return useMutation<
     SignUpResponse,
     Error,
-    { data: SignUpParams; type: IDENTIFIER_TYPE }
+    { data: IRegisterAccountDTO; type: IDENTIFIER_TYPE }
   >({
     mutationKey: ["register"],
     mutationFn: async ({ data, type }) => {

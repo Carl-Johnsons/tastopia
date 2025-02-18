@@ -1,4 +1,4 @@
-import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 import { useEffect } from "react";
 import { router, usePathname } from "expo-router";
 import SignUpForm from "@/components/screen/register/SignUpForm";
@@ -18,6 +18,7 @@ import useSyncSetting from "@/hooks/user/useSyncSetting";
 import useSyncUser from "@/hooks/user/useSyncUser";
 import { o } from "@/hooks/alternator";
 import { dismissKeyboard } from "@/utils/keyboard";
+import { IRegisterAccountDTO } from "@/generated/interfaces/identity.interface";
 
 const Register = () => {
   const { loginWithGoogle } = useLoginWithGoogle();
@@ -45,9 +46,9 @@ const Register = () => {
         ]
       );
     }
-  }, [isVerifyingAccount, currentRouteName]);
+  }, [currentRouteName]);
 
-  const onSubmit = async (data: SignUpParams) => {
+  const onSubmit = async (data: IRegisterAccountDTO) => {
     const registerType = getIdentifierType(data.identifier as string) as IDENTIFIER_TYPE;
 
     register(
