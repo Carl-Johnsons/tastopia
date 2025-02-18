@@ -62,6 +62,7 @@ public class UpdateStepDTO
 
     [JsonProperty("images")]
     [MaxFileSizeList(4)]
+    [MaxLengthList(3)]
     public List<IFormFile>? Images { get; set; }
 
     [JsonProperty("deleteUrls")]
