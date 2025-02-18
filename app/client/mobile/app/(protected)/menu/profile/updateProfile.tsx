@@ -7,17 +7,9 @@ import useSyncUser from "@/hooks/user/useSyncUser";
 import { saveUpdateProfileData } from "@/slices/menu/profile/updateProfileForm.slice";
 import { useAppDispatch } from "@/store/hooks";
 import { stringify } from "@/utils/debug";
-import { dismissKeyboard } from "@/utils/keyboard";
 import { router } from "expo-router";
-import { useCallback, useState } from "react";
-import {
-  Alert,
-  GestureResponderEvent,
-  Keyboard,
-  Pressable,
-  SafeAreaView,
-  View
-} from "react-native";
+import { useState } from "react";
+import { Alert, SafeAreaView, ScrollView, View } from "react-native";
 import { useQueryClient } from "react-query";
 
 export default function UpdateProfile() {
@@ -49,7 +41,7 @@ export default function UpdateProfile() {
         await queryClient.invalidateQueries({ queryKey: "getUserDetails" });
         await fetchUser();
 
-        router.back();
+        router.navigate("/(protected)/menu/profile");
         Alert.alert("Success", "Update profile successfully.");
       },
       onError: error => {
@@ -65,16 +57,16 @@ export default function UpdateProfile() {
   return (
     <UpdateProfileProvider value={contextValue}>
       <SafeAreaView>
-        <Pressable onPress={dismissKeyboard}>
-          <View className='bg-white_black flex h-full'>
-            <Header />
+        <View className='bg-white_black flex h-full'>
+          <Header />
+          <ScrollView>
             <ImageChangingSection />
             <UpdateProfileForm
               className='mt-10 px-4'
               onSubmit={updateUser}
             />
-          </View>
-        </Pressable>
+          </ScrollView>
+        </View>
       </SafeAreaView>
     </UpdateProfileProvider>
   );
