@@ -82,7 +82,7 @@ const Register = () => {
 
   return (
     <Pressable
-      className='relative h-full'
+      className='bg-white_black200 relative h-full'
       onPress={dismissKeyboard}
     >
       <CircleBg />
@@ -91,9 +91,11 @@ const Register = () => {
       >
         <BackButton
           onPress={router.back}
-          className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
+          className='bg-white_black200 w-[38px] rounded-xl border border-black px-4 py-3.5 dark:border-white'
         />
-        <Text className='font-sans font-semibold text-4xl text-black'>Register</Text>
+        <Text className='text-black_white font-sans font-semibold text-4xl'>
+          Register
+        </Text>
         <SignUpForm
           onSubmit={onSubmit}
           isLoading={isSubmitting}

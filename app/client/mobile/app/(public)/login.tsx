@@ -59,7 +59,7 @@ const Login = () => {
 
   return (
     <Pressable
-      className='relative h-full'
+      className='bg-white_black200 relative h-full'
       onPress={dismissKeyboard}
     >
       <CircleBg />
@@ -69,9 +69,9 @@ const Login = () => {
         <BackButton
           onPress={router.back}
           style={animatedStyles}
-          className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
+          className='w-[38px] rounded-xl border border-black dark:border-white bg-white_black200 px-4 py-3.5'
         />
-        <Text className='font-sans font-semibold text-4xl text-black'>Login</Text>
+        <Text className='font-sans font-semibold text-4xl text-black_white'>Login</Text>
         <LoginForm
           onSubmit={onSubmit}
           isLoading={isSubmitting}
