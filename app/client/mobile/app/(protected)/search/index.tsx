@@ -41,7 +41,7 @@ const Search = () => {
         <View className='flex-center'>
           <TouchableWithoutFeedback onPress={handleChangeSearch}>
             <View className='flex-center flex-row gap-2'>
-              <Text className='base-medium text-black_white text-center'>
+              <Text className='h3-semibold text-black_white text-center'>
                 {isSearchingUser ? t("header.user") : t("header.recipe")}
               </Text>
               <AntDesign

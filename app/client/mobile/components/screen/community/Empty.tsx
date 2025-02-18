@@ -3,7 +3,7 @@ import { View, Text, Image } from "react-native";
 import { useTranslation } from "react-i18next";
 
 type EmptyProps = {
-  type?: "empty" | "emptyRecipe" | "emptyComment" | "emptyNotification";
+  type?: "empty" | "emptyRecipe" | "emptyComment" | "emptyBookmark" | "emptyNotification";
 };
 
 const Empty = memo(({ type = "empty" }: EmptyProps) => {

@@ -6,6 +6,9 @@ export default function MenuLayout() {
       screenOptions={{
         headerShown: false
       }}
-    />
+    >
+      <Stack.Screen name='index' />
+      <Stack.Screen name='bookmark' />
+    </Stack>
   );
 }
