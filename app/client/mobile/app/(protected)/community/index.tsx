@@ -10,6 +10,8 @@ import { colors } from "@/constants/colors";
 import { useRecipesFeed } from "@/api/recipe";
 import BottomSheet from "@gorhom/bottom-sheet";
 import SettingRecipe from "@/components/common/SettingRecipe";
+import { ROLE, selectRole } from "@/slices/auth.slice";
+import { usePushNotification } from "@/hooks";
 
 const Community = () => {
   const { c } = useColorizer();
@@ -20,6 +22,8 @@ const Community = () => {
   const [currentAuthorId, setCurrentAuthorId] = useState("");
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
   const [filterSelected, setFilterSelected] = useState<string>("All");
+  const role = selectRole();
+  const { registerForPushNotificationAsync } = usePushNotification();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
     useRecipesFeed(filterSelected);
@@ -41,6 +45,12 @@ const Community = () => {
       fetchNextPage();
     }
   };
+
+  useEffect(() => {
+    if (role !== ROLE.GUEST) {
+      registerForPushNotificationAsync();
+    }
+  }, [role]);
 
   const renderItem = useCallback(
     ({ item, index }: { item: RecipeType; index: number }) => (
