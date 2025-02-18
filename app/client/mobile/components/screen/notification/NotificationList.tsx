@@ -1,6 +1,6 @@
 import { useGetNotification } from "@/api/notification";
 import { colors } from "@/constants/colors";
-import { ChatBubbleFillIcon } from "@/constants/icons";
+import { ArrowDownFillIcon, ArrowUpFillIcon, ChatBubbleFillIcon, UserIcon } from "@/constants/icons";
 import useColorizer from "@/hooks/useColorizer";
 import { Avatar } from "@rneui/base";
 import { router, useFocusEffect, usePathname } from "expo-router";
@@ -39,7 +39,7 @@ export default function NotificationList() {
 
   const handleLoadMore = () => {
     console.log("Load more");
-    
+
     if (!isFetchingNextPage && hasNextPage) {
       fetchNextPage();
     }
@@ -65,7 +65,7 @@ export default function NotificationList() {
   console.log(data, stringify(data));
 
   return (
-    <View className='pt-2 pb-[85px]'>
+    <View className='pb-[85px] pt-2'>
       <FlatList
         className='h-full'
         data={notifications}
@@ -101,12 +101,12 @@ export const Notification = ({
   item: INotificationsResponse;
   index: number;
 }) => {
-  const { message, imageUrl, jsonData } = item;
+  const { message, imageUrl, jsonData, code } = item;
   const currentRouteName = usePathname();
   const isOddItem = useMemo(() => {
     return index % 2 === 0;
   }, [index]);
-  const { white, black } = colors;
+  const { white, black, primary } = colors;
   const { c } = useColorizer();
 
   const handlePress = useCallback(() => {
@@ -125,16 +125,63 @@ export const Notification = ({
     }
   });
 
-  const renderIcon = () => {
-    //TODO: Add conditions to render different icons
+  type ActionCode =
+    | "USER_REPLY"
+    | "USER_FOLLOW"
+    | "USER_COMMENT"
+    | "USER_UPVOTE"
+    | "USER_DOWNVOTE";
 
-    return (
-      <ChatBubbleFillIcon
-        width={24}
-        height={24}
-        color={c(white.DEFAULT, black.DEFAULT)}
-      />
-    );
+  const renderIcon = (code: ActionCode) => {
+    switch (code) {
+      case "USER_REPLY":
+        return (
+          <ChatBubbleFillIcon
+            width={24}
+            height={24}
+            color={c(white.DEFAULT, black.DEFAULT)}
+          />
+        );
+      case "USER_FOLLOW":
+        return (
+          <UserIcon
+            width={24}
+            height={24}
+          />
+        );
+      case "USER_COMMENT":
+        return (
+          <ChatBubbleFillIcon
+            width={24}
+            height={24}
+            color={c(white.DEFAULT, black.DEFAULT)}
+          />
+        );
+      case "USER_UPVOTE":
+        return (
+          <ArrowUpFillIcon
+            width={24}
+            height={24}
+            color={primary}
+          />
+        );
+      case "USER_DOWNVOTE":
+        return (
+          <ArrowDownFillIcon
+            width={24}
+            height={24}
+            color={primary}
+          />
+        );
+      default:
+        return (
+          <ChatBubbleFillIcon
+            width={24}
+            height={24}
+            color={c(white.DEFAULT, black.DEFAULT)}
+          />
+        );
+    }
   };
 
   return (
@@ -152,7 +199,9 @@ export const Notification = ({
           }
           containerStyle={imageUrl && { backgroundColor: "#FFC529" }}
         />
-        <View className='absolute bottom-0 right-0'>{renderIcon()}</View>
+        <View className='absolute bottom-0 right-0'>
+          {renderIcon(code as ActionCode)}
+        </View>
       </View>
       <View className='shrink justify-center pt-2'>
         <Text className='text-black_white'>{message}</Text>
