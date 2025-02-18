@@ -2,7 +2,7 @@ import Recipe from "@/components/common/Recipe";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Empty from "@/components/screen/community/Empty";
 import Header from "@/components/screen/community/Header";
-import { View, RefreshControl, SafeAreaView, FlatList } from "react-native";
+import { View, RefreshControl, SafeAreaView, FlatList, Appearance } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { router } from "expo-router";
 import useColorizer from "@/hooks/useColorizer";
@@ -12,6 +12,9 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import SettingRecipe from "@/components/common/SettingRecipe";
 import { ROLE, selectRole } from "@/slices/auth.slice";
 import { usePushNotification } from "@/hooks";
+import { selectSetting } from "@/slices/setting.slice";
+import { changeLanguage } from "@/utils/language";
+import { getBooleanValueFromSetting } from "@/utils/converter";
 
 const Community = () => {
   const { c } = useColorizer();
@@ -45,6 +48,17 @@ const Community = () => {
       fetchNextPage();
     }
   };
+
+  const { LANGUAGE, DARK_MODE } = selectSetting();
+
+  const loadSettings = useCallback(() => {
+    changeLanguage(LANGUAGE);
+    Appearance.setColorScheme(getBooleanValueFromSetting(DARK_MODE) ? "dark" : "light");
+  }, [LANGUAGE, DARK_MODE]);
+
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
 
   useEffect(() => {
     if (role !== ROLE.GUEST) {
