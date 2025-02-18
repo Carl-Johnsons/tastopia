@@ -16,9 +16,9 @@ export const LogoutButton = () => {
   const logout = async () => {
     if (role !== ROLE.GUEST) {
       if (Platform.OS === "android")
-        await protectedAxiosInstance.delete("api/notification/expo-push-token/android");
+        protectedAxiosInstance.delete("api/notification/expo-push-token/android");
       else if (Platform.OS === "ios")
-        await protectedAxiosInstance.delete("api/notification/expo-push-token/ios");
+        protectedAxiosInstance.delete("api/notification/expo-push-token/ios");
     }
 
     animate();
@@ -29,7 +29,7 @@ export const LogoutButton = () => {
   return (
     <Protected excludedRoles={[]}>
       <Button
-        className='rounded-lg border border-gray-300 py-2.5'
+        className='rounded-lg border-gray-300 py-2.5'
         onPress={logout}
         style={[animatedStyles]}
       >
