@@ -7,22 +7,27 @@ import { useTranslation } from "react-i18next";
 import Button from "./Button";
 import Protected from "./Protected";
 import { ROLE, selectRole } from "@/slices/auth.slice";
+import useSyncSetting from "@/hooks/user/useSyncSetting";
 
 export const LogoutButton = () => {
   const { t } = useTranslation("menu");
   const { animate, animatedStyles } = useBounce();
   const role = selectRole();
+  const { load: loadSettings } = useSyncSetting();
 
   const logout = async () => {
+    animate();
+
     if (role !== ROLE.GUEST) {
       if (Platform.OS === "android")
-        protectedAxiosInstance.delete("api/notification/expo-push-token/android");
+        await protectedAxiosInstance.delete("api/notification/expo-push-token/android");
       else if (Platform.OS === "ios")
-        protectedAxiosInstance.delete("api/notification/expo-push-token/ios");
+        await protectedAxiosInstance.delete("api/notification/expo-push-token/ios");
     }
 
-    animate();
+    await persistor.flush();
     await persistor.purge();
+    await loadSettings();
     router.replace("/welcome");
   };
 

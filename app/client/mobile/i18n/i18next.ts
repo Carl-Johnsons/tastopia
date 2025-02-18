@@ -6,8 +6,8 @@ import resources from "./resourceTranslation";
 i18n.use(initReactI18next).init({
   resources,
   compatibilityJSON: "v3",
-  lng: "vi",
-  fallbackLng: "vi"
+  lng: "en",
+  fallbackLng: "en"
 });
 
 export default i18n;
