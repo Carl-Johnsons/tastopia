@@ -44,7 +44,7 @@ export const LoginForm = (props: LoginFormProps) => {
               value={value}
               onBlur={onBlur}
               onChangeText={onChange}
-              placeholder='Your email or phone number'
+              placeholder='Your email, phone number or username'
             />
           )}
         />
