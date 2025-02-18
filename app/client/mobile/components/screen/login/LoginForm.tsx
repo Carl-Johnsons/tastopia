@@ -34,7 +34,7 @@ export const LoginForm = (props: LoginFormProps) => {
     <View className={`gap-[2vh] ${props.className}`}>
       <View>
         <Text className='mb-3 font-sans text-lg text-gray-600'>
-          E-mail or phone number
+          E-mail, phone number or username
         </Text>
         <Controller
           name='identifier'
