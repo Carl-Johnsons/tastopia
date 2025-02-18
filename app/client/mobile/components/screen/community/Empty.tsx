@@ -1,9 +1,9 @@
-import React, { memo } from "react";
+import { memo } from "react";
 import { View, Text, Image } from "react-native";
 import { useTranslation } from "react-i18next";
 
 type EmptyProps = {
-  type?: "empty" | "emptyRecipe" | "emptyComment" | "emptyBookmark";
+  type?: "empty" | "emptyRecipe" | "emptyComment" | "emptyBookmark" | "emptyNotification";
 };
 
 const Empty = memo(({ type = "empty" }: EmptyProps) => {

@@ -5,7 +5,8 @@
     "title": "Display name",
     "description": "This will be displayed to viewers of your profile page and does not change your username.",
     "error": {
-      "required": "Display name is required."
+      "required": "Display name is required.",
+      "max": "Display name cannot exceed 50 characters."
     }
   },
   "username": {

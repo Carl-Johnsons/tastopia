@@ -4,13 +4,26 @@ import { ChatBubbleFillIcon } from "@/constants/icons";
 import useColorizer from "@/hooks/useColorizer";
 import { Avatar } from "@rneui/base";
 import { router, useFocusEffect, usePathname } from "expo-router";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator, FlatList } from "react-native";
+import Empty from "../community/Empty";
+import { stringify } from "@/utils/debug";
+import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
+import { filterUniqueItems } from "@/utils/dataFilter";
 
 export default function NotificationList() {
-  const { data, isLoading, refetch, isStale } = useGetNotification();
+  const {
+    data,
+    isLoading,
+    refetch,
+    isStale,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage
+  } = useGetNotification();
   const { primary } = colors;
+  const [notifications, setNotifications] = useState<INotificationsResponse[]>([]);
 
   const fetchData = useCallback(() => {
     if (isStale) {
@@ -24,6 +37,20 @@ export default function NotificationList() {
     await refetch();
   }, [refetch]);
 
+  const handleLoadMore = () => {
+    console.log("Load more");
+    
+    if (!isFetchingNextPage && hasNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  useEffect(() => {
+    if (data?.pages) {
+      setNotifications(filterUniqueItems(data.pages));
+    }
+  }, [data]);
+
   if (isLoading) {
     return (
       <View className='flex-center h-full w-full'>
@@ -35,19 +62,20 @@ export default function NotificationList() {
     );
   }
 
-  if (data?.paginatedData?.length && data?.paginatedData?.length === 0) {
-    return (
-      <View className='flex-center h-full w-full'>
-        <Text>No notifications available.</Text>
-      </View>
-    );
-  }
+  console.log(data, stringify(data));
 
   return (
-    <View className='pt-2'>
+    <View className='pt-2 pb-[85px]'>
       <FlatList
         className='h-full'
-        data={data?.paginatedData}
+        data={notifications}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
+        ListEmptyComponent={() => (
+          <View style={{ flex: 1, marginTop: 50 }}>
+            <Empty type='emptyNotification' />
+          </View>
+        )}
         renderItem={({ item, index }) => (
           <Notification
             item={item}
@@ -113,11 +141,11 @@ export const Notification = ({
     <Pressable
       onPress={handlePress}
       style={isOddItem && styles.oddWrapper}
-      className={`relative flex-row gap-2 p-2`}
+      className={`relative flex-row gap-2 p-4`}
     >
       <View className='relative'>
         <Avatar
-          size={80}
+          size={70}
           rounded
           source={
             imageUrl ? { uri: imageUrl } : require("../../../assets/images/avatar.png")
