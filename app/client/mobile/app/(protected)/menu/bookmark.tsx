@@ -7,6 +7,7 @@ import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import BottomSheet from "@gorhom/bottom-sheet";
+import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FlatList, RefreshControl, SafeAreaView, Text, View } from "react-native";
 
@@ -19,12 +20,23 @@ const bookmark = () => {
   const [currentAuthorId, setCurrentAuthorId] = useState("");
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
-    useGetBookmarks();
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+    isStale
+  } = useGetBookmarks();
 
-  const onRefresh = () => {
-    refetch();
-  };
+  const onRefresh = useCallback(() => {
+    if (isStale) {
+      refetch();
+    }
+  }, [isStale]);
+
+  useFocusEffect(onRefresh);
 
   const handleLoadMore = () => {
     if (!isFetchingNextPage && hasNextPage) {
@@ -70,6 +82,7 @@ const bookmark = () => {
     >
       <BookmarkHeader />
       <FlatList
+        className='h-full'
         removeClippedSubviews
         data={recipes}
         keyExtractor={keyExtractor}
