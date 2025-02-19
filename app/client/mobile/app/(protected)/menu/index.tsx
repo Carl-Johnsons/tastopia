@@ -63,9 +63,7 @@ const Menu = () => {
               <UserCard onPress={goToProfile} />
             </View>
             <History />
-            <View
-              className='px-4 py-7'
-            >
+            <View className='px-4 py-7'>
               <View
                 className='flex-row flex-wrap gap-4'
                 style={{ columnGap: 12 }}
@@ -81,7 +79,9 @@ const Menu = () => {
                 ))}
               </View>
             </View>
-            <LogoutButton />
+            <View className='px-4'>
+              <LogoutButton />
+            </View>
           </View>
         </View>
       </SafeAreaView>
