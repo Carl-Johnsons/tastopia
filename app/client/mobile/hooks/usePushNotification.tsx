@@ -20,6 +20,8 @@ import { Alert, Platform } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import { protectedAxiosInstance } from "@/constants/host";
 import { useRouter } from "expo-router";
+import { useAppDispatch } from "@/store/hooks";
+import { saveNotificationData } from "@/slices/notification.slice";
 
 export interface PushNotificationState {
   notification?: Notification;
@@ -63,6 +65,7 @@ export const usePushNotification = (): PushNotificationState => {
 
     const projectId =
       Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+    const dispatch = useAppDispatch();
 
     token = await getExpoPushTokenAsync({ projectId });
 
@@ -78,6 +81,7 @@ export const usePushNotification = (): PushNotificationState => {
         await protectedAxiosInstance.post("api/notification/expo-push-token/android", {
           expoPushToken: token.data
         });
+        dispatch(saveNotificationData({ pushToken: token.data }));
       } catch (err) {
         console.error(
           `Register user with expo push token ${expoPushToken} failed, Please try again`
