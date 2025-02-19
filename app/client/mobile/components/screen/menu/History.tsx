@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Pressable, Text, View } from "react-native";
 import PreviewHistoryList from "./PreviewHistoryList";
 import { ROLE, selectRole } from "@/slices/auth.slice";
+import { router } from "expo-router";
 
 export default function History() {
   const { t } = useTranslation("menu");
@@ -14,7 +15,7 @@ export default function History() {
         {role === ROLE.GUEST ? (
           <View />
         ) : (
-          <Pressable className='flex justify-center rounded-full border border-gray-200 px-4 py-1'>
+          <Pressable onPress={() => {router.push("/(protected)/menu/history")}} className='flex justify-center rounded-full border border-gray-200 px-4 py-1'>
             <Text className='text-black_white font-sans text-lg'>{t("viewAll")}</Text>
           </Pressable>
         )}

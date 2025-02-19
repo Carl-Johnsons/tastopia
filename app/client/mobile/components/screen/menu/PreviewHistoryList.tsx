@@ -5,7 +5,6 @@ import {
 import MiniRecipe from "@/components/common/MiniRecipe";
 import { colors } from "@/constants/colors";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import { stringify } from "@/utils/debug";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
