@@ -3,11 +3,12 @@ using MassTransit;
 
 namespace Contract.Event.NotificationEvent;
 
-[EntityName("PushNotificationEvent")]
+[EntityName("NotifyUserEvent")]
 public class NotifyUserEvent
 {
     public List<ActorDTO> PrimaryActors { get; set; } = [];
     public List<ActorDTO> SecondaryActors { get; set; } = [];
+    public List<Guid> RecipientIds { get; set; } = [];
     public NotificationTemplateCode TemplateCode { get; set; }
     public List<string> Channels { get; set; } = [];
     public string? JsonData { get; set; }

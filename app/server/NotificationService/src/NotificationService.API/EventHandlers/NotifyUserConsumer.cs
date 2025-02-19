@@ -39,7 +39,8 @@ public class NotifyUserConsumer : IConsumer<NotifyUserEvent>
             Channels = message.Channels,
             ImageUrl = message.ImageUrl,
             JsonData = message.JsonData,
-            TemplateCode = message.TemplateCode
+            TemplateCode = message.TemplateCode,
+            RecipientIds = message.RecipientIds,
         };
 
         var result = await _sender.Send(command);

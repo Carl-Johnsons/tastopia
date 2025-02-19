@@ -23,6 +23,14 @@ internal class NotificationTemplateMockup
             }
         },
         new NotificationTemplate{
+            Id = Guid.Parse("6c2150e7-7f34-4ce3-9701-c886145e16bb"),
+            TemplateCode = NotificationTemplateCode.USER_CREATE_RECIPE,
+            TranslationMessages = new Dictionary<string, string> {
+                {"en", "{Actors:list:{}|, } {Actors.Count:choose(1):has|have} created a new recipe." },
+                {"vi", "{Actors:list:{}|, } đã tạo một công thức nấu ăn mới." }
+            }
+        },
+        new NotificationTemplate{
             Id = Guid.Parse("123dca5f-bd13-4a6d-8742-67db09be227c"),
             TemplateCode = NotificationTemplateCode.USER_COMMENT,
             TranslationMessages = new Dictionary<string, string>  {
@@ -34,16 +42,16 @@ internal class NotificationTemplateMockup
             Id = Guid.Parse("3d2ff120-7ef0-4cdc-ba33-29d586bf8ccc"),
             TemplateCode = NotificationTemplateCode.USER_UPVOTE,
             TranslationMessages = new Dictionary<string, string>  {
-                {"en", "{Actors:list:{}|, } {Actors.Count:choose(1):has|have} upvoted on {IsSelf:choose(true):your post|{Targets:list:{}|, }{Targets.Count:plural:'s post|' posts}}" },
-                {"vi", "{Actors:list:{}|, } đã đồng ý trên bài đăng của {IsSelf:choose(true):bạn|{Targets:list:{}|, }}" }
+                {"en", "{Actors:list:{}|, } {Actors.Count:choose(1):has|have} liked on {IsSelf:choose(true):your post|{Targets:list:{}|, }{Targets.Count:plural:'s post|' posts}}" },
+                {"vi", "{Actors:list:{}|, } đã thích bài đăng của {IsSelf:choose(true):bạn|{Targets:list:{}|, }}" }
             }
         },
         new NotificationTemplate{
             Id = Guid.Parse("ca16c291-d601-4713-aadc-ff98e6a15f5d"),
             TemplateCode = NotificationTemplateCode.USER_DOWNVOTE,
             TranslationMessages = new Dictionary<string, string>  {
-                {"en", "{Actors:list:{}|, } {Actors.Count:choose(1):has|have} downvoted on {IsSelf:choose(true):your post|{Targets:list:{}|, }{Targets.Count:plural:'s post|' posts}}" },
-                {"vi", "{Actors:list:{}|, } đã không đồng ý trên bài đăng của {IsSelf:choose(true):bạn|{Targets:list:{}|, }}" }
+                {"en", "{Actors:list:{}|, } {Actors.Count:choose(1):has|have} disliked on {IsSelf:choose(true):your post|{Targets:list:{}|, }{Targets.Count:plural:'s post|' posts}}" },
+                {"vi", "{Actors:list:{}|, } đã không ủng hộ bài đăng của {IsSelf:choose(true):bạn|{Targets:list:{}|, }}" }
             }
         },
      ];
