@@ -1,0 +1,109 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/FileUtility.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+remove UserSetting
+remove Setting
+remove SettingDataType
+remove BaseEntity
+remove BaseAuditableEntity
+remove SettingDataType
+remove UserReport
+remove UserFollow
+
+together {
+    class BaseApiController {
+        #_sender: ISender
+        #_httpContextAccessor: HttpContextAccessor
+    }
+
+    class UserController {
+        +UpdateUser(UpdateUserDTO dto): async Task<IActionResult>
+    }
+    class UpdateUserDTO {
+        +DisplayName string
+        +Bio string
+        +Gender string
+        +Username string
+        +Avatar IFormFile
+        +Background IFormFile
+    }
+
+    class UpdateUserCommand {
+        +Guid AccountId
+        +DisplayName string
+        +Bio string
+        +Gender string
+        +Username string
+        +Avatar IFormFile
+        +Background IFormFile
+    }
+}
+
+
+class UpdateUserCommandHandler {
+    - _context : IApplicationDbContext
+    + _unitOfWork: IUnitOfWork
+    - _grpcAccountClient: GrpcAccountClient 
+    + _grpcUploadFileClient: GrpcUploadFileClient
+    + UpdateUserCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, GrpcAccount.GrpcAccountClient grpcAccountClient)
+    + Handle(UpdateUserCommand request, CancellationToken cancellationToken) : Task<Result>
+}
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+enum GenderType {
+    MALE
+    FEMALE
+}
+
+' =========== Microservice class ===========
+together {
+    class GrpcUploadFileClient #LightSalmon;line:white;text:white
+    class GrpcUpdateMultipleImageRequest #LightSalmon;line:white;text:white
+    class GrpcUpdateAccountRequest #DarkViolet;line:white;text:white
+    class GrpcAccountClient #DarkViolet;line:white;text:white
+}
+
+' =========== Library class ===========
+class "RepeatedField<T>" #black;line:white;text:white
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+
+UserController --|> BaseApiController
+UserController "1"--"1" UpdateUserCommand
+UpdateUserCommand --|> "IRequest<TResponse>"
+UpdateUserCommand "1" o--"1" IFormFile
+UpdateUserCommand "1" o--"1" UpdateUserDTO
+
+UpdateUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateUserCommandHandler "1" o--"1" UpdateUserCommand
+UpdateUserCommandHandler "1" o--"1" UserError
+UpdateUserCommandHandler "1" o--"1" IUnitOfWork
+UpdateUserCommandHandler "1" o--"1" IFormFile
+UpdateUserCommandHandler "1" o--"1" FileUtility
+UpdateUserCommandHandler "1" o--"1" IApplicationDbContext
+UpdateUserCommandHandler "1" o--"1" GrpcUploadFileClient
+UpdateUserCommandHandler "1" o--"1" GrpcUpdateMultipleImageRequest
+UpdateUserCommandHandler "1" o--"1" GrpcUpdateAccountRequest
+UpdateUserCommandHandler "1" o--"1" GrpcAccountClient
+UpdateUserCommandHandler "1" o--"1" "RepeatedField<T>"
+UpdateUserCommandHandler "1" o--"1" GenderType
+UpdateUserCommandHandler "1" o--"1" Result
+
+Error "1" --"1" UserError
+
+@enduml

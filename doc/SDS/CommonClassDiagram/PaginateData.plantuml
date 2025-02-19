@@ -1,0 +1,9 @@
+@startuml PaginateData
+interface IPaginateDataUtility{
+    #PaginateQuery(IQueryable<Type> query, PaginateParam param) :IQueryable<Type>
+}
+class PaginateDataUtility implements IPaginateDataUtility {
+    +PaginateQuery(IQueryable<Type> query, PaginateParam param) :IQueryable<Type>
+}
+
+@enduml

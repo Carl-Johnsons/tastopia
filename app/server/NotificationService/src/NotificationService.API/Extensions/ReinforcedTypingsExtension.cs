@@ -1,12 +1,13 @@
-﻿using Contract.DTOs;
-using Reinforced.Typings.Ast.TypeNames;
+﻿using Contract.Constants;
+using Contract.DTOs;
+using Contract.Extension;
+using NotificationService.Domain.Errors;
+using NotificationService.Domain.Responses;
 using Reinforced.Typings.Fluent;
-using System.Reflection;
-using System.Text;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 namespace NotificationService.API.Extensions;
 
-// RecipeService.API.Extensions.ReinforcedTypingsExtension.ConfigureReinforcedTypings
+// NotificationService.API.Extensions.ReinforcedTypingsExtension.ConfigureReinforcedTypings
 public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "notification";
@@ -16,20 +17,15 @@ public static class ReinforcedTypingsExtension
     {
         Directory.CreateDirectory(EXPORT_FILE_PATH);
 
-        builder.Global(config =>
-        {
-            config.CamelCaseForProperties()
-                  .AutoOptionalProperties()
-                  .ExportPureTypings(typings: true);
-        });
-
-        // Substitute C# type to typescript type
-        builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
-        builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
+        List<Type> errorsTypes = [typeof(NotificationErrors)];
+        
+        builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
 
         // Common type
         builder.ExportAsInterfaces([
-            typeof(ErrorResponseDTO)
+            typeof(ErrorResponseDTO),
+            typeof(AdvancePaginatedMetadata),
+            typeof(CommonPaginatedMetadata),
         ], config =>
         {
             config.WithPublicProperties()
@@ -38,7 +34,11 @@ public static class ReinforcedTypingsExtension
                   .ExportTo("interfaces/common.interface.d.ts");
         });
         // DTO and Entites
-        builder.ExportAsInterfaces([], config =>
+        builder.ExportAsInterfaces(
+        [
+            typeof(PaginatedNotificationListResponse),
+            typeof(NotificationsResponse)
+        ], config =>
         {
             config.FlattenHierarchy()
                   .WithPublicProperties()
@@ -47,50 +47,15 @@ public static class ReinforcedTypingsExtension
                   .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
         });
 
-        // Custom export file
-        List<Type> errorsTypes = [];
-
-        GenerateTypescriptEnumFile(errorsTypes);
-    }
-
-    private static void GenerateTypescriptEnumFile(List<Type> errorsTypes)
-    {
-        var enumsDirectory = Path.Combine(EXPORT_FILE_PATH, "enums");
-        Directory.CreateDirectory(enumsDirectory);
-        var disableWarning = @"/* eslint no-unused-vars: ""off"" */";
-        var typescriptEnumString = disableWarning + "\n" + string.Join("\n", errorsTypes.Select(GenerateErrorEnumTypescript));
-
-        File.WriteAllText(Path.Combine(enumsDirectory, $"{FILE_NAME}.enum.ts"), typescriptEnumString);
-    }
-
-    private static string GenerateErrorEnumTypescript(Type errorType)
-    {
-        var errorDictionary = GetErrorsEnumValues(errorType);
-
-        var sb = new StringBuilder();
-        sb.AppendLine("export enum " + errorType.Name + " {");
-        var lastIndex = errorDictionary.Count - 1;
-        int currentIndex = 0;
-
-        foreach (var (key, value) in errorDictionary)
+        builder.ExportAsEnums(
+        [
+            typeof(NotificationTemplateCode)
+        ], config =>
         {
-            if (currentIndex == lastIndex) sb.AppendLine($"\t{key} = \"{value}\"");
-            else sb.AppendLine($"\t{key} = \"{value}\",");
-
-            currentIndex++;
-        }
-        sb.AppendLine("}");
-
-        return sb.ToString();
-    }
-
-    private static Dictionary<string, string> GetErrorsEnumValues(Type errorType)
-    {
-        return errorType.GetProperties(BindingFlags.Public | BindingFlags.Static)
-                        .Where(p => p.PropertyType == typeof(Error))
-                        .ToDictionary(
-                            p => p.Name,
-                            p => ((Error)p.GetValue(null)!).Code
-                        );
+            config.FlattenHierarchy()
+                  .DontIncludeToNamespace()
+                  .UseString()
+                  .ExportTo($"enums/{FILE_NAME}.enum.ts");
+        });
     }
 }

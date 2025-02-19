@@ -1,44 +1,32 @@
 import { StyleSheet, View, TextInput, TouchableOpacity, Alert } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
-import useDebounce from "@/hooks/useDebounce";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import { Controller, useFormContext } from "react-hook-form";
 
 interface DraggableIngredientProps {
-  ingredientKey: string;
-  value: string;
-  ingredients: CreateIngredientType[];
-  setIngredients: Dispatch<SetStateAction<CreateIngredientType[]>>;
+  index: number;
+  remove: (index: number) => void;
 }
 
-const CreateIngredient = ({
-  ingredientKey,
-  value,
-  ingredients,
-  setIngredients
-}: DraggableIngredientProps) => {
+const CreateIngredient = ({ index, remove }: DraggableIngredientProps) => {
   const { c } = useColorizer();
   const { black, white } = colors;
-
   const { t } = useTranslation("createRecipe");
-  const [inputValue, setInputValue] = useState(value);
+
+  const { control } = useFormContext();
+  const { getValues } = useFormContext();
   const [isFocused, setIsFocused] = useState(false);
-  const debouncedValue = useDebounce(inputValue, 800);
+  const ingredients = getValues("ingredients");
 
-  const handleChangeText = useCallback((text: string) => {
-    setInputValue(text);
-  }, []);
-
-  const handleRemoveItem = useCallback((key: string) => {
+  const handleRemoveItem = useCallback(() => {
     if (ingredients.length > 1) {
-      setIngredients(prev => {
-        return prev.filter(item => {
-          return item.key !== key;
-        });
-      });
+      if (index !== undefined) {
+        remove(index);
+      }
     } else {
       Alert.alert(t("validation.ingredientRequired"));
       return;
@@ -46,41 +34,24 @@ const CreateIngredient = ({
   }, []);
 
   const confirmRemoveItem = () => {
-    if (inputValue !== "") {
-      Alert.alert(
-        t("removeIngredientAlert.title"),
-        t("removeIngredientAlert.description"),
-        [
-          {
-            text: t("removeIngredientAlert.cancel")
-          },
-          {
-            text: t("removeIngredientAlert.delete"),
-            onPress: () => {
-              handleRemoveItem(ingredientKey);
-            }
-          }
-        ]
-      );
-    } else {
-      handleRemoveItem(ingredientKey);
-    }
+    Alert.alert(
+      t("removeIngredientAlert.title"),
+      t("removeIngredientAlert.description"),
+      [
+        {
+          text: t("removeIngredientAlert.cancel")
+        },
+        {
+          text: t("removeIngredientAlert.delete"),
+          onPress: handleRemoveItem
+        }
+      ]
+    );
   };
-
-  useEffect(() => {
-    if (debouncedValue !== value) {
-      setIngredients(prevIngredients =>
-        prevIngredients.map(ingredient =>
-          ingredient.key === ingredientKey
-            ? { ...ingredient, value: debouncedValue }
-            : ingredient
-        )
-      );
-    }
-  }, [debouncedValue, ingredientKey, setIngredients]);
 
   return (
     <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
+      {/* Remove button */}
       {ingredients.length > 1 && (
         <TouchableOpacity
           style={styles.iconContainer}
@@ -94,18 +65,29 @@ const CreateIngredient = ({
         </TouchableOpacity>
       )}
 
+      {/* Input field */}
       <View style={styles.inputContainer}>
-        <TextInput
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          style={
-            (isFocused ? [styles.input, styles.inputFocused] : styles.input,
-            { color: `${c(black.DEFAULT, white.DEFAULT)}` })
-          }
-          value={inputValue}
-          onChangeText={handleChangeText}
-          placeholder={t("formPlaceholder.ingredients")}
-          placeholderTextColor='#9CA3AF'
+        <Controller
+          control={control}
+          name={`ingredients.${index}.value`}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => {
+                onBlur();
+                setIsFocused(false);
+              }}
+              style={[
+                styles.input,
+                isFocused && styles.inputFocused,
+                { color: c(black.DEFAULT, white.DEFAULT) }
+              ]}
+              value={value}
+              onChangeText={onChange}
+              placeholder={t("formPlaceholder.ingredients")}
+              placeholderTextColor='#9CA3AF'
+            />
+          )}
         />
       </View>
     </View>
@@ -146,6 +128,7 @@ const styles = StyleSheet.create({
     minHeight: 34
   },
   input: {
+    fontSize: 15,
     padding: 4,
     backgroundColor: "transparent",
     borderWidth: 0,

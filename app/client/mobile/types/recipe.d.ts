@@ -1,3 +1,5 @@
+import { VoteType } from "@/constants/recipe";
+
 type SearchRecipeType = {
   id: string;
   authorId: string;
@@ -6,6 +8,11 @@ type SearchRecipeType = {
   description: string;
   authorDisplayName: string;
   authorAvtUrl: string;
+};
+
+type MiniRecipeType = Omit<SearchRecipeType, "authorAvtUrl" | "description"> & {
+  voteDiff: number;
+  vote: VoteType;
 };
 
 type SearchRecipeResponse = {
@@ -20,6 +27,10 @@ type RecipeType = SearchRecipeType & {
   voteDiff?: number;
   numberOfComment?: number;
   vote?: string;
+};
+
+type MiniRecipeType = {
+  isMinimal?: boolean;
 };
 
 type RecipeStep = {
@@ -53,6 +64,12 @@ type RecipeDetailType = {
   id: string;
 };
 
+type SimilarRecipe = {
+  recipeId: string;
+  imageUrl: string;
+  title: string;
+};
+
 type RecipeDetailResponse = {
   recipe: RecipeDetailType;
   authorUsername: string;
@@ -62,6 +79,7 @@ type RecipeDetailResponse = {
   vote: string;
   isBookmarked: boolean;
   tags: TagType[] | null;
+  similarRecipes: SimilarRecipe[];
 };
 
 type RecipeResponse = {
@@ -87,3 +105,11 @@ type BookMarkRecipeResponse = {
   };
   isBookmark: boolean;
 };
+
+interface ICommentResponse {
+  paginatedData: IAccountRecipeCommentResponse[];
+  metadata: {
+    hasNextPage: boolean;
+    totalPage: number;
+  };
+}

@@ -27,7 +27,7 @@ const Step = ({
           <Text className={`text-white_black subtitle-medium`}>{ordinalNumber}</Text>
         </View>
         <View className='w-full max-w-[90%] flex-col gap-2'>
-          <Text className='text-black_white'>{content}</Text>
+          <Text className='text-black_white paragraph-regular'>{content}</Text>
           <View className='flex-row gap-2'>
             {!isCookingMode &&
               attachedImageUrls !== null &&

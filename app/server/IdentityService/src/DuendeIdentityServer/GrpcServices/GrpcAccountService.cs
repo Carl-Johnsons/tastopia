@@ -1,4 +1,5 @@
 ﻿using AccountProto;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using IdentityService.Application.Account.Commands;
 using IdentityService.Application.Account.Queries;
@@ -38,6 +39,8 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
             IsActive = result.Value![0].IsActive,
             PhoneNumber = result.Value![0].PhoneNumber ?? "",
             UserName = result.Value![0].UserName,
+            CreatedAt = Timestamp.FromDateTime(result.Value![0].CreatedAt.ToUniversalTime()),
+            UpdatedAt = Timestamp.FromDateTime(result.Value![0].UpdatedAt.ToUniversalTime()),
         };
 
         _logger.LogInformation("Grpc get account detail successfully!");

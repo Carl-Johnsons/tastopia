@@ -9,7 +9,6 @@ using System.ComponentModel.DataAnnotations;
 using static UserProto.GrpcUser;
 using UserProto;
 using AutoMapper;
-
 namespace RecipeService.Application.Recipes.Queries;
 
 public class SearchRecipesQuery : IRequest<Result<PaginatedSearchRecipeListResponse?>>
@@ -30,15 +29,13 @@ public class SearchRecipesQuery : IRequest<Result<PaginatedSearchRecipeListRespo
 public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Result<PaginatedSearchRecipeListResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IServiceBus _serviceBus;
     private readonly IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> _paginateDataUtility;
     private readonly IMapper _mapper;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
-    public SearchRecipesQueryHandler(IApplicationDbContext context, IServiceBus serviceBus, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility, GrpcUserClient grpcUserClient, IMapper mapper)
+    public SearchRecipesQueryHandler(IApplicationDbContext context, IPaginateDataUtility<Recipe, AdvancePaginatedMetadata> paginateDataUtility, GrpcUserClient grpcUserClient, IMapper mapper)
     {
         _context = context;
-        _serviceBus = serviceBus;
         _paginateDataUtility = paginateDataUtility;
         _grpcUserClient = grpcUserClient;
         _mapper = mapper;
@@ -49,10 +46,11 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
         var skip = request.Skip;
         var tagCodes = request.TagCodes;
         var keyword = request.Keyword;
+        var accountId = request.AccountId;
 
-        if (skip == null)
+        if (skip == null || accountId == Guid.Empty)
         {
-            return Result<PaginatedSearchRecipeListResponse?>.Failure(RecipeError.NotFound);
+            return Result<PaginatedSearchRecipeListResponse?>.Failure(RecipeError.NullParameter, "skip or accountId is null");
         }
 
         var recipesQuery = _context.Recipes.Where(r => r.IsActive == true).OrderByDescending(r => r.CreatedAt).AsQueryable();
@@ -76,10 +74,12 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
 
             var searchAuthorIds = searchUserResponse.AccountIds.ToHashSet();
 
+            keyword = keyword.ToLower();
             recipesQuery = recipesQuery.Where(r =>
-                r.Title.ToLower().Contains(keyword.ToLower()) ||
-                r.Description.ToLower().Contains(keyword.ToLower()) ||
-                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(keyword.ToLower())) ||
+                r.Title.ToLower().Contains(keyword) ||
+                r.Description.ToLower().Contains(keyword) ||
+                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(keyword)) ||
+                r.Steps.Any(step => step.Content.ToLower().Contains(keyword)) ||
                 searchAuthorIds.Contains(r.AuthorId.ToString())
             );
         }

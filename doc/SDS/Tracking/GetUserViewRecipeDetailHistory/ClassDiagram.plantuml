@@ -1,0 +1,96 @@
+@startuml GetTagsClassDiagram
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Tracking/TrackingDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class TrackingController {
+    +GetUserViewRecipeDetailHistory([FromBody] GetUserViewRecipeDetailHistoryDTO getUserViewRecipeDetailHistoryDTO): async Task<IActionResult>
+}
+
+class GetUserViewRecipeDetaiQuery {
+    +Skip: int
+    +AccountId: Guid
+}
+
+class GetUserViewRecipeDetaiQueryHandler {
+    -_context: IApplicationDbContext
+    -_paginateDataUtility: IPaginateDataUtility
+    -_mapper: IMapper
+    -_grpcRecipeClient: GrpcRecipeClient
+    +Handle(GetTagsQuery request, CancellationToken cancellationToken): async Task<Result<PaginatedTagListResponse?>> 
+}
+
+interface IMapper{
+    #Map<TDestination>(object source): TDestination
+}
+
+
+class PaginatedUserViewRecipeDetailListResponse{
+}
+class BasePaginatedResponse{
+    +PaginatedData : IEnumerable<Type>
+    +Metadata: MetadataType?
+}
+PaginatedUserViewRecipeDetailListResponse --|> BasePaginatedResponse
+
+class GetUserViewRecipeDetailHistoryDTO{
+    +Skip: int
+}
+
+class UserViewRecipeDetailResponse{
+    +Id: Guid
+    +AuthorId: Guid
+    +RecipeImgUrl: string
+    +Title: string
+    +Description: string
+    +AuthorDisplayName: string
+    +AuthorAvtUrl: string
+    +VoteDiff: int
+    +NumberOfComment: int
+    +Vote: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+}
+
+class UserViewRecipeDetailError {
+    {static} +NotFound: Error
+    {static} +AddUserViewRecipeDetailFail: Error
+    {static} +DeleteUserViewRecipeDetailFail: Error
+    {static} +UpdateUserViewRecipeDetailFail: Error
+}
+
+together {
+    class GrpcGetSimpleRecipeRequest #Green;line:white;text:white
+    class GrpcRecipeClient #Green;line:white;text:white
+}
+
+TrackingController --|> BaseApiController
+TrackingController "1"--"1" GetUserViewRecipeDetailHistoryDTO
+TrackingController "1"--"1" GetUserViewRecipeDetaiQuery
+
+GetUserViewRecipeDetaiQueryHandler "1"--"1" GetUserViewRecipeDetaiQuery
+GetUserViewRecipeDetaiQueryHandler "1"--"1" Result
+GetUserViewRecipeDetaiQueryHandler "1"--"1" PaginatedUserViewRecipeDetailListResponse
+GetUserViewRecipeDetaiQueryHandler "1" o-- "1" IApplicationDbContext
+GetUserViewRecipeDetaiQueryHandler "1" o-- "1" IPaginateDataUtility
+GetUserViewRecipeDetaiQueryHandler "1" o-- "1" IMapper
+GetUserViewRecipeDetaiQueryHandler "1" o-- "1" GrpcRecipeClient
+GetUserViewRecipeDetaiQueryHandler "1"--"1..*" UserViewRecipeDetailError
+GetUserViewRecipeDetaiQueryHandler "1"--"1" UserViewRecipeDetailResponse
+
+
+Error "1" --"1..*" UserViewRecipeDetailError
+' ====================STYLE====================
+
+@enduml

@@ -11,6 +11,10 @@ using Newtonsoft.Json;
 using Serilog;
 using Microsoft.IdentityModel.Tokens;
 using Polly;
+using Contract.DTOs;
+using Reinforced.Typings.Ast.TypeNames;
+using Reinforced.Typings.Fluent;
+using System.Text;
 
 namespace Contract.Extension;
 
@@ -214,4 +218,80 @@ public static class CommonExtension
             });
         }
     }
+
+    public static void ConfigCommonReinforcedTypings(this Reinforced.Typings.Fluent.ConfigurationBuilder builder,
+                                                     string exportFilePath,
+                                                     string fileName,
+                                                     List<Type> errorTypes)
+    {
+        builder.Global(config =>
+        {
+            config.CamelCaseForProperties()
+                  .AutoOptionalProperties()
+                  .ExportPureTypings(typings: true)
+                  .UseModules();
+        });
+
+        // Substitute C# type to typescript type
+        builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
+        builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
+
+        // Common type
+        builder.ExportAsInterfaces([
+            typeof(ErrorResponseDTO),
+            typeof(AdvancePaginatedMetadata),
+            typeof(CommonPaginatedMetadata),
+        ], config =>
+        {
+            config.WithPublicProperties()
+                  .AutoI()
+                  .DontIncludeToNamespace()
+                  .ExportTo("interfaces/common.interface.d.ts");
+        });
+
+        // Custom export file
+        GenerateTypescriptEnumFile(errorTypes, exportFilePath, fileName);
+    }
+
+    private static void GenerateTypescriptEnumFile(List<Type> errorsTypes, string exportFilePath, string fileName)
+    {
+        var enumsDirectory = Path.Combine(exportFilePath, "enums");
+        Directory.CreateDirectory(enumsDirectory);
+        var disableWarning = @"/* eslint no-unused-vars: ""off"" */";
+        var typescriptEnumString = disableWarning + "\n" + string.Join("\n", errorsTypes.Select(GenerateErrorEnumTypescript));
+
+        File.WriteAllText(Path.Combine(enumsDirectory, $"{fileName}.error.enum.ts"), typescriptEnumString);
+    }
+
+    private static string GenerateErrorEnumTypescript(Type errorType)
+    {
+        var errorDictionary = GetErrorsEnumValues(errorType);
+
+        var sb = new StringBuilder();
+        sb.AppendLine("export enum " + errorType.Name + " {");
+        var lastIndex = errorDictionary.Count - 1;
+        int currentIndex = 0;
+
+        foreach (var (key, value) in errorDictionary)
+        {
+            if (currentIndex == lastIndex) sb.AppendLine($"\t{key} = \"{value}\"");
+            else sb.AppendLine($"\t{key} = \"{value}\",");
+
+            currentIndex++;
+        }
+        sb.AppendLine("}");
+
+        return sb.ToString();
+    }
+
+    private static Dictionary<string, string> GetErrorsEnumValues(Type errorType)
+    {
+        return errorType.GetProperties(BindingFlags.Public | BindingFlags.Static)
+                        .Where(p => p.PropertyType == typeof(Error))
+                        .ToDictionary(
+                            p => p.Name,
+                            p => ((Error)p.GetValue(null)!).Code
+                        );
+    }
+
 }

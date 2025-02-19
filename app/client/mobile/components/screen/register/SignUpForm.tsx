@@ -1,19 +1,19 @@
 import { SignUpParams } from "@/api/user";
 import { ActivityIndicator, Text, View } from "react-native";
 import { AuthFormProps, CustomInput } from "../login/LoginForm";
-import Input from "../../Input";
 import Button from "../../Button";
 import useBounce from "@/hooks/animation/useBounce";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "@/lib/validation/auth";
+import { IRegisterAccountDTO } from "@/generated/interfaces/identity.interface";
 
 export interface SignUpFormFields extends SignUpParams {
   rePassword: string;
 }
 
 type SignUpFormProps = {
-  onSubmit: (data: SignUpFormFields) => Promise<void>;
+  onSubmit: (data: IRegisterAccountDTO) => Promise<void>;
 } & AuthFormProps;
 
 export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) => {
@@ -27,10 +27,15 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
     mode: "onSubmit"
   });
 
+  const submit = (data: SignUpFormFields) => {
+    const { identifier, fullName, password } = data as IRegisterAccountDTO;
+    onSubmit({ identifier, fullName, password });
+  };
+
   return (
     <View className={`gap-[2vh] ${className}`}>
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>Full name</Text>
+        <Text className='mb-3 font-sans text-lg text-gray-600'>Full name</Text>
         <Controller
           name='fullName'
           control={control}
@@ -49,7 +54,9 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
       </View>
 
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>E-mail or phone number</Text>
+        <Text className='mb-3 font-sans text-lg text-gray-600'>
+          E-mail or phone number
+        </Text>
         <Controller
           name='identifier'
           control={control}
@@ -67,7 +74,7 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
       </View>
 
       <View>
-        <Text className='mb-3 font-sans text-gray-600'>Password</Text>
+        <Text className='mb-3 font-sans text-lg text-gray-600'>Password</Text>
         <Controller
           name='password'
           control={control}
@@ -105,7 +112,7 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
       <Button
         onPress={() => {
           animate();
-          handleSubmit(onSubmit)();
+          handleSubmit(submit)();
         }}
         style={[animatedStyles]}
         className='rounded-full bg-primary p-3 px-16 py-6 text-white'

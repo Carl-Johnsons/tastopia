@@ -60,11 +60,12 @@ export default function Header() {
                   />
                 </View>
 
-                <Text className='font-semibold text-xl text-white'>{displayName}</Text>
+                <Text className='font-semibold text-xl text-white me-20'>{displayName}</Text>
 
                 <View>
                   <Text className='font-secondary-roman text-sm text-white'>
-                    {followerCounts} follower{followerCounts % 2 === 0 && followerCounts !== 0 ? "s" : ""}
+                    {followerCounts} follower
+                    {followerCounts % 2 === 0 && followerCounts !== 0 ? "s" : ""}
                   </Text>
 
                   <View className='flex-row items-center gap-1'>
@@ -89,7 +90,7 @@ export default function Header() {
               </View>
 
               <Button
-                className='rounded-full border border-white p-2'
+                className='absolute right-0 rounded-full border border-white p-2'
                 onPress={goToUpdateProfile}
               >
                 <Text className='font-sans text-white'>{t("update")}</Text>

@@ -39,6 +39,14 @@
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
       ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow Tastopia to use the microphone.",
+          "speechRecognitionPermission": "Allow Tastopia to use speech recognition.",
+          "androidSpeechServicePackages": ["com.google.android.googlequicksearchbox"]
+        }
+      ],
       "expo-font",
       "expo-asset"
     ],

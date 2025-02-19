@@ -1,4 +1,4 @@
-import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Pressable, Text, View } from "react-native";
 import { useEffect } from "react";
 import { router, usePathname } from "expo-router";
 import SignUpForm from "@/components/screen/register/SignUpForm";
@@ -18,6 +18,7 @@ import useSyncSetting from "@/hooks/user/useSyncSetting";
 import useSyncUser from "@/hooks/user/useSyncUser";
 import { o } from "@/hooks/alternator";
 import { dismissKeyboard } from "@/utils/keyboard";
+import { IRegisterAccountDTO } from "@/generated/interfaces/identity.interface";
 
 const Register = () => {
   const { loginWithGoogle } = useLoginWithGoogle();
@@ -45,9 +46,9 @@ const Register = () => {
         ]
       );
     }
-  }, [isVerifyingAccount, currentRouteName]);
+  }, [currentRouteName]);
 
-  const onSubmit = async (data: SignUpParams) => {
+  const onSubmit = async (data: IRegisterAccountDTO) => {
     const registerType = getIdentifierType(data.identifier as string) as IDENTIFIER_TYPE;
 
     register(
@@ -82,7 +83,7 @@ const Register = () => {
 
   return (
     <Pressable
-      className='relative h-full'
+      className='bg-white_black200 relative h-full'
       onPress={dismissKeyboard}
     >
       <CircleBg />
@@ -91,15 +92,17 @@ const Register = () => {
       >
         <BackButton
           onPress={router.back}
-          className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
+          className='bg-white_black200 w-[38px] rounded-xl border border-black px-4 py-3.5 dark:border-white'
         />
-        <Text className='font-sans font-semibold text-4xl text-black'>Register</Text>
+        <Text className='text-black_white font-sans font-semibold text-4xl'>
+          Register
+        </Text>
         <SignUpForm
           onSubmit={onSubmit}
           isLoading={isSubmitting}
         />
         <Pressable onPress={navigateToSignInScreen}>
-          <Text className='text-center font-medium text-sm text-gray-300'>
+          <Text className='text-center font-medium text-lg text-gray-300'>
             Already have an account?{" "}
             <Text className='font-medium text-primary'>Login</Text>
           </Text>
@@ -107,7 +110,7 @@ const Register = () => {
 
         <View className='flex-row items-center justify-center gap-5'>
           <View className='h-[1px] grow bg-gray-300' />
-          <Text className='text-center font-medium text-sm text-gray-300'>
+          <Text className='text-center font-medium text-lg text-gray-300'>
             Sign in with
           </Text>
           <View className='h-[1px] grow bg-gray-300' />

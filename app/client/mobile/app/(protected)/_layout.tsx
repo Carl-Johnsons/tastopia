@@ -44,12 +44,6 @@ const ProtectedLayout = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (role) {
-      registerForPushNotificationAsync();
-    }
-  }, []);
-
   if (!role) {
     return !navigationState?.key ? (
       <View className='h-full justify-center'>
@@ -85,7 +79,8 @@ const ProtectedLayout = () => {
     tabItem: {
       width: 80,
       padding: 0,
-      justifyContent: "center"
+      justifyContent: "center",
+      alignItems: "center"
     }
   });
 

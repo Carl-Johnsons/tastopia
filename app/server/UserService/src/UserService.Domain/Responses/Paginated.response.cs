@@ -1,7 +1,8 @@
 ﻿namespace UserService.Domain.Responses;
 
 
-public class PaginatedSearchUserListResponse : BasePaginatedResponse<SearchUserResponse, AdvancePaginatedMetadata>;
+public class PaginatedSimpleUserListResponse : BasePaginatedResponse<SimpleUserResponse, AdvancePaginatedMetadata>;
+
 
 
 

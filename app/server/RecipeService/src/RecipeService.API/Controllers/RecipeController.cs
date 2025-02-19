@@ -6,15 +6,16 @@ using RecipeService.Application.Comments.Commands;
 using RecipeService.Application.Comments.Queries;
 using RecipeService.Application.Recipes.Commands;
 using RecipeService.Application.Recipes.Queries;
+using RecipeService.Application.ReportReasons.Queries;
 using RecipeService.Application.Tags.Queries;
 using RecipeService.Application.UserBookmarkRecipes.Commands;
 using RecipeService.Application.UserBookmarkRecipes.Queries;
+using RecipeService.Application.UserReportComments.Commands;
+using RecipeService.Application.UserReportRecipes.Commands;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
-
 namespace RecipeService.API.Controllers;
-
 [Route("api/recipe")]
 [ApiController]
 [Authorize]
@@ -108,6 +109,33 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
+    [AllowAnonymous]
+    [HttpPost("get-recipe-feed-by-author-id")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedRecipeFeedsListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetRecipeFeedByAccountId([FromBody] GetRecipeFeedsByAuthorIdDTO getRecipeFeedsByAuthorIdDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var accountId = Guid.Empty;
+
+        if (!string.IsNullOrEmpty(subjectId))
+        {
+            accountId = Guid.Parse(subjectId!);
+        }
+
+        var result = await _sender.Send(new GetRecipeFeedsByAuthorIdQuery
+        {
+            Skip = getRecipeFeedsByAuthorIdDTO.Skip,
+            AuthorId = getRecipeFeedsByAuthorIdDTO.AuthorId,
+            AccountId = accountId
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [HttpPost("search-recipe")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedSearchRecipeListResponse), 200)]
@@ -195,6 +223,21 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
+    [HttpPost("get-account-recipe-comments")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAccountRecipeCommentListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetAccountRecipeComments([FromBody] GetAccountRecipeCommentsDTO getAccountRecipeCommentsDTO)
+    {
+        var result = await _sender.Send(new GetAccountRecipeCommentsQuery
+        {
+            AccountId = getAccountRecipeCommentsDTO.AccountId,
+            Skip = getAccountRecipeCommentsDTO.Skip
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
 
     [HttpPost("comment-recipe")]
     [Produces("application/json")]
@@ -210,6 +253,43 @@ public class RecipeController : BaseApiController
             AccountId = Guid.Parse(subjectId!),
             RecipeId = commentRecipeDTO.RecipeId,
             Content = commentRecipeDTO.Content,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("delete-comment")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Comment), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> DeleteComment([FromBody] DeleteCommentDTO deleteCommentDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new DeleteCommentCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            CommentId = deleteCommentDTO.CommentId,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("update-comment")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Comment), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UpdateComment([FromBody] UpdateCommentDTO updateCommentDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new UpdateCommentCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            CommentId = updateCommentDTO.CommentId,
+            Content = updateCommentDTO.Content,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -262,6 +342,79 @@ public class RecipeController : BaseApiController
         {
             AccountId = Guid.Parse(subjectId!),
             Skip = getRecipeBookmarkDTO.Skip
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("user-report-recipe")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(UserReportRecipeResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UserReportRecipe([FromBody] UserReportRecipeDTO userReportRecipeDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new UserReportRecipeCommand
+        {
+            ReporterId = Guid.Parse(subjectId!),
+            RecipeId = userReportRecipeDTO.RecipeId,
+            ReasonCodes = userReportRecipeDTO.ReasonCodes,
+            AdditionalDetails = userReportRecipeDTO.AdditionalDetails,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("user-report-comment")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(UserReportCommentResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UserReportComment([FromBody] UserReportCommentDTO userReportCommentDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new UserReportCommentCommand
+        {
+            ReporterId = Guid.Parse(subjectId!),
+            CommentId = userReportCommentDTO.CommentId,
+            ReasonCodes = userReportCommentDTO.ReasonCodes,
+            AdditionalDetails = userReportCommentDTO.AdditionalDetails,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("create-user-search-recipe")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(string), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> CreateUserSearchRecipe([FromBody] CreateUserSearchRecipeDTO createUserSearchRecipeDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new PublishUserSearchRecipeCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Keyword = createUserSearchRecipeDTO.Keyword
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("get-report-reasons")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(ReportReasonResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetReportReasons([FromBody] GetReportReasonsDTO getReportReasonsDTO)
+    {
+        var result = await _sender.Send(new GetReportReasonsQuery
+        {
+            Language = getReportReasonsDTO.Language,
+            ReportType = getReportReasonsDTO.ReportType,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

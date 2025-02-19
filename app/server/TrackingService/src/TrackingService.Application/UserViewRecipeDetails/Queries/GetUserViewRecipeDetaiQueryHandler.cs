@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 using RecipeProto;
 using TrackingService.Domain.Entities;
 using TrackingService.Domain.Errors;
@@ -23,14 +22,16 @@ public class GetUserViewRecipeDetaiQueryHandler : IRequestHandler<GetUserViewRec
     private readonly IMapper _mapper;
     private readonly IApplicationDbContext _context;
     private readonly IPaginateDataUtility<UserViewRecipeDetail, AdvancePaginatedMetadata> _paginateDataUtility;
+    private readonly ILogger<GetUserViewRecipeDetaiQueryHandler> _logger;
 
 
-    public GetUserViewRecipeDetaiQueryHandler(GrpcRecipe.GrpcRecipeClient grpcRecipeClient, IMapper mapper, IApplicationDbContext context, IPaginateDataUtility<UserViewRecipeDetail, AdvancePaginatedMetadata> paginateDataUtility)
+    public GetUserViewRecipeDetaiQueryHandler(GrpcRecipe.GrpcRecipeClient grpcRecipeClient, IMapper mapper, IApplicationDbContext context, IPaginateDataUtility<UserViewRecipeDetail, AdvancePaginatedMetadata> paginateDataUtility, ILogger<GetUserViewRecipeDetaiQueryHandler> logger)
     {
         _grpcRecipeClient = grpcRecipeClient;
         _mapper = mapper;
         _context = context;
         _paginateDataUtility = paginateDataUtility;
+        _logger = logger;
     }
 
     public async Task<Result<PaginatedUserViewRecipeDetailListResponse?>> Handle(GetUserViewRecipeDetaiQuery request, CancellationToken cancellationToken)
@@ -77,26 +78,25 @@ public class GetUserViewRecipeDetaiQueryHandler : IRequestHandler<GetUserViewRec
             return Result<PaginatedUserViewRecipeDetailListResponse?>.Failure(UserViewRecipeDetailError.NotFound, "Not found simple recipes");
         }
 
-        var mapRecipe = response.Recipes.ToDictionary(r => r.Key);
-        var mapRecipe1 = response.Recipes;
+        var mapRecipe = response.Recipes;
 
-        var listView = new List<UserViewRecipeDetailResponse>();
+        var listView = new List<SimpleRecipeResponse>();
 
         foreach (var v in views)
         {
             var redipeId = v.RecipeId.ToString();
-            var view = new UserViewRecipeDetailResponse
+            var view = new SimpleRecipeResponse
             {
-                Id = Guid.Parse(mapRecipe1[redipeId].Id),
-                AuthorId = Guid.Parse(mapRecipe1[redipeId].AuthorId),
-                Title = mapRecipe1[redipeId].Title,
-                Description = mapRecipe1[redipeId].Description,
-                RecipeImgUrl = mapRecipe1[redipeId].RecipeImgUrl,
-                AuthorAvtUrl = mapRecipe1[redipeId].AuthorAvtUrl,
-                AuthorDisplayName = mapRecipe1[redipeId].AuthorDisplayName,
-                NumberOfComment = mapRecipe1[redipeId].NumberOfComment,
-                VoteDiff = mapRecipe1[redipeId].VoteDiff,
-                Vote = mapRecipe1[redipeId].Vote,
+                Id = Guid.Parse(mapRecipe[redipeId].Id),
+                AuthorId = Guid.Parse(mapRecipe[redipeId].AuthorId),
+                Title = mapRecipe[redipeId].Title,
+                Description = mapRecipe[redipeId].Description,
+                RecipeImgUrl = mapRecipe[redipeId].RecipeImgUrl,
+                AuthorAvtUrl = mapRecipe[redipeId].AuthorAvtUrl,
+                AuthorDisplayName = mapRecipe[redipeId].AuthorDisplayName,
+                NumberOfComment = mapRecipe[redipeId].NumberOfComment,
+                VoteDiff = mapRecipe[redipeId].VoteDiff,
+                Vote = mapRecipe[redipeId].Vote,
                 CreatedAt = v.CreatedAt,
                 UpdatedAt = v.UpdatedAt
             };

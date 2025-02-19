@@ -4,9 +4,7 @@ import { useRouter } from "expo-router";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import InteractionSection from "./InteractionSection";
-import { RefObject, useRef } from "react";
-import BottomSheet from "@gorhom/bottom-sheet";
-import SettingRecipe from "./SettingRecipe";
+import { RefObject } from "react";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 
 const Recipe = ({
@@ -34,7 +32,7 @@ const Recipe = ({
   const handleOnPress = () => {
     router.push({
       pathname: "/(protected)/community/[id]",
-      params: { id, authorId }
+      params: { id }
     });
   };
   const handleTouchMenu = () => {
@@ -45,18 +43,21 @@ const Recipe = ({
 
   return (
     <TouchableWithoutFeedback onPress={handleOnPress}>
-      <View className='bg-white_black100 rounded-3xl pb-4'>
+      <View className='bg-white_black100 w-[94vw] rounded-3xl pb-4'>
         <View className='flex-between flex-row px-4 py-2'>
           {authorId && authorDisplayName && authorAvtUrl && (
             <TouchableWithoutFeedback
               onPress={() => {
-                console.log("go to user detail");
+                router.push({
+                  pathname: "/(protected)/user/[id]",
+                  params: { id: authorId }
+                });
               }}
             >
               <View className='flex-center flex-row gap-2'>
                 <Image
                   source={{ uri: authorAvtUrl }}
-                  className='size-[30px] rounded-full'
+                  className='mr-1 size-[30px] rounded-full'
                 />
                 <Text className='paragraph-medium text-black_white'>
                   {authorDisplayName}
@@ -81,7 +82,7 @@ const Recipe = ({
             style={{ width: "100%", height: 240, borderRadius: 10 }}
           />
 
-          <View className='gap-3 px-4'>
+          <View className='gap-3'>
             <View className='gap-1'>
               <Text
                 numberOfLines={1}
@@ -93,7 +94,7 @@ const Recipe = ({
               <Text
                 numberOfLines={4}
                 ellipsizeMode='tail'
-                className='body-regular text-black_white'
+                className='paragraph-regular text-black_white'
               >
                 {description}
               </Text>

@@ -28,6 +28,10 @@ import cookingModeEn from "../locales/en/cookingMode.json";
 import cookingModeVi from "../locales/vi/cookingMode.json";
 import loginWithGoogleEn from "../locales/en/auth/loginWithGoogle.json";
 import loginWithGoogleVi from "../locales/vi/auth/loginWithGoogle.json";
+import reportEn from "../locales/en/report.json";
+import reportVi from "../locales/vi/report.json";
+import notificationEn from "../locales/en/notification.json";
+import notificationVi from "../locales/vi/notification.json";
 
 export default {
   communityEn,
@@ -59,5 +63,9 @@ export default {
   cookingModeEn,
   cookingModeVi,
   loginWithGoogleEn,
-  loginWithGoogleVi
+  loginWithGoogleVi,
+  reportEn,
+  reportVi,
+  notificationEn,
+  notificationVi,
 };

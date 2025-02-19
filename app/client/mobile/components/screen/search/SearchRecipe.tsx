@@ -9,27 +9,29 @@ import {
   FlatList,
   RefreshControl
 } from "react-native";
-import { AntDesign } from "@expo/vector-icons";
-import { colors } from "@/constants/colors";
-import { Filter } from "@/components/common/SVG";
-import { filterUniqueItems } from "@/utils/dataFilter";
-import { globalStyles } from "@/components/common/GlobalStyles";
-import { Image } from "expo-image";
-import { router, UnknownOutputParams } from "expo-router";
-import {
-  removeTagValue,
-  selectSearchTagCodes,
-  selectSearchTags
-} from "@/slices/searchRecipe.slice";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { useSearchRecipes } from "@/api/search";
-import { useTranslation } from "react-i18next";
-import Feather from "@expo/vector-icons/Feather";
-import Recipe from "@/components/common/Recipe";
-import useColorizer from "@/hooks/useColorizer";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import useDarkMode from "@/hooks/useDarkMode";
+import { Image } from "expo-image";
+import {
+  createUserSearchRecipeKeyword,
+  useSearchRecipeHistory,
+  useSearchRecipes
+} from "@/api/search";
+import { router } from "expo-router";
+import { filterUniqueItems } from "@/utils/dataFilter";
+import { removeTagValue, selectSearchTagCodes, selectSearchTags } from "@/slices/searchRecipe.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useTranslation } from "react-i18next";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
+import SearchRecipeResult from "../community/SearchRecipeResult";
+import SearchHistory from "./SearchHistory";
+import uuid from "react-native-uuid";
+import { SearchRecipeType } from "@/types/recipe";
+import { globalStyles } from "@/components/common/GlobalStyles";
 import useDebounce from "@/hooks/useDebounce";
 import SelectedTag from "./SelectedTag";
+import { Filter } from "@/components/common/SVG";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -42,6 +44,7 @@ type ResultSectionProps = {
   isDoneSearching: boolean;
   onRefresh: () => Promise<void>;
   handleLoadMore: () => Promise<void>;
+  handleSelectSearchResult: () => void;
 };
 
 const ResultSection = memo(
@@ -50,7 +53,8 @@ const ResultSection = memo(
     isRefetching,
     isDoneSearching,
     onRefresh,
-    handleLoadMore
+    handleLoadMore,
+    handleSelectSearchResult
   }: ResultSectionProps) => {
     const { t } = useTranslation("search");
 
@@ -79,7 +83,10 @@ const ResultSection = memo(
           }}
           renderItem={({ item, index }) => (
             <>
-              <Recipe {...item} />
+              <SearchRecipeResult
+                {...item}
+                handleSelectSearchResult={handleSelectSearchResult}
+              />
               {searchResults !== undefined && index !== searchResults.length - 1 && (
                 <View className='my-4 h-[1px] w-full bg-gray-300' />
               )}
@@ -125,6 +132,9 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const isDarkMode = useDarkMode();
   const debouncedValue = useDebounce(searchValue, 800);
 
+  const { mutateAsync: createSearchHistory } = createUserSearchRecipeKeyword();
+  const { data: searchRecipeHistoryData, isLoading: isLoadingSearchRecipeHistory } =
+    useSearchRecipeHistory();
   const {
     data,
     isFetched,
@@ -160,7 +170,6 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
   const handleCancel = useCallback(() => {
     setSearchValue("");
-    // dispatch(addKeyword(""));
     setOnFocus(false);
     Keyboard.dismiss();
     if (tagCodes.length <= 0) setSearchResults([]);
@@ -169,7 +178,6 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const handleSearch = useCallback(
     (text: string) => {
       setSearchValue(text);
-      // dispatch(addKeyword(tex
     },
     [dispatch]
   );
@@ -183,6 +191,14 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
       fetchNextPage();
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const handleSelectSearchHistory = (item: string) => {
+    setSearchValue(item);
+  };
+
+  const handleSelectSearchResult = () => {
+    createSearchHistory({ keyword: searchValue });
+  };
 
   useEffect(() => {
     if (data?.pages && (searchValue !== "" || tagCodes.length > 0)) {
@@ -279,6 +295,30 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
           })}
         </View>
       </View>
+      {/* History section */}
+      {!isLoadingSearchRecipeHistory && searchRecipeHistoryData && searchValue === "" && (
+        <FlatList
+          data={searchRecipeHistoryData.value}
+          keyExtractor={_item => uuid.v4()}
+          scrollEnabled={false}
+          showsVerticalScrollIndicator={false}
+          style={{
+            marginTop: 20,
+            marginLeft: 10
+          }}
+          contentContainerStyle={{
+            gap: 10
+          }}
+          renderItem={item => {
+            return (
+              <SearchHistory
+                item={item.item}
+                handleSelectHistory={handleSelectSearchHistory}
+              />
+            );
+          }}
+        />
+      )}
 
       {/* Result section */}
       {(searchValue !== "" || tagCodes.length > 0) && (
@@ -288,6 +328,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
           isRefetching={isRefetching}
           onRefresh={onRefresh}
           handleLoadMore={handleLoadMore}
+          handleSelectSearchResult={handleSelectSearchResult}
         />
       )}
     </View>

@@ -87,7 +87,7 @@ const Welcome = () => {
         <View className='relative h-full px-3.5'>
           <Button
             onPress={browseAsGuest}
-            className={`absolute right-[26px] ${isAndroid ? "top-[2%]" : "top-[6%]"} rounded-full bg-white px-4 py-3`}
+            className={`absolute right-[26px] ${isAndroid ? "top-[2%]" : "top-[6%]"} rounded-full bg-white_black200 px-4 py-3`}
           >
             <Text className='font-sans text-primary'>Skip</Text>
           </Button>
@@ -95,21 +95,21 @@ const Welcome = () => {
           <Animated.View className='mt-[20vh] flex gap-3.5'>
             <Animated.Text
               style={textStyles[0]}
-              className='font-bold text-5xl text-black'
+              className='font-bold text-6xl text-black'
             >
               Welcome to
             </Animated.Text>
 
             <Animated.Text
               style={textStyles[1]}
-              className='font-bold text-4xl text-primary'
+              className='font-bold text-5xl text-primary'
             >
               Tastopia
             </Animated.Text>
 
             <Animated.Text
               style={textStyles[2]}
-              className='font-sans text-lg text-white'
+              className='font-sans text-xl text-white'
             >
               Where Flavors Unite
             </Animated.Text>
@@ -117,11 +117,11 @@ const Welcome = () => {
 
           <View className='absolute bottom-[6vh] left-3.5 flex w-full gap-4'>
             <View className='flex-row items-center justify-center gap-5'>
-              <View className='h-[1px] grow bg-gray-300' />
-              <Animated.Text className='text-center font-medium text-sm text-gray-300'>
+              <View className='h-[1px] grow bg-gray-300 dark:bg-black-200' />
+              <Animated.Text className='text-center font-medium text-lg text-gray-300'>
                 Sign in with
               </Animated.Text>
-              <View className='h-[1px] grow bg-gray-300' />
+              <View className='h-[1px] grow bg-gray-300 dark:bg-black-200' />
             </View>
 
             <View className='flex items-center'>
@@ -129,7 +129,7 @@ const Welcome = () => {
                 onPress={() => {
                   loginWithGoogle();
                 }}
-                className='rounded-full border border-gray-300 bg-white p-3'
+                className='rounded-full border dark:border-0 border-gray-300 bg-white_black200 p-3'
               />
             </View>
 
@@ -143,7 +143,7 @@ const Welcome = () => {
             </Button>
 
             <Pressable onPress={navigateToLoginScreen}>
-              <Text className='text-center font-medium text-sm text-gray-300'>
+              <Text className='text-center font-medium text-lg text-gray-300'>
                 Already have an account?{" "}
                 <Text className='font-medium text-white underline'>Sign In</Text>
               </Text>

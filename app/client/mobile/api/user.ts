@@ -8,6 +8,7 @@ import { stringify } from "@/utils/debug";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { UserState } from "@/slices/user.slice";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
+import { IRegisterAccountDTO } from "@/generated/interfaces/identity.interface";
 
 export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {
@@ -104,7 +105,7 @@ export const useRegister = () => {
   return useMutation<
     SignUpResponse,
     Error,
-    { data: SignUpParams; type: IDENTIFIER_TYPE }
+    { data: IRegisterAccountDTO; type: IDENTIFIER_TYPE }
   >({
     mutationKey: ["register"],
     mutationFn: async ({ data, type }) => {
@@ -265,6 +266,69 @@ export const useUpdateUser = () => {
 
         throw new Error("An error has occurred.");
       }
+    }
+  });
+};
+
+type FollowUnfollowUserResponse = {
+  followerId: string;
+  followingId: string;
+  isFollowing: boolean;
+};
+
+export const useFollowUnfollowUser = () => {
+  return useMutation<FollowUnfollowUserResponse, Error, { accountId: string }>({
+    mutationFn: async ({ accountId }) => {
+      const { data } = await protectedAxiosInstance.post("/api/user/follow-user", {
+        accountId: accountId
+      });
+      return data;
+    }
+  });
+};
+
+export const useGetUserByAccountId = (accountId: string) => {
+  return useQuery<IGetUserDetailsResponse>({
+    queryKey: ["user", accountId],
+    queryFn: async () => {
+      const { data } = await protectedAxiosInstance.post<IGetUserDetailsResponse>(
+        "/api/user/get-user-detail-by-account-id",
+        {
+          accountId: accountId
+        }
+      );
+      return data;
+    },
+    enabled: !!accountId
+  });
+};
+
+export const useReportUserReason = (language: string) => {
+  return useQuery<ReportRecipeCommentReasonResponse>({
+    queryKey: ["reportUserReason", language],
+    queryFn: async () => {
+      const { data } =
+        await protectedAxiosInstance.post<ReportRecipeCommentReasonResponse>(
+          "/api/user/get-report-reasons",
+          {
+            language
+          }
+        );
+      return data;
+    },
+    enabled: !!language
+  });
+};
+
+export const useReportUser = () => {
+  return useMutation<IUserReportUserResponse, Error, IUserReportUserDTO>({
+    mutationFn: async ({ accountId, reasonCodes, additionalDetails }) => {
+      const { data } = await protectedAxiosInstance.post("/api/user/user-report-user", {
+        accountId,
+        reasonCodes,
+        additionalDetails
+      });
+      return data;
     }
   });
 };

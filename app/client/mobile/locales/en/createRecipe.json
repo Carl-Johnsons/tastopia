@@ -24,7 +24,12 @@
   "validation": {
     "title": "Please enter recipe title",
     "description": "Please enter recipe description",
-    "serves": "Please enter recipe serves",
+    "serves": {
+      "required": "Please enter recipe serves",
+      "typeError": "Recipe serves must be a number",
+      "positive": "Recipe serves must be a positive number",
+      "integer": "Recipe serves must be a whole number"
+    },
     "cookTime": "Please enter recipe cook time",
     "image": "Please upload recipe image",
     "step": "Please enter cooking step",

@@ -10,10 +10,13 @@ import {
   MAIN_PATH,
   MENU_PATH,
   NOTIFICATION_PATH,
-  SEARCH_PATH
+  SEARCH_PATH,
+  USER_PATH
 } from "@/constants/paths";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "./colors";
+import Protected from "@/components/Protected";
+import { ROLE } from "@/slices/auth.slice";
 
 type TabIconType = {
   icon: ReactElement | undefined;
@@ -182,18 +185,24 @@ export const menuList: Menu[] = [
       {
         path: NOTIFICATION_PATH,
         icon: ({ color, focused }) => (
-          <TabIcon
-            icon={
-              <Feather
-                name='bell'
-                size={24}
-                color={color}
-              />
-            }
-            color={color}
-            translateCode='notification'
-            focused={focused}
-          />
+          <Protected
+            excludedRoles={[ROLE.GUEST]}
+            forceDisplay
+            requiredLogin
+          >
+            <TabIcon
+              icon={
+                <Feather
+                  name='bell'
+                  size={24}
+                  color={color}
+                />
+              }
+              color={color}
+              translateCode='notification'
+              focused={focused}
+            />
+          </Protected>
         ),
         code: "NOTIFICATION",
         translateCode: "notification",
@@ -222,6 +231,26 @@ export const menuList: Menu[] = [
         includeInMainTab: {
           position: 5
         }
+      },
+      {
+        path: USER_PATH,
+        icon: ({ color, focused }) => (
+          <TabIcon
+            icon={
+              <Feather
+                name='menu'
+                size={24}
+                color={color}
+              />
+            }
+            color={color}
+            translateCode='user'
+            focused={focused}
+          />
+        ),
+        code: "USER",
+        translateCode: "user",
+        hidden: true
       }
     ]
   }
