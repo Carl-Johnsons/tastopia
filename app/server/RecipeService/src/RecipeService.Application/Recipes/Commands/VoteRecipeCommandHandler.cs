@@ -149,7 +149,8 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
                     {
                         redirectUri = $"{CLIENT_URI.MOBILE.COMMUNITY}/{recipeId}"
                     }),
-                    ImageUrl = user.AvtUrl
+                    ImageUrl = user.AvtUrl,
+                    RecipientIds = [recipe.AuthorId]
                 });
 
             }
