@@ -185,7 +185,7 @@ const CookingMode = () => {
   const sliderData =
     sortedSteps
       ?.find(item => item.ordinalNumber === currentStep)
-      ?.attachedImageUrls?.filter(item => item) || [];
+      ?.attachedImageUrls?.filter((item: any) => item) || [];
 
   useEffect(() => {
     const isMounted = true;
