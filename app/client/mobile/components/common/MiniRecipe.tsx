@@ -52,7 +52,7 @@ export default function MiniRecipe({
             style={{ width: "100%", height: "60%", borderRadius: 19 }}
           />
 
-          {voteDiff && vote && (
+          {voteDiff !== undefined && vote !== undefined && (
             <View className='absolute left-0 top-0'>
               <InteractionSection
                 containerClassName='bg-white_black200 rounded-full'
