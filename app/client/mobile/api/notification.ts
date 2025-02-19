@@ -1,10 +1,11 @@
 import { protectedAxiosInstance } from "@/constants/host";
 import { SETTING_VALUE } from "@/constants/settings";
+import { IPaginatedNotificationListResponse } from "@/generated/interfaces/notification.interface";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { selectSetting } from "@/slices/setting.slice";
 import { stringify } from "@/utils/debug";
 import { AxiosError } from "axios";
-import { useInfiniteQuery, useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 
 export const useGetNotification = () => {
   const accessToken = selectAccessToken();
@@ -14,8 +15,6 @@ export const useGetNotification = () => {
     queryKey: "getNotification",
     enabled: !!accessToken,
     queryFn: async ({ pageParam = 0 }) => {
-      // const url = ?lang=${LANGUAGE === SETTING_VALUE.LANGUAGE.ENGLISH ? "en" : "vi"}&skip=${SKIP}`;
-
       try {
         const { data } =
           await protectedAxiosInstance.get<IPaginatedNotificationListResponse>(
