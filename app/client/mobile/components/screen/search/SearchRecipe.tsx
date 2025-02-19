@@ -9,22 +9,27 @@ import {
   FlatList,
   RefreshControl
 } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
-import { Filter } from "@/components/common/SVG";
-import { globalStyles } from "@/components/common/GlobalStyles";
-import useDebounce from "@/hooks/useDebounce";
 import { AntDesign } from "@expo/vector-icons";
-import useDarkMode from "@/hooks/useDarkMode";
-import { Image } from "expo-image";
-import { useSearchRecipes } from "@/api/search";
-import { router } from "expo-router";
-import Recipe from "@/components/common/Recipe";
-import { filterUniqueItems } from "@/utils/dataFilter";
-import { selectSearchTagCodes } from "@/slices/searchRecipe.slice";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { useTranslation } from "react-i18next";
-import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import { Filter } from "@/components/common/SVG";
+import { filterUniqueItems } from "@/utils/dataFilter";
+import { globalStyles } from "@/components/common/GlobalStyles";
+import { Image } from "expo-image";
+import { router, UnknownOutputParams } from "expo-router";
+import {
+  removeTagValue,
+  selectSearchTagCodes,
+  selectSearchTags
+} from "@/slices/searchRecipe.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useSearchRecipes } from "@/api/search";
+import { useTranslation } from "react-i18next";
+import Feather from "@expo/vector-icons/Feather";
+import Recipe from "@/components/common/Recipe";
+import useColorizer from "@/hooks/useColorizer";
+import useDarkMode from "@/hooks/useDarkMode";
+import useDebounce from "@/hooks/useDebounce";
+import SelectedTag from "./SelectedTag";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -48,6 +53,7 @@ const ResultSection = memo(
     handleLoadMore
   }: ResultSectionProps) => {
     const { t } = useTranslation("search");
+
     return (
       <View className='mt-6'>
         <FlatList
@@ -107,9 +113,13 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const { t } = useTranslation("search");
   const dispatch = useAppDispatch();
   const tagCodes = useAppSelector(selectSearchTagCodes);
+  console.log({ tagCodes });
+
+  const selectedTagsStore = useAppSelector(selectSearchTags);
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchResults, setSearchResults] = useState<SearchRecipeType[]>();
+  const [selectedTags, setSelectedTags] = useState<SelectedTag[]>(selectedTagsStore);
 
   const textInputRef = useRef<TextInput>(null);
   const isDarkMode = useDarkMode();
@@ -191,6 +201,16 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   //     return () => {};
   //   }, [])
   // );
+
+  const handleRemoveTag = useCallback((code: string) => {
+    dispatch(removeTagValue(code));
+    setSelectedTags(prev => prev.filter(t => t.code !== code));
+  }, []);
+
+  useEffect(() => {
+    setSelectedTags(selectedTagsStore);
+  }, [selectedTagsStore]);
+
   return (
     <View>
       {/* Search input */}
@@ -242,6 +262,22 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
         <TouchableWithoutFeedback onPress={handleFilter}>
           <Filter />
         </TouchableWithoutFeedback>
+      </View>
+
+      {/* Selected tags */}
+      <View>
+        <View className='mt-4 flex-row flex-wrap'>
+          {selectedTags.map((tag, index) => {
+            return (
+              <SelectedTag
+                key={`${tag}-${index}`}
+                code={tag.code}
+                value={tag.value}
+                onRemove={handleRemoveTag}
+              />
+            );
+          })}
+        </View>
       </View>
 
       {/* Result section */}

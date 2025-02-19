@@ -7,6 +7,7 @@ import { useIngredientPredictMutation } from "@/api/ingredient-predict";
 import { useNavigation } from "expo-router";
 import { useRouter } from "expo-router";
 import { Worklets } from "react-native-worklets-core";
+import uuid from "react-native-uuid";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import {
@@ -29,6 +30,8 @@ import {
 } from "react-native-vision-camera";
 import { useFastApiWebsocket } from "@/hooks/capture";
 import { FontAwesome } from "@expo/vector-icons";
+import { useAppDispatch } from "@/store/hooks";
+import { addTagValue } from "@/slices/searchRecipe.slice";
 
 const RNFS = require("react-native-fs");
 const { width: windowWidth } = Dimensions.get("window");
@@ -38,13 +41,14 @@ const Capture = () => {
   const [capturedImage, setCapturedImage] = useState("");
   const [device, setDevice] = useState<CameraDevice | undefined>(undefined);
   const [deviceCode, setDeviceCode] = useState<CameraPosition>("back");
+  const [enableFlash, setEnableFlash] = useState(false);
   const [isCameraActive, setIsCameraActive] = useState(true);
   const [isImageView, setIsImageView] = useState(false);
   const [prediction, setPrediction] = useState<IngredientStreamResponse>();
   const { mutateAsync: predictAsync } = useIngredientPredictMutation();
-  const [enableFlash, setEnableFlash] = useState(false);
   const camera = useRef<Camera>(null);
   const devices = useCameraDevices();
+  const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const router = useRouter();
 
@@ -194,9 +198,11 @@ const Capture = () => {
     },
     [device?.supportsFocus]
   );
+
   const toggleFlash = () => {
     setEnableFlash(!enableFlash);
   };
+
   const handleBack = () => {
     if (isImageView) {
       setIsImageView(false);
@@ -207,11 +213,10 @@ const Capture = () => {
   };
 
   const handleSearch = useCallback(() => {
+    dispatch(addTagValue({ code: uuid.v4(), value: ingredientPredict }));
+
     router.push({
-      pathname: "/(protected)/search",
-      params: {
-        filter: ingredientPredict
-      }
+      pathname: "/(protected)/search"
     });
   }, [ingredientPredict]);
 
