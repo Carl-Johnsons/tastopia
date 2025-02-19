@@ -1,6 +1,7 @@
+import { API_GATEWAY_HOST } from "@/constants/host";
 import { selectUserId } from "@/slices/user.slice";
 import { transformPlatformURI } from "@/utils/functions";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 type Props = {
   onMessageHandler?: (event: MessageEvent<any>) => void;
@@ -10,7 +11,7 @@ const RECONNECT_INTERVAL = 1000;
 
 export const useFastApiWebsocket = ({ onMessageHandler }: Props) => {
   const userId = selectUserId();
-  const WEBSOCKET_URL = transformPlatformURI(`ws://localhost:5009/ws/video/${userId}`);
+  const WEBSOCKET_URL = transformPlatformURI(`ws://${API_GATEWAY_HOST}:5009/ws/video/${userId}`);
 
   const wsRef = useRef<WebSocket | null>(null);
 
