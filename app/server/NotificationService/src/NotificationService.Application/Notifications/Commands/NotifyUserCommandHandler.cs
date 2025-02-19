@@ -17,6 +17,7 @@ public record NotifyUserCommand : IRequest<Result>
 {
     public List<Actor> PrimaryActors { get; set; } = [];
     public List<Actor> SecondaryActors { get; set; } = [];
+    public List<Guid> RecipientIds { get; set; } = [];
     public NotificationTemplateCode TemplateCode { get; set; }
     public List<string> Channels { get; set; } = [];
     public string? JsonData { get; set; }
@@ -72,6 +73,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
             JsonData = jsonData,
             TemplateId = template.Id,
             ImageUrl = request.ImageUrl,
+            RecipientIds = request.RecipientIds
         };
 
         _context.Notifications.Add(notification);
@@ -80,7 +82,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
         _logger.LogInformation(JsonConvert.SerializeObject(notification, Formatting.Indented));
 
         // Push the notification to mobile user
-        List<Guid> recipientIds = request.SecondaryActors.Select(sa => sa.ActorId).ToList();
+        List<Guid> recipientIds = request.RecipientIds.ToList();
 
         var expoPushTokens = _context.AccountExpoPushTokens
                                   .Where(aet => recipientIds.Contains(aet.AccountId))
@@ -117,7 +119,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
                 return Result.Failure(NotificationErrors.NotFound, "Actor not found for push notification");
             }
 
-            var recipientIdSet = notification.SecondaryActors.Select(merge => merge.ActorId.ToString())
+            var recipientIdSet = notification.RecipientIds.Select(merge => merge.ToString())
                                                              .ToHashSet();
 
             var settingRes = await _grpcUserClient.GetUserSettingAsync(new GrpcGetUserSettingRequest

@@ -15,6 +15,7 @@ public class Notification : BaseMongoDBAuditableEntity
     public string? ImageUrl { get; set; }
     [MaxLength(500)]
     public string? JsonData { get; set; }
+    public List<Guid> RecipientIds { get; set; } = [];
     public virtual NotificationTemplate? Template { get; set; }
 }
 

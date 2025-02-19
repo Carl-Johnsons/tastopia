@@ -200,4 +200,51 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
 
         return grpcResult;
     }
+
+    public override async Task<GrpcListAccountIds> GetUserFollower(GrpcAccountIdRequest request, ServerCallContext context)
+    {
+        if (string.IsNullOrEmpty(request.AccountId))
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "AccountId must not be null or empty."));
+        }
+
+        var accountId = Guid.Parse(request.AccountId);
+
+        var response = await _sender.Send(new GetUserFollowerIdsQuery
+        {
+            AccountId = accountId,
+        });
+        response.ThrowIfFailure();
+
+        var result = new GrpcListAccountIds
+        {
+            AccountIds = { response.Value!.Select(id => id.ToString()) }
+        };
+        return result;
+
+
+    }
+
+    public override async Task<GrpcListAccountIds> GetUserFollowing(GrpcAccountIdRequest request, ServerCallContext context)
+    {
+        if (string.IsNullOrEmpty(request.AccountId))
+        {
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "AccountId must not be null or empty."));
+        }
+
+        var accountId = Guid.Parse(request.AccountId);
+
+        var response = await _sender.Send(new GetUserFollowingIdsQuery
+        {
+            AccountId = accountId,
+        });
+        response.ThrowIfFailure();
+
+        var result = new GrpcListAccountIds
+        {
+            AccountIds = { response.Value!.Select(id => id.ToString()) }
+        };
+        return result;
+    }
+
 }

@@ -12,6 +12,8 @@ service GrpcUser {
     rpc GetUserSetting(GrpcGetUserSettingRequest) returns (GrpcUserSetting);
     // This will throw exception when user can't be created
     rpc CreateUser(GrpcCreateUserRequest) returns (GrpcEmpty);
+    rpc GetUserFollowing(GrpcAccountIdRequest) returns (GrpcListAccountIds);
+    rpc GetUserFollower(GrpcAccountIdRequest) returns (GrpcListAccountIds);
 }
 
 message GrpcEmpty {}

@@ -138,7 +138,8 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
                     {
                         redirectUri = $"{CLIENT_URI.MOBILE.COMMUNITY}/{recipeId}"
                     }),
-                    ImageUrl = user.AvtUrl
+                    ImageUrl = user.AvtUrl,
+                    RecipientIds = [recipe.AuthorId]
                 });
             }
             return Result<RecipeCommentResponse?>.Success(result);
