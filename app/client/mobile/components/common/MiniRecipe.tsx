@@ -36,7 +36,7 @@ export default function MiniRecipe({
   return (
     <TouchableWithoutFeedback onPress={handleOnPress}>
       <View
-        className={`bg-white_black100 h-[200px] w-[35vw] rounded-3xl ${containerClassName}`}
+        className={`bg-white_black h-[200px] w-[35vw] rounded-3xl ${containerClassName}`}
         style={Platform.select({
           ios: {
             shadowOffset: { width: 0, height: 2 },
@@ -55,7 +55,7 @@ export default function MiniRecipe({
           {voteDiff && vote && (
             <View className='absolute left-0 top-0'>
               <InteractionSection
-                containerClassName='bg-white rounded-full'
+                containerClassName='bg-white_black200 rounded-full'
                 recipeId={id}
                 vote={vote}
                 voteDiff={voteDiff}
@@ -63,7 +63,7 @@ export default function MiniRecipe({
             </View>
           )}
 
-          <View className='px-1'>
+          <View className='px-2'>
             <Text
               numberOfLines={1}
               ellipsizeMode='tail'

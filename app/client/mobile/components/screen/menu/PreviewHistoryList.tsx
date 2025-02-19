@@ -67,8 +67,6 @@ export default function PreviewHistoryList() {
   );
 
   useEffect(() => {
-    console.log("Data", stringify(data));
-
     if (data?.pages) {
       setHistory(filterUniqueItems(data.pages));
     }
@@ -93,6 +91,7 @@ export default function PreviewHistoryList() {
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.1}
       ItemSeparatorComponent={() => <View className='w-[20px]' />}
+      showsHorizontalScrollIndicator={false}
       ListEmptyComponent={() => (
         <View className='flex-center'>
           <Text className='text-center font-light text-lg text-gray-500'>
