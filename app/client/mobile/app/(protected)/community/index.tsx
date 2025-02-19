@@ -2,7 +2,14 @@ import Recipe from "@/components/common/Recipe";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Empty from "@/components/screen/community/Empty";
 import Header from "@/components/screen/community/Header";
-import { View, RefreshControl, SafeAreaView, FlatList, Appearance } from "react-native";
+import {
+  View,
+  RefreshControl,
+  SafeAreaView,
+  FlatList,
+  Appearance,
+  StatusBar
+} from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { router } from "expo-router";
 import useColorizer from "@/hooks/useColorizer";
@@ -99,6 +106,7 @@ const Community = () => {
     <SafeAreaView
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
+      <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
       <FlatList
         removeClippedSubviews
         data={recipes}

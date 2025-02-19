@@ -11,7 +11,7 @@ import useColorizer from "@/hooks/useColorizer";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useLocalSearchParams } from "expo-router";
 import { useRef, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Profile = () => {
@@ -59,6 +59,7 @@ const Profile = () => {
     <SafeAreaView
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
+      <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
       <Header
         accountId={accountDetailData.accountId}
         displayName={accountDetailData.displayName}
