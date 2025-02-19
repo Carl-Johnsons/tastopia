@@ -32,7 +32,7 @@ export const LogoutButton = () => {
   return (
     <Protected excludedRoles={[]}>
       <Button
-        className='rounded-lg border-gray-300 py-2.5'
+        className='rounded-lg border border-gray-300 py-2.5'
         onPress={logout}
         style={[animatedStyles]}
       >

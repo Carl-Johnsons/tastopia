@@ -37,7 +37,7 @@ import { ArrowBackIcon, CheckCircleIcon } from "@/constants/icons";
 import i18n from "@/i18n/i18next";
 import { REPORT_TYPE } from "@/constants/settings";
 import Loading from "./Loading";
-import { LANGUAGES } from "@/constants/languages";
+import { RecipeResponse } from "@/types/recipe";
 
 type Props = {
   id: string;
@@ -253,7 +253,7 @@ type ReportSettingProps = {
 
 const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingProps) => {
   const { c } = useColorizer();
-  const { black, white, primary } = colors;
+  const { black, white, primary, gray } = colors;
   const { t } = useTranslation("report");
   const currentLanguage = i18n.languages[0];
   const [report, setReport] = useState<Report>({
@@ -373,6 +373,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
                   borderBottomColor: primary,
                   color: c(black.DEFAULT, white.DEFAULT)
                 }}
+                placeholderTextColor={gray[500]}
                 placeholder={t("additionalDetails")}
               />
             </View>

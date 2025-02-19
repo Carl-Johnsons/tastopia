@@ -15,7 +15,6 @@ import BottomSheet, {
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
 import { AntDesign, MaterialIcons, Octicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import useIsOwner from "@/hooks/auth/useIsOwner";
 import {
@@ -32,7 +31,6 @@ import { ArrowBackIcon, CheckCircleIcon } from "@/constants/icons";
 import i18n from "@/i18n/i18next";
 import { REPORT_TYPE } from "@/constants/settings";
 import Loading from "./Loading";
-import { LANGUAGES } from "@/constants/languages";
 
 type Props = {
   id: string;
@@ -413,7 +411,7 @@ const UpdateSetting = ({
   updateComment
 }: UpdateSettingProps) => {
   const { c } = useColorizer();
-  const { black, white, primary } = colors;
+  const { black, white, primary, gray } = colors;
   const { t } = useTranslation("report", { keyPrefix: "update" });
   const [content, setContent] = useState(defaultContent);
   const queryClient = useQueryClient();
@@ -488,6 +486,7 @@ const UpdateSetting = ({
               borderBottomColor: primary,
               color: c(black.DEFAULT, white.DEFAULT)
             }}
+            placeholderTextColor={gray[500]}
             placeholder={t("placeholder")}
           />
         </View>
