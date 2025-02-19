@@ -31,6 +31,7 @@ import { colors } from "@/constants/colors";
 import SearchRecipeResult from "../community/SearchRecipeResult";
 import SearchHistory from "./SearchHistory";
 import uuid from "react-native-uuid";
+import { SearchRecipeType } from "@/types/recipe";
 
 type SearchUserProps = {
   onFocus: boolean;
