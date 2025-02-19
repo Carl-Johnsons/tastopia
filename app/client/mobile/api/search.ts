@@ -1,5 +1,6 @@
 import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { protectedAxiosInstance } from "@/constants/host";
+import { SearchRecipeResponse } from "@/types/recipe";
 
 const useSearchUsers = (keyword: string) => {
   return useInfiniteQuery<SearchUserResponse>({
