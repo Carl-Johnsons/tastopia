@@ -6,6 +6,7 @@ export type NotificationType = "Community" | "System";
 
 export interface NotificationState {
   type: NotificationType | null;
+  pushToken: string | null;
 }
 
 export type SaveNotificationDataAction = {
@@ -15,9 +16,11 @@ export type SaveNotificationDataAction = {
 
 const initialState: NotificationState = {
   type: "Community",
+  pushToken: null
 };
 
 export const selectNotificationType = () => useAppSelector(state => state.notification.type);
+export const selectPushToken = () => useAppSelector(state => state.notification.pushToken);
 
 export const NotificationSlice = createSlice({
   name: "notification",
