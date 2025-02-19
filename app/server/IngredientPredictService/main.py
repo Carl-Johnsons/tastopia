@@ -79,6 +79,7 @@ async def health():
 @app.post("/api/ingredient-predict")
 async def predict(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
+    image = image.rotate(270, expand=True)
 
     results = model(image, verbose=False)
 
