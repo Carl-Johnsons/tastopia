@@ -34,7 +34,7 @@ export const LoginForm = (props: LoginFormProps) => {
     <View className={`gap-[2vh] ${props.className}`}>
       <View>
         <Text className='mb-3 font-sans text-lg text-gray-600'>
-          E-mail or phone number
+          E-mail, phone number or username
         </Text>
         <Controller
           name='identifier'
@@ -44,7 +44,7 @@ export const LoginForm = (props: LoginFormProps) => {
               value={value}
               onBlur={onBlur}
               onChangeText={onChange}
-              placeholder='Your email or phone number'
+              placeholder='Your email, phone number or username'
             />
           )}
         />
@@ -126,7 +126,7 @@ export const CustomInput = ({
       value={value}
       autoCapitalize='none'
       placeholder={placeholder}
-      className={`border-gray-300 p-5 focus:border-primary ${className}`}
+      className={`border-gray-300 p-5 focus:border-primary ${className} text-black_white`}
       placeholderTextColor={gray[300]}
       secureTextEntry={secureTextEntry}
       cursorColor={primary}
