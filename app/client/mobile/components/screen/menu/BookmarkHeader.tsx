@@ -12,7 +12,7 @@ const BookmarkHeader = () => {
   const { black, white } = colors;
 
   return (
-    <View className='mb-6 px-4'>
+    <View className='mb-6 px-4 pt-2'>
       <View className='flex-row justify-between'>
         <ArrowBackIcon
           width={28}

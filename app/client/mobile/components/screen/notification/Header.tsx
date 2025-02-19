@@ -28,7 +28,7 @@ export default function Header() {
   });
 
   return (
-    <View className='bg-white_black200'>
+    <View className='bg-white_black200 pt-2'>
       <View
         style={styles.wrapper}
         className='relative flex-row items-center justify-between px-4'

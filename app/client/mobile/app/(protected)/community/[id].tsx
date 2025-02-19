@@ -9,7 +9,8 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  FlatList
+  FlatList,
+  StatusBar
 } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { globalStyles } from "@/components/common/GlobalStyles";
@@ -200,6 +201,7 @@ const RecipeDetail = () => {
     <SafeAreaView
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
+      <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
       {!isLoadingRecipeDetail && !isRefetchingRecipeDetail && recipeDetailData ? (
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}

@@ -18,7 +18,8 @@ import {
   Switch,
   Platform,
   FlatList,
-  Alert
+  Alert,
+  StatusBar
 } from "react-native";
 import * as Speech from "expo-speech";
 import i18n from "@/i18n/i18next";
@@ -269,6 +270,7 @@ const CookingMode = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: c(white.DEFAULT, black[100]) }}>
+      <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
       <View className='size-full'>
         {isLoading || isRefetching ? (
           <View className='flex-center size-full'>

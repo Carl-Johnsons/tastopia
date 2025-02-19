@@ -4,7 +4,7 @@ import MenuBg from "@/components/MenuBg";
 import SettingModal from "@/components/SettingModal";
 import { SavedIcon, SettingIcon, VipIcon, UserIcon } from "@/constants/icons";
 import { FC, useCallback, useRef } from "react";
-import { Text, View, useWindowDimensions } from "react-native";
+import { StatusBar, Text, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SvgProps } from "react-native-svg";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -42,7 +42,7 @@ const Menu = () => {
   const navigationCallbacks = [
     goToProfile,
     useCallback(() => {
-      router.push("/(protected)/menu/bookmark")
+      router.push("/(protected)/menu/bookmark");
     }, []),
     useCallback(() => {
       console.log("Go to subscriptions");
