@@ -1,47 +1,49 @@
+import { useGetBookmarks } from "@/api/recipe";
 import Recipe from "@/components/common/Recipe";
-import { useCallback, useEffect, useRef, useState } from "react";
+import SettingRecipe from "@/components/common/SettingRecipe";
 import Empty from "@/components/screen/community/Empty";
-import Header from "@/components/screen/community/Header";
+import BookmarkHeader from "@/components/screen/menu/BookmarkHeader";
+import { colors } from "@/constants/colors";
+import useColorizer from "@/hooks/useColorizer";
+import { filterUniqueItems } from "@/utils/dataFilter";
+import BottomSheet from "@gorhom/bottom-sheet";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  View,
+  FlatList,
   RefreshControl,
   SafeAreaView,
-  FlatList,
-  Appearance,
-  StatusBar
+  StatusBar,
+  Text,
+  View
 } from "react-native";
-import { filterUniqueItems } from "@/utils/dataFilter";
-import { router } from "expo-router";
-import useColorizer from "@/hooks/useColorizer";
-import { colors } from "@/constants/colors";
-import { useRecipesFeed } from "@/api/recipe";
-import BottomSheet from "@gorhom/bottom-sheet";
-import SettingRecipe from "@/components/common/SettingRecipe";
 
-const Community = () => {
+const bookmark = () => {
   const { c } = useColorizer();
-  const { black, white } = colors;
+  const { white, black } = colors;
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [currentRecipeId, setCurrentRecipeId] = useState("");
   const [currentAuthorId, setCurrentAuthorId] = useState("");
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
-  const [filterSelected, setFilterSelected] = useState<string>("All");
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
-    useRecipesFeed(filterSelected);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+    isStale
+  } = useGetBookmarks();
 
-  const handleCreateRecipe = () => {
-    router.push("/(protected)/community/create-recipe");
-  };
+  const onRefresh = useCallback(() => {
+    if (isStale) {
+      refetch();
+    }
+  }, [isStale]);
 
-  const handleFilter = (key: string) => {
-    setFilterSelected(key);
-  };
-
-  const onRefresh = () => {
-    refetch();
-  };
+  useFocusEffect(onRefresh);
 
   const handleLoadMore = () => {
     if (!isFetchingNextPage && hasNextPage) {
@@ -80,10 +82,15 @@ const Community = () => {
 
   return (
     <SafeAreaView
-      style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
+      style={{
+        flex: 1,
+        backgroundColor: c(white.DEFAULT, black[100])
+      }}
     >
       <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
+      <BookmarkHeader />
       <FlatList
+        className='h-full'
         removeClippedSubviews
         data={recipes}
         keyExtractor={keyExtractor}
@@ -96,15 +103,14 @@ const Community = () => {
         }
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
-        ListHeaderComponent={Header({
-          isRefreshing: isRefetching,
-          handleFilter,
-          filterSelected,
-          handleCreateRecipe
-        })}
         renderItem={renderItem}
-        ListEmptyComponent={() => <Empty />}
       />
+
+      {recipes.length === 0 && (
+        <View className='size-full'>
+          <Empty type='emptyBookmark' />
+        </View>
+      )}
 
       <SettingRecipe
         id={currentRecipeId}
@@ -115,4 +121,4 @@ const Community = () => {
   );
 };
 
-export default Community;
+export default bookmark;

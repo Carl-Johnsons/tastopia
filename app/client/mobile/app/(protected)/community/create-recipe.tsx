@@ -143,7 +143,7 @@ const CreateRecipe = () => {
 
     try {
       const { data: response } = await protectedAxiosInstance.post(
-        "http://localhost:5000/api/recipe/create-recipe",
+        "/api/recipe/create-recipe",
         data,
         {
           headers: {
@@ -221,6 +221,7 @@ const CreateRecipe = () => {
     <SafeAreaView
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
+      <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
       <View className='size-full flex-col'>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -294,7 +295,6 @@ const CreateRecipe = () => {
                         formControl={formControl}
                         errors={errors}
                       />
-
                       {/* Ingredient */}
                       <View>
                         <FlatList
