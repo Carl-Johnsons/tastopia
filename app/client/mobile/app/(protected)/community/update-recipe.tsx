@@ -199,7 +199,7 @@ const UpdateRecipe = () => {
 
     try {
       const { data: _response } = await protectedAxiosInstance.post(
-        "http://localhost:5000/api/recipe/update-recipe",
+        "/api/recipe/update-recipe",
         data,
         {
           headers: {

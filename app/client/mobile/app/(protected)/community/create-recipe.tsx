@@ -143,7 +143,7 @@ const CreateRecipe = () => {
 
     try {
       const { data: response } = await protectedAxiosInstance.post(
-        "http://localhost:5000/api/recipe/create-recipe",
+        "/api/recipe/create-recipe",
         data,
         {
           headers: {
@@ -294,7 +294,6 @@ const CreateRecipe = () => {
                         formControl={formControl}
                         errors={errors}
                       />
-
                       {/* Ingredient */}
                       <View>
                         <FlatList
