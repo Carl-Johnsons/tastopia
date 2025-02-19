@@ -21,30 +21,9 @@ const useIngredientPredictMutation = () => {
         },
         data: formData
       });
-      return data as IngredientPredictResponse;
+      return data as IngredientStreamResponse;
     }
   });
 };
 
-const useIngredientPredictBoxMutation = () => {
-  return useMutation({
-    mutationFn: async ({ file }: Props) => {
-      const formData = new FormData();
-      formData.append("file", file as unknown as Blob);
-
-      const url = "/api/ingredient-predict/box";
-      const { data } = await protectedAxiosInstance.request({
-        url: url,
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-          accept: "application/json"
-        },
-        data: formData
-      });
-      return data as IngredientPredictBoxResponse;
-    }
-  });
-};
-
-export { useIngredientPredictMutation, useIngredientPredictBoxMutation };
+export { useIngredientPredictMutation };

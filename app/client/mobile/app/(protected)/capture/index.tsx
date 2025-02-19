@@ -1,16 +1,20 @@
-// import "react-native-reanimated";
 import { Canvas, rect, DiffRect, rrect } from "@shopify/react-native-skia";
+import { Dimensions, TouchableWithoutFeedback } from "react-native";
+import { EncodingType, readAsStringAsync } from "expo-file-system";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useIngredientPredictMutation } from "@/api/ingredient-predict";
+import { useNavigation } from "expo-router";
 import { useRouter } from "expo-router";
 import { Worklets } from "react-native-worklets-core";
-import { EncodingType, readAsStringAsync } from "expo-file-system";
+import Ionicons from "@expo/vector-icons/Ionicons";
+
 import {
   Alert,
   GestureResponderEvent,
   Image,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from "react-native";
 import {
@@ -23,52 +27,44 @@ import {
   useCameraDevices,
   useFrameProcessor
 } from "react-native-vision-camera";
-import {
-  useIngredientPredictBoxMutation,
-  useIngredientPredictMutation
-} from "@/api/ingredient-predict";
-import { transformPlatformURI } from "@/utils/functions";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { selectUserId } from "@/slices/user.slice";
+import { useFastApiWebsocket } from "@/hooks/capture";
+import { FontAwesome } from "@expo/vector-icons";
 
-var RNFS = require("react-native-fs");
+const RNFS = require("react-native-fs");
+const { width: windowWidth } = Dimensions.get("window");
+// the value returned does not include the bottom navigation bar, I am not sure why yours does.
 
 const Capture = () => {
-  const router = useRouter();
-  const [isActive, setIsActive] = useState(true);
-  const userId = selectUserId();
-  const [deviceCode, setDeviceCode] = useState<CameraPosition>("back");
-  const devices = useCameraDevices();
-  const [device, setDevice] = useState<CameraDevice | undefined>(undefined);
-  const camera = useRef<Camera>(null);
-  const [prediction, setPrediction] = useState<IngredientStreamResponse>();
-  const [isImageView, setIsImageView] = useState(false);
   const [capturedImage, setCapturedImage] = useState("");
+  const [device, setDevice] = useState<CameraDevice | undefined>(undefined);
+  const [deviceCode, setDeviceCode] = useState<CameraPosition>("back");
+  const [isCameraActive, setIsCameraActive] = useState(true);
+  const [isImageView, setIsImageView] = useState(false);
+  const [prediction, setPrediction] = useState<IngredientStreamResponse>();
   const { mutateAsync: predictAsync } = useIngredientPredictMutation();
-  const { mutateAsync: predictBoxAsync } = useIngredientPredictBoxMutation();
+  const [enableFlash, setEnableFlash] = useState(false);
+  const camera = useRef<Camera>(null);
+  const devices = useCameraDevices();
+  const navigation = useNavigation();
+  const router = useRouter();
 
-  const ws = useRef(
-    new WebSocket(transformPlatformURI(`ws://localhost:5009/ws/video/${userId}`))
-  ).current;
-
-  useEffect(() => {
-    ws.onopen = () => {
-      console.log("WebSocket connection opened.");
-    };
-    ws.onmessage = event => {
+  const wsRef = useFastApiWebsocket({
+    onMessageHandler: event => {
       const response = JSON.parse(event.data) as IngredientStreamResponse;
+      // setPrediction(response);
       setPrediction({
         classifications: response.classifications,
-        boxes: [] // Disable predict box because it is very weird
+        boxes: [] // Disable predict box because I haven't find a way to send the buffer array to the server fast enough always delay 1 second
       });
-    };
-    ws.onerror = error => {
-      console.error("WebSocket error:", error);
-    };
-    ws.onclose = () => {
-      console.log("WebSocket closed.");
-    };
-  }, [ws]);
+    }
+  });
+  const [cameraContainerHeight, setCameraContainerHeight] = useState(0);
+
+  // ===== Inferred value =====
+  const ingredientPredict = prediction?.classifications?.[0].name ?? "";
+  const isScreenFocused = navigation.isFocused();
+  const isActive = isCameraActive && isScreenFocused;
+  const shouldRenderCamera = device;
 
   const requestPermissionAsync = async () => {
     let finalPermissionStatus = Camera.getCameraPermissionStatus();
@@ -107,17 +103,11 @@ const Capture = () => {
   }, [deviceCode]);
 
   const captureImage = useCallback(async () => {
-    if (isImageView) {
-      setIsImageView(false);
-      setPrediction(undefined);
-      return;
-    }
-    setPrediction(undefined);
-
     try {
       if (!camera.current) return;
-      setIsImageView(true);
-      const snapshot = await camera.current.takePhoto();
+      const snapshot = await camera.current.takePhoto({
+        flash: enableFlash ? "on" : "off"
+      });
 
       const file = {
         uri: `file://${snapshot.path}`,
@@ -126,27 +116,22 @@ const Capture = () => {
       };
 
       const predictResponse = await predictAsync({ file: file as unknown as Blob });
-      const predictBoxResponse = await predictBoxAsync({ file: file as unknown as Blob });
-      setPrediction({
-        classifications: predictResponse.classifications,
-        boxes: predictBoxResponse.boxes
-      });
+      setIsImageView(true);
+      setPrediction(predictResponse);
 
       setCapturedImage(`file://${snapshot.path}`);
 
-      RNFS.unlink(snapshot.path);
+      // RNFS.unlink(snapshot.path);
     } catch (error) {
-      console.error("Error capturing image:", error);
+      console.log("Error capturing image:", error);
     }
-  }, [camera.current]);
+  }, [camera.current, isImageView, enableFlash]);
 
   const sendFrameToServer = useCallback(
     async (_frame: Frame) => {
-      if (!camera.current) return;
+      if (!camera.current || !isActive) return;
       try {
-        const snapshot = await camera.current!.takeSnapshot({
-          quality: 90
-        });
+        const snapshot = await camera.current.takePhoto();
         let fileUri = snapshot.path;
         if (!fileUri.startsWith("file://")) {
           fileUri = "file://" + fileUri;
@@ -163,27 +148,41 @@ const Capture = () => {
           bytes[i] = binaryString.charCodeAt(i);
         }
         const arrayBuffer = bytes.buffer;
-        ws.send(arrayBuffer);
+        if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+          wsRef.current.send(arrayBuffer);
+        } else {
+          console.log(wsRef.current);
+
+          console.log("outside", wsRef.current?.readyState);
+
+          console.log("Websocket is closed await new websocket");
+        }
 
         RNFS.unlink(snapshot.path);
       } catch (error) {
-        console.error("Error sending frame to server:", error);
+        console.log("Error sending frame to server:", error);
       }
     },
-    [camera.current]
+    [camera.current, isActive, wsRef.current]
   );
 
   const sendFrameToServerJS = Worklets.createRunOnJS(sendFrameToServer);
 
-  const frameProcessor = useFrameProcessor(frame => {
-    "worklet";
-
-    runAtTargetFps(2, () => {
+  const frameProcessor = useFrameProcessor(
+    frame => {
       "worklet";
 
-      sendFrameToServerJS(frame);
-    });
-  }, []);
+      if (!isActive) return;
+
+      runAtTargetFps(0.5, () => {
+        "worklet";
+        if (!isActive) return;
+
+        sendFrameToServerJS(frame);
+      });
+    },
+    [isActive]
+  );
 
   const onFocusTap = useCallback(
     ({ nativeEvent: event }: GestureResponderEvent) => {
@@ -195,16 +194,44 @@ const Capture = () => {
     },
     [device?.supportsFocus]
   );
+  const toggleFlash = () => {
+    setEnableFlash(!enableFlash);
+  };
+  const handleBack = () => {
+    if (isImageView) {
+      setIsImageView(false);
+      setPrediction(undefined);
+      return;
+    }
+    router.back();
+  };
 
-  // Others
-  const ingredientPredict = prediction?.classifications?.[0].name ?? "";
+  const handleSearch = useCallback(() => {
+    router.push({
+      pathname: "/(protected)/search",
+      params: {
+        filter: ingredientPredict
+      }
+    });
+  }, [ingredientPredict]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{ position: "relative", height: 500 }}>
+    <SafeAreaView
+      style={styles.container}
+      className='bg-black'
+    >
+      <View
+        style={{ height: "80%" }}
+        className='relative w-full'
+        onLayout={event => {
+          const { height } = event.nativeEvent.layout;
+          if (height !== cameraContainerHeight) {
+            setCameraContainerHeight(height);
+          }
+        }}
+      >
         <View style={{ height: "100%" }}>
-          {isActive &&
-            device &&
+          {shouldRenderCamera &&
             (isImageView ? (
               <View style={styles.camera}>
                 <Image
@@ -220,7 +247,6 @@ const Capture = () => {
                 device={device}
                 frameProcessor={frameProcessor}
                 pixelFormat='rgb'
-                enableFpsGraph={true}
                 ref={camera}
                 photo={true}
                 preview={true}
@@ -240,19 +266,21 @@ const Capture = () => {
           }}
         >
           {(prediction?.boxes ?? []).map((box, index) => {
-            const x1 = (1 - box[1]) * 300;
-            const y1 = (1 - box[0]) * 300;
-            const x2 = (1 - box[3]) * 300;
-            const y2 = (1 - box[2]) * 300;
-            // console.log(box);
+            const x1 = box[0] * windowWidth;
+            const y1 = box[1] * cameraContainerHeight;
+            const x2 = box[2] * windowWidth;
+            const y2 = box[3] * cameraContainerHeight;
+            const boxWidth = x2 - x1;
+            const boxHeight = y2 - y1;
+            console.log(x1, y1, boxWidth, boxHeight);
             const line_width = 2;
-            const outer = rrect(rect(x1, y1, x2, y2), 0, 0);
+            const outer = rrect(rect(x1, y1, boxWidth, boxHeight), 0, 0);
             const inner = rrect(
               rect(
                 x1 + line_width,
                 y1 + line_width,
-                x2 - line_width * 2,
-                y2 - line_width * 2
+                boxWidth - line_width * 2,
+                boxHeight - line_width * 2
               ),
               0,
               0
@@ -262,39 +290,94 @@ const Capture = () => {
                 key={index}
                 outer={outer}
                 inner={inner}
-                color='lightblue'
+                color='red'
               />
             );
           })}
         </Canvas>
+        <View className='absolute left-0 right-0 top-0 w-full flex-1 flex-row justify-between pl-4 pr-4 pt-8'>
+          <View>
+            <TouchableWithoutFeedback onPress={handleBack}>
+              <View>
+                <Ionicons
+                  name='chevron-back'
+                  size={28}
+                  color='white'
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+          <View>
+            <TouchableWithoutFeedback onPress={toggleFlash}>
+              <View>
+                {enableFlash ? (
+                  <Ionicons
+                    name='flash-off'
+                    size={24}
+                    color='white'
+                  />
+                ) : (
+                  <Ionicons
+                    name='flash'
+                    size={24}
+                    color='white'
+                  />
+                )}
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </View>
+        {!isImageView && (
+          <Text
+            style={styles.text}
+            className='absolute bottom-0 left-0 right-0 text-primary'
+          >
+            {ingredientPredict}
+          </Text>
+        )}
       </View>
-      <Text style={styles.text}>{ingredientPredict}</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            setIsActive(!isActive);
-            // console.log(device);
-            // console.log(deviceCode);
-          }}
-        >
-          <Text style={styles.toggle_button}>Toggle Camera</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text
-            style={styles.toggle_button}
-            onPress={flipCamera}
-          >
-            Flip Camera
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text
-            style={styles.toggle_button}
-            onPress={captureImage}
-          >
-            Take photo
-          </Text>
-        </TouchableOpacity>
+      <View className='w-full flex-1 flex-row justify-center'>
+        {isImageView ? (
+          <View className='flex-1'>
+            <Text
+              style={styles.text}
+              className='mb-6 text-primary'
+            >
+              {ingredientPredict}
+            </Text>
+            <View className='w-[60%] self-center rounded-3xl bg-primary p-3'>
+              <TouchableWithoutFeedback onPress={handleSearch}>
+                <View className='flex-row items-center'>
+                  <FontAwesome
+                    name='search'
+                    size={24}
+                    color='black'
+                    className='pr-4'
+                  />
+                  <Text className='font-bold text-2xl'>Search for recipes</Text>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </View>
+        ) : (
+          <>
+            <TouchableWithoutFeedback onPress={captureImage}>
+              <View className='flex-1 items-center justify-center'>
+                {/* <Image source={require("../../../assets/icons/gallery.png")} /> */}
+              </View>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={captureImage}>
+              <View className='flex-1 items-center justify-end'>
+                <Image source={require("../../../assets/icons/dot-circle-icon.png")} />
+              </View>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={flipCamera}>
+              <View className='flex-1 items-center justify-center'>
+                <Image source={require("../../../assets/icons/flip-camera.png")} />
+              </View>
+            </TouchableWithoutFeedback>
+          </>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -303,21 +386,14 @@ const Capture = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center"
+    justifyContent: "flex-start"
   },
   message: {
     textAlign: "center",
     paddingBottom: 10
   },
   camera: {
-    // marginTop: 10,
     flex: 1
-  },
-  buttonContainer: {
-    // flex: 1,
-    flexDirection: "row",
-    backgroundColor: "transparent",
-    bottom: 0
   },
   button: {
     flex: 1,
@@ -325,8 +401,6 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   image_view: {
-    // height: 200,
-    // width: 200,
     flex: 1
   },
   toggle_button: {
