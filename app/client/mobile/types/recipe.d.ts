@@ -1,3 +1,5 @@
+import { VoteType } from "@/constants/recipe";
+
 type SearchRecipeType = {
   id: string;
   authorId: string;
@@ -6,6 +8,11 @@ type SearchRecipeType = {
   description: string;
   authorDisplayName: string;
   authorAvtUrl: string;
+};
+
+type MiniRecipeType = Omit<SearchRecipeType, "authorAvtUrl" | "description"> & {
+  voteDiff: number;
+  vote: VoteType;
 };
 
 type SearchRecipeResponse = {
@@ -20,6 +27,10 @@ type RecipeType = SearchRecipeType & {
   voteDiff?: number;
   numberOfComment?: number;
   vote?: string;
+};
+
+type MiniRecipeType = {
+  isMinimal?: boolean;
 };
 
 type RecipeStep = {
