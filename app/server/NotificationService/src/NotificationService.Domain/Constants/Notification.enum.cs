@@ -1,12 +1,10 @@
-﻿namespace Contract.Constants;
+﻿namespace NotificationService.Domain.Constants;
 
 public enum NotificationTemplateCode
 {
     USER_REPLY,
     USER_COMMENT,
-    USER_FOLLOW,
-    USER_UPVOTE,
-    USER_DOWNVOTE
+    USER_FOLLOW
 }
 
 public enum EntityType

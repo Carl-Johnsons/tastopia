@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { GestureResponderEvent, Keyboard, Pressable, Text, View } from "react-native";
 import { updateUserSchema } from "@/lib/validation/user";
 import Input from "../../Input";
 import { Controller, FieldError, useForm } from "react-hook-form";
@@ -62,7 +62,7 @@ export const UpdateProfileForm = ({ className, onSubmit }: UpdateProfileFormProp
         if (isDirty || isDirtyImageFields.avatar || isDirtyImageFields.background) {
           onSubmit(payload);
         } else {
-          router.navigate("/(protected)/menu/profile");
+          router.back();
         }
       })();
     };
@@ -197,7 +197,6 @@ const CustomInput = ({
       defaultValue={defaultValue ? defaultValue : undefined}
       cursorColor={primary}
       multiline={multiline}
-      numberOfLines={multiline ? 999 : 1}
     />
   );
 };

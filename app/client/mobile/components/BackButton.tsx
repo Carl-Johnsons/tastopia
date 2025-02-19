@@ -3,7 +3,8 @@ import Button, { CustomizedButtonProps } from "./Button";
 import { Path, Svg, SvgProps } from "react-native-svg";
 import { LegacyRef, forwardRef } from "react";
 import Animated from "react-native-reanimated";
-import useColorizer from "@/hooks/useColorizer";
+import useDarkMode from "@/hooks/useDarkMode";
+
 export const BackButton = Animated.createAnimatedComponent(
   forwardRef((props: CustomizedButtonProps, ref: LegacyRef<View>) => {
     return (
@@ -20,8 +21,7 @@ export const BackButton = Animated.createAnimatedComponent(
 );
 
 export const LeftRoundedIcon = (props: SvgProps) => {
-  const { c } = useColorizer();
-
+  const isDarkMode = useDarkMode();
   return (
     <Svg
       width={7}
@@ -32,7 +32,7 @@ export const LeftRoundedIcon = (props: SvgProps) => {
     >
       <Path
         d='M6 1L1 5.68393L6 10.6839'
-        stroke={c("black", "white")}
+        stroke={isDarkMode ? "white" : "black"}
         strokeWidth={2}
         strokeLinecap='round'
         strokeLinejoin='round'

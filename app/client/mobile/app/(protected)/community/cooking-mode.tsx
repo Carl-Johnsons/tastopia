@@ -46,8 +46,8 @@ const CookingMode = () => {
     return data?.sort((a, b) => a.ordinalNumber - b.ordinalNumber);
   }, [data]);
 
-  const { c } = useColorizer();
   const { primary, gray, white, black } = colors;
+  const { c } = useColorizer();
 
   const thumbColor = c(
     Platform.select({

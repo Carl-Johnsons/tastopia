@@ -17,8 +17,7 @@ const resources = {
     updateProfile: locales.updateProfileEn,
     cookingMode: locales.cookingModeEn,
     loginWithGoogle: locales.loginWithGoogleEn,
-    report: locales.reportEn,
-    notification: locales.notificationEn
+    report: locales.reportEn
   },
   vi: {
     navbar: locales.navbarVi,
@@ -36,8 +35,7 @@ const resources = {
     updateProfile: locales.updateProfileVi,
     cookingMode: locales.cookingModeVi,
     loginWithGoogle: locales.loginWithGoogleVi,
-    report: locales.reportVi,
-    notification: locales.notificationVi
+    report: locales.reportVi
   }
 };
 

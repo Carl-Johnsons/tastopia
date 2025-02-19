@@ -1,4 +1,4 @@
-﻿using Contract.Constants;
+﻿using NotificationService.Domain.Constants;
 using NotificationService.Domain.Entities;
 
 namespace NotificationService.Infrastructure.Persistence.Mockup.Data;
@@ -28,22 +28,6 @@ internal class NotificationTemplateMockup
             TranslationMessages = new Dictionary<string, string>  {
                 {"en", "{Actors:list:{}|, } {Actors.Count:choose(1):has|have} commented on {IsSelf:choose(true):your post|{Targets:list:{}|, }{Targets.Count:plural:'s post|' posts}}" },
                 {"vi", "{Actors:list:{}|, } đã bình luận trên bài đăng của {IsSelf:choose(true):bạn|{Targets:list:{}|, }}" }
-            }
-        },
-        new NotificationTemplate{
-            Id = Guid.Parse("3d2ff120-7ef0-4cdc-ba33-29d586bf8ccc"),
-            TemplateCode = NotificationTemplateCode.USER_UPVOTE,
-            TranslationMessages = new Dictionary<string, string>  {
-                {"en", "{Actors:list:{}|, } {Actors.Count:choose(1):has|have} upvoted on {IsSelf:choose(true):your post|{Targets:list:{}|, }{Targets.Count:plural:'s post|' posts}}" },
-                {"vi", "{Actors:list:{}|, } đã đồng ý trên bài đăng của {IsSelf:choose(true):bạn|{Targets:list:{}|, }}" }
-            }
-        },
-        new NotificationTemplate{
-            Id = Guid.Parse("ca16c291-d601-4713-aadc-ff98e6a15f5d"),
-            TemplateCode = NotificationTemplateCode.USER_DOWNVOTE,
-            TranslationMessages = new Dictionary<string, string>  {
-                {"en", "{Actors:list:{}|, } {Actors.Count:choose(1):has|have} downvoted on {IsSelf:choose(true):your post|{Targets:list:{}|, }{Targets.Count:plural:'s post|' posts}}" },
-                {"vi", "{Actors:list:{}|, } đã không đồng ý trên bài đăng của {IsSelf:choose(true):bạn|{Targets:list:{}|, }}" }
             }
         },
      ];

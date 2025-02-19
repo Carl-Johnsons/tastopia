@@ -1,29 +1,23 @@
-import Header from "@/components/screen/notification/Header";
-import NotificationList from "@/components/screen/notification/NotificationList";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Notification = () => {
-  const { c } = useColorizer();
-  const { black, white } = colors;
+  const {c} = useColorizer();
+  const {black, white} = colors;
 
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: c(white.DEFAULT, black[100]),
-        height: "100%"
-      }}
-    >
+    <SafeAreaView style={{
+      backgroundColor: c(white.DEFAULT, black[100]),
+      height: "100%"
+    }}>
       <View>
-        <Header />
-      </View>
-      <View>
-        <NotificationList />
+        <Text className="text-black_white">Notification</Text>
       </View>
     </SafeAreaView>
   );
 };
 
 export default Notification;
+

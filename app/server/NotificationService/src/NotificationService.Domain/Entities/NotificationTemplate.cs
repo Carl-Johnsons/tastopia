@@ -1,5 +1,5 @@
-﻿using Contract.Constants;
-using MongoDB.EntityFrameworkCore;
+﻿using MongoDB.EntityFrameworkCore;
+using NotificationService.Domain.Constants;
 
 namespace NotificationService.Domain.Entities;
 

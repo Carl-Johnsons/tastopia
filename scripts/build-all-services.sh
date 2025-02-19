@@ -15,8 +15,6 @@ build_service() {
       -e "/(error|err)/I s/.*/$(printf "${DANGER}&${NC}")/"
 }
 
-[[ "$PLATFORM" != "windows" ]] && sudo chmod 777 data -R && echo -e "${GREEN}Run chmod 777 for ./data directory successfully${NC}"
-
 # Publishing Contract solution
 echo -e "${PURPLE}Publishing Contract solution ...${NC}"
 dotnet publish --packages "$project_root/data/nuget" -o ./app/server/Contract/Contract/Published ./app/server/Contract/Contract

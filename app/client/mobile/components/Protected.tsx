@@ -39,7 +39,7 @@ export const Protected = ({
   };
 
   const content = (() => {
-    if (requiredLogin && !hasAccess) {
+    if (requiredLogin) {
       return (
         <Pressable
           onPress={!hasAccess ? navigateToLoginScreen : undefined}

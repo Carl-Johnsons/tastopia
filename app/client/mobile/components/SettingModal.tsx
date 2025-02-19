@@ -50,12 +50,12 @@ import {
 } from "@gorhom/bottom-sheet";
 
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { useChangeLanguage } from "@/hooks/useToggleLanguage";
 import { useTranslation } from "react-i18next";
 import { useColorScheme } from "nativewind";
 import useColorizer from "@/hooks/useColorizer";
 import { router } from "expo-router";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
-import { useQueryClient } from "react-query";
 
 type SettingModalProps = {
   ref: RefObject<BottomSheetMethods>;
@@ -216,7 +216,7 @@ const Main = ({
   const { toggleColorScheme } = useColorScheme();
 
   const setDarkMode: Dispatch<SetStateAction<boolean>> = async value => {
-    const oldValue = JSON.stringify(darkMode) as SETTING_VALUE.BOOLEAN;
+    const oldValue = JSON.stringify(darkMode);
     const newValue = getSettingFromBooleanValue(value as boolean);
 
     dispatch(
@@ -241,6 +241,9 @@ const Main = ({
     await updateSetting(
       { ...data },
       {
+        onSuccess: () => {
+          toggleColorScheme();
+        },
         onError: () => {
           dispatch(
             saveSettingData({
@@ -390,18 +393,16 @@ const LanguageSetting = () => {
   const dispatch = useDispatch();
   const { mutateAsync: updateSetting } = useUpdateSetting();
   const languague = selectLanguageSetting();
-  const queryClient = useQueryClient();
+  const { changeLanguage } = useChangeLanguage();
 
   const setLanguage = async (value: SETTING_VALUE.LANGUAGE) => {
-    const oldValue = JSON.stringify(value) as SETTING_VALUE.LANGUAGE;
+    const oldValue = JSON.stringify(value);
 
-    if (role === ROLE.GUEST) {
-      return dispatch(
-        saveSettingData({
-          [SETTING_KEY.LANGUAGE]: value
-        })
-      );
-    }
+    dispatch(
+      saveSettingData({
+        [SETTING_KEY.LANGUAGE]: value
+      })
+    );
 
     const data: UpdateSettingParams = {
       settings: [
@@ -412,18 +413,15 @@ const LanguageSetting = () => {
       ]
     };
 
+    if (role === ROLE.GUEST) {
+      return changeLanguage(value);
+    }
+
     await updateSetting(
       { ...data },
       {
-        onSuccess: async () => {
-          dispatch(
-            saveSettingData({
-              [SETTING_KEY.LANGUAGE]: value
-            })
-          );
-
-          await queryClient.invalidateQueries({ queryKey: ["getNotification"] });
-          console.log("Invalidated notification");
+        onSuccess: () => {
+          changeLanguage(value);
         },
         onError: () => {
           dispatch(

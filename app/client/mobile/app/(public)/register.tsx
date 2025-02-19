@@ -1,4 +1,4 @@
-import { Alert, Pressable, Text, View } from "react-native";
+import { Alert, Platform, Pressable, ScrollView, Text, View } from "react-native";
 import { useEffect } from "react";
 import { router, usePathname } from "expo-router";
 import SignUpForm from "@/components/screen/register/SignUpForm";
@@ -18,7 +18,6 @@ import useSyncSetting from "@/hooks/user/useSyncSetting";
 import useSyncUser from "@/hooks/user/useSyncUser";
 import { o } from "@/hooks/alternator";
 import { dismissKeyboard } from "@/utils/keyboard";
-import { IRegisterAccountDTO } from "@/generated/interfaces/identity.interface";
 
 const Register = () => {
   const { loginWithGoogle } = useLoginWithGoogle();
@@ -46,9 +45,9 @@ const Register = () => {
         ]
       );
     }
-  }, [currentRouteName]);
+  }, [isVerifyingAccount, currentRouteName]);
 
-  const onSubmit = async (data: IRegisterAccountDTO) => {
+  const onSubmit = async (data: SignUpParams) => {
     const registerType = getIdentifierType(data.identifier as string) as IDENTIFIER_TYPE;
 
     register(
@@ -83,7 +82,7 @@ const Register = () => {
 
   return (
     <Pressable
-      className='bg-white_black200 relative h-full'
+      className='relative h-full'
       onPress={dismissKeyboard}
     >
       <CircleBg />
@@ -92,11 +91,9 @@ const Register = () => {
       >
         <BackButton
           onPress={router.back}
-          className='bg-white_black200 w-[38px] rounded-xl border border-black px-4 py-3.5 dark:border-white'
+          className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
         />
-        <Text className='text-black_white font-sans font-semibold text-4xl'>
-          Register
-        </Text>
+        <Text className='font-sans font-semibold text-4xl text-black'>Register</Text>
         <SignUpForm
           onSubmit={onSubmit}
           isLoading={isSubmitting}

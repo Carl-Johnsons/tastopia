@@ -21,9 +21,9 @@ import useColorizer from "@/hooks/useColorizer";
 import("../global.css");
 
 SplashScreen.preventAutoHideAsync();
-const queryClient = new QueryClient();
 
 const RootLayout = () => {
+  const queryClient = new QueryClient();
   const [fontsLoaded, error] = useFonts(FONTS);
   const { white, black } = colors;
   const { c } = useColorizer();

@@ -1,5 +1,4 @@
-﻿using Contract.Constants;
-using NotificationService.Domain.Entities;
+﻿using NotificationService.Domain.Entities;
 
 namespace NotificationService.Infrastructure.Persistence.Mockup.Data;
 
@@ -51,14 +50,14 @@ internal class NotificationMockup
                 {
                     PrimaryActors = [new Actor {
                     ActorId = Guid.Parse( UserIds[userIdIndex]),
-                    Type = EntityType.USER
+                    Type = Domain.Constants.EntityType.USER
                 }],
                     SecondaryActors = [new Actor {
                     ActorId = Guid.Parse( recipientId),
-                    Type = EntityType.USER
+                    Type = Domain.Constants.EntityType.USER
                 }],
                     TemplateId = Guid.Parse(TemplateIds[templateIdIndex]),
-                    JsonData = "{\"redirectUri\":\"" + CLIENT_URI.MOBILE.NOTIFICATION + "\"}",
+                    JsonData = "{\"redirectUri\":\"" + Contract.Constants.CLIENT_URI.MOBILE.NOTIFICATION + "\"}",
                 });
             }
         }

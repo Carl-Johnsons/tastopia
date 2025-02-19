@@ -79,7 +79,7 @@ const Verify = () => {
   };
 
   return (
-    <View className='bg-white_black200 relative h-full'>
+    <View className='relative h-full'>
       <CircleBg />
 
       <View
@@ -87,10 +87,10 @@ const Verify = () => {
       >
         <BackButton
           onPress={router.back}
-          className='bg-white_black200 w-[38px] rounded-xl border border-black px-4 py-3.5 dark:border-white'
+          className='w-[38px] rounded-xl border border-black bg-white px-4 py-3.5'
         />
 
-        <Text className='text-black_white font-sans font-semibold text-4xl'>
+        <Text className='font-sans font-semibold text-4xl text-black'>
           Verification Code
         </Text>
         <Text className='font-sans text-lg text-gray-300'>
@@ -105,7 +105,7 @@ const Verify = () => {
         />
 
         <Pressable onPress={resendCode}>
-          <Text className='text-black_white text-center text-lg'>
+          <Text className='text-center text-lg'>
             I don’t recevie a code! <Text className='text-primary'>Please resend</Text>
           </Text>
         </Pressable>

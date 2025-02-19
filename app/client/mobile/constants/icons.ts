@@ -18,6 +18,3 @@ export { default as ShareIcon } from "../assets/icons/share.svg";
 export { default as UploadIcon } from "../assets/icons/upload.svg";
 export { default as CameraPlusIcon } from "../assets/icons/camera_plus.svg";
 export { default as ArrowDownIcon } from "../assets/icons/arrow_down.svg";
-export { default as ArrowDownFillIcon } from "../assets/icons/arrow_down_fill.svg";
-export { default as ArrowUpFillIcon } from "../assets/icons/arrow_up_fill.svg";
-export { default as ChatBubbleFillIcon } from "../assets/icons/chat_bubble_fill.svg";

@@ -1,19 +1,19 @@
 import { SignUpParams } from "@/api/user";
 import { ActivityIndicator, Text, View } from "react-native";
 import { AuthFormProps, CustomInput } from "../login/LoginForm";
+import Input from "../../Input";
 import Button from "../../Button";
 import useBounce from "@/hooks/animation/useBounce";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { registerSchema } from "@/lib/validation/auth";
-import { IRegisterAccountDTO } from "@/generated/interfaces/identity.interface";
 
 export interface SignUpFormFields extends SignUpParams {
   rePassword: string;
 }
 
 type SignUpFormProps = {
-  onSubmit: (data: IRegisterAccountDTO) => Promise<void>;
+  onSubmit: (data: SignUpFormFields) => Promise<void>;
 } & AuthFormProps;
 
 export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) => {
@@ -26,11 +26,6 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
     resolver: yupResolver(registerSchema),
     mode: "onSubmit"
   });
-
-  const submit = (data: SignUpFormFields) => {
-    const { identifier, fullName, password } = data as IRegisterAccountDTO;
-    onSubmit({ identifier, fullName, password });
-  };
 
   return (
     <View className={`gap-[2vh] ${className}`}>
@@ -112,7 +107,7 @@ export const SignUpForm = ({ onSubmit, isLoading, className }: SignUpFormProps) 
       <Button
         onPress={() => {
           animate();
-          handleSubmit(submit)();
+          handleSubmit(onSubmit)();
         }}
         style={[animatedStyles]}
         className='rounded-full bg-primary p-3 px-16 py-6 text-white'

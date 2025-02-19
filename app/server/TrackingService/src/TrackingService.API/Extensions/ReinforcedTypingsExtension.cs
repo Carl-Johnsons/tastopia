@@ -2,19 +2,34 @@
 using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
-using Contract.Extension;
 namespace TrackingService.API.Extensions;
 
 // TrackingService.API.Extensions.ReinforcedTypingsExtension.ConfigureReinforcedTypings
 public static class ReinforcedTypingsExtension
 {
-    private static string FILE_NAME = "tracking";
-    private static string EXPORT_FILE_PATH = "../../../../client/mobile/generated";
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {
-        List<Type> errorsTypes = [];
+        builder.Global(config =>
+        {
+            config.CamelCaseForProperties()
+                  .AutoOptionalProperties()
+                  .ExportPureTypings(typings: true);
+        });
 
-        builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
+        // Substitute C# type to typescript type
+        builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
+        builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
+
+        // Common type
+        builder.ExportAsInterfaces([
+            typeof(ErrorResponseDTO)
+        ], config =>
+        {
+            config.WithPublicProperties()
+                  .AutoI()
+                  .DontIncludeToNamespace()
+                  .ExportTo("common.interface.d.ts");
+        });
         // DTO 
         builder.ExportAsInterfaces([
             typeof(GetUserViewRecipeDetailHistoryDTO),
@@ -25,7 +40,7 @@ public static class ReinforcedTypingsExtension
                   .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo("interfaces/tracking.interface.d.ts");
+                  .ExportTo("tracking.interface.d.ts");
         });
     }
 }

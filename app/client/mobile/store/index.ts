@@ -16,12 +16,11 @@ import authReducer from "@/slices/auth.slice";
 import settingReducer from "@/slices/setting.slice";
 import searchRecipeReducer from "@/slices/searchRecipe.slice";
 import updateProfileReducer from "@/slices/menu/profile/updateProfileForm.slice";
-import notificationReducer from "@/slices/notification.slice";
 
 const persistConfig = {
   key: "root",
   storage: AsyncStorage,
-  whitelist: ["auth", "user", "setting"]
+  whitelist: ["auth", "user"]
 };
 
 const rootReducer = combineReducers({
@@ -29,8 +28,7 @@ const rootReducer = combineReducers({
   user: userReducer,
   setting: settingReducer,
   searchRecipe: searchRecipeReducer,
-  updateProfile: updateProfileReducer,
-  notification: notificationReducer
+  updateProfile: updateProfileReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

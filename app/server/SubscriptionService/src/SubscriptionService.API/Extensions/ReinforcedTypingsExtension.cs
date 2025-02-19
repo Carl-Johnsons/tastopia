@@ -1,6 +1,4 @@
-﻿using Contract.Constants;
-using Contract.Extension;
-using Reinforced.Typings.Ast.TypeNames;
+﻿using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using SubscriptionService.API.DTOs;
 using System.Reflection;
@@ -18,12 +16,28 @@ public static class ReinforcedTypingsExtension
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {
         Directory.CreateDirectory(EXPORT_FILE_PATH);
-        List<Type> errorsTypes = [
-            //typeof(SettingError),
-            //typeof(UserError)
-        ];
 
-        builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
+        builder.Global(config =>
+        {
+            config.CamelCaseForProperties()
+                  .AutoOptionalProperties()
+                  .ExportPureTypings(typings: true);
+        });
+
+        // Substitute C# type to typescript type
+        builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
+        builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
+
+        // Common type
+        builder.ExportAsInterfaces([
+            typeof(ErrorResponseDTO)
+        ], config =>
+        {
+            config.WithPublicProperties()
+                  .AutoI()
+                  .DontIncludeToNamespace()
+                  .ExportTo("interfaces/common.interface.d.ts");
+        });
         // DTO 
         builder.ExportAsInterfaces([
             //typeof(SearchUserDTO),
@@ -39,13 +53,53 @@ public static class ReinforcedTypingsExtension
                   .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
         });
 
-        builder.ExportAsEnums([], config =>
-        {
-            config.FlattenHierarchy()
-                  .DontIncludeToNamespace()
-                  .UseString()
-                  .ExportTo($"enums/{FILE_NAME}.enum.ts");
-        });
+        //Custom export file
+        List<Type> errorsTypes = [
+            //typeof(SettingError),
+            //typeof(UserError)
+        ];
 
+        GenerateTypescriptEnumFile(errorsTypes);
+    }
+
+    private static void GenerateTypescriptEnumFile(List<Type> errorsTypes)
+    {
+        var enumsDirectory = Path.Combine(EXPORT_FILE_PATH, "enums");
+        Directory.CreateDirectory(enumsDirectory);
+        var disableWarning = @"/* eslint no-unused-vars: ""off"" */";
+        var typescriptEnumString = disableWarning + "\n" + string.Join("\n", errorsTypes.Select(GenerateErrorEnumTypescript));
+
+        File.WriteAllText(Path.Combine(enumsDirectory, $"{FILE_NAME}.enum.ts"), typescriptEnumString);
+    }
+
+    private static string GenerateErrorEnumTypescript(Type errorType)
+    {
+        var errorDictionary = GetErrorsEnumValues(errorType);
+
+        var sb = new StringBuilder();
+        sb.AppendLine("export enum " + errorType.Name + " {");
+        var lastIndex = errorDictionary.Count - 1;
+        int currentIndex = 0;
+
+        foreach (var (key, value) in errorDictionary)
+        {
+            if (currentIndex == lastIndex) sb.AppendLine($"\t{key} = \"{value}\"");
+            else sb.AppendLine($"\t{key} = \"{value}\",");
+
+            currentIndex++;
+        }
+        sb.AppendLine("}");
+
+        return sb.ToString();
+    }
+
+    private static Dictionary<string, string> GetErrorsEnumValues(Type errorType)
+    {
+        return errorType.GetProperties(BindingFlags.Public | BindingFlags.Static)
+                        .Where(p => p.PropertyType == typeof(Error))
+                        .ToDictionary(
+                            p => p.Name,
+                            p => ((Error)p.GetValue(null)!).Code
+                        );
     }
 }

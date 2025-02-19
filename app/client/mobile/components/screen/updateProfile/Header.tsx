@@ -28,21 +28,18 @@ export default function Header() {
   };
 
   return (
-    <View className='bg-white_black relative h-[7.4vh] flex-row items-center justify-between px-6'>
+    <View className='bg-white_black h-[7.4vh] flex-row items-center justify-between px-6'>
       <CloseIcon
         color={c(black.DEFAULT, white.DEFAULT)}
         width={28}
         height={28}
         onPress={router.back}
       />
-      <Text
-        className='text-black_white font-medium text-xl'
-      >
-        {t("updateProfile")}
-      </Text>
+      <Text className='text-black_white font-medium text-xl'>{t("updateProfile")}</Text>
       <Button
         onPress={handleSubmit}
         isLoading={isLoading}
+        className='w-[40px]'
         spinner={
           <ActivityIndicator
             animating={isLoading}

@@ -15,8 +15,6 @@ import {
 } from "@/constants/paths";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "./colors";
-import Protected from "@/components/Protected";
-import { ROLE } from "@/slices/auth.slice";
 
 type TabIconType = {
   icon: ReactElement | undefined;
@@ -185,24 +183,18 @@ export const menuList: Menu[] = [
       {
         path: NOTIFICATION_PATH,
         icon: ({ color, focused }) => (
-          <Protected
-            excludedRoles={[ROLE.GUEST]}
-            forceDisplay
-            requiredLogin
-          >
-            <TabIcon
-              icon={
-                <Feather
-                  name='bell'
-                  size={24}
-                  color={color}
-                />
-              }
-              color={color}
-              translateCode='notification'
-              focused={focused}
-            />
-          </Protected>
+          <TabIcon
+            icon={
+              <Feather
+                name='bell'
+                size={24}
+                color={color}
+              />
+            }
+            color={color}
+            translateCode='notification'
+            focused={focused}
+          />
         ),
         code: "NOTIFICATION",
         translateCode: "notification",

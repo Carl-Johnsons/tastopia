@@ -5,7 +5,6 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Newtonsoft.Json;
 using UserProto;
-using UserService.Application.Settings.Queries;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
 using UserService.Domain.Entities;
@@ -103,6 +102,7 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         };
         return grpcResponse;
     }
+
     public override async Task<GrpcEmpty> CreateUser(GrpcCreateUserRequest request, ServerCallContext context)
     {
         var accountId = Guid.Parse(request.AccountId);
@@ -148,56 +148,5 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
             AccountIds = { response.Value!.Select(id => id.ToString()) }
         };
         return result;
-    }
-
-    public override async Task<GrpcUserSetting> GetUserSetting(GrpcGetUserSettingRequest request, ServerCallContext context)
-    {
-        if (request.AccountId == null || request.AccountId.Count == 0)
-        {
-            throw new RpcException(new Status(StatusCode.InvalidArgument, "AccountId must not be null or empty."));
-        }
-
-        var accountIdSets = request.AccountId.Select(Guid.Parse).ToHashSet();
-
-        var response = await _sender.Send(new GetMultipleUserSettingQuery
-        {
-            AccountIdSet = accountIdSets,
-        });
-        response.ThrowIfFailure();
-
-        var userSettingMap = response.Value!;
-
-        var mapField = new MapField<string, GrpcSettingCollection>();
-        foreach (var (key, value) in userSettingMap)
-        {
-            var repeatedField = new RepeatedField<GrpcSetting>();
-            foreach (var v in value)
-            {
-                repeatedField.Add(new GrpcSetting
-                {
-                    DefaultValue = v.Setting.DefaultValue,
-                    SettingCode = v.Setting.Code,
-                    SettingId = v.SettingId.ToString(),
-                    SettingValue = v.SettingValue,
-                    SettingType = v.Setting.DataType.ToString()
-                });
-            }
-
-            var keyStr = key.ToString();
-            if (!mapField.ContainsKey(keyStr))
-            {
-                mapField.Add(keyStr, new GrpcSettingCollection());
-            }
-
-            mapField[keyStr].Settings.AddRange(repeatedField);
-        }
-
-        var grpcResult = new GrpcUserSetting
-        {
-            SettingMap = { mapField }
-        };
-        _logger.LogInformation(JsonConvert.SerializeObject(grpcResult, Formatting.Indented));
-
-        return grpcResult;
     }
 }
