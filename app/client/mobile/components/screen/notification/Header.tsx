@@ -19,9 +19,6 @@ export default function Header() {
   const notificationType = selectNotificationType();
 
   const styles = StyleSheet.create({
-    wrapper: {
-      height: 32
-    },
     tabWrapper: {
       width: "50%"
     }
@@ -29,10 +26,7 @@ export default function Header() {
 
   return (
     <View className='bg-white_black200 pt-2'>
-      <View
-        style={styles.wrapper}
-        className='relative flex-row items-center justify-between px-4'
-      >
+      <View className='relative flex-row items-center justify-between px-4'>
         <ArrowBackIcon
           color={c(black.DEFAULT, white.DEFAULT)}
           width={28}
