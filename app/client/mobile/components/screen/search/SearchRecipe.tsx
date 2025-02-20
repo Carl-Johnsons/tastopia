@@ -260,7 +260,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
       {/* History section */}
       {!isLoadingSearchRecipeHistory && searchRecipeHistoryData && searchValue === "" && (
         <FlatList
-          data={searchRecipeHistoryData.value}
+          data={searchRecipeHistoryData.value.slice(0, 10)}
           keyExtractor={_item => uuid.v4()}
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
@@ -274,6 +274,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
           renderItem={item => {
             return (
               <SearchHistory
+                type='recipe'
                 item={item.item}
                 handleSelectHistory={handleSelectSearchHistory}
               />

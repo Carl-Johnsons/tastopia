@@ -132,6 +132,34 @@ const createUserSearchUserKeyword = () => {
   });
 };
 
+const useDeleteSearchRecipeHistory = () => {
+  return useMutation<any, Error, { keyword: string }>({
+    mutationFn: async ({ keyword }) => {
+      const { data } = await protectedAxiosInstance.post(
+        "/api/tracking/delete-user-search-recipe-history",
+        {
+          keyword: keyword
+        }
+      );
+      return data;
+    }
+  });
+};
+
+const useDeleteSearchUserHistory = () => {
+  return useMutation<any, Error, { keyword: string }>({
+    mutationFn: async ({ keyword }) => {
+      const { data } = await protectedAxiosInstance.post(
+        "/api/tracking/delete-user-search-user-history",
+        {
+          keyword: keyword
+        }
+      );
+      return data;
+    }
+  });
+};
+
 export {
   useSearchUsers,
   useSearchRecipes,
@@ -139,5 +167,7 @@ export {
   useSearchRecipeHistory,
   useSearchUserHistory,
   createUserSearchRecipeKeyword,
-  createUserSearchUserKeyword
+  createUserSearchUserKeyword,
+  useDeleteSearchRecipeHistory,
+  useDeleteSearchUserHistory
 };
