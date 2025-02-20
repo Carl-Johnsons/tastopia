@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using TrackingService.Domain.Errors;
-namespace TrackingService.Application.UserViewRecipeDetails.Queries;
+namespace TrackingService.Application.UserSearchRecipes.Queries;
 public class GetUserSearchRecipeQuery : IRequest<Result<List<string>?>>
 {
     public Guid AccountId { get; set; }
@@ -23,8 +23,8 @@ public class GetUserSearchRecipeQueryHandler : IRequestHandler<GetUserSearchReci
             return Result<List<string>?>.Failure(UserSearchRecipeError.NullParameter, "ACCOUNT ID NULL");
         }
         var views = await _context.UserSearchRecipes.Where(v => v.AccountId == accountId).OrderByDescending(v => v.CreatedAt).Select(v => v.Keyword).Take(50).ToListAsync();
-        
-        if(views == null || views.Count == 0)
+
+        if (views == null || views.Count == 0)
         {
             return Result<List<string>?>.Success([]);
         }
