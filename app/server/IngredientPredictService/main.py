@@ -1,11 +1,8 @@
-import asyncio
-import json
 from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect
 from contextlib import asynccontextmanager
 from ultralytics import YOLO
 from PIL import Image
 import logging
-import time
 import random
 import httpx
 import logging.config
@@ -79,7 +76,7 @@ async def health():
 @app.post("/api/ingredient-predict")
 async def predict(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
-
+    image = image.rotate(90, expand=True)
     results = model(image, verbose=False)
 
     classifications = []
@@ -94,86 +91,6 @@ async def predict(file: UploadFile = File(...)):
     results = box_model(image, verbose=False)
     return {"classifications": classifications, "boxes": results[0].boxes.xyxyn.tolist()}
 
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    try:
-        while True:
-            data = await websocket.receive_text()
-            # Echo the data back, for instance
-            await websocket.send_text(f"Echo: {data}")
-    except WebSocketDisconnect:
-        print("Client disconnected")
-
-@app.websocket("/ws/video/{user_id}")
-async def processVideo(websocket: WebSocket,user_id: str):
-    await connection_manager.connect(websocket, user_id)
-    try:
-        while True:
-            start = time.perf_counter()
-
-            # Receive frame bytes.
-            message = await websocket.receive()
-
-            if message["type"] == "websocket.disconnect":
-                print("WebSocket disconnected.")
-                break
-            if "ping" in message:
-                logging.info("Client pinging: Healthy")
-            elif "bytes" in message:
-                frame_bytes = message["bytes"]
-                recv_time = time.perf_counter()
-
-                try:
-                    # Convert the binary frame to an image.
-                    image = Image.open(io.BytesIO(frame_bytes))
-                    image.load()  # Ensure the image data is fully loaded.
-                except Exception as e:
-                    await websocket.send_text(
-                        json.dumps({"error": f"Invalid image data: {str(e)}"})
-                    )
-                    continue
-                conv_time = time.perf_counter()
-
-                # Process the image with your model.
-                results = model(image, verbose=False)
-                model_time = time.perf_counter()
-
-                predictions = []
-                for result in results:
-                    for cls, conf in zip(result.probs.top5, result.probs.top5conf):
-                        predictions.append({
-                            "class": result.names[cls],
-                            "confidence": float(conf),
-                            "name": names[result.names[cls]]
-                        })
-
-                boxResults = box_model(image, verbose=False)
-                box_time = time.perf_counter()
-
-                # Optionally send back the prediction for this frame.
-                await websocket.send_text(json.dumps({
-                    "classifications": predictions,
-                    "boxes": boxResults[0].boxes.xyxyn.tolist()
-                }))
-
-                end = time.perf_counter()
-
-                # Log timings.
-                print(f"Receive Time: {recv_time - start:.4f} sec")
-                print(f"Conversion Time: {conv_time - recv_time:.4f} sec")
-                print(f"Model Inference Time: {model_time - conv_time:.4f} sec")
-                print(f"Box Model Time: {box_time - model_time:.4f} sec")
-                print(f"Total Processing Time: {end - start:.4f} sec\n")
-
-                # Optionally throttle the frame rate.
-                await asyncio.sleep(0.1)
-            else:
-                logging.info("No binaries data or ping data received")
-    except WebSocketDisconnect:
-        connection_manager.disconnect(websocket, user_id)
-        print("Client disconnected")
 
 @app.get("/")
 async def root():
