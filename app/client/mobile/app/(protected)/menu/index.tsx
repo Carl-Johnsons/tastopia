@@ -2,7 +2,7 @@ import Button from "@/components/Button";
 import LogoutButton from "@/components/LogoutButton";
 import MenuBg from "@/components/MenuBg";
 import SettingModal from "@/components/SettingModal";
-import { SavedIcon, SettingIcon, VipIcon, UserIcon } from "@/constants/icons";
+import { SavedIcon, SettingIcon, TrashIcon, UserIcon } from "@/constants/icons";
 import { FC, useCallback, useRef } from "react";
 import { StatusBar, Text, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,8 +17,8 @@ import { selectUser } from "@/slices/user.slice";
 import History from "@/components/screen/menu/History";
 
 const Menu = () => {
-  const ITEM_TITLE = ["profile", "saved", "premium", "settings"];
-  const ITEM_ICON = [UserIcon, SavedIcon, VipIcon, SettingIcon];
+  const ITEM_TITLE = ["profile", "saved", "deleted", "settings"];
+  const ITEM_ICON = [UserIcon, SavedIcon, TrashIcon, SettingIcon];
   const { height } = useWindowDimensions();
   const settingModalRef = useRef<BottomSheetModal>(null);
   const { c } = useColorizer();
@@ -46,7 +46,7 @@ const Menu = () => {
       router.push("/(protected)/menu/bookmark");
     }, []),
     useCallback(() => {
-      console.log("Go to subscriptions");
+      router.push("/(protected)/menu/deleted-recipe");
     }, []),
     openSettingModal
   ];

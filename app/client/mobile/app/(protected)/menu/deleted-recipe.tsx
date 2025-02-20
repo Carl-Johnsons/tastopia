@@ -1,31 +1,18 @@
-import { useGetBookmarks } from "@/api/recipe";
-import Recipe from "@/components/common/Recipe";
-import SettingRecipe from "@/components/common/SettingRecipe";
+import { useGetDeletedRecipe } from "@/api/recipe";
 import Empty from "@/components/screen/community/Empty";
-import BookmarkHeader from "@/components/screen/menu/BookmarkHeader";
+import DeletedHeader from "@/components/screen/menu/DeletedHeader";
+import DeletedRecipeItem from "@/components/screen/menu/DeletedRecipeItem";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
 import { RecipeType } from "@/types/recipe";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import BottomSheet from "@gorhom/bottom-sheet";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  FlatList,
-  RefreshControl,
-  SafeAreaView,
-  StatusBar,
-  Text,
-  View
-} from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { FlatList, RefreshControl, SafeAreaView, StatusBar, View } from "react-native";
 
-const bookmark = () => {
+const DeletedRecipe = () => {
   const { c } = useColorizer();
   const { white, black } = colors;
-
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const [currentRecipeId, setCurrentRecipeId] = useState("");
-  const [currentAuthorId, setCurrentAuthorId] = useState("");
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
 
   const {
@@ -36,7 +23,7 @@ const bookmark = () => {
     refetch,
     isRefetching,
     isStale
-  } = useGetBookmarks();
+  } = useGetDeletedRecipe();
 
   const onRefresh = useCallback(() => {
     if (isStale) {
@@ -58,12 +45,7 @@ const bookmark = () => {
         className='px-4'
         testID='recipe'
       >
-        <Recipe
-          {...item}
-          setCurrentRecipeId={setCurrentRecipeId}
-          setCurrentAuthorId={setCurrentAuthorId}
-          bottomSheetRef={bottomSheetRef}
-        />
+        <DeletedRecipeItem {...item} />
         {index !== recipes.length - 1 && (
           <View className='my-4 h-[1px] w-full bg-gray-300' />
         )}
@@ -89,7 +71,7 @@ const bookmark = () => {
       }}
     >
       <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
-      <BookmarkHeader />
+      <DeletedHeader />
       <FlatList
         className='h-full'
         removeClippedSubviews
@@ -109,17 +91,11 @@ const bookmark = () => {
 
       {recipes.length === 0 && (
         <View className='size-full'>
-          <Empty type='emptyBookmark' />
+          <Empty type='emptyDeleted' />
         </View>
       )}
-
-      <SettingRecipe
-        id={currentRecipeId}
-        authorId={currentAuthorId}
-        ref={bottomSheetRef}
-      />
     </SafeAreaView>
   );
 };
 
-export default bookmark;
+export default DeletedRecipe;

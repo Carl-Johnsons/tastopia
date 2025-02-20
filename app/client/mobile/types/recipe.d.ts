@@ -1,4 +1,8 @@
-import { VoteType } from "@/constants/recipe";
+export enum VoteType {
+  UPVOTE = "Upvote",
+  DOWNVOTE = "Downvote",
+  NONE = "None"
+}
 
 type SearchRecipeType = {
   id: string;
@@ -26,7 +30,7 @@ type SearchRecipeResponse = {
 type RecipeType = SearchRecipeType & {
   voteDiff?: number;
   numberOfComment?: number;
-  vote?: string;
+  vote?: VoteType;
 };
 
 type MiniRecipeType = {

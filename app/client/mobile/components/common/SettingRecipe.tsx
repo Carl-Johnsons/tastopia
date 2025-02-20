@@ -107,7 +107,6 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
                   onSuccess: async data => {
                     Alert.alert(t("settingRecipe.deleteRecipeSuccessfully"));
                     refetch();
-                    router.navigate("/(protected)");
                     closeModal();
                   },
                   onError: error => {
