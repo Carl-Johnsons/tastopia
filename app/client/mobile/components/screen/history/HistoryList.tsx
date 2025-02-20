@@ -88,9 +88,9 @@ export default function HistoryList({ keyword }: HistoryListProps) {
     dispatch(saveHistoryData({ isLoading }));
   }, [isLoading]);
 
-  if (isLoading) {
+  if (isLoading && !!history) {
     return (
-      <View className='flex-center h-[140px]'>
+      <View className='flex-center h-[50%]'>
         <ActivityIndicator
           size='large'
           color={primary}
@@ -110,8 +110,8 @@ export default function HistoryList({ keyword }: HistoryListProps) {
         ItemSeparatorComponent={() => <View className='w-[20px]' />}
         showsHorizontalScrollIndicator={false}
         ListEmptyComponent={() => (
-          <View className='flex-center'>
-            <Empty type='emptyNotification' />
+          <View className='h-[100vh]'>
+            <Empty type='emptyRecipeViewingHistory' />
           </View>
         )}
         renderItem={renderItem}
