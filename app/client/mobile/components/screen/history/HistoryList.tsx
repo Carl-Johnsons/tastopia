@@ -12,6 +12,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { ActivityIndicator, RefreshControl, View } from "react-native";
 import Empty from "../community/Empty";
+import { useAppDispatch } from "@/store/hooks";
+import { saveHistoryData } from "@/slices/history.slice";
 
 type HistoryListProps = {
   keyword: string;
@@ -60,10 +62,7 @@ export default function HistoryList({ keyword }: HistoryListProps) {
       item: ListRenderItemInfo<IRecipeViewingHistoryResponse>;
       index: number;
     }) => (
-      <View
-        className='px-4'
-        testID='recipe'
-      >
+      <View testID='recipe'>
         <Recipe
           {...item}
           setCurrentRecipeId={setCurrentRecipeId}
@@ -84,6 +83,11 @@ export default function HistoryList({ keyword }: HistoryListProps) {
     }
   }, [data]);
 
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(saveHistoryData({ isLoading }));
+  }, [isLoading]);
+
   if (isLoading) {
     return (
       <View className='flex-center h-[140px]'>
@@ -99,6 +103,8 @@ export default function HistoryList({ keyword }: HistoryListProps) {
     <>
       <FlatList
         data={history}
+        className='h-full'
+        contentContainerStyle={{ paddingBottom: 130 }}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
         ItemSeparatorComponent={() => <View className='w-[20px]' />}

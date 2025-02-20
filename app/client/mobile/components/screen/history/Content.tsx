@@ -6,16 +6,18 @@ import { StyleSheet } from "react-native";
 import { TouchableOpacity, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import HistoryList from "./HistoryList";
+import { selectHistoryIsLoading } from "@/slices/history.slice";
 
 export default function Content() {
   const [searchValue, setSearchValue] = useState<string>("");
+  const isLoading = selectHistoryIsLoading();
 
   return (
-    <View className='h-full px-4'>
+    <View className='h-full gap-3 px-4'>
       <SearchBar
         searchValue={searchValue}
         setSearchValue={setSearchValue}
-        isSearching={false}
+        isSearching={isLoading}
       />
       <HistoryList keyword={searchValue} />
     </View>
@@ -69,32 +71,31 @@ const SearchBar = ({ searchValue, setSearchValue, isSearching }: SearchBarProps)
         placeholderTextColor={gray[400]}
       />
 
-      {searchValue && isSearching && (
-        <View className='absolute'>
-          <AntDesign
-            className='animate-spin'
-            name='loading2'
-            size={16}
-            color={c("#A9A9A9", "#6B7280")}
-          />
-        </View>
-      )}
-
-      {isFocused && searchValue && !isSearching && (
+      {isFocused && (
         <View
           className='absolute right-3 top-3.5'
           style={styles.verticallyCentered}
         >
-          <TouchableOpacity
-            onPress={handleCancel}
-            activeOpacity={1}
-          >
+          {isSearching && (
             <AntDesign
-              name='closecircleo'
+              className='animate-spin'
+              name='loading2'
               size={16}
-              color={c("#A9A9A9", "#6B7280")}
+              color={c(gray[500], gray[300])}
             />
-          </TouchableOpacity>
+          ) }
+          {!isSearching && isFocused && searchValue.length !== 0 && (
+            <TouchableOpacity
+              onPress={handleCancel}
+              activeOpacity={1}
+            >
+              <AntDesign
+                name='closecircleo'
+                size={16}
+                color={c("#A9A9A9", "#6B7280")}
+              />
+            </TouchableOpacity>
+          )}
         </View>
       )}
     </View>
