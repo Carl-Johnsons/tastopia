@@ -174,7 +174,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
       {/* History section */}
       {!isLoadingSearchUserHistory && searchUserHistoryData && searchValue === "" && (
         <FlatList
-          data={searchUserHistoryData.value}
+          data={searchUserHistoryData.value.slice(0, 10)}
           keyExtractor={_item => uuid.v4()}
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
@@ -188,6 +188,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
           renderItem={item => {
             return (
               <SearchHistory
+                type='user'
                 item={item.item}
                 handleSelectHistory={handleSelectSearchHistory}
               />

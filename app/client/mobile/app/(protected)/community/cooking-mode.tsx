@@ -31,10 +31,23 @@ import {
   ExpoSpeechRecognitionModule,
   useSpeechRecognitionEvent
 } from "expo-speech-recognition";
+import { useRouteGuardExclude } from "@/hooks/auth/useProtected";
+import { ROLE } from "@/slices/auth.slice";
+import Unauthorize from "@/components/common/Unauthorize";
 
 const REPEAT_AFTER = 10000;
 
 const CookingMode = () => {
+  const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
+
+  if (!hasAccess) {
+    return (
+      <View className='bg-white_black100 flex-1 items-center justify-center'>
+        <Unauthorize />
+      </View>
+    );
+  }
+
   const { t } = useTranslation("cookingMode");
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, isLoading, isRefetching } = useRecipeSteps(id);
@@ -82,9 +95,17 @@ const CookingMode = () => {
     const stepLanguage = detectLanguage.detect(
       (sortedSteps && sortedSteps[currentStep - 1]?.content) ?? ""
     )[0];
-    const isSameLanguage = compareLanguages(i18n.languages[0], stepLanguage[0]);
+    const isSameLanguage = compareLanguages(
+      i18n.languages[0].toLowerCase(),
+      stepLanguage[0].toLowerCase()
+    );
 
-    if (!selectedLanguage && !isSameLanguage) {
+    if (isSameLanguage || selectedLanguage) {
+      setIsActiveSpeaking(prev => !prev);
+      setSelectedLanguage(
+        i18n.languages[0] === LANGUAGE_CODES.EN ? LANGUAGE_CODES.EN : LANGUAGE_CODES.VI
+      );
+    } else if (!isSameLanguage && !selectedLanguage) {
       Alert.alert(t("titleChangeLanguage"), t("descriptionChangeLanguage"), [
         {
           text: t("english"),
@@ -101,8 +122,6 @@ const CookingMode = () => {
           }
         }
       ]);
-    } else {
-      setIsActiveSpeaking(prev => !prev);
     }
   };
 
@@ -212,7 +231,10 @@ const CookingMode = () => {
             selectedLanguage === LANGUAGE_CODES.VI
               ? VI_VOICE.identifier
               : EN_VOICE.identifier,
-          rate: 0.7,
+          rate: Platform.select({
+            ios: 0.5,
+            android: 0.4
+          }),
           onDone: () => {
             if (isActiveSpeakingRef.current && isMounted) {
               if (timeoutRef.current) {

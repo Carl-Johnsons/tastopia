@@ -6,6 +6,7 @@ import { colors } from "@/constants/colors";
 import InteractionSection from "./InteractionSection";
 import { RefObject } from "react";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { RecipeType } from "@/types/recipe";
 
 const Recipe = ({
   bottomSheetRef,

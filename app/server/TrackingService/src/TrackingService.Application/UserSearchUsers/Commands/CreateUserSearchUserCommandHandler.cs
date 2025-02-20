@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using TrackingService.Domain.Entities;
 using TrackingService.Domain.Errors;
-namespace TrackingService.Application.UserViewRecipeDetails.Commands;
+namespace TrackingService.Application.UserSearchUsers.Commands;
 
 public class CreateUserSearchUserCommand : IRequest<Result>
 {
@@ -16,9 +16,9 @@ public class CreateUserSearchUserCommandHandler : IRequestHandler<CreateUserSear
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<CreateUserSearchRecipeCommandHandler> _logger;
+    private readonly ILogger<CreateUserSearchUserCommandHandler> _logger;
 
-    public CreateUserSearchUserCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<CreateUserSearchRecipeCommandHandler> logger)
+    public CreateUserSearchUserCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<CreateUserSearchUserCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
@@ -31,7 +31,7 @@ public class CreateUserSearchUserCommandHandler : IRequestHandler<CreateUserSear
         var searchTime = request.SearchTime;
         var keyword = request.Keyword;
 
-        if(accountId == null || accountId == Guid.Empty || string.IsNullOrEmpty(keyword) || searchTime == null)
+        if (accountId == null || accountId == Guid.Empty || string.IsNullOrEmpty(keyword) || searchTime == null)
         {
             return Result.Failure(UserSearchUserError.NullParameter);
         }

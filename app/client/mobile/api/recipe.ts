@@ -1,5 +1,19 @@
 import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { protectedAxiosInstance } from "@/constants/host";
+import {
+  BookMarkRecipeResponse,
+  CreateRecipePayloadType,
+  ICommentResponse,
+  RecipeDetailResponse,
+  RecipeResponse,
+  RecipeStep
+} from "@/types/recipe";
+import {
+  IRecipe,
+  IUserReportCommentDTO,
+  IUserReportRecipeDTO,
+  IUserReportRecipeResponse
+} from "@/generated/interfaces/recipe.interface";
 
 const useRecipesFeed = (filterSelected: string) => {
   return useInfiniteQuery<RecipeResponse>({
@@ -188,7 +202,7 @@ const useReportRecipe = () => {
 };
 
 const useReportComment = () => {
-  return useMutation<IUserReportCommentResponse, Error, IUserReportCommentDTO>({
+  return useMutation<IUserReportRecipeResponse, Error, IUserReportCommentDTO>({
     mutationFn: async ({ commentId, reasonCodes, additionalDetails }) => {
       const { data } = await protectedAxiosInstance.post(
         "/api/recipe/user-report-comment",
@@ -252,6 +266,41 @@ const useGetBookmarks = () => {
   });
 };
 
+const useGetDeletedRecipe = () => {
+  return useInfiniteQuery<RecipeResponse>({
+    queryKey: ["deletedRecipes"],
+    queryFn: async ({ pageParam = 0 }) => {
+      const { data } = await protectedAxiosInstance.post<RecipeResponse>(
+        "/api/recipe/get-recipe-bin",
+        {
+          skip: pageParam.toString()
+        }
+      );
+      return data;
+    },
+    getNextPageParam: (lastPage, pages) => {
+      if (!lastPage.metadata.hasNextPage) {
+        return undefined;
+      }
+      return pages.length;
+    }
+  });
+};
+
+const useRestoreOwnRecipe = () => {
+  return useMutation<any, Error, { recipeId: string }>({
+    mutationFn: async ({ recipeId }) => {
+      const { data } = await protectedAxiosInstance.post(
+        "/api/recipe/restore-own-recipe",
+        {
+          recipeId: recipeId
+        }
+      );
+      return data;
+    }
+  });
+};
+
 export {
   useRecipesFeed,
   useRecipesFeedByAuthorId,
@@ -267,5 +316,7 @@ export {
   useReportComment,
   useUpdateComment,
   useDeleteComment,
-  useGetBookmarks
+  useGetBookmarks,
+  useGetDeletedRecipe,
+  useRestoreOwnRecipe
 };

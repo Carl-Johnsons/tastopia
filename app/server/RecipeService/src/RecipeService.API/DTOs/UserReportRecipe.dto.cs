@@ -14,5 +14,6 @@ public class UserReportRecipeDTO
     [NonEmptyList]
     public List<string> ReasonCodes { get; set; } = null!;
     [JsonProperty("additionalDetails")]
+    [MaxLength(1000)]
     public string? AdditionalDetails { get; set; }
 }

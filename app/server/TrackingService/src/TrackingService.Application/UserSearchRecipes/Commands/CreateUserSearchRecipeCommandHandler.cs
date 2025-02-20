@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using TrackingService.Domain.Entities;
 using TrackingService.Domain.Errors;
-namespace TrackingService.Application.UserViewRecipeDetails.Commands;
+namespace TrackingService.Application.UserSearchRecipes.Commands;
 
 public class CreateUserSearchRecipeCommand : IRequest<Result>
 {
@@ -31,7 +31,7 @@ public class CreateUserSearchRecipeCommandHandler : IRequestHandler<CreateUserSe
         var searchTime = request.SearchTime;
         var keyword = request.Keyword;
 
-        if(accountId == null || accountId == Guid.Empty || string.IsNullOrEmpty(keyword) || searchTime == null)
+        if (accountId == null || accountId == Guid.Empty || string.IsNullOrEmpty(keyword) || searchTime == null)
         {
             return Result.Failure(UserSearchRecipeError.NullParameter);
         }
