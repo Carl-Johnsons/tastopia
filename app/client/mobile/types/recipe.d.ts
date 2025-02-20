@@ -26,7 +26,7 @@ type SearchRecipeResponse = {
 type RecipeType = SearchRecipeType & {
   voteDiff?: number;
   numberOfComment?: number;
-  vote?: string;
+  vote?: VoteType;
 };
 
 type MiniRecipeType = {
