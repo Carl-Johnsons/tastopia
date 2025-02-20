@@ -85,7 +85,8 @@ export default function PreviewHistoryList() {
   return (
     <FlatList
       horizontal
-      className={`py-5 ps-4 ${history.length === 0 ? "w-[100vw]" : ""}`}
+      className="pt-5 ps-4"
+      contentContainerStyle={{ paddingRight: 30, height: 200 }}
       data={history}
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.1}
