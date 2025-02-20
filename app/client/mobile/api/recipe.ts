@@ -1,6 +1,19 @@
 import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { protectedAxiosInstance } from "@/constants/host";
-import { RecipeResponse } from "@/types/recipe";
+import {
+  BookMarkRecipeResponse,
+  CreateRecipePayloadType,
+  ICommentResponse,
+  RecipeDetailResponse,
+  RecipeResponse,
+  RecipeStep
+} from "@/types/recipe";
+import {
+  IRecipe,
+  IUserReportCommentDTO,
+  IUserReportRecipeDTO,
+  IUserReportRecipeResponse
+} from "@/generated/interfaces/recipe.interface";
 
 const useRecipesFeed = (filterSelected: string) => {
   return useInfiniteQuery<RecipeResponse>({
@@ -189,7 +202,7 @@ const useReportRecipe = () => {
 };
 
 const useReportComment = () => {
-  return useMutation<IUserReportCommentResponse, Error, IUserReportCommentDTO>({
+  return useMutation<IUserReportRecipeResponse, Error, IUserReportCommentDTO>({
     mutationFn: async ({ commentId, reasonCodes, additionalDetails }) => {
       const { data } = await protectedAxiosInstance.post(
         "/api/recipe/user-report-comment",

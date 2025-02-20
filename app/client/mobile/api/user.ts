@@ -9,6 +9,13 @@ import { selectAccessToken } from "@/slices/auth.slice";
 import { UserState } from "@/slices/user.slice";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 import { IRegisterAccountDTO } from "@/generated/interfaces/identity.interface";
+import {
+  IGetUserDetailsResponse,
+  IUpdateUserDTO,
+  IUserReportUserDTO,
+  IUserReportUserResponse
+} from "@/generated/interfaces/user.interface";
+import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 
 export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {
