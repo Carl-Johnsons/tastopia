@@ -367,6 +367,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
               <BottomSheetTextInput
                 value={report.additionalDetails}
                 onChangeText={handleChangeText}
+                numberOfLines={1}
                 style={{
                   borderBottomWidth: 2,
                   borderBottomColor: primary,

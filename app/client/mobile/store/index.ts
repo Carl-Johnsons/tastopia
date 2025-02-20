@@ -17,6 +17,7 @@ import settingReducer from "@/slices/setting.slice";
 import searchRecipeReducer from "@/slices/searchRecipe.slice";
 import updateProfileReducer from "@/slices/menu/profile/updateProfileForm.slice";
 import notificationReducer from "@/slices/notification.slice";
+import historyReducer from "@/slices/history.slice";
 
 const persistConfig = {
   key: "root",
@@ -30,7 +31,8 @@ const rootReducer = combineReducers({
   setting: settingReducer,
   searchRecipe: searchRecipeReducer,
   updateProfile: updateProfileReducer,
-  notification: notificationReducer
+  notification: notificationReducer,
+  history: historyReducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

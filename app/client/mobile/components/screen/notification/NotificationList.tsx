@@ -1,6 +1,11 @@
 import { useGetNotification } from "@/api/notification";
 import { colors } from "@/constants/colors";
-import { ArrowDownFillIcon, ArrowUpFillIcon, ChatBubbleFillIcon, UserIcon } from "@/constants/icons";
+import {
+  ArrowDownFillIcon,
+  ArrowUpFillIcon,
+  ChatBubbleFillIcon,
+  UserIcon
+} from "@/constants/icons";
 import useColorizer from "@/hooks/useColorizer";
 import { Avatar } from "@rneui/base";
 import { router, useFocusEffect, usePathname } from "expo-router";
@@ -38,8 +43,6 @@ export default function NotificationList() {
   }, [refetch]);
 
   const handleLoadMore = () => {
-    console.log("Load more");
-
     if (!isFetchingNextPage && hasNextPage) {
       fetchNextPage();
     }
@@ -53,7 +56,7 @@ export default function NotificationList() {
 
   if (isLoading) {
     return (
-      <View className='flex-center h-full w-full'>
+      <View className='flex-center h-[50%] w-full'>
         <ActivityIndicator
           size='large'
           color={primary}
@@ -62,17 +65,16 @@ export default function NotificationList() {
     );
   }
 
-  console.log(data, stringify(data));
-
   return (
     <View className='pb-[85px] pt-2'>
       <FlatList
         className='h-full'
-        data={notifications}
+        contentContainerStyle={{ paddingBottom: 25 }}
+        data={[]}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={() => (
-          <View style={{ flex: 1, marginTop: 50 }}>
+          <View className='h-[100vh]'>
             <Empty type='emptyNotification' />
           </View>
         )}
