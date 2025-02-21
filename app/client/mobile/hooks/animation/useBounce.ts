@@ -10,7 +10,7 @@ export type UseBounceResult = {
   /** Start the animation. */
   animate: () => void;
 
-  /** The styles to asign to the object. */
+  /** The styles to assign to the object. */
   animatedStyles: DefaultStyle
 };
 
