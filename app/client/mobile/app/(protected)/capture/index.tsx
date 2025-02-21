@@ -1,13 +1,16 @@
+import { ActivityIndicator, TouchableWithoutFeedback } from "react-native";
+import { addTagValue } from "@/slices/searchRecipe.slice";
 import { Canvas, rect, DiffRect, rrect } from "@shopify/react-native-skia";
-import { ActivityIndicator, Dimensions, TouchableWithoutFeedback } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import { globalStyles } from "@/components/common/GlobalStyles";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAppDispatch } from "@/store/hooks";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useIngredientPredictMutation } from "@/api/ingredient-predict";
 import { useNavigation } from "expo-router";
 import { useRouter } from "expo-router";
-import uuid from "react-native-uuid";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
+import uuid from "react-native-uuid";
 import {
   Alert,
   GestureResponderEvent,
@@ -21,16 +24,11 @@ import {
   CameraDevice,
   CameraPosition,
   getCameraDevice,
-  PhotoFile,
   useCameraDevices
 } from "react-native-vision-camera";
-import { FontAwesome } from "@expo/vector-icons";
-import { useAppDispatch } from "@/store/hooks";
-import { addTagValue } from "@/slices/searchRecipe.slice";
-import { globalStyles } from "@/components/common/GlobalStyles";
+import { useImagePicking } from "@/hooks";
 
 const RNFS = require("react-native-fs");
-const { width: windowWidth } = Dimensions.get("window");
 // the value returned does not include the bottom navigation bar, I am not sure why yours does.
 
 const Capture = () => {
@@ -38,11 +36,22 @@ const Capture = () => {
   const [deviceCode, setDeviceCode] = useState<CameraPosition>("back");
   const [enableFlash, setEnableFlash] = useState(false);
   const [isTakingPhoto, setIsTakingPhoto] = useState(false);
-  const [photo, setPhoto] = useState<PhotoFile | undefined>(undefined);
+  const [photo, setPhoto] = useState({
+    uri: "",
+    width: 0,
+    height: 0
+  });
   const [prediction, setPrediction] = useState<IngredientStreamResponse>();
-  const [previewContainerHeight, setPreviewContainerHeight] = useState(0);
+  const [imageContainerDimension, setImageContainerDimension] = useState({
+    width: 0,
+    height: 0
+  });
   const { isLoading: isPredictLoading, mutateAsync: predictAsync } =
     useIngredientPredictMutation();
+  const { pickImage } = useImagePicking({
+    imageCount: 1,
+    allowsMultipleSelection: false
+  });
   const camera = useRef<Camera>(null);
   const devices = useCameraDevices();
   const dispatch = useAppDispatch();
@@ -94,7 +103,12 @@ const Capture = () => {
         flash: enableFlash ? "on" : "off"
       });
       setIsTakingPhoto(false);
-      setPhoto(photo);
+      setPhoto({
+        ...photo,
+        uri: `file://${photo.path}`
+      });
+
+      console.log({ photo });
 
       const file = {
         uri: `file://${photo.path}`,
@@ -106,14 +120,25 @@ const Capture = () => {
       console.log(predictResponse.boxes);
 
       setPrediction(predictResponse);
-
-      // RNFS.unlink(snapshot.path);
     } catch (error) {
       console.log("Error capturing image:", error);
     }
   }, [camera.current, enableFlash]);
 
-  const toggleGallery = () => {};
+  const openGallery = async () => {
+    const images = await pickImage();
+    const image = images?.[0];
+    if (!image) {
+      Alert.alert("Image not found! Please try again!");
+      return;
+    }
+    setPhoto({
+      ...photo,
+      uri: image.previewPath
+    });
+    const predictResponse = await predictAsync({ file: image.file as unknown as Blob });
+    setPrediction(predictResponse);
+  };
 
   const onFocusTap = useCallback(
     ({ nativeEvent: event }: GestureResponderEvent) => {
@@ -131,8 +156,13 @@ const Capture = () => {
   };
 
   const handleBackInPreview = () => {
+    RNFS.unlink(photo.uri);
     setPrediction(undefined);
-    setPhoto(undefined);
+    setPhoto({
+      uri: "",
+      width: 0,
+      height: 0
+    });
   };
 
   const handleBack = () => {
@@ -147,6 +177,16 @@ const Capture = () => {
     });
   }, [ingredientPredict]);
 
+  useEffect(() => {
+    if (photo.uri) {
+      Image.getSize(
+        photo.uri,
+        (width, height) => setPhoto({ ...photo, width, height }),
+        error => console.error("Failed to get image dimensions:", error)
+      );
+    }
+  }, [photo.uri]);
+
   return (
     <SafeAreaView
       style={styles.container}
@@ -155,21 +195,22 @@ const Capture = () => {
       <View className='relative w-full'>
         <View style={{ height: "100%" }}>
           {shouldRenderCamera &&
-            (photo ? (
+            (photo.uri ? (
               <>
                 <View className='w-full flex-1'>
                   <View
                     className='h-[80%] w-full'
                     onLayout={event => {
-                      const { height } = event.nativeEvent.layout;
-                      if (height !== previewContainerHeight) {
-                        setPreviewContainerHeight(height);
-                      }
+                      const { width, height } = event.nativeEvent.layout;
+                      setImageContainerDimension({
+                        width,
+                        height
+                      });
                     }}
                   >
                     <Image
-                      source={{ uri: `file://${photo.path}` }}
-                      className='flex-1'
+                      source={{ uri: photo.uri }}
+                      style={{ flex: 1, resizeMode: "contain" }}
                     />
                   </View>
                   <Canvas
@@ -183,10 +224,20 @@ const Capture = () => {
                     }}
                   >
                     {(prediction?.boxes ?? []).map((box, index) => {
-                      const x1 = box[0] * windowWidth;
-                      const y1 = box[1] * previewContainerHeight;
-                      const x2 = box[2] * windowWidth;
-                      const y2 = box[3] * previewContainerHeight;
+                      const scaleFactor = Math.min(
+                        imageContainerDimension.width / photo.width,
+                        imageContainerDimension.height / photo.height
+                      );
+
+                      const displayWidth = photo.width * scaleFactor;
+                      const displayHeight = photo.height * scaleFactor;
+                      const offsetY =
+                        (imageContainerDimension.height - displayHeight) / 2;
+
+                      const x1 = box[0] * displayWidth;
+                      const y1 = offsetY + box[1] * displayHeight;
+                      const x2 = box[2] * displayWidth;
+                      const y2 = offsetY + box[3] * displayHeight;
                       const boxWidth = x2 - x1;
                       const boxHeight = y2 - y1;
                       console.log(x1, y1, boxWidth, boxHeight);
@@ -316,7 +367,7 @@ const Capture = () => {
                       </View>
                     </View>
                     <View className='absolute bottom-0 w-full flex-1 flex-row justify-center'>
-                      <TouchableWithoutFeedback onPress={toggleGallery}>
+                      <TouchableWithoutFeedback onPress={openGallery}>
                         <View className='flex-1 items-center justify-center'>
                           <Image source={require("../../../assets/icons/gallery.png")} />
                         </View>
