@@ -7,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAppDispatch } from "@/store/hooks";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useIngredientPredictMutation } from "@/api/ingredient-predict";
-import { useNavigation } from "expo-router";
+import { useFocusEffect, useNavigation } from "expo-router";
 import { useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import uuid from "react-native-uuid";
@@ -26,7 +26,9 @@ import {
   getCameraDevice,
   useCameraDevices
 } from "react-native-vision-camera";
-import { useImagePicking } from "@/hooks";
+import { useBounce, useImagePicking } from "@/hooks";
+import Button from "@/components/Button";
+import { colors } from "@/constants/colors";
 
 const RNFS = require("react-native-fs");
 // the value returned does not include the bottom navigation bar, I am not sure why yours does.
@@ -36,6 +38,7 @@ const Capture = () => {
   const [deviceCode, setDeviceCode] = useState<CameraPosition>("back");
   const [enableFlash, setEnableFlash] = useState(false);
   const [isTakingPhoto, setIsTakingPhoto] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [photo, setPhoto] = useState({
     uri: "",
     width: 0,
@@ -64,6 +67,13 @@ const Capture = () => {
   const isActive = isScreenFocused;
   const shouldRenderCamera = device;
 
+  // ===== Styling value =====
+  const { black } = colors;
+  const { animate: animateCaptureBtn, animatedStyles: animatedCaptureBtnStyles } =
+    useBounce();
+  const { animate: animatedSearchBtn, animatedStyles: animatedSearchBtnStyles } =
+    useBounce();
+
   const requestPermissionAsync = async () => {
     let finalPermissionStatus = Camera.getCameraPermissionStatus();
     if (finalPermissionStatus != "granted") {
@@ -71,7 +81,10 @@ const Capture = () => {
     }
 
     if (finalPermissionStatus != "granted") {
-      Alert.alert("In order to use the camera you must allowed camera permission!");
+      Alert.alert(
+        "Permission denied",
+        "In order to use the camera you must allowed camera permission!"
+      );
       router.back();
     }
   };
@@ -96,8 +109,12 @@ const Capture = () => {
   }, [deviceCode]);
 
   const captureImage = useCallback(async () => {
+    if (isTakingPhoto) return;
+    if (!camera.current) return;
+
+    animateCaptureBtn();
+
     try {
-      if (!camera.current) return;
       setIsTakingPhoto(true);
       const photo = await camera.current.takePhoto({
         flash: enableFlash ? "on" : "off"
@@ -128,10 +145,12 @@ const Capture = () => {
   const openGallery = async () => {
     const images = await pickImage();
     const image = images?.[0];
+
     if (!image) {
-      Alert.alert("Image not found! Please try again!");
+      // Alert.alert("Error", "Image not found! Please try again!");
       return;
     }
+
     setPhoto({
       ...photo,
       uri: image.previewPath
@@ -170,12 +189,22 @@ const Capture = () => {
   };
 
   const handleSearch = useCallback(() => {
+    if (isSearching) return;
+    animatedSearchBtn();
+
+    setIsSearching(true);
     dispatch(addTagValue({ code: uuid.v4(), value: ingredientPredict }));
 
     router.push({
       pathname: "/(protected)/search"
     });
-  }, [ingredientPredict]);
+  }, [ingredientPredict, isSearching]);
+
+  useFocusEffect(() => {
+    if (isSearching) {
+      setIsSearching(false);
+    };
+  });
 
   useEffect(() => {
     if (photo.uri) {
@@ -276,21 +305,21 @@ const Capture = () => {
                         <Text className='font-bold text-3xl text-primary'>
                           {ingredientPredict}
                         </Text>
-                        <View className='w-[60%] rounded-3xl bg-primary p-3'>
-                          <TouchableWithoutFeedback onPress={handleSearch}>
-                            <View className='flex-row items-center'>
-                              <FontAwesome
-                                name='search'
-                                size={24}
-                                color='black'
-                                className='pr-4'
-                              />
-                              <Text className='font-bold text-2xl'>
-                                Search for recipes
-                              </Text>
-                            </View>
-                          </TouchableWithoutFeedback>
-                        </View>
+                        <Button
+                          onPress={handleSearch}
+                          style={animatedSearchBtnStyles}
+                          className='w-[60%] rounded-3xl bg-primary p-3'
+                        >
+                          <View className='flex-row items-center'>
+                            <FontAwesome
+                              name='search'
+                              size={24}
+                              color='black'
+                              className='pr-4'
+                            />
+                            <Text className='font-bold text-2xl'>Search for recipes</Text>
+                          </View>
+                        </Button>
                       </>
                     )}
                   </View>
@@ -325,15 +354,8 @@ const Capture = () => {
                   photoQualityBalance='speed'
                   outputOrientation='preview'
                 />
-                {isTakingPhoto ? (
-                  <View className='absolute bottom-0 left-0 right-0 mb-6'>
-                    <ActivityIndicator
-                      size='large'
-                      color={globalStyles.color.primary}
-                    />
-                  </View>
-                ) : (
-                  <>
+                <>
+                  {!isTakingPhoto && (
                     <View className='absolute left-0 right-0 top-0 w-full flex-1 flex-row justify-between pl-4 pr-4 pt-8'>
                       <View>
                         <TouchableWithoutFeedback onPress={handleBack}>
@@ -366,19 +388,28 @@ const Capture = () => {
                         </TouchableWithoutFeedback>
                       </View>
                     </View>
-                    <View className='absolute bottom-0 w-full flex-1 flex-row justify-center'>
+                  )}
+                  <View className='absolute bottom-0 w-full flex-1 flex-row'>
+                    {!isTakingPhoto ? (
                       <TouchableWithoutFeedback onPress={openGallery}>
                         <View className='flex-1 items-center justify-center'>
                           <Image source={require("../../../assets/icons/gallery.png")} />
                         </View>
                       </TouchableWithoutFeedback>
-                      <TouchableWithoutFeedback onPress={captureImage}>
-                        <View className='flex-1 items-center justify-center'>
-                          <Image
-                            source={require("../../../assets/icons/dot-circle-icon.png")}
-                          />
-                        </View>
-                      </TouchableWithoutFeedback>
+                    ) : (
+                      <View className='flex-1' />
+                    )}
+                    <Button
+                      onPress={captureImage}
+                      style={animatedCaptureBtnStyles}
+                    >
+                      <View className='flex-1 items-center justify-center'>
+                        <Image
+                          source={require("../../../assets/icons/dot-circle-icon.png")}
+                        />
+                      </View>
+                    </Button>
+                    {!isTakingPhoto ? (
                       <TouchableWithoutFeedback onPress={flipCamera}>
                         <View className='flex-1 items-center justify-center'>
                           <Image
@@ -386,9 +417,11 @@ const Capture = () => {
                           />
                         </View>
                       </TouchableWithoutFeedback>
-                    </View>
-                  </>
-                )}
+                    ) : (
+                      <View className='flex-1' />
+                    )}
+                  </View>
+                </>
               </>
             ))}
         </View>
