@@ -4,6 +4,7 @@ using RecipeWorker.Utilities;
 using RecipeProto;
 using Newtonsoft.Json;
 using RecipeWorker.Constants;
+using Contract.Event.UserEvent;
 namespace RecipeWorker.Services;
 
 public class CommunityRecipeService : IRecipeService

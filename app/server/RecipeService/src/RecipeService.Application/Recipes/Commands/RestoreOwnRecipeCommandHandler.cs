@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Contract.Event.UserEvent;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
@@ -17,12 +18,13 @@ public class RestoreOwnRecipeCommandHandler : IRequestHandler<RestoreOwnRecipeCo
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<RestoreOwnRecipeCommandHandler> _logger;
-
-    public RestoreOwnRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<RestoreOwnRecipeCommandHandler> logger)
+    private readonly IServiceBus _serviceBus;
+    public RestoreOwnRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<RestoreOwnRecipeCommandHandler> logger, IServiceBus serviceBus)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _serviceBus = serviceBus;
     }
 
     public async Task<Result<Recipe?>> Handle(RestoreOwnRecipeCommand request, CancellationToken cancellationToken)
@@ -69,6 +71,11 @@ public class RestoreOwnRecipeCommandHandler : IRequestHandler<RestoreOwnRecipeCo
             await _unitOfWork.SaveChangeAsync();
             recipe.Comments = [];
             recipe.RecipeVotes = [];
+            await _serviceBus.Publish(new UpdateUserTotalRecipeEvent
+            {
+                AccountId = request.AuthorId,
+                Delta = 1
+            });
             return Result<Recipe?>.Success(recipe);
         }
         catch (Exception ex) {

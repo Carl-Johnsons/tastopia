@@ -3,6 +3,7 @@ using Contract.DTOs.UploadFileDTO;
 using Contract.Event.NotificationEvent;
 using Contract.Event.RecipeEvent;
 using Contract.Event.UploadEvent;
+using Contract.Event.UserEvent;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
@@ -165,6 +166,11 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
                     RecipientIds = ids
                 });
             }
+            await _serviceBus.Publish(new UpdateUserTotalRecipeEvent
+            {
+                AccountId = request.AuthorId,
+                Delta = 1
+            });
 
             return Result<Recipe?>.Success(recipe);
         }

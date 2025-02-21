@@ -3,6 +3,7 @@
 public class NotificationsResponse
 {
     public Guid Id { get; set; }
+    public bool IsViewed { get; set; }
     public string? Title { get; set; }
     public string Message { get; set; } = null!;
     public string Code { get; set; } = null!;
