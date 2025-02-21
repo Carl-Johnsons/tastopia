@@ -13,7 +13,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator, FlatList } from "react-native";
 import Empty from "../community/Empty";
-import { stringify } from "@/utils/debug";
 import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
 import { filterUniqueItems } from "@/utils/dataFilter";
 
@@ -70,7 +69,7 @@ export default function NotificationList() {
       <FlatList
         className='h-full'
         contentContainerStyle={{ paddingBottom: 25 }}
-        data={[]}
+        data={notifications}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={() => (
