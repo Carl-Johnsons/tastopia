@@ -1,5 +1,7 @@
 ﻿namespace RecipeService.API.ValidationAttributes;
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
+
 public class NonEmptyListAttribute : ValidationAttribute
 {
     public NonEmptyListAttribute() : base("The list cannot be empty.")
@@ -8,12 +10,10 @@ public class NonEmptyListAttribute : ValidationAttribute
 
     public override bool IsValid(object? value)
     {
-        if (value is List<string> list)
+        if (value is ICollection collection)
         {
-            return list.Count > 0;
+            return collection.Count > 0;
         }
         return false;
     }
 }
-
-

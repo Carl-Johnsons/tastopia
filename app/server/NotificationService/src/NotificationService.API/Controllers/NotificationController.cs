@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using NotificationService.API.DTOs;
 using NotificationService.Application.Notifications.Commands;
 using NotificationService.Application.Notifications.Queries;
+using NotificationService.Domain.Entities;
 using NotificationService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -131,6 +132,24 @@ public partial class NotificationController : BaseApiController
 
         result.ThrowIfFailure();
 
+        return Ok(result.Value);
+    }
+
+    [HttpPost("set-view-notification")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Recipient), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> SetViewNotification([FromBody] SetViewNotifyDTO setViewNotifyDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new SetViewNotificationCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            NotificationId = setViewNotifyDTO.NotificationId,
+        });
+
+        result.ThrowIfFailure();
         return Ok(result.Value);
     }
 }

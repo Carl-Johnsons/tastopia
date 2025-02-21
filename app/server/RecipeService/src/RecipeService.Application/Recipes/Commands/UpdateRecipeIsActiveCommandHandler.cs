@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Contract.Event.UserEvent;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RecipeService.Domain.Errors;
-
 namespace RecipeService.Application.Recipes.Commands;
 
 public class UpdateRecipeIsActiveCommand : IRequest<Result>
@@ -15,13 +15,15 @@ public class UpdateRecipeIsActiveCommandHandler : IRequestHandler<UpdateRecipeIs
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ILogger<UpdateRecipeTagsCommandHandler> _logger;
+    private readonly ILogger<UpdateRecipeIsActiveCommandHandler> _logger;
+    private readonly IServiceBus _serviceBus;
 
-    public UpdateRecipeIsActiveCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<UpdateRecipeTagsCommandHandler> logger)
+    public UpdateRecipeIsActiveCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<UpdateRecipeIsActiveCommandHandler> logger, IServiceBus serviceBus)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _serviceBus = serviceBus;
     }
 
     public async Task<Result> Handle(UpdateRecipeIsActiveCommand request, CancellationToken cancellationToken)
@@ -45,6 +47,11 @@ public class UpdateRecipeIsActiveCommandHandler : IRequestHandler<UpdateRecipeIs
             recipe.IsActive = isActive;
             _context.Recipes.Update(recipe);
             await _unitOfWork.SaveChangeAsync();
+            await _serviceBus.Publish(new UpdateUserTotalRecipeEvent
+            {
+                AccountId = recipe.AuthorId,
+                Delta = isActive ? 1 : -1,
+            });
             return Result.Success();
         }
         catch (Exception ex) {
