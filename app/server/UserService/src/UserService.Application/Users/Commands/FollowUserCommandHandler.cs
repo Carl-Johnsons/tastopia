@@ -102,7 +102,7 @@ public class FollowUserCommandHandler : IRequestHandler<FollowUserCommand, Resul
                     Channels = [NOTIFICATION_CHANNEL.DEFAULT],
                     JsonData = Newtonsoft.Json.JsonConvert.SerializeObject(new
                     {
-                        redirectUri = $"{CLIENT_URI.MOBILE.COMMUNITY}/{accountId.Value}"
+                        redirectUri = $"{CLIENT_URI.MOBILE.USER}/{accountId.Value}"
                     }),
                     ImageUrl = follower.AvatarUrl,
                     RecipientIds = [followingId.Value]
