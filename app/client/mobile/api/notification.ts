@@ -5,7 +5,8 @@ import { selectAccessToken } from "@/slices/auth.slice";
 import { selectSetting } from "@/slices/setting.slice";
 import { stringify } from "@/utils/debug";
 import { AxiosError } from "axios";
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "react-query";
+import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 
 export const useGetNotification = () => {
   const accessToken = selectAccessToken();
@@ -30,20 +31,54 @@ export const useGetNotification = () => {
       } catch (error) {
         if (error instanceof AxiosError) {
           const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message);
+          throw new Error(data.message || "An error has occurred.");
         }
 
         throw new Error("An error has occurred.");
       }
     },
     getNextPageParam: (lastPage, allPages) => {
-      if (!lastPage.metadata.hasNextPage) {
+      if (!lastPage.metadata?.hasNextPage) {
         return undefined;
       }
 
       console.log(allPages, stringify(allPages));
 
       return allPages.length;
+    }
+  });
+};
+
+type SetViewedNotificationResponse =
+  | {
+      recipientId: string;
+      isViewed: boolean;
+    }
+  | IErrorResponseDTO;
+
+type SetViewedNotificationParams = {
+  notificationId: string;
+};
+
+export const useSetViewedNotification = () => {
+  return useMutation<SetViewedNotificationResponse, Error, SetViewedNotificationParams>({
+    mutationKey: "getNotification",
+    mutationFn: async ({ notificationId }) => {
+      try {
+        const { data } =
+          await protectedAxiosInstance.post<SetViewedNotificationResponse>(
+            "/api/notification/set-view-notification",
+            { notificationId }
+          );
+        return data;
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message);
+        }
+
+        throw new Error("An error has occurred.");
+      }
     }
   });
 };

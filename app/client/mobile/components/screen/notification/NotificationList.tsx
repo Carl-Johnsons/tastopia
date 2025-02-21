@@ -1,4 +1,4 @@
-import { useGetNotification } from "@/api/notification";
+import { useGetNotification, useSetViewedNotification } from "@/api/notification";
 import { colors } from "@/constants/colors";
 import {
   ArrowDownFillIcon,
@@ -15,15 +15,10 @@ import { ActivityIndicator, FlatList } from "react-native";
 import Empty from "../community/Empty";
 import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
 import useHydrateData from "@/hooks/useHydrateData";
+import { useQueryClient } from "react-query";
 
 export default function NotificationList() {
-  const {
-    data,
-    isLoading,
-    refetch,
-    isStale,
-    fetchNextPage
-  } = useGetNotification();
+  const { data, isLoading, refetch, isStale, fetchNextPage } = useGetNotification();
   const { primary } = colors;
   const [notifications, setNotifications] = useState<INotificationsResponse[]>();
   useHydrateData({ source: data, setter: setNotifications });
@@ -85,15 +80,17 @@ export const Notification = ({
   item: INotificationsResponse;
   index: number;
 }) => {
-  const { message, imageUrl, jsonData, code } = item;
+  const { message, imageUrl, jsonData, code, isViewed, id } = item;
   const currentRouteName = usePathname();
   const isOddItem = useMemo(() => {
     return index % 2 === 0;
   }, [index]);
   const { white, black, primary } = colors;
   const { c } = useColorizer();
+  const { mutateAsync: setViewedNotification } = useSetViewedNotification();
+  const queryClient = useQueryClient();
 
-  const handlePress = useCallback(() => {
+  const handlePress = useCallback(async () => {
     if (jsonData) {
       const data = JSON.parse(jsonData);
 
@@ -101,7 +98,21 @@ export const Notification = ({
         router.push(data.redirectUri);
       }
     }
-  }, [jsonData, currentRouteName]);
+
+    if (!isViewed) {
+      await setViewedNotification(
+        { notificationId: id },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries("getNotification");
+            console.log("Notification viewed", id);
+          }
+        }
+      );
+    }
+
+    console.log("Pressing notification", id);
+  }, [jsonData, currentRouteName, id, isViewed]);
 
   const styles = StyleSheet.create({
     oddWrapper: {
@@ -123,7 +134,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={c(white.DEFAULT, black.DEFAULT)}
+            color={white.DEFAULT}
           />
         );
       case "USER_FOLLOW":
@@ -138,7 +149,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={c(white.DEFAULT, black.DEFAULT)}
+            color={white.DEFAULT}
           />
         );
       case "USER_UPVOTE":
@@ -162,7 +173,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={c(white.DEFAULT, black.DEFAULT)}
+            color={white.DEFAULT}
           />
         );
     }
@@ -188,7 +199,9 @@ export const Notification = ({
         </View>
       </View>
       <View className='shrink justify-center pt-2'>
-        <Text className='text-black_white'>{message}</Text>
+        <Text className={`${isViewed ? "text-gray-500" : "text-black_white"}`}>
+          {message}
+        </Text>
       </View>
     </Pressable>
   );
