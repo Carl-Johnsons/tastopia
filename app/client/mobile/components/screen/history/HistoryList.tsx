@@ -70,7 +70,7 @@ export default function HistoryList({ keyword }: HistoryListProps) {
     dispatch(saveHistoryData({ isLoading }));
   }, [isLoading]);
 
-  if (isLoading && !!history) {
+  if (isLoading || !history) {
     return (
       <View className='flex-center h-[50%]'>
         <ActivityIndicator
