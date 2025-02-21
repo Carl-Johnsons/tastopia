@@ -9,7 +9,7 @@ import Constants from "expo-constants";
 const { expoConfig } = Constants;
 
 const API_GATEWAY_SCHEME = process.env.EXPO_PUBLIC_API_GATEWAY_SCHEME;
-export const API_GATEWAY_HOST =
+const API_GATEWAY_HOST =
   process.env.EXPO_PUBLIC_API_GATEWAY_HOST ?? expoConfig?.hostUri?.split(":")[0];
 const API_GATEWAY_PORT = process.env.EXPO_PUBLIC_API_GATEWAY_PORT;
 const API_GATEWAY_HOST_DEV_BUILD = `${API_GATEWAY_HOST}.nip.io`;
