@@ -38,6 +38,8 @@ export const usePushNotification = (): PushNotificationState => {
   const notificationListener = useRef<EventSubscription>();
   const responseListener = useRef<EventSubscription>();
 
+  const dispatch = useAppDispatch();
+
   const registerForPushNotificationAsync = async () => {
     setNotificationHandler({
       handleNotification: async () => ({
@@ -65,8 +67,6 @@ export const usePushNotification = (): PushNotificationState => {
 
     const projectId =
       Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
-    const dispatch = useAppDispatch();
-
     token = await getExpoPushTokenAsync({ projectId });
 
     if (Platform.OS === "android") {
@@ -81,11 +81,9 @@ export const usePushNotification = (): PushNotificationState => {
         await protectedAxiosInstance.post("api/notification/expo-push-token/android", {
           expoPushToken: token.data
         });
+        console.log("Register push token successfully. Token:", token.data);
         dispatch(saveNotificationData({ pushToken: token.data }));
       } catch (err) {
-        console.error(
-          `Register user with expo push token ${expoPushToken} failed, Please try again`
-        );
         console.error(err);
       }
     }
