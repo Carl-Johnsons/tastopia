@@ -85,15 +85,19 @@ export default function PreviewHistoryList() {
   return (
     <FlatList
       horizontal
-      className="pt-5 ps-4"
-      contentContainerStyle={{ paddingRight: 30, height: 200 }}
+      className='ps-4 pt-5'
+      contentContainerStyle={{
+        paddingRight: 30,
+        height: 200,
+        justifyContent: "center"
+      }}
       data={history}
       onEndReached={handleLoadMore}
       onEndReachedThreshold={0.1}
       ItemSeparatorComponent={() => <View className='w-[20px]' />}
       showsHorizontalScrollIndicator={false}
       ListEmptyComponent={() => (
-        <View className='flex-center'>
+        <View className='mt-[30px] w-[100vw]'>
           <Text className='text-center font-light text-lg text-gray-500'>
             {t("noHistory")}
           </Text>
