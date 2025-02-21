@@ -9,12 +9,12 @@ import {
 import useColorizer from "@/hooks/useColorizer";
 import { Avatar } from "@rneui/base";
 import { router, useFocusEffect, usePathname } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator, FlatList } from "react-native";
 import Empty from "../community/Empty";
 import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
-import { filterUniqueItems } from "@/utils/dataFilter";
+import useHydrateData from "@/hooks/useHydrateData";
 
 export default function NotificationList() {
   const {
@@ -22,12 +22,11 @@ export default function NotificationList() {
     isLoading,
     refetch,
     isStale,
-    isFetchingNextPage,
-    hasNextPage,
     fetchNextPage
   } = useGetNotification();
   const { primary } = colors;
-  const [notifications, setNotifications] = useState<INotificationsResponse[]>([]);
+  const [notifications, setNotifications] = useState<INotificationsResponse[]>();
+  useHydrateData({ source: data, setter: setNotifications });
 
   const fetchData = useCallback(() => {
     if (isStale) {
@@ -37,25 +36,9 @@ export default function NotificationList() {
 
   useFocusEffect(fetchData);
 
-  const handleRefreshing = useCallback(async () => {
-    await refetch();
-  }, [refetch]);
-
-  const handleLoadMore = () => {
-    if (!isFetchingNextPage && hasNextPage) {
-      fetchNextPage();
-    }
-  };
-
-  useEffect(() => {
-    if (data?.pages) {
-      setNotifications(filterUniqueItems(data.pages));
-    }
-  }, [data]);
-
-  if (isLoading) {
+  if (isLoading || !notifications) {
     return (
-      <View className='flex-center h-[50%] w-full'>
+      <View className='flex-center h-[90%] w-full'>
         <ActivityIndicator
           size='large'
           color={primary}
@@ -65,12 +48,12 @@ export default function NotificationList() {
   }
 
   return (
-    <View className='pb-[85px] pt-2'>
+    <View className='pb-[60px] pt-2'>
       <FlatList
         className='h-full'
         contentContainerStyle={{ paddingBottom: 25 }}
         data={notifications}
-        onEndReached={handleLoadMore}
+        onEndReached={() => fetchNextPage()}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={() => (
           <View className='h-[100vh]'>
@@ -87,7 +70,7 @@ export default function NotificationList() {
           <RefreshControl
             refreshing={isLoading}
             tintColor={primary}
-            onRefresh={handleRefreshing}
+            onRefresh={refetch}
           />
         }
       />

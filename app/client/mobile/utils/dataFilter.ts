@@ -1,3 +1,6 @@
+import { IAdvancePaginatedMetadata } from "@/generated/interfaces/common.interface";
+import { stringify } from "./debug";
+
 /**
  * Filters the source of an image so that it could be properly handled.
  *
@@ -9,14 +12,19 @@ export function filterImageSource(source: string | null | undefined) {
   return source !== "" ? source : undefined;
 }
 
+export type PaginatedData<T> = {
+  paginatedData: T[];
+  metadata?: IAdvancePaginatedMetadata;
+};
+
 /**
  * Filters out duplicate items from paginated data based on a unique identifier
  * @param pages - Array of pages containing paginated data
  * @param idKey - Key to use as unique identifier
  * @returns Array of unique items
  */
-export const filterUniqueItems = <T extends { [key: string]: any }>(
-  pages: { paginatedData: T[] }[],
+export const filterUniqueItems = <T extends { id: any }>(
+  pages: PaginatedData<T>[],
   idKey: keyof T = "id"
 ): T[] => {
   const seenIds = new Set<string>();

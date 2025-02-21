@@ -5,7 +5,6 @@ import {
 import Recipe from "@/components/common/Recipe";
 import SettingRecipe from "@/components/common/SettingRecipe";
 import { colors } from "@/constants/colors";
-import { filterUniqueItems } from "@/utils/dataFilter";
 import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -14,23 +13,18 @@ import { ActivityIndicator, RefreshControl, View } from "react-native";
 import Empty from "../community/Empty";
 import { useAppDispatch } from "@/store/hooks";
 import { saveHistoryData } from "@/slices/history.slice";
+import useHydrateData from "@/hooks/useHydrateData";
 
 type HistoryListProps = {
   keyword: string;
 };
 
 export default function HistoryList({ keyword }: HistoryListProps) {
-  const {
-    data,
-    isLoading,
-    refetch,
-    isStale,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage
-  } = useSearchRecipeViewingHistory(keyword);
+  const { data, isLoading, refetch, isStale, fetchNextPage } =
+    useSearchRecipeViewingHistory(keyword);
   const { primary } = colors;
-  const [history, setHistory] = useState<IRecipeViewingHistoryResponse[]>([]);
+  const [history, setHistory] = useState<IRecipeViewingHistoryResponse[]>();
+  useHydrateData({ source: data, setter: setHistory });
 
   const fetchData = useCallback(() => {
     if (isStale) {
@@ -39,16 +33,6 @@ export default function HistoryList({ keyword }: HistoryListProps) {
   }, [isStale]);
 
   useFocusEffect(fetchData);
-
-  const handleRefreshing = useCallback(async () => {
-    await refetch();
-  }, [refetch]);
-
-  const handleLoadMore = useCallback(() => {
-    if (!isFetchingNextPage && hasNextPage) {
-      fetchNextPage();
-    }
-  }, [isFetchingNextPage, hasNextPage]);
 
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [currentRecipeId, setCurrentRecipeId] = useState("");
@@ -61,27 +45,25 @@ export default function HistoryList({ keyword }: HistoryListProps) {
     }: {
       item: ListRenderItemInfo<IRecipeViewingHistoryResponse>;
       index: number;
-    }) => (
-      <View testID='recipe'>
-        <Recipe
-          {...item}
-          setCurrentRecipeId={setCurrentRecipeId}
-          setCurrentAuthorId={setCurrentAuthorId}
-          bottomSheetRef={bottomSheetRef}
-        />
-        {index !== history.length - 1 && (
-          <View className='my-4 h-[1px] w-full bg-gray-300' />
-        )}
-      </View>
-    ),
-    [history.length]
-  );
+    }) => {
+      if (!history) return null;
 
-  useEffect(() => {
-    if (data?.pages) {
-      setHistory(filterUniqueItems(data.pages));
-    }
-  }, [data]);
+      return (
+        <View testID='recipe'>
+          <Recipe
+            {...item}
+            setCurrentRecipeId={setCurrentRecipeId}
+            setCurrentAuthorId={setCurrentAuthorId}
+            bottomSheetRef={bottomSheetRef}
+          />
+          {index !== history.length - 1 && (
+            <View className='my-4 h-[1px] w-full bg-gray-300' />
+          )}
+        </View>
+      );
+    },
+    [history?.length]
+  );
 
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -104,8 +86,7 @@ export default function HistoryList({ keyword }: HistoryListProps) {
       <FlatList
         data={history}
         className='h-full'
-        contentContainerStyle={{ paddingBottom: 130 }}
-        onEndReached={handleLoadMore}
+        onEndReached={() => fetchNextPage()}
         onEndReachedThreshold={0.1}
         ItemSeparatorComponent={() => <View className='w-[20px]' />}
         showsHorizontalScrollIndicator={false}
@@ -119,7 +100,7 @@ export default function HistoryList({ keyword }: HistoryListProps) {
           <RefreshControl
             refreshing={isLoading}
             tintColor={primary}
-            onRefresh={handleRefreshing}
+            onRefresh={refetch}
           />
         }
       />

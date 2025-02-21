@@ -4,6 +4,7 @@ import {
 } from "@/api/tracking";
 import MiniRecipe from "@/components/common/MiniRecipe";
 import { colors } from "@/constants/colors";
+import useHydrateData from "@/hooks/useHydrateData";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
@@ -24,7 +25,8 @@ export default function PreviewHistoryList() {
   } = useSearchRecipeViewingHistory();
   const { primary } = colors;
   const { t } = useTranslation("menu");
-  const [history, setHistory] = useState<IRecipeViewingHistoryResponse[]>([]);
+  const [history, setHistory] = useState<IRecipeViewingHistoryResponse[]>();
+  useHydrateData({ source: data, setter: setHistory });
 
   const fetchData = useCallback(() => {
     if (isStale) {
@@ -65,13 +67,7 @@ export default function PreviewHistoryList() {
     []
   );
 
-  useEffect(() => {
-    if (data?.pages) {
-      setHistory(filterUniqueItems(data.pages));
-    }
-  }, [data]);
-
-  if (isLoading) {
+  if (isLoading || !history) {
     return (
       <View className='flex-center h-[140px]'>
         <ActivityIndicator
@@ -83,34 +79,36 @@ export default function PreviewHistoryList() {
   }
 
   return (
-    <FlatList
-      horizontal
-      className='ps-4 pt-5'
-      contentContainerStyle={{
-        paddingRight: 30,
-        height: 200,
-        justifyContent: "center"
-      }}
-      data={history}
-      onEndReached={handleLoadMore}
-      onEndReachedThreshold={0.1}
-      ItemSeparatorComponent={() => <View className='w-[20px]' />}
-      showsHorizontalScrollIndicator={false}
-      ListEmptyComponent={() => (
-        <View className='mt-[30px] w-[100vw]'>
-          <Text className='text-center font-light text-lg text-gray-500'>
-            {t("noHistory")}
-          </Text>
-        </View>
-      )}
-      renderItem={renderItem}
-      refreshControl={
-        <RefreshControl
-          refreshing={isLoading}
-          tintColor={primary}
-          onRefresh={handleRefreshing}
-        />
-      }
-    />
+    <View className='pt-5'>
+      <FlatList
+        horizontal
+        className='ps-4'
+        contentContainerStyle={{
+          paddingRight: 30,
+          height: 200,
+          justifyContent: "center"
+        }}
+        data={history}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
+        ItemSeparatorComponent={() => <View className='w-[20px]' />}
+        showsHorizontalScrollIndicator={false}
+        ListEmptyComponent={() => (
+          <View className='mt-[30px] w-[100vw]'>
+            <Text className='text-center font-light text-lg text-gray-500'>
+              {t("noHistory")}
+            </Text>
+          </View>
+        )}
+        renderItem={renderItem}
+        refreshControl={
+          <RefreshControl
+            refreshing={isLoading}
+            tintColor={primary}
+            onRefresh={handleRefreshing}
+          />
+        }
+      />
+    </View>
   );
 }
