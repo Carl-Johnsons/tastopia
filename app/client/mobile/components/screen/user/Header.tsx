@@ -2,7 +2,7 @@ import { useFollowUnfollowUser } from "@/api/user";
 import Button from "@/components/Button";
 import PreviewImage from "@/components/common/PreviewImage";
 import { colors } from "@/constants/colors";
-import { ArrowBackIcon, DotIcon, ShareIcon } from "@/constants/icons";
+import { ArrowBackIcon, DotIcon } from "@/constants/icons";
 import useIsOwner from "@/hooks/auth/useIsOwner";
 import { formatDate } from "@/utils/format-date";
 import { Feather } from "@expo/vector-icons";
@@ -48,6 +48,7 @@ export default function Header({
   const [followed, setIsFollowed] = useState<boolean>(isFollowing);
   const { mutateAsync: followUser, isLoading } = useFollowUnfollowUser();
   const isOwnedByCurrentUser = useIsOwner(accountId);
+  console.log("total recipe count", totalRecipe);
 
   const goToUpdateProfile = useCallback(() => {
     router.push("/(protected)/menu/profile/updateProfile");
@@ -98,7 +99,7 @@ export default function Header({
               )}
             </View>
 
-            <View className='flex-row items-center justify-between'>
+            <View className='relative flex-row items-center justify-between'>
               <View className='flex gap-y-5'>
                 <View className='bg-white_black flex aspect-square w-[100px] items-center justify-center rounded-full'>
                   <PreviewImage
@@ -108,22 +109,26 @@ export default function Header({
                   />
                 </View>
 
-                <Text className='font-semibold text-2xl text-white'>{displayName}</Text>
+                <Text className='font-semibold text-2xl text-white w-[70vw]'>{displayName}</Text>
 
                 <View>
-                  <Text className='font-secondary-roman text-lg text-white'>
-                    {totalRecipe}{" "}
-                    {totalRecipe && totalRecipe % 2 === 0 && totalRecipe !== 0
-                      ? t("recipes")
-                      : t("recipe")}
-                  </Text>
+                  {!!totalRecipe && (
+                    <Text className='font-secondary-roman text-lg text-white'>
+                      {totalRecipe}{" "}
+                      {totalRecipe && totalRecipe % 2 === 0 && totalRecipe !== 0
+                        ? t("recipes")
+                        : t("recipe")}
+                    </Text>
+                  )}
 
-                  <Text className='font-secondary-roman text-lg text-white'>
-                    {followerCounts}{" "}
-                    {followerCounts % 2 === 0 && followerCounts !== 0
-                      ? t("follower")
-                      : t("followers")}
-                  </Text>
+                  {!!followerCounts && (
+                    <Text className='font-secondary-roman text-lg text-white'>
+                      {followerCounts}{" "}
+                      {followerCounts % 2 === 0 && followerCounts !== 0
+                        ? t("follower")
+                        : t("followers")}
+                    </Text>
+                  )}
 
                   <View className='flex-row items-center gap-1'>
                     <Text className='font-secondary-roman text-lg text-gray-200'>
@@ -146,23 +151,25 @@ export default function Header({
                 </View>
               </View>
 
-              {isCurrentUser ? (
-                <Button
-                  className='rounded-full border border-white px-4 py-3'
-                  onPress={goToUpdateProfile}
-                >
-                  <Text className='font-sans text-white'>{t("update")}</Text>
-                </Button>
-              ) : (
-                <Button
-                  className='rounded-full border border-white px-4 py-3'
-                  onPress={handleFollowUnFollow}
-                >
-                  <Text className='font-sans text-white'>
-                    {followed ? t("unfollow") : t("follow")}
-                  </Text>
-                </Button>
-              )}
+              <View className='absolute right-0'>
+                {isCurrentUser ? (
+                  <Button
+                    className='rounded-full border border-white px-4 py-3'
+                    onPress={goToUpdateProfile}
+                  >
+                    <Text className='font-sans text-white'>{t("update")}</Text>
+                  </Button>
+                ) : (
+                  <Button
+                    className='rounded-full border border-white px-4 py-3'
+                    onPress={handleFollowUnFollow}
+                  >
+                    <Text className='font-sans text-white'>
+                      {followed ? t("unfollow") : t("follow")}
+                    </Text>
+                  </Button>
+                )}
+              </View>
             </View>
           </View>
         </LinearGradient>

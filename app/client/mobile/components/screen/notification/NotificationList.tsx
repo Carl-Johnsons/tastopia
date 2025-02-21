@@ -1,4 +1,4 @@
-import { useGetNotification } from "@/api/notification";
+import { useGetNotification, useSetViewedNotification } from "@/api/notification";
 import { colors } from "@/constants/colors";
 import {
   ArrowDownFillIcon,
@@ -9,26 +9,19 @@ import {
 import useColorizer from "@/hooks/useColorizer";
 import { Avatar } from "@rneui/base";
 import { router, useFocusEffect, usePathname } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator, FlatList } from "react-native";
 import Empty from "../community/Empty";
-import { stringify } from "@/utils/debug";
 import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
-import { filterUniqueItems } from "@/utils/dataFilter";
+import useHydrateData from "@/hooks/useHydrateData";
+import { useQueryClient } from "react-query";
 
 export default function NotificationList() {
-  const {
-    data,
-    isLoading,
-    refetch,
-    isStale,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage
-  } = useGetNotification();
+  const { data, isLoading, refetch, isStale, fetchNextPage } = useGetNotification();
   const { primary } = colors;
-  const [notifications, setNotifications] = useState<INotificationsResponse[]>([]);
+  const [notifications, setNotifications] = useState<INotificationsResponse[]>();
+  useHydrateData({ source: data, setter: setNotifications });
 
   const fetchData = useCallback(() => {
     if (isStale) {
@@ -38,25 +31,9 @@ export default function NotificationList() {
 
   useFocusEffect(fetchData);
 
-  const handleRefreshing = useCallback(async () => {
-    await refetch();
-  }, [refetch]);
-
-  const handleLoadMore = () => {
-    if (!isFetchingNextPage && hasNextPage) {
-      fetchNextPage();
-    }
-  };
-
-  useEffect(() => {
-    if (data?.pages) {
-      setNotifications(filterUniqueItems(data.pages));
-    }
-  }, [data]);
-
-  if (isLoading) {
+  if (isLoading || !notifications) {
     return (
-      <View className='flex-center h-[50%] w-full'>
+      <View className='flex-center h-[90%] w-full'>
         <ActivityIndicator
           size='large'
           color={primary}
@@ -66,12 +43,12 @@ export default function NotificationList() {
   }
 
   return (
-    <View className='pb-[85px] pt-2'>
+    <View className='pb-[60px] pt-2'>
       <FlatList
         className='h-full'
         contentContainerStyle={{ paddingBottom: 25 }}
-        data={[]}
-        onEndReached={handleLoadMore}
+        data={notifications}
+        onEndReached={() => fetchNextPage()}
         onEndReachedThreshold={0.1}
         ListEmptyComponent={() => (
           <View className='h-[100vh]'>
@@ -88,7 +65,7 @@ export default function NotificationList() {
           <RefreshControl
             refreshing={isLoading}
             tintColor={primary}
-            onRefresh={handleRefreshing}
+            onRefresh={refetch}
           />
         }
       />
@@ -103,15 +80,17 @@ export const Notification = ({
   item: INotificationsResponse;
   index: number;
 }) => {
-  const { message, imageUrl, jsonData, code } = item;
+  const { message, imageUrl, jsonData, code, isViewed, id } = item;
   const currentRouteName = usePathname();
   const isOddItem = useMemo(() => {
     return index % 2 === 0;
   }, [index]);
   const { white, black, primary } = colors;
   const { c } = useColorizer();
+  const { mutateAsync: setViewedNotification } = useSetViewedNotification();
+  const queryClient = useQueryClient();
 
-  const handlePress = useCallback(() => {
+  const handlePress = useCallback(async () => {
     if (jsonData) {
       const data = JSON.parse(jsonData);
 
@@ -119,7 +98,21 @@ export const Notification = ({
         router.push(data.redirectUri);
       }
     }
-  }, [jsonData, currentRouteName]);
+
+    if (!isViewed) {
+      await setViewedNotification(
+        { notificationId: id },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries("getNotification");
+            console.log("Notification viewed", id);
+          }
+        }
+      );
+    }
+
+    console.log("Pressing notification", id);
+  }, [jsonData, currentRouteName, id, isViewed]);
 
   const styles = StyleSheet.create({
     oddWrapper: {
@@ -141,7 +134,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={c(white.DEFAULT, black.DEFAULT)}
+            color={white.DEFAULT}
           />
         );
       case "USER_FOLLOW":
@@ -156,7 +149,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={c(white.DEFAULT, black.DEFAULT)}
+            color={white.DEFAULT}
           />
         );
       case "USER_UPVOTE":
@@ -180,7 +173,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={c(white.DEFAULT, black.DEFAULT)}
+            color={white.DEFAULT}
           />
         );
     }
@@ -206,7 +199,9 @@ export const Notification = ({
         </View>
       </View>
       <View className='shrink justify-center pt-2'>
-        <Text className='text-black_white'>{message}</Text>
+        <Text className={`${isViewed ? "text-gray-500" : "text-black_white"}`}>
+          {message}
+        </Text>
       </View>
     </Pressable>
   );

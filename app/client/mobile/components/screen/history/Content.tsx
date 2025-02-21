@@ -13,7 +13,7 @@ export default function Content() {
   const isLoading = selectHistoryIsLoading();
 
   return (
-    <View className='h-full gap-3 px-4'>
+    <View className='h-full gap-3 px-4 pb-[100px]'>
       <SearchBar
         searchValue={searchValue}
         setSearchValue={setSearchValue}

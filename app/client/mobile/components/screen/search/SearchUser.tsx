@@ -199,7 +199,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
       {/* Result section */}
       {searchValue !== "" && (
-        <View className='mt-6'>
+        <View className='mt-6 pb-[40px]'>
           <FlatList
             data={searchResults}
             keyExtractor={item => item.username}
