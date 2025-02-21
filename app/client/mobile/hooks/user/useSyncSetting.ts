@@ -3,7 +3,6 @@ import { SETTING_KEY } from "@/constants/settings";
 import { saveSettingData, selectSetting } from "@/slices/setting.slice";
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
-import { stringify } from "@/utils/debug";
 
 type UpdateSettingStatus = "todo" | "loading" | "success" | "error";
 
@@ -59,8 +58,6 @@ const useSyncSetting = () => {
 
     try {
       const { data: settings } = await getUserSettings.refetch({ throwOnError: true });
-      console.log("Settings fetched:", stringify(settings));
-
       const UNION_SETTING: any = {};
 
       settings?.map(item => {
@@ -70,7 +67,6 @@ const useSyncSetting = () => {
         UNION_SETTING[key] = value;
       });
 
-      console.log("Settings to save:", stringify(UNION_SETTING));
       dispatch(saveSettingData(UNION_SETTING));
       setStatus("success");
     } catch (error) {
