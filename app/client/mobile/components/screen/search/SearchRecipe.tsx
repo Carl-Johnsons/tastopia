@@ -120,7 +120,6 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const { t } = useTranslation("search");
   const dispatch = useAppDispatch();
   const tagCodes = useAppSelector(selectSearchTagCodes);
-  console.log({ tagCodes });
 
   const selectedTagsStore = useAppSelector(selectSearchTags);
 
