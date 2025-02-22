@@ -18,7 +18,8 @@ const resources = {
     cookingMode: locales.cookingModeEn,
     loginWithGoogle: locales.loginWithGoogleEn,
     report: locales.reportEn,
-    notification: locales.notificationEn
+    notification: locales.notificationEn,
+    capture: locales.captureEn
   },
   vi: {
     navbar: locales.navbarVi,
@@ -37,7 +38,8 @@ const resources = {
     cookingMode: locales.cookingModeVi,
     loginWithGoogle: locales.loginWithGoogleVi,
     report: locales.reportVi,
-    notification: locales.notificationVi
+    notification: locales.notificationVi,
+    capture: locales.captureVi
   }
 };
 
