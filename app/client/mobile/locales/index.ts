@@ -32,6 +32,8 @@ import reportEn from "../locales/en/report.json";
 import reportVi from "../locales/vi/report.json";
 import notificationEn from "../locales/en/notification.json";
 import notificationVi from "../locales/vi/notification.json";
+import captureEn from "../locales/en/capture.json";
+import captureVi from "../locales/vi/capture.json";
 
 export default {
   communityEn,
@@ -68,4 +70,6 @@ export default {
   reportVi,
   notificationEn,
   notificationVi,
+  captureEn,
+  captureVi
 };

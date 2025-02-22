@@ -1,6 +1,14 @@
+import { addTagValue } from "@/slices/searchRecipe.slice";
 import { Canvas, DiffRect, rect, rrect } from "@shopify/react-native-skia";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { globalStyles } from "@/components/common/GlobalStyles";
+import { useAppDispatch } from "@/store/hooks";
+import { useBounce } from "@/hooks";
+import { useRouter } from "expo-router";
+import { useTranslation } from "react-i18next";
+import Button from "@/components/Button";
+import uuid from "react-native-uuid";
 import {
   View,
   Image,
@@ -8,13 +16,6 @@ import {
   Text,
   TouchableWithoutFeedback
 } from "react-native";
-import Button from "@/components/Button";
-import { Dispatch, SetStateAction, useCallback, useState } from "react";
-import { useBounce } from "@/hooks";
-import { useAppDispatch } from "@/store/hooks";
-import { useRouter } from "expo-router";
-import { addTagValue } from "@/slices/searchRecipe.slice";
-import uuid from "react-native-uuid";
 
 const RNFS = require("react-native-fs");
 
@@ -47,6 +48,8 @@ const PreviewView = ({
   setPrediction,
   isPredictLoading
 }: Props) => {
+  const { t } = useTranslation("capture");
+
   const [imageContainerDimension, setImageContainerDimension] = useState({
     width: 0,
     height: 0
@@ -124,7 +127,6 @@ const PreviewView = ({
             const y2 = offsetY + box[3] * displayHeight;
             const boxWidth = x2 - x1;
             const boxHeight = y2 - y1;
-            console.log(x1, y1, boxWidth, boxHeight);
             const line_width = 2;
             const outer = rrect(rect(x1, y1, boxWidth, boxHeight), 0, 0);
             const inner = rrect(
@@ -170,7 +172,7 @@ const PreviewView = ({
                     color='black'
                     className='pr-4'
                   />
-                  <Text className='font-bold text-2xl'>Search for recipes</Text>
+                  <Text className='font-bold text-2xl'>{t("searchForRecipes")}</Text>
                 </View>
               </Button>
             </>
@@ -185,6 +187,11 @@ const PreviewView = ({
                 name='chevron-back'
                 size={28}
                 color='white'
+                style={{
+                  textShadowColor: "rgba(0, 0, 0, 0.75)",
+                  textShadowOffset: { width: 1, height: 3 },
+                  textShadowRadius: 1
+                }}
               />
             </View>
           </TouchableWithoutFeedback>

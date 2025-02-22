@@ -64,7 +64,6 @@ const CameraView = ({
     const image = images?.[0];
 
     if (!image) {
-      // Alert.alert("Error", "Image not found! Please try again!");
       return;
     }
 
@@ -93,8 +92,6 @@ const CameraView = ({
         uri: `file://${photo.path}`
       });
 
-      console.log({ photo });
-
       const file = {
         uri: `file://${photo.path}`,
         type: "image/jpeg",
@@ -102,8 +99,6 @@ const CameraView = ({
       };
 
       const predictResponse = await predictAsync({ file: file as unknown as Blob });
-      console.log(predictResponse.boxes);
-
       setPrediction(predictResponse);
     } catch (error) {
       console.log("Error capturing image:", error);
@@ -141,9 +136,14 @@ const CameraView = ({
               <TouchableWithoutFeedback onPress={handleBack}>
                 <View>
                   <Ionicons
-                    name='chevron-back'
+                    name='chevron-back-outline'
                     size={28}
                     color='white'
+                    style={{
+                      textShadowColor: "rgba(0, 0, 0, 0.75)",
+                      textShadowOffset: { width: 1, height: 3 },
+                      textShadowRadius: 1
+                    }}
                   />
                 </View>
               </TouchableWithoutFeedback>
@@ -156,12 +156,22 @@ const CameraView = ({
                       name='flash-off'
                       size={24}
                       color='white'
+                      style={{
+                        textShadowColor: "rgba(0, 0, 0, 0.75)",
+                        textShadowOffset: { width: 1, height: 3 },
+                        textShadowRadius: 1
+                      }}
                     />
                   ) : (
                     <Ionicons
                       name='flash'
                       size={24}
                       color='white'
+                      style={{
+                        textShadowColor: "rgba(0, 0, 0, 0.75)",
+                        textShadowOffset: { width: 1, height: 3 },
+                        textShadowRadius: 1
+                      }}
                     />
                   )}
                 </View>

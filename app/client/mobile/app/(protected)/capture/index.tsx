@@ -1,20 +1,26 @@
-import { GestureResponderEvent } from "react-native";
+import { Button, GestureResponderEvent } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useFocusEffect, useNavigation } from "expo-router";
 import { useRouter } from "expo-router";
-import { Alert, Image, StyleSheet, View } from "react-native";
+import { Alert, Image, StyleSheet, View, Text } from "react-native";
 import {
   Camera,
   CameraDevice,
+  CameraPermissionStatus,
   CameraPosition,
   getCameraDevice,
   useCameraDevices
 } from "react-native-vision-camera";
 import { useIngredientPredictMutation } from "@/api/ingredient-predict";
 import { CameraView, PreviewView } from "@/components/screen/capture";
+import { useTranslation } from "react-i18next";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import useColorizer from "@/hooks/useColorizer";
+import { colors } from "@/constants/colors";
 
 const Capture = () => {
+  const { t } = useTranslation("capture");
   const [device, setDevice] = useState<CameraDevice | undefined>(undefined);
   const [deviceCode, setDeviceCode] = useState<CameraPosition>("back");
   const [isSearching, setIsSearching] = useState(false);
@@ -24,6 +30,7 @@ const Capture = () => {
     width: 0,
     height: 0
   });
+  const [permission, setPermission] = useState<CameraPermissionStatus>("not-determined");
   const [prediction, setPrediction] = useState<IngredientStreamResponse>();
 
   const { isLoading: isPredictLoading, mutateAsync: predictAsync } =
@@ -38,25 +45,23 @@ const Capture = () => {
   const shouldRenderCamera = device && isScreenFocused;
 
   // ===== Styling value =====
+  const { black, white } = colors;
+  const { c } = useColorizer();
 
   const requestPermissionAsync = async () => {
     let finalPermissionStatus = Camera.getCameraPermissionStatus();
-    if (finalPermissionStatus != "granted") {
+    if (finalPermissionStatus !== "granted") {
       finalPermissionStatus = await Camera.requestCameraPermission();
     }
+    setPermission(finalPermissionStatus);
 
-    if (finalPermissionStatus != "granted") {
+    if (finalPermissionStatus !== "granted") {
       Alert.alert(
-        "Permission denied",
-        "In order to use the camera you must allowed camera permission!"
+        t("permissionDeniedAlert.title"),
+        t("permissionDeniedAlert.description")
       );
-      router.back();
     }
   };
-
-  useEffect(() => {
-    requestPermissionAsync();
-  }, []);
 
   useEffect(() => {
     if (deviceCode) {
@@ -79,7 +84,7 @@ const Capture = () => {
       );
     }
   }, [photo.uri]);
-  
+
   const flipCamera = () => {
     if (deviceCode == "back") {
       setDeviceCode("front");
@@ -99,10 +104,30 @@ const Capture = () => {
     [device?.supportsFocus]
   );
 
+  if (permission !== "granted") {
+    return (
+      <SafeAreaView
+        style={{ backgroundColor: c(white.DEFAULT, black[100]) }}
+        className='flex-1 justify-start'
+      >
+        <View className='w-full flex-1 items-center justify-center'>
+          <Text className='text-black_white mb-6 text-center text-2xl'>
+            {t("grantPermission.title")}
+          </Text>
+          <TouchableWithoutFeedback onPress={requestPermissionAsync}>
+            <View className='w-full rounded-2xl bg-primary pb-3 pl-4 pr-4 pt-3'>
+              <Text className='font-semibold text-lg'>{t("grantPermission.button")}</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView
-      style={styles.container}
-      className='bg-black'
+      style={{ backgroundColor: black[100] }}
+      className='flex-1 justify-start'
     >
       <View className='relative w-full'>
         <View style={{ height: "100%" }}>
@@ -133,21 +158,5 @@ const Capture = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "flex-start"
-  },
-  message: {
-    textAlign: "center",
-    paddingBottom: 10
-  },
-  button: {
-    flex: 1,
-    alignSelf: "flex-end",
-    alignItems: "center"
-  }
-});
 
 export default Capture;
