@@ -1,7 +1,7 @@
 from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect
 from contextlib import asynccontextmanager
 from ultralytics import YOLO
-from PIL import Image
+from PIL import Image, ImageOps
 import logging
 import random
 import httpx
@@ -76,7 +76,8 @@ async def health():
 @app.post("/api/ingredient-predict")
 async def predict(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
-    image = image.rotate(270, expand=True)
+    # Apply exif metadata if exist
+    image = ImageOps.exif_transpose(image)
 
     results = model(image, verbose=False)
 
