@@ -1,6 +1,11 @@
 import { useGetNotification } from "@/api/notification";
 import { colors } from "@/constants/colors";
-import { ArrowDownFillIcon, ArrowUpFillIcon, ChatBubbleFillIcon, UserIcon } from "@/constants/icons";
+import {
+  ArrowDownFillIcon,
+  ArrowUpFillIcon,
+  ChatBubbleFillIcon,
+  UserIcon
+} from "@/constants/icons";
 import useColorizer from "@/hooks/useColorizer";
 import { Avatar } from "@rneui/base";
 import { router, useFocusEffect, usePathname } from "expo-router";
@@ -38,8 +43,6 @@ export default function NotificationList() {
   }, [refetch]);
 
   const handleLoadMore = () => {
-    console.log("Load more");
-
     if (!isFetchingNextPage && hasNextPage) {
       fetchNextPage();
     }
@@ -61,8 +64,6 @@ export default function NotificationList() {
       </View>
     );
   }
-
-  console.log(data, stringify(data));
 
   return (
     <View className='pb-[85px] pt-2'>
@@ -94,6 +95,10 @@ export default function NotificationList() {
   );
 }
 
+type INotificationJsonData = {
+  redirectUri: string;
+};
+
 export const Notification = ({
   item,
   index
@@ -110,13 +115,13 @@ export const Notification = ({
   const { c } = useColorizer();
 
   const handlePress = useCallback(() => {
-    if (jsonData) {
-      const data = JSON.parse(jsonData);
+    if (!jsonData) return;
 
-      if (data.redirectUri && currentRouteName !== "/notification") {
-        router.push(data.redirectUri);
-      }
-    }
+    const NOTIFICATION_ROUTE = "/(protected)/notification";
+    const { redirectUri } = JSON.parse(jsonData) as INotificationJsonData;
+
+    if (!redirectUri || redirectUri === NOTIFICATION_ROUTE) return;
+    router.push(redirectUri as any);
   }, [jsonData, currentRouteName]);
 
   const styles = StyleSheet.create({
