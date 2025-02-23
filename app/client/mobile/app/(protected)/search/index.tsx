@@ -1,13 +1,13 @@
-import { useState } from "react";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { globalStyles } from "@/components/common/GlobalStyles";
-import SearchUser from "@/components/screen/search/SearchUser";
-import SearchRecipe from "@/components/screen/search/SearchRecipe";
-import { Text, TouchableWithoutFeedback, Keyboard, View } from "react-native";
-import { useTranslation } from "react-i18next";
-import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
+import { globalStyles } from "@/components/common/GlobalStyles";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Text, TouchableWithoutFeedback, Keyboard, View, StatusBar } from "react-native";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import SearchRecipe from "@/components/screen/search/SearchRecipe";
+import SearchUser from "@/components/screen/search/SearchUser";
+import useColorizer from "@/hooks/useColorizer";
 
 const Search = () => {
   const { c } = useColorizer();
@@ -38,7 +38,8 @@ const Search = () => {
           height: "100%"
         }}
       >
-        <View className='flex-center'>
+        <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
+        <View className='flex-center pt-2'>
           <TouchableWithoutFeedback onPress={handleChangeSearch}>
             <View className='flex-center flex-row gap-2'>
               <Text className='h3-semibold text-black_white text-center'>

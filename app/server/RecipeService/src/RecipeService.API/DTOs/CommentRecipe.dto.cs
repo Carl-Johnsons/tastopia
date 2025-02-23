@@ -8,5 +8,6 @@ public class CommentRecipeDTO
     public Guid RecipeId { get; set; }
     [Required]
     [JsonProperty("content")]
+    [MaxLength(500)]
     public string Content { get; set; } = null!;
 }

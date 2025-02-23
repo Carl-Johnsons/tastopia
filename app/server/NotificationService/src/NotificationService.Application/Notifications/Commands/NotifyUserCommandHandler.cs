@@ -66,6 +66,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
         {
             return Result.Failure(NotificationErrors.TemplateNotFound);
         }
+        var recipients = request.RecipientIds.Select(id => new Recipient { RecipientId = id, IsViewed = false }).ToList();
         var notification = new Notification
         {
             PrimaryActors = request.PrimaryActors,
@@ -73,7 +74,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
             JsonData = jsonData,
             TemplateId = template.Id,
             ImageUrl = request.ImageUrl,
-            RecipientIds = request.RecipientIds
+            Recipients = recipients
         };
 
         _context.Notifications.Add(notification);
@@ -119,7 +120,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
                 return Result.Failure(NotificationErrors.NotFound, "Actor not found for push notification");
             }
 
-            var recipientIdSet = notification.RecipientIds.Select(merge => merge.ToString())
+            var recipientIdSet = notification.Recipients.Select(merge => merge.RecipientId.ToString())
                                                              .ToHashSet();
 
             var settingRes = await _grpcUserClient.GetUserSettingAsync(new GrpcGetUserSettingRequest

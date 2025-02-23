@@ -44,19 +44,26 @@ public static class ConsulExtension
             }
         };
 
-        lifetime.ApplicationStarted.Register(() =>
+        lifetime.ApplicationStarted.Register(async () =>
         {
             Log.Information("Registering to Consul");
-            consulClient.Agent.ServiceDeregister(registration.ID).ConfigureAwait(true);
-            consulClient.Agent.ServiceRegister(registration).ConfigureAwait(true);
+            await consulClient.Agent.ServiceDeregister(registration.ID);
+            await consulClient.Agent.ServiceRegister(registration);
         });
 
-
-        lifetime.ApplicationStopping.Register(() =>
+        // Graceful shutdown handling
+        lifetime.ApplicationStopping.Register(async () =>
         {
             Log.Information("Unregistering from Consul");
-            consulClient.Agent.ServiceDeregister(registration.ID).ConfigureAwait(true);
+            await consulClient.Agent.ServiceDeregister(registration.ID);
         });
+        // Handle SIGINT (Ctrl+C) and SIGTERM
+        AppDomain.CurrentDomain.ProcessExit += async (sender, eventArgs) =>
+        {
+            Log.Information("Application is exiting. Deregistering from Consul...");
+            await consulClient.Agent.ServiceDeregister(serviceId);
+        };
+
         return app;
     }
 }

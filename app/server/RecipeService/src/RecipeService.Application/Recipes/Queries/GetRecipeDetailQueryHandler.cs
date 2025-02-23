@@ -7,9 +7,7 @@ using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
 using UserProto;
-
 namespace RecipeService.Application.Recipes.Queries;
-
 public class GetRecipeDetailQuery : IRequest<Result<RecipeDetailsResponse?>>
 {
     [Required]
@@ -39,7 +37,7 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
         var accountId = request.AccountId;
         var recipeId = request.RecipeId;
 
-        if(accountId == Guid.Empty || recipeId == Guid.Empty)
+        if (accountId == Guid.Empty || recipeId == Guid.Empty)
         {
             return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound, "RecipeId or AccountId not found.");
         }
@@ -60,24 +58,27 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
 
         var vote = recipe.RecipeVotes.Where(v => v.AccountId == accountId).SingleOrDefault();
         var v = Vote.None;
-        if (vote != null) {
+        if (vote != null)
+        {
             v = vote.IsUpvote ? Vote.Upvote : Vote.Downvote;
         }
         var bookmark = await _context.UserBookmarkRecipes.Where(bm => bm.AccountId == accountId && bm.RecipeId == recipeId).SingleOrDefaultAsync();
 
         var isBookmark = false;
-        if(bookmark != null) {
+        if (bookmark != null)
+        {
             isBookmark = true;
         }
 
         var listString = recipe.Title.ToLower().Split(' ');
 
         var similarRecipes = _context.Recipes.Where(
-            r => r.Id != recipe.Id &&
+            r => r.Id != recipe.Id && r.IsActive &&
                 (
                  listString.Any(word => r.Title.ToLower().Contains(word)) ||
                  listString.Any(word => r.Description.ToLower().Contains(word)) ||
-                 listString.Any(word => r.Ingredients.Any(i => i.ToLower().Contains(word)))
+                 listString.Any(word => r.Ingredients.Any(i => i.ToLower().Contains(word))) ||
+                 listString.Any(word => r.Steps.Any(i => i.Content.ToLower().Contains(word)))
                 )
             ).OrderByDescending(r => r.CreatedAt).Select(r => new SimilarRecipe
             {

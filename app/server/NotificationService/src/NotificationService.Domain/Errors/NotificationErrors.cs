@@ -16,4 +16,8 @@ public static class NotificationErrors
             new("NotificationErrors.ExpoPushTokenNotFound",
                 StatusCode: (int)HttpStatusCode.NotFound,
                 Message: "Expo push token not found");
+    public static Error UpdateNotificationFail =>
+    new("NotificationErrors.UpdateNotificationFail",
+        StatusCode: (int)HttpStatusCode.InternalServerError,
+        Message: "Update Notification Fail");
 }

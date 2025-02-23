@@ -174,7 +174,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
       {/* History section */}
       {!isLoadingSearchUserHistory && searchUserHistoryData && searchValue === "" && (
         <FlatList
-          data={searchUserHistoryData.value}
+          data={searchUserHistoryData.value.slice(0, 10)}
           keyExtractor={_item => uuid.v4()}
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
@@ -188,6 +188,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
           renderItem={item => {
             return (
               <SearchHistory
+                type='user'
                 item={item.item}
                 handleSelectHistory={handleSelectSearchHistory}
               />
@@ -198,7 +199,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
       {/* Result section */}
       {searchValue !== "" && (
-        <View className='mt-6'>
+        <View className='mt-6 pb-[40px]'>
           <FlatList
             data={searchResults}
             keyExtractor={item => item.username}

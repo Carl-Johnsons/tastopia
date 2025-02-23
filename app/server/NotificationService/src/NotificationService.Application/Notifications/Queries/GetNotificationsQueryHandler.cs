@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Contract.Constants;
 using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using NotificationService.Domain.Constants;
 using NotificationService.Domain.Errors;
 using NotificationService.Domain.Responses;
@@ -54,6 +54,7 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                 resultSelector: (n, nt) => new Notification
                 {
                     Id = n.Id,
+                    Recipients = n.Recipients,
                     PrimaryActors = n.PrimaryActors,
                     SecondaryActors = n.SecondaryActors,
                     TemplateId = n.TemplateId,
@@ -63,8 +64,7 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                     UpdatedAt = n.UpdatedAt,
                     Template = nt
                 }
-            ).Where(n => n.SecondaryActors.Any(sa => sa.ActorId == request.AccountId
-                                                     && sa.Type.ToString() == EntityType.USER.ToString()))
+            ).Where(n => n.Recipients.Any(sa => sa.RecipientId == request.AccountId))
             .OrderByDescending(n => n.CreatedAt);
 
         var totalPage = (notificationQuery.Count() + NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT - 1) / NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT;
@@ -123,12 +123,15 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                                            IsSelf = true
                                        };
 
+                                       var IsViewed = n.Recipients.Where(r => r.RecipientId == request.AccountId).Select(r => r.IsViewed).SingleOrDefault();
+
                                        message = Smart.Format(message, data);
                                        title = Smart.Format(title);
 
                                        return new NotificationsResponse
                                        {
                                            Id = n.Id,
+                                           IsViewed = IsViewed,
                                            CreatedAt = n.CreatedAt,
                                            UpdatedAt = n.UpdatedAt,
                                            ImageUrl = n.ImageUrl,
@@ -150,7 +153,8 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                 TotalPage = totalPage
             }
         };
-
+        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(paginatedResponse, Formatting.Indented));
+        await Console.Out.WriteLineAsync("skip:"+ skip);
         return Result<PaginatedNotificationListResponse?>.Success(paginatedResponse);
     }
 

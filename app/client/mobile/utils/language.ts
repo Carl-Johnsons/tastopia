@@ -6,8 +6,8 @@ type LanguageMap = {
 };
 
 const languageMap: LanguageMap = {
-  vi: "Vietnamese",
-  en: "English"
+  vi: "vietnamese",
+  en: "english"
 };
 
 export const compareLanguages = (code: string, name: string) => {

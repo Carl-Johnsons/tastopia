@@ -7,16 +7,18 @@ import { useTranslation } from "react-i18next";
 import Button from "./Button";
 import Protected from "./Protected";
 import { ROLE, selectRole } from "@/slices/auth.slice";
+import { selectPushToken } from "@/slices/notification.slice";
 
 export const LogoutButton = () => {
   const { t } = useTranslation("menu");
   const { animate, animatedStyles } = useBounce();
   const role = selectRole();
+  const pushNotificationToken = selectPushToken();
 
   const logout = async () => {
     animate();
 
-    if (role !== ROLE.GUEST) {
+    if (role !== ROLE.GUEST && pushNotificationToken) {
       if (Platform.OS === "android")
         await protectedAxiosInstance.delete("api/notification/expo-push-token/android");
       else if (Platform.OS === "ios")
@@ -30,7 +32,7 @@ export const LogoutButton = () => {
   return (
     <Protected excludedRoles={[]}>
       <Button
-        className='rounded-lg border-gray-300 py-2.5'
+        className='rounded-lg border border-gray-300 py-2.5'
         onPress={logout}
         style={[animatedStyles]}
       >

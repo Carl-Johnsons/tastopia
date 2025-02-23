@@ -653,7 +653,7 @@ export const ItemCard = ({
       className={`flex-row items-center gap-3 px-5 ${className}`}
       onPress={onPress}
     >
-      <View className={`flex-row gap-3 py-4 ${mainContentClassName}`}>
+      <View className={`flex-row items-center gap-3 py-4 ${mainContentClassName}`}>
         {reversed ? mainContent.reverse() : mainContent}
       </View>
       {switchOptions && renderSwitch()}

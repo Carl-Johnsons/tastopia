@@ -5,11 +5,19 @@ import Empty from "@/components/screen/community/Empty";
 import BookmarkHeader from "@/components/screen/menu/BookmarkHeader";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
+import { RecipeType } from "@/types/recipe";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FlatList, RefreshControl, SafeAreaView, Text, View } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  SafeAreaView,
+  StatusBar,
+  Text,
+  View
+} from "react-native";
 
 const bookmark = () => {
   const { c } = useColorizer();
@@ -80,6 +88,7 @@ const bookmark = () => {
         backgroundColor: c(white.DEFAULT, black[100])
       }}
     >
+      <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
       <BookmarkHeader />
       <FlatList
         className='h-full'
