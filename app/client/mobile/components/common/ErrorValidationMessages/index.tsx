@@ -28,7 +28,7 @@ export default ErrorValidationMessages;
 
 const stylesDefault = StyleSheet.create({
   text: {
-    color: "red",
+    color: "#f87171",
     marginTop: 8,
     fontSize: 12
   }
