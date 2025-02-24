@@ -115,7 +115,7 @@ export const Notification = ({
   }, [jsonData, currentRouteName, id, isViewed]);
 
   const styles = StyleSheet.create({
-    oddWrapper: {
+    isViewed: {
       backgroundColor: "#FE724C26"
     }
   });
@@ -182,7 +182,7 @@ export const Notification = ({
   return (
     <Pressable
       onPress={handlePress}
-      style={isOddItem && styles.oddWrapper}
+      style={!isViewed && styles.isViewed}
       className={`relative flex-row gap-2 p-4`}
     >
       <View className='relative'>
