@@ -141,18 +141,24 @@ export const menuList: Menu[] = [
       {
         path: SEARCH_PATH,
         icon: ({ color, focused }) => (
-          <TabIcon
-            icon={
-              <Feather
-                name='search'
-                size={24}
-                color={color}
-              />
-            }
-            color={color}
-            translateCode='search'
-            focused={focused}
-          />
+          <Protected
+            excludedRoles={[ROLE.GUEST]}
+            forceDisplay
+            requiredLogin
+          >
+            <TabIcon
+              icon={
+                <Feather
+                  name='search'
+                  size={24}
+                  color={color}
+                />
+              }
+              color={color}
+              translateCode='search'
+              focused={focused}
+            />
+          </Protected>
         ),
         code: "SEARCH",
         translateCode: "search",

@@ -80,7 +80,7 @@ type RecipeDetailResponse = {
   authorAvtUrl: string;
   authorDisplayName: string;
   authorNumberOfFollower: number;
-  vote: string;
+  vote: VoteType;
   isBookmarked: boolean;
   tags: TagType[] | null;
   similarRecipes: SimilarRecipe[];
