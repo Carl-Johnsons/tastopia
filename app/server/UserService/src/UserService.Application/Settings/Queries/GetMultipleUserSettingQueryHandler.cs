@@ -15,13 +15,10 @@ public record GetMultipleUserSettingQuery : IRequest<Result<Dictionary<Guid, Lis
 public class GetMultipleUserSettingQueryHandler : IRequestHandler<GetMultipleUserSettingQuery, Result<Dictionary<Guid, List<UserSetting>>?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly ILogger<GetMultipleUserSettingQueryHandler> _logger;
 
-    public GetMultipleUserSettingQueryHandler(IApplicationDbContext context,
-                                              ILogger<GetMultipleUserSettingQueryHandler> logger)
+    public GetMultipleUserSettingQueryHandler(IApplicationDbContext context)
     {
         _context = context;
-        _logger = logger;
     }
 
     public async Task<Result<Dictionary<Guid, List<UserSetting>>?>> Handle(GetMultipleUserSettingQuery request, CancellationToken cancellationToken)
@@ -38,15 +35,32 @@ public class GetMultipleUserSettingQueryHandler : IRequestHandler<GetMultipleUse
                                                                 .GroupBy(us => us.AccountId)
                                                                 .ToDictionaryAsync(g => g.Key, g => g.ToList());
 
-        foreach (var key in userSettingsDictionary.Keys)
+        foreach (var key in request.AccountIdSet)
         {
-            var userSettings = userSettingsDictionary[key];
-            var settingIds = userSettings.Select(usd => usd.SettingId).ToList();
-
-            // populate remaining settings with default value
-            foreach (var settingKey in settingsDictionary.Keys)
+            if (userSettingsDictionary.ContainsKey(key))
             {
-                if (!settingIds.Contains(settingKey))
+                var userSettings = userSettingsDictionary[key];
+                var settingIds = userSettings.Select(usd => usd.SettingId).ToList();
+
+                // populate remaining settings with default value
+                foreach (var settingKey in settingsDictionary.Keys)
+                {
+                    if (!settingIds.Contains(settingKey))
+                    {
+                        userSettings.Add(new UserSetting
+                        {
+                            AccountId = key,
+                            SettingId = settingKey,
+                            SettingValue = settingsDictionary[settingKey].DefaultValue,
+                            Setting = settingsDictionary[settingKey]
+                        });
+                    }
+                }
+            }
+            else
+            {
+                List<UserSetting> userSettings = [];
+                foreach (var settingKey in settingsDictionary.Keys)
                 {
                     userSettings.Add(new UserSetting
                     {
@@ -56,10 +70,9 @@ public class GetMultipleUserSettingQueryHandler : IRequestHandler<GetMultipleUse
                         Setting = settingsDictionary[settingKey]
                     });
                 }
+                userSettingsDictionary[key] = userSettings;
             }
         }
-
-        _logger.LogInformation(JsonConvert.SerializeObject(userSettingsDictionary, Formatting.Indented));
 
         return Result<Dictionary<Guid, List<UserSetting>>?>.Success(userSettingsDictionary);
     }

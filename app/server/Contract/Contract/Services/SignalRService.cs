@@ -1,23 +1,36 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using Contract.Interfaces;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace IdentityService.Infrastructure.Services;
+namespace Contract.Services;
 
 public sealed class SignalRService : ISignalRService
 {
+    private readonly IConsulRegistryService _consulRegistryService;
     private readonly ILogger<SignalRService> _logger;
     public HubConnection HubConnection { get; init; }
 
-    public SignalRService(ILogger<SignalRService> logger)
+    public SignalRService(ILogger<SignalRService> logger, IConsulRegistryService consulRegistryService)
     {
         _logger = logger;
-        var websocketHost = (Environment.GetEnvironmentVariable("WEBSOCKET_HOST") ?? "localhost:5003").Replace("\"", "");
-        _logger.LogInformation("Connect to chat hub " + websocketHost);
+        _consulRegistryService = consulRegistryService;
+        var webSocketUri = _consulRegistryService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_SIGNALR"));
+        _logger.LogInformation("Connect to chat hub " + webSocketUri);
 
         HubConnection = new HubConnectionBuilder()
-            .WithUrl($"http://{websocketHost}/chat-hub")
-            .WithAutomaticReconnect([TimeSpan.Zero, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(30)])
+            .WithUrl($"{webSocketUri}tastopia-hub")
+            .WithAutomaticReconnect(
+            [
+                TimeSpan.Zero,
+                TimeSpan.FromSeconds(2),
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromSeconds(30)
+            ])
             .ConfigureLogging(logging =>
             {
                 logging.SetMinimumLevel(LogLevel.Information);

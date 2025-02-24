@@ -163,6 +163,7 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         {
             AccountIdSet = accountIdSets,
         });
+
         response.ThrowIfFailure();
 
         var userSettingMap = response.Value!;
