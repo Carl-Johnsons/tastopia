@@ -10,7 +10,7 @@ public class UpdateRecipeDTO
     public Guid Id { get; set; }
 
     [JsonProperty("recipeImage")]
-    [MaxFileSize(4)]
+    [MaxFileSize(17)]
     public IFormFile? RecipeImage { get; set; }
 
     [Required]
@@ -61,8 +61,8 @@ public class UpdateStepDTO
     public string Content { get; set; } = null!;
 
     [JsonProperty("images")]
-    [MaxFileSizeList(4)]
     [MaxLengthList(3)]
+    [MaxFileSizeList(17)]
     public List<IFormFile>? Images { get; set; }
 
     [JsonProperty("deleteUrls")]
