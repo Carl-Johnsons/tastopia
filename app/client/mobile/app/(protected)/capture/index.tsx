@@ -110,13 +110,15 @@ const Capture = () => {
         style={{ backgroundColor: c(white.DEFAULT, black[100]) }}
         className='flex-1 justify-start'
       >
-        <View className='w-full flex-1 items-center justify-center'>
+        <View className='w-full flex-1 items-center justify-center px-4'>
           <Text className='text-black_white mb-6 text-center text-2xl'>
             {t("grantPermission.title")}
           </Text>
           <TouchableWithoutFeedback onPress={requestPermissionAsync}>
-            <View className='w-full rounded-2xl bg-primary pb-3 pl-4 pr-4 pt-3'>
-              <Text className='font-semibold text-lg'>{t("grantPermission.button")}</Text>
+            <View className='w-full rounded-full bg-primary pb-3 pl-4 pr-4 pt-3'>
+              <Text className='text-white_black font-semibold text-lg'>
+                {t("grantPermission.button")}
+              </Text>
             </View>
           </TouchableWithoutFeedback>
         </View>

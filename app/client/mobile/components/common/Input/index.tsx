@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Controller } from "react-hook-form";
 import {
   StyleProp,
@@ -120,7 +120,7 @@ const Input = ({
     customProps.onChange?.(currentDate);
   };
 
-  const getInputStyles = () => {
+  const getInputStyles = useCallback(() => {
     const baseStyles = [
       styles.input,
       inputStyle && inputStyle,
@@ -140,7 +140,7 @@ const Input = ({
     }
 
     return baseStyles;
-  };
+  }, [isFocused]);
 
   return (
     <HasFormGroupElement>
@@ -209,6 +209,7 @@ const Input = ({
                       }}
                       onBlur={e => {
                         setIsFocused(false);
+                        onBlur();
                         customProps.onBlur?.(e);
                       }}
                       defaultValue={

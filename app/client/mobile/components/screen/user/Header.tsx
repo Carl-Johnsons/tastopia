@@ -4,6 +4,8 @@ import PreviewImage from "@/components/common/PreviewImage";
 import { colors } from "@/constants/colors";
 import { ArrowBackIcon, DotIcon } from "@/constants/icons";
 import useIsOwner from "@/hooks/auth/useIsOwner";
+import { useProtectedExclude } from "@/hooks/auth/useProtected";
+import { ROLE } from "@/slices/auth.slice";
 import { formatDate } from "@/utils/format-date";
 import { Feather } from "@expo/vector-icons";
 import { ImageBackground } from "expo-image";
@@ -55,7 +57,7 @@ export default function Header({
     router.push("/(protected)/menu/profile/updateProfile");
   }, [router]);
 
-  const handleFollowUnFollow = () => {
+  const handleFollowUnFollow = useProtectedExclude(() => {
     if (!isLoading) {
       followUser(
         { accountId },
@@ -70,7 +72,7 @@ export default function Header({
         }
       );
     }
-  };
+  }, [ROLE.GUEST]);
 
   return (
     <View>

@@ -15,6 +15,8 @@ import { router } from "expo-router";
 import UserCard from "@/components/screen/menu/UserCard";
 import { selectUser } from "@/slices/user.slice";
 import History from "@/components/screen/menu/History";
+import { useProtectedExclude } from "@/hooks/auth/useProtected";
+import { ROLE } from "@/slices/auth.slice";
 
 const Menu = () => {
   const ITEM_TITLE = ["profile", "saved", "deleted", "settings"];
@@ -40,13 +42,19 @@ const Menu = () => {
   }, [router]);
 
   const navigationCallbacks = [
-    goToProfile,
-    useCallback(() => {
-      router.push("/(protected)/menu/bookmark");
-    }, []),
-    useCallback(() => {
-      router.push("/(protected)/menu/deleted-recipe");
-    }, []),
+    useProtectedExclude(() => goToProfile(), [ROLE.GUEST]),
+    useCallback(
+      useProtectedExclude(() => {
+        router.push("/(protected)/menu/bookmark");
+      }, [ROLE.GUEST]),
+      []
+    ),
+    useCallback(
+      useProtectedExclude(() => {
+        router.push("/(protected)/menu/deleted-recipe");
+      }, [ROLE.GUEST]),
+      []
+    ),
     openSettingModal
   ];
 
