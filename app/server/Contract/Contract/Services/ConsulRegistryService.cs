@@ -1,7 +1,6 @@
 ﻿using Consul;
 using Contract.Interfaces;
 using Microsoft.Extensions.Logging;
-using System.Text.Json.Nodes;
 
 namespace Contract.Services;
 

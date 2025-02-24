@@ -83,10 +83,10 @@ public static class CommonExtension
 
     /**
      * <summary>
-     *   Add ConsulRegistryService for service discovery, only usable for api gateway
+     *   Add ConsulRegistryService for service discovery, only usable for api gateway and signalR service
      * </summary>
      */
-    public static IServiceCollection AddAPIGatewayInfrastructureServices(this IServiceCollection services)
+    public static IServiceCollection AddConsulRegistryService(this IServiceCollection services)
     {
         services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
         {
@@ -120,7 +120,7 @@ public static class CommonExtension
     {
         var retryPolicy = Polly.Policy.Handle<Exception>()
             .WaitAndRetryAsync(
-                retryCount: 20,
+                retryCount: 100,
                 sleepDurationProvider: attempt => TimeSpan.FromSeconds(attempt),
                 onRetry: (exception, timeSpan, retryCount, context) =>
                 {

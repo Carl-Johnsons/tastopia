@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contract.Constants;
+using Contract.DTOs.SignalRDTO;
 using Contract.DTOs.UserDTO;
 using Contract.Event.NotificationEvent;
 using Contract.Utilities;
@@ -32,13 +33,15 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
     private readonly IMapper _mapper;
     private readonly ILogger<NotifyUserCommandHandler> _logger;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
+    private readonly ISignalRService _signalRService;
 
     public NotifyUserCommandHandler(IApplicationDbContext context,
                                     IUnitOfWork unitOfWork,
                                     ILogger<NotifyUserCommandHandler> logger,
                                     IServiceBus serviceBus,
                                     GrpcUser.GrpcUserClient grpcUserClient,
-                                    IMapper mapper)
+                                    IMapper mapper,
+                                    ISignalRService signalRService)
     {
         _context = context;
         _unitOfWork = unitOfWork;
@@ -46,6 +49,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
         _serviceBus = serviceBus;
         _grpcUserClient = grpcUserClient;
         _mapper = mapper;
+        _signalRService = signalRService;
     }
 
     private record UserSettingObj
@@ -87,6 +91,10 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
         _context.Notifications.Add(notification);
 
         await _unitOfWork.SaveChangeAsync(cancellationToken);
+        await _signalRService.InvokeAction(SignalRAction.InvalidateNotification.ToString(), new InvalidateNotificationDTO
+        {
+            RecipientIds = request.RecipientIds
+        });
         _logger.LogInformation(JsonConvert.SerializeObject(notification, Formatting.Indented));
 
         // Push the notification to mobile user
