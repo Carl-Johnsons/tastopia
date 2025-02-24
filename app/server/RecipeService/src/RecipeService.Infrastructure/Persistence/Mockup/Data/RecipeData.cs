@@ -508,6 +508,92 @@ public class RecipeData
                 new Step{ Content = "Add beef broth, tomato paste, salt, pepper, and thyme.", OrdinalNumber = 3 },
                 new Step{ Content = "Cook on low for 6 hours until tender.", OrdinalNumber = 4 }
             ]
+        },
+        //red pepper
+        new Recipe{
+            Id = Guid.Parse("2b3c4d5e-aaaa-bbbb-cccc-ddddeeeeffff"),
+            Title = "Spicy Beef Stir-Fry",
+            Description = "Tender beef slices stir-fried with red pepper and a spicy sauce.",
+            ImageUrl = "https://omnivorescookbook.com/wp-content/uploads/2015/03/1502_Spicy-Beef-Stir-Fry-with-Pepper_005.jpg",
+            Serves = 4,
+            CookTime = "20m",
+            IsActive = true,
+            Ingredients = ["400g Beef Slices", "1 Red Pepper", "2 Garlic Cloves", "1 tbsp Soy Sauce", "1 tsp Chili Flakes", "1 tsp Cornstarch", "Salt", "Pepper", "Sesame Oil"],
+            Steps = [
+                new Step{ Content = "Slice red pepper into thin strips.", OrdinalNumber = 1 },
+                new Step{ Content = "Sauté garlic and red pepper in sesame oil until fragrant.", OrdinalNumber = 2 },
+                new Step{ Content = "Add beef slices and cook until browned.", OrdinalNumber = 3 },
+                new Step{ Content = "Mix soy sauce, chili flakes, and cornstarch with water, then add to the pan.", OrdinalNumber = 4 },
+                new Step{ Content = "Stir-fry everything together and serve hot.", OrdinalNumber = 5 }
+            ]
+        },
+
+        new Recipe{
+            Id = Guid.Parse("2b3c4d5e-1111-2222-3333-444455556666"),
+            Title = "Beef and Red Pepper Fajitas",
+            Description = "Juicy beef strips and red pepper sautéed with spices, served in warm tortillas.",
+            ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTRa0MuT24suC-hI9S-M0kC8LRqOpjbhRzdeQ&s",
+            Serves = 3,
+            CookTime = "25m",
+            IsActive = true,
+            Ingredients = ["300g Beef Strips", "1 Red Pepper", "1 Onion", "1 tsp Cumin", "1 tsp Chili Powder", "Salt", "Pepper", "Tortillas", "Lime"],
+            Steps = [
+                new Step{ Content = "Slice red pepper and onion into strips.", OrdinalNumber = 1 },
+                new Step{ Content = "Sauté beef strips in a pan until browned.", OrdinalNumber = 2 },
+                new Step{ Content = "Add red pepper, onion, cumin, and chili powder, then cook until tender.", OrdinalNumber = 3 },
+                new Step{ Content = "Serve in warm tortillas with a squeeze of lime.", OrdinalNumber = 4 }
+            ]
+        },
+
+        new Recipe{
+            Id = Guid.Parse("2b3c4d5e-7777-8888-9999-000011112222"),
+            Title = "Red Pepper Pasta",
+            Description = "Creamy roasted red pepper sauce served over pasta.",
+            ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmmJEbGjPFJK1Ngyn7jfcRK7cKr9OrDMsmrg&s",
+            Serves = 2,
+            CookTime = "30m",
+            IsActive = true,
+            Ingredients = ["2 Red Peppers", "200g Pasta", "1 Onion", "2 Garlic Cloves", "100ml Heavy Cream", "Salt", "Pepper", "Parmesan Cheese"],
+            Steps = [
+                new Step{ Content = "Roast red peppers in the oven until skin is charred, then peel.", OrdinalNumber = 1 },
+                new Step{ Content = "Blend roasted peppers with garlic, onion, and heavy cream.", OrdinalNumber = 2 },
+                new Step{ Content = "Cook pasta according to package instructions.", OrdinalNumber = 3 },
+                new Step{ Content = "Toss pasta with red pepper sauce and top with Parmesan cheese.", OrdinalNumber = 4 }
+            ]
+        },
+
+        new Recipe{
+            Id = Guid.Parse("2b3c4d5e-3333-4444-5555-666677778888"),
+            Title = "Spicy Red Pepper Hummus",
+            Description = "A flavorful hummus dip made with roasted red pepper and chickpeas.",
+            ImageUrl = "https://cdn77-s3.lazycatkitchen.com/wp-content/uploads/2017/05/spicy-roasted-red-pepper-hummus-macro-1000x1500.jpg",
+            Serves = 4,
+            CookTime = "10m",
+            IsActive = true,
+            Ingredients = ["1 Red Pepper", "1 Can Chickpeas", "2 tbsp Tahini", "2 Garlic Cloves", "1 tbsp Lemon Juice", "Salt", "Olive Oil", "Paprika"],
+            Steps = [
+                new Step{ Content = "Roast red pepper in the oven until charred, then peel and chop.", OrdinalNumber = 1 },
+                new Step{ Content = "Blend red pepper, chickpeas, tahini, garlic, lemon juice, and salt until smooth.", OrdinalNumber = 2 },
+                new Step{ Content = "Drizzle with olive oil and sprinkle with paprika before serving.", OrdinalNumber = 3 }
+            ]
+        },
+
+        new Recipe{
+            Id = Guid.Parse("2b3c4d5e-eeee-ffff-0000-111122223333"),
+            Title = "Stuffed Red Peppers",
+            Description = "Bell peppers stuffed with a flavorful rice and vegetable mixture.",
+            ImageUrl = "https://embed.widencdn.net/img/beef/t9bwp7fitq/exact/Stuffed%20Peppers%20-%20NCBA%20Beef%20Aug%20202431717.jpg?keep=c&u=7fueml",
+            Serves = 4,
+            CookTime = "40m",
+            IsActive = true,
+            Ingredients = ["4 Red Peppers", "200g Rice", "1 Onion", "1 Carrot", "2 Garlic Cloves", "1 Tomato", "Salt", "Pepper", "Olive Oil"],
+            Steps = [
+                new Step{ Content = "Cut the tops off red peppers and remove the seeds.", OrdinalNumber = 1 },
+                new Step{ Content = "Cook rice and mix with sautéed onion, carrot, garlic, and tomato.", OrdinalNumber = 2 },
+                new Step{ Content = "Stuff the peppers with the rice mixture.", OrdinalNumber = 3 },
+                new Step{ Content = "Bake in the oven at 180°C for 30 minutes.", OrdinalNumber = 4 }
+            ]
         }
+
     ];
 }

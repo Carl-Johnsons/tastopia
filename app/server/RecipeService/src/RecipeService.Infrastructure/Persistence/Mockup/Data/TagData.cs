@@ -219,6 +219,18 @@ public class TagData
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
         },
+        new Tag
+        {
+            Id = Guid.Parse("6adc1ab3-b10a-4341-881b-553fb7860cc4"),
+            Code = "RED_PEPPER",
+            Value = "Red pepper",
+            Category = TagCategory.Ingredient,
+            Status = TagStatus.Active,
+            ImageUrl = "https://www.producemarketguide.com/media/user_5q6Kv4eMkN/176/red-bell-peppers_variety-page.png",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/bqnsia9cjejk24bma2sl.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        },
 
     ];
 

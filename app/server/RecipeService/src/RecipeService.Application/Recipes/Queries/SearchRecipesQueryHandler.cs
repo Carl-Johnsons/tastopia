@@ -66,12 +66,15 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
                .Select(rt => rt.RecipeId)
                .ToHashSet() ?? new HashSet<Guid>();
 
-            recipesQuery = recipesQuery.Where(r => tagValues.Any(tag =>
-                r.Title.ToLower().Contains(tag.ToLower()) ||
-                r.Description.ToLower().Contains(tag.ToLower()) ||
-                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.ToLower())) ||
-                recipeContainTagIds.Contains(r.Id)
+            if(tagValues != null && tagValues.Count != 0)
+            {
+                recipesQuery = recipesQuery.Where(r => tagValues.Any(tag =>
+                  r.Title.ToLower().Contains(tag.ToLower()) ||
+                  r.Description.ToLower().Contains(tag.ToLower()) ||
+                  r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.ToLower())) ||
+                  recipeContainTagIds.Contains(r.Id)
             ));
+            }
         }
 
         if (!string.IsNullOrEmpty(keyword))
