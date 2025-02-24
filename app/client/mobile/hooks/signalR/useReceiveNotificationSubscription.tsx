@@ -11,7 +11,7 @@ const useReceiveNotificationSubscription = () => {
     }
     connection.on(SignalREvent.RECEIVE_NOTIFICATION, () => {
       if (!connection) {
-        queryClient.invalidateQueries("getNotification");
+        queryClient.invalidateQueries({ queryKey: "getNotification" });
         return;
       }
 
