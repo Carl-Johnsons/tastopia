@@ -501,7 +501,7 @@ const NotificationSetting = () => {
     const data: UpdateSettingParams = {
       settings: [
         {
-          key: SETTING_KEY.NOTIFICATION_COMMENT,
+          key,
           value: newValue
         }
       ]
