@@ -16,7 +16,6 @@ const Notification = () => {
         height: "100%"
       }}
     >
-      <StatusBar backgroundColor={c(white.DEFAULT, black[200])} />
       <View>
         <Header />
       </View>
