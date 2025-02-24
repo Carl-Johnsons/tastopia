@@ -163,18 +163,24 @@ export const menuList: Menu[] = [
       {
         path: CAPTURE_PATH,
         icon: ({ color, focused }) => (
-          <MainTabIcon
-            icon={
-              <Ionicons
-                name='scan-circle-outline'
-                size={40}
-                color={color}
-              />
-            }
-            color={color}
-            translateCode='dashboard'
-            focused={focused}
-          />
+          <Protected
+            excludedRoles={[ROLE.GUEST]}
+            forceDisplay
+            requiredLogin
+          >
+            <MainTabIcon
+              icon={
+                <Ionicons
+                  name='scan-circle-outline'
+                  size={40}
+                  color={color}
+                />
+              }
+              color={color}
+              translateCode='dashboard'
+              focused={focused}
+            />
+          </Protected>
         ),
         code: "CAPTURE",
         translateCode: "capture",

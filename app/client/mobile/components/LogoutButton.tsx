@@ -10,9 +10,9 @@ import { ROLE, selectRole } from "@/slices/auth.slice";
 import { selectPushToken } from "@/slices/notification.slice";
 
 export const LogoutButton = () => {
+  const role = selectRole();
   const { t } = useTranslation("menu");
   const { animate, animatedStyles } = useBounce();
-  const role = selectRole();
   const pushNotificationToken = selectPushToken();
 
   const logout = async () => {
@@ -37,7 +37,7 @@ export const LogoutButton = () => {
         style={[animatedStyles]}
       >
         <Text className='text-black_white text-center font-sans text-lg'>
-          {t("logout")}
+          {role === ROLE.GUEST ? t("backToLogin") : t("logout")}
         </Text>
       </Button>
     </Protected>
