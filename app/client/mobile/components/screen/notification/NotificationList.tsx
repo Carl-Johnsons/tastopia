@@ -98,20 +98,19 @@ export const Notification = ({
     const NOTIFICATION_ROUTE = "/(protected)/notification";
     const { redirectUri } = JSON.parse(jsonData) as INotificationJsonData;
 
-    if (!redirectUri || redirectUri === NOTIFICATION_ROUTE) return;
-    router.push(redirectUri as any);
-
     if (!isViewed) {
       await setViewedNotification(
         { notificationId: id },
         {
-          onSuccess: () => {
-            queryClient.invalidateQueries("getNotification");
-            console.log("Notification viewed", id);
+          onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: "getNotification" });
           }
         }
       );
     }
+
+    if (!redirectUri || redirectUri === NOTIFICATION_ROUTE) return;
+    router.push(redirectUri as any);
   }, [jsonData, currentRouteName, id, isViewed]);
 
   const styles = StyleSheet.create({
@@ -183,24 +182,31 @@ export const Notification = ({
     <Pressable
       onPress={handlePress}
       style={!isViewed && styles.isViewed}
-      className={`relative flex-row gap-2 p-4`}
+      className={`relative flex-row gap-3 p-4`}
     >
       <View className='relative'>
-        <Avatar
-          size={70}
-          rounded
-          source={
-            imageUrl ? { uri: imageUrl } : require("../../../assets/images/avatar.png")
-          }
-          containerStyle={imageUrl && { backgroundColor: "#FFC529" }}
-        />
-        <View className='absolute bottom-0 right-0'>
-          {renderIcon(code as ActionCode)}
+        <View className='max-h-[75px]'>
+          <Avatar
+            size={70}
+            rounded
+            source={
+              imageUrl ? { uri: imageUrl } : require("../../../assets/images/avatar.png")
+            }
+            containerStyle={imageUrl && { backgroundColor: "#FFC529" }}
+          />
+          <View className='absolute bottom-0 right-0'>
+            {renderIcon(code as ActionCode)}
+          </View>
         </View>
       </View>
       <View className='shrink justify-center pt-2'>
-        <Text className={`${isViewed ? "text-gray-500" : "text-black_white"}`}>
-          {message}
+        <Text
+          className={`${isViewed ? "text-gray-500" : "text-black_white"} text-xl`}
+          numberOfLines={2}
+        >
+          {
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
         </Text>
       </View>
     </Pressable>
