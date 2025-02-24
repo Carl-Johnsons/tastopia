@@ -236,19 +236,6 @@ public static class CommonExtension
         builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
         builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
 
-        // Common type
-        builder.ExportAsInterfaces([
-            typeof(ErrorResponseDTO),
-            typeof(AdvancePaginatedMetadata),
-            typeof(CommonPaginatedMetadata),
-        ], config =>
-        {
-            config.WithPublicProperties()
-                  .AutoI()
-                  .DontIncludeToNamespace()
-                  .ExportTo("interfaces/common.interface.d.ts");
-        });
-
         // Custom export file
         GenerateTypescriptEnumFile(errorTypes, exportFilePath, fileName);
     }
