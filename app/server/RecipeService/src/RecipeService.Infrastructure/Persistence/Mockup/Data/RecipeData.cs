@@ -425,6 +425,89 @@ public class RecipeData
                 },
             ],
         },
+        //recipe for ai
+        new Recipe{
+            Id = Guid.Parse("1a2b3c4d-1111-2222-3333-444455556666"),
+            Title = "Classic Beef Stroganoff",
+            Description = "Tender beef strips in a creamy mushroom sauce, served over pasta.",
+            ImageUrl = "https://www.allrecipes.com/thmb/Ql4hTdhKYV1eifgS3nShSdSk63I=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/220059-ChefJohnsClassicBeefStroganoff-mfs-2X3-0032-ee04ff133b334abd98040199454a137a.jpg",
+            Serves = 4,
+            CookTime = "30m",
+            IsActive = true,
+            Ingredients = ["400g Beef Strips", "1 Onion", "200g Mushrooms", "200ml Sour Cream", "2 Garlic Cloves", "Salt", "Pepper", "Butter", "Pasta"],
+            Steps = [
+                new Step{ Content = "Sauté onions and garlic in butter until translucent.", OrdinalNumber = 1 },
+                new Step{ Content = "Add beef strips and cook until browned.", OrdinalNumber = 2 },
+                new Step{ Content = "Stir in mushrooms and cook until softened.", OrdinalNumber = 3 },
+                new Step{ Content = "Add sour cream, salt, and pepper, then simmer for a few minutes.", OrdinalNumber = 4 },
+                new Step{ Content = "Serve over cooked pasta.", OrdinalNumber = 5 }
+            ]
+        },
+        new Recipe{
+            Id = Guid.Parse("1a2b3c4d-7777-8888-9999-000011112222"),
+            Title = "Beef Tacos",
+            Description = "Seasoned ground beef served in crispy taco shells with fresh toppings.",
+            ImageUrl = "https://www.onceuponachef.com/images/2023/08/Beef-Tacos.jpg",
+            Serves = 3,
+            CookTime = "20m",
+            IsActive = true,
+            Ingredients = ["300g Ground Beef", "1 Onion", "2 Garlic Cloves", "1 tsp Cumin", "1 tsp Chili Powder", "Salt", "Pepper", "Taco Shells", "Lettuce", "Tomato", "Cheese"],
+            Steps = [
+                new Step{ Content = "Sauté onions and garlic until soft.", OrdinalNumber = 1 },
+                new Step{ Content = "Add ground beef and cook until browned.", OrdinalNumber = 2 },
+                new Step{ Content = "Season with cumin, chili powder, salt, and pepper.", OrdinalNumber = 3 },
+                new Step{ Content = "Fill taco shells with beef and top with lettuce, tomato, and cheese.", OrdinalNumber = 4 }
+            ]
+        },
 
+        new Recipe{
+            Id = Guid.Parse("1a2b3c4d-3333-4444-5555-666677778888"),
+            Title = "Grilled Steak with Garlic Butter",
+            Description = "Juicy grilled steak topped with garlic butter and served with vegetables.",
+            ImageUrl = "https://www.thespruceeats.com/thmb/G_4tv14ZYYvxeDG98cd6wkQppic=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/steakhouse-garlic-butter-recipe-101899-Final-5bafb21546e0fb00266e4222.jpg",
+            Serves = 2,
+            CookTime = "25m",
+            IsActive = true,
+            Ingredients = ["2 Beef Steaks", "3 Garlic Cloves", "50g Butter", "Salt", "Pepper", "Rosemary"],
+            Steps = [
+                new Step{ Content = "Season steaks with salt and pepper.", OrdinalNumber = 1 },
+                new Step{ Content = "Grill steaks to desired doneness.", OrdinalNumber = 2 },
+                new Step{ Content = "Melt butter with minced garlic and rosemary.", OrdinalNumber = 3 },
+                new Step{ Content = "Pour garlic butter over steaks before serving.", OrdinalNumber = 4 }
+            ]
+        },
+
+        new Recipe{
+            Id = Guid.Parse("1a2b3c4d-9999-aaaa-bbbb-ccccddddeeee"),
+            Title = "Beef and Broccoli Stir-Fry",
+            Description = "Tender beef slices stir-fried with broccoli in a savory sauce.",
+            ImageUrl = "https://cleanfoodcrush.com/wp-content/uploads/2022/05/Beef-and-broccoli-stir-fry-5.jpg",
+            Serves = 4,
+            CookTime = "20m",
+            IsActive = true,
+            Ingredients = ["400g Beef Slices", "1 Broccoli Head", "2 Garlic Cloves", "2 tbsp Soy Sauce", "1 tbsp Oyster Sauce", "1 tsp Cornstarch", "Salt", "Pepper"],
+            Steps = [
+                new Step{ Content = "Blanch broccoli in boiling water and set aside.", OrdinalNumber = 1 },
+                new Step{ Content = "Sauté garlic, then add beef slices and cook until browned.", OrdinalNumber = 2 },
+                new Step{ Content = "Mix soy sauce, oyster sauce, and cornstarch with water.", OrdinalNumber = 3 },
+                new Step{ Content = "Add sauce and broccoli to the beef, stir-fry for 2 minutes.", OrdinalNumber = 4 }
+            ]
+        },
+        new Recipe{
+            Id = Guid.Parse("1a2b3c4d-eeee-ffff-0000-111122223333"),
+            Title = "Slow Cooker Beef Stew",
+            Description = "A hearty and comforting beef stew cooked slowly for maximum flavor.",
+            ImageUrl = "https://cdn.apartmenttherapy.info/image/upload/f_jpg,q_auto:eco,c_fill,g_auto,w_1500,ar_1:1/k%2FPhoto%2FRecipes%2F2023-12-slow-cooker-beef-stew%2Fslow-cooker-beef-stew-129",
+            Serves = 6,
+            CookTime = "6h",
+            IsActive = true,
+            Ingredients = ["500g Beef Chunks", "2 Carrots", "2 Potatoes", "1 Onion", "3 Garlic Cloves", "500ml Beef Broth", "1 tbsp Tomato Paste", "Salt", "Pepper", "Thyme"],
+            Steps = [
+                new Step{ Content = "Brown beef chunks in a pan.", OrdinalNumber = 1 },
+                new Step{ Content = "Place beef, carrots, potatoes, onions, and garlic into a slow cooker.", OrdinalNumber = 2 },
+                new Step{ Content = "Add beef broth, tomato paste, salt, pepper, and thyme.", OrdinalNumber = 3 },
+                new Step{ Content = "Cook on low for 6 hours until tender.", OrdinalNumber = 4 }
+            ]
+        }
     ];
 }
