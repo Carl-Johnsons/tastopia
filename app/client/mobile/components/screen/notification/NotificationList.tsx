@@ -88,7 +88,7 @@ export const Notification = ({
   const isOddItem = useMemo(() => {
     return index % 2 === 0;
   }, [index]);
-  const { white, primary } = colors;
+  const { primary } = colors;
   const { mutateAsync: setViewedNotification } = useSetViewedNotification();
   const queryClient = useQueryClient();
 
@@ -134,7 +134,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={white.DEFAULT}
+            color={primary}
           />
         );
       case "USER_FOLLOW":
@@ -149,7 +149,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={white.DEFAULT}
+            color={primary}
           />
         );
       case "USER_UPVOTE":
@@ -173,7 +173,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={white.DEFAULT}
+            color={primary}
           />
         );
     }
