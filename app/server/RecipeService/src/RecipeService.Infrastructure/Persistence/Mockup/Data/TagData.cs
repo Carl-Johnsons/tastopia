@@ -205,7 +205,21 @@ public class TagData
             ImageUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735196329/default_storage/tag/dishtype/jhxdroetbjq9f57cixwj.png",
             CreatedAt = DateTime.Now,
             UpdatedAt = DateTime.Now
-        }
+        },
+        //tag ai
+        new Tag
+        {
+            Id = Guid.Parse("921ae2be-5f9c-4611-b296-8a709bb304c8"),
+            Code = "BEEF",
+            Value = "Beef",
+            Category = TagCategory.Ingredient,
+            Status = TagStatus.Active,
+            ImageUrl = "https://www.lovefoodhatewaste.com/sites/default/files/styles/open_graph_image/public/2022-08/Beef-sh344681603.jpg.webp?itok=bXWzTuPi",
+            //IconUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735188127/default_storage/tag/bqnsia9cjejk24bma2sl.png",
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now
+        },
+
     ];
 
 }
