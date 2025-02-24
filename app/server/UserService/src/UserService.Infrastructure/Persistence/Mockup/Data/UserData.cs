@@ -18,7 +18,6 @@ public class UserData
                 DisplayName = "Alice",
                 AvatarUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024620/default_storage/hud0frffejraoexs28ol.png",
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
-                TotalRecipe = 21,
                 TotalFollowing = 4,
                 AccountUsername = "alice1234"
             },
