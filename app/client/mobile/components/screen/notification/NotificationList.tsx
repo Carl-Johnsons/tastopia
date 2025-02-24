@@ -16,6 +16,10 @@ import Empty from "../community/Empty";
 import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
 import useHydrateData from "@/hooks/useHydrateData";
 import { useQueryClient } from "react-query";
+import { formatDistanceToNow } from "date-fns";
+import { enUS, vi } from "date-fns/locale";
+import i18n from "@/i18n/i18next";
+import { useTranslation } from "react-i18next";
 
 export default function NotificationList() {
   const { data, isLoading, refetch, isStale, fetchNextPage } = useGetNotification();
@@ -80,8 +84,9 @@ export const Notification = ({
   item: INotificationsResponse;
   index: number;
 }) => {
-  const { message, imageUrl, jsonData, code, isViewed, id } = item;
+  const { message, imageUrl, jsonData, code, isViewed, id, createdAt } = item;
   const currentRouteName = usePathname();
+  const { t } = useTranslation("component");
   const isOddItem = useMemo(() => {
     return index % 2 === 0;
   }, [index]);
@@ -201,6 +206,12 @@ export const Notification = ({
       <View className='shrink justify-center pt-2'>
         <Text className={`${isViewed ? "text-gray-500" : "text-black_white"}`}>
           {message}
+        </Text>
+        <Text className={`${isViewed ? "text-gray-500" : "text-black_white"}`}>
+          {formatDistanceToNow(createdAt, {
+            locale: i18n.languages[0] === "vi" ? vi : enUS
+          })}
+          {" " + t("ago")}
         </Text>
       </View>
     </Pressable>
