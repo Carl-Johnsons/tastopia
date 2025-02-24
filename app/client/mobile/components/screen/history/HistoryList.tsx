@@ -39,13 +39,7 @@ export default function HistoryList({ keyword }: HistoryListProps) {
   const [currentAuthorId, setCurrentAuthorId] = useState("");
 
   const renderItem = useCallback(
-    ({
-      item,
-      index
-    }: {
-      item: ListRenderItemInfo<IRecipeViewingHistoryResponse>;
-      index: number;
-    }) => {
+    ({ item, index }: ListRenderItemInfo<IRecipeViewingHistoryResponse>) => {
       if (!history) return null;
 
       return (
