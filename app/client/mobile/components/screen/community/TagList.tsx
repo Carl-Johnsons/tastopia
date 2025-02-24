@@ -103,10 +103,10 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
   }, [searchValue, setSelectedTags]);
 
   const handleRemoveTag = useCallback(
-    (id: string) => {
+    (code: string) => {
       setSelectedTags(prev =>
         prev.filter(t => {
-          return t.id !== id;
+          return t.code !== code;
         })
       );
     },
@@ -174,7 +174,7 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
                   id={tag.id}
                   code={tag.code}
                   value={tag.value}
-                  onRemove={handleRemoveTag}
+                  onRemove={() => handleRemoveTag(tag.code)}
                 />
               );
             })}
