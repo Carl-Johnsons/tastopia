@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using NotificationService.Domain.Constants;
@@ -24,16 +25,19 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
     private readonly IMapper _mapper;
     private readonly IPaginateDataUtility<Notification, AdvancePaginatedMetadata> _paginateDataUtility;
+    private readonly ILogger<GetNotificationsQueryHandler> _logger;
 
     public GetNotificationsQueryHandler(IApplicationDbContext context,
                                         GrpcUser.GrpcUserClient grpcUserClient,
                                         IMapper mapper,
-                                        IPaginateDataUtility<Notification, AdvancePaginatedMetadata> paginateDataUtility)
+                                        IPaginateDataUtility<Notification, AdvancePaginatedMetadata> paginateDataUtility,
+                                        ILogger<GetNotificationsQueryHandler> logger)
     {
         _context = context;
         _grpcUserClient = grpcUserClient;
         _mapper = mapper;
         _paginateDataUtility = paginateDataUtility;
+        _logger = logger;
     }
 
     public async Task<Result<PaginatedNotificationListResponse?>> Handle(GetNotificationsQuery request, CancellationToken cancellationToken)
@@ -153,8 +157,7 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                 TotalPage = totalPage
             }
         };
-        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(paginatedResponse, Formatting.Indented));
-        await Console.Out.WriteLineAsync("skip:"+ skip);
+        _logger.LogInformation(JsonConvert.SerializeObject(paginatedResponse, Formatting.Indented));
         return Result<PaginatedNotificationListResponse?>.Success(paginatedResponse);
     }
 
