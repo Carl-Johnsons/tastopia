@@ -27,7 +27,7 @@ public class UpdateUserTotalRecipeCommandHandler : IRequestHandler<UpdateUserTot
             return Result.Failure(UserError.NotFound);
         }
 
-        user.TotalRecipe += request.Delta;
+        user.TotalRecipe = (user.TotalRecipe ?? 0) + request.Delta;
         if (user.TotalRecipe < 0)
         {
             user.TotalRecipe = 0;
