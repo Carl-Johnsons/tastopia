@@ -49,6 +49,7 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
             AccountId = u.AccountId,
             AvtUrl = u.AvatarUrl,
             DisplayName = u.DisplayName,
+            AccountUsername = u.AccountUsername,
         }).ToDictionary(u => u.AccountId);
 
 
@@ -60,6 +61,7 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
                 AccountId = value.AccountId.ToString(),
                 AvtUrl = value.AvtUrl,
                 DisplayName = value.DisplayName,
+                AccountUsername = value.AccountUsername,
             };
         }
 
