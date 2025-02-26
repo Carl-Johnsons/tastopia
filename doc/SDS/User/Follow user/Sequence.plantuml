@@ -1,0 +1,45 @@
+@startuml Sequence
+title "Follow user"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n UserService" as UserService
+database Postgresql
+
+User -> MobileUI ++: 1. Touch follow or following button in user profile screen
+MobileUI -> ApiGateway ++: 2. follow user
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> UserService ++: 4. Forward request
+
+UserService -> Postgresql++: 5. Query data
+UserService <-- Postgresql--: 6. Return response
+alt User not have followed
+  UserService -> Postgresql++: 7. Insert data
+  UserService <-- Postgresql--: 7A.1. Return response
+  ApiGateway <-- UserService: 7A.2. Return user follow
+  MobileUI <-- ApiGateway: 7A.3. Forward response
+  User <-- MobileUI: 7A.4. Display report user success message
+else User adrealy followed
+  UserService -> Postgresql++: 8. Delete data
+  UserService <-- Postgresql--: 9. Return response
+  ApiGateway <-- UserService--: 10. Return user follow
+  MobileUI <-- ApiGateway--: 11. Forward response
+  User <-- MobileUI--: 12. Display unfollow success message
+end alt
+@enduml
