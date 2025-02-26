@@ -18,25 +18,14 @@ public static class ReinforcedTypingsExtension
         Directory.CreateDirectory(EXPORT_FILE_PATH);
 
         List<Type> errorsTypes = [typeof(NotificationErrors)];
-        
+
         builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
 
-        // Common type
-        builder.ExportAsInterfaces([
-            typeof(ErrorResponseDTO),
-            typeof(AdvancePaginatedMetadata),
-            typeof(CommonPaginatedMetadata),
-        ], config =>
-        {
-            config.WithPublicProperties()
-                  .AutoI()
-                  .DontIncludeToNamespace()
-                  .ExportTo("interfaces/common.interface.d.ts");
-        });
         // DTO and Entites
         builder.ExportAsInterfaces(
         [
             typeof(PaginatedNotificationListResponse),
+            typeof(NotificationListMetadata),
             typeof(NotificationsResponse)
         ], config =>
         {

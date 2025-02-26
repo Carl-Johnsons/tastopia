@@ -71,6 +71,7 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
             ).Where(n => n.Recipients.Any(sa => sa.RecipientId == request.AccountId))
             .OrderByDescending(n => n.CreatedAt);
 
+        var unReadNotifications = notificationQuery.Where(n => n.Recipients.Any(sa => sa.RecipientId == request.AccountId && !sa.IsViewed)).Count();
         var totalPage = (notificationQuery.Count() + NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT - 1) / NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT;
         var paginatedNotificationQuery = _paginateDataUtility.PaginateQuery(notificationQuery, new PaginateParam
         {
@@ -151,10 +152,11 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
         var paginatedResponse = new PaginatedNotificationListResponse
         {
             PaginatedData = responses!,
-            Metadata = new AdvancePaginatedMetadata
+            Metadata = new NotificationListMetadata
             {
                 HasNextPage = skip < totalPage - 1,
-                TotalPage = totalPage
+                TotalPage = totalPage,
+                UnreadNotifications = unReadNotifications
             }
         };
         _logger.LogInformation(JsonConvert.SerializeObject(paginatedResponse, Formatting.Indented));

@@ -1,3 +1,3 @@
 ﻿namespace NotificationService.Domain.Responses;
 
-public class PaginatedNotificationListResponse : BasePaginatedResponse<NotificationsResponse, AdvancePaginatedMetadata>;
+public class PaginatedNotificationListResponse : BasePaginatedResponse<NotificationsResponse, NotificationListMetadata>;

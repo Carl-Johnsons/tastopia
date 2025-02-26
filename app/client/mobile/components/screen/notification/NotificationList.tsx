@@ -6,33 +6,36 @@ import {
   ChatBubbleFillIcon,
   UserIcon
 } from "@/constants/icons";
-import { Avatar } from "@rneui/base";
-import { router, useFocusEffect, usePathname } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
-import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { ActivityIndicator, FlatList } from "react-native";
-import Empty from "../community/Empty";
-import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
-import useHydrateData from "@/hooks/useHydrateData";
-import { useQueryClient } from "react-query";
-import { formatDistanceToNow } from "date-fns";
+import { Avatar } from "@rneui/base";
 import { enUS, vi } from "date-fns/locale";
-import i18n from "@/i18n/i18next";
+import { formatDistanceToNow } from "date-fns";
+import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
+import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { router, usePathname } from "expo-router";
+import { saveNotificationData } from "@/slices/notification.slice";
+import { useAppDispatch } from "@/store/hooks";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
+import Empty from "../community/Empty";
+import i18n from "@/i18n/i18next";
+import useHydrateData from "@/hooks/useHydrateData";
 
 export default function NotificationList() {
-  const { data, isLoading, refetch, isStale, fetchNextPage } = useGetNotification();
+  const { data, isLoading, refetch, fetchNextPage } = useGetNotification();
   const { primary } = colors;
+  const dispatch = useAppDispatch();
   const [notifications, setNotifications] = useState<INotificationsResponse[]>();
   useHydrateData({ source: data, setter: setNotifications });
 
-  const fetchData = useCallback(() => {
-    if (isStale) {
-      refetch();
-    }
-  }, [isStale]);
-
-  useFocusEffect(fetchData);
+  useEffect(() => {
+    dispatch(
+      saveNotificationData({
+        unreadNotifications: data?.pages[0].metadata?.unreadNotifications ?? 0
+      })
+    );
+  }, [data]);
 
   if (isLoading || !notifications) {
     return (
