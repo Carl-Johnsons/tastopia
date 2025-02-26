@@ -1,0 +1,77 @@
+@startuml GetRecipeCommentClassDiagram
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +GetAccountRecipeComments([FromBody] GetAccountRecipeCommentsDTO getAccountRecipeCommentsDTO): async Task<IActionResult>
+}
+
+class GetAccountRecipeCommentsQuery {
+    +AccountId: Guid
+    +Skip: int
+}
+
+class GetAccountRecipeCommentsQueryHandler {
+    -_context: IApplicationDbContext
+    -_mapper: IMapper
+    -_grpcUserClient: GrpcUserClient
+    -_paginateDataUtility: IPaginateDataUtility
+    +Handle(GetAccountRecipeCommentsQuery request, CancellationToken cancellationToken): async Task<Result<PaginatedAccountRecipeCommentListResponse?>> 
+}
+
+
+interface IMapper{
+    #Map<TDestination>(object source): TDestination
+}
+
+class PaginatedAccountRecipeCommentListResponse{
+}
+class BasePaginatedResponse{
+    +PaginatedData : IEnumerable<Type>
+    +Metadata: MetadataType?
+}
+PaginatedAccountRecipeCommentListResponse --|> BasePaginatedResponse
+
+class GetAccountRecipeCommentsDTO{
+    +AccountId: Guid
+    +Skip: int
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+together {
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" GetAccountRecipeCommentsDTO
+RecipeController "1"--"1" GetAccountRecipeCommentsQuery
+
+GetAccountRecipeCommentsQueryHandler "1"--"1" GetAccountRecipeCommentsQuery
+GetAccountRecipeCommentsQueryHandler "1"--"1" Result
+GetAccountRecipeCommentsQueryHandler "1"--"1" PaginatedAccountRecipeCommentListResponse
+GetAccountRecipeCommentsQueryHandler "1"--"1" GrpcGetSimpleUsersRequest
+GetAccountRecipeCommentsQueryHandler "1" o-- "1" IApplicationDbContext
+GetAccountRecipeCommentsQueryHandler "1" o-- "1" IMapper
+GetAccountRecipeCommentsQueryHandler "1" o-- "1" IPaginateDataUtility
+GetAccountRecipeCommentsQueryHandler "1" o-- "1" GrpcUserClient
+GetAccountRecipeCommentsQueryHandler "1"--"1..*" RecipeError
+
+Error "1" --"1..*" RecipeError
+@enduml

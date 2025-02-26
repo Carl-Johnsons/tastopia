@@ -1,0 +1,56 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +DeleteOwnRecipe([FromBody] DeleteOwnRecipeDTO deleteOwnRecipeDTO): async Task<IActionResult>
+}
+
+class DeleteCommentCommand {
+    +AccountId: Guid
+    +RecipeId: Guid
+}
+
+class DeleteOwnRecipeCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +Handle(DeleteOwnRecipeCommand request, CancellationToken cancellationToken): async Task<Result<Recipe?>> 
+}
+
+class DeleteOwnRecipeDTO{
+    +RecipeId: Guid
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" DeleteOwnRecipeDTO
+RecipeController "1"--"1" DeleteOwnRecipeCommand
+
+DeleteOwnRecipeCommandHandler "1"--"1" DeleteOwnRecipeCommand
+DeleteOwnRecipeCommandHandler "1"--"1" Recipe
+DeleteOwnRecipeCommandHandler "1"--"1" Result
+DeleteOwnRecipeCommandHandler "1" o-- "1" IUnitOfWork
+DeleteOwnRecipeCommandHandler "1" o-- "1" IApplicationDbContext
+DeleteOwnRecipeCommandHandler "1"--"1..*" RecipeError
+
+Error "1" --"1..*" RecipeError
+
+@enduml

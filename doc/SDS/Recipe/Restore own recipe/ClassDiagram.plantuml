@@ -1,0 +1,56 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +RestoreOwnRecipe([FromBody] RestoreOwnRecipeDTO restoreOwnRecipeDTO): async Task<IActionResult>
+}
+
+class RestoreOwnRecipeCommand {
+    +AuthorId: Guid
+    +RecipeId: Guid
+}
+
+class RestoreOwnRecipeCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +Handle(RestoreOwnRecipeCommand request, CancellationToken cancellationToken): async Task<Result<Recipe?>> 
+}
+
+class RestoreOwnRecipeDTO{
+    +RecipeId: Guid
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" RestoreOwnRecipeDTO
+RecipeController "1"--"1" RestoreOwnRecipeCommand
+
+RestoreOwnRecipeCommandHandler "1"--"1" RestoreOwnRecipeCommand
+RestoreOwnRecipeCommandHandler "1"--"1" Recipe
+RestoreOwnRecipeCommandHandler "1"--"1" Result
+RestoreOwnRecipeCommandHandler "1" o-- "1" IUnitOfWork
+RestoreOwnRecipeCommandHandler "1" o-- "1" IApplicationDbContext
+RestoreOwnRecipeCommandHandler "1"--"1..*" RecipeError
+
+Error "1" --"1..*" RecipeError
+
+@enduml
