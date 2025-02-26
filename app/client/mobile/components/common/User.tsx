@@ -14,8 +14,8 @@ type UserProps = {
   username: string;
   numberOfRecipe: number;
   isFollowing: boolean;
-  invalidateSearch: () => void;
-  handleSelectSearchResult: () => void;
+  invalidateSearch?: () => void;
+  handleSelectSearchResult?: () => void;
 };
 
 const User = ({
@@ -40,7 +40,7 @@ const User = ({
         { accountId: id },
         {
           onSuccess: async data => {
-            invalidateSearch();
+            invalidateSearch && invalidateSearch();
             setIsFollowed(data.isFollowing);
           },
           onError: async error => {
@@ -56,7 +56,7 @@ const User = ({
     <TouchableWithoutFeedback
       key={id}
       onPress={() => {
-        handleSelectSearchResult();
+        handleSelectSearchResult && handleSelectSearchResult();
         router.push({
           pathname: "/(protected)/user/[id]",
           params: { id }

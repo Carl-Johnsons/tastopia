@@ -28,9 +28,15 @@ type SearchBarProps = {
   searchValue: string;
   setSearchValue: Dispatch<SetStateAction<string>>;
   isSearching: boolean;
+  placeholder?: string;
 };
 
-const SearchBar = ({ searchValue, setSearchValue, isSearching }: SearchBarProps) => {
+export const SearchBar = ({
+  searchValue,
+  setSearchValue,
+  isSearching,
+  placeholder
+}: SearchBarProps) => {
   const { c } = useColorizer();
   const { black, white, gray } = colors;
   const [isFocused, setIsFocused] = useState(false);
@@ -52,7 +58,9 @@ const SearchBar = ({ searchValue, setSearchValue, isSearching }: SearchBarProps)
   });
 
   return (
-    <View className='flex-center relative flex-row gap-2 rounded-3xl border-[0.5px] border-gray-300 px-3'>
+    <View
+      className={`flex-center relative flex-row gap-2 rounded-3xl border-[0.5px] border-gray-300 px-3 ${isFocused && "border-primary"}`}
+    >
       <Feather
         name='search'
         size={20}
@@ -67,7 +75,7 @@ const SearchBar = ({ searchValue, setSearchValue, isSearching }: SearchBarProps)
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         onChangeText={handleSearch}
-        placeholder={"Search recipe viewing history"}
+        placeholder={!!placeholder ? placeholder : "Search recipe viewing history"}
         placeholderTextColor={gray[400]}
       />
 
@@ -83,7 +91,7 @@ const SearchBar = ({ searchValue, setSearchValue, isSearching }: SearchBarProps)
               size={16}
               color={c(gray[500], gray[300])}
             />
-          ) }
+          )}
           {!isSearching && isFocused && searchValue.length !== 0 && (
             <TouchableOpacity
               onPress={handleCancel}

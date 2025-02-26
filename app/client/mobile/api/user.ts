@@ -1,6 +1,6 @@
 import { loginSchema, registerSchema } from "@/lib/validation/auth";
 import { axiosInstance, protectedAxiosInstance } from "@/constants/host";
-import { useMutation, useQuery } from "react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { InferType } from "yup";
 import { CLIENT_ID, SCOPE } from "@/constants/api";
 import { AxiosError } from "axios";
@@ -15,7 +15,10 @@ import {
   IUserReportUserDTO,
   IUserReportUserResponse
 } from "@/generated/interfaces/user.interface";
-import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
+import {
+  IAdvancePaginatedMetadata,
+  IErrorResponseDTO
+} from "@/generated/interfaces/common.interface";
 
 export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {
@@ -93,7 +96,7 @@ export const useGetUserDetails = () => {
         const { data } = await protectedAxiosInstance.get(url);
         return data;
       } catch (error) {
-        console.debug("useGetUserDetails", JSON.stringify(error));
+        console.debug("useGetUserDetails", stringify(error));
 
         if (error instanceof AxiosError) {
           const data = error.response?.data as IErrorResponseDTO;
@@ -336,6 +339,75 @@ export const useReportUser = () => {
         additionalDetails
       });
       return data;
+    }
+  });
+};
+
+type IGetUserFollowersResponse = {
+  paginatedData: SearchUserResultType[];
+  metadata: IAdvancePaginatedMetadata;
+};
+
+export const useGetUserFollowers = (keyword: string) => {
+  const accessToken = selectAccessToken();
+
+  return useInfiniteQuery<IGetUserFollowersResponse, Error>({
+    queryKey: ["getUserFollowers", keyword],
+    enabled: !!accessToken,
+    queryFn: async ({ pageParam = 0 }) => {
+      try {
+        const { data } = await protectedAxiosInstance.post<IGetUserFollowersResponse>(
+          "/api/user/get-user-follower",
+          {
+            skip: pageParam,
+            keyword
+          }
+        );
+        return data;
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message || "An error has occurred.");
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.metadata?.hasNextPage) return undefined;
+      return allPages.length;
+    }
+  });
+};
+
+export const useGetUserFollowings = (keyword: string = "") => {
+  const accessToken = selectAccessToken();
+
+  return useInfiniteQuery<IGetUserFollowersResponse, Error>({
+    queryKey: ["getUserFollowings", keyword],
+    enabled: !!accessToken,
+    queryFn: async ({ pageParam = 0 }) => {
+      try {
+        const { data } = await protectedAxiosInstance.post<IGetUserFollowersResponse>(
+          "/api/user/get-user-following",
+          {
+            skip: pageParam,
+            keyword
+          }
+        );
+        return data;
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message || "An error has occurred.");
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.metadata?.hasNextPage) return undefined;
+      return allPages.length;
     }
   });
 };

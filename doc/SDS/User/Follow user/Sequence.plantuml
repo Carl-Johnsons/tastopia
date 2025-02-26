@@ -15,6 +15,7 @@ boundary MobileUI
 participant "<<cordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n UserService" as UserService
+participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
 database Postgresql
 
 User -> MobileUI ++: 1. Touch follow or following button in user profile screen
@@ -32,9 +33,13 @@ UserService <-- Postgresql--: 6. Return response
 alt User not have followed
   UserService -> Postgresql++: 7. Insert data
   UserService <-- Postgresql--: 7A.1. Return response
-  ApiGateway <-- UserService: 7A.2. Return user follow
-  MobileUI <-- ApiGateway: 7A.3. Forward response
-  User <-- MobileUI: 7A.4. Display report user success message
+  UserService -> Rabbitmq: 7A.2. Publish "NotifyUserEvent" message 
+  activate Rabbitmq
+  ref over Rabbitmq: 7A.3. NotifyUserConsumer
+  ApiGateway <-- UserService: 7A.4. Return user follow
+  destroy Rabbitmq
+  MobileUI <-- ApiGateway: 7A.5. Forward response
+  User <-- MobileUI: 7A.6. Display report user success message
 else User adrealy followed
   UserService -> Postgresql++: 8. Delete data
   UserService <-- Postgresql--: 9. Return response

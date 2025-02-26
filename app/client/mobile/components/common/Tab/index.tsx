@@ -5,10 +5,11 @@ import { globalStyles } from "../GlobalStyles";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 
-type ItemProps = {
+export type ItemProps = {
   title: string;
   iconStyle?: object;
   titleStyle?: object;
+  onPress?: () => void;
 };
 
 type TabProps = {
@@ -43,6 +44,7 @@ const CustomTab = ({ variant = "primary", tabItems, tabViews, ...rest }: TabProp
             <Tab.Item
               key={idx + item.title}
               title={item.title}
+              onPress={item.onPress}
               buttonStyle={[
                 { borderBottomWidth: 2, borderColor: "transparent" },
                 isActive && {

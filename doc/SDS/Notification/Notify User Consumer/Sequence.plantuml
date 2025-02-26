@@ -1,0 +1,57 @@
+@startuml Sequence
+title "Notify User Consumer"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
+participant "<<service>>\n NotificationService" as NotificationService
+participant "<<service>>\n UserService" as UserService
+participant "<<service>>\n PushNotificationWorker" as PushNotificationWorker
+participant "<<service>>\n ExpoPushService" as ExpoPushService
+
+database MongoDB
+database Postgresql
+
+activate Rabbitmq
+Rabbitmq -> NotificationService: Deliver "NotifyUserEvent" message
+deactivate Rabbitmq
+activate NotificationService
+NotificationService -> MongoDB++: Query data
+NotificationService <-- MongoDB--: Return response
+
+alt if expo push token count is 0
+
+else
+  NotificationService -> UserService++: request GetSimpleUserAsync <<gRPC>>
+  UserService -> Postgresql++: Query data
+  UserService <-- Postgresql--: Return response
+  NotificationService <-- UserService--: return response <<gRPC>>
+  alt GetSimpleUserAsync response is null
+    
+  else
+    NotificationService -> UserService++: request GetUserSettingAsync <<gRPC>>
+    UserService -> Postgresql++: Query data
+    UserService <-- Postgresql--: Return response
+    NotificationService <-- UserService--: return response <<gRPC>>
+    NotificationService -> Rabbitmq: Publish "PushNotificationEvent" message <<Async>>
+    deactivate NotificationService
+    activate Rabbitmq
+    Rabbitmq -> PushNotificationWorker: Deliver "PushNotificationEvent" message
+    deactivate Rabbitmq
+    activate PushNotificationWorker
+    PushNotificationWorker -> ExpoPushService: Push the notification message\n to expo push service
+    deactivate PushNotificationWorker
+    activate ExpoPushService
+  end
+end
+destroy ExpoPushService
+
+
+@enduml

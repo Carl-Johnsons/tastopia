@@ -28,6 +28,7 @@ type HeaderProps = {
   isCurrentUser: boolean;
   isFollowing: boolean;
   handleTouchMenu: () => void;
+  handleTouchFollowerCount: () => void;
 };
 
 export default function Header({
@@ -42,7 +43,8 @@ export default function Header({
   createdAt,
   isCurrentUser,
   isFollowing,
-  handleTouchMenu
+  handleTouchMenu,
+  handleTouchFollowerCount
 }: HeaderProps) {
   const { t } = useTranslation("profile");
   const { black, white } = colors;
@@ -124,14 +126,15 @@ export default function Header({
                     </Text>
                   )}
 
-                  {!!followerCounts && (
-                    <Text className='font-secondary-roman text-lg text-white'>
-                      {followerCounts}{" "}
-                      {followerCounts % 2 === 0 && followerCounts !== 0
-                        ? t("follower")
-                        : t("followers")}
-                    </Text>
-                  )}
+                  <Text
+                    onPress={isOwnedByCurrentUser ? handleTouchFollowerCount : undefined}
+                    className='font-secondary-roman text-lg text-white'
+                  >
+                    {followerCounts}{" "}
+                    {followerCounts % 2 === 0 && followerCounts !== 0
+                      ? t("follower")
+                      : t("followers")}
+                  </Text>
 
                   <View className='flex-row items-center gap-1'>
                     <Text className='font-secondary-roman text-lg text-gray-200'>
