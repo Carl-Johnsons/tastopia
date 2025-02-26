@@ -15,16 +15,19 @@ const useReceiveNotificationSubscription = () => {
       }
 
       queryClient.invalidateQueries({ queryKey: "getNotification" });
-      console.log("Receive notification");
+      console.log("SignalR: Receive notification");
     });
   }, []);
 
-  const unsubscribeReceiveNotificationEvent = useCallback((connection?: HubConnection) => {
-    if (!connection) {
-      return;
-    }
-    connection.off(SignalREvent.RECEIVE_NOTIFICATION);
-  }, []);
+  const unsubscribeReceiveNotificationEvent = useCallback(
+    (connection?: HubConnection) => {
+      if (!connection) {
+        return;
+      }
+      connection.off(SignalREvent.RECEIVE_NOTIFICATION);
+    },
+    []
+  );
 
   return { subscribeReceiveNotificationEvent, unsubscribeReceiveNotificationEvent };
 };

@@ -3,9 +3,8 @@ import { SETTING_VALUE } from "@/constants/settings";
 import { IPaginatedNotificationListResponse } from "@/generated/interfaces/notification.interface";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { selectSetting } from "@/slices/setting.slice";
-import { stringify } from "@/utils/debug";
 import { AxiosError } from "axios";
-import { useInfiniteQuery, useMutation, useQueryClient } from "react-query";
+import { useInfiniteQuery, useMutation } from "react-query";
 import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 
 export const useGetNotification = () => {
@@ -41,9 +40,6 @@ export const useGetNotification = () => {
       if (!lastPage.metadata?.hasNextPage) {
         return undefined;
       }
-
-      console.log(allPages, stringify(allPages));
-
       return allPages.length;
     }
   });
@@ -65,11 +61,10 @@ export const useSetViewedNotification = () => {
     mutationKey: "getNotification",
     mutationFn: async ({ notificationId }) => {
       try {
-        const { data } =
-          await protectedAxiosInstance.post<SetViewedNotificationResponse>(
-            "/api/notification/set-view-notification",
-            { notificationId }
-          );
+        const { data } = await protectedAxiosInstance.post<SetViewedNotificationResponse>(
+          "/api/notification/set-view-notification",
+          { notificationId }
+        );
         return data;
       } catch (error) {
         if (error instanceof AxiosError) {
