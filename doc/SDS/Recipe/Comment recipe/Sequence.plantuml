@@ -35,29 +35,30 @@ UserService -> Postgresql++: 8. Query data
 UserService <-- Postgresql--: 9. Return response
 RecipeService <-- UserService--: 10. Return user's information <<gRPC>>
 
-RecipeService -> Rabbitmq++: 11. Publish "UserCommentRecipeEvent" \n message <<Async>>
-
-ApiGateway <-- RecipeService--: 12. Return recipe comment
+RecipeService -> Rabbitmq++: 11. Publish "NotifyUserEvent" message <<Async>>
+ref over Rabbitmq: 12. NotifyUserConsumer
+RecipeService -> Rabbitmq: 13. Publish "UserCommentRecipeEvent" \n message <<Async>>
+ApiGateway <-- RecipeService--: 14. Return recipe comment
 destroy RecipeService
-MobileUI <-- ApiGateway--: 13. Forward response
-User <-- MobileUI--: 14. Display recipe comment
+MobileUI <-- ApiGateway--: 15. Forward response
+User <-- MobileUI--: 16. Display recipe comment
 
-Rabbitmq -> RecipeWorker: 15. Deliver "UserCommentRecipeEvent"\n message
+Rabbitmq -> RecipeWorker: 17. Deliver "UserCommentRecipeEvent"\n message
 deactivate Rabbitmq
 activate RecipeWorker
 
-RecipeWorker -> GerminiAPI++: 16. Consume event and \n call api to check abuse
-RecipeWorker <-- GerminiAPI--: 17. Return response
+RecipeWorker -> GerminiAPI++: 18. Consume event and \n call api to check abuse
+RecipeWorker <-- GerminiAPI--: 19. Return response
 
 opt Comment has abusive word
-    RecipeWorker -> Rabbitmq: 18A. Publish "AbusiveCommentEvent" \n message <<Async>>
+    RecipeWorker -> Rabbitmq: 20A. Publish "AbusiveCommentEvent" \n message <<Async>>
     deactivate RecipeWorker
     activate Rabbitmq
-    Rabbitmq -> RecipeService: 18A.1. Deliver "AbusiveCommentEvent"\n message
+    Rabbitmq -> RecipeService: 20A.1. Deliver "AbusiveCommentEvent"\n message
     deactivate Rabbitmq
     activate RecipeService
-    RecipeService -> MongoDB++: 18A.2. Consume message and update data
-    RecipeService <-- MongoDB--: 18A.3. Return response.
+    RecipeService -> MongoDB++: 20A.2. Consume message and update data
+    RecipeService <-- MongoDB--: 20A.3. Return response.
     destroy RecipeService
     deactivate RecipeService
 end opt
