@@ -163,7 +163,7 @@ const PreviewView = ({
               <Button
                 onPress={handleSearch}
                 style={animatedSearchBtnStyles}
-                className='w-[60%] rounded-3xl bg-primary p-3'
+                className='rounded-full bg-primary p-3'
               >
                 <View className='flex-row items-center'>
                   <FontAwesome
@@ -172,7 +172,9 @@ const PreviewView = ({
                     color='black'
                     className='pr-4'
                   />
-                  <Text className='font-bold text-2xl'>{t("searchForRecipes")}</Text>
+                  <Text className='font-bold text-xl'>
+                    {t("searchForRecipes")}
+                  </Text>
                 </View>
               </Button>
             </>

@@ -7,6 +7,7 @@ export type NotificationType = "Community" | "System";
 export interface NotificationState {
   type: NotificationType | null;
   pushToken: string | null;
+  unreadNotifications: number;
 }
 
 export type SaveNotificationDataAction = {
@@ -16,11 +17,16 @@ export type SaveNotificationDataAction = {
 
 const initialState: NotificationState = {
   type: "Community",
-  pushToken: null
+  pushToken: null,
+  unreadNotifications: 0
 };
 
-export const selectNotificationType = () => useAppSelector(state => state.notification.type);
-export const selectPushToken = () => useAppSelector(state => state.notification.pushToken);
+export const selectNotificationType = () =>
+  useAppSelector(state => state.notification.type);
+export const selectPushToken = () =>
+  useAppSelector(state => state.notification.pushToken);
+export const selectUnreadNotifications = () =>
+  useAppSelector(state => state.notification.unreadNotifications);
 
 export const NotificationSlice = createSlice({
   name: "notification",
@@ -28,7 +34,7 @@ export const NotificationSlice = createSlice({
   reducers: {
     saveNotificationData: (state, action: SaveNotificationDataAction) => {
       Object.assign(state, action.payload);
-    },
+    }
   },
   extraReducers: builder => {
     builder.addCase(PURGE, () => {

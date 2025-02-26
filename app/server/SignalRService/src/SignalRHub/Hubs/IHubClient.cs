@@ -9,5 +9,6 @@ public interface IHubClient
     Task ReceiveTest();
     Task ReceiveTest(string response);
     Task ReceiveTest(TestObject obj);
+    Task ReceiveNotification();
     Task ForcedLogout();
 }

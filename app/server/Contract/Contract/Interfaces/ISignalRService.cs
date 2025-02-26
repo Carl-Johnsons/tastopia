@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 
-namespace TrackingService.Domain.Interfaces;
+namespace Contract.Interfaces;
 
 public interface ISignalRService
 {
