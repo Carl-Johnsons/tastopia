@@ -20,7 +20,6 @@ public class UserController : BaseApiController
     {
     }
 
-    [AllowAnonymous]
     [HttpPost("search")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedSimpleUserListResponse), 200)]
@@ -32,7 +31,7 @@ public class UserController : BaseApiController
 
         var result = await _sender.Send(new SearchUsersQuery
         {
-            AccountId = subjectId != null ? Guid.Parse(subjectId) : null,
+            AccountId = Guid.Parse(subjectId!),
             Skip = searchUser.Skip,
             Keyword = searchUser.Keyword,
         });

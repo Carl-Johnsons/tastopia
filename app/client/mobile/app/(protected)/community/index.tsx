@@ -8,7 +8,8 @@ import {
   SafeAreaView,
   FlatList,
   Appearance,
-  StatusBar
+  StatusBar,
+  Alert
 } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { router } from "expo-router";
@@ -22,11 +23,17 @@ import { usePushNotification } from "@/hooks";
 import { selectSetting } from "@/slices/setting.slice";
 import { changeLanguage } from "@/utils/language";
 import { getBooleanValueFromSetting } from "@/utils/converter";
+import { RecipeType } from "@/types/recipe";
+import { selectIsActiveUser } from "@/slices/user.slice";
+import { useTranslation } from "react-i18next";
 
 const Community = () => {
   const { c } = useColorizer();
   const { black, white } = colors;
+  const { t } = useTranslation("component");
+  const isActiveUser = selectIsActiveUser();
 
+  const isFirstRender = useRef(true);
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [currentRecipeId, setCurrentRecipeId] = useState("");
   const [currentAuthorId, setCurrentAuthorId] = useState("");
@@ -35,8 +42,15 @@ const Community = () => {
   const role = selectRole();
   const { registerForPushNotificationAsync } = usePushNotification();
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
-    useRecipesFeed(filterSelected);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+    isLoading
+  } = useRecipesFeed(filterSelected);
 
   const handleCreateRecipe = () => {
     router.push("/(protected)/community/create-recipe");
@@ -50,7 +64,26 @@ const Community = () => {
     refetch();
   };
 
-  const handleLoadMore = () => {
+  const handleReachEnd = () => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (!isActiveUser) {
+      Alert.alert(t("notLoggedIn"), t("loadMoreRecipe"), [
+        {
+          text: t("settingUser.ok"),
+          onPress: () => {
+            router.push("/login");
+          }
+        },
+        {
+          text: t("settingUser.cancel")
+        }
+      ]);
+    }
+
     if (!isFetchingNextPage && hasNextPage) {
       fetchNextPage();
     }
@@ -118,7 +151,7 @@ const Community = () => {
             onRefresh={onRefresh}
           />
         }
-        onEndReached={handleLoadMore}
+        onEndReached={handleReachEnd}
         onEndReachedThreshold={0.1}
         ListHeaderComponent={Header({
           isRefreshing: isRefetching,

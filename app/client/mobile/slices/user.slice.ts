@@ -32,6 +32,8 @@ const initialState: UserState = {
 
 export const selectUser = () => useAppSelector(state => state.user);
 export const selectUserId = () => useAppSelector(state => state.user.accountId);
+export const selectIsActiveUser = () =>
+  useAppSelector(state => state.user.accountId && state.user.isAccountActive);
 
 export const userSlice = createSlice({
   name: "user",

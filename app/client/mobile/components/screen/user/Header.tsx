@@ -4,6 +4,8 @@ import PreviewImage from "@/components/common/PreviewImage";
 import { colors } from "@/constants/colors";
 import { ArrowBackIcon, DotIcon } from "@/constants/icons";
 import useIsOwner from "@/hooks/auth/useIsOwner";
+import { useProtectedExclude } from "@/hooks/auth/useProtected";
+import { ROLE } from "@/slices/auth.slice";
 import { formatDate } from "@/utils/format-date";
 import { Feather } from "@expo/vector-icons";
 import { ImageBackground } from "expo-image";
@@ -26,6 +28,7 @@ type HeaderProps = {
   isCurrentUser: boolean;
   isFollowing: boolean;
   handleTouchMenu: () => void;
+  handleTouchFollowerCount: () => void;
 };
 
 export default function Header({
@@ -40,7 +43,8 @@ export default function Header({
   createdAt,
   isCurrentUser,
   isFollowing,
-  handleTouchMenu
+  handleTouchMenu,
+  handleTouchFollowerCount
 }: HeaderProps) {
   const { t } = useTranslation("profile");
   const { black, white } = colors;
@@ -48,13 +52,12 @@ export default function Header({
   const [followed, setIsFollowed] = useState<boolean>(isFollowing);
   const { mutateAsync: followUser, isLoading } = useFollowUnfollowUser();
   const isOwnedByCurrentUser = useIsOwner(accountId);
-  console.log("total recipe count", totalRecipe);
 
   const goToUpdateProfile = useCallback(() => {
     router.push("/(protected)/menu/profile/updateProfile");
   }, [router]);
 
-  const handleFollowUnFollow = () => {
+  const handleFollowUnFollow = useProtectedExclude(() => {
     if (!isLoading) {
       followUser(
         { accountId },
@@ -69,7 +72,7 @@ export default function Header({
         }
       );
     }
-  };
+  }, [ROLE.GUEST]);
 
   return (
     <View>
@@ -109,7 +112,9 @@ export default function Header({
                   />
                 </View>
 
-                <Text className='font-semibold text-2xl text-white w-[70vw]'>{displayName}</Text>
+                <Text className='w-[70vw] font-semibold text-2xl text-white'>
+                  {displayName}
+                </Text>
 
                 <View>
                   {!!totalRecipe && (
@@ -121,14 +126,15 @@ export default function Header({
                     </Text>
                   )}
 
-                  {!!followerCounts && (
-                    <Text className='font-secondary-roman text-lg text-white'>
-                      {followerCounts}{" "}
-                      {followerCounts % 2 === 0 && followerCounts !== 0
-                        ? t("follower")
-                        : t("followers")}
-                    </Text>
-                  )}
+                  <Text
+                    onPress={isOwnedByCurrentUser ? handleTouchFollowerCount : undefined}
+                    className='font-secondary-roman text-lg text-white'
+                  >
+                    {followerCounts}{" "}
+                    {followerCounts % 2 === 0 && followerCounts !== 0
+                      ? t("follower")
+                      : t("followers")}
+                  </Text>
 
                   <View className='flex-row items-center gap-1'>
                     <Text className='font-secondary-roman text-lg text-gray-200'>

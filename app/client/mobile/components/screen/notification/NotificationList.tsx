@@ -15,6 +15,10 @@ import Empty from "../community/Empty";
 import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
 import useHydrateData from "@/hooks/useHydrateData";
 import { useQueryClient } from "react-query";
+import { formatDistanceToNow } from "date-fns";
+import { enUS, vi } from "date-fns/locale";
+import i18n from "@/i18n/i18next";
+import { useTranslation } from "react-i18next";
 
 export default function NotificationList() {
   const { data, isLoading, refetch, isStale, fetchNextPage } = useGetNotification();
@@ -83,12 +87,13 @@ export const Notification = ({
   item: INotificationsResponse;
   index: number;
 }) => {
-  const { message, imageUrl, jsonData, code, isViewed, id } = item;
+  const { message, imageUrl, jsonData, code, isViewed, id, createdAt } = item;
   const currentRouteName = usePathname();
+  const { t } = useTranslation("component");
   const isOddItem = useMemo(() => {
     return index % 2 === 0;
   }, [index]);
-  const { white, primary } = colors;
+  const { primary } = colors;
   const { mutateAsync: setViewedNotification } = useSetViewedNotification();
   const queryClient = useQueryClient();
 
@@ -98,24 +103,23 @@ export const Notification = ({
     const NOTIFICATION_ROUTE = "/(protected)/notification";
     const { redirectUri } = JSON.parse(jsonData) as INotificationJsonData;
 
-    if (!redirectUri || redirectUri === NOTIFICATION_ROUTE) return;
-    router.push(redirectUri as any);
-
     if (!isViewed) {
       await setViewedNotification(
         { notificationId: id },
         {
-          onSuccess: () => {
-            queryClient.invalidateQueries("getNotification");
-            console.log("Notification viewed", id);
+          onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: "getNotification" });
           }
         }
       );
     }
+
+    if (!redirectUri || redirectUri === NOTIFICATION_ROUTE) return;
+    router.push(redirectUri as any);
   }, [jsonData, currentRouteName, id, isViewed]);
 
   const styles = StyleSheet.create({
-    oddWrapper: {
+    isViewed: {
       backgroundColor: "#FE724C26"
     }
   });
@@ -134,7 +138,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={white.DEFAULT}
+            color={primary}
           />
         );
       case "USER_FOLLOW":
@@ -149,7 +153,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={white.DEFAULT}
+            color={primary}
           />
         );
       case "USER_UPVOTE":
@@ -173,7 +177,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={white.DEFAULT}
+            color={primary}
           />
         );
     }
@@ -182,25 +186,36 @@ export const Notification = ({
   return (
     <Pressable
       onPress={handlePress}
-      style={isOddItem && styles.oddWrapper}
-      className={`relative flex-row gap-2 p-4`}
+      style={!isViewed && styles.isViewed}
+      className={`relative flex-row gap-3 p-4`}
     >
       <View className='relative'>
-        <Avatar
-          size={70}
-          rounded
-          source={
-            imageUrl ? { uri: imageUrl } : require("../../../assets/images/avatar.png")
-          }
-          containerStyle={imageUrl && { backgroundColor: "#FFC529" }}
-        />
-        <View className='absolute bottom-0 right-0'>
-          {renderIcon(code as ActionCode)}
+        <View className='max-h-[75px]'>
+          <Avatar
+            size={70}
+            rounded
+            source={
+              imageUrl ? { uri: imageUrl } : require("../../../assets/images/avatar.png")
+            }
+            containerStyle={imageUrl && { backgroundColor: "#FFC529" }}
+          />
+          <View className='absolute bottom-0 right-0'>
+            {renderIcon(code as ActionCode)}
+          </View>
         </View>
       </View>
       <View className='shrink justify-center pt-2'>
-        <Text className={`${isViewed ? "text-gray-500" : "text-black_white"}`}>
+        <Text
+          className={`${isViewed ? "text-gray-500" : "text-black_white"} text-xl`}
+          numberOfLines={2}
+        >
           {message}
+        </Text>
+        <Text className={`${isViewed ? "text-gray-500" : "text-black_white"}`}>
+          {formatDistanceToNow(createdAt, {
+            locale: i18n.languages[0] === "vi" ? vi : enUS
+          })}
+          {" " + t("ago")}
         </Text>
       </View>
     </Pressable>

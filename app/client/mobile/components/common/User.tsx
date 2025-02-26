@@ -1,10 +1,11 @@
-import { Alert, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Alert, Text, TouchableWithoutFeedback, View } from "react-native";
 import { useState } from "react";
 import { Image } from "expo-image";
 import { abbreviateNumber } from "@/utils/format";
 import { useFollowUnfollowUser } from "@/api/user";
 import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
+import { selectIsActiveUser } from "@/slices/user.slice";
 
 type UserProps = {
   id: string;
@@ -13,8 +14,8 @@ type UserProps = {
   username: string;
   numberOfRecipe: number;
   isFollowing: boolean;
-  invalidateSearch: () => void;
-  handleSelectSearchResult: () => void;
+  invalidateSearch?: () => void;
+  handleSelectSearchResult?: () => void;
 };
 
 const User = ({
@@ -28,17 +29,18 @@ const User = ({
   handleSelectSearchResult
 }: UserProps) => {
   const { t } = useTranslation("search");
+  const isActiveUser = selectIsActiveUser();
 
   const [followed, setIsFollowed] = useState<boolean>(isFollowing);
   const { mutateAsync: followUser, isLoading } = useFollowUnfollowUser();
 
   const handleFollowUnFollow = () => {
-    if (!isLoading) {
+    if (!isLoading && isActiveUser) {
       followUser(
         { accountId: id },
         {
           onSuccess: async data => {
-            invalidateSearch();
+            invalidateSearch && invalidateSearch();
             setIsFollowed(data.isFollowing);
           },
           onError: async error => {
@@ -54,7 +56,7 @@ const User = ({
     <TouchableWithoutFeedback
       key={id}
       onPress={() => {
-        handleSelectSearchResult();
+        handleSelectSearchResult && handleSelectSearchResult();
         router.push({
           pathname: "/(protected)/user/[id]",
           params: { id }
@@ -92,20 +94,20 @@ const User = ({
             </Text>
           </View>
         </View>
-        <View>
-          <TouchableWithoutFeedback onPress={handleFollowUnFollow}>
-            <View className='rounded-3xl bg-primary px-6 py-2'>
-              <Text className='paragraph-bold text-white_black text-center'>
-                {followed ? t("unfollow") : t("follow")}
-              </Text>
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
+        {isActiveUser && (
+          <View>
+            <TouchableWithoutFeedback onPress={handleFollowUnFollow}>
+              <View className='rounded-3xl bg-primary px-6 py-2'>
+                <Text className='paragraph-bold text-white_black text-center'>
+                  {followed ? t("unfollow") : t("follow")}
+                </Text>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
 };
 
 export default User;
-
-const styles = StyleSheet.create({});

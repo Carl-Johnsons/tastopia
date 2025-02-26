@@ -1,8 +1,10 @@
 import { useCallback } from "react";
 import { HubConnection } from "@microsoft/signalr";
 import { SignalREvent } from "@/constants/signalr";
+import { useQueryClient } from "react-query";
 
 const useReceiveNotificationSubscription = () => {
+  const queryClient = useQueryClient();
   const subscribeReceiveNotificationEvent = useCallback((connection?: HubConnection) => {
     if (!connection) {
       return;
@@ -11,6 +13,8 @@ const useReceiveNotificationSubscription = () => {
       if (!connection) {
         return;
       }
+
+      queryClient.invalidateQueries({ queryKey: "getNotification" });
       console.log("Receive notification");
     });
   }, []);

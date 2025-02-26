@@ -4,7 +4,7 @@ import MenuBg from "@/components/MenuBg";
 import SettingModal from "@/components/SettingModal";
 import { SavedIcon, SettingIcon, TrashIcon, UserIcon } from "@/constants/icons";
 import { FC, useCallback, useRef } from "react";
-import { StatusBar, Text, View, useWindowDimensions } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SvgProps } from "react-native-svg";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -15,11 +15,12 @@ import { router } from "expo-router";
 import UserCard from "@/components/screen/menu/UserCard";
 import { selectUser } from "@/slices/user.slice";
 import History from "@/components/screen/menu/History";
+import { useProtectedExclude } from "@/hooks/auth/useProtected";
+import { ROLE } from "@/slices/auth.slice";
 
 const Menu = () => {
   const ITEM_TITLE = ["profile", "saved", "deleted", "settings"];
   const ITEM_ICON = [UserIcon, SavedIcon, TrashIcon, SettingIcon];
-  const { height } = useWindowDimensions();
   const settingModalRef = useRef<BottomSheetModal>(null);
   const { c } = useColorizer();
   const { black, white } = colors;
@@ -41,13 +42,19 @@ const Menu = () => {
   }, [router]);
 
   const navigationCallbacks = [
-    goToProfile,
-    useCallback(() => {
-      router.push("/(protected)/menu/bookmark");
-    }, []),
-    useCallback(() => {
-      router.push("/(protected)/menu/deleted-recipe");
-    }, []),
+    useProtectedExclude(() => goToProfile(), [ROLE.GUEST]),
+    useCallback(
+      useProtectedExclude(() => {
+        router.push("/(protected)/menu/bookmark");
+      }, [ROLE.GUEST]),
+      []
+    ),
+    useCallback(
+      useProtectedExclude(() => {
+        router.push("/(protected)/menu/deleted-recipe");
+      }, [ROLE.GUEST]),
+      []
+    ),
     openSettingModal
   ];
 

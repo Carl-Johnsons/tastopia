@@ -4,7 +4,7 @@ import {
 } from "@/schemas/create-recipe";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormProvider, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import uuid from "react-native-uuid";
@@ -367,7 +367,7 @@ const CreateRecipe = () => {
                       </View>
 
                       {/* Tag */}
-                      <View className='mt-4'>
+                      <View className='mb-4 mt-4'>
                         <Text className='body-semibold text-black_white mb-2'>
                           {t("formTitle.tag")}
                         </Text>

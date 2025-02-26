@@ -63,7 +63,56 @@ public class RecipeTagData {
     new RecipeTag{
         RecipeId = Guid.Parse("057aa844-742a-4952-8162-dbfbd7e493ac"),
         TagId = Guid.Parse("6f229db7-e0d7-4fd8-83d6-4f8b9c3ef5c1") // BUTTER
-    }
+    },
+    //ai
+    new RecipeTag{
+        RecipeId = Guid.Parse("1a2b3c4d-1111-2222-3333-444455556666"),
+        TagId = Guid.Parse("921ae2be-5f9c-4611-b296-8a709bb304c8") // BEEF
+    },
+    new RecipeTag{
+        RecipeId = Guid.Parse("1a2b3c4d-7777-8888-9999-000011112222"),
+        TagId = Guid.Parse("921ae2be-5f9c-4611-b296-8a709bb304c8") // BEEF
+    },
+    new RecipeTag{
+        RecipeId = Guid.Parse("1a2b3c4d-3333-4444-5555-666677778888"),
+        TagId = Guid.Parse("921ae2be-5f9c-4611-b296-8a709bb304c8") // BEEF
+    },
+    new RecipeTag{
+        RecipeId = Guid.Parse("1a2b3c4d-9999-aaaa-bbbb-ccccddddeeee"),
+        TagId = Guid.Parse("921ae2be-5f9c-4611-b296-8a709bb304c8") // BEEF
+    },
+    new RecipeTag{
+        RecipeId = Guid.Parse("1a2b3c4d-eeee-ffff-0000-111122223333"),
+        TagId = Guid.Parse("921ae2be-5f9c-4611-b296-8a709bb304c8") // BEEF
+    },
+    new RecipeTag{
+        RecipeId = Guid.Parse("2b3c4d5e-aaaa-bbbb-cccc-ddddeeeeffff"),
+        TagId = Guid.Parse("921ae2be-5f9c-4611-b296-8a709bb304c8") // BEEF
+    },
+    new RecipeTag{
+        RecipeId = Guid.Parse("2b3c4d5e-1111-2222-3333-444455556666"),
+        TagId = Guid.Parse("921ae2be-5f9c-4611-b296-8a709bb304c8") // BEEF
+    },
+    //red pepper
+    new RecipeTag{
+        RecipeId = Guid.Parse("2b3c4d5e-aaaa-bbbb-cccc-ddddeeeeffff"),
+        TagId = Guid.Parse("6adc1ab3-b10a-4341-881b-553fb7860cc4") // RED PEPPER
+    },
+    new RecipeTag{
+        RecipeId = Guid.Parse("2b3c4d5e-1111-2222-3333-444455556666"),
+        TagId = Guid.Parse("6adc1ab3-b10a-4341-881b-553fb7860cc4") // RED PEPPER
+    },
+    new RecipeTag{
+        RecipeId = Guid.Parse("2b3c4d5e-7777-8888-9999-000011112222"),
+        TagId = Guid.Parse("6adc1ab3-b10a-4341-881b-553fb7860cc4") // RED PEPPER
+    },
+    new RecipeTag{
+        RecipeId = Guid.Parse("2b3c4d5e-3333-4444-5555-666677778888"),
+        TagId = Guid.Parse("6adc1ab3-b10a-4341-881b-553fb7860cc4") // RED PEPPER
+    },
+    new RecipeTag{
+        RecipeId = Guid.Parse("2b3c4d5e-eeee-ffff-0000-111122223333"),
+        TagId = Guid.Parse("6adc1ab3-b10a-4341-881b-553fb7860cc4") // RED PEPPER
+    },
     ];
-
 }

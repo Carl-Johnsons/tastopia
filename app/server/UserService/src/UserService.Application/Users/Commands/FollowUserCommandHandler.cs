@@ -66,8 +66,8 @@ public class FollowUserCommandHandler : IRequestHandler<FollowUserCommand, Resul
                     FollowingId = followingId.Value,
                 };
 
-                follower.TotalFollowing += 1;
-                following.TotalFollower += 1;
+                follower.TotalFollowing = (follower.TotalFollowing ?? 0) + 1;
+                following.TotalFollower = (following.TotalFollower ?? 0) + 1;
                 _context.Users.Update(follower);
                 _context.Users.Update(following);
                 _context.UserFollows.Add(follow);
@@ -75,8 +75,10 @@ public class FollowUserCommandHandler : IRequestHandler<FollowUserCommand, Resul
             else
             {
                 isFollowing = false;
-                follower.TotalFollowing -= 1;
-                following.TotalFollower -= 1;
+                follower.TotalFollowing = (follower.TotalFollowing ?? 0) - 1;
+                following.TotalFollower = (following.TotalFollower ?? 0) - 1;
+                if(follower.TotalFollowing < 0) { follower.TotalFollowing = 0; }
+                if(following.TotalFollower < 0) { following.TotalFollower = 0; }
                 _context.Users.Update(follower);
                 _context.Users.Update(following);
                 _context.UserFollows.Remove(follow);

@@ -8,7 +8,7 @@ public class CreateRecipeDTO
 {
     [Required]
     [JsonProperty("recipeImage")]
-    [MaxFileSize(4)]
+    [MaxFileSize(17)]
     public IFormFile RecipeImage { get; set; } = null!;
 
     [Required]
@@ -56,6 +56,6 @@ public class StepDTO
 
     [JsonProperty("images")]
     [MaxLengthList(3)]
-    [MaxFileSizeList(4)]
+    [MaxFileSizeList(17)]
     public List<IFormFile>? Images { get; set; } = null!;
 }

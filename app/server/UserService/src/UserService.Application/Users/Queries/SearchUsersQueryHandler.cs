@@ -1,5 +1,4 @@
-﻿using Contract.Event.TrackingEvent;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using UserService.Domain.Entities;
 using UserService.Domain.Errors;
@@ -36,9 +35,9 @@ public class SearchUsersQueryHandler : IRequestHandler<SearchUsersQuery, Result<
         var keyword = request.Keyword;
         var accountId = request.AccountId;
 
-        if (skip == null || keyword == null)
+        if (skip == null || keyword == null || accountId == null || accountId == Guid.Empty)
         {
-            return Result<PaginatedSimpleUserListResponse?>.Failure(UserError.NotFound);
+            return Result<PaginatedSimpleUserListResponse?>.Failure(UserError.NullParameters);
         }
 
         keyword = keyword.ToLower();
