@@ -10,7 +10,7 @@ import { VoteType } from "@/constants/recipe";
 import { useVoteRecipe } from "@/api/recipe";
 
 type VoteProps = {
-  vote: string;
+  vote: VoteType;
   voteDiff: number;
   recipeId: string;
 };

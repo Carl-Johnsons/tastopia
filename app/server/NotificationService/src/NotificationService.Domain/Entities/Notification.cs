@@ -15,6 +15,7 @@ public class Notification : BaseMongoDBAuditableEntity
     public string? ImageUrl { get; set; }
     [MaxLength(500)]
     public string? JsonData { get; set; }
+    public List<Recipient> Recipients { get; set; } = [];
     public virtual NotificationTemplate? Template { get; set; }
 }
 
@@ -23,4 +24,11 @@ public class Actor
     [BsonElement("Id")]
     public Guid ActorId { get; set; }
     public EntityType Type { get; set; }
+}
+
+public class Recipient
+{
+    [BsonElement("Id")]
+    public Guid RecipientId { get; set; }
+    public bool IsViewed { get; set; } = false;
 }

@@ -1,8 +1,7 @@
 ﻿using Contract.Constants;
 using Contract.Event.TrackingEvent;
 using MassTransit;
-using TrackingService.Application.UserViewRecipeDetails.Commands;
-
+using TrackingService.Application.UserSearchUsers.Commands;
 namespace TrackingService.API.EventHandlers;
 
 [QueueName(RabbitMQConstant.QUEUE.NAME.CREATE_USER_SEARCH_USER,

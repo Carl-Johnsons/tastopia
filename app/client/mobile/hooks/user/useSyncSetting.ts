@@ -30,10 +30,7 @@ const useSyncSetting = () => {
     setStatus("loading");
 
     const data: UpdateSettingParams = {
-      settings: KEYS.map(key => ({
-        key: key,
-        value: setting[key]
-      }))
+      settings: KEYS.map(key => ({ key: key, value: setting[key] }))
     };
 
     await mutateAsync(

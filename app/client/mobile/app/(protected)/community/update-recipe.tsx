@@ -199,7 +199,7 @@ const UpdateRecipe = () => {
 
     try {
       const { data: _response } = await protectedAxiosInstance.post(
-        "http://localhost:5000/api/recipe/update-recipe",
+        "/api/recipe/update-recipe",
         data,
         {
           headers: {
@@ -322,6 +322,7 @@ const UpdateRecipe = () => {
     <SafeAreaView
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
+      <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
       <View className='size-full flex-col'>
         <KeyboardAvoidingView
           style={{ flex: 1 }}

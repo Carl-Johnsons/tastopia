@@ -1,10 +1,12 @@
+import { Badge } from "@rneui/themed";
 import { colors } from "@/constants/colors";
 import { COMMUNITY_PATH, MAIN_PATH } from "@/constants/paths";
 import { menuList } from "@/constants/menu";
 import { Redirect, Tabs, usePathname, useRootNavigationState } from "expo-router";
-import { ROLE, selectRole } from "@/slices/auth.slice";
+import { selectRole } from "@/slices/auth.slice";
 import { useEffect, useState } from "react";
-import { usePushNotification } from "@/hooks";
+import { useGetNotification } from "@/api/notification";
+import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet, Keyboard, ActivityIndicator, Platform } from "react-native";
 import useColorizer from "@/hooks/useColorizer";
@@ -12,12 +14,19 @@ import useColorizer from "@/hooks/useColorizer";
 const isAndroid = Platform.OS === "android";
 
 const ProtectedLayout = () => {
-  const { registerForPushNotificationAsync } = usePushNotification();
+  const { data } = useGetNotification();
 
+  const queryClient = useQueryClient();
   const { t } = useTranslation("menu");
   const { c } = useColorizer();
   const { black, white, primary } = colors;
   const pathname = usePathname();
+  const unreadNotification = data?.pages[0].metadata?.unreadNotifications;
+  const formatUnreadNotification = unreadNotification
+    ? unreadNotification >= 10
+      ? "9+"
+      : unreadNotification
+    : undefined;
 
   const [isKeyBoardVisible, setIsKeyBoardVisible] = useState(false);
   const role = selectRole();
@@ -38,17 +47,13 @@ const ProtectedLayout = () => {
       setIsKeyBoardVisible(false);
     });
 
+    queryClient.invalidateQueries({ queryKey: "getNotification" });
+
     return () => {
       KeyboardDidShow.remove();
       KeyboardDidHide.remove();
     };
   }, []);
-
-  useEffect(() => {
-    if (role !== ROLE.GUEST) {
-      registerForPushNotificationAsync();
-    }
-  }, [role]);
 
   if (!role) {
     return !navigationState?.key ? (
@@ -102,7 +107,8 @@ const ProtectedLayout = () => {
         }}
       >
         {sortedMenuItems.map(menuItem => {
-          const { code, translateCode, path, icon, hidden, includeInMainTab } = menuItem;
+          const { code, translateCode, path, icon, hidden, includeInMainTab, hasBadge } =
+            menuItem;
           // const isNotAllowed = !accountPermissionGroups?.includes(code);
           //! Update authorization later
           const isNotAllowed = false;
@@ -130,6 +136,13 @@ const ProtectedLayout = () => {
                           size
                         })
                       : icon}
+                    {hasBadge && formatUnreadNotification && (
+                      <Badge
+                        value={formatUnreadNotification}
+                        status='error'
+                        containerStyle={{ position: "absolute", top: -10, left: 44 }}
+                      />
+                    )}
                   </View>
                 )
               }}

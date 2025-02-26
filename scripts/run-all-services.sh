@@ -91,28 +91,53 @@ run_service() {
     -e "s/^/$(printf "${color}[${name}]${NC} ")/"
 }
 
+run_python_service() {
+  local http_port=$1
+  local path=$2
+  local color=$3
+  local name=$4
+
+  cd $path
+  python_path=""
+  if [[ "$PLATFORM" == "windows" ]]; then
+    python_path="./venv/Scripts/python"
+  else
+    python_path="./venv/bin/python"
+  fi
+
+  $python_path main.py \
+    2>&1 | sed -E \
+    -e "/(warning\])/I s/.*/$(printf "${WARNING}&${NC}")/" \
+    -e "/(error\])/I s/.*/$(printf "${DANGER}&${NC}")/" \
+    -e "/(information\])/I s/.*/$(printf "${INFO}&${NC}")/" \
+    -e "/Uvicorn running on/I s/.*/$(printf "${SUCCESS}&${NC}")/" \
+    -e "s/^/$(printf "${color}[${name}]${NC} ")/"
+}
+
 run_services() {
   run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" &
   run_service 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" &
   run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" &
   run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" &
+  run_service 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" &
   run_service 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" &
   run_service 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification" &
   run_service 5007 "./app/server/SubscriptionService/src/SubscriptionService.API" "$DEBUG" "Subscription" &
   run_service 5008 "./app/server/TrackingService/src/TrackingService.API" "$LIGHT_YELLOW" "Tracking" &
+  run_python_service 5009 "./app/server/IngredientPredictService" "$LIGHT_RED" "Ingredient Predict" &
   run_service 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker" &
   run_service 6001 "./app/server/RecipeService/src/RecipeWorker" "$LIGHT_BLUE" "Recipe Worker" &
   run_service 6002 "./app/server/NotificationService/src/PushNotificationWorker" "$CYAN" "Push notification Worker" &
-  # Not now
-  # run_service 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" & \
 }
 
 test_services() {
   run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" &
   run_service 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity" &
-  run_service 5002 "./app/server/UploadFileService/src/UploadFileService.API" "$BLUE" "Upload" &
+  run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User" &
+  run_service 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" &
   run_service 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" &
-  run_service 5003 "./app/server/UserService/src/UserService.API" "$LIGHT_BLUE" "User"
+  run_service 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification" &
+  run_service 6002 "./app/server/NotificationService/src/PushNotificationWorker" "$CYAN" "Push notification Worker" &
 }
 
 run_services

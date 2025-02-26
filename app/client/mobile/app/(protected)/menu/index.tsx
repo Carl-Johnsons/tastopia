@@ -2,9 +2,9 @@ import Button from "@/components/Button";
 import LogoutButton from "@/components/LogoutButton";
 import MenuBg from "@/components/MenuBg";
 import SettingModal from "@/components/SettingModal";
-import { SavedIcon, SettingIcon, VipIcon, UserIcon } from "@/constants/icons";
+import { SavedIcon, SettingIcon, TrashIcon, UserIcon } from "@/constants/icons";
 import { FC, useCallback, useRef } from "react";
-import { Text, View, useWindowDimensions } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SvgProps } from "react-native-svg";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -14,11 +14,13 @@ import useColorizer from "@/hooks/useColorizer";
 import { router } from "expo-router";
 import UserCard from "@/components/screen/menu/UserCard";
 import { selectUser } from "@/slices/user.slice";
+import History from "@/components/screen/menu/History";
+import { useProtectedExclude } from "@/hooks/auth/useProtected";
+import { ROLE } from "@/slices/auth.slice";
 
 const Menu = () => {
-  const ITEM_TITLE = ["profile", "saved", "premium", "settings"];
-  const ITEM_ICON = [UserIcon, SavedIcon, VipIcon, SettingIcon];
-  const { height } = useWindowDimensions();
+  const ITEM_TITLE = ["profile", "saved", "deleted", "settings"];
+  const ITEM_ICON = [UserIcon, SavedIcon, TrashIcon, SettingIcon];
   const settingModalRef = useRef<BottomSheetModal>(null);
   const { c } = useColorizer();
   const { black, white } = colors;
@@ -40,13 +42,19 @@ const Menu = () => {
   }, [router]);
 
   const navigationCallbacks = [
-    goToProfile,
-    useCallback(() => {
-      console.log("Go to saved section.");
-    }, []),
-    useCallback(() => {
-      console.log("Go to subscriptions");
-    }, []),
+    useProtectedExclude(() => goToProfile(), [ROLE.GUEST]),
+    useCallback(
+      useProtectedExclude(() => {
+        router.push("/(protected)/menu/bookmark");
+      }, [ROLE.GUEST]),
+      []
+    ),
+    useCallback(
+      useProtectedExclude(() => {
+        router.push("/(protected)/menu/deleted-recipe");
+      }, [ROLE.GUEST]),
+      []
+    ),
     openSettingModal
   ];
 
@@ -57,10 +65,12 @@ const Menu = () => {
       >
         <View>
           <MenuBg />
-          <View className='bg-white_dark-100 absolute top-[8.6vh] flex w-full gap-y-5 px-4'>
-            <UserCard onPress={goToProfile} />
+          <View className='bg-white_dark-100 absolute top-[8.6vh] flex w-full gap-y-2'>
+            <View className='px-4'>
+              <UserCard onPress={goToProfile} />
+            </View>
             <History />
-            <View style={{ paddingBlock: 0.06 * height }}>
+            <View className='px-4 py-7'>
               <View
                 className='flex-row flex-wrap gap-4'
                 style={{ columnGap: 12 }}
@@ -76,7 +86,9 @@ const Menu = () => {
                 ))}
               </View>
             </View>
-            <LogoutButton />
+            <View className='px-4'>
+              <LogoutButton />
+            </View>
           </View>
         </View>
       </SafeAreaView>
@@ -112,30 +124,6 @@ const ItemCard = ({ icon: Icon, title, className, onPress }: ItemCardProps) => {
       />
       <Text className='text-black_white font-medium text-xl'>{t(title)}</Text>
     </Button>
-  );
-};
-
-const History = () => {
-  const { height } = useWindowDimensions();
-  const { t } = useTranslation("menu");
-
-  return (
-    <>
-      <View className='flex-row items-center justify-between'>
-        <Text className='text-black_white font-semibold text-3xl'>{t("history")}</Text>
-        <Button className='flex justify-center rounded-full border border-gray-200 px-4 py-1'>
-          <Text className='text-black_white font-sans text-lg'>{t("viewAll")}</Text>
-        </Button>
-      </View>
-      <View
-        className='flex justify-center'
-        style={{ height: 0.1 * height }}
-      >
-        <Text className='text-center font-light text-xl text-gray-500'>
-          {t("noHistory")}
-        </Text>
-      </View>
-    </>
   );
 };
 

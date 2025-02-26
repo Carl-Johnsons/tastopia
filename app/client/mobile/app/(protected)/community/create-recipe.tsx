@@ -4,7 +4,7 @@ import {
 } from "@/schemas/create-recipe";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { router } from "expo-router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FormProvider, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
 import uuid from "react-native-uuid";
@@ -143,7 +143,7 @@ const CreateRecipe = () => {
 
     try {
       const { data: response } = await protectedAxiosInstance.post(
-        "http://localhost:5000/api/recipe/create-recipe",
+        "/api/recipe/create-recipe",
         data,
         {
           headers: {
@@ -221,6 +221,7 @@ const CreateRecipe = () => {
     <SafeAreaView
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
+      <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
       <View className='size-full flex-col'>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -294,7 +295,6 @@ const CreateRecipe = () => {
                         formControl={formControl}
                         errors={errors}
                       />
-
                       {/* Ingredient */}
                       <View>
                         <FlatList
@@ -367,7 +367,7 @@ const CreateRecipe = () => {
                       </View>
 
                       {/* Tag */}
-                      <View className='mt-4'>
+                      <View className='mb-4 mt-4'>
                         <Text className='body-semibold text-black_white mb-2'>
                           {t("formTitle.tag")}
                         </Text>

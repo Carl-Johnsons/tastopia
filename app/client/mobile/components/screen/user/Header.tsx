@@ -2,8 +2,10 @@ import { useFollowUnfollowUser } from "@/api/user";
 import Button from "@/components/Button";
 import PreviewImage from "@/components/common/PreviewImage";
 import { colors } from "@/constants/colors";
-import { ArrowBackIcon, DotIcon, ShareIcon } from "@/constants/icons";
+import { ArrowBackIcon, DotIcon } from "@/constants/icons";
 import useIsOwner from "@/hooks/auth/useIsOwner";
+import { useProtectedExclude } from "@/hooks/auth/useProtected";
+import { ROLE } from "@/slices/auth.slice";
 import { formatDate } from "@/utils/format-date";
 import { Feather } from "@expo/vector-icons";
 import { ImageBackground } from "expo-image";
@@ -26,6 +28,7 @@ type HeaderProps = {
   isCurrentUser: boolean;
   isFollowing: boolean;
   handleTouchMenu: () => void;
+  handleTouchFollowerCount: () => void;
 };
 
 export default function Header({
@@ -40,7 +43,8 @@ export default function Header({
   createdAt,
   isCurrentUser,
   isFollowing,
-  handleTouchMenu
+  handleTouchMenu,
+  handleTouchFollowerCount
 }: HeaderProps) {
   const { t } = useTranslation("profile");
   const { black, white } = colors;
@@ -53,7 +57,7 @@ export default function Header({
     router.push("/(protected)/menu/profile/updateProfile");
   }, [router]);
 
-  const handleFollowUnFollow = () => {
+  const handleFollowUnFollow = useProtectedExclude(() => {
     if (!isLoading) {
       followUser(
         { accountId },
@@ -68,7 +72,7 @@ export default function Header({
         }
       );
     }
-  };
+  }, [ROLE.GUEST]);
 
   return (
     <View>
@@ -98,7 +102,7 @@ export default function Header({
               )}
             </View>
 
-            <View className='flex-row items-center justify-between'>
+            <View className='relative flex-row items-center justify-between'>
               <View className='flex gap-y-5'>
                 <View className='bg-white_black flex aspect-square w-[100px] items-center justify-center rounded-full'>
                   <PreviewImage
@@ -108,17 +112,24 @@ export default function Header({
                   />
                 </View>
 
-                <Text className='font-semibold text-2xl text-white'>{displayName}</Text>
+                <Text className='w-[70vw] font-semibold text-2xl text-white'>
+                  {displayName}
+                </Text>
 
                 <View>
-                  <Text className='font-secondary-roman text-lg text-white'>
-                    {totalRecipe}{" "}
-                    {totalRecipe && totalRecipe % 2 === 0 && totalRecipe !== 0
-                      ? t("recipes")
-                      : t("recipe")}
-                  </Text>
+                  {!!totalRecipe && (
+                    <Text className='font-secondary-roman text-lg text-white'>
+                      {totalRecipe}{" "}
+                      {totalRecipe && totalRecipe % 2 === 0 && totalRecipe !== 0
+                        ? t("recipes")
+                        : t("recipe")}
+                    </Text>
+                  )}
 
-                  <Text className='font-secondary-roman text-lg text-white'>
+                  <Text
+                    onPress={isOwnedByCurrentUser ? handleTouchFollowerCount : undefined}
+                    className='font-secondary-roman text-lg text-white'
+                  >
                     {followerCounts}{" "}
                     {followerCounts % 2 === 0 && followerCounts !== 0
                       ? t("follower")
@@ -146,23 +157,25 @@ export default function Header({
                 </View>
               </View>
 
-              {isCurrentUser ? (
-                <Button
-                  className='rounded-full border border-white px-4 py-3'
-                  onPress={goToUpdateProfile}
-                >
-                  <Text className='font-sans text-white'>{t("update")}</Text>
-                </Button>
-              ) : (
-                <Button
-                  className='rounded-full border border-white px-4 py-3'
-                  onPress={handleFollowUnFollow}
-                >
-                  <Text className='font-sans text-white'>
-                    {followed ? t("unfollow") : t("follow")}
-                  </Text>
-                </Button>
-              )}
+              <View className='absolute right-0'>
+                {isCurrentUser ? (
+                  <Button
+                    className='rounded-full border border-white px-4 py-3'
+                    onPress={goToUpdateProfile}
+                  >
+                    <Text className='font-sans text-white'>{t("update")}</Text>
+                  </Button>
+                ) : (
+                  <Button
+                    className='rounded-full border border-white px-4 py-3'
+                    onPress={handleFollowUnFollow}
+                  >
+                    <Text className='font-sans text-white'>
+                      {followed ? t("unfollow") : t("follow")}
+                    </Text>
+                  </Button>
+                )}
+              </View>
             </View>
           </View>
         </LinearGradient>

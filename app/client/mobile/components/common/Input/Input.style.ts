@@ -47,7 +47,7 @@ export default StyleSheet.create({
     marginBottom: 8
   },
   inputFocused: {
-    borderColor: "#3b7079",
+    borderColor: globalStyles.color.primary,
     shadowColor: "0 0 0 4" + globalStyles.color.primaryMoreOpacity
   },
   calendarIcon: {

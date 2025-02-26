@@ -1,32 +1,45 @@
-import { useGetNotification } from "@/api/notification";
+import { useGetNotification, useSetViewedNotification } from "@/api/notification";
 import { colors } from "@/constants/colors";
-import { ChatBubbleFillIcon } from "@/constants/icons";
-import useColorizer from "@/hooks/useColorizer";
-import { Avatar } from "@rneui/base";
-import { router, useFocusEffect, usePathname } from "expo-router";
-import { useCallback, useMemo } from "react";
-import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
+import {
+  ArrowDownFillIcon,
+  ArrowUpFillIcon,
+  ChatBubbleFillIcon,
+  UserIcon
+} from "@/constants/icons";
 import { ActivityIndicator, FlatList } from "react-native";
+import { Avatar } from "@rneui/base";
+import { enUS, vi } from "date-fns/locale";
+import { formatDistanceToNow } from "date-fns";
+import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
+import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { router, usePathname } from "expo-router";
+import { saveNotificationData } from "@/slices/notification.slice";
+import { useAppDispatch } from "@/store/hooks";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "react-query";
+import { useTranslation } from "react-i18next";
+import Empty from "../community/Empty";
+import i18n from "@/i18n/i18next";
+import useHydrateData from "@/hooks/useHydrateData";
 
 export default function NotificationList() {
-  const { data, isLoading, refetch, isStale } = useGetNotification();
+  const { data, isLoading, refetch, fetchNextPage } = useGetNotification();
   const { primary } = colors;
+  const dispatch = useAppDispatch();
+  const [notifications, setNotifications] = useState<INotificationsResponse[]>();
+  useHydrateData({ source: data, setter: setNotifications });
 
-  const fetchData = useCallback(() => {
-    if (isStale) {
-      refetch();
-    }
-  }, [isStale]);
+  useEffect(() => {
+    dispatch(
+      saveNotificationData({
+        unreadNotifications: data?.pages[0].metadata?.unreadNotifications ?? 0
+      })
+    );
+  }, [data]);
 
-  useFocusEffect(fetchData);
-
-  const handleRefreshing = useCallback(async () => {
-    await refetch();
-  }, [refetch]);
-
-  if (isLoading) {
+  if (isLoading || !notifications) {
     return (
-      <View className='flex-center h-full w-full'>
+      <View className='flex-center h-[90%] w-full'>
         <ActivityIndicator
           size='large'
           color={primary}
@@ -35,19 +48,19 @@ export default function NotificationList() {
     );
   }
 
-  if (data?.paginatedData?.length && data?.paginatedData?.length === 0) {
-    return (
-      <View className='flex-center h-full w-full'>
-        <Text>No notifications available.</Text>
-      </View>
-    );
-  }
-
   return (
-    <View className='pt-2'>
+    <View className='pb-[60px] pt-2'>
       <FlatList
         className='h-full'
-        data={data?.paginatedData}
+        contentContainerStyle={{ paddingBottom: 25 }}
+        data={notifications}
+        onEndReached={() => fetchNextPage()}
+        onEndReachedThreshold={0.1}
+        ListEmptyComponent={() => (
+          <View className='h-[100vh]'>
+            <Empty type='emptyNotification' />
+          </View>
+        )}
         renderItem={({ item, index }) => (
           <Notification
             item={item}
@@ -58,13 +71,17 @@ export default function NotificationList() {
           <RefreshControl
             refreshing={isLoading}
             tintColor={primary}
-            onRefresh={handleRefreshing}
+            onRefresh={refetch}
           />
         }
       />
     </View>
   );
 }
+
+type INotificationJsonData = {
+  redirectUri: string;
+};
 
 export const Notification = ({
   item,
@@ -73,61 +90,136 @@ export const Notification = ({
   item: INotificationsResponse;
   index: number;
 }) => {
-  const { message, imageUrl, jsonData } = item;
+  const { message, imageUrl, jsonData, code, isViewed, id, createdAt } = item;
   const currentRouteName = usePathname();
+  const { t } = useTranslation("component");
   const isOddItem = useMemo(() => {
     return index % 2 === 0;
   }, [index]);
-  const { white, black } = colors;
-  const { c } = useColorizer();
+  const { primary } = colors;
+  const { mutateAsync: setViewedNotification } = useSetViewedNotification();
+  const queryClient = useQueryClient();
 
-  const handlePress = useCallback(() => {
-    if (jsonData) {
-      const data = JSON.parse(jsonData);
+  const handlePress = useCallback(async () => {
+    if (!jsonData) return;
 
-      if (data.redirectUri && currentRouteName !== "/notification") {
-        router.push(data.redirectUri);
-      }
+    const NOTIFICATION_ROUTE = "/(protected)/notification";
+    const { redirectUri } = JSON.parse(jsonData) as INotificationJsonData;
+
+    if (!isViewed) {
+      await setViewedNotification(
+        { notificationId: id },
+        {
+          onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: "getNotification" });
+          }
+        }
+      );
     }
-  }, [jsonData, currentRouteName]);
+
+    if (!redirectUri || redirectUri === NOTIFICATION_ROUTE) return;
+    router.push(redirectUri as any);
+  }, [jsonData, currentRouteName, id, isViewed]);
 
   const styles = StyleSheet.create({
-    oddWrapper: {
+    isViewed: {
       backgroundColor: "#FE724C26"
     }
   });
 
-  const renderIcon = () => {
-    //TODO: Add conditions to render different icons
+  type ActionCode =
+    | "USER_REPLY"
+    | "USER_FOLLOW"
+    | "USER_COMMENT"
+    | "USER_UPVOTE"
+    | "USER_DOWNVOTE";
 
-    return (
-      <ChatBubbleFillIcon
-        width={24}
-        height={24}
-        color={c(white.DEFAULT, black.DEFAULT)}
-      />
-    );
+  const renderIcon = (code: ActionCode) => {
+    switch (code) {
+      case "USER_REPLY":
+        return (
+          <ChatBubbleFillIcon
+            width={24}
+            height={24}
+            color={primary}
+          />
+        );
+      case "USER_FOLLOW":
+        return (
+          <UserIcon
+            width={24}
+            height={24}
+          />
+        );
+      case "USER_COMMENT":
+        return (
+          <ChatBubbleFillIcon
+            width={24}
+            height={24}
+            color={primary}
+          />
+        );
+      case "USER_UPVOTE":
+        return (
+          <ArrowUpFillIcon
+            width={24}
+            height={24}
+            color={primary}
+          />
+        );
+      case "USER_DOWNVOTE":
+        return (
+          <ArrowDownFillIcon
+            width={24}
+            height={24}
+            color={primary}
+          />
+        );
+      default:
+        return (
+          <ChatBubbleFillIcon
+            width={24}
+            height={24}
+            color={primary}
+          />
+        );
+    }
   };
 
   return (
     <Pressable
       onPress={handlePress}
-      style={isOddItem && styles.oddWrapper}
-      className={`relative flex-row gap-2 p-2`}
+      style={!isViewed && styles.isViewed}
+      className={`relative flex-row gap-3 p-4`}
     >
       <View className='relative'>
-        <Avatar
-          size={80}
-          rounded
-          source={
-            imageUrl ? { uri: imageUrl } : require("../../../assets/images/avatar.png")
-          }
-          containerStyle={imageUrl && { backgroundColor: "#FFC529" }}
-        />
-        <View className='absolute bottom-0 right-0'>{renderIcon()}</View>
+        <View className='max-h-[75px]'>
+          <Avatar
+            size={70}
+            rounded
+            source={
+              imageUrl ? { uri: imageUrl } : require("../../../assets/images/avatar.png")
+            }
+            containerStyle={imageUrl && { backgroundColor: "#FFC529" }}
+          />
+          <View className='absolute bottom-0 right-0'>
+            {renderIcon(code as ActionCode)}
+          </View>
+        </View>
       </View>
       <View className='shrink justify-center pt-2'>
-        <Text className='text-black_white'>{message}</Text>
+        <Text
+          className={`${isViewed ? "text-gray-500" : "text-black_white"} text-xl`}
+          numberOfLines={2}
+        >
+          {message}
+        </Text>
+        <Text className={`${isViewed ? "text-gray-500" : "text-black_white"}`}>
+          {formatDistanceToNow(createdAt, {
+            locale: i18n.languages[0] === "vi" ? vi : enUS
+          })}
+          {" " + t("ago")}
+        </Text>
       </View>
     </Pressable>
   );

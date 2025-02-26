@@ -54,31 +54,27 @@ const CreateFormHeader = ({
           errors={[t(errors.description?.message ?? "")]}
         />
       </View>
-      <View className='flex flex-row justify-center gap-6'>
-        <View className='flex-1'>
-          <Text className='body-semibold text-black_white'>{t("formTitle.serves")}</Text>
-          <Input
-            isNumeric={true}
-            variant='secondary'
-            control={formControl}
-            name='serves'
-            placeHolder={t("formPlaceholder.serves")}
-            errors={[t(errors.serves?.message ?? "")]}
-          />
-        </View>
+      <View>
+        <Text className='body-semibold text-black_white'>{t("formTitle.serves")}</Text>
+        <Input
+          isNumeric={true}
+          variant='secondary'
+          control={formControl}
+          name='serves'
+          placeHolder={t("formPlaceholder.serves")}
+          errors={[t(errors.serves?.message ?? "")]}
+        />
+      </View>
 
-        <View className='flex-1'>
-          <Text className='body-semibold text-black_white'>
-            {t("formTitle.cookTime")}
-          </Text>
-          <Input
-            variant='secondary'
-            control={formControl}
-            name='cookTime'
-            placeHolder={t("formPlaceholder.cookTime")}
-            errors={[t(errors.cookTime?.message ?? "")]}
-          />
-        </View>
+      <View>
+        <Text className='body-semibold text-black_white'>{t("formTitle.cookTime")}</Text>
+        <Input
+          variant='secondary'
+          control={formControl}
+          name='cookTime'
+          placeHolder={t("formPlaceholder.cookTime")}
+          errors={[t(errors.cookTime?.message ?? "")]}
+        />
       </View>
     </View>
   );

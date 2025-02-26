@@ -20,6 +20,9 @@ import { Alert, Platform } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import { protectedAxiosInstance } from "@/constants/host";
 import { useRouter } from "expo-router";
+import { useAppDispatch } from "@/store/hooks";
+import { saveNotificationData } from "@/slices/notification.slice";
+import { useBottomSheet, useBottomSheetModal } from "@gorhom/bottom-sheet";
 
 export interface PushNotificationState {
   notification?: Notification;
@@ -29,12 +32,15 @@ export interface PushNotificationState {
 
 export const usePushNotification = (): PushNotificationState => {
   const router = useRouter();
+  const { dismissAll: dismissAllBottomSheetModal } = useBottomSheetModal();
 
   const [expoPushToken, setExpoPushToken] = useState<ExpoPushToken | undefined>();
   const [notification, setNotification] = useState<Notification | undefined>();
 
   const notificationListener = useRef<EventSubscription>();
   const responseListener = useRef<EventSubscription>();
+
+  const dispatch = useAppDispatch();
 
   const registerForPushNotificationAsync = async () => {
     setNotificationHandler({
@@ -63,7 +69,6 @@ export const usePushNotification = (): PushNotificationState => {
 
     const projectId =
       Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
-
     token = await getExpoPushTokenAsync({ projectId });
 
     if (Platform.OS === "android") {
@@ -78,10 +83,9 @@ export const usePushNotification = (): PushNotificationState => {
         await protectedAxiosInstance.post("api/notification/expo-push-token/android", {
           expoPushToken: token.data
         });
+        console.log("Register push token successfully. Token:", token.data);
+        dispatch(saveNotificationData({ pushToken: token.data }));
       } catch (err) {
-        console.error(
-          `Register user with expo push token ${expoPushToken} failed, Please try again`
-        );
         console.error(err);
       }
     }
@@ -99,6 +103,8 @@ export const usePushNotification = (): PushNotificationState => {
       const { redirectUri, params } = data;
 
       if (redirectUri) {
+        dismissAllBottomSheetModal();
+
         router.push({
           pathname: redirectUri,
           params: params

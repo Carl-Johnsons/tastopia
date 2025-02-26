@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using UserService.Domain.Constants;
 
 namespace UserService.Domain.Entities;
 

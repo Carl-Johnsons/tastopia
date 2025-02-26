@@ -1,3 +1,9 @@
+export enum VoteType {
+  UPVOTE = "Upvote",
+  DOWNVOTE = "Downvote",
+  NONE = "None"
+}
+
 type SearchRecipeType = {
   id: string;
   authorId: string;
@@ -6,6 +12,11 @@ type SearchRecipeType = {
   description: string;
   authorDisplayName: string;
   authorAvtUrl: string;
+};
+
+type MiniRecipeType = Omit<SearchRecipeType, "authorAvtUrl" | "description"> & {
+  voteDiff: number;
+  vote: VoteType;
 };
 
 type SearchRecipeResponse = {
@@ -19,7 +30,11 @@ type SearchRecipeResponse = {
 type RecipeType = SearchRecipeType & {
   voteDiff?: number;
   numberOfComment?: number;
-  vote?: string;
+  vote?: VoteType;
+};
+
+type MiniRecipeType = {
+  isMinimal?: boolean;
 };
 
 type RecipeStep = {
@@ -65,7 +80,7 @@ type RecipeDetailResponse = {
   authorAvtUrl: string;
   authorDisplayName: string;
   authorNumberOfFollower: number;
-  vote: string;
+  vote: VoteType;
   isBookmarked: boolean;
   tags: TagType[] | null;
   similarRecipes: SimilarRecipe[];

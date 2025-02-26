@@ -1,0 +1,31 @@
+{
+  "Routes": [
+    {
+      "ServiceName": "ingredient-predict-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/ingredient-predict/",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/ingredient-predict",
+      "SwaggerKey": "ingredient-predict"
+    },
+    {
+      "ServiceName": "ingredient-predict-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/ingredient-predict/{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/ingredient-predict/{everything}",
+      "SwaggerKey": "user"
+    }
+  ]
+}

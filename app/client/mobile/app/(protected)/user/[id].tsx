@@ -4,14 +4,16 @@ import { globalStyles } from "@/components/common/GlobalStyles";
 import SettingComment from "@/components/common/SettingComment";
 import SettingRecipe from "@/components/common/SettingRecipe";
 import SettingUser from "@/components/common/SettingUser";
+import FollowModal from "@/components/screen/profile/FollowModal";
 import Body from "@/components/screen/user/Body";
 import Header from "@/components/screen/user/Header";
 import { colors } from "@/constants/colors";
+import useBottomSheetModal from "@/hooks/useBottomSheetModal";
 import useColorizer from "@/hooks/useColorizer";
 import BottomSheet from "@gorhom/bottom-sheet";
-import { useLocalSearchParams } from "expo-router";
-import { useRef, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { useFocusEffect, useLocalSearchParams } from "expo-router";
+import { useCallback, useRef, useState } from "react";
+import { ActivityIndicator, StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Profile = () => {
@@ -22,6 +24,10 @@ const Profile = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetCommentRef = useRef<BottomSheet>(null);
   const bottomSheetUserRef = useRef<BottomSheet>(null);
+  const {
+    ref: followModalRef,
+    openModal: openFollowModal,
+  } = useBottomSheetModal();
   const [currentRecipeId, setCurrentRecipeId] = useState("");
   const [currentAuthorId, setCurrentAuthorId] = useState("");
   const [currentComment, setCurrentComment] = useState<CommentCustomType>({
@@ -29,12 +35,25 @@ const Profile = () => {
     content: ""
   });
   const [currentCommentAuthorId, setCurrentCommentAuthorId] = useState("");
-  const { data: accountDetailData, isLoading: isLoadingAccountDetail } =
+  const { data: accountDetailData, isLoading: isLoadingAccountDetail, isStale, refetch: refectAccountDetailData } =
     useGetUserByAccountId(accountId as string);
+  
+  const fetchData = useCallback(() => {
+    if (isStale) {
+      refectAccountDetailData();
+    }
+  }, [isStale]);
+
 
   const handleTouchMenu = () => {
     bottomSheetUserRef.current?.expand();
   };
+
+  const handleTouchFollowerCount = useCallback(() => {
+    openFollowModal();
+  }, [openFollowModal]);
+
+  useFocusEffect(fetchData);
 
   if (isLoadingAccountDetail) {
     return (
@@ -59,6 +78,7 @@ const Profile = () => {
     <SafeAreaView
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
     >
+      <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
       <Header
         accountId={accountDetailData.accountId}
         displayName={accountDetailData.displayName}
@@ -72,6 +92,7 @@ const Profile = () => {
         isCurrentUser={accountDetailData.isCurrentUser}
         isFollowing={accountDetailData.isFollowing}
         handleTouchMenu={handleTouchMenu}
+        handleTouchFollowerCount={handleTouchFollowerCount}
       />
       <Body
         accountId={accountDetailData.accountId}
@@ -101,6 +122,7 @@ const Profile = () => {
         authorId={accountId as string}
         ref={bottomSheetUserRef}
       />
+      <FollowModal ref={followModalRef} />
     </SafeAreaView>
   );
 };

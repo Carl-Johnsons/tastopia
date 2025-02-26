@@ -12,8 +12,7 @@ import { View, Text } from "react-native";
 
 export default function Header() {
   const { t } = useTranslation("profile");
-  const { displayName, accountUsername, avatarUrl, totalFollower, accountId } =
-    selectUser();
+  const { displayName, accountUsername, avatarUrl, totalFollower } = selectUser();
   const { backgroundUrl, bio } = selectUser();
   const { black, white } = colors;
 
@@ -61,7 +60,7 @@ export default function Header() {
                   />
                 </View>
 
-                <Text className='font-semibold text-xl text-white'>{displayName}</Text>
+                <Text className='font-semibold text-xl text-white me-20'>{displayName}</Text>
 
                 <View>
                   <Text className='font-secondary-roman text-sm text-white'>
@@ -91,7 +90,7 @@ export default function Header() {
               </View>
 
               <Button
-                className='rounded-full border border-white p-2'
+                className='absolute right-0 rounded-full border border-white p-2'
                 onPress={goToUpdateProfile}
               >
                 <Text className='font-sans text-white'>{t("update")}</Text>

@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using UserService.Infrastructure.Persistence;
 using UserService.Infrastructure.Persistence.Mockup;
-using UserService.Infrastructure.Services;
 
 namespace UserService.Infrastructure;
 
@@ -16,7 +15,6 @@ public static class DependencyInjection
         services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
         services.AddScoped<MockupData>();
         services.AddCommonInfrastructureServices("UserService.API");
-        services.AddSingleton<ISignalRService, SignalRService>();
 
         using (var serviceProvider = services.BuildServiceProvider())
         {

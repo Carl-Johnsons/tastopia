@@ -18,7 +18,8 @@ import {
   Switch,
   Platform,
   FlatList,
-  Alert
+  Alert,
+  StatusBar
 } from "react-native";
 import * as Speech from "expo-speech";
 import i18n from "@/i18n/i18next";
@@ -26,10 +27,27 @@ import { EN_VOICE, VI_VOICE } from "@/constants/voice";
 import { LANGUAGE_CODES } from "@/constants/languages";
 import languagedetect from "languagedetect";
 import { compareLanguages } from "@/utils/language";
+import {
+  ExpoSpeechRecognitionModule,
+  useSpeechRecognitionEvent
+} from "expo-speech-recognition";
+import { useRouteGuardExclude } from "@/hooks/auth/useProtected";
+import { ROLE } from "@/slices/auth.slice";
+import Unauthorize from "@/components/common/Unauthorize";
 
 const REPEAT_AFTER = 10000;
 
 const CookingMode = () => {
+  const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
+
+  if (!hasAccess) {
+    return (
+      <View className='bg-white_black100 flex-1 items-center justify-center'>
+        <Unauthorize />
+      </View>
+    );
+  }
+
   const { t } = useTranslation("cookingMode");
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data, isLoading, isRefetching } = useRecipeSteps(id);
@@ -39,6 +57,7 @@ const CookingMode = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<LANGUAGE_CODES>();
   const [isActiveSpeaking, setIsActiveSpeaking] = useState(false);
   const [isActiveVoiceCommand, setIsActiveVoiceCommand] = useState(false);
+  const [transcript, setTranscript] = useState("");
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [totalSpeak, setTotalSpeak] = useState<number>(0);
 
@@ -46,8 +65,8 @@ const CookingMode = () => {
     return data?.sort((a, b) => a.ordinalNumber - b.ordinalNumber);
   }, [data]);
 
-  const { primary, gray, white, black } = colors;
   const { c } = useColorizer();
+  const { primary, gray, white, black } = colors;
 
   const thumbColor = c(
     Platform.select({
@@ -76,9 +95,17 @@ const CookingMode = () => {
     const stepLanguage = detectLanguage.detect(
       (sortedSteps && sortedSteps[currentStep - 1]?.content) ?? ""
     )[0];
-    const isSameLanguage = compareLanguages(i18n.languages[0], stepLanguage[0]);
+    const isSameLanguage = compareLanguages(
+      i18n.languages[0].toLowerCase(),
+      stepLanguage[0].toLowerCase()
+    );
 
-    if (!selectedLanguage && !isSameLanguage) {
+    if (isSameLanguage || selectedLanguage) {
+      setIsActiveSpeaking(prev => !prev);
+      setSelectedLanguage(
+        i18n.languages[0] === LANGUAGE_CODES.EN ? LANGUAGE_CODES.EN : LANGUAGE_CODES.VI
+      );
+    } else if (!isSameLanguage && !selectedLanguage) {
       Alert.alert(t("titleChangeLanguage"), t("descriptionChangeLanguage"), [
         {
           text: t("english"),
@@ -95,13 +122,63 @@ const CookingMode = () => {
           }
         }
       ]);
-    } else {
-      setIsActiveSpeaking(prev => !prev);
     }
   };
 
+  /** Command by voice */
+  useSpeechRecognitionEvent("start", () => setIsActiveVoiceCommand(true));
+  useSpeechRecognitionEvent("end", () => setIsActiveVoiceCommand(false));
+  useSpeechRecognitionEvent("result", event => {
+    setTranscript(event.results[0]?.transcript);
+  });
+  useSpeechRecognitionEvent("error", event => {
+    console.log("error code:", event.error, "error message:", event.message);
+  });
+
+  const handleStartCommandVoice = async () => {
+    const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+    if (!result.granted) {
+      console.warn("Permissions not granted", result);
+      return;
+    }
+
+    ExpoSpeechRecognitionModule.start({
+      lang: i18n.languages[0] === LANGUAGE_CODES.EN ? "en-US" : "vi-VN",
+      interimResults: true,
+      maxAlternatives: 1000,
+      continuous: true,
+      requiresOnDeviceRecognition: false,
+      addsPunctuation: false,
+      contextualStrings: [
+        t("next").toLowerCase(),
+        t("back").toLowerCase(),
+        t("stop").toLowerCase()
+      ]
+    });
+  };
+
   const handleToggleVoiceCommand = () => {
-    setIsActiveVoiceCommand(prev => !prev);
+    if (isActiveVoiceCommand) {
+      setIsActiveVoiceCommand(prev => !prev);
+      ExpoSpeechRecognitionModule.stop();
+    } else {
+      Alert.alert(t("commandVoiceTitle"), t("commandVoiceMessage"), [
+        {
+          text: t("cancel"),
+          onPress: () => {
+            ExpoSpeechRecognitionModule.stop();
+            setIsActiveVoiceCommand(false);
+          }
+        },
+        {
+          text: t("ok"),
+          onPress: () => {
+            handleStartCommandVoice();
+            setIsActiveVoiceCommand(true);
+          }
+        }
+      ]);
+    }
   };
 
   const handleBack = async () => {
@@ -127,7 +204,7 @@ const CookingMode = () => {
   const sliderData =
     sortedSteps
       ?.find(item => item.ordinalNumber === currentStep)
-      ?.attachedImageUrls?.filter(item => item) || [];
+      ?.attachedImageUrls?.filter((item: any) => item) || [];
 
   useEffect(() => {
     const isMounted = true;
@@ -154,7 +231,10 @@ const CookingMode = () => {
             selectedLanguage === LANGUAGE_CODES.VI
               ? VI_VOICE.identifier
               : EN_VOICE.identifier,
-          rate: 0.7,
+          rate: Platform.select({
+            ios: 0.5,
+            android: 0.4
+          }),
           onDone: () => {
             if (isActiveSpeakingRef.current && isMounted) {
               if (timeoutRef.current) {
@@ -191,8 +271,28 @@ const CookingMode = () => {
     };
   }, [isActiveSpeaking, currentStep, sortedSteps, totalSpeak]);
 
+  useEffect(() => {
+    const handleVoiceCommands = async () => {
+      console.log("transcript", transcript);
+      if (
+        transcript.toLowerCase().includes(t("next").toLowerCase()) ||
+        transcript.toLowerCase().includes(t("net").toLowerCase())
+      ) {
+        handleNext();
+      } else if (transcript.toLowerCase().includes(t("back").toLowerCase())) {
+        handleBack();
+      } else if (transcript.toLowerCase().includes(t("stop").toLowerCase())) {
+        ExpoSpeechRecognitionModule.stop();
+        setIsActiveVoiceCommand(false);
+      }
+    };
+
+    handleVoiceCommands();
+  }, [transcript]);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: c(white.DEFAULT, black[100]) }}>
+      <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
       <View className='size-full'>
         {isLoading || isRefetching ? (
           <View className='flex-center size-full'>
@@ -225,10 +325,10 @@ const CookingMode = () => {
                 <View className='flex-center flex-row gap-2'>
                   <MaterialIcons
                     name='keyboard-voice'
-                    size={18}
+                    size={22}
                     color={c(black.DEFAULT, white.DEFAULT)}
                   />
-                  <Text className='body-regular text-black_white'>
+                  <Text className='base-semibold text-black_white'>
                     {t("voiceCommand")}
                   </Text>
                   <Switch
@@ -243,10 +343,10 @@ const CookingMode = () => {
                 <View className='flex-center flex-row gap-2'>
                   <MaterialCommunityIcons
                     name='account-tie-voice-outline'
-                    size={18}
+                    size={22}
                     color={c(black.DEFAULT, white.DEFAULT)}
                   />
-                  <Text className='body-regular text-black_white'>{t("speaking")}</Text>
+                  <Text className='base-semibold text-black_white'>{t("speaking")}</Text>
                   <Switch
                     testID='active-speaking-switch'
                     trackColor={{ false: `${inactiveTrackColor}`, true: `${primary}` }}
@@ -300,12 +400,12 @@ const CookingMode = () => {
             {/* Navigate buttons */}
             <View className='flex-center mb-4 flex-row gap-4 px-4'>
               <TouchableWithoutFeedback onPress={handleBack}>
-                <View className='flex-center max-w-[152px] flex-1 rounded-3xl bg-gray-400 px-5 py-2'>
+                <View className='flex-center flex-1 rounded-3xl bg-gray-400 px-5 py-3'>
                   <Text className='body-semibold text-black'>{t("back")}</Text>
                 </View>
               </TouchableWithoutFeedback>
               <TouchableWithoutFeedback onPress={handleNext}>
-                <View className='flex-center max-w-[152px] flex-1 rounded-3xl bg-primary px-5 py-2'>
+                <View className='flex-center flex-1 rounded-3xl bg-primary px-5 py-3'>
                   <Text className='body-semibold text-white_black'>{t("next")}</Text>
                 </View>
               </TouchableWithoutFeedback>

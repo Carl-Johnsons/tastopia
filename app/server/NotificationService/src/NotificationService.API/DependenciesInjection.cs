@@ -31,7 +31,7 @@ public static class DependenciesInjection
         return builder;
     }
 
-    public static WebApplication UseAPIServices(this WebApplication app)
+    public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
         app.UseSerilogServices();
         app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_NOTIFICATION", "Not Found"));
@@ -50,6 +50,9 @@ public static class DependenciesInjection
         app.UseAuthorization();
 
         app.UseRouting();
+
+        await app.UseSignalRServiceAsync();
+        
         app.UseHealthCheck();
 
         return app;

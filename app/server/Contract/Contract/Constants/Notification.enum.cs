@@ -4,6 +4,7 @@ public enum NotificationTemplateCode
 {
     USER_REPLY,
     USER_COMMENT,
+    USER_CREATE_RECIPE,
     USER_FOLLOW,
     USER_UPVOTE,
     USER_DOWNVOTE

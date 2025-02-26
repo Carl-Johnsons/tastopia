@@ -21,7 +21,7 @@ public static class DependenciesInjection
 
         builder.ConfigureCommonAPIServices();
 
-        services.AddAPIGatewayInfrastructureServices();
+        services.AddConsulRegistryService();
 
         config.SetBasePath(env.ContentRootPath)
               .AddEnvironmentVariables();

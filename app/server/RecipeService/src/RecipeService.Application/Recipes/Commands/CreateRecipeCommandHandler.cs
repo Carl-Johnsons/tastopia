@@ -1,6 +1,9 @@
-﻿using Contract.DTOs.UploadFileDTO;
+﻿using Contract.Constants;
+using Contract.DTOs.UploadFileDTO;
+using Contract.Event.NotificationEvent;
 using Contract.Event.RecipeEvent;
 using Contract.Event.UploadEvent;
+using Contract.Event.UserEvent;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +14,7 @@ using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
 using UploadFileProto;
+using UserProto;
 
 
 namespace RecipeService.Application.Recipes.Commands;
@@ -53,16 +57,19 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
     private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
+    private readonly GrpcUser.GrpcUserClient _grpcUserClient;
+
     private readonly ILogger<CreateRecipeCommandHandler> _logger;
 
 
-    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, ILogger<CreateRecipeCommandHandler> logger)
+    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, ILogger<CreateRecipeCommandHandler> logger, GrpcUser.GrpcUserClient grpcUserClient)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _serviceBus = serviceBus;
         _grpcUploadFileClient = grpcUploadFileClient;
         _logger = logger;
+        _grpcUserClient = grpcUserClient;
     }
 
     public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
@@ -132,9 +139,40 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
                 TagValues = request.TagValues ?? []
             });
 
+            var recipientId = await _grpcUserClient.GetUserFollowerAsync(new GrpcAccountIdRequest
+            {
+                AccountId = request.AuthorId.ToString()
+            });
+
+            var ids = recipientId.AccountIds.Select(Guid.Parse).ToList();
+
+            if(ids != null && ids.Count != 0) {
+                await _serviceBus.Publish(new NotifyUserEvent
+                {
+                    PrimaryActors = [
+                        new ActorDTO
+                        {
+                            ActorId = request.AuthorId,
+                            Type = EntityType.USER
+                        }],
+                    SecondaryActors = [],
+                    TemplateCode = NotificationTemplateCode.USER_CREATE_RECIPE,
+                    Channels = [NOTIFICATION_CHANNEL.DEFAULT],
+                    JsonData = JsonConvert.SerializeObject(new
+                    {
+                        redirectUri = $"{CLIENT_URI.MOBILE.COMMUNITY}/{recipe.Id}"
+                    }),
+                    ImageUrl = recipe.ImageUrl,
+                    RecipientIds = ids
+                });
+            }
+            await _serviceBus.Publish(new UpdateUserTotalRecipeEvent
+            {
+                AccountId = request.AuthorId,
+                Delta = 1
+            });
+
             return Result<Recipe?>.Success(recipe);
-
-
         }
         catch (Exception ex)
         {

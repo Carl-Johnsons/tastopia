@@ -57,12 +57,24 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
 
         if (tagCodes != null && tagCodes.Any() && !tagCodes.Contains("ALL"))
         {
-            var tagValues = _context.Tags.Where(t => tagCodes.Any(tc => tc == t.Code)).Select(t => t.Value).ToList();
-            recipesQuery = recipesQuery.Where(r => tagValues.Any(tag =>
-                r.Title.ToLower().Contains(tag.ToLower()) ||
-                r.Description.ToLower().Contains(tag.ToLower()) ||
-                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.ToLower()))
+            var tagData = _context.Tags.Where(t => tagCodes.Contains(t.Code)).Select(t => new { t.Id, t.Value }).ToList();
+            var tagIds = tagData.Select(t => t.Id).ToList();
+            var tagValues = tagData.Select(t => t.Value).ToList();
+
+            var recipeContainTagIds = _context.RecipeTags
+               .Where(rt => tagIds.Contains(rt.TagId))
+               .Select(rt => rt.RecipeId)
+               .ToHashSet() ?? new HashSet<Guid>();
+
+            if(tagValues != null && tagValues.Count != 0)
+            {
+                recipesQuery = recipesQuery.Where(r => tagValues.Any(tag =>
+                  r.Title.ToLower().Contains(tag.ToLower()) ||
+                  r.Description.ToLower().Contains(tag.ToLower()) ||
+                  r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.ToLower())) ||
+                  recipeContainTagIds.Contains(r.Id)
             ));
+            }
         }
 
         if (!string.IsNullOrEmpty(keyword))

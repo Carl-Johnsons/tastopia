@@ -9,10 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7E7DD171-F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalRHub", "src\SignalRHub\SignalRHub.csproj", "{7394FD04-1458-4227-B7F4-9C796D1B06CA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalRService.Domain", "src\SignalRService.Domain\SignalRService.Domain.csproj", "{E051F750-F083-4824-80D5-66C939B39588}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalRService.Infrastructure", "src\SignalRService.Infrastructure\SignalRService.Infrastructure.csproj", "{1F85AB02-DBBD-435C-BE3F-237345A98D28}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,22 +19,12 @@ Global
 		{7394FD04-1458-4227-B7F4-9C796D1B06CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7394FD04-1458-4227-B7F4-9C796D1B06CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7394FD04-1458-4227-B7F4-9C796D1B06CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E051F750-F083-4824-80D5-66C939B39588}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E051F750-F083-4824-80D5-66C939B39588}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E051F750-F083-4824-80D5-66C939B39588}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E051F750-F083-4824-80D5-66C939B39588}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1F85AB02-DBBD-435C-BE3F-237345A98D28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1F85AB02-DBBD-435C-BE3F-237345A98D28}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1F85AB02-DBBD-435C-BE3F-237345A98D28}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1F85AB02-DBBD-435C-BE3F-237345A98D28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{7394FD04-1458-4227-B7F4-9C796D1B06CA} = {B17F4481-93E9-464C-BF5B-93880DD1123C}
-		{E051F750-F083-4824-80D5-66C939B39588} = {B17F4481-93E9-464C-BF5B-93880DD1123C}
-		{1F85AB02-DBBD-435C-BE3F-237345A98D28} = {B17F4481-93E9-464C-BF5B-93880DD1123C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {68B3B09C-71B5-469C-8C99-BCD58E0D1AAD}

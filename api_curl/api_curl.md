@@ -195,6 +195,20 @@ curl --location 'https://localhost:7000/api/recipe/create-user-search-recipe' \
 "keyword" : "Valentine"
 }'
 
+**get recipe bin**
+curl --location 'https://localhost:7000/api/recipe/get-recipe-bin' \
+--header 'Content-Type: application/json' \
+--data '{
+"skip" : "0"
+}'
+
+**restore own recipe**
+curl --location 'https://localhost:7000/api/recipe/restore-own-recipe' \
+--header 'Content-Type: application/json' \
+--data '{
+"recipeId" : "9895461b-a748-4f8b-8037-7422372e882e"
+}'
+
 # USER
 
 **search user**

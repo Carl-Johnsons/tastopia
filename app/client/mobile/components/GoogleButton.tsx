@@ -13,7 +13,7 @@ const GoogleButton = Animated.createAnimatedComponent(
       >
         <View className='flex-row items-center justify-center gap-3.5'>
           <GoogleIcon />
-          <Text className='font-medium text-sm uppercase text-black'>Google</Text>
+          <Text className='font-medium text-sm uppercase text-black_white'>Google</Text>
         </View>
       </Button>
     );

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Contract.Constants;
+using Contract.DTOs.SignalRDTO;
 using Contract.DTOs.UserDTO;
 using Contract.Event.NotificationEvent;
 using Contract.Utilities;
@@ -17,6 +18,7 @@ public record NotifyUserCommand : IRequest<Result>
 {
     public List<Actor> PrimaryActors { get; set; } = [];
     public List<Actor> SecondaryActors { get; set; } = [];
+    public List<Guid> RecipientIds { get; set; } = [];
     public NotificationTemplateCode TemplateCode { get; set; }
     public List<string> Channels { get; set; } = [];
     public string? JsonData { get; set; }
@@ -31,13 +33,15 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
     private readonly IMapper _mapper;
     private readonly ILogger<NotifyUserCommandHandler> _logger;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
+    private readonly ISignalRService _signalRService;
 
     public NotifyUserCommandHandler(IApplicationDbContext context,
                                     IUnitOfWork unitOfWork,
                                     ILogger<NotifyUserCommandHandler> logger,
                                     IServiceBus serviceBus,
                                     GrpcUser.GrpcUserClient grpcUserClient,
-                                    IMapper mapper)
+                                    IMapper mapper,
+                                    ISignalRService signalRService)
     {
         _context = context;
         _unitOfWork = unitOfWork;
@@ -45,6 +49,14 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
         _serviceBus = serviceBus;
         _grpcUserClient = grpcUserClient;
         _mapper = mapper;
+        _signalRService = signalRService;
+    }
+
+    private record UserSettingObj
+    {
+        public string Code { get; set; } = null!;
+        public string Value { get; set; } = null!;
+        public SettingDataType DataType { get; set; }
     }
 
     public async Task<Result> Handle(NotifyUserCommand request,
@@ -65,6 +77,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
         {
             return Result.Failure(NotificationErrors.TemplateNotFound);
         }
+        var recipients = request.RecipientIds.Select(id => new Recipient { RecipientId = id, IsViewed = false }).ToList();
         var notification = new Notification
         {
             PrimaryActors = request.PrimaryActors,
@@ -72,15 +85,20 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
             JsonData = jsonData,
             TemplateId = template.Id,
             ImageUrl = request.ImageUrl,
+            Recipients = recipients
         };
 
         _context.Notifications.Add(notification);
 
         await _unitOfWork.SaveChangeAsync(cancellationToken);
+        await _signalRService.InvokeAction(SignalRAction.InvalidateNotification.ToString(), new InvalidateNotificationDTO
+        {
+            RecipientIds = request.RecipientIds
+        });
         _logger.LogInformation(JsonConvert.SerializeObject(notification, Formatting.Indented));
 
         // Push the notification to mobile user
-        List<Guid> recipientIds = request.SecondaryActors.Select(sa => sa.ActorId).ToList();
+        List<Guid> recipientIds = request.RecipientIds.ToList();
 
         var expoPushTokens = _context.AccountExpoPushTokens
                                   .Where(aet => recipientIds.Contains(aet.AccountId))
@@ -117,7 +135,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
                 return Result.Failure(NotificationErrors.NotFound, "Actor not found for push notification");
             }
 
-            var recipientIdSet = notification.SecondaryActors.Select(merge => merge.ActorId.ToString())
+            var recipientIdSet = notification.Recipients.Select(merge => merge.RecipientId.ToString())
                                                              .ToHashSet();
 
             var settingRes = await _grpcUserClient.GetUserSettingAsync(new GrpcGetUserSettingRequest
@@ -125,25 +143,77 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
                 AccountId = { _mapper.Map<RepeatedField<string>>(recipientIdSet) }
             }, cancellationToken: cancellationToken);
 
-            var mapUserLanguageSettings = new Dictionary<Guid, string>();
+            var mapUserSettings = new Dictionary<Guid, List<UserSettingObj>>();
 
             foreach (var (key, value) in settingRes.SettingMap)
             {
-                var languageSetting = LanguageUtility.ToIso6391(value.Settings.SingleOrDefault(s => s.SettingCode == "LANGUAGE")?.SettingValue
-                                                                ?? "en");
-                mapUserLanguageSettings[Guid.Parse(key)] = languageSetting;
+                List<UserSettingObj> userSetting = [];
+                foreach (var setting in value.Settings)
+                {
+                    if (setting.SettingCode == SETTING_KEY.LANGUAGE.ToString())
+                    {
+                        var languageSetting = LanguageUtility.ToIso6391(value.Settings.SingleOrDefault(s => s.SettingCode == SETTING_KEY.LANGUAGE.ToString())?.SettingValue
+                                                    ?? "en");
+                        userSetting.Add(new UserSettingObj
+                        {
+                            Code = SETTING_KEY.LANGUAGE.ToString(),
+                            Value = languageSetting,
+                            DataType = (SettingDataType)Enum.Parse(typeof(SettingDataType), setting.SettingType)
+                        });
+                        continue;
+                    }
+
+                    userSetting.Add(new UserSettingObj
+                    {
+                        Code = setting.SettingCode,
+                        Value = setting.SettingValue,
+                        DataType = (SettingDataType)Enum.Parse(typeof(SettingDataType), setting.SettingType)
+                    });
+                }
+
+                mapUserSettings[Guid.Parse(key)] = userSetting;
             }
 
-            Console.WriteLine(JsonConvert.SerializeObject(mapUserLanguageSettings, Formatting.Indented));
+            var mapSettingNotificationTemplate = new Dictionary<string, List<string>> {
+                {SETTING_KEY.NOTIFICATION_FOLLOW.ToString(), [NotificationTemplateCode.USER_FOLLOW.ToString()]},
+                {SETTING_KEY.NOTIFICATION_VOTE.ToString(), [NotificationTemplateCode.USER_DOWNVOTE.ToString(),
+                                                            NotificationTemplateCode.USER_UPVOTE.ToString()]},
+                {SETTING_KEY.NOTIFICATION_COMMENT.ToString(), [NotificationTemplateCode.USER_COMMENT.ToString()]},
+            };
 
-            foreach (var (key, languageCode) in mapUserLanguageSettings)
+
+            foreach (var (key, value) in mapUserSettings)
             {
                 var paNames = notification.PrimaryActors.Select(pa => mapUsers[pa.ActorId].DisplayName).ToList();
                 var saNames = notification.SecondaryActors.Select(sa => mapUsers[sa.ActorId].DisplayName).ToList();
-                var message = template.TranslationMessages.GetValueOrDefault(languageCode)
+                var message = template.TranslationMessages.GetValueOrDefault(value.SingleOrDefault(v => v.Code
+                                                                                                        == SETTING_KEY.LANGUAGE.ToString())!.Value)
                               ?? "";
-                var title = notification.Template?.TranslationTitles?.GetValueOrDefault(languageCode)
+                var title = notification.Template?.TranslationTitles?.GetValueOrDefault(value.SingleOrDefault(v => v.Code
+                                                                                                                   == SETTING_KEY.LANGUAGE.ToString())!.Value)
                             ?? "";
+
+                bool shouldNotify = true;
+
+                foreach (var setting in value)
+                {
+                    if (setting.DataType.ToString() == SettingDataType.Boolean.ToString()
+                        && mapSettingNotificationTemplate.ContainsKey(setting.Code)
+                        && mapSettingNotificationTemplate[setting.Code].Contains(request.TemplateCode.ToString())
+                        && !Boolean.Parse(value.SingleOrDefault(v => v.Code == setting.Code)!.Value))
+                    {
+                        shouldNotify = false;
+                        break;
+                    }
+                }
+
+
+                if (!shouldNotify)
+                {
+                    _logger.LogInformation($"Should notify {shouldNotify} with template {request.TemplateCode.ToString()}");
+                    continue;
+                }
+
                 var data = new
                 {
                     Actors = paNames,
@@ -167,7 +237,6 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
                         Title = title,
                     });
                 }
-
             }
         }
 

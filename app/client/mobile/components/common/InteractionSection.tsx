@@ -3,25 +3,28 @@ import Vote from "./Vote";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
+import { VoteType } from "@/constants/recipe";
 
 const InteractionSection = ({
   recipeId,
   vote,
   voteDiff,
   numberOfComment,
-  handleOnPress
+  handleOnPress,
+  containerClassName
 }: {
   recipeId: string;
-  vote: string | undefined;
+  vote?: VoteType;
   voteDiff: number | undefined;
-  numberOfComment: number | undefined;
-  handleOnPress: () => void;
+  numberOfComment?: number;
+  handleOnPress?: () => void;
+  containerClassName?: string;
 }) => {
   const { black, white } = colors;
   const { c } = useColorizer();
 
   return (
-    <View className='flex-start flex-row gap-2'>
+    <View className={`flex-row gap-2 ${containerClassName}`}>
       {voteDiff !== undefined && vote !== undefined && (
         <Vote
           recipeId={recipeId}

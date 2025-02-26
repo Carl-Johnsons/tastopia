@@ -98,6 +98,7 @@ type MenuItem = {
   hidden?: boolean;
   includeInModal?: { position: number };
   includeInMainTab?: { position: number };
+  hasBadge?: boolean;
 };
 
 export type Menu = {
@@ -141,18 +142,24 @@ export const menuList: Menu[] = [
       {
         path: SEARCH_PATH,
         icon: ({ color, focused }) => (
-          <TabIcon
-            icon={
-              <Feather
-                name='search'
-                size={24}
-                color={color}
-              />
-            }
-            color={color}
-            translateCode='search'
-            focused={focused}
-          />
+          <Protected
+            excludedRoles={[ROLE.GUEST]}
+            forceDisplay
+            requiredLogin
+          >
+            <TabIcon
+              icon={
+                <Feather
+                  name='search'
+                  size={24}
+                  color={color}
+                />
+              }
+              color={color}
+              translateCode='search'
+              focused={focused}
+            />
+          </Protected>
         ),
         code: "SEARCH",
         translateCode: "search",
@@ -163,18 +170,24 @@ export const menuList: Menu[] = [
       {
         path: CAPTURE_PATH,
         icon: ({ color, focused }) => (
-          <MainTabIcon
-            icon={
-              <Ionicons
-                name='scan-circle-outline'
-                size={40}
-                color={color}
-              />
-            }
-            color={color}
-            translateCode='dashboard'
-            focused={focused}
-          />
+          <Protected
+            excludedRoles={[ROLE.GUEST]}
+            forceDisplay
+            requiredLogin
+          >
+            <MainTabIcon
+              icon={
+                <Ionicons
+                  name='scan-circle-outline'
+                  size={40}
+                  color={color}
+                />
+              }
+              color={color}
+              translateCode='dashboard'
+              focused={focused}
+            />
+          </Protected>
         ),
         code: "CAPTURE",
         translateCode: "capture",
@@ -208,7 +221,8 @@ export const menuList: Menu[] = [
         translateCode: "notification",
         includeInMainTab: {
           position: 4
-        }
+        },
+        hasBadge: true
       },
       {
         path: MENU_PATH,

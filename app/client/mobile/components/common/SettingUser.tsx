@@ -15,7 +15,6 @@ import BottomSheet, {
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
 import { Octicons } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import useIsOwner from "@/hooks/auth/useIsOwner";
 import {
@@ -30,8 +29,8 @@ import { ItemCard } from "../SettingModal";
 import { ArrowBackIcon, CheckCircleIcon } from "@/constants/icons";
 import i18n from "@/i18n/i18next";
 import Loading from "./Loading";
-import { LANGUAGES } from "@/constants/languages";
 import { useReportUser, useReportUserReason } from "@/api/user";
+import { RecipeResponse } from "@/types/recipe";
 
 type Props = {
   id: string;
@@ -175,7 +174,7 @@ type ReportSettingProps = {
 
 const ReportSetting = ({ accountId, changeSetting, closeModal }: ReportSettingProps) => {
   const { c } = useColorizer();
-  const { black, white, primary } = colors;
+  const { black, white, primary, gray } = colors;
   const { t } = useTranslation("report");
   const currentLanguage = i18n.languages[0];
   const [report, setReport] = useState<Report>({
@@ -292,6 +291,7 @@ const ReportSetting = ({ accountId, changeSetting, closeModal }: ReportSettingPr
                   borderBottomColor: primary,
                   color: c(black.DEFAULT, white.DEFAULT)
                 }}
+                placeholderTextColor={gray[500]}
                 placeholder={t("additionalDetails")}
               />
             </View>

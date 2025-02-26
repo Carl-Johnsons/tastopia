@@ -59,6 +59,7 @@ internal class NotificationMockup
                 }],
                     TemplateId = Guid.Parse(TemplateIds[templateIdIndex]),
                     JsonData = "{\"redirectUri\":\"" + CLIENT_URI.MOBILE.NOTIFICATION + "\"}",
+                    Recipients = [new Recipient { RecipientId = Guid.Parse(recipientId), IsViewed = false }]
                 });
             }
         }

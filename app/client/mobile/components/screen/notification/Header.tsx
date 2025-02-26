@@ -10,7 +10,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Pressable, Text, StyleSheet, View } from "react-native";
-import Animated, { LinearTransition } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
 export default function Header() {
   const { t } = useTranslation("notification");
@@ -19,50 +19,34 @@ export default function Header() {
   const notificationType = selectNotificationType();
 
   const styles = StyleSheet.create({
-    wrapper: {
-      height: 62
-    },
-    title: {
-      position: "absolute",
-      top: "50%",
-      left: "58%",
-      transform: [{ translateY: "-50%" }, { translateX: "-50%" }]
-    },
     tabWrapper: {
       width: "50%"
     }
   });
 
   return (
-    <View className='bg-white_black'>
-      <View
-        style={styles.wrapper}
-        className='relative flex-row items-center justify-between px-6'
-      >
+    <View className='bg-white_black200 pt-2'>
+      <View className='relative flex-row items-center justify-between px-4'>
         <ArrowBackIcon
           color={c(black.DEFAULT, white.DEFAULT)}
           width={28}
           height={28}
           onPress={router.back}
         />
-        <Text
-          style={styles.title}
-          className='text-black_white font-medium text-2xl'
-        >
-          {t("Notification")}
-        </Text>
+        <Text className='text-black_white font-medium text-2xl'>{t("notification")}</Text>
+        <View className='w-[28px]' />
       </View>
       <View className='w-full flex-row'>
         <View style={styles.tabWrapper}>
           <Tab
-            label={"Community"}
+            label={t("community")}
             value={"Community"}
             isActive={notificationType === "Community"}
           />
         </View>
         <View style={styles.tabWrapper}>
           <Tab
-            label={"System"}
+            label={t("system")}
             value={"System"}
             isActive={notificationType === "System"}
           />
@@ -91,14 +75,19 @@ const Tab = ({
     activeWrapper: {
       borderBottomWidth: 3
     },
+    inactiveWrapper: {
+      borderBottomWidth: 3,
+      borderColor: "transparent"
+    },
     wrapper: {
-      height: 52
+      height: 52,
+      paddingBottom: 3
     }
   });
 
   return (
     <Animated.View
-      style={[isActive && styles.activeWrapper, styles.wrapper]}
+      style={[isActive ? styles.activeWrapper : styles.inactiveWrapper, styles.wrapper]}
       className={`${isActive && "border-primary"}`}
     >
       <Pressable

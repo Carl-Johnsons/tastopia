@@ -12,6 +12,8 @@ public static class RabbitMQConstant
             public const string LINK_ACCOUNT = "link-account-queue";
             public const string UNLINK_ACCOUNT = "unlink-account-queue";
             public const string USER_RESEND_OTP = "user-resend-otp-queue";
+            public const string UPDATE_TOTAL_RECIPE = "update-total-recipe-queue";
+            
             // ======================= Recipe ============================
             public const string UPDATE_RECIPE_TAGS = "update-recipe-tags-queue";
             public const string UPDATE_RECIPE_IS_ACTIVE = "update-recipe-is-active-queue";
@@ -44,6 +46,7 @@ public static class RabbitMQConstant
             public const string LINK_ACCOUNT = "link-account-event";
             public const string UNLINK_ACCOUNT = "unlink-account-event";
             public const string USER_RESEND_OTP = "user-resend-otp-event";
+            public const string UPDATE_TOTAL_RECIPE = "update-total-recipe-event";
             // ======================= Recipe ============================
             public const string UPDATE_RECIPE_TAGS = "update-recipe-tags-event";
             public const string UPDATE_RECIPE_IS_ACTIVE = "update-recipe-is-active-event";

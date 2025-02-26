@@ -15,9 +15,12 @@ const resources = {
     termOfServices: locales.termOfServicesEn,
     profile: locales.profileEn,
     updateProfile: locales.updateProfileEn,
+    follow: locales.followEn,
     cookingMode: locales.cookingModeEn,
     loginWithGoogle: locales.loginWithGoogleEn,
-    report: locales.reportEn
+    report: locales.reportEn,
+    notification: locales.notificationEn,
+    capture: locales.captureEn
   },
   vi: {
     navbar: locales.navbarVi,
@@ -33,9 +36,12 @@ const resources = {
     termOfServices: locales.termOfServicesVi,
     profile: locales.profileVi,
     updateProfile: locales.updateProfileVi,
+    follow: locales.followVi,
     cookingMode: locales.cookingModeVi,
     loginWithGoogle: locales.loginWithGoogleVi,
-    report: locales.reportVi
+    report: locales.reportVi,
+    notification: locales.notificationVi,
+    capture: locales.captureVi
   }
 };
 

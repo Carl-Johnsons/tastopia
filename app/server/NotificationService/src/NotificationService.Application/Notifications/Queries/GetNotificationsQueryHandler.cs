@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using Contract.Constants;
 using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using NotificationService.Domain.Constants;
 using NotificationService.Domain.Errors;
 using NotificationService.Domain.Responses;
@@ -24,16 +25,19 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
     private readonly IMapper _mapper;
     private readonly IPaginateDataUtility<Notification, AdvancePaginatedMetadata> _paginateDataUtility;
+    private readonly ILogger<GetNotificationsQueryHandler> _logger;
 
     public GetNotificationsQueryHandler(IApplicationDbContext context,
                                         GrpcUser.GrpcUserClient grpcUserClient,
                                         IMapper mapper,
-                                        IPaginateDataUtility<Notification, AdvancePaginatedMetadata> paginateDataUtility)
+                                        IPaginateDataUtility<Notification, AdvancePaginatedMetadata> paginateDataUtility,
+                                        ILogger<GetNotificationsQueryHandler> logger)
     {
         _context = context;
         _grpcUserClient = grpcUserClient;
         _mapper = mapper;
         _paginateDataUtility = paginateDataUtility;
+        _logger = logger;
     }
 
     public async Task<Result<PaginatedNotificationListResponse?>> Handle(GetNotificationsQuery request, CancellationToken cancellationToken)
@@ -54,6 +58,7 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                 resultSelector: (n, nt) => new Notification
                 {
                     Id = n.Id,
+                    Recipients = n.Recipients,
                     PrimaryActors = n.PrimaryActors,
                     SecondaryActors = n.SecondaryActors,
                     TemplateId = n.TemplateId,
@@ -63,10 +68,10 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                     UpdatedAt = n.UpdatedAt,
                     Template = nt
                 }
-            ).Where(n => n.SecondaryActors.Any(sa => sa.ActorId == request.AccountId
-                                                     && sa.Type.ToString() == EntityType.USER.ToString()))
+            ).Where(n => n.Recipients.Any(sa => sa.RecipientId == request.AccountId))
             .OrderByDescending(n => n.CreatedAt);
 
+        var unReadNotifications = notificationQuery.Where(n => n.Recipients.Any(sa => sa.RecipientId == request.AccountId && !sa.IsViewed)).Count();
         var totalPage = (notificationQuery.Count() + NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT - 1) / NOTIFICATION_CONSTANT.NOTIFICATION_LIMIT;
         var paginatedNotificationQuery = _paginateDataUtility.PaginateQuery(notificationQuery, new PaginateParam
         {
@@ -123,12 +128,15 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                                            IsSelf = true
                                        };
 
+                                       var IsViewed = n.Recipients.Where(r => r.RecipientId == request.AccountId).Select(r => r.IsViewed).SingleOrDefault();
+
                                        message = Smart.Format(message, data);
                                        title = Smart.Format(title);
 
                                        return new NotificationsResponse
                                        {
                                            Id = n.Id,
+                                           IsViewed = IsViewed,
                                            CreatedAt = n.CreatedAt,
                                            UpdatedAt = n.UpdatedAt,
                                            ImageUrl = n.ImageUrl,
@@ -144,13 +152,14 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
         var paginatedResponse = new PaginatedNotificationListResponse
         {
             PaginatedData = responses!,
-            Metadata = new AdvancePaginatedMetadata
+            Metadata = new NotificationListMetadata
             {
                 HasNextPage = skip < totalPage - 1,
-                TotalPage = totalPage
+                TotalPage = totalPage,
+                UnreadNotifications = unReadNotifications
             }
         };
-
+        _logger.LogInformation(JsonConvert.SerializeObject(paginatedResponse, Formatting.Indented));
         return Result<PaginatedNotificationListResponse?>.Success(paginatedResponse);
     }
 

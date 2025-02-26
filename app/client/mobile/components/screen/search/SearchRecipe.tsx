@@ -9,11 +9,7 @@ import {
   FlatList,
   RefreshControl
 } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
-import { Filter } from "@/components/common/SVG";
-import { globalStyles } from "@/components/common/GlobalStyles";
-import useDebounce from "@/hooks/useDebounce";
-import { AntDesign } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import useDarkMode from "@/hooks/useDarkMode";
 import { Image } from "expo-image";
 import {
@@ -23,7 +19,7 @@ import {
 } from "@/api/search";
 import { router } from "expo-router";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import { selectSearchTagCodes } from "@/slices/searchRecipe.slice";
+import { removeTagValue, selectSearchTagCodes, selectSearchTags } from "@/slices/searchRecipe.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useTranslation } from "react-i18next";
 import useColorizer from "@/hooks/useColorizer";
@@ -31,6 +27,11 @@ import { colors } from "@/constants/colors";
 import SearchRecipeResult from "../community/SearchRecipeResult";
 import SearchHistory from "./SearchHistory";
 import uuid from "react-native-uuid";
+import { SearchRecipeType } from "@/types/recipe";
+import { globalStyles } from "@/components/common/GlobalStyles";
+import useDebounce from "@/hooks/useDebounce";
+import SelectedTag from "./SelectedTag";
+import { Filter } from "@/components/common/SVG";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -58,7 +59,7 @@ const ResultSection = memo(
     const { t } = useTranslation("search");
 
     return (
-      <View className='mt-6'>
+      <View className='mt-6 mb-[50px]'>
         <FlatList
           data={searchResults}
           keyExtractor={item => item.id}
@@ -120,8 +121,11 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const dispatch = useAppDispatch();
   const tagCodes = useAppSelector(selectSearchTagCodes);
 
+  const selectedTagsStore = useAppSelector(selectSearchTags);
+
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchResults, setSearchResults] = useState<SearchRecipeType[]>();
+  const [selectedTags, setSelectedTags] = useState<SelectedTag[]>(selectedTagsStore);
 
   const textInputRef = useRef<TextInput>(null);
   const isDarkMode = useDarkMode();
@@ -203,6 +207,25 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
     }
   }, [data, tagCodes]);
 
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (searchValue !== "" || tagCodes.length > 0) {
+  //       refetch();
+  //     }
+
+  //     return () => {};
+  //   }, [])
+  // );
+
+  const handleRemoveTag = useCallback((code: string) => {
+    dispatch(removeTagValue(code));
+    setSelectedTags(prev => prev.filter(t => t.code !== code));
+  }, []);
+
+  useEffect(() => {
+    setSelectedTags(selectedTagsStore);
+  }, [selectedTagsStore]);
+
   return (
     <View>
       {/* Search input */}
@@ -256,10 +279,25 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
         </TouchableWithoutFeedback>
       </View>
 
+      {/* Selected tags */}
+      <View>
+        <View className='mt-4 flex-row flex-wrap'>
+          {selectedTags.map((tag, index) => {
+            return (
+              <SelectedTag
+                key={`${tag}-${index}`}
+                code={tag.code}
+                value={tag.value}
+                onRemove={handleRemoveTag}
+              />
+            );
+          })}
+        </View>
+      </View>
       {/* History section */}
       {!isLoadingSearchRecipeHistory && searchRecipeHistoryData && searchValue === "" && (
         <FlatList
-          data={searchRecipeHistoryData.value}
+          data={searchRecipeHistoryData.value.slice(0, 10)}
           keyExtractor={_item => uuid.v4()}
           scrollEnabled={false}
           showsVerticalScrollIndicator={false}
@@ -273,6 +311,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
           renderItem={item => {
             return (
               <SearchHistory
+                type='recipe'
                 item={item.item}
                 handleSelectHistory={handleSelectSearchHistory}
               />

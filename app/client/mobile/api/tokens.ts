@@ -1,6 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { CLIENT_ID, SCOPE } from "@/constants/api";
 import { stringify } from "@/utils/debug";
+import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 
 export const refreshAccessToken = async (refreshToken: string) => {
   const body = new URLSearchParams({
@@ -11,15 +12,11 @@ export const refreshAccessToken = async (refreshToken: string) => {
   }).toString();
 
   try {
-    const { data } = await axios.post<LoginResponse>(
-      "/connect/token",
-      body,
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        }
+    const { data } = await axios.post<LoginResponse>("/connect/token", body, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
       }
-    );
+    });
 
     return data;
   } catch (error) {

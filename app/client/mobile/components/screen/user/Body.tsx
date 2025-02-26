@@ -40,7 +40,7 @@ const Body = ({
   ];
 
   return (
-    <View className={`h-full ${Platform.select({ ios: "", android: "flex-1" })}`}>
+    <View className={`h-full ${Platform.select({ ios: "", android: "flex-1" })} pb-10`}>
       <CustomTab
         variant='primary'
         tabItems={tabs}

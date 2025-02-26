@@ -21,3 +21,6 @@ printf "\n\t*** ${GREEN}DONE APPLY ALL MIGRATIONS${NC} ***\n\n"
 
 ./scripts/config-docker-compose.sh
 printf "\n\t*** ${GREEN}DONE GENERATING DOCKER COMPOSE OVERRIDE FILE${NC} ***\n\n"
+
+./scripts/setup-capture-service.sh
+printf "\n\t*** ${GREEN}DONE SETUP CAPTURE SERVICE${NC} ***\n\n"
