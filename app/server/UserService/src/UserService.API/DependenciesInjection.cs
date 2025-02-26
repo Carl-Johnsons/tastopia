@@ -54,15 +54,6 @@ public static class DependenciesInjection
         app.UseRouting();
         app.UseHealthCheck();
 
-        //try
-        //{
-        //    var signalRService = app.Services.GetService<ISignalRService>();
-        //    await signalRService!.StartConnectionAsync();
-        //}
-        //catch (Exception ex)
-        //{
-        //    app.Logger.LogError($"Error connecting to SignalR: {ex.Message}");
-        //}
         return app;
     }
 }

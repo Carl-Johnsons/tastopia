@@ -10,7 +10,11 @@ type EmptyProps = {
     | "emptyBookmark"
     | "emptyNotification"
     | "emptyDeleted"
-    | "emptyRecipeViewingHistory";
+    | "emptyRecipeViewingHistory"
+    | "emptyFollowing"
+    | "emptyFollowingSearch"
+    | "emptyFollower"
+    | "emptyFollowerSearch";
 };
 
 const Empty = memo(({ type = "empty" }: EmptyProps) => {

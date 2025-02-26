@@ -10,10 +10,17 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Polly" Version="8.5.1" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="8.0.5" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+		<!-- Consul dependencies -->
+		<PackageReference Include="Consul" Version="1.7.14.1" />
+		<!-- DotNetEnv dependencies -->
+		<PackageReference Include="DotNetEnv" Version="3.0.0" />
+		<!-- Newtonsoft.Json dependencies -->
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<!-- Serilog dependencies -->
 		<PackageReference Include="Serilog" Version="4.1.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
 	</ItemGroup>
@@ -27,8 +34,5 @@
 	</ItemGroup>
 	<ItemGroup>
 		<InternalsVisibleTo Include="ChatHub.Tests" />
-	</ItemGroup>
-	<ItemGroup>
-	  <ProjectReference Include="..\SignalRService.Infrastructure\SignalRService.Infrastructure.csproj" />
 	</ItemGroup>
 </Project>

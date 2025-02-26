@@ -165,9 +165,6 @@ internal static class HostingExtensions
                 .RequireAuthorization();
         });
 
-        //var signalRService = app.Services.GetService<ISignalRService>();
-        //signalRService!.StartConnectionAsync();
-
         app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
         return app;
     }

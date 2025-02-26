@@ -5,10 +5,10 @@ using Serilog;
 
 try
 {
-    var app = WebApplication.CreateBuilder(args)
+    var app = await WebApplication.CreateBuilder(args)
                      .AddAPIServices()
                      .Build()
-                     .UseAPIServices();
+                     .UseAPIServicesAsync();
 
     app.Start();
 

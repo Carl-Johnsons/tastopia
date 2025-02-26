@@ -1,25 +1,43 @@
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
 using SignalRHub;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args)
-                .AddChatHubServices();
-var app = builder.Build();
-app.UseChatHubService();
-
-app.Start();
-
-var server = app.Services.GetService<IServer>();
-var addresses = server?.Features.Get<IServerAddressesFeature>()?.Addresses;
-
-if (addresses != null)
+try
 {
-    foreach (var address in addresses)
+    var app = WebApplication.CreateBuilder(args)
+                     .AddChatHubServices()
+                     .Build()
+                     .UseChatHubService();
+
+    app.Start();
+
+    var server = app.Services.GetService<IServer>();
+    var addresses = server?.Features.Get<IServerAddressesFeature>()?.Addresses;
+
+    if (addresses != null)
     {
+        foreach (var address in addresses)
+        {
+            Log.Information($"Chat hub is listening on: {address}");
+        }
     }
+    else
+    {
+        Log.Information("Could not retrieve server addresses.");
+    }
+
+    app.WaitForShutdown();
 }
-else
+catch (Exception ex) when (ex is not HostAbortedException)
 {
+    Log.Fatal(ex, "Unhandled exception");
+}
+finally
+{
+    Log.Information("Shut down complete");
+    Log.CloseAndFlush();
 }
 
-app.WaitForShutdown();
+
+

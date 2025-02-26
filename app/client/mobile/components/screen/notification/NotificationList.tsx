@@ -6,7 +6,6 @@ import {
   ChatBubbleFillIcon,
   UserIcon
 } from "@/constants/icons";
-import useColorizer from "@/hooks/useColorizer";
 import { Avatar } from "@rneui/base";
 import { router, useFocusEffect, usePathname } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
@@ -77,6 +76,10 @@ export default function NotificationList() {
   );
 }
 
+type INotificationJsonData = {
+  redirectUri: string;
+};
+
 export const Notification = ({
   item,
   index
@@ -90,33 +93,29 @@ export const Notification = ({
   const isOddItem = useMemo(() => {
     return index % 2 === 0;
   }, [index]);
-  const { white, black, primary } = colors;
-  const { c } = useColorizer();
+  const { primary } = colors;
   const { mutateAsync: setViewedNotification } = useSetViewedNotification();
   const queryClient = useQueryClient();
 
   const handlePress = useCallback(async () => {
-    if (jsonData) {
-      const data = JSON.parse(jsonData);
+    if (!jsonData) return;
 
-      if (data.redirectUri && currentRouteName !== "/notification") {
-        router.push(data.redirectUri);
-      }
-    }
+    const NOTIFICATION_ROUTE = "/(protected)/notification";
+    const { redirectUri } = JSON.parse(jsonData) as INotificationJsonData;
 
     if (!isViewed) {
       await setViewedNotification(
         { notificationId: id },
         {
-          onSuccess: () => {
-            queryClient.invalidateQueries("getNotification");
-            console.log("Notification viewed", id);
+          onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: "getNotification" });
           }
         }
       );
     }
 
-    console.log("Pressing notification", id);
+    if (!redirectUri || redirectUri === NOTIFICATION_ROUTE) return;
+    router.push(redirectUri as any);
   }, [jsonData, currentRouteName, id, isViewed]);
 
   const styles = StyleSheet.create({
@@ -139,7 +138,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={white.DEFAULT}
+            color={primary}
           />
         );
       case "USER_FOLLOW":
@@ -154,7 +153,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={white.DEFAULT}
+            color={primary}
           />
         );
       case "USER_UPVOTE":
@@ -178,7 +177,7 @@ export const Notification = ({
           <ChatBubbleFillIcon
             width={24}
             height={24}
-            color={white.DEFAULT}
+            color={primary}
           />
         );
     }
@@ -188,23 +187,28 @@ export const Notification = ({
     <Pressable
       onPress={handlePress}
       style={!isViewed && styles.isViewed}
-      className={`relative flex-row gap-2 p-4`}
+      className={`relative flex-row gap-3 p-4`}
     >
       <View className='relative'>
-        <Avatar
-          size={70}
-          rounded
-          source={
-            imageUrl ? { uri: imageUrl } : require("../../../assets/images/avatar.png")
-          }
-          containerStyle={imageUrl && { backgroundColor: "#FFC529" }}
-        />
-        <View className='absolute bottom-0 right-0'>
-          {renderIcon(code as ActionCode)}
+        <View className='max-h-[75px]'>
+          <Avatar
+            size={70}
+            rounded
+            source={
+              imageUrl ? { uri: imageUrl } : require("../../../assets/images/avatar.png")
+            }
+            containerStyle={imageUrl && { backgroundColor: "#FFC529" }}
+          />
+          <View className='absolute bottom-0 right-0'>
+            {renderIcon(code as ActionCode)}
+          </View>
         </View>
       </View>
       <View className='shrink justify-center pt-2'>
-        <Text className={`${isViewed ? "text-gray-500" : "text-black_white"}`}>
+        <Text
+          className={`${isViewed ? "text-gray-500" : "text-black_white"} text-xl`}
+          numberOfLines={2}
+        >
           {message}
         </Text>
         <Text className={`${isViewed ? "text-gray-500" : "text-black_white"}`}>

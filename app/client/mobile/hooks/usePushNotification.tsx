@@ -22,6 +22,7 @@ import { protectedAxiosInstance } from "@/constants/host";
 import { useRouter } from "expo-router";
 import { useAppDispatch } from "@/store/hooks";
 import { saveNotificationData } from "@/slices/notification.slice";
+import { useBottomSheet, useBottomSheetModal } from "@gorhom/bottom-sheet";
 
 export interface PushNotificationState {
   notification?: Notification;
@@ -31,6 +32,7 @@ export interface PushNotificationState {
 
 export const usePushNotification = (): PushNotificationState => {
   const router = useRouter();
+  const { dismissAll: dismissAllBottomSheetModal } = useBottomSheetModal();
 
   const [expoPushToken, setExpoPushToken] = useState<ExpoPushToken | undefined>();
   const [notification, setNotification] = useState<Notification | undefined>();
@@ -101,6 +103,8 @@ export const usePushNotification = (): PushNotificationState => {
       const { redirectUri, params } = data;
 
       if (redirectUri) {
+        dismissAllBottomSheetModal();
+
         router.push({
           pathname: redirectUri,
           params: params
