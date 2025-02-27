@@ -1,0 +1,44 @@
+@startuml Sequence
+title "Set view notification"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<coordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n NotificationService" as NotificationService
+database MongoDB
+
+User -> MobileUI ++: 1. User enter the app
+MobileUI -> ApiGateway ++: 2. Request save expo \n push notification token
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> NotificationService ++: 4. Forward request
+
+NotificationService -> MongoDB++: 5. Query data
+NotificationService <-- MongoDB--: 6. Return response
+
+alt accountPushToken not found
+  NotificationService -> MongoDB++: 7A.1 Add new push notification token
+  NotificationService <-- MongoDB--: 7A.2 Return response
+else
+  NotificationService -> MongoDB++: 8. Replace existing push notification token
+  NotificationService <-- MongoDB--: 9. Return response
+end
+ApiGateway <-- NotificationService--: 10. Return success
+MobileUI <-- ApiGateway--: 11. Forward response
+User <-- MobileUI--: 12. Display notification list
+
+@enduml
