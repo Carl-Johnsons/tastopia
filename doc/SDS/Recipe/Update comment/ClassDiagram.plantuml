@@ -42,10 +42,18 @@ class RecipeError {
     {static} +UpdateRecipeFail: Error
 }
 
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" UpdateCommentDTO
 RecipeController "1"--"1" UpdateCommentCommand
 
+UpdateCommentCommand --|> "IRequest<TResponse>"
+
+UpdateCommentCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
 UpdateCommentCommandHandler "1"--"1" UpdateCommentCommand
 UpdateCommentCommandHandler "1"--"1" Comment
 UpdateCommentCommandHandler "1"--"1" Result

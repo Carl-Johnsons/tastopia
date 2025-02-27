@@ -53,15 +53,25 @@ class RecipeError {
     {static} +DeleteRecipeFail: Error
     {static} +UpdateRecipeFail: Error
 }
+
 together {
     class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
     class GrpcUserClient #DarkBlue;line:white;text:white
 }
 
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" GetRecipeBookmarkDTO
 RecipeController "1"--"1" GetRecipeBookmarksQuery
 
+GetRecipeBookmarksQuery --|> "IRequest<TResponse>"
+
+GetRecipeBookmarksQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 GetRecipeBookmarksQueryHandler "1"--"1" GetRecipeBookmarksQuery
 GetRecipeBookmarksQueryHandler "1"--"1" Result
 GetRecipeBookmarksQueryHandler "1"--"1" PaginatedRecipeFeedsListResponse

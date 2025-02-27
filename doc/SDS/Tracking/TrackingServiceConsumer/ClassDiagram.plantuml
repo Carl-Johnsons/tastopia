@@ -46,6 +46,14 @@ class UserViewRecipeDetailError {
     {static} +UpdateUserViewRecipeDetailFail: Error
 }
 
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+CreateUserVewRecipeDetailCommand --|> "IRequest<TResponse>"
+CreateUserVewRecipeDetailCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+
 TrackingServiceConsumer "1"--"1" CreateUserViewRecipeDetailEvent
 TrackingServiceConsumer "1"--"1" CreateUserVewRecipeDetailCommand
 

@@ -40,10 +40,19 @@ class RecipeError {
     {static} +UpdateRecipeFail: Error
 }
 
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" DeleteOwnRecipeDTO
 RecipeController "1"--"1" DeleteOwnRecipeCommand
 
+DeleteOwnRecipeCommand --|> "IRequest<TResponse>"
+
+DeleteOwnRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
 DeleteOwnRecipeCommandHandler "1"--"1" DeleteOwnRecipeCommand
 DeleteOwnRecipeCommandHandler "1"--"1" Recipe
 DeleteOwnRecipeCommandHandler "1"--"1" Result

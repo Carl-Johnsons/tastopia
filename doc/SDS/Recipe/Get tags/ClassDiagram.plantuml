@@ -53,10 +53,18 @@ class TagError {
     {static} +UpdateTagFail: Error
 }
 
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" GetTagsDTO
 RecipeController "1"--"1" GetTagsQuery
 
+GetTagsQuery --|> "IRequest<TResponse>"
+
+GetTagsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 GetTagsQueryHandler "1"--"1" GetTagsQuery
 GetTagsQueryHandler "1"--"1" Result
 GetTagsQueryHandler "1"--"1" PaginatedTagListResponse
