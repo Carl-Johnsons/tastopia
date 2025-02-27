@@ -1,0 +1,74 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class UserController {
+    +FollowUser([FromBody] FollowUserDTO followUserDTO): async Task<IActionResult>
+}
+
+class FollowUserCommand {
+    +AccountId: Guid
+    +FollowingId: Guid
+}
+
+class FollowUserCommandHandler {
+    - _mapper : IMapper
+    - _context : IApplicationDbContext
+    - _serviceBus: IServiceBus 
+    + Handle(request: FollowUserCommand, cancellationToken: CancellationToken) : Task<Result<FollowUserResponse?>>
+}
+
+class FollowUserDTO {
+    +AccountId: Guid
+}
+
+class FollowUserResponse {
+    - AccountId : Guid
+    - FollowingId : Guid
+    - IsFollowing : bool
+}
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class NotifyUserEvent #Cyan;line:white;text:black
+}
+
+UserController --|> BaseApiController
+UserController "1"--"1" FollowUserDTO
+UserController "1"--"1" FollowUserCommand
+
+FollowUserCommand --|> "IRequest<TResponse>"
+
+FollowUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+FollowUserCommandHandler "1" o--"1" FollowUserCommand
+FollowUserCommandHandler "1" o--"1" IApplicationDbContext
+FollowUserCommandHandler "1" o--"1" FollowUserResponse
+FollowUserCommandHandler "1" o--"1" IServiceBus
+FollowUserCommandHandler "1" o--"1" Result
+FollowUserCommandHandler "1" --"1..*" UserError
+FollowUserCommandHandler "1"--"1" NotifyUserEvent
+
+Error "1" --"1" UserError
+
+@enduml

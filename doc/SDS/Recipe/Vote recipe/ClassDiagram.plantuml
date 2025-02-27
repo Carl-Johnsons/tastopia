@@ -54,10 +54,18 @@ class RecipeError {
     {static} +UpdateRecipeFail: Error
 }
 
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" VoteRecipeDTO
 RecipeController "1"--"1" VoteRecipeCommand
 
+VoteRecipeCommand --|> "IRequest<TResponse>"
+
+VoteRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
 VoteRecipeCommandHandler "1"--"1" VoteRecipeCommand
 VoteRecipeCommandHandler "1"--"1" Result
 VoteRecipeCommandHandler "1" o-- "1" IUnitOfWork
