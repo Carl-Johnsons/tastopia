@@ -98,6 +98,7 @@ type MenuItem = {
   hidden?: boolean;
   includeInModal?: { position: number };
   includeInMainTab?: { position: number };
+  hasBadge?: boolean;
 };
 
 export type Menu = {
@@ -220,7 +221,8 @@ export const menuList: Menu[] = [
         translateCode: "notification",
         includeInMainTab: {
           position: 4
-        }
+        },
+        hasBadge: true
       },
       {
         path: MENU_PATH,

@@ -1,4 +1,4 @@
-﻿namespace UserService.Domain.Constants;
+﻿namespace Contract.Constants;
 
 public enum SettingDataType
 {

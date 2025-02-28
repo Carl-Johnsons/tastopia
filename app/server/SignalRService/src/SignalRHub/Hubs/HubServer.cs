@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http.Extensions;
-using MassTransit;
 using Serilog;
 using SignalRHub.DTOs;
+using Contract.Interfaces;
+using Contract.DTOs.SignalRDTO;
 
 namespace SignalRHub.Hubs;
 
@@ -13,8 +14,9 @@ public class HubServer : Hub<IHubClient>
     private static readonly ConcurrentDictionary<string, Guid> UserConnectionMap = new();
     private readonly IHttpContextAccessor _httpContextAccessor;
     // rabbitmq
-    private readonly IBus _bus;
-    public HubServer(IHttpContextAccessor httpContextAccessor, IBus bus)
+    private readonly IServiceBus _bus;
+    public HubServer(IHttpContextAccessor httpContextAccessor,
+                     IServiceBus bus)
     {
         _httpContextAccessor = httpContextAccessor;
         _bus = bus;
@@ -27,7 +29,6 @@ public class HubServer : Hub<IHubClient>
         var userId = _httpContextAccessor.HttpContext?.Request.Query["userId"].ToString();
         try
         {
-
             if (string.IsNullOrEmpty(userId))
             {
                 var RequestUrl = Context.GetHttpContext()?.Request.GetDisplayUrl() ?? "Unknown";
@@ -38,7 +39,6 @@ public class HubServer : Hub<IHubClient>
                 Log.Information($"user with id {userId} has connected to signalR sucessfully!");
                 await ConnectWithUserIdAsync(Guid.Parse(userId));
             }
-
         }
         catch (Exception ex)
         {
@@ -83,6 +83,26 @@ public class HubServer : Hub<IHubClient>
         await Clients.All.ReceiveTest(obj);
     }
 
+    public async Task InvalidateNotification(InvalidateNotificationDTO dto)
+    {
+        // Have to get list because the 1 person can join on 2 different tab on browser
+        // So the connectionId may different but still 1 userId
+        var receiverConnectionIdList = UserConnectionMap.
+            Where(pair => dto.RecipientIds.Contains(pair.Value))
+            .Select(pair => pair.Key)
+            .ToList();
+
+        // If the receiver didn't online, simply do nothing
+        if (receiverConnectionIdList.Count <= 0)
+        {
+            return;
+        }
+        var tasks = receiverConnectionIdList
+            .Select(receiverConnectionId => Clients.Client(receiverConnectionId).ReceiveNotification())
+            .ToArray();
+
+        await Task.WhenAll(tasks);
+    }
 
     #region Helper method
     private async Task ConnectWithUserIdAsync(Guid userId)

@@ -4,7 +4,6 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Bson;
 using RecipeService.Infrastructure.Persistence;
 using RecipeService.Infrastructure.Persistence.Mockup;
-using RecipeService.Infrastructure.Services;
 using Contract.Extension;
 
 namespace RecipeService.Infrastructure;
@@ -25,7 +24,6 @@ public static class DependencyInjection
         services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
         services.AddScoped<MockupData>();
         services.AddCommonInfrastructureServices("RecipeService.API");
-        services.AddSingleton<ISignalRService, SignalRService>();
 
         using (var serviceProvider = services.BuildServiceProvider())
         {

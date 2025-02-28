@@ -1,4 +1,5 @@
-﻿using UserService.Domain.Entities;
+﻿using Contract.Constants;
+using UserService.Domain.Entities;
 using UserService.Domain.Errors;
 
 namespace UserService.Application.Settings.Commands;

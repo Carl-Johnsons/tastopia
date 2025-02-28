@@ -17,6 +17,7 @@ import { useColorScheme } from "nativewind";
 import { colors } from "@/constants/colors";
 import { FONTS } from "@/constants/fonts";
 import useColorizer from "@/hooks/useColorizer";
+import { SignalRHubProvider } from "@/components/SignalRProvider";
 
 import("../global.css");
 
@@ -49,25 +50,27 @@ const RootLayout = () => {
             <I18nextProvider i18n={i18n}>
               <OutSidePressProvider>
                 <SafeAreaProvider>
-                  <BottomSheetModalProvider>
-                    <StatusBar
-                      backgroundColor={bgColor}
-                      barStyle={barStyle}
-                    />
-                    <Stack
-                      screenOptions={{
-                        headerShown: false
-                      }}
-                    >
-                      <Stack.Screen name='(public)' />
-                      <Stack.Screen name='(protected)' />
-                      <Stack.Screen
-                        name='(modals)'
-                        options={{ presentation: "modal" }}
+                  <SignalRHubProvider>
+                    <BottomSheetModalProvider>
+                      <StatusBar
+                        backgroundColor={bgColor}
+                        barStyle={barStyle}
                       />
-                      <Stack.Screen name='+not-found' />
-                    </Stack>
-                  </BottomSheetModalProvider>
+                      <Stack
+                        screenOptions={{
+                          headerShown: false
+                        }}
+                      >
+                        <Stack.Screen name='(public)' />
+                        <Stack.Screen name='(protected)' />
+                        <Stack.Screen
+                          name='(modals)'
+                          options={{ presentation: "modal" }}
+                        />
+                        <Stack.Screen name='+not-found' />
+                      </Stack>
+                    </BottomSheetModalProvider>
+                  </SignalRHubProvider>
                 </SafeAreaProvider>
               </OutSidePressProvider>
             </I18nextProvider>

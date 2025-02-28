@@ -1,7 +1,6 @@
 ﻿using Contract.Extension;
 using IdentityService.Infrastructure.Persistence;
 using IdentityService.Infrastructure.Persistence.Mockup;
-using IdentityService.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +22,6 @@ public static class DependencyInjection
         services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
         services.AddScoped<MockupData>();
         services.AddCommonInfrastructureServices("DuendeIdentityServer");
-        services.AddSingleton<ISignalRService, SignalRService>();
 
         using (var serviceProvider = services.BuildServiceProvider())
         {
