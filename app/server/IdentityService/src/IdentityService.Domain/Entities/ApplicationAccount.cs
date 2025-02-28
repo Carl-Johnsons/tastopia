@@ -24,6 +24,8 @@ public class ApplicationAccount : IdentityUser
     public DateTime? PhoneOTPCreated { get; set; }
     public DateTime? PhoneOTPExpiry { get; set; }
     public int RequestOTPCount { get; set; } = 0;
+    [MaxLength(6)]
+    public string? ForgotPasswordOTP { get; set; } = null!;
 
     [Required]
     public bool IsActive { get; set; }

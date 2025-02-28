@@ -77,4 +77,8 @@ public class AccountError
         new("AccountError.UpdateAccountFailed",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Operation update account failed");
+    public static Error InvalidAccountMethod =>
+        new("AccountError.InvalidAccountMethod",
+            StatusCode: (int)HttpStatusCode.BadRequest,
+            Message: "Invalid account method");
 }
