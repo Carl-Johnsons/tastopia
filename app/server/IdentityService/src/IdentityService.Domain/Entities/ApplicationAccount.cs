@@ -23,9 +23,11 @@ public class ApplicationAccount : IdentityUser
     public string? UnlinkPhoneOTP { get; set; } = null!;
     public DateTime? PhoneOTPCreated { get; set; }
     public DateTime? PhoneOTPExpiry { get; set; }
-    public int RequestOTPCount { get; set; } = 0;
     [MaxLength(6)]
     public string? ForgotPasswordOTP { get; set; } = null!;
+    public DateTime? ForgotPasswordCreated { get; set; }
+    public DateTime? ForgotPasswordExpiry { get; set; }
+    public int RequestOTPCount { get; set; } = 0;
 
     [Required]
     public bool IsActive { get; set; }

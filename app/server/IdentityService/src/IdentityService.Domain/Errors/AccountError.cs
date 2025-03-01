@@ -81,4 +81,8 @@ public class AccountError
         new("AccountError.InvalidAccountMethod",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Invalid account method");
+    public static Error ResetPasswordFailed =>
+        new("AccountError.ResetPasswordFailed",
+            StatusCode: (int)HttpStatusCode.BadRequest,
+            Message: "Reset Password failed");
 }
