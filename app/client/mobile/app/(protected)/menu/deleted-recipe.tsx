@@ -22,7 +22,8 @@ const DeletedRecipe = () => {
     isFetchingNextPage,
     refetch,
     isRefetching,
-    isStale
+    isStale,
+    isLoading
   } = useGetDeletedRecipe();
 
   const onRefresh = useCallback(() => {
@@ -89,7 +90,7 @@ const DeletedRecipe = () => {
         renderItem={renderItem}
       />
 
-      {recipes.length === 0 && (
+      {!isLoading && recipes.length === 0 && (
         <View className='size-full'>
           <Empty type='emptyDeleted' />
         </View>
