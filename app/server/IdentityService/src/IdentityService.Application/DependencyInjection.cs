@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AutoMapper;
+using IdentityService.Application.Configs;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using UserProto;
 
@@ -10,6 +12,11 @@ public static class DependencyInjection
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         services.AddGrpcClientServices();
+        // Register automapper
+        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+        services.AddSingleton(mapper);
+        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
         return services;
     }
 

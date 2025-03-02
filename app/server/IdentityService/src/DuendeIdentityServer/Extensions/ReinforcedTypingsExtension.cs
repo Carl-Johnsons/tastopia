@@ -1,5 +1,4 @@
-﻿using Contract.Constants;
-using Contract.Extension;
+﻿using Contract.Extension;
 using IdentityService.Domain.Errors;
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
@@ -23,7 +22,7 @@ public static class ReinforcedTypingsExtension
         
         // DTO and Entities
         builder.ExportAsInterfaces([
-            typeof(LinkAccountDTO),
+            typeof(AccountIdentifierDTO),
             typeof(RegisterAccountDTO),
             typeof(VerifyAccountDTO),
             typeof(ApplicationAccount),

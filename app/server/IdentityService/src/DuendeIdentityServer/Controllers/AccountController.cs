@@ -25,7 +25,7 @@ public class AccountController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> RegisterWithEmail([FromRoute] string method, [FromBody] RegisterAccountDTO dto)
     {
-        if (!Enum.TryParse(method, out AccountMethod accountMethod))
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
         {
             return BadRequest("Invalid account method");
         }
@@ -42,7 +42,7 @@ public class AccountController : BaseApiController
     [ProducesResponseType(400)]
     public async Task<IActionResult> VerifyEmail([FromRoute] string method, [FromBody] VerifyAccountDTO dto)
     {
-        if (!Enum.TryParse(method, out AccountMethod accountMethod))
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
         {
             return BadRequest("Invalid account method");
         }
@@ -62,7 +62,7 @@ public class AccountController : BaseApiController
     [ProducesResponseType(400)]
     public async Task<IActionResult> ResendOTP([FromRoute] string method)
     {
-        if (!Enum.TryParse(method, out AccountMethod accountMethod))
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
         {
             return BadRequest("Invalid account method");
         }
@@ -81,9 +81,9 @@ public class AccountController : BaseApiController
     [HttpPost("link/{method}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> LinkAccount([FromRoute] string method, LinkAccountDTO dto)
+    public async Task<IActionResult> LinkAccount([FromRoute] string method, AccountIdentifierDTO dto)
     {
-        if (!Enum.TryParse(method, out AccountMethod accountMethod))
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
         {
             return BadRequest("Invalid account method");
         }
@@ -104,9 +104,9 @@ public class AccountController : BaseApiController
     [HttpPost("unlink/{method}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> UnlinkAccount([FromRoute] string method, LinkAccountDTO dto)
+    public async Task<IActionResult> UnlinkAccount([FromRoute] string method, AccountIdentifierDTO dto)
     {
-        if (!Enum.TryParse(method, out AccountMethod accountMethod))
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
         {
             return BadRequest("Invalid account method");
         }
@@ -130,7 +130,7 @@ public class AccountController : BaseApiController
     [ProducesResponseType(400)]
     public async Task<IActionResult> CheckForgotPassword([FromRoute] string method, CheckForgotPasswordDTO dto)
     {
-        if (!Enum.TryParse(method, out AccountMethod accountMethod))
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
         {
             return BadRequest("Invalid account method");
         }
@@ -153,7 +153,7 @@ public class AccountController : BaseApiController
     [ProducesResponseType(400)]
     public async Task<IActionResult> ChangePassword([FromRoute] string method, ChangePasswordDTO dto)
     {
-        if (!Enum.TryParse(method, out AccountMethod accountMethod))
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
         {
             return BadRequest("Invalid account method");
         }
@@ -169,5 +169,27 @@ public class AccountController : BaseApiController
         var result = await _sender.Send(command);
         result.ThrowIfFailure();
         return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpPost("find-account/{method}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> FindAccount([FromRoute] string method, AccountIdentifierDTO dto)
+    {
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+
+        var query = new FindAccountQuery
+        {
+            Identifier = dto.Identifier,
+            Method = accountMethod,
+        };
+
+        var result = await _sender.Send(query);
+        result.ThrowIfFailure();
+        return Ok(result.Value);
     }
 }

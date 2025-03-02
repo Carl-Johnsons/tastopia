@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -21,8 +22,4 @@
 			<HintPath Condition="Exists('..\Contract\Contract.dll')">..\Contract\Contract.dll</HintPath>
 		</Reference>
 	</ItemGroup>
-	<!--<ItemGroup>
-		<Protobuf Include="..\..\..\Contract\Contract\Protos\UserService.proto" Link="Protos\UserService.proto" GrpcServices="Client" />
-	</ItemGroup>-->
-
 </Project>

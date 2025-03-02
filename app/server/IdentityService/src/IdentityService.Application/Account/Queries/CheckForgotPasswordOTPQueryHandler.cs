@@ -14,7 +14,7 @@ public record CheckForgotPasswordOTPQuery : IRequest<Result>
 
 public class CheckForgotPasswordOTPQueryHandler : IRequestHandler<CheckForgotPasswordOTPQuery, Result>
 {
-    public UserManager<ApplicationAccount> _userManager { get; set; }
+    private readonly UserManager<ApplicationAccount> _userManager;
 
     public CheckForgotPasswordOTPQueryHandler(UserManager<ApplicationAccount> userManager)
     {
