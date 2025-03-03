@@ -80,7 +80,7 @@ export default function Header({
         imageStyle={{ opacity: 10 }}
         source={backgroundUrl}
       >
-        <LinearGradient colors={["#00000040", black.DEFAULT]}>
+        <LinearGradient colors={["#00000040", black[200] as string]}>
           <View className='flex gap-2 px-4 pb-4 pt-2'>
             <View className='flex-row justify-between'>
               <ArrowBackIcon

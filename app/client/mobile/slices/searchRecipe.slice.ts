@@ -33,6 +33,10 @@ export const selectSearchTagCodes = createSelector([selectSearchTags], tags =>
   tags.map(tag => tag.code)
 );
 
+export const selectSearchTagValues = createSelector([selectSearchTags], tags =>
+  tags.map(tag => tag.value)
+);
+
 export const searchRecipeSlice = createSlice({
   name: "searchRecipe",
   initialState,

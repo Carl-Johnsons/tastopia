@@ -39,7 +39,7 @@ const Menu = () => {
       pathname: "/(protected)/user/[id]",
       params: { id: accountId ?? "" }
     });
-  }, [router]);
+  }, [router, accountId]);
 
   const navigationCallbacks = [
     useProtectedExclude(() => goToProfile(), [ROLE.GUEST]),
