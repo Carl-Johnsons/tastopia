@@ -23,7 +23,7 @@ public class AccountController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(JsonElement), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> RegisterWithEmail([FromRoute] string method, [FromBody] RegisterAccountDTO dto)
+    public async Task<IActionResult> RegisterAccount([FromRoute] string method, [FromBody] RegisterAccountDTO dto)
     {
         if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
         {
@@ -40,7 +40,7 @@ public class AccountController : BaseApiController
     [HttpPost("verify/{method}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> VerifyEmail([FromRoute] string method, [FromBody] VerifyAccountDTO dto)
+    public async Task<IActionResult> VerifyAccount([FromRoute] string method, [FromBody] VerifyAccountDTO dto)
     {
         if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
         {
