@@ -8,9 +8,15 @@ import { stringify } from "@/utils/debug";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { UserState } from "@/slices/user.slice";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
-import { IRegisterAccountDTO } from "@/generated/interfaces/identity.interface";
+import {
+  IAccountIdentifierDTO,
+  IChangePasswordDTO,
+  ICheckForgotPasswordDTO,
+  IRegisterAccountDTO
+} from "@/generated/interfaces/identity.interface";
 import {
   IGetUserDetailsResponse,
+  ISimpleUserResponse,
   IUpdateUserDTO,
   IUserReportUserDTO,
   IUserReportUserResponse
@@ -19,6 +25,7 @@ import {
   IAdvancePaginatedMetadata,
   IErrorResponseDTO
 } from "@/generated/interfaces/common.interface";
+import { ForgotPasswordFormFields } from "@/components/screen/forgot/ForgotPasswordForm";
 
 export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {
@@ -185,6 +192,67 @@ export const useResendVerifyCode = () => {
 
         throw new Error("An error has occurred.");
       }
+    }
+  });
+};
+
+export const useFindAccount = () => {
+  return useMutation<
+    ISimpleUserResponse,
+    AxiosError,
+    { data: ForgotPasswordFormFields; type: IDENTIFIER_TYPE }
+  >({
+    mutationFn: async ({ data, type }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/find-account/${ENDPOINT_TYPE}`;
+
+      const { data: response } = await axiosInstance.post<ISimpleUserResponse>(url, data);
+      return response;
+    }
+  });
+};
+
+export const useRequestChangePassword = () => {
+  return useMutation<
+    undefined,
+    AxiosError,
+    { data: IAccountIdentifierDTO; type: IDENTIFIER_TYPE }
+  >({
+    mutationFn: async ({ data, type }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/change-password/${ENDPOINT_TYPE}/request`;
+
+      await axiosInstance.post(url, data);
+    }
+  });
+};
+
+export const useCheckForgotPasswordOTP = () => {
+  return useMutation<
+    undefined,
+    AxiosError,
+    { data: ICheckForgotPasswordDTO; type: IDENTIFIER_TYPE }
+  >({
+    mutationFn: async ({ data, type }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/forgot-password/${ENDPOINT_TYPE}/check`;
+
+      await axiosInstance.post(url, data);
+    }
+  });
+};
+
+export const useChangePassword = () => {
+  return useMutation<
+    undefined,
+    AxiosError,
+    { data: IChangePasswordDTO; type: IDENTIFIER_TYPE }
+  >({
+    mutationFn: async ({ data, type }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/change-password/${ENDPOINT_TYPE}`;
+
+      await axiosInstance.post(url, data);
     }
   });
 };
