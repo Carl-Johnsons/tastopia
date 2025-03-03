@@ -1,19 +1,19 @@
-import { useState } from "react";
 import { Alert, Platform, Pressable, Text, View } from "react-native";
-import { router } from "expo-router";
-import LoginForm, { LoginFormFields } from "@/components/screen/login/LoginForm";
-import { useLogin } from "@/api/user";
+import { dismissKeyboard } from "@/utils/keyboard";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
+import { router } from "expo-router";
+import { stringify } from "@/utils/debug";
 import { useAppDispatch } from "@/store/hooks";
-import GoogleButton from "@/components/GoogleButton";
-import CircleBg from "@/components/CircleBg";
+import { useLogin } from "@/api/user";
+import { useState } from "react";
 import BackButton from "@/components/BackButton";
+import CircleBg from "@/components/CircleBg";
+import GoogleButton from "@/components/GoogleButton";
+import LoginForm, { LoginFormFields } from "@/components/screen/login/LoginForm";
 import useBounce from "@/hooks/animation/useBounce";
 import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
-import { stringify } from "@/utils/debug";
 import useSyncSetting from "@/hooks/user/useSyncSetting";
 import useSyncUser from "@/hooks/user/useSyncUser";
-import { dismissKeyboard } from "@/utils/keyboard";
 
 const Login = () => {
   const isAndroid = Platform.OS === "android";

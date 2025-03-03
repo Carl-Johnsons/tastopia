@@ -1,6 +1,7 @@
 ﻿using Contract.Constants;
 using Duende.IdentityServer.Extensions;
 using IdentityService.Application.Account.Commands;
+using IdentityService.Application.Account.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json.Linq;
 using System.Text.Json;
@@ -18,107 +19,149 @@ public class AccountController : BaseApiController
     }
 
     [AllowAnonymous]
-    [HttpPost("register/email")]
+    [HttpPost("register/{method}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(JsonElement), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> RegisterWithEmail(RegisterAccountDTO dto)
+    public async Task<IActionResult> RegisterWithEmail([FromRoute] string method, [FromBody] RegisterAccountDTO dto)
     {
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+
         var command = _mapper.Map<RegisterAccountCommand>(dto);
-        command.Method = AccountMethod.Email;
+        command.Method = accountMethod;
         var result = await _sender.Send(command);
         result.ThrowIfFailure();
         return Ok(JToken.Parse(result.Value?.Json.GetRawText()!));
+    }
+
+    [HttpPost("verify/{method}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> VerifyEmail([FromRoute] string method, [FromBody] VerifyAccountDTO dto)
+    {
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+
+        var command = _mapper.Map<VerifyAccountCommand>(dto);
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+        command.Method = accountMethod;
+        command.AccountId = Guid.Parse(userId!);
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [HttpPost("resend/{method}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> ResendOTP([FromRoute] string method)
+    {
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+
+        var command = new ResendOTPCommand();
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+
+        command.Method = accountMethod;
+        command.AccountId = Guid.Parse(userId!);
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [HttpPost("link/{method}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> LinkAccount([FromRoute] string method, AccountIdentifierDTO dto)
+    {
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+        var command = new LinkAccountCommand
+        {
+            Identifier = dto.Identifier,
+            Method = accountMethod,
+            Id = Guid.Parse(userId!)
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [HttpPost("unlink/{method}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> UnlinkAccount([FromRoute] string method, AccountIdentifierDTO dto)
+    {
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+        var command = new UnlinkAccountCommand
+        {
+            Identifier = dto.Identifier,
+            Method = accountMethod,
+            Id = Guid.Parse(userId!)
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
     }
 
     [AllowAnonymous]
-    [HttpPost("register/phone")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(JsonElement), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> RegisterWithPhone(RegisterAccountDTO dto)
-    {
-        var command = _mapper.Map<RegisterAccountCommand>(dto);
-        command.Method = AccountMethod.Phone;
-        var result = await _sender.Send(command);
-        result.ThrowIfFailure();
-        return Ok(JToken.Parse(result.Value?.Json.GetRawText()!));
-    }
-
-    [HttpPost("verify/email")]
+    [HttpPost("forgot-password/{method}/check")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> VerifyEmail(VerifyAccountDTO dto)
+    public async Task<IActionResult> CheckForgotPassword([FromRoute] string method, CheckForgotPasswordDTO dto)
     {
-        var command = _mapper.Map<VerifyAccountCommand>(dto);
-        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
-        command.Method = AccountMethod.Email;
-        command.AccountId = Guid.Parse(userId!);
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
 
-        var result = await _sender.Send(command);
-        result.ThrowIfFailure();
-        return NoContent();
-    }
-
-    [HttpPost("verify/phone")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> VerifyPhone(VerifyAccountDTO dto)
-    {
-        var command = _mapper.Map<VerifyAccountCommand>(dto);
-        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
-
-        command.Method = AccountMethod.Phone;
-        command.AccountId = Guid.Parse(userId!);
-
-        var result = await _sender.Send(command);
-        result.ThrowIfFailure();
-        return NoContent();
-    }
-
-    [HttpPost("resend/email")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> ResendEmailOTP()
-    {
-        var command = new ResendOTPCommand();
-        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
-
-        command.Method = AccountMethod.Email;
-        command.AccountId = Guid.Parse(userId!);
-
-        var result = await _sender.Send(command);
-        result.ThrowIfFailure();
-        return NoContent();
-    }
-
-    [HttpPost("resend/phone")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> ResendPhoneOTP()
-    {
-        var command = new ResendOTPCommand();
-        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
-
-        command.Method = AccountMethod.Phone;
-        command.AccountId = Guid.Parse(userId!);
-
-        var result = await _sender.Send(command);
-        result.ThrowIfFailure();
-        return NoContent();
-    }
-
-    [HttpPost("link/email")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> LinkEmailToAccount(LinkAccountDTO dto)
-    {
-        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
-        var command = new LinkAccountCommand
+        var query = new CheckForgotPasswordOTPQuery
         {
             Identifier = dto.Identifier,
-            Method = AccountMethod.Email,
-            Id = Guid.Parse(userId!)
+            Method = accountMethod,
+            OTP = dto.OTP
+        };
+
+        var result = await _sender.Send(query);
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpPost("change-password/{method}/request")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> RequestChangePassword([FromRoute] string method, AccountIdentifierDTO dto)
+    {
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+
+        var command = new RequestChangePasswordCommand
+        {
+            Identifier = dto.Identifier,
+            Method = accountMethod,
         };
 
         var result = await _sender.Send(command);
@@ -126,17 +169,23 @@ public class AccountController : BaseApiController
         return NoContent();
     }
 
-    [HttpPost("link/phone")]
+    [AllowAnonymous]
+    [HttpPost("change-password/{method}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> LinkPhoneToAccount(LinkAccountDTO dto)
+    public async Task<IActionResult> ChangePassword([FromRoute] string method, ChangePasswordDTO dto)
     {
-        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
-        var command = new LinkAccountCommand
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+
+        var command = new ChangePasswordCommand
         {
             Identifier = dto.Identifier,
-            Method = AccountMethod.Phone,
-            Id = Guid.Parse(userId!)
+            Method = accountMethod,
+            OTP = dto.OTP,
+            Password = dto.Password
         };
 
         var result = await _sender.Send(command);
@@ -144,57 +193,25 @@ public class AccountController : BaseApiController
         return NoContent();
     }
 
-    [HttpPost("unlink/email")]
+    [AllowAnonymous]
+    [HttpPost("find-account/{method}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> UnlinkEmailToAccount(LinkAccountDTO dto)
+    public async Task<IActionResult> FindAccount([FromRoute] string method, AccountIdentifierDTO dto)
     {
-        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
-        var command = new UnlinkAccountCommand
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+
+        var query = new FindAccountQuery
         {
             Identifier = dto.Identifier,
-            Method = AccountMethod.Email,
-            Id = Guid.Parse(userId!)
+            Method = accountMethod,
         };
 
-        var result = await _sender.Send(command);
+        var result = await _sender.Send(query);
         result.ThrowIfFailure();
-        return NoContent();
-    }
-
-    [HttpPost("unlink/phone")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> UnlinkPhoneToAccount(LinkAccountDTO dto)
-    {
-        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
-        var command = new UnlinkAccountCommand
-        {
-            Identifier = dto.Identifier,
-            Method = AccountMethod.Phone,
-            Id = Guid.Parse(userId!)
-        };
-
-        var result = await _sender.Send(command);
-        result.ThrowIfFailure();
-        return NoContent();
-    }
-
-    [HttpPost("unlink/google")]
-    [ProducesResponseType(204)]
-    [ProducesResponseType(400)]
-    public async Task<IActionResult> UnlinkGoogleToAccount(LinkAccountDTO dto)
-    {
-        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
-        var command = new UnlinkAccountCommand
-        {
-            Identifier = dto.Identifier,
-            Method = AccountMethod.Google,
-            Id = Guid.Parse(userId!)
-        };
-
-        var result = await _sender.Send(command);
-        result.ThrowIfFailure();
-        return NoContent();
+        return Ok(result.Value);
     }
 }

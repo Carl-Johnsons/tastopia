@@ -4,6 +4,7 @@ import { selectAccessToken } from "@/slices/auth.slice";
 import { selectUserId } from "@/slices/user.slice";
 import { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { useSubscribeSignalREvents } from "@/hooks/signalR/useSubscribeSignalREvents";
+import { transformPlatformURI } from "@/utils/functions";
 
 interface SignalRHubContextType {
   connection: HubConnection | null;
@@ -19,7 +20,7 @@ interface Props {
 const SignalRHubContext = createContext<SignalRHubContextType | null>(null);
 
 const SignalRHubProvider = ({ children }: Props) => {
-  const hubUrl = `http://${API_GATEWAY_HOST}:5004/tastopia-hub`;
+  const hubUrl = transformPlatformURI(`http://${API_GATEWAY_HOST}:5004/tastopia-hub`);
   const [waitingToReconnect, setWaitingToReconnect] = useState(true);
   const currentUserId = selectUserId();
   const accessToken = selectAccessToken();

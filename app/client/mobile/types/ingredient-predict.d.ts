@@ -2,7 +2,10 @@ type IngredientStreamResponse = {
   classifications: {
     class: number;
     confidence: number;
-    name: string;
+    name: {
+      en: string;
+      vi: string;
+    };
   }[];
   boxes: number[][];
 };
