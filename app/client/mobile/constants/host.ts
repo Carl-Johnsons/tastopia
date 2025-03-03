@@ -12,10 +12,9 @@ const API_GATEWAY_SCHEME = process.env.EXPO_PUBLIC_API_GATEWAY_SCHEME;
 const API_GATEWAY_HOST =
   process.env.EXPO_PUBLIC_API_GATEWAY_HOST ?? expoConfig?.hostUri?.split(":")[0];
 const API_GATEWAY_PORT = process.env.EXPO_PUBLIC_API_GATEWAY_PORT;
-const API_GATEWAY_HOST_DEV_BUILD = `${API_GATEWAY_HOST}.nip.io`;
 
 const API_URI = transformPlatformURI(
-  `${API_GATEWAY_SCHEME}://${API_GATEWAY_HOST_DEV_BUILD}:${API_GATEWAY_PORT}`
+  `${API_GATEWAY_SCHEME}://${API_GATEWAY_HOST}:${API_GATEWAY_PORT}`
 );
 
 console.log("API gateways uri is " + API_URI);

@@ -1,6 +1,6 @@
 ﻿namespace DuendeIdentityServer.DTOs;
 
-public class LinkAccountDTO
+public class AccountIdentifierDTO
 {
     public string Identifier { get; set; } = null!;
 }
