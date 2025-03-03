@@ -1,40 +1,35 @@
 import { ActivityIndicator, Pressable, Text, TextInputProps, View } from "react-native";
 import { colors } from "@/constants/colors";
 import { Controller, useForm } from "react-hook-form";
-import { LoginParams } from "@/api/user";
-import { loginSchema } from "@/lib/validation/auth";
-import { useRouter } from "expo-router";
+import { forgotPasswordSchema } from "@/lib/validation/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "../../Button";
 import Input from "../../Input";
 import useBounce from "@/hooks/animation/useBounce";
 
-export interface LoginFormFields extends LoginParams {}
+export interface ForgotPasswordFormFields {
+  identifier?: string;
+}
 
 export type AuthFormProps = {
   isLoading?: boolean;
   className?: string;
 };
 
-type LoginFormProps = {
-  onSubmit: (data: LoginFormFields) => Promise<void>;
+type ForgotPasswordFormProps = {
+  onSubmit: (data: ForgotPasswordFormFields) => Promise<void>;
 } & AuthFormProps;
 
-export const LoginForm = (props: LoginFormProps) => {
+export const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
   const {
     control,
     handleSubmit,
     formState: { errors }
-  } = useForm<LoginFormFields>({
-    resolver: yupResolver(loginSchema)
+  } = useForm({
+    resolver: yupResolver(forgotPasswordSchema)
   });
   const { onSubmit, isLoading } = props;
   const { animate, animatedStyles } = useBounce();
-  const router = useRouter();
-
-  const onNavigateToForgot = () => {
-    router.push("/forgot-password");
-  };
 
   return (
     <View className={`gap-[2vh] ${props.className}`}>
@@ -58,31 +53,6 @@ export const LoginForm = (props: LoginFormProps) => {
           <Text className='font-sans text-red-400'>{errors.identifier.message}</Text>
         ) : null}
       </View>
-
-      <View>
-        <Text className='mb-3 font-sans text-lg text-gray-600'>Password</Text>
-        <Controller
-          name='password'
-          control={control}
-          render={({ field: { onBlur, onChange, value } }) => (
-            <CustomInput
-              value={value}
-              onBlur={onBlur}
-              onChangeText={onChange}
-              placeholder='Password'
-              secureTextEntry
-            />
-          )}
-        />
-        {errors.password ? (
-          <Text className='font-sans text-red-400'>{errors.password.message}</Text>
-        ) : null}
-      </View>
-      <Pressable onPress={onNavigateToForgot}>
-        <Text className='text-center font-medium text-lg text-primary'>
-          Forgot password?
-        </Text>
-      </Pressable>
       <Button
         onPress={() => {
           animate();
@@ -99,7 +69,7 @@ export const LoginForm = (props: LoginFormProps) => {
         }
       >
         <Text className='text-center font-sans font-semibold uppercase text-white'>
-          Log in
+          Find
         </Text>
       </Button>
     </View>
@@ -140,4 +110,4 @@ export const CustomInput = ({
   );
 };
 
-export default LoginForm;
+export default ForgotPasswordForm;

@@ -13,6 +13,35 @@ export const loginSchema = object({
   password: string().required("Please enter password.")
 });
 
+export const forgotPasswordSchema = object({
+  identifier: lazy(value => {
+    const emailRegex = /[a-zA-Z@]/;
+    const phoneNumberRegex = /^\d+$/;
+
+    if (typeof value !== "string") {
+      return string().required("Please enter email or phone number.");
+    }
+
+    if (emailRegex.test(value)) {
+      return string().email("Please enter a valid email address.");
+    } else if (phoneNumberRegex.test(value)) {
+      return string().matches(
+        /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/,
+        "Please enter a valid phone number."
+      );
+    }
+
+    return string().required("Please enter email or phone number.");
+  })
+});
+
+export const changePasswordSchema = object({
+  password: passwordSchema,
+  rePassword: string()
+    .oneOf([ref("password")], "Passwords must match.")
+    .required("Please confirm your password.")
+});
+
 export const registerSchema = object({
   fullName: string().required("Please enter your full name."),
   identifier: lazy(value => {

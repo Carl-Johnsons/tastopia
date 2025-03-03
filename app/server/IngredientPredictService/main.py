@@ -19,7 +19,7 @@ logging.addLevelName(logging.INFO, "Information")
 logging.addLevelName(logging.WARNING, "Warning")
 
 # Load the YOLO model
-model = YOLO("./model/best.pt")
+model = YOLO("./model/best_filtered.pt")
 box_model = YOLO('./model/bestv13.pt')
 
 envUtil = EnvUtility()
@@ -75,8 +75,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan, redirect_slashes=False)
 
 names = dict()
-for i in open("names.txt").read().splitlines():
-    names[i.split('_')[0]] = i.split('_')[1]
+for i in open("name_edited.txt", encoding='utf-8').read().splitlines():
+    names[i.split('_')[0]] = [i.split('_')[2], i.split('_')[4]]
 
 @app.get("/health")
 async def health():
@@ -96,7 +96,10 @@ async def predict(file: UploadFile = File(...)):
             classifications.append({
                 "class": result.names[cls],
                 "confidence": float(conf),
-                "name": names[result.names[cls]]
+                "name": {
+                    'en': names[result.names[cls]][0],
+                    'vi': names[result.names[cls]][1]
+                }
             })
 
     results = box_model(image, verbose=False)

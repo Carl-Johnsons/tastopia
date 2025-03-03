@@ -181,6 +181,7 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
                 RequireHttps = false
             }
         });
+
         if (discovery.IsError)
         {
             throw new Exception(discovery.Error);

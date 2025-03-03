@@ -1,5 +1,4 @@
-﻿using Contract.Constants;
-using Contract.Extension;
+﻿using Contract.Extension;
 using IdentityService.Domain.Errors;
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
@@ -20,16 +19,18 @@ public static class ReinforcedTypingsExtension
         ];
 
         builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
-        
+
         // DTO and Entities
         builder.ExportAsInterfaces([
-            typeof(LinkAccountDTO),
+            typeof(AccountIdentifierDTO),
             typeof(RegisterAccountDTO),
             typeof(VerifyAccountDTO),
             typeof(ApplicationAccount),
             typeof(Group),
             typeof(Permission),
-            typeof(RoleGroupPermission)
+            typeof(RoleGroupPermission),
+            typeof(CheckForgotPasswordDTO),
+            typeof(ChangePasswordDTO)
         ], config =>
         {
             config.FlattenHierarchy()

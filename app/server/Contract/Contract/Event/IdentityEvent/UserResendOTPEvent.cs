@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Contract.Event.IdentityEvent;
 
-[EntityName("UserResendOTPEvent")]
-public record UserResendOTPEvent
+[EntityName("UserSendOTPEvent")]
+public record UserSendOTPEvent
 {
     [Required]
     public Guid AccountId { get; set; }
@@ -15,4 +15,6 @@ public record UserResendOTPEvent
     public string OTP { get; set; } = null!;
     [Required]
     public AccountMethod Method { get; set; }
+    [Required]
+    public OTPMethod OTPMethod { get; set; }
 }

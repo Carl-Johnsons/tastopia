@@ -1,3 +1,5 @@
+import * as FileSystem from "expo-file-system";
+
 /**
  * The function `extensionToMimeType` maps file extensions to their corresponding MIME types.
  * @param {string} extension file's extension
@@ -35,4 +37,14 @@ const isOnlineImage = (url: string) => {
   return urlPattern.test(url);
 };
 
-export { extensionToMimeType, isOnlineImage };
+const getFileInfo = async (fileURI: string) => {
+  const fileInfo = await FileSystem.getInfoAsync(fileURI);
+  return fileInfo;
+};
+
+const isLessThanTheMB = (fileSize: number, smallerThanSizeMB: number) => {
+  const isOk = fileSize / 1024 / 1024 < smallerThanSizeMB;
+  return isOk;
+};
+
+export { extensionToMimeType, isOnlineImage, getFileInfo, isLessThanTheMB };
