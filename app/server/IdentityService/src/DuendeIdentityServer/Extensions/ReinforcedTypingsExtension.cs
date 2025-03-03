@@ -19,7 +19,7 @@ public static class ReinforcedTypingsExtension
         ];
 
         builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
-        
+
         // DTO and Entities
         builder.ExportAsInterfaces([
             typeof(AccountIdentifierDTO),
@@ -28,7 +28,9 @@ public static class ReinforcedTypingsExtension
             typeof(ApplicationAccount),
             typeof(Group),
             typeof(Permission),
-            typeof(RoleGroupPermission)
+            typeof(RoleGroupPermission),
+            typeof(CheckForgotPasswordDTO),
+            typeof(ChangePasswordDTO)
         ], config =>
         {
             config.FlattenHierarchy()

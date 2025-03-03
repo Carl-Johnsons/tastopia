@@ -148,7 +148,29 @@ public class AccountController : BaseApiController
     }
 
     [AllowAnonymous]
-    [HttpPost("forgot-password/{method}")]
+    [HttpPost("change-password/{method}/request")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> RequestChangePassword([FromRoute] string method, AccountIdentifierDTO dto)
+    {
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+
+        var command = new RequestChangePasswordCommand
+        {
+            Identifier = dto.Identifier,
+            Method = accountMethod,
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpPost("change-password/{method}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     public async Task<IActionResult> ChangePassword([FromRoute] string method, ChangePasswordDTO dto)

@@ -1,31 +1,30 @@
-﻿using Consul;
-using Contract.Constants;
+﻿using Contract.Constants;
 using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Application.Account.Commands;
 
-public record ForgotPasswordCommand : IRequest<Result>
+public record RequestChangePasswordCommand : IRequest<Result>
 {
     public string Identifier { get; set; } = null!;
     public AccountMethod Method { get; set; }
 }
 
-public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, Result>
+public class RequestChangePasswordCommandHandler : IRequestHandler<RequestChangePasswordCommand, Result>
 {
     public UserManager<ApplicationAccount> _userManager { get; set; }
     private IServiceBus _serviceBus { get; set; }
 
 
-    public ForgotPasswordCommandHandler(UserManager<ApplicationAccount> userManager,
+    public RequestChangePasswordCommandHandler(UserManager<ApplicationAccount> userManager,
                                         IServiceBus serviceBus)
     {
         _userManager = userManager;
         _serviceBus = serviceBus;
     }
 
-    public async Task<Result> Handle(ForgotPasswordCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(RequestChangePasswordCommand request, CancellationToken cancellationToken)
     {
         ApplicationAccount? account;
 
