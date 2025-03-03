@@ -62,12 +62,13 @@ public class ResendOTPCommandHandler : IRequestHandler<ResendOTPCommand, Result>
             return Result.Failure(AccountError.CreateAccountFailed);
         }
 
-        await _serviceBus.Publish(new UserResendOTPEvent
+        await _serviceBus.Publish(new UserSendOTPEvent
         {
             AccountId = request.AccountId,
             Identifier = acc.Email ?? "",
             Method = AccountMethod.Email,
-            OTP = OTP
+            OTP = OTP,
+            OTPMethod = OTPMethod.Resend
         });
         return Result.Success();
     }
@@ -98,12 +99,13 @@ public class ResendOTPCommandHandler : IRequestHandler<ResendOTPCommand, Result>
             return Result.Failure(AccountError.CreateAccountFailed);
         }
 
-        await _serviceBus.Publish(new UserResendOTPEvent
+        await _serviceBus.Publish(new UserSendOTPEvent
         {
             AccountId = request.AccountId,
             Identifier = acc.PhoneNumber ?? "",
             Method = AccountMethod.Phone,
-            OTP = OTP
+            OTP = OTP,
+            OTPMethod = OTPMethod.Resend
         });
         return Result.Success();
     }

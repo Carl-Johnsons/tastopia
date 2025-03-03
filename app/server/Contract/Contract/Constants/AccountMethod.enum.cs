@@ -7,3 +7,9 @@ public enum AccountMethod
     Username,
     Google
 }
+
+public enum OTPMethod
+{
+    Resend,
+    ForgotPassword
+}
