@@ -28,8 +28,7 @@ class BaseApiController {
 }
 
 class AccountController {
-    +RegisterWithEmail(RegisterAccountDTO dto): async Task<IActionResult>
-    +RegisterWithPhone(RegisterAccountDTO dto): async Task<IActionResult>
+    +RegisterAccount(string method, RegisterAccountDTO dto): async Task<IActionResult>
 }
 
 class RegisterAccountCommand {
