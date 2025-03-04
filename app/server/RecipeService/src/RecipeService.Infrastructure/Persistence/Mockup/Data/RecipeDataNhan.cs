@@ -2,7 +2,7 @@
 
 namespace RecipeService.Infrastructure.Persistence.Mockup.Data;
 
-public class RecipeDataThinh
+public class RecipeDataNhan
 {
     public static List<Recipe> Recipes = [
         new Recipe{

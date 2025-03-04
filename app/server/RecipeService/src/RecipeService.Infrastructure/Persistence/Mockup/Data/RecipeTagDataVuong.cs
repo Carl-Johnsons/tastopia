@@ -2,7 +2,7 @@
 
 namespace RecipeService.Infrastructure.Persistence.Mockup.Data;
 
-public class RecipeTagDataThinh
+public class RecipeTagDataVuong
 {
     public static List<RecipeTag> Data => [
         
@@ -41,7 +41,7 @@ public class RecipeTagDataThinh
 
         new RecipeTag { RecipeId = Guid.Parse("1ae9fafd-9446-4106-99df-de1517f8606b"), TagId = Guid.Parse("26529e4b-0504-4da6-aa2c-b90232d8ff68") }, 
         new RecipeTag { RecipeId = Guid.Parse("9c57378a-0e5f-4def-bb60-59e404c1cf9d"), TagId = Guid.Parse("26529e4b-0504-4da6-aa2c-b90232d8ff68") }, 
-        ];
+
         new RecipeTag { RecipeId = Guid.Parse("f56e3110-dc48-4919-a463-12a3fda85724"), TagId = Guid.Parse("31dc282f-d553-43f6-8ba4-ca050e1b8343") }, 
         ];
 

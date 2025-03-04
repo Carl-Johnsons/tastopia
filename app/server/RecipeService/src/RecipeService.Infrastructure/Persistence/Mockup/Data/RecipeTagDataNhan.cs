@@ -2,7 +2,7 @@
 
 namespace RecipeService.Infrastructure.Persistence.Mockup.Data;
 
-public class RecipeTagDataThinh
+public class RecipeTagDataNhan
 {
     public static List<RecipeTag> Data => [
         // Stir-Fried Chicken with Bitter Melon
