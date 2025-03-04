@@ -121,6 +121,19 @@ class CloudinaryFileError {
     {static} +InvalidFile(string Type, string ChosenFileType): Error
 }
 
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+DeleteMultipleImageCommand --|> "IRequest<TResponse>"
+UpdateMultipleImageFileCommand --|> "IRequest<TResponse>"
+CreateMultipleImageFileCommand --|> "IRequest<TResponse>"
+
+UpdateMultipleImageFileCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+CreateMultipleImageFileCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+DeleteMultipleImageCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+
 GrpcUploadFileService "1"--"1" GrpcUpdateMultipleImageRequest
 GrpcUploadFileService "1"--"1..*" GrpcListFileDTO
 GrpcUploadFileService "1"--"1..*" GrpcFileDTO

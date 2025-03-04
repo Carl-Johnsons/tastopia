@@ -56,6 +56,16 @@ namespace IdentityService.Infrastructure.Persistence.Migrations
                     b.Property<DateTime?>("EmailOTPExpiry")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("ForgotPasswordCreated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ForgotPasswordExpiry")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ForgotPasswordOTP")
+                        .HasMaxLength(6)
+                        .HasColumnType("character varying(6)");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")

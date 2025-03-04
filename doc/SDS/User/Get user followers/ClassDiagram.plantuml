@@ -1,0 +1,104 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+together {
+    class BaseApiController {
+        #_sender: ISender
+        #_httpContextAccessor: HttpContextAccessor
+    }
+
+    class UserController {
+        +GetUserFollower(GetUserFollowersDTO getUserFollowersDTO): async Task<IActionResult>
+    }
+
+    class GetUserFollowersQuery {
+        +AccountId: Guid
+        +Skip: int
+        +Keyword: string
+    }
+
+    class GetUserFollowersDTO {
+        +Skip: int
+        +Keyword: string
+    }
+}
+
+class GetUserFollowersQueryHandler {
+    - _context : IApplicationDbContext
+    - _paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata> 
+    + Handle(request: GetUserFollowersQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedSimpleUserListResponse?>>
+}
+
+class PaginatedSimpleUserListResponse
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    + PaginatedData: IEnumerable<Type>
+    + Metadata: MetadataType
+}
+
+class CommonPaginatedMetadata {
+    + TotalPage: int
+
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    + HasNextPage: bool
+}
+
+
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+class USER_CONSTANTS {
+    {static} +USER_LIMIT: int
+}
+
+class SimpleUserResponse {
+    - Id : Guid
+    - AvtUrl : string
+    - DisplayName : string
+    - Username : string
+    - NumberOfRecipe : int
+    - IsFollowing : bool
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+UserController --|> BaseApiController
+UserController "1"--"1" GetUserFollowersQuery
+UserController "1"--"1" getUserFollowersDTO
+GetUserFollowersQuery --|> "IRequest<TResponse>"
+
+GetUserFollowersQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetUserFollowersQueryHandler "1" o--"1" GetUserFollowersQuery
+GetUserFollowersQueryHandler "1" o--"1" UserError
+GetUserFollowersQueryHandler "1" o--"1" IPaginateDataUtility
+GetUserFollowersQueryHandler "1" o--"1" IApplicationDbContext
+GetUserFollowersQueryHandler "1" o--"1" USER_CONSTANTS
+GetUserFollowersQueryHandler "1" o--"1" SimpleUserResponse
+GetUserFollowersQueryHandler "1" o--"1" Result
+GetUserFollowersQueryHandler "1" o--"1" AdvancePaginatedMetadata
+GetUserFollowersQueryHandler "1" o--"1" PaginatedSimpleUserListResponse
+
+"BasePaginatedResponse<Type,MetadataType>" "1" <|-up-"1" PaginatedSimpleUserListResponse
+
+' Style
+CommonPaginatedMetadata -[hidden]up- AdvancePaginatedMetadata
+
+Error "1" --"1" UserError
+
+@enduml

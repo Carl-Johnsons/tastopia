@@ -35,7 +35,8 @@ const bookmark = () => {
     isFetchingNextPage,
     refetch,
     isRefetching,
-    isStale
+    isStale,
+    isLoading
   } = useGetBookmarks();
 
   const onRefresh = useCallback(() => {
@@ -107,7 +108,7 @@ const bookmark = () => {
         renderItem={renderItem}
       />
 
-      {recipes.length === 0 && (
+      {!isLoading && recipes.length === 0 && (
         <View className='size-full'>
           <Empty type='emptyBookmark' />
         </View>

@@ -1,13 +1,9 @@
-﻿using Consul;
-using MassTransit;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson;
-using System.Reflection;
 using TrackingService.Infrastructure.Persistence;
 using TrackingService.Infrastructure.Persistence.Mockup;
-using TrackingService.Infrastructure.Services;
 using Contract.Extension;
 
 namespace TrackingService.Infrastructure;
@@ -27,7 +23,6 @@ public static class DependencyInjection
         services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
         services.AddScoped<MockupData>();
         services.AddCommonInfrastructureServices("TrackingService.API");
-        services.AddSingleton<ISignalRService, SignalRService>();
 
         using (var serviceProvider = services.BuildServiceProvider())
         {

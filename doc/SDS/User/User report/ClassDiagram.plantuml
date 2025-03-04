@@ -1,0 +1,70 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class UserController {
+    +UserReportUser([FromBody] UserReportUserDTO userReportUserDTO): async Task<IActionResult>
+}
+
+class UserReportUserCommand {
+    +ReporterId : Guid
+    +ReportedId : Guid
+    +ReasonCodes : List<string>
+    +AdditionalDetails : string
+}
+
+class UserReportUserCommandHandler {
+    - _context : IApplicationDbContext
+    - _serviceBus: IServiceBus 
+    + Handle(request: UserReportUserCommand, cancellationToken: CancellationToken) : Task<Result<UserReportUserResponse?>>
+}
+
+class UserReportUserDTO {
+    +AccountId : Guid
+    +ReasonCodes : List<string>
+    +AdditionalDetails : string
+}
+
+class UserReportUserResponse {
+    - Report : UserReport
+    - IsRemoved : Guid
+}
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+UserController --|> BaseApiController
+UserController "1"--"1" UserReportUserDTO
+UserController "1"--"1" UserReportUserCommand
+
+UserReportUserCommand --|> "IRequest<TResponse>"
+
+UserReportUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UserReportUserCommandHandler "1" o--"1" UserReportUserCommand
+UserReportUserCommandHandler "1" o--"1" IApplicationDbContext
+UserReportUserCommandHandler "1" o--"1" UserReportUserResponse
+UserReportUserCommandHandler "1" o--"1" Result
+UserReportUserCommandHandler "1" --"1..*" UserError
+
+Error "1" --"1" UserError
+
+@enduml

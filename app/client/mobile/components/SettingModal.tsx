@@ -56,6 +56,7 @@ import useColorizer from "@/hooks/useColorizer";
 import { router } from "expo-router";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 import { useQueryClient } from "react-query";
+import { IUpdateUserDTO } from "@/generated/interfaces/user.interface";
 
 type SettingModalProps = {
   ref: RefObject<BottomSheetMethods>;
@@ -501,7 +502,7 @@ const NotificationSetting = () => {
     const data: UpdateSettingParams = {
       settings: [
         {
-          key: SETTING_KEY.NOTIFICATION_COMMENT,
+          key,
           value: newValue
         }
       ]

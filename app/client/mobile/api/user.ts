@@ -1,6 +1,6 @@
 import { loginSchema, registerSchema } from "@/lib/validation/auth";
 import { axiosInstance, protectedAxiosInstance } from "@/constants/host";
-import { useMutation, useQuery } from "react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { InferType } from "yup";
 import { CLIENT_ID, SCOPE } from "@/constants/api";
 import { AxiosError } from "axios";
@@ -8,14 +8,24 @@ import { stringify } from "@/utils/debug";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { UserState } from "@/slices/user.slice";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
-import { IRegisterAccountDTO } from "@/generated/interfaces/identity.interface";
+import {
+  IAccountIdentifierDTO,
+  IChangePasswordDTO,
+  ICheckForgotPasswordDTO,
+  IRegisterAccountDTO
+} from "@/generated/interfaces/identity.interface";
 import {
   IGetUserDetailsResponse,
+  ISimpleUserResponse,
   IUpdateUserDTO,
   IUserReportUserDTO,
   IUserReportUserResponse
 } from "@/generated/interfaces/user.interface";
-import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
+import {
+  IAdvancePaginatedMetadata,
+  IErrorResponseDTO
+} from "@/generated/interfaces/common.interface";
+import { ForgotPasswordFormFields } from "@/components/screen/forgot/ForgotPasswordForm";
 
 export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {
@@ -93,7 +103,7 @@ export const useGetUserDetails = () => {
         const { data } = await protectedAxiosInstance.get(url);
         return data;
       } catch (error) {
-        console.debug("useGetUserDetails", JSON.stringify(error));
+        console.debug("useGetUserDetails", stringify(error));
 
         if (error instanceof AxiosError) {
           const data = error.response?.data as IErrorResponseDTO;
@@ -182,6 +192,67 @@ export const useResendVerifyCode = () => {
 
         throw new Error("An error has occurred.");
       }
+    }
+  });
+};
+
+export const useFindAccount = () => {
+  return useMutation<
+    ISimpleUserResponse,
+    AxiosError,
+    { data: ForgotPasswordFormFields; type: IDENTIFIER_TYPE }
+  >({
+    mutationFn: async ({ data, type }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/find-account/${ENDPOINT_TYPE}`;
+
+      const { data: response } = await axiosInstance.post<ISimpleUserResponse>(url, data);
+      return response;
+    }
+  });
+};
+
+export const useRequestChangePassword = () => {
+  return useMutation<
+    undefined,
+    AxiosError,
+    { data: IAccountIdentifierDTO; type: IDENTIFIER_TYPE }
+  >({
+    mutationFn: async ({ data, type }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/change-password/${ENDPOINT_TYPE}/request`;
+
+      await axiosInstance.post(url, data);
+    }
+  });
+};
+
+export const useCheckForgotPasswordOTP = () => {
+  return useMutation<
+    undefined,
+    AxiosError,
+    { data: ICheckForgotPasswordDTO; type: IDENTIFIER_TYPE }
+  >({
+    mutationFn: async ({ data, type }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/forgot-password/${ENDPOINT_TYPE}/check`;
+
+      await axiosInstance.post(url, data);
+    }
+  });
+};
+
+export const useChangePassword = () => {
+  return useMutation<
+    undefined,
+    AxiosError,
+    { data: IChangePasswordDTO; type: IDENTIFIER_TYPE }
+  >({
+    mutationFn: async ({ data, type }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/change-password/${ENDPOINT_TYPE}`;
+
+      await axiosInstance.post(url, data);
     }
   });
 };
@@ -336,6 +407,75 @@ export const useReportUser = () => {
         additionalDetails
       });
       return data;
+    }
+  });
+};
+
+type IGetUserFollowersResponse = {
+  paginatedData: SearchUserResultType[];
+  metadata: IAdvancePaginatedMetadata;
+};
+
+export const useGetUserFollowers = (keyword: string) => {
+  const accessToken = selectAccessToken();
+
+  return useInfiniteQuery<IGetUserFollowersResponse, Error>({
+    queryKey: ["getUserFollowers", keyword],
+    enabled: !!accessToken,
+    queryFn: async ({ pageParam = 0 }) => {
+      try {
+        const { data } = await protectedAxiosInstance.post<IGetUserFollowersResponse>(
+          "/api/user/get-user-follower",
+          {
+            skip: pageParam,
+            keyword
+          }
+        );
+        return data;
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message || "An error has occurred.");
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.metadata?.hasNextPage) return undefined;
+      return allPages.length;
+    }
+  });
+};
+
+export const useGetUserFollowings = (keyword: string = "") => {
+  const accessToken = selectAccessToken();
+
+  return useInfiniteQuery<IGetUserFollowersResponse, Error>({
+    queryKey: ["getUserFollowings", keyword],
+    enabled: !!accessToken,
+    queryFn: async ({ pageParam = 0 }) => {
+      try {
+        const { data } = await protectedAxiosInstance.post<IGetUserFollowersResponse>(
+          "/api/user/get-user-following",
+          {
+            skip: pageParam,
+            keyword
+          }
+        );
+        return data;
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message || "An error has occurred.");
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.metadata?.hasNextPage) return undefined;
+      return allPages.length;
     }
   });
 };

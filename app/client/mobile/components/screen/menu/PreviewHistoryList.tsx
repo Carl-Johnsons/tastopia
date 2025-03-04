@@ -5,9 +5,8 @@ import {
 import MiniRecipe from "@/components/common/MiniRecipe";
 import { colors } from "@/constants/colors";
 import useHydrateData from "@/hooks/useHydrateData";
-import { filterUniqueItems } from "@/utils/dataFilter";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { ActivityIndicator, RefreshControl, View } from "react-native";

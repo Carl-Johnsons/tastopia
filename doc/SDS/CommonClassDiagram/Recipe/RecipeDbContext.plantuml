@@ -79,6 +79,11 @@ class UserReportComment extends BaseMongoDBAuditableEntity {
     +Reason: string
     +Status: enum
 }
+
+class UserRecipeBin extends BaseMongoDBAuditableEntity {
+    +AccountId: Guid
+    +RecipeId: Guid
+}
 interface IApplicationDbContext extends IMongoDbContext {
     + Recipes : DbSet<Recipe>
     + Tags : DbSet<Tag>

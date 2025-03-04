@@ -16,6 +16,9 @@ import {
   Text,
   TouchableWithoutFeedback
 } from "react-native";
+import { selectLanguageSetting } from "@/slices/setting.slice";
+import { LANGUAGES } from "@/constants/languages";
+import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 
 const RNFS = require("react-native-fs");
 
@@ -55,8 +58,13 @@ const PreviewView = ({
     height: 0
   });
   const dispatch = useAppDispatch();
+  const language = selectLanguageSetting();
+
   const router = useRouter();
-  const ingredientPredict = prediction?.classifications?.[0].name ?? "";
+  const ingredientPredict =
+    (language === SETTING_VALUE.LANGUAGE.VIETNAMESE
+      ? prediction?.classifications?.[0].name.vi
+      : prediction?.classifications?.[0].name.en) ?? "";
 
   // === Style ===
   const { animate: animatedSearchBtn, animatedStyles: animatedSearchBtnStyles } =
@@ -163,7 +171,7 @@ const PreviewView = ({
               <Button
                 onPress={handleSearch}
                 style={animatedSearchBtnStyles}
-                className='w-[60%] rounded-3xl bg-primary p-3'
+                className='rounded-full bg-primary p-3'
               >
                 <View className='flex-row items-center'>
                   <FontAwesome
@@ -172,7 +180,7 @@ const PreviewView = ({
                     color='black'
                     className='pr-4'
                   />
-                  <Text className='font-bold text-2xl'>{t("searchForRecipes")}</Text>
+                  <Text className='font-bold text-xl'>{t("searchForRecipes")}</Text>
                 </View>
               </Button>
             </>

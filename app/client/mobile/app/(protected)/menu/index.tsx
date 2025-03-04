@@ -4,7 +4,7 @@ import MenuBg from "@/components/MenuBg";
 import SettingModal from "@/components/SettingModal";
 import { SavedIcon, SettingIcon, TrashIcon, UserIcon } from "@/constants/icons";
 import { FC, useCallback, useRef } from "react";
-import { StatusBar, Text, View, useWindowDimensions } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SvgProps } from "react-native-svg";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -21,7 +21,6 @@ import { ROLE } from "@/slices/auth.slice";
 const Menu = () => {
   const ITEM_TITLE = ["profile", "saved", "deleted", "settings"];
   const ITEM_ICON = [UserIcon, SavedIcon, TrashIcon, SettingIcon];
-  const { height } = useWindowDimensions();
   const settingModalRef = useRef<BottomSheetModal>(null);
   const { c } = useColorizer();
   const { black, white } = colors;
@@ -40,7 +39,7 @@ const Menu = () => {
       pathname: "/(protected)/user/[id]",
       params: { id: accountId ?? "" }
     });
-  }, [router]);
+  }, [router, accountId]);
 
   const navigationCallbacks = [
     useProtectedExclude(() => goToProfile(), [ROLE.GUEST]),

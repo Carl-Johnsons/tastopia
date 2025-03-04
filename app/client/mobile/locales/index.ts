@@ -24,6 +24,8 @@ import profileEn from "../locales/en/menu/profile/profile.json";
 import profileVi from "../locales/vi/menu/profile/profile.json";
 import updateProfileEn from "../locales/en/menu/profile/updateProfile.json";
 import updateProfileVi from "../locales/vi/menu/profile/updateProfile.json";
+import followEn from "../locales/en/menu/profile/follow.json";
+import followVi from "../locales/vi/menu/profile/follow.json";
 import cookingModeEn from "../locales/en/cookingMode.json";
 import cookingModeVi from "../locales/vi/cookingMode.json";
 import loginWithGoogleEn from "../locales/en/auth/loginWithGoogle.json";
@@ -62,6 +64,8 @@ export default {
   profileVi,
   updateProfileEn,
   updateProfileVi,
+  followEn,
+  followVi,
   cookingModeEn,
   cookingModeVi,
   loginWithGoogleEn,

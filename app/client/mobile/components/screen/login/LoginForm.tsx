@@ -1,12 +1,13 @@
+import { ActivityIndicator, Pressable, Text, TextInputProps, View } from "react-native";
+import { colors } from "@/constants/colors";
+import { Controller, useForm } from "react-hook-form";
 import { LoginParams } from "@/api/user";
-import { ActivityIndicator, Text, TextInputProps, View } from "react-native";
+import { loginSchema } from "@/lib/validation/auth";
+import { useRouter } from "expo-router";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Button from "../../Button";
 import Input from "../../Input";
 import useBounce from "@/hooks/animation/useBounce";
-import { Controller, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { loginSchema } from "@/lib/validation/auth";
-import Button from "../../Button";
-import { colors } from "@/constants/colors";
 
 export interface LoginFormFields extends LoginParams {}
 
@@ -29,6 +30,11 @@ export const LoginForm = (props: LoginFormProps) => {
   });
   const { onSubmit, isLoading } = props;
   const { animate, animatedStyles } = useBounce();
+  const router = useRouter();
+
+  const onNavigateToForgot = () => {
+    router.push("/forgot-password");
+  };
 
   return (
     <View className={`gap-[2vh] ${props.className}`}>
@@ -72,11 +78,11 @@ export const LoginForm = (props: LoginFormProps) => {
           <Text className='font-sans text-red-400'>{errors.password.message}</Text>
         ) : null}
       </View>
-
-      <Text className='text-center font-medium text-lg text-primary'>
-        Forgot password?
-      </Text>
-
+      <Pressable onPress={onNavigateToForgot}>
+        <Text className='text-center font-medium text-lg text-primary'>
+          Forgot password?
+        </Text>
+      </Pressable>
       <Button
         onPress={() => {
           animate();

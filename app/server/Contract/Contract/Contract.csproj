@@ -1,11 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	<!--
+		This is a workaround for Reinforced.Typing to compile and generate typescript without corrupt entire project
+		Ref: https://github.com/reinforced/Reinforced.Typings/issues/231
+	-->
+	<Target Name="CompileTypeScript" />
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
-
+	
 	<ItemGroup>
 		<Compile Remove="Protos\User\**" />
 		<EmbeddedResource Remove="Protos\User\**" />
@@ -50,6 +55,9 @@
 		<PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
 		<!-- Reinforced.Typings dependencies -->
 		<PackageReference Include="Reinforced.Typings" Version="1.6.5" />
+		<!-- SignalR client dependencies -->
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.5" />
+
 	</ItemGroup>
 
 	<ItemGroup>
