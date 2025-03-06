@@ -607,7 +607,7 @@ public class RecipeDataLong {
                       OrdinalNumber = 7 },
            new Step { Content = "Let rest for 10 minutes before serving.",
                       OrdinalNumber = 8 }]
-    }
+    },
 
     // Beef Recipes
     new Recipe {
@@ -964,7 +964,7 @@ public class RecipeDataLong {
            new Step { Content = "Season with salt and black pepper to taste.",
                       OrdinalNumber = 9 },
            new Step { Content = "Serve immediately.", OrdinalNumber = 10 }]
-    }
+    },
 
     // Lettuce Recipes
     new Recipe {
