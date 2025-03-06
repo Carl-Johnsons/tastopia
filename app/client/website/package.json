@@ -10,6 +10,7 @@
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.6.0",
     "@tailwindcss/typography": "^0.5.10",
     "@tiptap/pm": "^2.8.0",
     "@tiptap/react": "^2.8.0",
@@ -24,7 +25,9 @@
     "next": "14.2.14",
     "prettier": "^3.2.5",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-redux": "^9.2.0",
+    "redux-persist": "^6.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",
