@@ -1,4 +1,5 @@
 ﻿using Cocona;
+using Sprache;
 
 namespace MongoMigration;
 
@@ -9,8 +10,12 @@ internal class MigrationCommands
     }
 
     [Command("add")]
-    public void Add([Argument] string migrationName, [Option] string outputFolder)
+    public void Add([Argument] string migrationName, [Option] string? outputFolder)
     {
+        if (outputFolder == null) {
+            outputFolder = "Migrations";
+        }
+
         string currentDirectory = Directory.GetCurrentDirectory();
         string folderPath = Path.Combine(currentDirectory, outputFolder);
 
@@ -33,21 +38,22 @@ internal class MigrationCommands
     private string GetMigrationTemplate(string migrationName)
     {
         // This template assumes you have an interface IMigration with UpAsync/DownAsync methods.
+        var normalizeMigrationName = char.ToUpper(migrationName[0]) + migrationName.Substring(1);
         return @$"
 using MongoDB.Driver;
-using System.Threading.Tasks;
+using Contract.Interfaces;
 
-public class {migrationName} : IMigration
+public class {normalizeMigrationName} : IMigration
 {{
     // Specify the target version for this migration.
     public string Version => ""<specify version>"";
 
-    public async Task UpAsync(IMongoDatabase database)
+    public async Task Up(IMongoDatabase database)
     {{
         // Write code to apply changes (e.g. rename fields, update data, etc.)
     }}
 
-    public async Task DownAsync(IMongoDatabase database)
+    public async Task Down(IMongoDatabase database)
     {{
         // Write code to rollback changes if needed.
     }}
