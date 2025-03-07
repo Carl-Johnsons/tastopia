@@ -24,7 +24,7 @@ export const colors: Colors = {
     DEFAULT: "#000000",
     100: "#1E1E1E",
     200: "#191919",
-    300: "#0D0D0D"
+    300: "#0D0D0D",
   },
   white: { DEFAULT: "#FFFFFF", 100: "#EFEFEF" },
   gray: {
@@ -35,6 +35,6 @@ export const colors: Colors = {
     400: "#C4C7D0",
     500: "#9CA3AF",
     600: "#626C70",
-    700: "#5B5B5E"
-  }
+    700: "#5B5B5E",
+  },
 };

@@ -1,6 +1,11 @@
-export interface SidebarLink {
-  imgURL?: string;
+export interface SidebarChildLink {
   route: string;
   label: string;
-  children?: SidebarLink[];
+}
+
+export interface SidebarLink {
+  imgURL: string;
+  route: string;
+  label: string;
+  children?: SidebarChildLink[];
 }
