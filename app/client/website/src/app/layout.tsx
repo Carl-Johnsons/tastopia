@@ -9,27 +9,27 @@ import "animate.css";
 import { ThemeProvider } from "@/context/ThemeProvider";
 
 const imbPlexMono = IBM_Plex_Mono({
-    weight: ["400", "500", "600", "700"],
-    style: ["normal", "italic"],
-    subsets: ["latin", "vietnamese"],
-    display: "swap",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  subsets: ["latin", "vietnamese"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-    title: "Tastopia",
-    description: "About Tastopia",
+  title: "Tastopia",
+  description: "About Tastopia",
 };
 
 export default function RootLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-        <html lang="en">
-            <body className={`${imbPlexMono.className} h-screen w-screen`}>
-                <ThemeProvider>{children}</ThemeProvider>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en">
+      <body className={`${imbPlexMono.className}`}>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
+    </html>
+  );
 }
