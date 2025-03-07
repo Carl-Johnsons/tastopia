@@ -42,6 +42,7 @@ internal class MigrationCommands
         return @$"
 using MongoDB.Driver;
 using Contract.Interfaces;
+using System.Threading.Tasks; //Do not delete this using
 
 public class {normalizeMigrationName} : IMigration
 {{

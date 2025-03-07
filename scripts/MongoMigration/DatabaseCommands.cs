@@ -125,7 +125,8 @@ internal class DatabaseCommands
         EnvUtility.LoadEnvFile();
 
         var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
-        var client = new MongoClient(mongoConnectionString);
+        var mongostring = "mongodb://mongodb:15c0996dc7355e47ff0588570f2312296ebbe64e8e7beda986d1332f77785d39@localhost:2002?authSource=admin";
+        var client = new MongoClient(mongostring);
         return client;
     }
 
@@ -146,12 +147,35 @@ internal class DatabaseCommands
 
         Assembly migrationAssembly = Assembly.LoadFrom(dllPath);
         var mainAssembly = Assembly.GetExecutingAssembly();
-        var references = new List<MetadataReference>
+        var references = new List<MetadataReference>();
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
-            MetadataReference.CreateFromFile(mainAssembly.Location)
+            if (!string.IsNullOrEmpty(assembly.Location))
+            {
+                references.Add(MetadataReference.CreateFromFile(assembly.Location));
+            }
+        }
+        string runtimeDir = Path.GetDirectoryName(typeof(object).Assembly.Location) ?? "";
+        string[] coreLibs = new[]
+        {
+            "System.Private.CoreLib.dll",
+            "System.Runtime.dll",
+            "System.Console.dll",
+            "System.Linq.dll",
+            "System.Collections.dll",
+            "System.Threading.Tasks.dll",
+            "netstandard.dll"
         };
+        foreach (var lib in coreLibs)
+        {
+            string libPath = Path.Combine(runtimeDir, lib);
+            if (File.Exists(libPath))
+            {
+                references.Add(MetadataReference.CreateFromFile(libPath));
+            }
+        }
 
-        var referencedAssemblyNames = mainAssembly.GetReferencedAssemblies();
+        var referencedAssemblyNames = Assembly.GetExecutingAssembly().GetReferencedAssemblies();
 
         foreach (var asmName in referencedAssemblyNames)
         {
