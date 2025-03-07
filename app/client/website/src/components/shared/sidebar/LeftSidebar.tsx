@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { sidebarLinks } from "@/constants/nav";
 
 const LeftSidebar = () => {
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
   const pathname = usePathname();
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
 
@@ -35,7 +35,7 @@ const LeftSidebar = () => {
       <div className="flex flex-col">
         <div className="flex h-full flex-col gap-6">
           {sidebarLinks.map((link) => {
-            const isActive = pathname === link.route;
+            const isActive = pathname === link.route || pathname.startsWith(link.route + "/");
             const isDropdownOpen = openDropdowns.includes(link.route);
 
             return (
