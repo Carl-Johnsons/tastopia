@@ -10,7 +10,7 @@ type ProfileHeaderProps = {
 
 export default function ProfileHeader({ user }: ProfileHeaderProps) {
   return (
-    <div className="bg-white_black100 overflow-hidden rounded-xl border border-blue-100 shadow-sm dark:border-gray-600">
+    <div className="bg-white_black100 overflow-hidden rounded-xl border border-gray-200 shadow-sm dark:border-gray-600">
       <div className="flex flex-col items-center justify-between gap-4 p-6 sm:flex-row">
         <div className="flex items-center gap-5">
           <div className="relative size-24 overflow-hidden rounded-full bg-orange-100">
