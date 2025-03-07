@@ -23,4 +23,8 @@ public class UserError
         Message: "User follow fail.",
         StatusCode: (int)HttpStatusCode.InternalServerError);
 
+    public static Error PermissionDenied =>
+    new("UserError.PermissionDenied",
+        Message: "Permission denied.",
+        StatusCode: (int)HttpStatusCode.InternalServerError);
 }

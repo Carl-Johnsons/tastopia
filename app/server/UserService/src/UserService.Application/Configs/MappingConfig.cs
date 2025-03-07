@@ -12,6 +12,7 @@ public class MappingConfig
         var mappingConfig = new MapperConfiguration(config =>
         {
             config.CreateMap<User, GetUserDetailsResponse>().ReverseMap();
+            config.CreateMap<User, AdminGetUserDetailResponse>().ReverseMap();
             config.CreateMap<UserDetailsDTO, GetUserDetailsResponse>().ReverseMap();
         });
 

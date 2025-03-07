@@ -97,9 +97,6 @@ internal class MockupData
 
             await _unitOfWork.SaveChangeAsync();
         }
-        var migrationRunner = new MigrationRunner(_context.GetDatabase());
-        _logger.LogInformation("Apply migration RecipeDB");
-        await migrationRunner.ApplyMigrationsAsync();
 
     }
 
