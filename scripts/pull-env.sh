@@ -40,4 +40,5 @@ pull_both_env_file "./" global_production &&
   pull_both_env_file "./app/server/TrackingService" tracking &&
   pull_both_env_file "./app/server/SubscriptionService" "subscription" &&
   pull_both_env_file "./app/server/IngredientPredictService" "ingredient-predict" &&
-  pull_both_env_file "./app/client/mobile" "mobile"
+  pull_both_env_file "./app/client/mobile" "mobile" &&
+  pull_both_env_file "./app/client/website" "website"
