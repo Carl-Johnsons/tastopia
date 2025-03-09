@@ -355,26 +355,421 @@ public class RecipeDataDuc
             ],
         },
         new Recipe{
-            Id = Guid.Parse("c3d4e5f6-a7b8-9012-cd34-ef56gh78ij90"),
+            Id = Guid.Parse("fdcec077-b088-4af5-8271-f2f97c191c4b"),
             Title = "Strawberry Banana Smoothie",
-            Description = "A refreshing and healthy smoothie blending strawberries, banana, Greek yogurt, and honey for a quick breakfast or snack.",
-            ImageUrl = "https://www.allrecipes.com/recipe/215093/strawberry-banana-smoothie",
+            Description = "This classic strawberry banana smoothie recipe is easy to make with 4 simple ingredients in less than 5 minutes, and always tastes so sweet and refreshing!",
+            ImageUrl = "https://i.imgur.com/cjoKYcr.jpeg",
             Serves = 2,
             CookTime = "5m",
             Ingredients = [
-                "1 cup fresh strawberries, hulled",
-                "1 ripe banana",
-                "1/2 cup Greek yogurt",
-                "1/2 cup milk (or almond milk)",
-                "1 tbsp honey",
-                "Ice cubes as needed"
+                "Frozen strawberries",
+                "Banana",
+                "Milk",
+                "Ice",
             ],
             Steps = [
                 new Step{
-                    Content = "Place the strawberries, banana, Greek yogurt, milk, and honey in a blender."
+                    Content = "Combine ingredients. Add all ingredients to a blender."
                 },
                 new Step{
-                    Content = "Blend until smooth. Adjust thickness with ice or additional milk as needed."
+                    Content = "Blend. Pulse until smooth. (If your smoothie seems too thick, add in a bit of extra milk or water. If it seems too thin, add in more strawberries or banana.)"
+                },
+                new Step{
+                    Content = "Serve. Then pour the smoothie into a serving glass or two…and enjoy!"
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("3b6fcddb-daea-47a3-a338-1697d307586d"),
+            Title = "Strawberry Basil Bruschetta",
+            Description = "Greek yogurt, fresh strawberries, basil and balsamic reduction over a French baguette gives you perfection.",
+            ImageUrl = "https://www.jocooks.com/wp-content/uploads/2014/07/strawberry-basil-bruschetta-2.jpg",
+            Serves = 1,
+            CookTime = "15m",
+            Ingredients = [
+                "1 French baguette",
+                "½ cup Greek yogurt",
+                "1½ cups strawberries",
+                "½ cup fresh basil",
+                "½ cup balsamic vinegar",
+                "2 tablespoon almond slivers",
+                "black pepper"
+            ],
+            Steps = [
+                new Step{
+                    Content = "Pour the vinegar in a small sauce pan and bring to a boil over medium heat. Lower the heat and continue cooking, stirring occasionally for about 10 minutes or until vinegar thickens so that it’s close to a honey consistency. Let cool."
+                },
+                new Step{
+                    Content = "Bake the French baguette slices until toasted. I actually placed mine under the broiler for about a minute on both sides, make sure you don’t burn them."
+                },
+                new Step{
+                    Content = "Spread some yogurt over each slice, then top with strawberries and chopped basil. Drizzle a bit of the balsamic reduction over each slice and top with slivered almonds for a bit of crunch. Finish of with some freshly ground black pepper."
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("b3333754-11d3-41a3-bb3b-8010ad1d4e00"),
+            Title = "Strawberry Balsamic Chicken",
+            Description = "This strawberry balsamic chicken is a delicious and easy fruity version of caprese that I adore!",
+            ImageUrl = "https://www.gimmesomeoven.com/wp-content/uploads/2013/07/Strawberry-Balsamic-Chicken-3.jpg",
+            Serves = 4,
+            CookTime = "40m",
+            Ingredients = [
+                "4 boneless, skinless chicken breasts",
+                "1 cup balsamic vinegar, divided",
+                "Salt and pepper",
+                "1 pint fresh strawberries, hulled and roughly chopped",
+                "4 oz. fresh mozzarella ball (or shredded mozzarella), roughly chopped",
+                "1/4 cup chopped fresh basil",
+            ],
+            Steps = [
+                new Step{
+                    Content = "Preheat oven to 400 degrees F."
+                },
+                new Step{
+                    Content = "Combine chicken breasts and 1/2 cup balsamic in a ziplock bag. Refrigerate for at least 5 minutes, or up to 5 hours. When ready to cook, place chicken in a baking dish and pour the remaining vinegar on top. Season chicken generously with salt and pepper. Bake for 30 minutes, or until chicken is cooked through and no longer pink inside."
+                },
+                new Step{
+                    Content = "Meanwhile, bring the remaining 1/2 cup vinegar to a boil in a small saucepan over medium-high heat. Reduce heat to medium-low and simmer for about 10 minutes, or until reduced by half. Remove and set aside."
+                },
+                new Step{
+                    Content = "In a small bowl, stir together strawberries, mozzarella and basil to make a caprese topping."
+                },
+                new Step{
+                    Content = "When the chicken is ready, transfer to serving dishes. Then top with the strawberry caprese topping, and then drizzle with the reduced balsamic vinegar."
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("27d860f7-3625-4df2-bb0b-65da56c64265"),
+            Title = "Hyacinth Bean Sweet Soup",
+            Description = "A traditional Vietnamese sweet soup from Huế made with hyacinth beans, coconut milk, brown sugar, and pandan leaves. Enjoy it warm or chilled!",
+            ImageUrl = "https://vietnamesefood.com.vn/kcfinder/upload/images/hinh%2010/Hyacinth%20Bean%20Sweet%20Soup%20Recipe%20(Ch%C3%A8%20%C4%90%E1%BA%ADu%20V%C3%A1n)%20(1).jpg",
+            Serves = 6,
+            CookTime = "1d 45m",
+            Ingredients = [
+                "300g hyacinth beans",
+                "Brown sugar cubes",
+                "Pandan leaves (50g)",
+                "6 teaspoons tapioca starch",
+                "½ teaspoon vanilla starch.",
+            ],
+            Steps = [
+                new Step{
+                    Content = "Soak hyacinth beans in cold water (cover all beans) and bring to cook until it boils. Then, wait for 1 night."
+                },
+                new Step{
+                    Content = "Next day, bring to clean and spread out all covers of beans. If you see any bean floats on water, take it out because of its bad quality."
+                },
+                new Step{
+                    Content = "Clean well again and bring to steam until they are soft."
+                },
+                new Step{
+                    Content = "Cook water (3 – 4 bowls) with brown sugar cubes (depend on your flavor) and a little salt until it boils. Next, add pandan leaves into pot (tie like a bunch before adding into pot).",
+                    AttachedImageUrls = [
+                        "https://vietnamesefood.com.vn/kcfinder/upload/images/hinh%2010/Hyacinth%20Bean%20Sweet%20Soup%20Recipe%20(Ch%C3%A8%20%C4%90%E1%BA%ADu%20V%C3%A1n)%20(5).jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Mix tapioca starch with 100ml water, pour slowly into mixture in step 4, use wood spoon to stir well and gently. When it becomes thicker is perfect."
+                },
+                new Step{
+                    Content = "Now, you add steamed hyacinth beans into mixture in step 5, stir gently to make sure these beans will not be broken. Season again to suit your flavor and turn off the heat, add more vanilla starch and stir gently.",
+                    AttachedImageUrls = [
+                        "https://vietnamesefood.com.vn/kcfinder/upload/images/hinh%2010/Hyacinth%20Bean%20Sweet%20Soup%20Recipe%20(Ch%C3%A8%20%C4%90%E1%BA%ADu%20V%C3%A1n)%20(1).png",
+                        "https://vietnamesefood.com.vn/kcfinder/upload/images/hinh%2010/Hyacinth%20Bean%20Sweet%20Soup%20Recipe%20(Ch%C3%A8%20%C4%90%E1%BA%ADu%20V%C3%A1n)%20(3).jpg"
+                    ]
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("44a7ea08-8e19-4f67-85d1-8bc0dc2a7bef"),
+            Title = "Vietnamese Green Papaya Salad",
+            Description = "This super fresh Vietnamese-inspired green papaya salad is packed with crunchy raw veggies, roasted peanuts, and fried shallots and tossed with a bright and citrusy lime dressing! It’s easy to prepare, refreshing, and plant-based!",
+            ImageUrl = "https://fullofplants.com/wp-content/uploads/2019/02/Easy-Vietnamese-Papaya-Salad-Vegan-4.jpg",
+            Serves = 4,
+            CookTime = "20m",
+            Ingredients = [
+                "Green Papaya",
+                "Carrot",
+                "Cucumber",
+                "Fish sauce",
+                "Garlic",
+                "Chili",
+                "Lime",
+                "Sugar",
+                "Fresh herbs",
+                "Peanuts",
+                "Fried shallots",
+                "Salt to taste"
+            ],
+            Steps = [
+                new Step{
+                    Content = "Peel and slice the papaya. Start by peeling the papaya skin using a vegetable peeler. Then, slice it in half lengthwise. Using an ice cream scoop or a regular spoon, scoop out the seeds and discard them."
+                },
+                new Step{
+                    Content = "Let it soak. Transfer the green papaya halves to a large bowl and cover with cold water. Let it soak for about 15 minutes."
+                },
+                new Step{
+                    Content = "Grate it into thin strips. Next, drain the papaya well and pat it dry using kitchen paper towels. Using a vegetable grater or a food processor fitted with the grating disk, grate the papaya into long and thin strips (also called julienne).",
+                    AttachedImageUrls = [
+                        "https://fullofplants.com/wp-content/uploads/2019/02/Easy-Vietnamese-Papaya-Salad-Vegan-6.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Soak the papaya strips. Transfer the papaya strips to a large bowl, cover with ice-cold water, and add 1/4 teaspoon of salt. Let it sit for 10 minutes (this step helps crisp up the papaya by extracting some of the water, as well as more latex). Drain and squeeze firmly with your hands to remove excess water. Transfer the drained papaya strips to a large mixing bowl."
+                },
+                new Step{
+                    Content = "Slice the other vegetables. In the meantime, julienne the carrot (grate it into long strips) and thinly slice the cucumber. Transfer to the mixing bowl.",
+                    AttachedImageUrls = [
+                        "https://fullofplants.com/wp-content/uploads/2023/01/Easy-Vietnamese-Papaya-Salad-Vegan-22-1024x1536.jpg",
+                        "https://fullofplants.com/wp-content/uploads/2023/01/Easy-Vietnamese-Papaya-Salad-Vegan-23-1024x1536.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Mince the aromatics. Finely mince the garlic and chili. Alternatively, you can crush them in a mortar and pestle."
+                },
+                new Step{
+                    Content = "Combine everything. Add the minced garlic, chili, fish sauce, sugar, and lime juice to a small bowl. Stir until the sugar has completely dissolved."
+                },
+                new Step{
+                    Content = "Toss the salad with the dressing. Finally, toss the green papaya and carrots with the dressing. Incorporate the fresh herbs, peanuts, and fried shallots, and toss again. Serve immediately!",
+                    AttachedImageUrls = [
+                        "https://fullofplants.com/wp-content/uploads/2019/02/Easy-Vietnamese-Papaya-Salad-Vegan-12.jpg"
+                    ]
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("9d4e3acd-05ea-4766-bbbd-cd7a06243088"),
+            Title = "Vietnamese Papaya Soup with Pork",
+            Description = "Vietnamese folk remedy says Papaya Soup, or Canh Du Du, stimulates lactation in new mothers. Whether it’s true or not, I surely didn’t complain when I was endlessly served Canh Du Du after the birth of my children. Canh Du Du and Vietnamese Sour Catfish Soup (Canh Chua) are two my favorite Vietnamese soups.",
+            ImageUrl = "https://i0.wp.com/vickypham.com/wp-content/uploads/2017/05/de953-vietnamesepapayasoupcanhdudu.jpg?resize=2500%2C2500",
+            Serves = 4,
+            CookTime = "45m",
+            Ingredients = [
+                "1 lb pork shoulder (cut into small cubes, blanch in boiling salted water for 5 minutes, then rinse)",
+                "1 1/2 lbs ripened yet firm papaya flesh (cut into small cubes)",
+                "1 tablespoon minced shallot",
+                "1 teaspoon minced garlic",
+                "2-3 tablespoons vegetable oil",
+                "6 cups water",
+                "1/2 teaspoon salt",
+                "1 teaspoon chicken bouillon powder (or 1 teaspoon salt if none is available)",
+                "1/4 cup chopped cilantro"
+            ],
+            Steps = [
+                new Step{
+                    Content = "Add vegetable oil to the bottom of a small pot. Heat on high. Add shallots and garlic. Stir until shallot and garlic are limp and fragrant (about 15 seconds).",
+                    AttachedImageUrls = [
+                        "https://i.imgur.com/BkBxlYx.png",
+                        "https://i.imgur.com/td1391T.png",
+                        "https://i.imgur.com/BVzq728.png"
+                    ]
+                },
+                new Step{
+                    Content = "Add pork. Toss until it is evenly coated with the aromatics.",
+                    AttachedImageUrls = [
+                        "https://i.imgur.com/NYtfghN.png",
+                        "https://i.imgur.com/6jO2s5l.png"
+                    ]
+                },
+                new Step{
+                    Content = "Add water. Be careful as oil may splatter. Bring the pot to a boil then reduce heat to low. Simmer for 25 minutes or until pork is chopstick or fork tender. Occasionally skim off the foam at the top.",
+                    AttachedImageUrls = [
+                        "https://i.imgur.com/t0GOzPJ.png",
+                        "https://i.imgur.com/sYPd5wH.png",
+                        "https://i.imgur.com/rFtJT7Y.png"
+                    ]
+                },
+                new Step{
+                    Content = "Add papaya. Cook for 5 minutes. Season with salt and chicken soup powder.",
+                    AttachedImageUrls = [
+                        "https://i.imgur.com/TSGTVxi.png",
+                        "https://i.imgur.com/a4I1Q7I.png",
+                        "https://i.imgur.com/Q74WU0B.png"
+                    ]
+                },
+                new Step{
+                    Content = "Turn off heat. Garnish with cilantro.",
+                    AttachedImageUrls = [
+                        "https://i.imgur.com/RTgBITF.png",
+                        "https://i.imgur.com/71IfDXl.png"
+                    ]
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("9a2ffffa-d335-452f-a299-375fd7d8cb58"),
+            Title = "Vietnamese Papaya Smoothie",
+            Description = "A refreshing papaya smoothie blending ripe papaya, yogurt, and a hint of condensed milk for a creamy, tropical treat.",
+            ImageUrl = "https://i0.wp.com/cookwithchung.com/wp-content/uploads/2022/10/Summer-papaya-smoothie.jpg",
+            Serves = 2,
+            CookTime = "5m",
+            Ingredients = [
+                "1 cup papaya",
+                "1 cup ice cubes",
+                "50ml milk",
+                "1 tbsp condensed milk",
+            ],
+            Steps = [
+                new Step{
+                    Content = "Peel and deseed the papaya. Cut into chunks."
+                },
+                new Step{
+                    Content = "Add papaya, ice cubes, milk and condensed milk to the blender. Blend on high speed until fully blended"
+                },
+                new Step{
+                    Content = "Pour into a glass and enjoy!"
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("b7703e62-9271-4790-ac6c-309e9e32653a"),
+            Title = "Pineapple Chicken Stir-Fry",
+            Description = "This pineapple chicken stir fry recipe has a deliciously sweet and tangy sauce that perfectly coats the tender chicken, pineapple, and veggies. It costs less than takeout! This dish is flavored with fish sauce, sugar, and a hint of black pepper – a perfect balance of tangy and sweet.",
+            ImageUrl = "https://www.saltandlavender.com/wp-content/uploads/2020/07/pineapple-chicken-1-1200x1751.jpg",
+            Serves = 4,
+            CookTime = "25m",
+            Ingredients = [
+                "500g chicken breast, thinly sliced",
+                "2 cups fresh pineapple, cut into chunks",
+                "1 red bell pepper, sliced",
+                "1 medium onion, sliced",
+                "3 cloves garlic, minced",
+                "2 tbsp vegetable oil",
+                "2 tbsp fish sauce",
+                "1 tbsp sugar (adjust to taste)",
+                "1/2 tsp black pepper",
+                "Fresh cilantro, chopped (for garnish)"
+            ],
+            Steps = [
+                new Step{
+                    Content = "Prepare ingredient",
+                    AttachedImageUrls = [
+                        "https://www.saltandlavender.com/wp-content/uploads/2020/07/ingredients-for-pineapple-chicken-1200x1782.jpg",
+                    ]
+                },
+                new Step{
+                    Content = "Mix the sauce ingredients together in a small bowl, then set aside. Chop the veggies. Cut the chicken into bite-size pieces and coat them in the garlic powder, pepper, and cornstarch.",
+                    AttachedImageUrls = [
+                        "https://www.saltandlavender.com/wp-content/uploads/2020/07/how-to-make-pineapple-chicken-1-1200x783.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Pan fry the chicken in olive oil in two batches in a skillet. That way it’ll brown up nicely and won’t steam by being too crowded. Transfer to a plate once cooked to 165F. In the skillet, stir fry the pineapple.",
+                    AttachedImageUrls = [
+                        "https://www.saltandlavender.com/wp-content/uploads/2020/07/how-to-make-pineapple-chicken-2-1200x783.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Add in the veggies, and cook until tender-crisp. Return the chicken back to the pan. Pour in the sauce, and let it bubble until thickened. Garnish with scallions if desired.",
+                    AttachedImageUrls = [
+                        "https://www.saltandlavender.com/wp-content/uploads/2020/07/how-to-make-pineapple-chicken-3-1200x783.jpg"
+                    ]
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("0f1281b5-608a-4df8-a4b6-605aae8abbf8"),
+            Title = "Vietnamese Sweet & Sour Soup",
+            Description = "This is a simplified but still flavorful version of my mom's Vietnamese Sweet and Sour soup and can be ready in under 30 minutes. Pineapple is used to sweeten the broth and lemons are used for the sour element. Easy and fast to prepare.",
+            ImageUrl = "https://www.cooking-therapy.com/wp-content/uploads/2020/12/Canh-Chua-13.jpg",
+            Serves = 6,
+            CookTime = "40m",
+            Ingredients = [
+                "2 quarts water or chicken stock",
+                "1 large tomato",
+                "juice from 16 oz can pineapple and 3 pineapple rings cut into chunks",
+                "6-8 large shrimp",
+                "3 Tablespoons lemon juice ",
+                "2 Tablespoons sugar",
+                "5 Tablespoons Vietnamese or Thai fish sauce",
+                "handful of okra",
+                "handful of bean sprouts",
+                "2 large leaves of culantro",
+                "salt",
+                "hot pepper",
+                "scallions and cilantro for garnish"
+            ],
+            Steps = [
+                new Step{
+                    Content = "Bring water or chicken stock* to a boil."
+                },
+                new Step{
+                    Content = "Add tomato, pineapple juice and pineapple chunks and reduce heat to simmer for 5 minutes."
+                },
+                new Step{
+                    Content = "Add shrimp, optional chili, lemon, sugar, and fish sauce and simmer 3-5 minutes or until shrimp is cooked."
+                },
+                new Step{
+                    Content = "Add okra, bean sprouts and recao. Cover and remove from heat. Let stand 5 minutes."
+                },
+                new Step{
+                    Content = "Salt to taste and garnish with scallions and cilantro."
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("027157a0-866f-487a-98b7-e94f4bfcc300"),
+            Title = "Shrimps, bean sprouts and watermelon salad",
+            Description = "A light salad bursting with fruity flavors and the surprising tang and umami of Vietnamese fish sauce.",
+            ImageUrl = "https://umamidays.com/wp-content/uploads/2022/06/shrimp-watermelon-salad.jpg",
+            Serves = 4,
+            CookTime = "20m",
+            Ingredients = [
+                "20 medium shrimps peeled and deveined",
+                "salt",
+                "pepper",
+                "6 cups seedless watermelon cubes",
+                "1 cup mandarin orange segments",
+                "4 generous handfuls mung bean sprouts",
+                "1 small head Romaine lettuce",
+                "1 cup cubed feta",
+                "¼ cup mixed fish sauce"
+            ],
+            Steps = [
+                new Step{
+                    Content = "Cook the shrimps in a frying pan, boil enough water to reach a depth of one inch. Sprinkle with salt and pepper."
+                },
+                new Step{
+                    Content = "Spread the shrimps in the boiling water and cook for two to two and a half minutes per side."
+                },
+                new Step{
+                    Content = "Scoop out the shrimps and dry on a bed of paper towels. Cool."
+                },
+                new Step{
+                    Content = "Toss the fruits and vegetables in a large mixing bowl, toss together the watermelon cubes, mandarin orange segments, bean sprouts, lettuce and feta."
+                },
+                new Step{
+                    Content = "Add the shrimps. Toss to distribute.Drizzle in the mixed fish sauce and toss a few more times. Serve immediately.",
+                    AttachedImageUrls = [
+                        "https://umamidays.com/wp-content/uploads/2022/06/shrimp-watermelon-salad-2-1200x900.jpg",
+                        "https://umamidays.com/wp-content/uploads/2022/06/vietnamese-mixed-fish-sauce.jpg"
+                    ]
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("77eaa718-0346-4d79-8f3f-5dd6dbf9d615"),
+            Title = "Vietnamese Watermelon Smoothie",
+            Description = "A refreshing and creamy smoothie made with ripe watermelon, coconut water, and a squeeze of lime for a tropical Vietnamese twist.",
+            ImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQSAWndjhgeBuq40UBNv3r-0dEsAAiew0ruqA&s", // example source
+            Serves = 2,
+            CookTime = "5m",
+            Ingredients = [
+                "2 cups ripe watermelon, cubed",
+                "1/2 cup coconut water",
+                "Juice of 1 lime",
+                "A few fresh mint leaves (optional)",
+                "Ice cubes (as needed)"
+            ],
+            Steps = [
+                new Step{
+                    Content = "Place the watermelon cubes, coconut water, lime juice, and mint leaves in a blender."
+                },
+                new Step{
+                    Content = "Blend until smooth. Add ice cubes to reach your desired consistency."
                 },
                 new Step{
                     Content = "Pour into glasses and serve immediately."
@@ -382,66 +777,290 @@ public class RecipeDataDuc
             ],
         },
         new Recipe{
-            Id = Guid.Parse("d4e5f6a7-b8c9-0123-de45-f678gh90ij12"),
-            Title = "Strawberry Basil Bruschetta",
-            Description = "A unique appetizer featuring toasted baguette slices topped with creamy goat cheese, fresh strawberries, basil, and a drizzle of balsamic glaze.",
-            ImageUrl = "https://www.bonappetit.com/recipe/strawberry-basil-bruschetta",
-            Serves = 4,
-            CookTime = "15m",
+            Id = Guid.Parse("a5c8f8c8-97c5-4047-b28b-1b8ab377cbbf"),
+            Title = "Chilled Cantaloupe Soup",
+            Description = "Very refreshing fruit soup, served chilled. Great for luncheons. Garnish with mint if desired.",
+            ImageUrl = "https://www.allrecipes.com/thmb/IX2uWzS9P2NnVczL_eo3eY3Yx5o=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/19125-61dcf1cab4044e179cef30c4d0ed814f.jpg",
+            Serves = 6,
+            CookTime = "1h20m",
             Ingredients = [
-                "1 baguette, sliced and toasted",
-                "1 cup fresh strawberries, diced",
-                "1/2 cup goat cheese, softened",
-                "1/4 cup fresh basil, chopped",
-                "1 tbsp balsamic glaze",
-                "Salt and pepper to taste"
+                "1 cantaloupe - peeled, seeded and cubed",
+                "2 cups orange juice",
+                "1 tablespoon fresh lime juice",
+                "¼ teaspoon ground cinnamon",
             ],
             Steps = [
                 new Step{
-                    Content = "Spread the softened goat cheese onto toasted baguette slices."
+                    Content = "Peel, seed, and cube the cantaloupe."
                 },
                 new Step{
-                    Content = "Top each slice with diced strawberries and chopped basil."
+                    Content = "Place cantaloupe and 1/2 cup orange juice in a blender or food processor; cover, and process until smooth. Transfer to large bowl. Stir in lime juice, cinnamon, and remaining orange juice. Cover, and refrigerate for at least one hour. Garnish with mint if desired."
+                },
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("52c0c17c-6837-4f6b-a6db-9a7545c4075d"),
+            Title = "Crisp Fried Pig's Tail",
+            Description = "A Little Porky Universe: The Qualities of a Pig's Tail",
+            ImageUrl = "https://www.seriouseats.com/thmb/dUyzl_nOQq-xuDbY6pcUP_KFsoM=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/__opt__aboutcom__coeus__resources__content_migration__serious_eats__seriouseats.com__recipes__images__20090901-pigs-tails-finished-44cf2f6acb374a42a31d961c51075f6f.jpg",
+            Serves = 4,
+            CookTime = "1h40m",
+            Ingredients = [
+                "2 pounds pigs tails, cut into approximately 4-inch sections",
+                "2 quarts oil for deep frying",
+                "1/2 cup flour, or enough to coat the tails",
+                "3 cloves garlic, smashed",
+                "Half an onion, roughly chopped",
+                "3 tablespoons soy sauce",
+                "1/2 cup rice wine or white wine of your choice for braising",
+                "1 teaspoon salt",
+                "A splash soy sauce",
+                "A splash red wine",
+                "Salt and pepper to taste",
+            ],
+            Steps = [
+                new Step{
+                    Content = "In a wok or pot, heat the quarts of oil to 350°F. Carefully rinse and pat dry all the pigs' tails. Gently slip them into the oil and fry for 3 to 4 minutes, until the tails are golden brown."
                 },
                 new Step{
-                    Content = "Drizzle with balsamic glaze, season with salt and pepper, and serve immediately."
+                    Content = "Place the tails into a braising pot and cover with water. Add the garlic, onion, soy sauce, wine, and salt. Simmer for an hour, and let cool. Reserve the stock for another use."
+                },
+                new Step{
+                    Content = "Reheat the oil until it is 350°F. Pat the tails dry with a paper towel or clean cloth, taking care that no residual stock is sticking to the surface. Roll each tail segment around in the flour, until it is evenly coated."
+                },
+                new Step{
+                    Content = "With one hand, very quickly slip the tail segments into the pot, using your other hand to maneuver the lid of the pot as you go along. Fry for another 3 minutes, until the tails are golden brown and crisped."
+                },
+                new Step{
+                    Content = "Tossing evenly, dress the tails in a mixture of soy sauce and vinegar with salt and pepper to taste. The tails will have absorbed only a bit of the dressing, but it is enough. Have a bit of the dressing handy on the side, for dipping."
                 }
             ],
         },
         new Recipe{
-            Id = Guid.Parse("e5f6a7b8-c9d0-1234-ef56-gh78ij90kl34"),
-            Title = "Strawberry Balsamic Chicken",
-            Description = "A savory dish where tender chicken breasts are glazed with a strawberry-balsamic reduction for a delightful balance of sweet and tangy flavors.",
-            ImageUrl = "https://www.foodnetwork.com/recipes/food-network-kitchen/strawberry-balsamic-chicken-recipe-2011617",
-            Serves = 4,
-            CookTime = "40m",
+            Id = Guid.Parse("2b94a458-0ded-40d1-b17b-148cde3c3d37"),
+            Title = "Vietnamese Baked Banana Cake",
+            Description = "Soft, creamy, and rich Vietnamese baked banana cake is an amazing way to use up some bananas and this is not your typical banana cake. You will love the creamy pudding-like texture.",
+            ImageUrl = "https://whattocooktoday.com/wp-content/uploads/2023/03/banh-chuoi-nuong-4.jpg",
+            Serves = 10,
+            CookTime = "1h45m",
             Ingredients = [
-                "4 boneless, skinless chicken breasts",
-                "2 cups fresh strawberries, chopped",
-                "1/2 cup balsamic vinegar",
-                "1/4 cup honey",
-                "2 cloves garlic, minced",
-                "2 tbsp olive oil",
-                "Salt and pepper to taste"
+                "800g bananas",
+                "4g salt",
+                "480g water",
+                "60g rum",
+                "½ tsp salt",
+                "50g egg",
+                "400g coconut cream",
+                "100g condensed milk",
+                "30g sugar",
+                "30g rice flour",
+                "60g melted butter",
+                "150g stale bread slices",
+                "15g honey"
             ],
             Steps = [
                 new Step{
-                    Content = "Season the chicken breasts with salt and pepper."
+                    Content = "Preheat the oven to 300 F (180 C) for conventional oven, 280 F(140 C) for convection oven. Line the baking pan with parchment paper at the bottom"
                 },
                 new Step{
-                    Content = "Heat olive oil in a skillet over medium-high heat and sear the chicken until golden, about 5 minutes per side."
+                    Content = "It is important to choose ripe bananas but not overripe ones because we need the bananas to hold their shapes. Combine salt and water in a large mixing bowl. Peel the bananas and leave them whole. Let them soak in the salt water for at least 15 minutes and up to 30 minutes. Soaking the bananas helps to prevent the bananas from turning brown and it also gives the bananas nice reddish color after being baked",
+                    AttachedImageUrls = [
+                        "https://whattocooktoday.com/wp-content/uploads/2023/03/baked-banana-cake-1.jpg"
+                    ]
                 },
                 new Step{
-                    Content = "Remove the chicken and set aside. In the same skillet, add garlic and strawberries; cook until the strawberries soften."
+                    Content = " After soaking the banana, cut them into about 3/4 inch thick. Do not cut too thin.",
+                    AttachedImageUrls = [
+                        "https://whattocooktoday.com/wp-content/uploads/2023/03/baked-banana-cake-5.jpg"
+                    ]
                 },
                 new Step{
-                    Content = "Stir in balsamic vinegar and honey; simmer until the sauce thickens slightly."
+                    Content = "Pour rum and salt into a large skillet. Arrange the banana slices on top and cook over medium-low heat for about 5-7 minutes. Reserve about 15-20 slices to decorate the cake later",
+                    AttachedImageUrls = [
+                        "https://whattocooktoday.com/wp-content/uploads/2023/03/baked-banana-cake-6.jpg"
+                    ]
                 },
                 new Step{
-                    Content = "Return the chicken to the skillet and spoon the sauce over it. Cook for an additional 10 minutes until the chicken is cooked through. Serve hot."
+                    Content = "Cut the bread slices into 1/2-inch cubes or thin slices. Combine all ingredients for the coconut milk mixture.",
+                    AttachedImageUrls = [
+                        "https://whattocooktoday.com/wp-content/uploads/2023/03/baked-banana-cake-3.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Add the bread and the cooked bananas and stir to combine everything.",
+                    AttachedImageUrls = [
+                        "https://whattocooktoday.com/wp-content/uploads/2023/03/baked-banana-cake-7.jpg",
+                        "https://whattocooktoday.com/wp-content/uploads/2023/03/baked-banana-cake-8.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Pour into the prepared baking pan. Arrange the banana slices you reserve earlier on top",
+                    AttachedImageUrls = [
+                        "https://whattocooktoday.com/wp-content/uploads/2023/03/baked-banana-cake-9.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Cover the pan with a foil and put the pan on the middle rack and bake for 90 minutes.",
+                    AttachedImageUrls = [
+                        "https://whattocooktoday.com/wp-content/uploads/2023/03/baked-banana-cake-10.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Remove from the cake from the oven and remove the foil. Increase oven temperature to 350 F (180 C). Brush the surface of the cake with honey and melted butter mixture.",
+                    AttachedImageUrls = [
+                        "https://whattocooktoday.com/wp-content/uploads/2023/03/baked-banana-cake-12.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Put it back into the oven and bake for another 15 minutes or until you get a nice golden brown on top",
+                    AttachedImageUrls = [
+                        "https://whattocooktoday.com/wp-content/uploads/2023/03/baked-banana-cake-11.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Place the pan on a cooling rack and let the cake cool in the pan completely before unmolding and serving. Loosen the edge of the cake, put a plate on top and then carefully invert the cake upside down, peel off the parchment paper and invert it back on to a serving plate. Cut into serving size. The cake can be served at room temperature or after being chilled in the fridge. It will have a firmer texture when it’s cold",
+                    AttachedImageUrls = [
+                        "https://whattocooktoday.com/wp-content/uploads/2023/03/banh-chuoi-nuong-1.jpg"
+                    ]
                 }
             ],
         },
-
+        new Recipe{
+            Id = Guid.Parse("7a3adfb0-7848-49f0-bf5c-b0db5d8f9bee"),
+            Title = "Vietnamese Banana Smoothie",
+            Description = "A refreshing Vietnamese banana smoothie made with ripe bananas, ice, condensed milk (or coconut milk for a vegan version), and a squeeze of lime for extra brightness.",
+            ImageUrl = "https://guides.brit.co/media-library/take-a-cup-a-straw-and-it-ready-to-serve-awesome.jpg?id=23864125&width=700&quality=85",
+            Serves = 2,
+            CookTime = "5m",
+            Ingredients = [
+                "50.0g Ice cream (different flavor different taste)",
+                "10.0g Sugar",
+                "50.0g Condensed milk",
+                "200.0ml Milk",
+                "3 Bananas",
+            ],
+            Steps = [
+                new Step{
+                    Content = "Place bananas in the blender",
+                    AttachedImageUrls = [
+                        "https://guides.brit.co/media-library/place-bananas-in-the-blender.jpg?id=23864097&width=700&quality=85"
+                    ]
+                },
+                new Step{
+                    Content = "Add COLD milk, the more you add, the less thick it get.",
+                    AttachedImageUrls = [
+                        "https://guides.brit.co/media-library/add-cold-milk-the-more-you-add-the-less-thick-it-get.jpg?id=23864102&width=700&quality=85"
+                    ]
+                },
+                new Step{
+                    Content = "Add a spoon of Ice cream. Vanilla is standard, chocolate would be good, too.",
+                    AttachedImageUrls = [
+                        "https://guides.brit.co/media-library/add-a-spoon-of-ice-cream-vanilla-is-standard-chocolate-would-be-good-too.jpg?id=23864110&width=700&quality=85"
+                    ]
+                },
+                new Step{
+                    Content = "Add condensed milk, as sweet as you like and add sugar",
+                    AttachedImageUrls = [
+                        "https://guides.brit.co/media-library/add-condensed-milk-as-sweet-as-you-like.jpg?id=23864114&width=700&quality=85",
+                        "https://guides.brit.co/media-library/add-sugar.jpg?id=23864117&width=700&quality=85"
+                    ]
+                },
+                new Step{
+                    Content = "Blend all of them up until you see no more banana pieces inside. Around 20 secs.",
+                    AttachedImageUrls = [
+                        "https://guides.brit.co/media-library/blend-all-of-them-up-until-you-see-no-more-banana-pieces-inside-around-20-secs.jpg?id=23864121&width=700&quality=85"
+                    ]
+                },
+                new Step{
+                    Content = "Take a cup, a straw and it ready to serve. Awesome!!!",
+                    AttachedImageUrls = [
+                        "https://guides.brit.co/media-library/take-a-cup-a-straw-and-it-ready-to-serve-awesome.jpg?id=23864125&width=700&quality=85"
+                    ]
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("f06dba1e-b786-4fa0-8ff9-4261fd0dafc2"),
+            Title = "White Radish Soup",
+            Description = "This clear peppery White Radish Soup with beef broth is soothing accompaniment to any rice meal. Also delicious served with thick rice noodles.",
+            ImageUrl = "https://www.malaysianchinesekitchen.com/wp-content/uploads/2017/09/WhiteRadishSoup-1.jpg",
+            Serves = 6,
+            CookTime = "1h50m",
+            Ingredients = [
+                "10 cups water",
+                "1 lb beef neck bones",
+                "2 lbs white radish",
+                "1 tsp white peppercorns",
+                "Salt"
+            ],
+            Steps = [
+                new Step{
+                    Content = "Fill a large pot half full of water. Bring to a boil. Add beef neck bones or ribs. Allow it to blanch for 4 to 5 minutes. Remove with thongs and rinse in cold water.",
+                    AttachedImageUrls = [
+                        "https://www.malaysianchinesekitchen.com/wp-content/uploads/2017/09/WhiteRadishSoup-6.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Discard water in pot and fill with 10 cups (2.4 liters) of fresh water. Bring to a boil."
+                },
+                new Step{
+                    Content = "Add blanched beef neck bones or ribs, white radish, and crushed peppercorns.",
+                    AttachedImageUrls = [
+                        "https://www.malaysianchinesekitchen.com/wp-content/uploads/2017/09/WhiteRadishSoup-7.jpg"
+                    ]
+                },
+                new Step{
+                    Content = "Bring water back up to a boil. Reduce heat to low and allow soup to simmer for 1½ hours. Skim off any scum appearing on the surface."
+                },
+                new Step{
+                    Content = "Season with salt and turn off heat. Serve warm in individual bowls.",
+                    AttachedImageUrls = [
+                        "https://www.malaysianchinesekitchen.com/wp-content/uploads/2017/09/WhiteRadishSoup-8.jpg"
+                    ]
+                }
+            ],
+        },
+        new Recipe{
+            Id = Guid.Parse("a9f86c25-5f24-45c8-a09b-5fc29dab8936"),
+            Title = "Vietnamese Fried Radish Rice Cakes",
+            Description = "A popular Vietnamese street food and dim sum restaurant item, these little savory rice cakes are pan-fried to crispy perfection and served with a sweet and savory soy dipping sauce.",
+            ImageUrl = "https://www.vietnamesefood.com.vn/vietnamese-vegetable-recipes/xao-cu-cai-trang-toi/", // example URL
+            Serves = 5,
+            CookTime = "1h35m",
+            Ingredients = [
+                "20 grams dried shrimp",
+                "1 Chinese sausage",
+                "1 tablespoon vegetable oil",
+                "300 grams grated daikon",
+                "100 grams rice flour",
+                "10 grams tapioca starch",
+                "300 ml water",
+                "1 teaspoon ground white pepper",
+                "1/2 teaspoon granulated cane sugar",
+                "1/2 teaspoon MSG (optional)",
+                "1/2 teaspoon salt",
+                "Thinly sliced green onions"
+            ],
+            Steps = [
+                new Step{
+                    Content = "Prepare the dried ingredients: Soak the dried shrimp in hot water for 10 minutes. Drain and rinse. Chop the dried shrimp and Chinese sausage into small pieces. Add oil (1 tablespoon) to the skillet and heat on medium-high. Add dried shrimp and sauté for about 30 seconds. Add Chinese sausage and sauté for one minute or until you get nice caramelization on the edges of the shrimp and sausage. Transfer the mixture into another bowl and set aside."
+                },
+                new Step{
+                    Content = "Make the batter: Mix together the batter ingredient in a medium bowl until you get a paste-like consistency. Set aside."
+                },
+                new Step{
+                    Content = "Pan fry: Combine the batter, daikon, and dried shrimp/Chinese sausage mixture back into the skillet. Pan fry for about 5 minutes to cook off the raw flour taste."
+                },
+                new Step{
+                    Content = "Steam: Transfer mixture to an oiled pan. I’m using a 10″x5″ loaf pan. Place the pan into a steamer with plenty of water and steam over a medium simmer for 45 minutes."
+                },
+                new Step{
+                    Content = "Slice: Carefully remove the pan from the steamer and let your rice cake set for about 30 minutes. Once cooled, loosen the sides with a knife and turn it upside down onto a cutting board and slice ½-inch thick square or rectangular pieces."
+                },
+                new Step{
+                    Content = "Serve: To enjoy, pan-fry the radish cakes by adding a couple tablespoons oil to skillet over medium heat. Fry the cakes on both sides until golden and crispy. If serving with eggs, heat a bit of oil on the other side of the skillet and crack your desired amount of eggs into the oil. Pan fry eggs however you choose. I simply like it over-easy with no additional seasonings. Transfer the eggs and fried rice cakes to a plate. Garnish green onions (optional) and serve with your choice of soy or fish sauce dipping sauce, and a side of pickled daikon and carrot (optional)."
+                }
+            ],
+        },
     ];
 }
