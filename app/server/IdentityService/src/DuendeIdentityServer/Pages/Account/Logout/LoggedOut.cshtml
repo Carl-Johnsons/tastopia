@@ -1,13 +1,13 @@
 @page
 @model DuendeIdentityServer.Pages.Account.Logout.LoggedOut
 
-<div class="h-100 logged-out-page d-flex flex-col justify-content-center align-items-center">
+<div class="h-100 logged-out-page d-flex flex-column justify-content-center align-items-center">
     <h1>You have logged out.</h1>
 
     @if (Model.View.PostLogoutRedirectUri != null)
     {
         <div>
-            <p>returning to <a class="PostLogoutRedirectUri" href="@Model.View.PostLogoutRedirectUri">the website</a>...</p>.
+            <p>returning to <a class="PostLogoutRedirectUri" href="@Model.View.PostLogoutRedirectUri">the website</a>...</p>
         </div>
     }
 
