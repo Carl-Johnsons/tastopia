@@ -35,7 +35,7 @@ export const NavContent = () => {
   return (
     <section className="flex h-full flex-col gap-6 pt-16">
       {sidebarLinks.map((link) => {
-        const isActive = pathname === link.route;
+        const isActive = pathname === link.route || pathname.startsWith(link.route + "/");
         const isDropdownOpen = openDropdowns.includes(link.route);
 
         return (
