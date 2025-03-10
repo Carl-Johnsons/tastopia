@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "npx env-cmd -f \".env\" next dev",
     "start": "next start",
+    "build": "next build",
     "lint": "next lint",
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
@@ -20,9 +20,11 @@
     "@tiptap/react": "^2.8.0",
     "@tiptap/starter-kit": "^2.8.0",
     "animate.css": "^4.1.1",
+    "axios": "^1.8.2",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.0.3",
     "clsx": "^2.1.1",
+    "env-cmd": "^10.1.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
     "eslint-plugin-tailwindcss": "^3.14.3",
@@ -30,12 +32,14 @@
     "mongodb": "^6.4.0",
     "mongoose": "^8.2.0",
     "next": "14.2.14",
+    "next-auth": "^4.24.11",
     "prettier": "^3.2.5",
     "react": "^18",
     "react-dom": "^18",
     "react-redux": "^9.2.0",
     "redux-persist": "^6.0.0",
-    "tailwind-merge": "^3.0.2"
+    "tailwind-merge": "^3.0.2",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@types/node": "^20",
