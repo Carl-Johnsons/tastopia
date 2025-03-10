@@ -71,21 +71,21 @@ public class RecipeTagDataDuc
         
         // Strawberry Spinach Salad with Poppy Seed Dressing
         new RecipeTag{
-            RecipeId = Guid.Parse("a1b2c3d4-e5f6-7890-ab12-cd34ef56gh78"),
+            RecipeId = Guid.Parse("9c19f806-47c3-4f9e-a1d9-9b4f9c4ed596"),
             TagId = Guid.Parse("c54f00ae-2064-4edb-b246-9da7f45a2735") // Strawberry
         },
         
         // Classic Strawberry Shortcake
         new RecipeTag{
-            RecipeId = Guid.Parse("b2c3d4e5-f6a7-8901-bc23-de45fg67hi89"),
+            RecipeId = Guid.Parse("b34206bf-d901-474c-b5f2-563fdb93645e"),
             TagId = Guid.Parse("c54f00ae-2064-4edb-b246-9da7f45a2735") // Strawberry
         },
         new RecipeTag{
-            RecipeId = Guid.Parse("b2c3d4e5-f6a7-8901-bc23-de45fg67hi89"),
+            RecipeId = Guid.Parse("b34206bf-d901-474c-b5f2-563fdb93645e"),
             TagId = Guid.Parse("f92b7c2e-d2f0-4b7f-b5d5-9d3a41b718c3") // Milk
         },
         new RecipeTag{
-            RecipeId = Guid.Parse("b2c3d4e5-f6a7-8901-bc23-de45fg67hi89"),
+            RecipeId = Guid.Parse("b34206bf-d901-474c-b5f2-563fdb93645e"),
             TagId = Guid.Parse("6f229db7-e0d7-4fd8-83d6-4f8b9c3ef5c1") // Butter
         },
 

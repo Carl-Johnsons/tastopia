@@ -3337,7 +3337,7 @@ public class RecipeData
 
         // RecipeDataDuc
         new Recipe{
-            Id = Guid.Parse("262c5dc6-2b2f-4b17-acb7-d8c33bc67c1b"),
+            Id = Guid.Parse("29d01830-e41e-4191-baeb-6917faef08ae"),
             Title = "Chinese-style Braised WHite Radish",
             Description = "I love daikon radish. But mostly, I use it as a garnish or a side dish. I never thought that radish alone can make such a tasty recipe. Salads are great, but you will fall in love with this vegan recipe once you try it. The key to making tender and savory radish is braising. Braising is a common cooking method in Asian kitchens. Similar to stewing, you cook with medium-low heat for a longer time. ",
             ImageUrl = "https://cdn.shortpixel.ai/spai/w_813+q_lossy+ret_img+to_webp/cooklikeasian.com/wp-content/uploads/2021/06/Chinese-braised-daikon-radish-2.jpg",
@@ -3588,7 +3588,7 @@ public class RecipeData
             ],
         },
         new Recipe{
-            Id = Guid.Parse("a1b2c3d4-e5f6-7890-ab12-cd34ef56gh78"),
+            Id = Guid.Parse("9c19f806-47c3-4f9e-a1d9-9b4f9c4ed596"),
             Title = "Strawberry Spinach Salad with Poppy Seed Dressing",
             Description = "A refreshing salad featuring baby spinach, juicy strawberries, red onion, and a tangy poppy seed dressing.",
             ImageUrl = "https://www.allrecipes.com/thmb/PqbFLx2uVrHN2KvLouUKxHyDTfY=/0x512/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/4539063_Strawberry-Spinach-Salad-I-4x3-a696255b0c0e4d808fae6e91fae2f3fc.jpg",
@@ -3636,7 +3636,7 @@ public class RecipeData
             ],
         },
         new Recipe{
-            Id = Guid.Parse("b2c3d4e5-f6a7-8901-bc23-de45fg67hi89"),
+            Id = Guid.Parse("b34206bf-d901-474c-b5f2-563fdb93645e"),
             Title = "Classic Strawberry Shortcake",
             Description = "A timeless dessert featuring sweet macerated strawberries, fluffy whipped cream, and tender shortcakes.",
             ImageUrl = "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fimages.media-allrecipes.com%2Fuserphotos%2F2377260.jpg&q=60&c=sc&poi=auto&orient=true&h=512",
