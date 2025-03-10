@@ -214,4 +214,22 @@ public class UserController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    [HttpPost("admin-get-user-detail")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(AdminGetUserDetailResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetUserDetail([FromBody] GetUserDetailByAccountIdDTO getUserDetailByAccountIdDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new AdminGetUserDetailQuery
+        {
+            CurrentAccountId = Guid.Parse(subjectId!),
+            AccountId = getUserDetailByAccountIdDTO.AccountId,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
 }

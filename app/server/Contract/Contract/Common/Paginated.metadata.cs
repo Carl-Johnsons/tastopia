@@ -17,3 +17,10 @@ public class AdvancePaginatedMetadata : CommonPaginatedMetadata
     [JsonProperty("hasNextPage")]
     public bool HasNextPage { get; set; } = true;
 }
+
+public class NumberedPaginatedMetadata : CommonPaginatedMetadata
+{
+    [Required]
+    [JsonProperty("currentPage")]
+    public int CurrentPage { get; set; } 
+}

@@ -1,0 +1,27 @@
+@startuml Sequence
+title "Restore own recipe"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI 
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+database MongoDB
+
+User -> MobileUI++: 1. Touch Restore button above \n a recipe in recipe bin screen
+MobileUI -> ApiGateway++: 2. Restore recipe
+ref over ApiGateway: 3. Verify access token
+ApiGateway -> RecipeService++: 4. Forward request
+RecipeService -> MongoDB++: 5. Update recipe data and remove recipe from deleted list
+RecipeService <-- MongoDB--: 6. Return response
+ApiGateway <-- RecipeService--: 7. Return restore recipe
+MobileUI <-- ApiGateway--: 8. Forward response
+User <-- MobileUI--: 9. Display restore recipe success message
+@enduml

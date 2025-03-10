@@ -454,4 +454,24 @@ public class RecipeController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    //ADMIN SECTION
+    [HttpPost("admin-get-recipes")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetRecipes([FromBody] AdminGetRecipesDTO adminGetRecipesDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new AdminGetRecipesQuery
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Keyword = adminGetRecipesDTO.Keyword,
+            Page = adminGetRecipesDTO?.Page,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
 }

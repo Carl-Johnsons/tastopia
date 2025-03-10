@@ -12,7 +12,4 @@ public class PaginatedRecipeCommentListResponse : BasePaginatedResponse<RecipeCo
 
 public class PaginatedAccountRecipeCommentListResponse : BasePaginatedResponse<AccountRecipeCommentResponse, AdvancePaginatedMetadata>;
 
-
-
-
-
+public class PaginatedAdminRecipeListResponse : BasePaginatedResponse<AdminRecipeResponse, NumberedPaginatedMetadata>;

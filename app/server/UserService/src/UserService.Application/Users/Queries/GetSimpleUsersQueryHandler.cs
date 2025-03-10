@@ -34,7 +34,8 @@ public class GetSimpleUsersQueryHandler : IRequestHandler<GetSimpleUsersQuery, R
             {
                 AccountId = user.AccountId,
                 DisplayName = user.DisplayName,
-                AvatarUrl = user.AvatarUrl
+                AvatarUrl = user.AvatarUrl,
+                AccountUsername = user.AccountUsername,
             }).ToListAsync();
         if (users == null || users.Count == 0)
         {

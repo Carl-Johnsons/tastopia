@@ -53,6 +53,7 @@ message GrpcSimpleUser {
     string AccountId = 1;
     string AvtUrl = 2;
     string DisplayName = 3;
+    string AccountUsername = 4;
 }
 
 message GrpcUserDetailDTO {
