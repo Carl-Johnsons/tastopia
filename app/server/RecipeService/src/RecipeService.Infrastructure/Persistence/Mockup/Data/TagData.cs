@@ -324,8 +324,8 @@ public class TagData
         new Tag
         {
             Id = Guid.Parse("3ad3bd53-aee7-4179-b879-5d6a9dfd3d7d"),
-            Code = "PORK_TAIL",
-            Value = "Pork Tail",
+            Code = "PIG_TAIL",
+            Value = "Pig's Tail",
             Category = TagCategory.Ingredient,
             Status = TagStatus.Active,
             ImageUrl = "https://media.istockphoto.com/id/1304387749/photo/fresh-pig-tails-fresh-pork-bones.jpg?s=612x612&w=0&k=20&c=dZH57-6dtLjQLz_Idp6kEhMDekA3HnWnWzvlLH9L2_I="
@@ -505,7 +505,7 @@ public class TagData
         {
             Id = Guid.Parse("3d66564d-4146-456c-a1e3-676aa6c872bc"),
             Code = "PORK_RIBS",
-            Value = "Prok Ribs",
+            Value = "Pork Ribs",
             Category = TagCategory.Ingredient,
             Status = TagStatus.Active,
             ImageUrl = "https://media.istockphoto.com/id/1465370619/photo/raw-pork-ribs-with-rosemary-and-spices-on-rustic-wooden-cutting-board-prepared-for-cooking-on.jpg?s=612x612&w=0&k=20&c=ci7XIGrx9adaJ7ebdpo5ZtF-APKxN3mYacOH5PPFxLA="
