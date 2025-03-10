@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import { IBM_Plex_Mono } from "next/font/google";
 import React from "react";
 
 import "./globals.css";
 import "../styles/prism.css";
 import "animate.css";
-import { ThemeProvider } from "@/context/ThemeProvider";
+import Providers from "@/components/provider/Providers";
+import AuthListener from "@/components/shared/auth/AuthListener";
+import Protected from "@/components/shared/auth/Protected";
+import { Roles } from "@/constants/role";
 
 const imbPlexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600", "700"],
@@ -28,7 +30,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${imbPlexMono.className}`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <Providers>
+          <AuthListener />
+          <Protected allowedRoles={[Roles.SUPER_ADMIN, Roles.ADMIN]}>
+            {children}
+          </Protected>
+        </Providers>
       </body>
     </html>
   );
