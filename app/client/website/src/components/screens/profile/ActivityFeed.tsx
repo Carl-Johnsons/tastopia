@@ -70,7 +70,7 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
             </div>
 
             <div className="flex-1">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <h3 className="base-semibold text-black_white">{activity.type === "ban" ? "System" : "Tai Duc"}</h3>
                 <p className="text-sm text-gray-500">{activity.description}</p>
                 <span className="text-sm text-gray-500">{activity.timeAgo}</span>
@@ -101,11 +101,6 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
 
                 {activity.type === "recipe" && (
                   <div className="mt-4">
-                    <div className="text-lg font-medium">{activity.title}</div>
-                    <div className="mt-1 text-sm text-gray-500">
-                      @{activity.userName} · Just now · {activity.likes}
-                    </div>
-
                     <div className="mt-3 overflow-hidden rounded-lg">
                       <Image
                         src={"/assets/images/pizza.jpg"}
