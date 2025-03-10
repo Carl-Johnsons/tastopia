@@ -1,0 +1,41 @@
+@startuml Sequence
+title "User report comment"
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+database MongoDB
+
+User -> MobileUI++: 1. Touch on report icon \n under a comment in recipe detail screen
+
+MobileUI -> ApiGateway++: 2. Report comment
+
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> RecipeService++: 4. Forward request
+
+database MongoDB
+RecipeService -> MongoDB++: 5. Query data
+RecipeService <-- MongoDB--: 6. Return response
+alt User not have reported comment
+  RecipeService -> MongoDB++: 7. Insert data
+  RecipeService <-- MongoDB--: 7A.1. Return response
+  ApiGateway <-- RecipeService: 7A.2. Return comment report
+  MobileUI <-- ApiGateway: 7A.3. Forward response
+  User <-- MobileUI: 7A.4. Display report comment success message
+else User adrealy reported comment
+  RecipeService -> MongoDB++: 8. Delete data
+  RecipeService <-- MongoDB--: 9. Return response
+  ApiGateway <-- RecipeService--: 10. Return comment report
+  MobileUI <-- ApiGateway--: 11. Forward response
+  User <-- MobileUI--: 12. Display remove report success message
+end alt
+@enduml

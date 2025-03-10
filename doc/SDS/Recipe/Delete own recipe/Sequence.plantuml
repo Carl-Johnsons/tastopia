@@ -1,0 +1,27 @@
+@startuml Sequence
+title "Delete own recipe"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI 
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+database MongoDB
+
+User -> MobileUI++: 1. Touch Delete button above \na recipe in recipe feed screen
+MobileUI -> ApiGateway++: 2. Delete recipe
+ref over ApiGateway: 3. Verify access token
+ApiGateway -> RecipeService++: 4. Forward request
+RecipeService -> MongoDB++: 5. Update recipe data and add recipe to deleted list
+RecipeService <-- MongoDB--: 6. Return response
+ApiGateway <-- RecipeService--: 7. Return deleted recipe
+MobileUI <-- ApiGateway--: 8. Forward response
+User <-- MobileUI--: 9. Display delete recipe success message
+@enduml

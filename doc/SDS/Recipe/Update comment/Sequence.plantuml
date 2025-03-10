@@ -1,0 +1,32 @@
+@startuml Sequence
+title "Update comment"
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+database MongoDB
+
+User -> MobileUI++: 1. Touch update icon under\n comment in recipe detail screen
+
+MobileUI -> ApiGateway++: 2. Update comment
+
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> RecipeService++: 4. Forward request
+
+RecipeService -> MongoDB++: 5. Update data
+RecipeService <-- MongoDB--: 6. Return response
+
+ApiGateway <-- RecipeService--: 7. Return updated comment
+MobileUI <-- ApiGateway--: 8. Forward response
+User <-- MobileUI--: 9. Display updated comment \nin recipe detail screen
+
+@enduml

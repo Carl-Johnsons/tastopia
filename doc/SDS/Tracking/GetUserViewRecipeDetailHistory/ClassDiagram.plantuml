@@ -75,10 +75,18 @@ together {
     class GrpcRecipeClient #Green;line:white;text:white
 }
 
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
 TrackingController --|> BaseApiController
 TrackingController "1"--"1" GetUserViewRecipeDetailHistoryDTO
 TrackingController "1"--"1" GetUserViewRecipeDetaiQuery
 
+GetUserViewRecipeDetaiQuery --|> "IRequest<TResponse>"
+
+GetUserViewRecipeDetaiQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 GetUserViewRecipeDetaiQueryHandler "1"--"1" GetUserViewRecipeDetaiQuery
 GetUserViewRecipeDetaiQueryHandler "1"--"1" Result
 GetUserViewRecipeDetaiQueryHandler "1"--"1" PaginatedUserViewRecipeDetailListResponse

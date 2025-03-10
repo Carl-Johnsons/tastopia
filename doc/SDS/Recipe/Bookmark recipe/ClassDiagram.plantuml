@@ -1,0 +1,71 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +BookmarkRecipe([FromBody] BookmarkRecipeDTO bookmarkRecipeDTO): async Task<IActionResult>
+}
+
+class BookmarkRecipeCommand {
+    +AccountId: Guid
+    +RecipeId: Guid
+}
+
+class BookmarkRecipeCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +Handle(BookmarkRecipeCommand request, CancellationToken cancellationToken): async Task<Result<BookmarkRecipeResponse?>> 
+}
+
+class BookmarkRecipeDTO{
+    +RecipeId: Guid
+}
+
+class BookmarkRecipeResponse{
+    +UserBookmarkRecipe: UserBookmarkRecipe
+    +IsBookmark: bool
+}
+
+BookmarkRecipeResponse "1"--"1" UserBookmarkRecipe
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" BookmarkRecipeDTO
+RecipeController "1"--"1" BookmarkRecipeCommand
+
+BookmarkRecipeCommand --|> "IRequest<TResponse>"
+
+BookmarkRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+BookmarkRecipeCommandHandler "1"--"1" BookmarkRecipeCommand
+BookmarkRecipeCommandHandler "1"--"1" BookmarkRecipeResponse
+BookmarkRecipeCommandHandler "1"--"1" Result
+BookmarkRecipeCommandHandler "1" o-- "1" IUnitOfWork
+BookmarkRecipeCommandHandler "1" o-- "1" IApplicationDbContext
+BookmarkRecipeCommandHandler "1"--"1..*" RecipeError
+
+Error "1" --"1..*" RecipeError
+
+@enduml

@@ -1,0 +1,49 @@
+@startuml Sequence
+title "Get notifications"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n NotificationService" as NotificationService
+participant "<<service>>\n UserService" as UserService
+database MongoDB
+database Postgresql
+
+User -> MobileUI ++: 1. Navigate to notification screen
+MobileUI -> ApiGateway ++: 2. Request get notification list
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> NotificationService ++: 4. Forward request
+
+NotificationService -> MongoDB++: 5. Query data
+NotificationService <-- MongoDB--: 6. Return response
+
+NotificationService -> UserService++ : 7. Call GetSimpleUserAsync <<gRPC>> 
+UserService -> Postgresql++ : 8. Query data 
+UserService <-- Postgresql-- : 9. Return response
+NotificationService <-- UserService-- : 10. return response <<gRPC>> 
+
+alt GetSimpleUserAsync return null
+  ApiGateway <-- NotificationService: 11A.1. Return NotFound error
+  MobileUI <-- ApiGateway: 11A.2. Forward response
+  User <-- MobileUI: 11A.3. Display error message
+else
+  ApiGateway <-- NotificationService--: 12. Return notification list
+  MobileUI <-- ApiGateway--: 13. Forward response
+  User <-- MobileUI--: 14. Display notification list
+end alt
+@enduml
