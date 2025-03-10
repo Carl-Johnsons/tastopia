@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ProfileHeader from "@/components/screens/profile/ProfileHeader";
-import ActivityFeed from "@/components/screens/profile/ActivityFeed";
-import ProfileInfo from "@/components/screens/profile/ProfileInfo";
-import ProfileSettings from "@/components/screens/profile/ProfileSettings";
+import ProfileHeader from "@/components/screen/profile/ProfileHeader";
+import ActivityFeed from "@/components/screen/profile/ActivityFeed";
+import ProfileInfo from "@/components/screen/profile/ProfileInfo";
+import ProfileSettings from "@/components/screen/profile/ProfileSettings";
 import { UserProfileType } from "@/types/user";
 import { useParams, useRouter } from "next/navigation";
 
