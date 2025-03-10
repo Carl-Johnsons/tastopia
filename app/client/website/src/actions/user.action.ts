@@ -1,7 +1,6 @@
 "use server";
 
 import { useAxios } from "@/hooks/api/useAxios";
-import { privateAxios } from "@/lib/axiosInstance";
 
 export async function useGetUserById(id: string) {
   const { protectedAxiosInstance } = useAxios();
