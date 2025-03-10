@@ -1,4 +1,4 @@
-// components/profile/ProfileSettings.jsx
+"use client";
 import { ArrowDownIcon, LoadingIcon, SaveIcon } from "@/components/shared/icons";
 import { useState } from "react";
 
@@ -21,7 +21,7 @@ export default function ProfileSettings() {
 
       <div className="space-y-6">
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-500">Theme</label>
+          <label className="mb-2 block font-medium text-sm text-gray-500">Theme</label>
           <div className="relative">
             <select
               value={theme}
@@ -40,7 +40,7 @@ export default function ProfileSettings() {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-500">Language</label>
+          <label className="mb-2 block font-medium text-sm text-gray-500">Language</label>
           <div className="relative">
             <select
               value={language}
