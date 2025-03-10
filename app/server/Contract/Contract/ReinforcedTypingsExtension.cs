@@ -9,27 +9,58 @@ namespace Contract;
 public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "common";
-    private static string EXPORT_FILE_PATH = "../../../client/mobile/generated";
+    private static List<string> EXPORT_FILE_PATHS = [
+        "../../../client/mobile/generated",
+        "../../../client/website/generated"
+    ];
 
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {
-        Directory.CreateDirectory(EXPORT_FILE_PATH);
-
-        //Custom export file
+        // Custom export file
         List<Type> errorsTypes = [];
 
-        builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
+        foreach (var path in EXPORT_FILE_PATHS)
+        {
+            Directory.CreateDirectory(path);
+            builder.ConfigCommonReinforcedTypings(path, FILE_NAME, errorsTypes);
+        }
         // Common type
+        builder.GenerateTypesForMobileClient();
+        builder.GenerateTypesForWebsiteClient();
+    }
+
+    private static void GenerateTypesForMobileClient(this ConfigurationBuilder builder)
+    {
+        // DTO and Entites
         builder.ExportAsInterfaces([
             typeof(ErrorResponseDTO),
             typeof(AdvancePaginatedMetadata),
-            typeof(CommonPaginatedMetadata),
+            typeof(CommonPaginatedMetadata)
+
         ], config =>
         {
-            config.WithPublicProperties()
+            config.FlattenHierarchy()
+                  .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo("interfaces/common.interface.d.ts");
+                  .ExportTo($"mobile/generated/interfaces/{FILE_NAME}.interface.d.ts");
+        });
+    }
+
+    private static void GenerateTypesForWebsiteClient(this ConfigurationBuilder builder)
+    {
+        // DTO and Entites
+        builder.ExportAsInterfaces([
+            typeof(ErrorResponseDTO),
+            typeof(AdvancePaginatedMetadata),
+            typeof(CommonPaginatedMetadata)
+        ], config =>
+        {
+            config.FlattenHierarchy()
+                  .WithPublicProperties()
+                  .AutoI()
+                  .DontIncludeToNamespace()
+                  .ExportTo($"website/generated/interfaces/{FILE_NAME}.interface.d.ts");
         });
     }
 }
