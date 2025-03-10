@@ -6,84 +6,51 @@
 <partial name="_ValidationSummary" />
 <link rel="stylesheet" href="~/css/login.css" />
 
-<div class="row d-flex justify-content-center align-items-center h-100">
-    <div class="card bg-white shadow h-100">
-        <div class="card-body d-flex flex-column justify-content-center">
-            @if (Model.View.EnableLocalLogin)
-            {
-                <p style="width:300px">@Model.Input.ReturnUrl</p>
-                <h1 style="margin-bottom:32px;">Login</h1>
-                <form asp-page="/Account/Login/Index">
-                    <input type="hidden" asp-for="Input.ReturnUrl" />
-                    <div class="form-group form-floating">
-                        <label for="floatingInput" asp-for="Input.Username"></label>
-                        <input class="form-control shadow-sm" id="floatingInput" placeholder="Username" asp-for="Input.Username" autofocus>
+<div class="row login-page justify-content-center align-items-center">
+    <div class="col d-none d-md-block vh-100">
+      <image src="/img/auth-figure.png" class="h-100 w-100 object-fit-cover"/>
+    </div>
+    <div class="col ps-0 vh-100 d-flex justify-content-center align-items-center">
+        <div class="card bg-white shadow">
+            <div class="card-body d-flex flex-column justify-content-center">
+                @if (Model.View.EnableLocalLogin)
+                {
+                    <!-- <p style="width:300px">@Model.Input.ReturnUrl</p> -->
+                    <div class="logo">
+                        <image src="/img/logo.svg" class="object-fit-cover"/>
                     </div>
-                    <div class="form-group form-floating">
-                        <label for="floatingInput" asp-for="Input.Password"></label>
-                        <input type="password" id="floatingInput" class="form-control shadow-sm" placeholder="Password" asp-for="Input.Password" autocomplete="off">
-                    </div>
+                    <h1 style="margin-bottom:32px;" class="mt-4">Welcome to<br/><span class="title">Tastopia dashboard</span></h1>
+                    <form asp-page="/Account/Login/Index">
+                        <input type="hidden" asp-for="Input.ReturnUrl" />
+                        <div class="form-group form-floating">
+                            <input class="form-control shadow-sm" id="floatingInput" placeholder="Your email or phone number" asp-for="Input.Username" autofocus>
+                        </div>
+                        <div class="form-group form-floating">
+                            <input type="password" id="floatingInput" class="form-control shadow-sm" placeholder="Password" asp-for="Input.Password" autocomplete="off">
+                        </div>
 
-                    @if (Model.View.AllowRememberLogin)
-                    {
-                        <div class="form-group">
-                            <div class="form-check">
-                                <input class="form-check-input" asp-for="Input.RememberLogin">
-                                <label class="form-check-label" asp-for="Input.RememberLogin">
-                                    Remember My Login
-                                </label>
+                        <div class="d-flex form-group flex-row justify-content-between align-items-center">
+                            @if (Model.View.AllowRememberLogin)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" asp-for="Input.RememberLogin">
+                                    <label class="form-check-label" asp-for="Input.RememberLogin">
+                                        Remember me
+                                    </label>
+                                </div>
+                            }
+                            <div>
+                              <a href="/Account/Register?returnUrl=@returnUrl" class="primary-text font-weight-bold"><span>Forgot password?</span></a>
                             </div>
                         </div>
-                    }
-                    <div class="d-flex justify-content-center">
-                        <a href="/Account/Register?returnUrl=@returnUrl" class="primary-text mb-4 font-weight-bold">Forgot password?</a>
-                    </div>
 
-                    <div class=" d-flex justify-content-center">
-                        <button class="btn btn-primary w-75 shadow" name="Input.Button" value="login">Login</button>
-                    </div>
-                    @*<button class="btn btn-secondary" name="Input.Button" value="cancel">Cancel</button>*@
-                </form>
-                <div class=" d-flex justify-content-center mt-3">
-                    <p>
-                        Don't have an account?
-                        <a href="/Account/Register?returnUrl=@returnUrl" class="primary-text">Register</a>
-                    </p>
-                </div>
-
-            }
-
-            <p class=" d-flex justify-content-center">or</p>
-            <div class="hr-with-text">
-                <hr>
-                <span class="hr-text">Sign in with</span>
-                <hr>
+                        <div class=" d-flex justify-content-center">
+                            <button class="btn btn-primary w-75 shadow" name="Input.Button" value="login">Login</button>
+                        </div>
+                        @*<button class="btn btn-secondary" name="Input.Button" value="cancel">Cancel</button>*@
+                    </form>
+                }
             </div>
-
-            @if (Model.View.VisibleExternalProviders.Any())
-            {
-                <div class="d-flex justify-content-center">
-                    @*<ul class="list-inline">*@
-                    @foreach (var provider in Model.View.VisibleExternalProviders)
-                    {
-                        @*<li class="list-inline-item">*@
-                        <a class="btn btn-google border border-0 text-dark shadow-sm"
-                           asp-page="/ExternalLogin/Challenge"
-                           asp-route-scheme="@provider.AuthenticationScheme"
-                           asp-route-returnUrl="@Model.Input.ReturnUrl">
-                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="20" height="20" viewBox="0 0 48 48">
-                                <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path>
-                                <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path>
-                                <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path>
-                                <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path>
-                            </svg>
-                            @provider.DisplayName
-                        </a>
-                        @*</li>*@
-                    }
-                    @*</ul>*@
-                </div>
-            }
         </div>
     </div>
 
