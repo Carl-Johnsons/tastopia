@@ -7,6 +7,7 @@ import "./globals.css";
 import "../styles/prism.css";
 import "animate.css";
 import { ThemeProvider } from "@/context/ThemeProvider";
+import QueryProvider from "@/components/QueryProvider";
 
 const imbPlexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600", "700"],
@@ -28,7 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${imbPlexMono.className}`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );
