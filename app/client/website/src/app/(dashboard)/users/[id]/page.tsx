@@ -80,7 +80,7 @@ export default async function UserProfile({ params }: ParamsProps) {
 
           <div className="flex flex-col space-y-6 lg:w-1/3">
             <ProfileInfo user={currentUser} />
-            <ProfileSettings />
+            {/* <ProfileSettings /> */}
           </div>
         </div>
       </div>
