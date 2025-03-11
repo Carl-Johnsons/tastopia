@@ -1,13 +1,13 @@
 import { ParamsProps } from "@/types/link";
-import { useGetUserById } from "@/actions/user.action";
+import { getUserActivitiesById, getUserById } from "@/actions/user.action";
 import ProfileHeader from "@/components/screen/profile/ProfileHeader";
 import ActivityFeed from "@/components/screen/profile/ActivityFeed";
 import ProfileInfo from "@/components/screen/profile/ProfileInfo";
 import ProfileSettings from "@/components/screen/profile/ProfileSettings";
 
 export default async function UserProfile({ params }: ParamsProps) {
-  const currentUser = await useGetUserById(params.id);
-  console.log("Current user", currentUser);
+  const currentUser = await getUserById(params.id);
+  const currentUserActivities = await getUserActivitiesById(params.id, "en");
 
   const mockData = {
     id: params.id,
@@ -76,7 +76,7 @@ export default async function UserProfile({ params }: ParamsProps) {
         <ProfileHeader user={currentUser} />
 
         <div className="mt-6 flex flex-col-reverse gap-6 lg:flex-row">
-          <div className="flex-1">{mockData.activities && <ActivityFeed activities={mockData.activities} />}</div>
+          <div className="flex-1">{currentUserActivities && <ActivityFeed activities={currentUserActivities.paginatedData} />}</div>
 
           <div className="flex flex-col space-y-6 lg:w-1/3">
             <ProfileInfo user={currentUser} />

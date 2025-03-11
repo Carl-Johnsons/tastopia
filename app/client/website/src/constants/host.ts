@@ -1,7 +1,6 @@
 import axios from "axios";
-import { API_URI, CLIENT_BASE_URL } from "./api";
-import { getAuthCookie } from "@/utils/auth";
 import { auth } from "@/auth";
+import { API_URI, CLIENT_BASE_URL } from "./api";
 
 console.log("API gateways uri is " + API_URI);
 
@@ -34,7 +33,6 @@ protectedAxiosInstance.interceptors.request.use(
   async (config) => {
     const session = await auth();
     const accessToken = session?.accessToken;
-    console.log("Access token in interceptors:", accessToken);
 
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
