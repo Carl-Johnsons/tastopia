@@ -41,7 +41,7 @@ public static class ActionTemplateConstant
         ];
     public static string GetTimeElapsed(DateTime time, string language)
     {
-        if (language != "en" && language != "vn")
+        if (language != "en" && language != "vi")
             throw new ArgumentException("Language must be 'en' or 'vn'");
 
         TimeSpan elapsed = DateTime.UtcNow - time;
