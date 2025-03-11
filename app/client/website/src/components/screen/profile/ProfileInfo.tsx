@@ -14,15 +14,15 @@ import {
 
 export default function ProfileInfo({ user }: any) {
   const infoItems = [
-    { icon: "user", label: "USERNAME", value: user.username },
-    { icon: "email", label: "EMAIL", value: user.email },
-    { icon: "phone", label: "PHONE", value: user.phone },
+    { icon: "user", label: "USERNAME", value: user.accountUsername },
+    { icon: "email", label: "EMAIL", value: user.accountEmail },
+    { icon: "phone", label: "PHONE", value: user.accountPhoneNumber },
     { icon: "gender", label: "GENDER", value: user.gender },
-    { icon: "calendar", label: "DATE OF BIRTH", value: user.dateOfBirth },
+    { icon: "calendar", label: "DATE OF BIRTH", value: user.dob },
     { icon: "location", label: "ADDRESS", value: user.address },
-    { icon: "followers", label: "FOLLOWERS", value: user.followers },
-    { icon: "following", label: "FOLLOWINGS", value: user.following },
-    { icon: "recipes", label: "RECIPES", value: user.recipes },
+    { icon: "followers", label: "FOLLOWERS", value: user.totalFollower },
+    { icon: "following", label: "FOLLOWINGS", value: user.totalFollowing },
+    { icon: "recipes", label: "RECIPES", value: user.totalRecipe },
     { icon: "time", label: "ACTIVE TIME", value: user.activeTime },
   ];
 

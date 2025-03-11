@@ -66,7 +66,7 @@ public static class Config
                     AccessTokenLifetime = 2592000,
                     AllowOfflineAccess = true,
                     RedirectUris = {
-                       $"{reactUrl}/api/auth/callback/duende-identityserver6",
+                       $"{reactUrl}/api/auth/callback/duende-identity-server6",
                        "https://www.getpostman.com/oauth2/callback",
                     },
                     PostLogoutRedirectUris ={reactUrl},

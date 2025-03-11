@@ -1,3 +1,7 @@
+export interface ParamsProps {
+  params: { id: string };
+}
+
 export interface SidebarChildLink {
   route: string;
   label: string;

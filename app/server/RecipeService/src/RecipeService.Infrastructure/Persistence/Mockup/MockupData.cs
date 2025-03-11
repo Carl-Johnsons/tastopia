@@ -97,6 +97,7 @@ internal class MockupData
 
             await _unitOfWork.SaveChangeAsync();
         }
+
     }
 
     public async Task SeedTags()

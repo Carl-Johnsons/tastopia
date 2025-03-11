@@ -1,37 +1,32 @@
 "use client";
 
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useAppDispatch } from "@/store/hooks";
 import { clearAuthData, saveAuthData } from "@/slices/auth.slice";
-import useSyncUser from "@/hooks/auth/useSyncUser";
-import { clearUserData, useSelectUser } from "@/slices/user.slice";
+import { clearUserData } from "@/slices/user.slice";
+import { clientAxiosInstance } from "@/constants/clientHost";
 
 const AuthListener = () => {
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
-  const { fetch: fetchUser } = useSyncUser();
-  const user = useSelectUser();
+
+  const clearData = useCallback(() => {
+    dispatch(clearAuthData());
+    dispatch(clearUserData());
+  }, []);
 
   useEffect(() => {
-    if (session) {
-      dispatch(
-        saveAuthData({
-          accessToken: session.accessToken as string,
-          idToken: session.idToken as string,
-        }),
-      );
+    if (!session) return clearData();
 
-      fetchUser();
-    } else {
-      dispatch(clearAuthData());
-      dispatch(clearUserData());
-    }
+    const accessToken = session.accessToken as string;
+    const idToken = session.idToken as string;
+
+    clientAxiosInstance.post("/api/auth/cookie", {
+      accessToken,
+      idToken,
+    });
   }, [session]);
-
-  useEffect(() => {
-    console.log("AuthListener: User changed", user);
-  }, [user]);
 
   return null;
 };

@@ -1,14 +1,21 @@
-"use client";
+import { getUserDetails } from "@/api/user";
+import { auth } from "@/auth";
 
-import { useSelectUser } from "@/slices/user.slice";
-
-const Income = () => {
-  const { displayName } = useSelectUser();
+const Income = async () => {
+  const session = await auth();
+  const accessToken = session?.accessToken;
+  const user = await getUserDetails();
 
   return (
-    <div className="flex size-full justify-center">
-      <div className="flex w-full flex-col gap-4">Hi, {displayName}</div>
-    </div>
+    <>
+      <div>
+        <p>Access token: {accessToken}</p>
+      </div>
+      <div className="flex flex-col size-full justify-center">
+        <div className="flex w-full flex-col gap-4">Hi, income</div>
+        {!!user && <div>user: {JSON.stringify(user, null, 2)}</div>}
+      </div>
+    </>
   );
 };
 

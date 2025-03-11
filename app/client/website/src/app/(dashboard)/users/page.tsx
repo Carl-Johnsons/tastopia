@@ -8,7 +8,7 @@ export default function Users() {
   console.log("params", params.id);
 
   const handleClick = () => {
-    router.push("/users/zuong");
+    router.push("/users/bb06e4ec-f371-45d5-804e-22c65c77f67d");
   };
   return (
     <div className="flex size-full justify-center">
