@@ -6,11 +6,8 @@ import Link from "next/link";
 import Theme from "./Theme";
 import MobileNav from "./MobileNav";
 import LogoutButton from "./LogoutButton";
-import { useSelectAccessToken } from "@/slices/auth.slice";
 
 const Navbar = () => {
-  const accessToken = useSelectAccessToken();
-
   return (
     <nav className="flex-between bg-white_black100 fixed z-50 w-full flex-wrap gap-5 p-6 shadow-lg shadow-gray-100 sm:flex-nowrap sm:px-12 dark:shadow-none">
       <Link href={"/"} className="group flex items-center justify-center gap-2">
@@ -27,9 +24,9 @@ const Navbar = () => {
       </Link>
 
       <div className="flex-between gap-5">
-        {!!accessToken && <LogoutButton />}
         <Theme />
         <MobileNav />
+        <LogoutButton/>
       </div>
     </nav>
   );

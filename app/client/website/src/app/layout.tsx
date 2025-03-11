@@ -31,7 +31,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${imbPlexMono.className}`}>
         <Providers>
-          <AuthListener />
           <Protected allowedRoles={[Roles.SUPER_ADMIN, Roles.ADMIN]}>
             {children}
           </Protected>

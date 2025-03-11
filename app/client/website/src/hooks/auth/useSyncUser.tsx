@@ -1,5 +1,3 @@
-"use client";
-
 import { useGetUserDetails } from "@/api/user";
 import { saveUserData } from "@/slices/user.slice";
 import { useCallback, useState } from "react";
@@ -7,10 +5,10 @@ import { useDispatch } from "react-redux";
 
 type Status = "todo" | "loading" | "success" | "error";
 
-const useSyncUser = () => {
+const useSyncUser = async () => {
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<Status>("todo");
-  const getUserDetails = useGetUserDetails();
+  const getUserDetails = await useGetUserDetails();
   const dispatch = useDispatch();
 
   /**
