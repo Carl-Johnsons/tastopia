@@ -1,0 +1,50 @@
+import { getAuthCookie, setAuthCookies } from "@/utils/auth";
+import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
+import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
+
+export async function GET() {
+  try {
+    const accessToken = getAuthCookie("accessToken");
+    const idToken = getAuthCookie("idToken");
+
+    if (!accessToken || !idToken) {
+      return Response.json(
+        {
+          accessToken,
+          idToken,
+        },
+        { status: 404 },
+      );
+    }
+
+    return Response.json({ accessToken, idToken }, { status: 204 });
+  } catch (error) {
+    console.log("Error getting cookie", error);
+    return Response.json("Internal server error", { status: 500 });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+
+    if (!body) {
+      return Response.json("Missing body", { status: 400 });
+    }
+
+    const { accessToken, idToken } = body;
+
+    if (!accessToken || !idToken) {
+      return Response.json("Missing access token or id token", { status: 400 });
+    }
+
+    await setAuthCookies({ accessToken, idToken });
+    return Response.json(null, {
+      status: 200,
+    });
+  } catch (error) {
+    console.log("Error setting cookie", error);
+    return Response.json("Internal server error", { status: 500 });
+  }
+}

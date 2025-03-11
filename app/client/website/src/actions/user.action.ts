@@ -1,11 +1,14 @@
 "use server";
 
-import { useAxios } from "@/hooks/api/useAxios";
+import { protectedAxiosInstance } from "@/constants/host";
+import { cookies } from "next/headers";
 
 export async function useGetUserById(id: string) {
-  const { protectedAxiosInstance } = useAxios();
+  const cookieStore = cookies();
+  console.log("Cookies in useGetUserById:", cookieStore.getAll());
+
   try {
-    const url = "/api/user/get-current-user-details";
+    const url = "/api/user/admin-get-user-detail";
     const { data } = await protectedAxiosInstance.post(url, {
       accountId: id,
     });

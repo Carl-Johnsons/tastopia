@@ -1,51 +1,31 @@
-"use client";
+"use server";
 
-import { DUENDE_IDENTITY_PROVIDER_NAME } from "@/constants/api";
+import { auth } from "@/auth";
+import LoginForm from "@/components/screen/login/LoginForm";
 import { Roles } from "@/constants/role";
-import { useSelectRole } from "@/slices/auth.slice";
-import { useSelectUser } from "@/slices/user.slice";
-import { signIn, useSession } from "next-auth/react";
-import { ReactNode, useCallback } from "react";
+import { ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
   allowedRoles: Roles[];
 };
 
-const Protected = ({ children, allowedRoles }: Props) => {
-  const { data: session } = useSession();
-  const role = useSelectRole();
-  const { isAdmin } = useSelectUser();
+const Protected = async ({ children, allowedRoles }: Props) => {
+  const session = await auth();
+  console.log("session", session);
 
-  if (!session || (role && !allowedRoles.includes(role))) {
+  if (!session) {
     return <Unauthenticated />;
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="h-screen flex-center">
-        <span>Loading...</span>
-      </div>
-    );
   }
 
   return <>{children}</>;
 };
 
 const Unauthenticated = () => {
-  const login = useCallback(async () => {
-    signIn(DUENDE_IDENTITY_PROVIDER_NAME);
-  }, [DUENDE_IDENTITY_PROVIDER_NAME]);
-
   return (
-    <div className="h-screen flex-center">
-      <span>
-        Unauthenticated, please{" "}
-        <button onClick={login} className="text-blue-500">
-          <span>login</span>
-        </button>{" "}
-        to continue.
-      </span>
+    <div className="h-screen flex-center flex-col gap-5">
+      <p>Unauthenticated, please login to continue.</p>
+      <LoginForm />
     </div>
   );
 };
