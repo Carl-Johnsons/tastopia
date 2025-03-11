@@ -25,6 +25,7 @@ export const colors: Colors = {
     100: "#1E1E1E",
     200: "#191919",
     300: "#0D0D0D",
+    400: "#1E201E"
   },
   white: { DEFAULT: "#FFFFFF", 100: "#EFEFEF" },
   gray: {

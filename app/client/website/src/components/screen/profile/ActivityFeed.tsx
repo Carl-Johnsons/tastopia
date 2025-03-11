@@ -54,14 +54,14 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
     switch (type) {
       case ActivityType.CreateRecipe:
       case ActivityType.UpvoteRecipe:
-        return "bg-green-50 border-green-200";
+        return "bg-green-50 dark:bg-black-400 border-green-200";
       case ActivityType.Ban:
       case ActivityType.DownvoteRecipe:
-        return "bg-red-50 border-red-200";
+        return "bg-red-50 dark:bg-black-400 border-red-200";
       case ActivityType.CommentRecipe:
-        return "bg-blue-50 border-blue-200";
+        return "bg-blue-50 dark:bg-black-400 border-blue-200";
       default:
-        return "bg-gray-50 border-gray-200";
+        return "bg-gray-50 dark:bg-black-400 border-gray-200";
     }
   };
 
@@ -103,7 +103,7 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
               <div className={`mt-2 rounded-lg border p-4 ${getBgColor(activity.type)}`}>
                 <div className="mb-3 flex items-center gap-2">
                   {getActivityIcon(activity.type)}
-                  <h4 className="font-medium">
+                  <h4 className="text-black_white font-medium">
                     {(() => {
                       switch (activity.type) {
                         case ActivityType.CreateRecipe:
@@ -123,7 +123,7 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
                   </h4>
                 </div>
 
-                <h3 className="mb-1 font-medium text-lg">{activity.description}</h3>
+                <h3 className="text-black_white mb-1 font-medium text-lg">{activity.description}</h3>
 
                 {/* <div className="mt-4">
                   <div className="mt-3 overflow-hidden rounded-lg">
@@ -140,7 +140,7 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
                 <div className="mt-3 whitespace-pre-line text-gray-700">{activity.content}</div>
 
                 <div className="mt-4 rounded-lg border border-gray-200 p-4">
-                  <div className="font-medium text-lg">{activity.recipeTitle}</div>
+                  <div className="text-black_white font-medium text-lg">{activity.recipeTitle}</div>
                   <div className="mt-1 text-sm text-gray-500">
                     @{activity.recipeAuthorUsername} · {activity.recipeTimeAgo}
                   </div>
