@@ -11,9 +11,7 @@ using IdentityService.Domain.Constants;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
 using System.Net;
 
 namespace DuendeIdentityServer.Pages.Account.Login;
@@ -112,9 +110,16 @@ public class Index : PageModel
         {
             var user = await _userManager.FindByNameAsync(Input.Username!);
 
+            if (user == null)
+            {
+                ModelState.AddModelError("InvalidCredential", RegisterOptions.InvalidCredentialsErrorMessage);
+                await BuildModelAsync(Input.ReturnUrl);
+                return Page();
+            }
+
             if (!user!.IsActive)
             {
-                ModelState.AddModelError(string.Empty, RegisterOptions.AccountDisabledErrorMessage);
+                ModelState.AddModelError("Disabled", RegisterOptions.AccountDisabledErrorMessage);
                 // account disabled, show form with error
                 await BuildModelAsync(Input.ReturnUrl);
                 return Page();
@@ -129,7 +134,7 @@ public class Index : PageModel
 
             if (!isAllowed)
             {
-                ModelState.AddModelError(string.Empty, RegisterOptions.InvalidCredentialsErrorMessage);
+                ModelState.AddModelError("InvalidCredential", RegisterOptions.InvalidCredentialsErrorMessage);
                 await BuildModelAsync(Input.ReturnUrl);
                 return Page();
             }
