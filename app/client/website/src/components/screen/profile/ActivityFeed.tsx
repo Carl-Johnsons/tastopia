@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ActivityItem } from "@/types/user";
-import { BanIcon, CommentIcon, DefaultIcon, RecipeIcon } from "@/components/shared/icons";
+import { BanIcon, CommentIcon, DefaultIcon, DownvoteIcon, RecipeIcon, UpvoteIcon } from "@/components/shared/icons";
+import { ActivityType } from "@/constants/activities";
 
 type ActivityFeedProps = {
   activities: ActivityItem[];
@@ -10,22 +11,34 @@ type ActivityFeedProps = {
 export default function ActivityFeed({ activities }: ActivityFeedProps) {
   const getActivityIcon = (type: ActivityItem["type"]) => {
     switch (type) {
-      case "recipe":
+      case ActivityType.CreateRecipe:
         return (
           <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
             <RecipeIcon />
           </div>
         );
-      case "ban":
+      case ActivityType.UpvoteRecipe:
+        return (
+          <div className="flex size-8 items-center justify-center rounded-full bg-green-100 text-green-600">
+            <UpvoteIcon />
+          </div>
+        );
+      case ActivityType.Ban:
         return (
           <div className="flex size-8 items-center justify-center rounded-full bg-red-100 text-red-600">
             <BanIcon />
           </div>
         );
-      case "comment":
+      case ActivityType.DownvoteRecipe:
+        return (
+          <div className="flex size-8 items-center justify-center rounded-full bg-red-100 text-red-600">
+            <DownvoteIcon />
+          </div>
+        );
+      case ActivityType.CommentRecipe:
         return (
           <div className="flex size-8 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-            <CommentIcon></CommentIcon>
+            <CommentIcon />
           </div>
         );
       default:
@@ -37,13 +50,15 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
     }
   };
 
-  const getBgColor = (type: string) => {
+  const getBgColor = (type: ActivityType) => {
     switch (type) {
-      case "recipe":
+      case ActivityType.CreateRecipe:
+      case ActivityType.UpvoteRecipe:
         return "bg-green-50 border-green-200";
-      case "ban":
+      case ActivityType.Ban:
+      case ActivityType.DownvoteRecipe:
         return "bg-red-50 border-red-200";
-      case "comment":
+      case ActivityType.CommentRecipe:
         return "bg-blue-50 border-blue-200";
       default:
         return "bg-gray-50 border-gray-200";
@@ -60,7 +75,7 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
             <div className="shrink-0">
               <div className="size-10 overflow-hidden rounded-full bg-orange-100">
                 <Image
-                  src="/assets/images/panda.png"
+                  src={activity.avtImageUrl}
                   alt={activity.userName || "User"}
                   width={40}
                   height={40}
@@ -71,21 +86,8 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
 
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="base-semibold text-black_white">{activity.type === "ban" ? "System" : "Tai Duc"}</h3>
-                <p className="text-sm text-gray-500">{activity.description}</p>
-                <span className="text-sm text-gray-500">{activity.timeAgo}</span>
-              </div>
-
-              <div className={`mt-2 rounded-lg border p-4 ${getBgColor(activity.type)}`}>
-                <div className="mb-3 flex items-center gap-2">
-                  {getActivityIcon(activity.type)}
-                  <h4 className="font-medium">
-                    {activity.type === "recipe" ? "Create Recipe" : activity.type === "ban" ? "Disable User" : "Create comment"}
-                  </h4>
-                </div>
-
-                <h3 className="mb-1 text-lg font-medium">{activity.title}</h3>
-
+                <h3 className="base-semibold text-black_white">{activity.type === ActivityType.Ban ? "System" : activity.username}</h3>
+                <p className="text-sm text-gray-500">{activity.title}</p>
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <svg xmlns="http://www.w3.org/2000/svg" className="size-4" viewBox="0 0 20 20" fill="currentColor">
                     <path
@@ -94,47 +96,65 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  <span>
-                    {activity.time} · {activity.timestamp}
-                  </span>
+                  <span className="text-sm text-gray-500">{activity.timeAgo}</span>
+                </div>
+              </div>
+
+              <div className={`mt-2 rounded-lg border p-4 ${getBgColor(activity.type)}`}>
+                <div className="mb-3 flex items-center gap-2">
+                  {getActivityIcon(activity.type)}
+                  <h4 className="font-medium">
+                    {(() => {
+                      switch (activity.type) {
+                        case ActivityType.CreateRecipe:
+                          return "Create Recipe";
+                        case ActivityType.Ban:
+                          return "Disable User";
+                        case ActivityType.CommentRecipe:
+                          return "Create Comment";
+                        case ActivityType.UpvoteRecipe:
+                          return "Upvoted Recipe";
+                        case ActivityType.DownvoteRecipe:
+                          return "Downvoted Recipe";
+                        default:
+                          return "Activity";
+                      }
+                    })()}
+                  </h4>
                 </div>
 
-                {activity.type === "recipe" && (
-                  <div className="mt-4">
-                    <div className="mt-3 overflow-hidden rounded-lg">
-                      <Image
-                        src={"/assets/images/pizza.jpg"}
-                        alt={activity.title}
-                        width={600}
-                        height={300}
-                        className="h-auto w-full object-cover"
-                      />
-                    </div>
+                <h3 className="mb-1 font-medium text-lg">{activity.description}</h3>
+
+                {/* <div className="mt-4">
+                  <div className="mt-3 overflow-hidden rounded-lg">
+                    <Image
+                      src={activity.recipeImageUrl}
+                      alt={activity.recipeTitle}
+                      width={600}
+                      height={300}
+                      className="h-auto w-full object-cover"
+                    />
                   </div>
-                )}
+                </div> */}
 
-                {activity.type === "comment" && (
-                  <>
-                    <div className="mt-3 whitespace-pre-line text-gray-700">{activity.content}</div>
+                <div className="mt-3 whitespace-pre-line text-gray-700">{activity.content}</div>
 
-                    <div className="mt-4 rounded-lg border border-gray-200 p-4">
-                      <div className="text-lg font-medium">{activity.recipeTitle}</div>
-                      <div className="mt-1 text-sm text-gray-500">
-                        @{activity.recipeOwner} · {activity.recipeTimeAgo}
-                      </div>
+                <div className="mt-4 rounded-lg border border-gray-200 p-4">
+                  <div className="font-medium text-lg">{activity.recipeTitle}</div>
+                  <div className="mt-1 text-sm text-gray-500">
+                    @{activity.recipeAuthorUsername} · {activity.recipeTimeAgo}
+                  </div>
 
-                      <div className="mt-3 overflow-hidden rounded-lg">
-                        <Image
-                          src={"/assets/images/pizza.jpg"}
-                          alt={activity.recipeTitle ?? "activity comment"}
-                          width={600}
-                          height={300}
-                          className="h-auto w-full object-cover"
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
+                  <div className="mt-3 overflow-hidden rounded-lg">
+                    <Image
+                      src={"/assets/images/pizza.jpg"}
+                      alt={activity.recipeTitle ?? "activity comment"}
+                      width={600}
+                      height={300}
+                      className="h-auto w-full object-cover"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

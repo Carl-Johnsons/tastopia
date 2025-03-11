@@ -1,7 +1,5 @@
 import { getAuthCookie, setAuthCookies } from "@/utils/auth";
-import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -39,10 +37,16 @@ export async function POST(req: NextRequest) {
       return Response.json("Missing access token or id token", { status: 400 });
     }
 
-    await setAuthCookies({ accessToken, idToken });
-    return Response.json(null, {
+    const res = NextResponse.json(null, {
       status: 200,
     });
+
+    res.cookies.set("accessToken", accessToken);
+    res.cookies.set("idToken", idToken);
+
+    console.log("Cookies set success");
+
+    return res;
   } catch (error) {
     console.log("Error setting cookie", error);
     return Response.json("Internal server error", { status: 500 });

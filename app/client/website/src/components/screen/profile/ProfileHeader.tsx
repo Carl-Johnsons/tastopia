@@ -15,16 +15,16 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
         <div className="flex items-center gap-5">
           <div className="relative size-24 overflow-hidden rounded-full bg-orange-100">
             {user.avatarUrl ? (
-              <Image src={"/assets/images/panda.png"} alt={user.name} fill className="object-cover" />
+              <Image src={user.avatarUrl} alt={user.accountUsername} fill className="object-cover" />
             ) : (
-              <div className="flex size-full items-center justify-center bg-orange-200 text-3xl font-bold text-orange-600">
-                {user.name.charAt(0)}
+              <div className="flex size-full items-center justify-center bg-orange-200 font-bold text-3xl text-orange-600">
+                {user.accountUsername.charAt(0)}
               </div>
             )}
           </div>
 
           <div>
-            <h1 className="h3-semibold text-black_white">{user.name}</h1>
+            <h1 className="h3-semibold text-black_white">{user.accountUsername}</h1>
             <div className="flex items-center gap-2">
               <p className="text-gray-600">User</p>
               {user.status === "inactive" ? (
