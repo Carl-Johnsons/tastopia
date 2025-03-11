@@ -134,7 +134,7 @@ test_services() {
   run_service 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" &
 }
 
-# run_services
-test_services
+run_services
+# test_services
 
 wait

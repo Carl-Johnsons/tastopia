@@ -71,10 +71,6 @@ public static class ReinforcedTypingsExtension
             typeof(UserReportCommentDTO),
             typeof(UserReportCommentResponse),
             typeof(ReportReasonResponse),
-            //ADMIN SECTION
-            typeof(AdminGetRecipesDTO),
-            typeof(PaginatedAccountRecipeCommentListResponse),
-            typeof(AdminRecipeResponse),
         ], config =>
         {
             config.FlattenHierarchy()
@@ -97,7 +93,12 @@ public static class ReinforcedTypingsExtension
     {
         // DTO and Entites
         builder.ExportAsInterfaces([
-            typeof(CommentRecipeDTO)
+            typeof(AdminGetRecipesDTO),
+            typeof(PaginatedAccountRecipeCommentListResponse),
+            typeof(AdminRecipeResponse),
+            typeof(AdminGetUserActivityDTO),
+            typeof(PaginatedUserActivityListResponse),
+            typeof(UserActivityResponse),
         ], config =>
         {
             config.FlattenHierarchy()
