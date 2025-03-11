@@ -85,9 +85,9 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
             </div>
 
             <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-4">
                 <h3 className="base-semibold text-black_white">{activity.type === ActivityType.Ban ? "System" : activity.username}</h3>
-                <p className="text-sm text-gray-500">{activity.title}</p>
+                {/* <p className="text-sm text-gray-500">{activity.title}</p> */}
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                   <svg xmlns="http://www.w3.org/2000/svg" className="size-4" viewBox="0 0 20 20" fill="currentColor">
                     <path
