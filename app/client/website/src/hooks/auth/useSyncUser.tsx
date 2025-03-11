@@ -1,14 +1,13 @@
-import { useGetUserDetails } from "@/api/user";
+import { getUserDetails } from "@/api/user";
 import { saveUserData } from "@/slices/user.slice";
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
 
 type Status = "todo" | "loading" | "success" | "error";
 
-const useSyncUser = async () => {
+const useSyncUser = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [status, setStatus] = useState<Status>("todo");
-  const getUserDetails = await useGetUserDetails();
   const dispatch = useDispatch();
 
   /**
@@ -19,9 +18,7 @@ const useSyncUser = async () => {
     setStatus("loading");
 
     try {
-      const { data: user } = await getUserDetails.refetch({
-        throwOnError: true,
-      });
+      const user = await getUserDetails();
       dispatch(saveUserData({ ...user }));
       setStatus("success");
     } catch (error) {

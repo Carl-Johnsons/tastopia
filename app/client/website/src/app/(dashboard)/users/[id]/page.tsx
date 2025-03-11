@@ -7,6 +7,7 @@ import ProfileSettings from "@/components/screen/profile/ProfileSettings";
 
 export default async function UserProfile({ params }: ParamsProps) {
   const currentUser = await useGetUserById(params.id);
+  console.log("Current user", currentUser);
 
   const mockData = {
     id: params.id,

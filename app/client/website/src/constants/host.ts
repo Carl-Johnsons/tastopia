@@ -1,6 +1,7 @@
 import axios from "axios";
 import { API_URI, CLIENT_BASE_URL } from "./api";
-import { getCookie } from "cookies-next/client";
+import { getAuthCookie } from "@/utils/auth";
+import { auth } from "@/auth";
 
 console.log("API gateways uri is " + API_URI);
 
@@ -31,7 +32,8 @@ export const protectedAxiosInstance = axios.create({
 
 protectedAxiosInstance.interceptors.request.use(
   async (config) => {
-    const accessToken = await getCookie("accessToken");
+    const session = await auth();
+    const accessToken = session?.accessToken;
     console.log("Access token in interceptors:", accessToken);
 
     if (accessToken) {

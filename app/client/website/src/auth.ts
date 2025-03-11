@@ -7,7 +7,6 @@ import {
   SCOPE,
 } from "./constants/api";
 import { v4 as uuidv4 } from "uuid";
-import { clientAxiosInstance } from "./constants/clientHost";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -50,18 +49,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         idToken = account.id_token as string;
       }
 
-      await clientAxiosInstance.post(
-        "/api/auth/cookie",
-        JSON.stringify({
-          accessToken,
-          idToken,
-        }),
-      );
-
       return token;
     },
-    async session({ session }) {
+    async session({ session, token }) {
+      session.accessToken = token.accessToken as string;
+      session.idToken = token.idToken as string;
+
       return session;
     },
   },
 });
+

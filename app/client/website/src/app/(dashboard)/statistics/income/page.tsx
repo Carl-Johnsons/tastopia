@@ -1,11 +1,17 @@
 import { getUserDetails } from "@/api/user";
-import { getCookie } from "cookies-next/client";
+import { auth } from "@/auth";
 
 const Income = async () => {
-  const accessToken = getCookie("accessToken");
+  const session = await auth();
+  const accessToken = session?.accessToken;
 
   if (!accessToken) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        Loading...
+        <br />
+      </div>
+    );
   }
 
   const user = await getUserDetails();
