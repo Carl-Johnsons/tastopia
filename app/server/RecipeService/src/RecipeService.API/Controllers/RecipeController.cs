@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeService.API.DTOs;
+using RecipeService.Application.Activities.Queries;
 using RecipeService.Application.Comments.Commands;
 using RecipeService.Application.Comments.Queries;
 using RecipeService.Application.Recipes.Commands;
@@ -450,6 +451,44 @@ public class RecipeController : BaseApiController
         {
             Language = getReportReasonsDTO.Language,
             ReportType = getReportReasonsDTO.ReportType,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    //ADMIN SECTION
+    [HttpPost("admin-get-recipes")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetRecipes([FromBody] AdminGetRecipesDTO adminGetRecipesDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new AdminGetRecipesQuery
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Keyword = adminGetRecipesDTO.Keyword,
+            Page = adminGetRecipesDTO?.Page,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("admin-get-user-activities")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedUserActivityListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetUserActivities([FromBody] AdminGetUserActivityDTO adminGetUserActivityDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new AdminGetUserActivityQuery
+        {
+            CurrentAccountId = Guid.Parse(subjectId!),
+            AccountId = adminGetUserActivityDTO.AccountId,
+            Skip = adminGetUserActivityDTO.Skip,
+            Language = adminGetUserActivityDTO.Language,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

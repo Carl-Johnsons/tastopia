@@ -19,7 +19,7 @@ import {
 } from "@/api/search";
 import { router } from "expo-router";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import { removeTagValue, selectSearchTagCodes, selectSearchTags } from "@/slices/searchRecipe.slice";
+import { removeTagValue, selectSearchTagCodes, selectSearchTagValues, selectSearchTags } from "@/slices/searchRecipe.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useTranslation } from "react-i18next";
 import useColorizer from "@/hooks/useColorizer";
@@ -73,7 +73,7 @@ const ResultSection = memo(
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.1}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 160 }}
           ListHeaderComponent={() => {
             return (
               <Text className='h3-bold text-black_white mb-2'>
@@ -120,6 +120,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const { t } = useTranslation("search");
   const dispatch = useAppDispatch();
   const tagCodes = useAppSelector(selectSearchTagCodes);
+  const tagValues = useAppSelector(selectSearchTagValues);
 
   const selectedTagsStore = useAppSelector(selectSearchTags);
 
@@ -143,7 +144,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
     isLoading: isSearching,
     refetch,
     fetchNextPage
-  } = useSearchRecipes(debouncedValue, tagCodes);
+  } = useSearchRecipes(debouncedValue, tagCodes, tagValues);
 
   const isDoneSearching =
     ((searchValue !== "" && debouncedValue !== "") || tagCodes.length > 0) &&

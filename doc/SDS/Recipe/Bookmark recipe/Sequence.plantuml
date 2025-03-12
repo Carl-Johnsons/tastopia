@@ -1,0 +1,43 @@
+@startuml Sequence
+title "Bookmark recipe"
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n RecipeService" as RecipeService
+database MongoDB
+
+User -> MobileUI++: 1. Touch on bookmark icon \n in a recipe feed or recipe detail screen
+
+MobileUI -> ApiGateway++: 2. Bookmark recipe
+
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> RecipeService++: 4. Forward request
+
+database MongoDB
+RecipeService -> MongoDB++: 5. Query data
+RecipeService <-- MongoDB--: 6. Return response
+alt Recipe is not bookmarked
+  RecipeService -> MongoDB++: 7. Insert data
+  RecipeService <-- MongoDB--: 7A.1. Return response
+  ApiGateway <-- RecipeService: 7A.2. Return recipe bookmark
+  MobileUI <-- ApiGateway: 7A.3. Forward response
+  User <-- MobileUI: 7A.4. Display boomark recipe success message
+else Recipe is bookmarked
+  RecipeService -> MongoDB++: 8. Delete data
+  RecipeService <-- MongoDB--: 9. Return response
+  ApiGateway <-- RecipeService--: 10. Return recipe bookmark
+  MobileUI <-- ApiGateway--: 11. Forward response
+  User <-- MobileUI--: 12. Display unbookmark recipe success message
+end alt
+
+
+@enduml

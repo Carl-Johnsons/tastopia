@@ -79,7 +79,7 @@ public class CommunityRecipeService : IRecipeService
 
     public async Task CheckRecipeIngredients()
     {
-
+        await Console.Out.WriteLineAsync();
     }
 
     public async Task CheckRecipeTags(Guid recipeId, List<string> tagValues)

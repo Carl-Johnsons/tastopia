@@ -41,9 +41,33 @@ public static class Config
                     AccessTokenLifetime = 2592000,
                     AllowOfflineAccess = true,
                     RedirectUris = {
-                       $"{reactUrl}/api/auth/callback/duende-identityserver6",
                        "https://www.getpostman.com/oauth2/callback",
                        "com.tastopia.app://"
+                    },
+                    PostLogoutRedirectUris ={reactUrl},
+                    AllowedCorsOrigins = { reactUrl, "https://www.getpostman.com" },
+                    AllowedScopes = {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Phone,
+                        IdentityServerConstants.StandardScopes.Email,
+                        IdentityServerConstants.LocalApi.ScopeName,
+                    },
+                },
+                new Client
+                {
+                    ClientId = "nextJS",
+                    ClientName = "NextJS",
+                    RequireClientSecret = false, // TODO: add secret later
+                    AllowedGrantTypes = [GrantType.AuthorizationCode],
+                    RequirePkce = true,
+                    AllowAccessTokensViaBrowser = false,
+                    AlwaysIncludeUserClaimsInIdToken = true, // Attach user claim for SPA client
+                    AccessTokenLifetime = 2592000,
+                    AllowOfflineAccess = true,
+                    RedirectUris = {
+                       $"{reactUrl}/api/auth/callback/duende-identity-server6",
+                       "https://www.getpostman.com/oauth2/callback",
                     },
                     PostLogoutRedirectUris ={reactUrl},
                     AllowedCorsOrigins = { reactUrl, "https://www.getpostman.com" },

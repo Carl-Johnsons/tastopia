@@ -75,6 +75,8 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
                 {
                     AccountId = accountId.Value,
                     IsUpvote = isUpvote.Value,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
                 };
                 var delta = isUpvote.Value ? 1 : -1;
                 recipe.VoteDiff += delta;

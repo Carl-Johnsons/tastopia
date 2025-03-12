@@ -1,0 +1,35 @@
+@startuml Sequence
+title "Get user followers"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n UserService" as UserService
+database Postgresql
+
+User -> MobileUI ++: 1. Enter user profile screen
+
+MobileUI -> ApiGateway ++: 2. Get user followers
+ApiGateway -> UserService ++: 3. Forward request
+UserService -> Postgresql ++: 4. Query data
+UserService <-- Postgresql--: 5. Return response
+
+alt Users list is empty
+    ApiGateway <-- UserService: 6A. Return empty list
+    MobileUI <-- ApiGateway: 6A.1. Foward response
+    User <-- MobileUI: 6A.2. Display empty list
+else Users list is not empty
+    ApiGateway <-- UserService--: 7. Return users list
+    MobileUI <-- ApiGateway--: 8. Forward response
+    User <-- MobileUI--: 9. Display users list
+end alt
+
+@enduml

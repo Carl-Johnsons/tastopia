@@ -55,11 +55,17 @@ internal class MockupData
                 //add author
                 int randomIndex = random.Next(RecipeData.Authors.Count);
                 recipe.AuthorId = RecipeData.Authors[randomIndex];
+                recipe.IsActive = true;
+                recipe.CreatedAt = DateTime.UtcNow;
+                recipe.UpdatedAt = DateTime.UtcNow;
 
                 //add id for step
+                int num = 1;
                 foreach (var step in recipe.Steps)
                 {
                     step.Id = Guid.NewGuid();
+                    step.OrdinalNumber = num;
+                    num++;
                 }
 
                 //add comment
@@ -91,6 +97,7 @@ internal class MockupData
 
             await _unitOfWork.SaveChangeAsync();
         }
+
     }
 
     public async Task SeedTags()

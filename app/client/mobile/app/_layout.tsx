@@ -22,7 +22,15 @@ import { SignalRHubProvider } from "@/components/SignalRProvider";
 import("../global.css");
 
 SplashScreen.preventAutoHideAsync();
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+      refetchOnWindowFocus: false,
+      retry: 1
+    }
+  }
+});
 
 const RootLayout = () => {
   const [fontsLoaded, error] = useFonts(FONTS);

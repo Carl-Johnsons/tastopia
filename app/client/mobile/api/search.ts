@@ -25,8 +25,13 @@ const useSearchUsers = (keyword: string) => {
   });
 };
 
-const useSearchRecipes = (keyword: string, tagCodes: string[]) => {
+const useSearchRecipes = (keyword: string, tagCodes: string[], values?: string[]) => {
   const finalTagCodes = tagCodes.length > 0 ? tagCodes : ["ALL"];
+
+  if (values) {
+    keyword = keyword.concat(values.join(" "));
+  }
+
   return useInfiniteQuery<SearchRecipeResponse>({
     queryKey: ["searchRecipes", keyword],
     enabled: keyword.length > 0 || tagCodes.length > 0,
@@ -35,7 +40,7 @@ const useSearchRecipes = (keyword: string, tagCodes: string[]) => {
         "/api/recipe/search-recipe",
         {
           keyword,
-          tagCodes: finalTagCodes,
+          tagCodes: [],
           skip: pageParam.toString()
         }
       );

@@ -76,7 +76,7 @@ public class Comment : BaseMongoDBAuditableEntity
     public bool IsActive { get; set; } = true;
 
 }
-public class RecipeVote : BaseMongoDBEntity
+public class RecipeVote : BaseMongoDBAuditableEntity
 {
     [Required]
     public Guid AccountId { get; set; }

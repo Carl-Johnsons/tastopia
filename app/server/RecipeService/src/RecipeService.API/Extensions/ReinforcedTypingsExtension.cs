@@ -3,7 +3,6 @@ using RecipeService.API.DTOs;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
-using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 namespace RecipeService.API.Extensions;
@@ -12,12 +11,13 @@ namespace RecipeService.API.Extensions;
 public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "recipe";
-    private static string EXPORT_FILE_PATH = "../../../../client/mobile/generated";
+    private static List<string> EXPORT_FILE_PATHS = [
+        "../../../../client/mobile/generated",
+        "../../../../client/website/generated"
+    ];
 
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {
-        Directory.CreateDirectory(EXPORT_FILE_PATH);
-
         // Custom export file
         List<Type> errorsTypes = [
             typeof(CommentError),
@@ -25,8 +25,18 @@ public static class ReinforcedTypingsExtension
             typeof(TagError)
         ];
 
-        builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
+        foreach (var path in EXPORT_FILE_PATHS)
+        {
+            Directory.CreateDirectory(path);
+            builder.ConfigCommonReinforcedTypings(path, FILE_NAME, errorsTypes);
+        }
 
+        builder.GenerateTypesForMobileClient();
+        builder.GenerateTypesForWebsiteClient();
+    }
+
+    private static void GenerateTypesForMobileClient(this ConfigurationBuilder builder)
+    {
         // DTO and Entites
         builder.ExportAsInterfaces([
             typeof(CommentRecipeDTO),
@@ -61,14 +71,13 @@ public static class ReinforcedTypingsExtension
             typeof(UserReportCommentDTO),
             typeof(UserReportCommentResponse),
             typeof(ReportReasonResponse),
-
         ], config =>
         {
             config.FlattenHierarchy()
                   .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
+                  .ExportTo($"mobile/generated/interfaces/{FILE_NAME}.interface.d.ts");
         });
 
         builder.ExportAsEnums([], config =>
@@ -76,8 +85,35 @@ public static class ReinforcedTypingsExtension
             config.FlattenHierarchy()
                   .DontIncludeToNamespace()
                   .UseString()
-                  .ExportTo($"enums/{FILE_NAME}.enum.ts");
+                  .ExportTo($"mobile/generated/enums/{FILE_NAME}.enum.ts");
+        });
+    }
+
+    private static void GenerateTypesForWebsiteClient(this ConfigurationBuilder builder)
+    {
+        // DTO and Entites
+        builder.ExportAsInterfaces([
+            typeof(AdminGetRecipesDTO),
+            typeof(PaginatedAccountRecipeCommentListResponse),
+            typeof(AdminRecipeResponse),
+            typeof(AdminGetUserActivityDTO),
+            typeof(PaginatedUserActivityListResponse),
+            typeof(UserActivityResponse),
+        ], config =>
+        {
+            config.FlattenHierarchy()
+                  .WithPublicProperties()
+                  .AutoI()
+                  .DontIncludeToNamespace()
+                  .ExportTo($"website/generated/interfaces/{FILE_NAME}.interface.d.ts");
         });
 
+        builder.ExportAsEnums([], config =>
+        {
+            config.FlattenHierarchy()
+                  .DontIncludeToNamespace()
+                  .UseString()
+                  .ExportTo($"website/generated/enums/{FILE_NAME}.enum.ts");
+        });
     }
 }

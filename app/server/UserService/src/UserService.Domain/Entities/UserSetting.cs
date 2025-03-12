@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace UserService.Domain.Entities;
@@ -12,6 +13,7 @@ public class UserSetting
     [Required]
     public Guid SettingId { get; set; }
     public string SettingValue { get; set; } = null!;
+    [JsonIgnore]
     public virtual User User { get; set; } = null!;
     public virtual Setting Setting { get; set; } = null!;
 }

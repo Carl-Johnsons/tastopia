@@ -1,4 +1,48 @@
 /** @type {import('tailwindcss').Config} */
+
+import { colors } from "./src/constants/colors";
+
+const FONT_PRIMARY = {
+  sans: ["Sofia Pro Regular", "sans-serif"],
+  bold: ["Sofia Pro Bold", "sans-serif"],
+  light: ["Sofia Pro Light", "sans-serif"],
+  medium: ["Sofia Pro Medium", "sans-serif"],
+  semibold: ["Sofia Pro Semi Bold", "sans-serif"],
+  black: ["Sofia Pro Black", "sans-serif"],
+  extralight: ["Sofia Pro ExtraLight", "sans-serif"],
+  ultralight: ["Sofia Pro UltraLight", "sans-serif"],
+  italic: ["Sofia Pro Regular Italic", "sans-serif"],
+  "bold-italic": ["Sofia Pro Bold Italic", "sans-serif"],
+  "light-italic": ["Sofia Pro Light Italic", "sans-serif"],
+  "medium-italic": ["Sofia Pro Medium Italic", "sans-serif"],
+  "semibold-italic": ["Sofia Pro Semi Bold Italic", "sans-serif"],
+  "black-italic": ["Sofia Pro Black Italic", "sans-serif"],
+  "extralight-italic": ["Sofia Pro ExtraLight Italic", "sans-serif"],
+  "ultralight-italic": ["Sofia Pro UltraLight Italic", "sans-serif"],
+};
+
+const FONT_SECONDARY = {
+  "secondary-black": ["Helvetica Neue Black", "sans-serif"],
+  "secondary-black-italic": ["Helvetica Neue Black Italic", "sans-serif"],
+  "secondary-bold": ["Helvetica Neue Bold", "sans-serif"],
+  "secondary-bold-italic": ["Helvetica Neue Bold Italic", "sans-serif"],
+  "secondary-heavy": ["Helvetica Neue Heavy", "sans-serif"],
+  "secondary-heavy-italic": ["Helvetica Neue Heavy Italic", "sans-serif"],
+  "secondary-italic": ["Helvetica Neue Italic", "sans-serif"],
+  "secondary-light": ["Helvetica Neue Light", "sans-serif"],
+  "secondary-light-italic": ["Helvetica Neue Light Italic", "sans-serif"],
+  "secondary-medium": ["Helvetica Neue Medium", "sans-serif"],
+  "secondary-medium-italic": ["Helvetica Neue Medium Italic", "sans-serif"],
+  "secondary-semibold": ["Helvetica Neue Semi Bold", "sans-serif"],
+  "secondary-roman": ["Helvetica Neue Roman", "sans-serif"],
+  "secondary-thin": ["Helvetica Neue Thin", "sans-serif"],
+  "secondary-thin-italic": ["Helvetica Neue Thin Italic", "sans-serif"],
+  "secondary-ultralight": ["Helvetica Neue UltraLight", "sans-serif"],
+  "secondary-ultralight-italic": ["Helvetica Neue UltraLight Italic", "sans-serif"],
+};
+
+const fontFamily = { ...FONT_PRIMARY, ...FONT_SECONDARY };
+
 module.exports = {
   darkMode: ["class"],
   content: [
@@ -17,41 +61,8 @@ module.exports = {
       screen: {
         sm: "600px",
       },
-      colors: {
-        primary: {
-          100: "#FFF1E6",
-          200: "#fceff8",
-          300: "#ffe8f1",
-          400: "#fbc3e7", // for background
-          500: "#ff82b1",
-          800: "#ffacdc",
-          900: "#FFB5D1",
-          950: "#b50044",
-        },
-        dark: {
-          100: "#000000",
-          200: "#0F1117",
-          300: "#151821",
-          400: "#212734",
-          450: "#2a3b42",
-          500: "#101012",
-        },
-        light: {
-          400: "#858EAD",
-          500: "#fbd7ed",
-          600: "#e9edf7",
-          700: "#DCE3F1",
-          800: "#F4F6F8",
-          850: "#FDFDFD",
-          900: "#FFFFFF",
-        },
-        "accent-blue": "#1DA1F2",
-        "purple-vote": "#6A5CFF",
-      },
-      fontFamily: {
-        inter: ["var(--font-inter)"],
-        spaceGrotesk: ["var(--font-spaceGrotesk)"],
-      },
+      colors,
+      fontFamily,
       boxShadow: {
         "light-100":
           "0px 12px 20px 0px rgba(184, 184, 184, 0.03), 0px 6px 12px 0px rgba(184, 184, 184, 0.02), 0px 2px 4px 0px rgba(184, 184, 184, 0.03)",
@@ -69,17 +80,30 @@ module.exports = {
       },
       keyframes: {
         "accordion-down": {
-          from: { height: 0 },
-          to: { height: "var(--radix-accordion-content-height)" },
+          from: {
+            height: 0,
+          },
+          to: {
+            height: "var(--radix-accordion-content-height)",
+          },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: 0 },
+          from: {
+            height: "var(--radix-accordion-content-height)",
+          },
+          to: {
+            height: 0,
+          },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
     },
   },

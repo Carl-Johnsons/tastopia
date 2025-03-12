@@ -1,0 +1,66 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +UpdateComment([FromBody] UpdateCommentDTO updateCommentDTO): async Task<IActionResult>
+}
+
+class UpdateCommentCommand {
+    +AccountId: Guid
+    +CommentId: Guid
+    +Content: string
+}
+
+class UpdateCommentCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +Handle(UpdateCommentCommand request, CancellationToken cancellationToken): async Task<Result<Comment>> 
+}
+
+class UpdateCommentDTO{
+    +CommentId: Guid
+    +Content: string
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" UpdateCommentDTO
+RecipeController "1"--"1" UpdateCommentCommand
+
+UpdateCommentCommand --|> "IRequest<TResponse>"
+
+UpdateCommentCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateCommentCommandHandler "1"--"1" UpdateCommentCommand
+UpdateCommentCommandHandler "1"--"1" Comment
+UpdateCommentCommandHandler "1"--"1" Result
+UpdateCommentCommandHandler "1" o-- "1" IUnitOfWork
+UpdateCommentCommandHandler "1" o-- "1" IApplicationDbContext
+UpdateCommentCommandHandler "1"--"1..*" RecipeError
+
+Error "1" --"1..*" RecipeError
+
+@enduml

@@ -1,35 +1,42 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import { IBM_Plex_Mono } from "next/font/google";
 import React from "react";
 
 import "./globals.css";
 import "../styles/prism.css";
 import "animate.css";
-import { ThemeProvider } from "@/context/ThemeProvider";
+import Providers from "@/components/provider/Providers";
+import AuthListener from "@/components/shared/auth/AuthListener";
+import Protected from "@/components/shared/auth/Protected";
+import { Roles } from "@/constants/role";
 
 const imbPlexMono = IBM_Plex_Mono({
-    weight: ["400", "500", "600", "700"],
-    style: ["normal", "italic"],
-    subsets: ["latin", "vietnamese"],
-    display: "swap",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  subsets: ["latin", "vietnamese"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-    title: "Tastopia",
-    description: "About Tastopia",
+  title: "Tastopia",
+  description: "About Tastopia",
 };
 
 export default function RootLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-        <html lang="en">
-            <body className={`${imbPlexMono.className} h-screen w-screen`}>
-                <ThemeProvider>{children}</ThemeProvider>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en">
+      <body className={`${imbPlexMono.className}`}>
+        <Providers>
+          <AuthListener />
+          <Protected allowedRoles={[Roles.SUPER_ADMIN, Roles.ADMIN]}>
+            {children}
+          </Protected>
+        </Providers>
+      </body>
+    </html>
+  );
 }

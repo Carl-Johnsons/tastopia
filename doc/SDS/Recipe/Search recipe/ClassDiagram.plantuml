@@ -58,9 +58,17 @@ class RecipeError {
     {static} +UpdateRecipeFail: Error
 }
 
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" SearchRecipesDTO
 RecipeController "1"--"1" SearchRecipesQuery
+
+SearchRecipesQuery --|> "IRequest<TResponse>"
+SearchRecipesQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 
 SearchRecipesQueryHandler "1"--"1" SearchRecipesQuery
 SearchRecipesQueryHandler "1"--"1" Result

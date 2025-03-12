@@ -73,10 +73,18 @@ together {
     class GrpcUserClient #DarkBlue;line:white;text:white
 }
 
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" GetRecipeDetailDTO
 RecipeController "1"--"1" GetRecipeDetailQuery
 
+GetRecipeDetailQuery --|> "IRequest<TResponse>"
+
+GetRecipeDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 GetRecipeDetailQueryHandler "1"--"1" GetRecipeDetailQuery
 GetRecipeDetailQueryHandler "1"--"1" Result
 GetRecipeDetailQueryHandler "1"--"1..*" RecipeDetailsResponse
