@@ -49,10 +49,18 @@ internal class MockupData
         {
             var seedRecipeFile = File.ReadAllText(Path.Combine(SeedDataPath, "recipes.json"));
             var seedRecipes = JsonConvert.DeserializeObject<List<SeedRecipe>>(seedRecipeFile) ?? [];
+
+            var seedAccountFile = File.ReadAllText(Path.Combine(SeedDataPath, "accounts.json"));
+            var seedAccounts = JsonConvert.DeserializeObject<List<SeedAccount>>(seedAccountFile) ?? [];
+
             var seedCommentFile = File.ReadAllText(Path.Combine(SeedDataPath, "comments.json"));
 
             var mapRecipeTagsCode = new Dictionary<Guid, List<string>>();
             var recipes = new List<Recipe>();
+
+            // Only role user for comment and vote
+            seedAccounts = seedAccounts.Where(sa => sa.RoleCode == "USER").ToList();
+
             _logger.LogInformation("Begin seed recipe");
             Random random = new Random();
 
@@ -96,8 +104,8 @@ internal class MockupData
                     Steps = steps
                 };
                 //add author
-                int randomIndex = random.Next(RecipeData.Authors.Count);
-                recipe.AuthorId = RecipeData.Authors[randomIndex];
+                int randomIndex = random.Next(seedAccounts.Count);
+                recipe.AuthorId = Guid.Parse(seedAccounts[randomIndex].Id);
                 recipe.IsActive = true;
                 recipe.CreatedAt = DateTime.UtcNow;
                 recipe.UpdatedAt = DateTime.UtcNow;
@@ -106,26 +114,37 @@ internal class MockupData
                 int numberOfComment = random.Next(35);
                 for (int i = 0; i <= numberOfComment; i++)
                 {
-                    var randomIndexAccount = GetRandomExcluding(RecipeData.Authors.Count, randomIndex);
+                    var randomIndexAccount = GetRandomExcluding(seedAccounts.Count, randomIndex);
                     var comment = CommentData.GetRandomComment();
-                    comment.AccountId = RecipeData.Authors[randomIndexAccount];
+                    comment.AccountId = Guid.Parse(seedAccounts[randomIndexAccount].Id);
                     recipe.Comments.Add(comment);
                 }
                 recipe.NumberOfComment = recipe.Comments.Count;
 
                 //add vote
-                var numberOfVote = random.Next(RecipeData.Authors.Count);
+                var numberOfVote = random.Next(seedAccounts.Count);
                 recipe.VoteDiff = numberOfVote;
+
+                var recipeVotes = new List<RecipeVote>();
+                Guid voteId;
                 for (int i = 0; i < numberOfVote; i++)
                 {
-                    var accountId = RecipeData.Authors[i];
-                    recipe.RecipeVotes.Add(new RecipeVote
+                    var accountId = Guid.Parse(seedAccounts[i].Id);
+                    do
                     {
-                        Id = Guid.NewGuid(),
+                        voteId = Guid.NewGuid();
+                    } while (recipeVotes.Any(rv => rv.Id == voteId));
+
+                    recipeVotes.Add(new RecipeVote
+                    {
+                        Id = voteId,
                         AccountId = accountId,
                         IsUpvote = true,
                     });
                 }
+
+                recipe.RecipeVotes.AddRange(recipeVotes);
+
                 _context.Recipes.Add(recipe);
 
                 mapRecipeTagsCode.Add(recipeId, seedRecipe.TagsCode);
@@ -238,6 +257,14 @@ internal class MockupData
         public string Code { get; set; } = null!;
         public string Category { get; set; } = null!;
         public string ImageUrl { get; set; } = null!;
+    }
+    private class SeedAccount
+    {
+        public string Id { get; set; } = null!;
+        public string Username { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!;
+        public string RoleCode { get; set; } = null!;
     }
 }
 
