@@ -4,9 +4,13 @@ export type ColorShades = {
   200?: string;
   300?: string;
   400?: string;
+  450?: string;
   500?: string;
   600?: string;
   700?: string;
+  800?: string;
+  850?: string;
+  900?: string;
 };
 
 export type Colors = {
@@ -25,9 +29,16 @@ export const colors: Colors = {
     100: "#1E1E1E",
     200: "#191919",
     300: "#0D0D0D",
-    400: "#1E201E"
+    400: "#1E201E",
+    450: "#2a3b42",
+    500: "#101012",
   },
-  white: { DEFAULT: "#FFFFFF", 100: "#EFEFEF" },
+  white: { DEFAULT: "#FFFFFF", 100: "#EFEFEF",
+    600: "#e9edf7",
+    700: "#DCE3F1",
+    800: "#F4F6F8",
+    850: "#FDFDFD",
+    900: "#FFFFFF", },
   gray: {
     DEFAULT: "#C4C4C4",
     100: "#F3F4F6",
