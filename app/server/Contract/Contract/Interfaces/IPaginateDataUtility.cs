@@ -6,6 +6,14 @@ public class PaginateParam
 {
     public int Offset { get; set; }
     public int Limit { get; set; }
+    public SortType? SortOrder { get; set; } = SortType.DESC;
+    public string? SortBy { get; set; }
+}
+
+public enum SortType
+{
+    ASC,
+    DESC
 }
 
 public interface IPaginateDataUtility<Type, ResponseMetadataType>
