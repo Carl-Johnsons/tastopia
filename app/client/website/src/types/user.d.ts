@@ -1,41 +1,64 @@
+import { ActivityType } from "@/constants/activities";
+
 export interface ActivityItem {
-  id: string;
-  type: "recipe" | "ban" | "comment" | "login" | "rating";
+  id?: string;
+  type: ActivityType;
   title: string;
   description: string;
-  timestamp: string;
-  time: string;
   timeAgo: string;
-  imageUrl: string;
-  likes: number;
-  userName: string;
-  content: string;
+  time: string;
+
+  username: string;
+  accountId: string;
+  avtImageUrl: string;
+
+  recipeId: string;
   recipeTitle: string;
-  recipeOwner: string;
-  recipeTimeAgo: string;
-  recipeLikes: number;
+  recipeAuthorUsername: string;
+  recipeAuthorId: string;
   recipeImageUrl: string;
+  recipeTimeAgo: string;
+  recipeTime: string;
+  recipeVoteDiff: number;
+
+  commentId: string | null;
+  commentContent: string | null;
+
+  timestamp?: string;
+  imageUrl?: string;
+  likes?: number;
+  userName?: string;
+  content?: string;
+  recipeOwner?: string;
+  recipeLikes?: number;
+}
+
+export interface UserSettingType {
+  settingId: string;
+  accountId: string;
+  code: string;
+  description: string;
+  dataType: "Boolean" | "String" | "Number";
+  defaultValue: string;
+  value: string;
 }
 
 export interface UserProfileType {
   id: string;
   name: string;
-  username: string;
+  accountUsername: string;
   email: string;
   phone: string;
-  gender: string;
-  dateOfBirth: string;
-  address: string;
+  gender: string | null;
+  dateOfBirth: string | null;
+  address: string | null;
   followers: number;
   following: number;
   recipes: number;
   activeTime: string;
   status: "active" | "inactive" | "banned";
   avatarUrl: string;
-  activities: ActivityItem[];
-}
-
-export interface UserSettings {
-  theme: "Light" | "Dark" | "System";
-  language: string;
+  isCurrentUser: boolean;
+  role: "User" | "Admin" | "Super Admin";
+  settings: UserSettingType[];
 }
