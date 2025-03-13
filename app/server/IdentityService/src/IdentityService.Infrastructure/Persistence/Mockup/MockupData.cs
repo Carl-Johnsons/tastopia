@@ -1,11 +1,13 @@
 ﻿using IdentityService.Infrastructure.Persistence.Mockup.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace IdentityService.Infrastructure.Persistence.Mockup;
 
 internal class MockupData
 {
+    private readonly string SeedDataPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.Parent?.FullName!, "seeds") ?? "";
     private UserManager<ApplicationAccount> _userManager;
     private RoleManager<IdentityRole> _roleManager;
     private readonly ApplicationDbContext _context;
@@ -23,41 +25,7 @@ internal class MockupData
     public async Task SeedAllData()
     {
         await SeedRoleGroupPermission();
-        await SeedSuperAdminRoleAsync();
         await SeedUserDataAsync();
-    }
-
-
-    public async Task SeedSuperAdminRoleAsync()
-    {
-        // Create a default admin user
-        var adminUser = new ApplicationAccount
-        {
-            Id = "f9a8c16e-610a-49f5-aac0-82183d8c3a16",
-            UserName = "admin",
-            Email = "admin@example.com",
-            EmailConfirmed = true,
-            PhoneNumber = "0111111119",
-            PhoneNumberConfirmed = true,
-            /* Custom attribute */
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
-
-        string userPassword = "Pass123$";
-        var user = await _userManager.FindByEmailAsync("admin@example.com");
-
-        if (user == null)
-        {
-            _logger.LogInformation("***\tSeed super admin data\t***");
-            var createAdminUser = await _userManager.CreateAsync(adminUser, userPassword);
-            if (createAdminUser.Succeeded)
-            {
-                await _userManager.AddToRoleAsync(adminUser, "SUPER ADMIN");
-                _logger.LogInformation("***\tSeed admin data successfully\t***");
-            }
-        }
     }
 
     public async Task SeedRoleGroupPermission()
@@ -88,22 +56,46 @@ internal class MockupData
 
     public async Task SeedUserDataAsync()
     {
-        foreach (var user in ApplicationAccountData.Data)
+        var seedAccountFile = File.ReadAllText(Path.Combine(SeedDataPath, "accounts.json"));
+        var seedAccounts = JsonConvert.DeserializeObject<List<SeedAccount>>(seedAccountFile) ?? [];
+
+        foreach (var seedAccount in seedAccounts)
         {
-            var userResult = _userManager.FindByNameAsync(user.UserName!).Result;
+            var account = new ApplicationAccount
+            {
+                Id = seedAccount.Id,
+                UserName = seedAccount.Username,
+                Email = seedAccount.Email,
+                PhoneNumber = seedAccount.PhoneNumber,
+
+                EmailConfirmed = true,
+                PhoneNumberConfirmed = true,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            var userResult = _userManager.FindByNameAsync(account.UserName).Result;
             if (userResult == null)
             {
-                user.CreatedAt = DateTime.UtcNow;
-                user.UpdatedAt = DateTime.UtcNow;
-                var result = _userManager.CreateAsync(user, "Pass123$").Result;
+                var result = _userManager.CreateAsync(account, "Pass123$").Result;
                 if (!result.Succeeded)
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
-                await _userManager.AddToRoleAsync(user, "User");
+                await _userManager.AddToRoleAsync(account, seedAccount.RoleCode);
 
-                _logger.LogInformation($"{user.UserName} created");
+                _logger.LogInformation($"{account.UserName} created");
             }
         }
+    }
+
+    private class SeedAccount
+    {
+        public string Id { get; set; } = null!;
+        public string Username { get; set; } = null!;
+        public string Email { get; set; } = null!;
+        public string PhoneNumber { get; set; } = null!;
+        public string RoleCode { get; set; } = null!;
     }
 }
