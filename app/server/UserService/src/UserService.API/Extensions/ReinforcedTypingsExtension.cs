@@ -1,6 +1,5 @@
-﻿using Contract.DTOs.RecipeDTO;
+﻿using Contract.DTOs;
 using Contract.Extension;
-using MongoDB.Driver;
 using Reinforced.Typings.Fluent;
 using UserService.API.DTOs;
 using UserService.Domain.Entities;
@@ -85,6 +84,9 @@ public static class ReinforcedTypingsExtension
             typeof(GetUserDetailByAccountIdDTO),
             typeof(Setting),
             typeof(UserSetting),
+            typeof(PaginatedDTO),
+            typeof(PaginatedAdminGetUserListResponse),
+            typeof(AdminGetUserResponse),
         ], config =>
         {
             config.FlattenHierarchy()
