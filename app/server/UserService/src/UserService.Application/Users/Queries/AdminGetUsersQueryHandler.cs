@@ -4,11 +4,9 @@ using Contract.DTOs;
 using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using UserProto;
 using UserService.Domain.Entities;
 using UserService.Domain.Errors;
 using UserService.Domain.Responses;
-using static UserProto.GrpcUser;
 
 namespace UserService.Application.Users.Queries;
 
@@ -82,13 +80,18 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                 );
             }
 
-            var totalPage = (await usersQuery.CountAsync() + USER_CONSTANTS.ADMIN_USER_LIMIT - 1) / USER_CONSTANTS.ADMIN_USER_LIMIT;
+            var limit = USER_CONSTANTS.ADMIN_USER_LIMIT;
+            if(paginatedDTO.TotalRow != null)
+            {
+                limit = paginatedDTO.TotalRow.Value;
+            }
+            var totalPage = (await usersQuery.CountAsync() + limit - 1) / limit;
 
 
             usersQuery = _paginateDataUtility.PaginateQuery(usersQuery, new PaginateParam
             {
-                Offset = (paginatedDTO.Skip ?? 0) * USER_CONSTANTS.ADMIN_USER_LIMIT,
-                Limit = USER_CONSTANTS.ADMIN_USER_LIMIT,
+                Offset = (paginatedDTO.Skip ?? 0) * limit,
+                Limit = limit,
                 SortBy = paginatedDTO.SortBy != null ? paginatedDTO.SortBy : "AccountUsername",
                 SortOrder = paginatedDTO.SortOrder
             });
