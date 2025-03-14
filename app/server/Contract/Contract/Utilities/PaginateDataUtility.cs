@@ -21,13 +21,13 @@ public class PaginateDataUtility<Type, ResponseMetadataType> : IPaginateDataUtil
 
     public IQueryable<Type> PaginateQuery(IQueryable<Type> query, PaginateParam param)
     {
-        if(param.SortBy != null && param.SortOrder != null)
+        if(param.SortOrder == null) param.SortOrder = SortType.DESC;
+        if(param.SortBy != null)
         {
-                var parameter = Expression.Parameter(typeof(Type), "x");
-                var property = Expression.Property(parameter, param.SortBy);
-                var keySelector = Expression.Lambda<Func<Type, object>>(Expression.Convert(property, typeof(object)), parameter);
-                query = param.SortOrder == SortType.ASC ? query.OrderBy(keySelector) : query.OrderByDescending(keySelector);
-
+            var parameter = Expression.Parameter(typeof(Type), "x");
+            var property = Expression.Property(parameter, param.SortBy);
+            var keySelector = Expression.Lambda<Func<Type, object>>(Expression.Convert(property, typeof(object)), parameter);
+            query = param.SortOrder == SortType.ASC ? query.OrderBy(keySelector) : query.OrderByDescending(keySelector);
         }
         return query.Skip(param.Offset)
                     .Take(param.Limit);
