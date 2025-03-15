@@ -69,7 +69,7 @@ type ActionButtonsProps = {
   isActive: boolean;
   onStatusUpdate: (accountId: string, isActive: boolean) => void;
 }
-export const ActionButtons = ({ accountId, isActive = true, onStatusUpdate }: ActionButtonsProps) => {
+export const ActionButtons = ({ accountId, isActive, onStatusUpdate }: ActionButtonsProps) => {
   const router = useRouter();
   const [active, setActive] = useState<boolean>(isActive);
   
