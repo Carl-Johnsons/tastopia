@@ -93,12 +93,15 @@ public static class ReinforcedTypingsExtension
     {
         // DTO and Entites
         builder.ExportAsInterfaces([
+            typeof(NumberedPaginatedMetadata),
             typeof(AdminGetRecipesDTO),
             typeof(PaginatedAccountRecipeCommentListResponse),
             typeof(AdminRecipeResponse),
+            typeof(UserActivityResponse),
             typeof(AdminGetUserActivityDTO),
             typeof(PaginatedUserActivityListResponse),
-            typeof(UserActivityResponse),
+            typeof(AdminReportRecipeResponse),
+            typeof(PaginatedAdminReportRecipeListResponse),
         ], config =>
         {
             config.FlattenHierarchy()
