@@ -141,13 +141,6 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                 u.AccountPhoneNumber = response.Accounts[u.AccountId.ToString()].PhoneNumber;
             }
 
-            var hasNextPage = true;
-
-            if (paginatedDTO.Skip >= totalPage - 1)
-            {
-                hasNextPage = false;
-            }
-
             var paginatedResponse = new PaginatedAdminGetUserListResponse
             {
                 Metadata = new NumberedPaginatedMetadata
