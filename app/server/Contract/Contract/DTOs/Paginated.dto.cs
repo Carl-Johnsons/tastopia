@@ -8,4 +8,5 @@ public class PaginatedDTO
     public SortType? SortOrder {  get; set; } = SortType.DESC;
     public string? SortBy { get; set; }
     public string? Keyword { get; set; }
+    public int? Limit { get; set; }
 }

@@ -251,4 +251,22 @@ public class UserController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    [HttpPost("admin-ban-user")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(AdminBanUserResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminBanUser([FromBody] AdminBanUserDTO adminBanUserDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new AdminBanUserCommand
+        {
+            CurrentAccountId = Guid.Parse(subjectId!),
+            AccountId = adminBanUserDTO.AccountId,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
 }

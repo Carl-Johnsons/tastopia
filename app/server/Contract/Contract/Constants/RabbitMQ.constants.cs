@@ -6,6 +6,8 @@ public static class RabbitMQConstant
     {
         public static class NAME
         {
+            // ======================= Identity ============================
+            public const string UPDATE_ACCOUNT_IS_ACTIVE = "update-account-is-active-queue";
             // ======================= USER ============================
             public const string USER_REGISTER_NOTIFICATION = "user-register-notification-queue";
             public const string USER_REGISTER_USER = "user-register-user-queue";
@@ -41,6 +43,8 @@ public static class RabbitMQConstant
     {
         public static class NAME
         {
+            // ======================= Identity ============================
+            public const string UPDATE_ACCOUNT_IS_ACTIVE = "update-account-is-active-event";
             // ======================= USER ============================
             public const string USER_REGISTER = "user-register-event";
             public const string LINK_ACCOUNT = "link-account-event";

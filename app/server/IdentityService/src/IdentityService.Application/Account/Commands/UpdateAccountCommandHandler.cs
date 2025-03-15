@@ -6,6 +6,7 @@ public class UpdateAccountCommand : IRequest<Result>
 {
     public Guid AccountId { get; init; }
     public string? UserName { get; init; } = null!;
+    public bool? IsActive { get; init; }
 }
 
 
@@ -38,6 +39,11 @@ public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand,
                 return Result.Failure(AccountError.UsernameAlreadyExisted);
             }
             account.UserName = request.UserName;
+        }
+
+        if(request.IsActive != null)
+        {
+            account.IsActive = request.IsActive.Value;
         }
 
         var result = await _userManager.UpdateAsync(account);

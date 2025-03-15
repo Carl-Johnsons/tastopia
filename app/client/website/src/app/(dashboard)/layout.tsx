@@ -9,7 +9,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <div className="flex">
         <LeftSidebar />
         <section className="bg-white_black200 mt-16 flex min-h-screen flex-1 flex-col px-2 pb-6 pt-10 max-md:pb-14 sm:px-4">
-          <div className="mx-auto w-full max-w-5xl">{children}</div>
+          <div className="w-full max-w-full">{children}</div>
         </section>
       </div>
     </main>

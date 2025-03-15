@@ -26,7 +26,9 @@ body * {
   }
 
   .card-wrapper {
-    @apply bg-light-900 dark:dark-gradient shadow-light-100 dark:shadow-dark-100;
+    @apply /* `1E1E1E` is a hexadecimal color code representing a shade of dark gray. In this context,
+    it is used as one of the shades in the black color palette within the `colors` object. */
+    bg-light-900 dark:dark-gradient shadow-light-100 dark:shadow-dark-100;
   }
 
   .btn {
@@ -56,6 +58,30 @@ body * {
   .tab {
     @apply min-h-full dark:bg-dark-400 bg-light-800 text-light-400 dark:data-[state=active]:bg-dark-300 data-[state=active]:bg-primary-200 data-[state=active]:text-primary-800 !important;
   }
+
+  .rdt_TableHead {
+    background-color: #FE724C !important;
+  }
+  
+  .dark .rdt_TableHeadRow {
+    border-bottom-color:#191919 !important ;
+  }
+  .dark .rdt_TableCol {
+    color: black !important;
+  }
+  .dark .rdt_TableRow {
+    background-color: #1E1E1E !important;
+    color: white !important;
+  }
+
+  .dark .rdt_Pagination {
+    background-color: #1E1E1E !important;
+    color: white !important;
+  }
+  .dark .sc-lertIE svg {
+    fill: white !important;
+  }
+
 }
 
 .no-focus {
