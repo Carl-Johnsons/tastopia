@@ -24,13 +24,13 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly GrpcAccount.GrpcAccountClient _grpcAccountClient;
-    private readonly IPaginateDataUtility<User, AdvancePaginatedMetadata> _paginateDataUtility;
+    private readonly IPaginateDataUtility<User, NumberedPaginatedMetadata> _paginateDataUtility;
 
 
     public AdminGetUsersQueryHandler(IApplicationDbContext context,
         IMapper mapper,
         GrpcAccount.GrpcAccountClient grpcAccountClient,
-        IPaginateDataUtility<User, AdvancePaginatedMetadata> paginateDataUtility)
+        IPaginateDataUtility<User, NumberedPaginatedMetadata> paginateDataUtility)
     {
         _context = context;
         _mapper = mapper;
@@ -111,10 +111,11 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                 return Result<PaginatedAdminGetUserListResponse?>.Success(new PaginatedAdminGetUserListResponse
                 {
                     PaginatedData = [],
-                    Metadata = new AdvancePaginatedMetadata
+                    Metadata = new NumberedPaginatedMetadata
                     {
-                        HasNextPage = false,
+                        CurrentPage = paginatedDTO.Skip!.Value,
                         TotalPage = 0,
+                        TotalRow = limit,
                     }
                 });
             }
@@ -149,9 +150,10 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
 
             var paginatedResponse = new PaginatedAdminGetUserListResponse
             {
-                Metadata = new AdvancePaginatedMetadata
+                Metadata = new NumberedPaginatedMetadata
                 {
-                    HasNextPage = hasNextPage,
+                    CurrentPage = paginatedDTO.Skip!.Value,
+                    TotalRow = limit,
                     TotalPage = totalPage,
                 },
                 PaginatedData = userList,
