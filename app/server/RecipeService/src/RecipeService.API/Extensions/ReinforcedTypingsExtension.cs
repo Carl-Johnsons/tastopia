@@ -1,4 +1,5 @@
-﻿using Contract.Extension;
+﻿using Contract.Constants;
+using Contract.Extension;
 using RecipeService.API.DTOs;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
@@ -102,6 +103,8 @@ public static class ReinforcedTypingsExtension
             typeof(PaginatedUserActivityListResponse),
             typeof(AdminReportRecipeResponse),
             typeof(PaginatedAdminReportRecipeListResponse),
+            typeof(ReportRecipeResponse),
+            typeof(AdminReportRecipeDetailResponse),
         ], config =>
         {
             config.FlattenHierarchy()
@@ -111,7 +114,9 @@ public static class ReinforcedTypingsExtension
                   .ExportTo($"website/src/generated/interfaces/{FILE_NAME}.interface.d.ts");
         });
 
-        builder.ExportAsEnums([], config =>
+        builder.ExportAsEnums([
+            typeof(ReportStatus)
+        ], config =>
         {
             config.FlattenHierarchy()
                   .DontIncludeToNamespace()

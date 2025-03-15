@@ -483,10 +483,26 @@ public class RecipeController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminGetRecipeReports([FromQuery] string? lang, [FromQuery] PaginatedDTO paginatedDTO)
     {
-        var result = await _sender.Send(new GetRecipeReportQuery
+        var result = await _sender.Send(new GetRecipeReportsQuery
         {
             Lang = lang ?? "en",
             paginatedDTO = paginatedDTO
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpGet("admin-get-recipe-report-detail")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetRecipeReportDetail([FromQuery] string? lang, [FromQuery] string recipeId)
+    {
+        var result = await _sender.Send(new GetRecipeReportDetailQuery
+        {
+            Lang = lang ?? "en",
+            RecipeId = Guid.Parse(recipeId)
         });
 
         result.ThrowIfFailure();

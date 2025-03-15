@@ -11,13 +11,13 @@ using RecipeService.Domain.Responses;
 using UserProto;
 
 namespace RecipeService.Application.UserReportRecipes.Queries;
-public record GetRecipeReportQuery : IRequest<Result<PaginatedAdminReportRecipeListResponse>>
+public record GetRecipeReportsQuery : IRequest<Result<PaginatedAdminReportRecipeListResponse>>
 {
     public string Lang { get; init; } = "en";
     public PaginatedDTO? paginatedDTO { get; init; } = null!;
 }
 
-public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportQuery, Result<PaginatedAdminReportRecipeListResponse>>
+public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery, Result<PaginatedAdminReportRecipeListResponse>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaginateDataUtility<UserReportWithRecipe, NumberedPaginatedMetadata> _paginateDataUtility;
@@ -35,7 +35,7 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportQuery,
         _mapper = mapper;
     }
 
-    public async Task<Result<PaginatedAdminReportRecipeListResponse>> Handle(GetRecipeReportQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PaginatedAdminReportRecipeListResponse>> Handle(GetRecipeReportsQuery request, CancellationToken cancellationToken)
     {
         var userReportCollection = _context.GetDatabase().GetCollection<UserReportRecipe>(nameof(UserReportRecipe));
         var recipeCollection = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe));
