@@ -1,6 +1,5 @@
-﻿using Contract.DTOs.RecipeDTO;
+﻿using Contract.DTOs;
 using Contract.Extension;
-using MongoDB.Driver;
 using Reinforced.Typings.Fluent;
 using UserService.API.DTOs;
 using UserService.Domain.Entities;
@@ -14,8 +13,8 @@ public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "user";
     private static List<string> EXPORT_FILE_PATHS = [
-        "../../../../client/mobile/generated",
-        "../../../../client/website/generated"
+        "../../../../client/mobile/src/generated",
+        "../../../../client/website/src/generated"
     ];
 
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
@@ -65,7 +64,7 @@ public static class ReinforcedTypingsExtension
                   .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo($"mobile/generated/interfaces/{FILE_NAME}.interface.d.ts");
+                  .ExportTo($"mobile/src/generated/interfaces/{FILE_NAME}.interface.d.ts");
         });
 
         builder.ExportAsEnums([], config =>
@@ -73,7 +72,7 @@ public static class ReinforcedTypingsExtension
             config.FlattenHierarchy()
                   .DontIncludeToNamespace()
                   .UseString()
-                  .ExportTo($"mobile/generated/enums/{FILE_NAME}.enum.ts");
+                  .ExportTo($"mobile/src/generated/enums/{FILE_NAME}.enum.ts");
         });
     }
 
@@ -85,13 +84,19 @@ public static class ReinforcedTypingsExtension
             typeof(GetUserDetailByAccountIdDTO),
             typeof(Setting),
             typeof(UserSetting),
+            typeof(PaginatedDTO),
+            typeof(PaginatedAdminGetUserListResponse),
+            typeof(AdminGetUserResponse),
+            typeof(AdminBanUserDTO),
+            typeof(AdminBanUserResponse),
+
         ], config =>
         {
             config.FlattenHierarchy()
                   .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo($"website/generated/interfaces/{FILE_NAME}.interface.d.ts");
+                  .ExportTo($"website/src/generated/interfaces/{FILE_NAME}.interface.d.ts");
         });
 
         builder.ExportAsEnums([], config =>
@@ -99,7 +104,7 @@ public static class ReinforcedTypingsExtension
             config.FlattenHierarchy()
                   .DontIncludeToNamespace()
                   .UseString()
-                  .ExportTo($"website/generated/enums/{FILE_NAME}.enum.ts");
+                  .ExportTo($"website/src/generated/enums/{FILE_NAME}.enum.ts");
         });
     }
 }

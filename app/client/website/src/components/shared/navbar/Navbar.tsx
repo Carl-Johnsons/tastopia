@@ -6,10 +6,12 @@ import Link from "next/link";
 import Theme from "./Theme";
 import MobileNav from "./MobileNav";
 import LogoutButton from "./LogoutButton";
+import Language from "./Language";
+import Profile from "./Profile";
 
 const Navbar = () => {
   return (
-    <nav className="flex-between bg-white_black100 fixed z-50 w-full flex-wrap gap-5 p-6 shadow-lg shadow-gray-100 sm:flex-nowrap sm:px-12 dark:shadow-none">
+    <nav className="flex-between bg-white_black100 fixed z-50 w-full flex-wrap gap-5 p-6 shadow-lg shadow-gray-100 dark:shadow-none sm:flex-nowrap sm:px-12">
       <Link href={"/"} className="group flex items-center justify-center gap-2">
         <Image
           src="/assets/icons/logo.svg"
@@ -23,10 +25,11 @@ const Navbar = () => {
         </p>
       </Link>
 
-      <div className="flex-between gap-5">
+      <div className="flex-between gap-1">
         <Theme />
+        <Language/>
         <MobileNav />
-        <LogoutButton/>
+        <Profile/>
       </div>
     </nav>
   );

@@ -82,8 +82,8 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
         {
             grpcResponse.Accounts.Add(acc.Id, new GrpcSimpleAccountDTO
             {
-                Email = acc.Email,
-                PhoneNumber = acc.PhoneNumber
+                Email = acc.Email ?? "",
+                PhoneNumber = acc.PhoneNumber ?? ""
             });
         }
         _logger.LogInformation("Grpc get simple account successfully!");

@@ -56,7 +56,7 @@ export interface UserProfileType {
   following: number;
   recipes: number;
   activeTime: string;
-  status: "active" | "inactive" | "banned";
+  isAccountActive: boolean;
   avatarUrl: string;
   isCurrentUser: boolean;
   role: "User" | "Admin" | "Super Admin";

@@ -8,7 +8,7 @@ namespace DuendeIdentityServer.Extensions;
 public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "identity";
-    private static string EXPORT_FILE_PATH = "../../../../client/mobile/generated";
+    private static string EXPORT_FILE_PATH = "../../../../client/mobile/src/generated";
 
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {

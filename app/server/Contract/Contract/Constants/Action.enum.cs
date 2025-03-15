@@ -6,5 +6,9 @@ public enum ActionTemplateCode
     USER_CREATE_RECIPE,
     USER_UPVOTE,
     USER_DOWNVOTE,
-    USER_BANNED
+    USER_BANNED,
+
+
 }
+
+
