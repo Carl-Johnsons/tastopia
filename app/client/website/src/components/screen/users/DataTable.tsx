@@ -2,37 +2,14 @@
 
 import Loader from '@/components/ui/Loader';
 import NoRecord from '@/components/ui/NoRecord';
-import { columnFieldMap, usersColumns } from "./DataTableColumns"
+import { ActionButtons, columnFieldMap, usersColumns } from "./DataTableColumns"
 import ReactDataTable, { SortOrder, TableColumn } from 'react-data-table-component';
 import { IAdminGetUserResponse } from '@/generated/interfaces/user.interface';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useGetAdminUsers } from '@/api/user';
-import { colors } from '@/constants/colors';
 import { Loader2, Search } from 'lucide-react';
 import useDebounce from '@/hooks/useDebounce';
-
-const customStyles = {
-  headCells: {
-    style: {
-      backgroundColor: colors.primary,
-      color: "white",
-      fontWeight: "bold",
-      paddingLeft: "30px"
-    },
-  },
-  rows: {
-    style: {
-      backgroundColor: "white",
-      color: "black",
-      paddingLeft: "10px"
-    },
-  },
-  headRow: {
-    style: {
-      backgroundColor: "#FE724C !important",
-    },
-  },
-};
+import { customStyles } from '@/constants/styles';
 
 const DataTable = () => {
   const [skip, setSkip] = useState(0);
@@ -41,9 +18,23 @@ const DataTable = () => {
   const [keyword, setKeyword] = useState("");
   const [sortOrder, setSortOrder] = useState("asc")
   const debouncedValue = useDebounce(keyword, 800);
+  const [updatedUserStatuses, setUpdatedUserStatuses] = useState<Record<string, boolean>>({});
 
   const { data, isLoading, refetch } =
   useGetAdminUsers(skip, sortBy, sortOrder, debouncedValue, limit);
+  const tableData = data?.paginatedData.slice(0, limit).map(user => ({
+    ...user,
+    isAccountActive: updatedUserStatuses[user.accountId] !== undefined 
+      ? updatedUserStatuses[user.accountId] 
+      : user.isAccountActive
+  })) || [];
+
+  const handleStatusUpdate = (accountId: string, isActive: boolean) => {
+    setUpdatedUserStatuses(prev => ({
+      ...prev,
+      [accountId]: isActive
+    }));
+  };
 
   const handlePageChange = (page: number) => {
     setSkip(page - 1);
@@ -54,7 +45,6 @@ const DataTable = () => {
   }
 
   const handleSort = (selectedColumn: TableColumn<IAdminGetUserResponse>, sortDirection: SortOrder) => {
-    console.log('handleSort', selectedColumn.name)
     const apiField = columnFieldMap[selectedColumn.name as string];
 
     if (!apiField) return;
@@ -92,8 +82,22 @@ const DataTable = () => {
 
         <div className='dark:bg-black'>
           <ReactDataTable
-            columns={usersColumns}
-            data={data?.paginatedData.slice(0, limit) || []}
+            columns={usersColumns.map(column => {
+              if (column.name === "Action") {
+                return {
+                  ...column,
+                  cell: (user: IAdminGetUserResponse) => (
+                    <ActionButtons 
+                      accountId={user.accountId} 
+                      isActive={user.isAccountActive} 
+                      onStatusUpdate={handleStatusUpdate}
+                    />
+                  )
+                };
+              }
+              return column;
+            })}
+            data={tableData}
             customStyles={customStyles}
             striped
             highlightOnHover

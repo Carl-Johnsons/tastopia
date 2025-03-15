@@ -4,7 +4,8 @@ import { Ban, Eye, RotateCcw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { adminBanUser } from '@/actions/user.action';
-import { Bounce, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+import Status from '@/components/ui/Status';
 
 export const usersColumns = [
   {
@@ -37,8 +38,8 @@ export const usersColumns = [
   },
   {
     name: "Status",
-    selector: (user: IAdminGetUserResponse) => user?.isAccountActive,
-    width: '90px',
+    cell: (user: IAdminGetUserResponse) => <Status isActive={user.isAccountActive}/>,
+    width: '120px',
   },
   {
     name: "Address",
@@ -48,7 +49,6 @@ export const usersColumns = [
   },
   {
     name: "Action",
-    cell: (user: IAdminGetUserResponse) => <ActionButtons accountId={user.accountId} isActive={user.isAccountActive} />,
     ignoreRowClick: true,
     button: true,
   },
@@ -67,9 +67,9 @@ export const columnFieldMap: Record<string, keyof IAdminGetUserResponse> = {
 type ActionButtonsProps = {
   accountId: string;
   isActive: boolean;
+  onStatusUpdate: (accountId: string, isActive: boolean) => void;
 }
-
-const ActionButtons = ({ accountId, isActive = true }: ActionButtonsProps) => {
+export const ActionButtons = ({ accountId, isActive = true, onStatusUpdate }: ActionButtonsProps) => {
   const router = useRouter();
   const [active, setActive] = useState<boolean>(isActive);
   
@@ -80,7 +80,9 @@ const ActionButtons = ({ accountId, isActive = true }: ActionButtonsProps) => {
   const handleToggleStatus = async () => {
     const result = await adminBanUser(accountId)
     if(result.userId) {
-      setActive(result.isRestored)
+      const newStatus = result.isRestored;
+      setActive(newStatus);
+      onStatusUpdate(accountId, newStatus);
 
       if(result.isRestored) {
         toast.success('Restore user successfully!');
@@ -90,8 +92,6 @@ const ActionButtons = ({ accountId, isActive = true }: ActionButtonsProps) => {
     } else {
       toast.error('Something went wrong!');
     }
-
-   
   };
 
   return (
