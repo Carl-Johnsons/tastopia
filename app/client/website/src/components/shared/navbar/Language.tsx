@@ -13,8 +13,6 @@ const Language = () => {
     i18next.changeLanguage(language);
   };
 
-  console.log("current language", currentLanguage)
-
   return (
     <Menubar className="relative border-none bg-transparent shadow-none">
       <MenubarMenu>

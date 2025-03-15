@@ -31,7 +31,7 @@ const LeftSidebar = () => {
   };
 
   return (
-    <section className="bg-white_black100 light-border custom-scrollbar sticky right-0 top-0 flex h-screen flex-col justify-between overflow-y-auto border-l p-2 pt-28 shadow-lg shadow-gray-300 max-sm:hidden dark:shadow-none">
+    <section className="bg-white_black100 custom-scrollbar sticky right-0 top-0 flex h-screen min-w-[276px] flex-col justify-between overflow-y-auto border-l p-2 pt-28 shadow-lg shadow-gray-300 dark:shadow-none max-sm:hidden">
       <div className="flex flex-col">
         <div className="flex h-full flex-col gap-6">
           {sidebarLinks.map((link) => {
@@ -43,13 +43,17 @@ const LeftSidebar = () => {
                 <div
                   onClick={() => handleNavigation(link)}
                   className={`flex cursor-pointer items-center rounded-lg p-3 ${
-                    isActive && !link.children ? "bg-primary" : "text-black_white"
+                    isActive && !link.children ? "bg-primary" : ""
                   }`}
                 >
                   <div className="size-6">
-                    <Image src={link.imgURL} alt={link.label} width={20} height={20} className="dark:invert" />
+                    <Image src={link.imgURL} alt={link.label} width={20} height={20} className={`${
+                    isActive && !link.children ? "invert dark:invert-0" : "dark:invert"
+                  }`} />
                   </div>
-                  <span className="mx-2 flex-1">{link.label}</span>
+                  <span className={`mx-2 flex-1 ${
+                    isActive && !link.children ? "text-white_black" : "text-black_white"
+                  }`}>{link.label}</span>
                   {link.children && (
                     <svg
                       className={`size-5 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}

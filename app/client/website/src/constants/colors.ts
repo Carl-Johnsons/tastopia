@@ -19,6 +19,8 @@ export type Colors = {
   black: ColorShades;
   white: ColorShades;
   gray: ColorShades;
+  green: ColorShades;
+  red: ColorShades;
 };
 
 export const colors: Colors = {
@@ -49,4 +51,10 @@ export const colors: Colors = {
     600: "#626C70",
     700: "#5B5B5E",
   },
+  green: {
+    DEFAULT: "#0B986D"
+  },
+  red: {
+    DEFAULT: "#E84646"
+  }
 };

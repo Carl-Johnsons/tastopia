@@ -6,6 +6,7 @@ import { AxiosError } from "axios";
 import { UserState } from "@/slices/user.slice";
 import { IErrorResponseDTO } from "../../generated/interfaces/common.interface";
 import { stringify } from "@/utils/debug";
+import { IPaginatedAdminGetUserListResponse } from "@/generated/interfaces/user.interface";
 
 export async function getUserById(id: string) {
   try {
@@ -82,3 +83,30 @@ export const getUserDetails = async () => {
     throw new Error("An error has occurred.");
   }
 };
+
+export async function getAdminUsers(skip = 0, sortBy = "", sortOrder = "asc", keyword = "", limit = 6) {
+  try {
+    const url = `/api/user/admin-get-users?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&keyword=${encodeURIComponent(keyword)}`;
+
+    const { data } = await protectedAxiosInstance.get(url);
+
+    return data as IPaginatedAdminGetUserListResponse;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function adminBanUser(accountId: string) {
+  try {
+    const url = "/api/user/admin-ban-user";
+    const { data } = await protectedAxiosInstance.post(url, {
+      accountId
+    });
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
