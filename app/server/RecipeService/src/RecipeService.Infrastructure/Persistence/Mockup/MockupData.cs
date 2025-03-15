@@ -1,4 +1,5 @@
-﻿using Contract.Utilities;
+﻿using Contract.Constants;
+using Contract.Utilities;
 using DnsClient.Internal;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -49,6 +50,9 @@ internal class MockupData
         {
             var seedRecipeFile = File.ReadAllText(Path.Combine(SeedDataPath, "recipes.json"));
             var seedRecipes = JsonConvert.DeserializeObject<List<SeedRecipe>>(seedRecipeFile) ?? [];
+
+            var wrongRecipeFile = File.ReadAllText(Path.Combine(SeedDataPath, "wrong-recipes.json"));
+            var seedWrongRecipes = JsonConvert.DeserializeObject<List<SeedWrongRecipe>>(wrongRecipeFile) ?? [];
 
             var seedAccountFile = File.ReadAllText(Path.Combine(SeedDataPath, "accounts.json"));
             var seedAccounts = JsonConvert.DeserializeObject<List<SeedAccount>>(seedAccountFile) ?? [];
@@ -149,9 +153,111 @@ internal class MockupData
 
                 mapRecipeTagsCode.Add(recipeId, seedRecipe.TagsCode);
             }
+
+
+            foreach (var seedRecipe in seedWrongRecipes)
+            {
+                var steps = new List<Step>();
+                var seedSteps = seedRecipe.Steps;
+                for (int i = 0; i < seedSteps.Count; i++)
+                {
+                    Guid stepId;
+                    do
+                    {
+                        stepId = Guid.NewGuid();
+                    } while (steps.Any(s => s.Id == stepId));
+
+                    steps.Add(new Step
+                    {
+                        Id = stepId,
+                        OrdinalNumber = i + 1,
+                        Content = seedSteps[i].Content,
+                        AttachedImageUrls = seedSteps[i].AttachedImageURLs,
+                    });
+                }
+
+                Guid recipeId;
+
+                do
+                {
+                    recipeId = Guid.NewGuid();
+                } while (_context.Recipes.Any(r => r.Id == recipeId));
+
+                var recipe = new Recipe
+                {
+                    Id = recipeId,
+                    Title = seedRecipe.Title,
+                    Description = seedRecipe.Description,
+                    ImageUrl = seedRecipe.ImageUrl,
+                    Serves = seedRecipe.Serves,
+                    CookTime = seedRecipe.CookTime,
+                    Ingredients = seedRecipe.Ingredients,
+                    Steps = steps
+                };
+                //add author
+                int randomIndex = random.Next(seedAccounts.Count);
+                recipe.AuthorId = Guid.Parse(seedAccounts[randomIndex].Id);
+                recipe.IsActive = true;
+                recipe.CreatedAt = DateTime.UtcNow;
+                recipe.UpdatedAt = DateTime.UtcNow;
+
+                //add comment
+                int numberOfComment = random.Next(35);
+                for (int i = 0; i <= numberOfComment; i++)
+                {
+                    var randomIndexAccount = GetRandomExcluding(seedAccounts.Count, randomIndex);
+                    var comment = CommentData.GetRandomComment();
+                    comment.AccountId = Guid.Parse(seedAccounts[randomIndexAccount].Id);
+                    recipe.Comments.Add(comment);
+                }
+                recipe.NumberOfComment = recipe.Comments.Count;
+
+                //add vote
+                var numberOfVote = random.Next(seedAccounts.Count);
+                recipe.VoteDiff = numberOfVote;
+
+                var recipeVotes = new List<RecipeVote>();
+                Guid voteId;
+                for (int i = 0; i < numberOfVote; i++)
+                {
+                    var accountId = Guid.Parse(seedAccounts[i].Id);
+                    do
+                    {
+                        voteId = Guid.NewGuid();
+                    } while (recipeVotes.Any(rv => rv.Id == voteId));
+
+                    recipeVotes.Add(new RecipeVote
+                    {
+                        Id = voteId,
+                        AccountId = accountId,
+                        IsUpvote = true,
+                    });
+                }
+
+                recipe.RecipeVotes.AddRange(recipeVotes);
+
+                _context.Recipes.Add(recipe);
+                // Add user report
+                do
+                {
+                    randomIndex = random.Next(seedAccounts.Count);
+                } while (Guid.Parse(seedAccounts[randomIndex].Id) == recipe.AuthorId);
+
+                _context.UserReportRecipes.Add(new UserReportRecipe
+                {
+                    AdditionalDetails = seedRecipe.AdditionalDetails,
+                    ReasonCodes = seedRecipe.ReasonCodes,
+                    RecipeId = recipeId,
+                    Status = ReportStatus.Pending,
+                    AccountId = Guid.Parse(seedAccounts[randomIndex].Id)
+                });
+
+                mapRecipeTagsCode.Add(recipeId, seedRecipe.TagsCode);
+            }
             await _unitOfWork.SaveChangeAsync();
             return mapRecipeTagsCode;
         }
+
         return null;
     }
 
@@ -242,6 +348,20 @@ internal class MockupData
         public List<string> Ingredients { get; set; } = null!;
         public List<SeedStep> Steps { get; set; } = [];
         public List<string> TagsCode { get; set; } = null!;
+    }
+    private class SeedWrongRecipe
+    {
+        public string Title { get; set; } = null!;
+
+        public string Description { get; set; } = null!;
+        public string ImageUrl { get; set; } = null!;
+        public int? Serves { get; set; }
+        public string? CookTime { get; set; }
+        public List<string> Ingredients { get; set; } = null!;
+        public List<SeedStep> Steps { get; set; } = [];
+        public List<string> TagsCode { get; set; } = null!;
+        public List<string> ReasonCodes { get; set; } = null!;
+        public string AdditionalDetails { get; set; } = null!;
     }
 
     private class SeedStep
