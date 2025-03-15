@@ -81,12 +81,12 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
             }
 
             var limit = USER_CONSTANTS.ADMIN_USER_LIMIT;
-            if(paginatedDTO.TotalRow != null)
+            if(paginatedDTO.Limit != null)
             {
-                limit = paginatedDTO.TotalRow.Value;
+                limit = paginatedDTO.Limit.Value;
             }
-            var totalPage = (await usersQuery.CountAsync() + limit - 1) / limit;
-
+            var totalRow = await usersQuery.CountAsync();
+            var totalPage = (totalRow + limit - 1) / limit;
 
             usersQuery = _paginateDataUtility.PaginateQuery(usersQuery, new PaginateParam
             {
@@ -115,7 +115,7 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                     {
                         CurrentPage = paginatedDTO.Skip!.Value,
                         TotalPage = 0,
-                        TotalRow = limit,
+                        TotalRow = totalRow,
                     }
                 });
             }
@@ -146,8 +146,8 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                 Metadata = new NumberedPaginatedMetadata
                 {
                     CurrentPage = paginatedDTO.Skip!.Value,
-                    TotalRow = limit,
                     TotalPage = totalPage,
+                    TotalRow = totalRow,
                 },
                 PaginatedData = userList,
             };
