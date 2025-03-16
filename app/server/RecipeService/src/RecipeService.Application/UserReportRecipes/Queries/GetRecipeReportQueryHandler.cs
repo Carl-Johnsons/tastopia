@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Contract.Constants;
 using Contract.DTOs;
-using Contract.DTOs.UserDTO;
 using Contract.Utilities;
 using Google.Protobuf.Collections;
 using MongoDB.Bson.Serialization;
@@ -20,12 +19,12 @@ public record GetRecipeReportsQuery : IRequest<Result<PaginatedAdminReportRecipe
 public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery, Result<PaginatedAdminReportRecipeListResponse>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IPaginateDataUtility<UserReportWithRecipe, NumberedPaginatedMetadata> _paginateDataUtility;
+    private readonly IPaginateDataUtility<AdminReportRecipeResponse, NumberedPaginatedMetadata> _paginateDataUtility;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
     private readonly IMapper _mapper;
 
     public GetRecipeReportQueryHandler(IApplicationDbContext context,
-                                       IPaginateDataUtility<UserReportWithRecipe, NumberedPaginatedMetadata> paginateDataUtility,
+                                       IPaginateDataUtility<AdminReportRecipeResponse, NumberedPaginatedMetadata> paginateDataUtility,
                                        GrpcUser.GrpcUserClient grpcUserClient,
                                        IMapper mapper)
     {
@@ -59,21 +58,23 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
             AccountId = { repeatedField },
         }, cancellationToken: cancellationToken);
 
-        var mapUser = new Dictionary<Guid, SimpleUser>();
-        foreach (var (key, value) in mapGrpcUserResponse.Users)
-        {
-            mapUser.Add(Guid.Parse(key), new SimpleUser
-            {
-                AccountId = Guid.Parse(value.AccountId),
-                AccountUsername = value.AccountUsername,
-                AvtUrl = value.AvtUrl,
-                DisplayName = value.DisplayName
-            });
-        }
-
         var totalPage = (userReportList.Count() + RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT;
 
-        var paginatedQuery = _paginateDataUtility.PaginateQuery(userReportList, new PaginateParam
+        var adminReportRecipe = userReportList.Select(ur => new AdminReportRecipeResponse
+        {
+            RecipeId = ur.RecipeId,
+            RecipeImageURL = ur.Recipe!.ImageUrl,
+            RecipeTitle = ur.Recipe.Title,
+            Status = ur.Status.ToString(),
+            CreatedAt = ur.CreatedAt,
+            RecipeOwnerUsername = mapGrpcUserResponse.Users[ur.Recipe.AuthorId.ToString()].AccountUsername,
+            ReporterUsername = mapGrpcUserResponse.Users[ur.AccountId.ToString()].AccountUsername,
+            ReportReason = string.Join(", ", ReportReasonData.RecipeReportReasons.Where(rrr => ur.ReasonCodes.Contains(rrr.Code))
+                                                                                 .Select(rrr => normalizedLangue == LanguageValidation.Vi ? rrr.Vi : rrr.En)
+                                                                                 .ToList()),
+        }).AsQueryable();
+
+        var paginatedQuery = _paginateDataUtility.PaginateQuery(adminReportRecipe, new PaginateParam
         {
             Limit = RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT,
             Offset = (request.paginatedDTO?.Skip ?? 0) * RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT,
@@ -81,19 +82,7 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
             SortOrder = request.paginatedDTO?.SortOrder ?? SortType.DESC
         });
 
-        var paginatedResult = paginatedQuery.Select(pq => new AdminReportRecipeResponse
-        {
-            RecipeId = pq.RecipeId,
-            RecipeImageURL = pq.Recipe!.ImageUrl,
-            RecipeTitle = pq.Recipe.Title,
-            Status = pq.Status.ToString(),
-            CreatedAt = pq.CreatedAt,
-            RecipeOwnerUsername = mapUser[pq.Recipe.AuthorId].AccountUsername,
-            ReporterUsername = mapUser[pq.AccountId].AccountUsername,
-            ReportReason = string.Join(", ", ReportReasonData.RecipeReportReasons.Where(rrr => pq.ReasonCodes.Contains(rrr.Code))
-                                                                                 .Select(rrr => normalizedLangue == LanguageValidation.Vi ? rrr.Vi : rrr.En)
-                                                                                 .ToList()),
-        }).ToList();
+        var paginatedResult = paginatedQuery.ToList();
 
         var adminReportRecipeResponse = new PaginatedAdminReportRecipeListResponse
         {
