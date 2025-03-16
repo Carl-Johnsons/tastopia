@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using Contract.DTOs.UserDTO;
+using Contract.DTOs;
 using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
@@ -9,9 +10,8 @@ using UserProto;
 namespace RecipeService.Application.Recipes.Queries;
 public class AdminGetRecipesQuery : IRequest<Result<PaginatedAdminRecipeListResponse?>>
 {
-    public int? Page { get; set; }
-    public string? Keyword { get; set; } 
     public Guid AccountId { get; set; }
+    public PaginatedDTO paginatedDTO { get; set; } = null!;
 }
 public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery, Result<PaginatedAdminRecipeListResponse?>>
 {
@@ -28,10 +28,10 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
     }
     public async Task<Result<PaginatedAdminRecipeListResponse?>> Handle(AdminGetRecipesQuery request, CancellationToken cancellationToken)
     {
-        var page = request.Page;
-        var keyword = request.Keyword;
+        var skip = request.paginatedDTO.Skip;
+        var keyword = request.paginatedDTO.Keyword;
         var accountId = request.AccountId;
-        if(accountId == Guid.Empty || page == null || page < 0)
+        if(accountId == Guid.Empty || skip == null || skip < 0)
         {
             return Result<PaginatedAdminRecipeListResponse?>.Failure(RecipeError.NullParameter, "AccountId or Page is null");
         }
@@ -46,7 +46,7 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
             return Result<PaginatedAdminRecipeListResponse?>.Failure(RecipeError.PermissionDeny);
         }
 
-        var recipesQuery = _context.Recipes.OrderByDescending(r => r.CreatedAt).AsQueryable();
+        var recipesQuery = _context.Recipes.AsQueryable();
         if (!string.IsNullOrEmpty(keyword))
         {
             var searchUserResponse = await _grpcUserClient.SearchUserAsync(new GrpcSearchUserRequest
@@ -65,11 +65,20 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
                 searchAuthorIds.Contains(r.AuthorId.ToString())
             );
         }
-        var totalPage = (await recipesQuery.CountAsync() + RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT;
+
+        var limit = RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT;
+        if(request.paginatedDTO.Limit != null)
+        {
+            limit = request.paginatedDTO.Limit.Value;
+        }
+        var totalRow = await recipesQuery.CountAsync();
+        var totalPage = (totalRow + limit - 1) / limit;
         recipesQuery = _paginateDataUtility.PaginateQuery(recipesQuery, new PaginateParam
         {
-            Offset = (page ?? 0) * RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT,
-            Limit = RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT
+            Offset = (skip ?? 0) * limit,
+            Limit = limit,
+            SortBy = request.paginatedDTO.SortBy != null ? request.paginatedDTO.SortBy : "CreatedAt",
+            SortOrder = request.paginatedDTO.SortOrder != null ? request.paginatedDTO.SortOrder : SortType.DESC,
         });
         var recipes = await recipesQuery.ToListAsync();
         var recipeList = recipes.Select(r =>
@@ -84,7 +93,7 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
             IsActive = r.IsActive,
             AuthorDisplayName = "",
             AuthorUsername = ""
-        });
+        }).ToList();
         if (recipeList == null || !recipeList.Any())
         {
             return Result<PaginatedAdminRecipeListResponse?>.Success(new PaginatedAdminRecipeListResponse
@@ -106,33 +115,26 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
             AccountId = { _mapper.Map<RepeatedField<string>>(authorIds) }
         }, cancellationToken: cancellationToken);
 
-        var mapUsers = new Dictionary<Guid, SimpleUser>();
-        foreach (var (key, value) in response.Users)
-        {
-            mapUsers[Guid.Parse(key)] = new SimpleUser
-            {
-                AccountId = Guid.Parse(value.AccountId),
-                AvtUrl = value.AvtUrl,
-                DisplayName = value.DisplayName,
-                AccountUsername = value.AccountUsername,
-            };
-        }
-        if (response == null || mapUsers.Count != authorIds.Count)
+        if (response == null || response.Users.Count != authorIds.Count)
         {
             return Result<PaginatedAdminRecipeListResponse?>.Failure(RecipeError.NotFound);
         }
+
         foreach (var recipe in recipeList)
         {
-            recipe.AuthorDisplayName = mapUsers[recipe.AuthorId].DisplayName;
-            recipe.AuthorUsername = mapUsers[recipe.AuthorId].AccountUsername;
+            recipe.AuthorDisplayName = response.Users[recipe.AuthorId.ToString()].DisplayName;
+            recipe.AuthorUsername = response.Users[recipe.AuthorId.ToString()].AccountUsername;
         }
+        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(recipeList, Formatting.Indented));
+
         var paginatedResponse = new PaginatedAdminRecipeListResponse
         {
             PaginatedData = recipeList,
             Metadata = new NumberedPaginatedMetadata
             {
                 TotalPage = totalPage,
-                CurrentPage = page!.Value
+                CurrentPage = skip!.Value,
+                TotalRow = totalRow,
             }
         };
         return Result<PaginatedAdminRecipeListResponse?>.Success(paginatedResponse);
