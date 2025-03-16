@@ -1,4 +1,5 @@
-﻿using Contract.Extension;
+﻿using Contract.Constants;
+using Contract.Extension;
 using RecipeService.API.DTOs;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
@@ -93,11 +94,25 @@ public static class ReinforcedTypingsExtension
     {
         // DTO and Entites
         builder.ExportAsInterfaces([
+            typeof(Tag),
+            typeof(Comment),
+            typeof(Step),
+            typeof(RecipeVote),
+            typeof(CommentVote),
+            typeof(RecipeTag),
+            typeof(Recipe),
+            typeof(AccountRecipeCommentResponse),
+            typeof(NumberedPaginatedMetadata),
+            typeof(AdminGetRecipesDTO),
             typeof(PaginatedAccountRecipeCommentListResponse),
             typeof(AdminRecipeResponse),
+            typeof(UserActivityResponse),
             typeof(AdminGetUserActivityDTO),
             typeof(PaginatedUserActivityListResponse),
-            typeof(UserActivityResponse),
+            typeof(AdminReportRecipeResponse),
+            typeof(PaginatedAdminReportRecipeListResponse),
+            typeof(ReportRecipeResponse),
+            typeof(AdminReportRecipeDetailResponse),
         ], config =>
         {
             config.FlattenHierarchy()
@@ -107,7 +122,9 @@ public static class ReinforcedTypingsExtension
                   .ExportTo($"website/src/generated/interfaces/{FILE_NAME}.interface.d.ts");
         });
 
-        builder.ExportAsEnums([], config =>
+        builder.ExportAsEnums([
+            typeof(ReportStatus)
+        ], config =>
         {
             config.FlattenHierarchy()
                   .DontIncludeToNamespace()
