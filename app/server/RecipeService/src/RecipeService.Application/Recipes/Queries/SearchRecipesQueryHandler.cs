@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using static UserProto.GrpcUser;
 using UserProto;
 using AutoMapper;
+using Newtonsoft.Json;
 namespace RecipeService.Application.Recipes.Queries;
 
 public class SearchRecipesQuery : IRequest<Result<PaginatedSearchRecipeListResponse?>>
@@ -83,6 +84,8 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
             {
                 Keyword = keyword,
             }, cancellationToken: cancellationToken);
+
+            await Console.Out.WriteLineAsync("Search user:"+ JsonConvert.SerializeObject(searchUserResponse.AccountIds, Formatting.Indented));
 
             var searchAuthorIds = searchUserResponse.AccountIds.ToHashSet();
 

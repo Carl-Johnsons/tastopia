@@ -21,7 +21,6 @@ public class UpdateAccountIsActiveConsumer : IConsumer<UpdateAccountIsActiveEven
             AccountId = context.Message.AccountId,
             IsActive = context.Message.IsActive,
         });
-        await Console.Out.WriteLineAsync("ok ngon neffffffffffffffffffffffffffffffffffffff");
         result.ThrowIfFailure();
     }
 }

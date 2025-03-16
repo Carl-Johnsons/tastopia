@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using UserService.Domain.Errors;
 
 namespace UserService.Application.Users.Queries;
