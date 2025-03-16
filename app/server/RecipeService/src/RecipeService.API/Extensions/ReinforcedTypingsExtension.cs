@@ -94,6 +94,14 @@ public static class ReinforcedTypingsExtension
     {
         // DTO and Entites
         builder.ExportAsInterfaces([
+            typeof(Tag),
+            typeof(Comment),
+            typeof(Step),
+            typeof(RecipeVote),
+            typeof(CommentVote),
+            typeof(RecipeTag),
+            typeof(Recipe),
+            typeof(AccountRecipeCommentResponse),
             typeof(NumberedPaginatedMetadata),
             typeof(AdminGetRecipesDTO),
             typeof(PaginatedAccountRecipeCommentListResponse),

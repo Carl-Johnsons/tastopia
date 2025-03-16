@@ -3,7 +3,6 @@ using Contract.Constants;
 using Contract.DTOs;
 using Contract.Utilities;
 using Google.Protobuf.Collections;
-using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
@@ -36,6 +35,8 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
 
     public async Task<Result<PaginatedAdminReportRecipeListResponse>> Handle(GetRecipeReportsQuery request, CancellationToken cancellationToken)
     {
+        var keyword = request.paginatedDTO?.Keyword;
+
         var userReportCollection = _context.GetDatabase().GetCollection<UserReportRecipe>(nameof(UserReportRecipe));
         var recipeCollection = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe));
         var normalizedLangue = LanguageUtility.ToIso6391(request.Lang);
@@ -45,10 +46,31 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
                                                                     localField: report => report.RecipeId,
                                                                     foreignField: recipe => recipe.Id,
                                                                     @as: result => result.Recipe)
-            .Unwind(result => result.Recipe);
+            .Unwind<UserReportWithRecipe, UserReportWithRecipe>(result => result.Recipe);
 
-        var bsonResults = await pipeline.ToListAsync(cancellationToken);
-        var userReportList = bsonResults.Select(doc => BsonSerializer.Deserialize<UserReportWithRecipe>(doc)).ToList().AsQueryable();
+        if (!string.IsNullOrEmpty(keyword))
+        {
+            keyword = keyword.ToLower();
+            var searchUserResponse = await _grpcUserClient.SearchUserAsync(new GrpcSearchUserRequest
+            {
+                Keyword = keyword,
+            }, cancellationToken: cancellationToken);
+
+
+            var searchAuthorIds = searchUserResponse.AccountIds.ToHashSet();
+            var searchRecipeReportReasonCode = ReportReasonData.RecipeReportReasons.Where(rrr => normalizedLangue
+                                                                                                 == LanguageValidation.Vi ? rrr.Vi.Contains(keyword) : rrr.En.Contains(keyword))
+                                                                                   .Select(rrr => rrr.Code)
+                                                                                   .ToList();
+            pipeline = pipeline.Match(report =>
+                report.Recipe!.Title.Contains(keyword) ||
+                (searchAuthorIds != null && searchAuthorIds.Contains(report.Recipe.AuthorId.ToString())) ||
+                (searchAuthorIds != null && searchAuthorIds.Contains(report.AccountId.ToString())) ||
+                searchRecipeReportReasonCode.Any(srrc => report.ReasonCodes.Contains(srrc))
+            );
+        }
+
+        var userReportList = await pipeline.ToListAsync(cancellationToken);
 
         var accountId = userReportList.Select(ur => ur.AccountId).Concat(userReportList.Select(ur => ur.Recipe!.AuthorId)).ToList();
         var repeatedField = _mapper.Map<RepeatedField<string>>(accountId);
@@ -97,7 +119,7 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
         return Result<PaginatedAdminReportRecipeListResponse>.Success(adminReportRecipeResponse);
     }
 
-    public class UserReportWithRecipe : UserReportRecipe
+    private class UserReportWithRecipe : UserReportRecipe
     {
         public Recipe? Recipe { get; set; }
     }

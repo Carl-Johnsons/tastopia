@@ -86,7 +86,7 @@ public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReport
         var accountIds = result.UserReportRecipes.Select(r => r.AccountId).ToList();
 
         var repeatedField = _mapper.Map<RepeatedField<string>>(accountIds);
-        var grpcGetSimpleUserResponse = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
+        var mapUserGrpc = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
         {
             AccountId = { repeatedField }
         }, cancellationToken: cancellationToken);
@@ -95,18 +95,6 @@ public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReport
         {
             AccountId = result.AuthorId.ToString()
         });
-
-        var mapUsers = new Dictionary<Guid, SimpleUser>();
-        foreach (var (key, value) in grpcGetSimpleUserResponse.Users)
-        {
-            mapUsers.Add(Guid.Parse(key), new SimpleUser
-            {
-                AccountId = Guid.Parse(value.AccountId),
-                AccountUsername = value.AccountUsername,
-                AvtUrl = value.AvtUrl,
-                DisplayName = value.DisplayName,
-            });
-        }
 
         var reportDetailResponse = new AdminReportRecipeDetailResponse
         {
@@ -139,7 +127,8 @@ public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReport
                 AdditionalDetail = urr.AdditionalDetails,
                 CreatedAt = urr.CreatedAt,
                 Status = urr.Status.ToString(),
-                ReporterUsername = mapUsers[urr.AccountId].AccountUsername,
+                ReporterUsername = mapUserGrpc.Users[urr.AccountId.ToString()].AccountUsername,
+                ReporterAvtUrl = mapUserGrpc.Users[urr.AccountId.ToString()].AvtUrl,
                 Reasons = ReportReasonData.RecipeReportReasons.Where(rrr => urr.ReasonCodes.Contains(rrr.Code))
                                                               .Select(rrr => request.Lang == LanguageValidation.Vi ? rrr.Vi : rrr.En)
                                                               .ToList(),

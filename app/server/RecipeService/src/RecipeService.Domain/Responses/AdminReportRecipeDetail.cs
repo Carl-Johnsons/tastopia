@@ -17,6 +17,7 @@ public class ReportRecipeResponse
 {
     public Guid Id { get; set; }
     public string ReporterUsername { get; set; } = null!;
+    public string ReporterAvtUrl { get; set; } = null!;
     public List<string> Reasons { get; set; } = [];
     public string? AdditionalDetail { get; set; }
     public string Status { get; set; } = null!;
