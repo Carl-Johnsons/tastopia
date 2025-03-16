@@ -103,7 +103,6 @@ public static class ReinforcedTypingsExtension
             typeof(Recipe),
             typeof(AccountRecipeCommentResponse),
             typeof(NumberedPaginatedMetadata),
-            typeof(AdminGetRecipesDTO),
             typeof(PaginatedAccountRecipeCommentListResponse),
             typeof(AdminRecipeResponse),
             typeof(UserActivityResponse),

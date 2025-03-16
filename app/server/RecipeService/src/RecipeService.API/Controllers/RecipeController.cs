@@ -19,7 +19,6 @@ using RecipeService.Application.UserReportRecipes.Queries;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
-using ErrorResponseDTO = RecipeService.API.DTOs.ErrorResponseDTO;
 namespace RecipeService.API.Controllers;
 [Route("api/recipe")]
 [ApiController]
