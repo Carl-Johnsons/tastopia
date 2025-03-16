@@ -145,7 +145,7 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
             {
                 Metadata = new NumberedPaginatedMetadata
                 {
-                    CurrentPage = paginatedDTO.Skip!.Value,
+                    CurrentPage = (paginatedDTO.Skip ?? 0) + 1,
                     TotalPage = totalPage,
                     TotalRow = totalRow,
                 },

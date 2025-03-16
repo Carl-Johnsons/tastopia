@@ -71,6 +71,18 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
         }
 
         var userReportList = await pipeline.ToListAsync(cancellationToken);
+        if(userReportList == null || userReportList.Count == 0)
+        {
+            return Result<PaginatedAdminReportRecipeListResponse>.Success(new PaginatedAdminReportRecipeListResponse
+            {
+                PaginatedData = [],
+                Metadata = new NumberedPaginatedMetadata
+                {
+                    CurrentPage = (request.paginatedDTO?.Skip ?? 0) + 1,
+                    TotalPage = 0
+                }
+            });
+        }
 
         var accountId = userReportList.Select(ur => ur.AccountId).Concat(userReportList.Select(ur => ur.Recipe!.AuthorId)).ToList();
         var repeatedField = _mapper.Map<RepeatedField<string>>(accountId);

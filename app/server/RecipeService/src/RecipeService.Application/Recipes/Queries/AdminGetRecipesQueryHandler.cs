@@ -125,7 +125,6 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
             recipe.AuthorDisplayName = response.Users[recipe.AuthorId.ToString()].DisplayName;
             recipe.AuthorUsername = response.Users[recipe.AuthorId.ToString()].AccountUsername;
         }
-        await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(recipeList, Formatting.Indented));
 
         var paginatedResponse = new PaginatedAdminRecipeListResponse
         {
@@ -133,7 +132,7 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
             Metadata = new NumberedPaginatedMetadata
             {
                 TotalPage = totalPage,
-                CurrentPage = skip!.Value,
+                CurrentPage = (skip ?? 0) + 1,
                 TotalRow = totalRow,
             }
         };
