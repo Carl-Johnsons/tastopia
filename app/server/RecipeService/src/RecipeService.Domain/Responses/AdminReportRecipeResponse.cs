@@ -2,6 +2,7 @@
 
 public class AdminReportRecipeResponse
 {
+    public Guid ReportId { get; set; }
     public Guid RecipeId { get; set; }
     public string RecipeTitle { get; set; } = null!;
     public string RecipeOwnerUsername { get; set; } = null!;

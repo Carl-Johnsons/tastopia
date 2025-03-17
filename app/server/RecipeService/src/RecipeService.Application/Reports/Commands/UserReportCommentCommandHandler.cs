@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
-namespace RecipeService.Application.UserReportComments.Commands;
+namespace RecipeService.Application.Reports.Commands;
 public class UserReportCommentCommand : IRequest<Result<UserReportCommentResponse?>>
 {
     public Guid ReporterId { get; set; }
@@ -28,7 +28,8 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
 
     public async Task<Result<UserReportCommentResponse?>> Handle(UserReportCommentCommand request, CancellationToken cancellationToken)
     {
-        try {
+        try
+        {
             var reporterId = request.ReporterId;
             var commentId = request.CommentId;
             var reasonCodes = request.ReasonCodes;
@@ -46,7 +47,7 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
                 return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NotFound, "Not found comment");
             }
 
-            var report = _context.UserReportComments.Where(r => r.AccountId == reporterId && r.CommentId == commentId).FirstOrDefault();
+            var report = _context.UserReportComments.Where(r => r.AccountId == reporterId && r.EntityId == commentId).FirstOrDefault();
             if (report != null)
             {
                 _context.UserReportComments.Remove(report);
@@ -59,14 +60,15 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
             }
 
             var codes = ReportReasonData.CommentReportReasons.Where(r => reasonCodes.Contains(r.Code)).Select(r => r.Code).ToList();
-            if (codes == null || codes.Count == 0) {
+            if (codes == null || codes.Count == 0)
+            {
                 return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NotFound, "Not found reason codes.");
             }
 
             report = new UserReportComment
             {
                 AccountId = reporterId,
-                CommentId = commentId,
+                EntityId = commentId,
                 ReasonCodes = codes,
                 AdditionalDetails = additionalDetails,
                 CreatedAt = DateTime.UtcNow,
@@ -81,7 +83,8 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
                 IsRemoved = false
             });
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.AddUserReportCommentFail, ex.Message);
         }

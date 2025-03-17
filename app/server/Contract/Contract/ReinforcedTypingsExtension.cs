@@ -10,8 +10,8 @@ public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "common";
     private static List<string> EXPORT_FILE_PATHS = [
-        "../../../client/mobile/generated",
-        "../../../client/website/generated"
+        "../../../client/mobile/src/generated",
+        "../../../client/website/src/generated"
     ];
 
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
@@ -43,7 +43,7 @@ public static class ReinforcedTypingsExtension
                   .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo($"mobile/generated/interfaces/{FILE_NAME}.interface.d.ts");
+                  .ExportTo($"mobile/src/generated/interfaces/{FILE_NAME}.interface.d.ts");
         });
     }
 
@@ -60,7 +60,7 @@ public static class ReinforcedTypingsExtension
                   .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo($"website/generated/interfaces/{FILE_NAME}.interface.d.ts");
+                  .ExportTo($"website/src/generated/interfaces/{FILE_NAME}.interface.d.ts");
         });
     }
 }
