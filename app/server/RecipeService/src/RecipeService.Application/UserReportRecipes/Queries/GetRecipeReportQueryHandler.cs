@@ -36,6 +36,7 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
     public async Task<Result<PaginatedAdminReportRecipeListResponse>> Handle(GetRecipeReportsQuery request, CancellationToken cancellationToken)
     {
         var keyword = request.paginatedDTO?.Keyword;
+        var limit = request.paginatedDTO?.Limit ?? RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT;
 
         var userReportCollection = _context.GetDatabase().GetCollection<UserReportRecipe>(nameof(UserReportRecipe));
         var recipeCollection = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe));
@@ -71,7 +72,7 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
         }
 
         var userReportList = await pipeline.ToListAsync(cancellationToken);
-        if(userReportList == null || userReportList.Count == 0)
+        if (userReportList == null || userReportList.Count == 0)
         {
             return Result<PaginatedAdminReportRecipeListResponse>.Success(new PaginatedAdminReportRecipeListResponse
             {
@@ -92,7 +93,7 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
             AccountId = { repeatedField },
         }, cancellationToken: cancellationToken);
 
-        var totalPage = (userReportList.Count() + RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT - 1) / RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT;
+        var totalPage = (userReportList.Count() + limit - 1) / limit;
 
         var adminReportRecipe = userReportList.Select(ur => new AdminReportRecipeResponse
         {
@@ -110,8 +111,8 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
 
         var paginatedQuery = _paginateDataUtility.PaginateQuery(adminReportRecipe, new PaginateParam
         {
-            Limit = RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT,
-            Offset = (request.paginatedDTO?.Skip ?? 0) * RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT,
+            Limit = limit,
+            Offset = (request.paginatedDTO?.Skip ?? 0) * limit,
             SortBy = request.paginatedDTO?.SortBy ?? "CreatedAt",
             SortOrder = request.paginatedDTO?.SortOrder ?? SortType.DESC
         });
