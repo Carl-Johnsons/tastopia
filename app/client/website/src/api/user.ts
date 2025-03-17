@@ -1,4 +1,4 @@
-import { getAdminUsers } from "@/actions/user.action";
+import { getAdminUsers, getUserById } from "@/actions/user.action";
 import { IPaginatedAdminGetUserListResponse } from "@/generated/interfaces/user.interface";
 import { useQuery } from "@tanstack/react-query";
 
@@ -6,5 +6,12 @@ export const useGetAdminUsers = (skip = 0, sortBy = "", sortOrder = "asc", keywo
   return useQuery<IPaginatedAdminGetUserListResponse>({
     queryKey: ["users", skip, sortBy, sortOrder, keyword, limit],
     queryFn: () =>  getAdminUsers(skip, sortBy, sortOrder, keyword, limit),
+  });
+};
+
+export const useGetUserById = (userId: string) => {
+  return useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => getUserById(userId),
   });
 };

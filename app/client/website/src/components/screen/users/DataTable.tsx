@@ -17,7 +17,7 @@ const DataTable = () => {
   const [sortBy, setSortBy] = useState("");
   const [keyword, setKeyword] = useState("");
   const [sortOrder, setSortOrder] = useState("asc")
-  const debouncedValue = useDebounce(keyword, 800);
+  const debouncedValue = useDebounce(keyword, 300);
   const [updatedUserStatuses, setUpdatedUserStatuses] = useState<Record<string, boolean>>({});
 
   const { data, isLoading, refetch } =

@@ -17,14 +17,14 @@ export default async function Page({ params }: ParamsProps) {
           <ChevronRight className='text-black_white' />
           <span className='text-black_white'>Detail</span>
         </div>
-        <div className='container grid lg:grid-cols-[70%_30%] gap-10 lg:gap-3'>
+        <div className='container grid xl:grid-cols-[70%_30%] gap-10 xl:gap-3'>
           <ReportList
             reports={reports}
-            className='lg:col-start-2' 
+            className='xl:col-start-2' 
           />
           <RecipeDetail
             recipe={recipe}
-            className='lg:col-start-1 lg:row-start-1'
+            className='xl:col-start-1 xl:row-start-1'
           />
         </div>
       </div>

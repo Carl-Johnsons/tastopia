@@ -11,7 +11,9 @@ export default function SearchBar({ onChange, isLoading }: Props) {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div className={`flex-center relative w-full max-w-lg items-center gap-2 rounded-2xl bg-primary/15 px-4 py-3 border-[1.5px] border-transparent ${isFocused && "border-primary bg-transparent"}`}>
+    <div
+      className={`flex-center relative w-full max-w-lg items-center gap-2 rounded-2xl border-[1.5px] bg-primary/15 px-4 py-3 ${isFocused ? "border-primary bg-transparent" : "border-transparent"}`}
+    >
       <Search
         className='text-primary'
         size={20}

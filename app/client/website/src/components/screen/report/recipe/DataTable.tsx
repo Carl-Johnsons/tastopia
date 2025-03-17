@@ -17,23 +17,25 @@ import {
 import { customStyles } from "@/constants/styles";
 import { ChevronRight } from "lucide-react";
 import NoRecord from "@/components/ui/NoRecord";
+import SearchBar from "../../users/SearchBar";
 
 const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
     name: "Recipe Name",
     selector: row => row.recipeTitle,
-    sortable: true
+    sortable: true,
+    grow: 4
   },
   {
     name: "Recipe Owner",
     selector: row => row.recipeOwnerUsername,
-    hide: 1200,
+    hide: 1576,
     sortable: true
   },
   {
     name: "Recipe Image",
-    compact: true,
-    hide: 1400,
+    hide: 1672,
+    center: true,
     cell: ({ recipeImageURL }) => (
       <div className='p-2'>
         <Image
@@ -49,14 +51,14 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
     name: "Reporter",
     selector: row => row.reporterUsername,
-    compact: true,
-    hide: 1200,
+    hide: 1776,
     sortable: true
   },
   {
     name: "Report Reason",
-    hide: 1050,
+    hide: 1368,
     sortable: true,
+    grow: 4,
     cell: ({ reportReason }) => {
       return (
         <span className='w-full overflow-hidden text-ellipsis text-nowrap text-sm'>
@@ -68,6 +70,7 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
     name: "Created Date",
     sortable: true,
+    hide: 1476,
     cell: ({ createdAt }) => {
       return (
         <span className='w-full overflow-hidden text-ellipsis text-nowrap text-sm'>
@@ -137,7 +140,7 @@ export const StatusText = ({
   coloring?: boolean;
 }) => {
   return (
-    <div className='flex-center flex gap-2'>
+    <div className='flex-center flex gap-2 min-w-[75px]'>
       {status === "Done" ? (
         <>
           <div className='size-3 rounded-full bg-green-500' />
@@ -176,12 +179,15 @@ export default function Table() {
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
 
+  console.log("debouncedValue", debouncedValue);
+
   const { data, isLoading, refetch } = useGetRecipeReports({
     skip,
     sortBy,
     sortOrder,
     limit,
-    lang
+    lang,
+    keyword: debouncedValue
   });
 
   console.log("data", data);
@@ -191,12 +197,10 @@ export default function Table() {
   }, [data]);
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
-    console.log("numOfRows", numOfRows);
     setLimit(numOfRows);
   }, []);
 
   const handleChangePage = useCallback((page: number) => {
-    console.log("page", page);
     setSkip(page);
   }, []);
 
@@ -214,14 +218,23 @@ export default function Table() {
     []
   );
 
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyword(e.target.value.trim());
+    setSkip(0);
+  }, []);
+
   useEffect(() => {
     refetch();
-  }, [skip, sortBy, sortOrder, debouncedValue, limit]);
+  }, [skip, sortBy, sortOrder, debouncedValue, limit, keyword]);
 
   return (
     <>
-      <div className='mt-4 flex flex-col gap-4'>
-        <div className='flex gap-2'>
+      <div className='flex-center mt-4 flex-col gap-4'>
+        <SearchBar
+          onChange={handleSearch}
+          isLoading={isLoading}
+        />
+        <div className='flex gap-2 self-start'>
           <span className='text-gray-500'>Administer Reports</span>
           <ChevronRight className='text-black_white' />
           <span className='text-black_white'>Recipe</span>
@@ -237,6 +250,7 @@ export default function Table() {
         highlightOnHover
         progressPending={isLoading}
         progressComponent={<Loader />}
+        noDataComponent={<NoRecord />}
         pagination
         paginationServer
         onChangeRowsPerPage={handleChangeRowPerPage}
