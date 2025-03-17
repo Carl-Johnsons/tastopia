@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
-namespace RecipeService.Application.UserReportRecipes.Commands;
+namespace RecipeService.Application.Reports.Commands;
 public class UserReportRecipeCommand : IRequest<Result<UserReportRecipeResponse?>>
 {
     public Guid ReporterId { get; set; }
@@ -29,7 +29,8 @@ public class UserReportRecipeCommandHandler : IRequestHandler<UserReportRecipeCo
 
     public async Task<Result<UserReportRecipeResponse?>> Handle(UserReportRecipeCommand request, CancellationToken cancellationToken)
     {
-        try {
+        try
+        {
             var reporterId = request.ReporterId;
             var recipeId = request.RecipeId;
             var reasonCodes = request.ReasonCodes;
@@ -45,7 +46,7 @@ public class UserReportRecipeCommandHandler : IRequestHandler<UserReportRecipeCo
                 return Result<UserReportRecipeResponse?>.Failure(UserReportRecipeError.NotFound, "Not found recipe");
             }
 
-            var report = _context.UserReportRecipes.Where(r => r.AccountId == reporterId && r.RecipeId == recipeId).FirstOrDefault();
+            var report = _context.UserReportRecipes.Where(r => r.AccountId == reporterId && r.EntityId == recipeId).FirstOrDefault();
 
             if (report != null)
             {
@@ -59,14 +60,15 @@ public class UserReportRecipeCommandHandler : IRequestHandler<UserReportRecipeCo
             }
 
             var codes = ReportReasonData.RecipeReportReasons.Where(r => reasonCodes.Contains(r.Code)).Select(r => r.Code).ToList();
-            if (codes == null || codes.Count == 0) {
+            if (codes == null || codes.Count == 0)
+            {
                 return Result<UserReportRecipeResponse?>.Failure(UserReportRecipeError.NotFound, "Not found reason codes");
             }
 
             report = new UserReportRecipe
             {
                 AccountId = reporterId,
-                RecipeId = recipeId,
+                EntityId = recipeId,
                 ReasonCodes = codes,
                 AdditionalDetails = additionalDetails,
                 CreatedAt = DateTime.UtcNow,
@@ -81,7 +83,8 @@ public class UserReportRecipeCommandHandler : IRequestHandler<UserReportRecipeCo
                 IsRemoved = false,
             });
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<UserReportRecipeResponse?>.Failure(UserReportRecipeError.AddUserReportRecipeFail, ex.Message);
         }

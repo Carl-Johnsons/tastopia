@@ -3,22 +3,20 @@ using Contract.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeService.API.DTOs;
-using RecipeService.Application.Activities.Queries;
 using RecipeService.Application.Comments.Commands;
 using RecipeService.Application.Comments.Queries;
 using RecipeService.Application.Recipes.Commands;
 using RecipeService.Application.Recipes.Queries;
 using RecipeService.Application.ReportReasons.Queries;
+using RecipeService.Application.Reports.Commands;
 using RecipeService.Application.Tags.Queries;
 using RecipeService.Application.UserBookmarkRecipes.Commands;
 using RecipeService.Application.UserBookmarkRecipes.Queries;
 using RecipeService.Application.UserRecipeBins.Queries;
-using RecipeService.Application.UserReportComments.Commands;
-using RecipeService.Application.UserReportRecipes.Commands;
-using RecipeService.Application.UserReportRecipes.Queries;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
+
 namespace RecipeService.API.Controllers;
 [Route("api/recipe")]
 [ApiController]
@@ -453,75 +451,6 @@ public class RecipeController : BaseApiController
         {
             Language = getReportReasonsDTO.Language,
             ReportType = getReportReasonsDTO.ReportType,
-        });
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    //ADMIN SECTION
-    [HttpGet("admin-get-recipes")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetRecipes([FromQuery] PaginatedDTO paginatedDTO)
-    {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-        var result = await _sender.Send(new AdminGetRecipesQuery
-        {
-            AccountId = Guid.Parse(subjectId!),
-            paginatedDTO = paginatedDTO,
-        });
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    [HttpGet("admin-get-recipe-reports")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetRecipeReports([FromQuery] string? lang, [FromQuery] PaginatedDTO paginatedDTO)
-    {
-        var result = await _sender.Send(new GetRecipeReportsQuery
-        {
-            Lang = lang ?? "en",
-            paginatedDTO = paginatedDTO
-        });
-
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    [HttpGet("admin-get-recipe-report-detail")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetRecipeReportDetail([FromQuery] string? lang, [FromQuery] string recipeId)
-    {
-        var result = await _sender.Send(new GetRecipeReportDetailQuery
-        {
-            Lang = lang ?? "en",
-            RecipeId = Guid.Parse(recipeId)
-        });
-
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    [HttpPost("admin-get-user-activities")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedUserActivityListResponse), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetUserActivities([FromBody] AdminGetUserActivityDTO adminGetUserActivityDTO)
-    {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-        var result = await _sender.Send(new AdminGetUserActivityQuery
-        {
-            CurrentAccountId = Guid.Parse(subjectId!),
-            AccountId = adminGetUserActivityDTO.AccountId,
-            Skip = adminGetUserActivityDTO.Skip,
-            Language = adminGetUserActivityDTO.Language,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

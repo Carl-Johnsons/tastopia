@@ -2,13 +2,13 @@
 using MongoDB.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 namespace RecipeService.Domain.Entities;
-[Collection("UserReportRecipe")]
-public class UserReportRecipe : BaseMongoDBAuditableEntity
+
+public class CommonReportEntity : BaseMongoDBAuditableEntity
 {
     [Required]
     public Guid AccountId { get; set; }
     [Required]
-    public Guid RecipeId { get; set; }
+    public Guid EntityId { get; set; }
     [Required]
     public List<string> ReasonCodes { get; set; } = null!;
     [MaxLength(300)]
@@ -16,3 +16,10 @@ public class UserReportRecipe : BaseMongoDBAuditableEntity
     [Required]
     public ReportStatus Status { get; set; } = ReportStatus.Pending;
 }
+
+
+[Collection("UserReportRecipe")]
+public class UserReportRecipe : CommonReportEntity { }
+
+[Collection("UserReportComment")]
+public class UserReportComment : CommonReportEntity { }
