@@ -61,58 +61,56 @@ const DataTable = () => {
     refetch();
   }, [skip, sortBy, sortOrder, debouncedValue, limit]);
   
-  console.log("skip", skip)
-  
   return (
-     <div className='flex-center mt-4 flex-col gap-4'>
-        <div className="relative flex w-full max-w-lg items-center gap-2 rounded-2xl bg-primary/15 px-4 py-3">
-          <Search className="text-primary" size={20} />
-          <input
-            type="text"
-            placeholder="Search by username, name, gmail,..."
-            className="w-full bg-transparent text-primary outline-none placeholder:text-primary/50"
-            onChange={handleSearch}
-          />
-          {debouncedValue && isLoading && <div className='absolute right-3 top-3.5'>
-            <Loader2 className="size-5 animate-spin text-primary" />
-          </div>}
-      </div>
-
-      <p className="text-black_white base-medium flex w-full flex-col gap-4">Administer Users</p>
-
-        <div className='dark:bg-black'>
-          <ReactDataTable
-            columns={usersColumns.map(column => {
-              if (column.name === "Action") {
-                return {
-                  ...column,
-                  cell: (user: IAdminGetUserResponse) => (
-                    <ActionButtons 
-                      accountId={user.accountId} 
-                      isActive={user.isAccountActive} 
-                      onStatusUpdate={handleStatusUpdate}
-                    />
-                  )
-                };
-              }
-              return column;
-            })}
-            data={tableData}
-            customStyles={customStyles}
-            striped
-            highlightOnHover
-            progressPending={isLoading}
-            pagination
-            paginationServer
-            paginationTotalRows={data?.metadata.totalRow}
-            onChangePage={handlePageChange}
-            onChangeRowsPerPage={handlePerRowsChange}
-            onSort={handleSort}
-            progressComponent={<Loader />}
-            noDataComponent={<NoRecord />}
-          />
+     <>
+       <div className='flex-center mt-4 flex-col gap-4'>
+          <div className="flex-center relative w-full max-w-lg items-center gap-2 rounded-2xl bg-primary/15 px-4 py-3">
+            <Search className="text-primary" size={20} />
+            <input
+              type="text"
+              placeholder="Search by username, name, gmail,..."
+              className="w-full bg-transparent text-primary outline-none placeholder:text-primary/50"
+              onChange={handleSearch}
+            />
+            {debouncedValue && isLoading && <div className='absolute right-3 top-3.5'>
+              <Loader2 className="size-5 animate-spin text-primary" />
+            </div>}
+          </div>
+  
+          <p className="text-black_white base-medium flex w-full flex-col gap-4">Administer Users</p>
         </div>
-     </div>
+          <ReactDataTable
+              columns={usersColumns.map(column => {
+                    if (column.name === "Action") {
+                      return {
+                        ...column,
+                        cell: (user: IAdminGetUserResponse) => (
+                          <ActionButtons 
+                            accountId={user.accountId} 
+                            isActive={user.isAccountActive} 
+                            onStatusUpdate={handleStatusUpdate}
+                          />
+                        )
+                      };
+                    }
+                    return column;
+                  })}
+              data={tableData}
+              customStyles={customStyles}
+              striped
+              highlightOnHover
+              progressPending={isLoading}
+              pagination
+              paginationServer
+              paginationTotalRows={data?.metadata.totalRow}
+              onChangePage={handlePageChange}
+              onChangeRowsPerPage={handlePerRowsChange}
+              onSort={handleSort}
+              progressComponent={<Loader />}
+              noDataComponent={<NoRecord />}
+          />
+     </>
+    
   );
 }
 
