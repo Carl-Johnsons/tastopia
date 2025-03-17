@@ -1,3 +1,4 @@
+import { SvgIconProps } from "@/types/icon";
 import React from "react";
 
 const RestoreIcon = () => {
@@ -23,8 +24,8 @@ const RecipeIcon = () => (
   </svg>
 );
 
-const BanIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" className="size-4" viewBox="0 0 20 20" fill="currentColor">
+const BanIcon = ({ className }: SvgIconProps) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={`size-4 ${className}`} viewBox="0 0 20 20" fill="currentColor">
     <path
       fillRule="evenodd"
       d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z"
@@ -190,8 +191,8 @@ const InfoIcon = ({ className = "size-5" }) => (
   </svg>
 );
 
-const UpvoteIcon = ({ className = "size-4" }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
+const UpvoteIcon = ({ className }: SvgIconProps) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={`size-4 ${className}`} viewBox="0 0 20 20" fill="currentColor">
     <path
       fillRule="evenodd"
       d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z"
@@ -200,8 +201,8 @@ const UpvoteIcon = ({ className = "size-4" }) => (
   </svg>
 );
 
-const DownvoteIcon = ({ className = "size-4" }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
+const DownvoteIcon = ({ className }: SvgIconProps) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={`size-4 ${className}`} viewBox="0 0 20 20" fill="currentColor">
     <path
       fillRule="evenodd"
       d="M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z"

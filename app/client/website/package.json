@@ -25,6 +25,7 @@
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.0.3",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "env-cmd": "^10.1.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-config-standard": "^17.1.0",
@@ -35,7 +36,6 @@
     "mongoose": "^8.2.0",
     "next": "14.2.14",
     "next-auth": "^5.0.0-beta.25",
-    "prettier": "^3.2.5",
     "react": "^18",
     "react-data-table-component": "^7.7.0",
     "react-dom": "^18",
@@ -49,6 +49,7 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.6.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -58,6 +59,8 @@
     "eslint-plugin-n": "^16.6.2",
     "eslint-plugin-promise": "^6.1.1",
     "postcss": "^8.4.47",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.4.13",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"

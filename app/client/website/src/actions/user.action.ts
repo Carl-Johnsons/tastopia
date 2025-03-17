@@ -12,7 +12,7 @@ export async function getUserById(id: string) {
   try {
     const url = "/api/user/admin-get-user-detail";
     const { data } = await protectedAxiosInstance.post(url, {
-      accountId: id,
+      accountId: id
     });
 
     return data;
@@ -28,7 +28,7 @@ export async function getUserActivitiesById(id: string, language: string) {
     const { data } = await protectedAxiosInstance.post(url, {
       accountId: id,
       language,
-      skip: 0,
+      skip: 0
     });
 
     return data;
@@ -48,22 +48,24 @@ export type UpdateSettingParams = {
 };
 
 export const useUpdateSettings = async (data: UpdateSettingParams) => {
-    const url = "/api/setting";
+  const url = "/api/setting";
 
-    try {
-      const { data: response } =
-        await protectedAxiosInstance.put<UpdateSettingResponse>(url, data);
-      return response;
-    } catch (error) {
-      console.debug("useUpdateSettings", stringify(error));
+  try {
+    const { data: response } = await protectedAxiosInstance.put<UpdateSettingResponse>(
+      url,
+      data
+    );
+    return response;
+  } catch (error) {
+    console.debug("useUpdateSettings", stringify(error));
 
-      if (error instanceof AxiosError) {
-        const data = error.response?.data as IErrorResponseDTO;
-        throw new Error(data.message);
-      }
-
-      throw new Error("An error has occurred.");
+    if (error instanceof AxiosError) {
+      const data = error.response?.data as IErrorResponseDTO;
+      throw new Error(data.message);
     }
+
+    throw new Error("An error has occurred.");
+  }
 };
 
 export type GetUserDetailsResponse = UserState;
@@ -84,7 +86,13 @@ export const getUserDetails = async () => {
   }
 };
 
-export async function getAdminUsers(skip = 0, sortBy = "", sortOrder = "asc", keyword = "", limit = 6) {
+export async function getAdminUsers(
+  skip = 0,
+  sortBy = "",
+  sortOrder = "asc",
+  keyword = "",
+  limit = 6
+) {
   try {
     const url = `/api/user/admin-get-users?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&keyword=${encodeURIComponent(keyword)}`;
 
