@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono } from "next/font/google";
+import localFont from 'next/font/local';
 import React from "react";
 
 import "./globals.css";
@@ -10,12 +10,29 @@ import AuthListener from "@/components/shared/auth/AuthListener";
 import Protected from "@/components/shared/auth/Protected";
 import { Roles } from "@/constants/role";
 
-const imbPlexMono = IBM_Plex_Mono({
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-  subsets: ["latin", "vietnamese"],
-  display: "swap",
+const sofiaPro = localFont({
+  src: [
+    { path: '../../public/fonts/Sofia-Pro-Black-Az.otf', weight: '900', style: 'normal' },
+    { path: '../../public/fonts/Sofia-Pro-Black-Italic-Az.otf', weight: '900', style: 'italic' },
+    { path: '../../public/fonts/Sofia-Pro-Bold-Az.otf', weight: '700', style: 'normal' },
+    { path: '../../public/fonts/Sofia-Pro-Bold-Italic-Az.otf', weight: '700', style: 'italic' },
+    { path: '../../public/fonts/Sofia-Pro-ExtraLight-Az.otf', weight: '200', style: 'normal' },
+    { path: '../../public/fonts/Sofia-Pro-ExtraLight-Italic-Az.otf', weight: '200', style: 'italic' },
+    { path: '../../public/fonts/Sofia-Pro-Light-Az.otf', weight: '300', style: 'normal' },
+    { path: '../../public/fonts/Sofia-Pro-Light-Italic-Az.otf', weight: '300', style: 'italic' },
+    { path: '../../public/fonts/Sofia-Pro-Medium-Az.otf', weight: '500', style: 'normal' },
+    { path: '../../public/fonts/Sofia-Pro-Medium-Italic-Az.otf', weight: '500', style: 'italic' },
+    { path: '../../public/fonts/Sofia-Pro-Regular-Az.otf', weight: '400', style: 'normal' },
+    { path: '../../public/fonts/Sofia-Pro-Regular-Italic-Az.otf', weight: '400', style: 'italic' },
+    { path: '../../public/fonts/Sofia-Pro-Semi-Bold-Az.otf', weight: '600', style: 'normal' },
+    { path: '../../public/fonts/Sofia-Pro-Semi-Bold-Italic-Az.otf', weight: '600', style: 'italic' },
+    { path: '../../public/fonts/Sofia-Pro-UltraLight-Az.otf', weight: '100', style: 'normal' },
+    { path: '../../public/fonts/Sofia-Pro-UltraLight-Italic-Az.otf', weight: '100', style: 'italic' },
+  ],
+  variable: '--font-sofia',
+  display: 'swap',
 });
+
 
 export const metadata: Metadata = {
   title: "Tastopia",
@@ -29,7 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${imbPlexMono.className}`}>
+      <body className={`${sofiaPro.className}`}>
         <Providers>
           <AuthListener />
           <Protected allowedRoles={[Roles.SUPER_ADMIN, Roles.ADMIN]}>
