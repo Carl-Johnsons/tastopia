@@ -238,19 +238,25 @@ internal class MockupData
 
                 _context.Recipes.Add(recipe);
                 // Add user report
-                do
-                {
-                    randomIndex = random.Next(seedAccounts.Count);
-                } while (Guid.Parse(seedAccounts[randomIndex].Id) == recipe.AuthorId);
+                int numberOfReports = random.Next(5) + 1;
+                var author = seedAccounts.SingleOrDefault(sa => sa.Id == recipe.AuthorId.ToString());
+                List<SeedAccount> seedAccountWithoutAuthorId = JsonConvert.DeserializeObject<List<SeedAccount>>(JsonConvert.SerializeObject(seedAccounts))!;
+                seedAccountWithoutAuthorId.Remove(author!);
 
-                _context.UserReportRecipes.Add(new UserReportRecipe
+                var randomIndexes = GetRandomIndexes(random, seedAccounts.Count, numberOfReports);
+
+                foreach (var accountRandomIndex in randomIndexes)
                 {
-                    AdditionalDetails = seedRecipe.AdditionalDetails,
-                    ReasonCodes = seedRecipe.ReasonCodes,
-                    RecipeId = recipeId,
-                    Status = ReportStatus.Pending,
-                    AccountId = Guid.Parse(seedAccounts[randomIndex].Id)
-                });
+                    _context.UserReportRecipes.Add(new UserReportRecipe
+                    {
+                        AdditionalDetails = seedRecipe.AdditionalDetails,
+                        ReasonCodes = seedRecipe.ReasonCodes,
+                        RecipeId = recipeId,
+                        Status = ReportStatus.Pending,
+                        AccountId = Guid.Parse(seedAccounts[accountRandomIndex].Id)
+                    });
+                }
+
 
                 mapRecipeTagsCode.Add(recipeId, seedRecipe.TagsCode);
             }
@@ -324,6 +330,18 @@ internal class MockupData
             }
             await _unitOfWork.SaveChangeAsync();
         }
+    }
+
+    // Fisher-Yates Shuffle algorithm
+    private List<int> GetRandomIndexes(Random random, int max, int count)
+    {
+        var indexes = Enumerable.Range(0, max).ToList();
+        for (int i = max - 1; i > 0; i--)
+        {
+            int j = random.Next(i + 1);
+            (indexes[i], indexes[j]) = (indexes[j], indexes[i]); // Swap
+        }
+        return indexes.Take(count).ToList();
     }
 
     public static int GetRandomExcluding(int range, int exclude)
