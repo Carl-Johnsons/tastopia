@@ -24,13 +24,13 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly GrpcAccount.GrpcAccountClient _grpcAccountClient;
-    private readonly IPaginateDataUtility<User, NumberedPaginatedMetadata> _paginateDataUtility;
+    private readonly IPaginateDataUtility<AdminGetUserResponse, NumberedPaginatedMetadata> _paginateDataUtility;
 
 
     public AdminGetUsersQueryHandler(IApplicationDbContext context,
         IMapper mapper,
         GrpcAccount.GrpcAccountClient grpcAccountClient,
-        IPaginateDataUtility<User, NumberedPaginatedMetadata> paginateDataUtility)
+        IPaginateDataUtility<AdminGetUserResponse, NumberedPaginatedMetadata> paginateDataUtility)
     {
         _context = context;
         _mapper = mapper;
@@ -80,22 +80,6 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                 );
             }
 
-            var limit = USER_CONSTANTS.ADMIN_USER_LIMIT;
-            if(paginatedDTO.Limit != null)
-            {
-                limit = paginatedDTO.Limit.Value;
-            }
-            var totalRow = await usersQuery.CountAsync();
-            var totalPage = (totalRow + limit - 1) / limit;
-
-            usersQuery = _paginateDataUtility.PaginateQuery(usersQuery, new PaginateParam
-            {
-                Offset = (paginatedDTO.Skip ?? 0) * limit,
-                Limit = limit,
-                SortBy = paginatedDTO.SortBy != null ? paginatedDTO.SortBy : "AccountUsername",
-                SortOrder = paginatedDTO.SortOrder
-            });
-
             var userList = await usersQuery.Select(u => new AdminGetUserResponse
             {
                 AccountId = u.AccountId,
@@ -104,7 +88,7 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                 DisplayName = u.DisplayName,
                 Dob = u.Dob,
                 IsAccountActive = u.IsAccountActive,
-            }).ToArrayAsync();
+            }).ToListAsync();
 
             if (userList == null || !userList.Any())
             {
@@ -115,7 +99,7 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                     {
                         CurrentPage = paginatedDTO.Skip!.Value,
                         TotalPage = 0,
-                        TotalRow = totalRow,
+                        TotalRow = 0,
                     }
                 });
             }
@@ -140,6 +124,25 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                 u.AccountEmail = response.Accounts[u.AccountId.ToString()].Email;
                 u.AccountPhoneNumber = response.Accounts[u.AccountId.ToString()].PhoneNumber;
             }
+            var userResponseQuery = userList.AsQueryable();
+
+            var limit = USER_CONSTANTS.ADMIN_USER_LIMIT;
+            if (paginatedDTO.Limit != null)
+            {
+                limit = paginatedDTO.Limit.Value;
+            }
+            var totalRow = userResponseQuery.Count();
+            var totalPage = (totalRow + limit - 1) / limit;
+
+            userResponseQuery = _paginateDataUtility.PaginateQuery(userResponseQuery, new PaginateParam
+            {
+                Offset = (paginatedDTO.Skip ?? 0) * limit,
+                Limit = limit,
+                SortBy = paginatedDTO.SortBy != null ? paginatedDTO.SortBy : "AccountUsername",
+                SortOrder = paginatedDTO.SortOrder
+            });
+
+            userList = userResponseQuery.ToList();
 
             var paginatedResponse = new PaginatedAdminGetUserListResponse
             {
