@@ -93,7 +93,8 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
             AccountId = { repeatedField },
         }, cancellationToken: cancellationToken);
 
-        var totalPage = (userReportList.Count() + limit - 1) / limit;
+        var totalRow = userReportList.Count();
+        var totalPage = (totalRow + limit - 1) / limit;
 
         var adminReportRecipe = userReportList.Select(ur => new AdminReportRecipeResponse
         {
@@ -125,7 +126,8 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
             Metadata = new NumberedPaginatedMetadata
             {
                 CurrentPage = (request.paginatedDTO?.Skip ?? 0) + 1,
-                TotalPage = totalPage
+                TotalPage = totalPage,
+                TotalRow = totalRow
             }
         };
 
