@@ -1,0 +1,87 @@
+import { ClockIcon } from "lucide-react";
+import { IStep } from "../../../../../../mobile/generated/interfaces/recipe.interface";
+import Image from "next/image";
+
+type IngredientProps = {
+  ingredient: string[];
+  serves?: number;
+};
+
+type InstructionProps = {
+  steps: IStep[];
+  cookTime?: string;
+};
+
+type ContentProps = IngredientProps & InstructionProps;
+
+export default function Content({ ingredient, serves, steps, cookTime }: ContentProps) {
+  return (
+    <div className='flex gap-6'>
+      <Ingredient
+        ingredient={ingredient}
+        serves={serves}
+      />
+      <Instruction
+        steps={steps}
+        cookTime={cookTime}
+      />
+    </div>
+  );
+}
+
+const Ingredient = ({ ingredient, serves = 0 }: IngredientProps) => {
+  return (
+    <div className='flex max-w-[360px] flex-col gap-3'>
+      <h2 className='text-black_white font-semibold text-2xl'>Ingredient</h2>
+      <span className='text-sm text-gray-600'>
+        For {serves} Serving{serves > 2 && "s"}
+      </span>
+      {ingredient.map((item, index) => (
+        <>
+          {index !== 0 && <div className='border-black_white border-t border-dashed' />}
+          <span
+            key={item}
+            className='text-black_white'
+          >
+            {item}
+          </span>
+        </>
+      ))}
+    </div>
+  );
+};
+
+const Instruction = ({ steps, cookTime = "Not specified" }: InstructionProps) => {
+  return (
+    <div className='flex flex-col gap-3'>
+      <h2 className='text-black_white font-semibold text-2xl'>Instruction</h2>
+      <div className='flex items-center gap-2'>
+        <ClockIcon className='size-6 text-gray-600' />
+        <span className='text-sm text-gray-600'>Cook Time: {cookTime}</span>
+      </div>
+      <div className='flex flex-col gap-5'>
+        {steps.map(({ id, content, ordinalNumber, attachedImageUrls }) => (
+          <div key={id}>
+            <span className='text-black_white flex items-center gap-2'>
+              <span className='text-white_black flex-center flex size-6 rounded-full bg-primary p-2'>
+                {ordinalNumber}
+              </span>
+              {content}
+            </span>
+
+            <div className='flex gap-3'>
+              {attachedImageUrls?.map((url, index) => (
+                <Image
+                  key={index + url}
+                  src={url}
+                  alt={`Instrunciton image ${index + 1}`}
+                  className='h-[160px] w-[260] rounded-lg'
+                />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

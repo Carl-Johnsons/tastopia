@@ -13,7 +13,7 @@ const Theme = () => {
       <MenubarMenu>
         <MenubarTrigger className="cursor-pointer focus:bg-white data-[state=open]:bg-white dark:focus:bg-black-200 dark:data-[state=open]:bg-black-200">
           {mode === "light" ? (
-            <Image src={"/assets/icons/sun.svg"} alt="sun" width={20} height={20} className="active-theme min-w-[20px]" />
+            <Image src={"/assets/icons/sun.svg"} alt="sun" width={20} height={20} className="active-theme min-w-[20px] fill-blue-600" />
           ) : (
             <Image src={"/assets/icons/moon.svg"} alt="moon" width={20} height={20} className="active-theme min-w-[20px]" />
           )}
