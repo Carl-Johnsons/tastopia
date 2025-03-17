@@ -11,44 +11,37 @@ export const usersColumns = [
   {
     name: "Username",
     selector: (user: IAdminGetUserResponse) => user?.accountUsername,
-    width: '160px',
     sortable: true,
 
   },
   {
     name: "Name",
     selector: (user: IAdminGetUserResponse) => user?.displayName,
-    width: '220px',
     sortable: true,
     hide: 1460,
   },
   {
     name: "Gmail",
     selector: (user: IAdminGetUserResponse) => user?.accountEmail ?? "",
-    width: '220px',
     hide: 1234
   },
   {
     name: "Phone number",
     selector: (user: IAdminGetUserResponse) => user?.accountPhoneNumber ?? "",
-    width: '150px',
     hide: 1026
   },
   {
     name: "Date of birth",
     selector: (user: IAdminGetUserResponse) => user?.dob ?? "",
-    width: '140px',
     hide: 1612,
   },
   {
     name: "Status",
     cell: (user: IAdminGetUserResponse) => <Status isActive={user.isAccountActive}/>,
-    width: '120px',
   },
   {
     name: "Address",
     selector: (user: IAdminGetUserResponse) => user?.address ?? "",
-    width: '240px',
     sortable: true,
     hide: 1840,
   },
