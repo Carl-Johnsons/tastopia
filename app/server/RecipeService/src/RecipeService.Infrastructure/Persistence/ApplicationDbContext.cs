@@ -85,18 +85,19 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 entity.Property(e => e.Status)
                       .HasConversion(typeof(string));
             });
-        modelBuilder.Entity<UserReportComment>();
+
         modelBuilder.Entity<UserReportComment>(entity =>
         {
             entity.Property(e => e.Status)
                   .HasConversion(typeof(string));
         });
-        modelBuilder.Entity<UserReportRecipe>();
+
         modelBuilder.Entity<UserReportRecipe>(entity =>
         {
             entity.Property(e => e.Status)
                   .HasConversion(typeof(string));
         });
+
         modelBuilder.Entity<RecipeTag>().ToCollection("RecipeTag");
     }
 

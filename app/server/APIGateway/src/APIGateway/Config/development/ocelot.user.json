@@ -5,6 +5,22 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
+      "DownstreamPathTemplate": "/api/admin/user/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "UpstreamPathTemplate": "/api/admin/user/{everything}",
+      "SwaggerKey": "user"
+    },
+    {
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/user/get-user-detail-by-account-id",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [

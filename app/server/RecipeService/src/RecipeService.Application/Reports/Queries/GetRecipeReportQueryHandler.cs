@@ -8,7 +8,7 @@ using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using UserProto;
 
-namespace RecipeService.Application.UserReportRecipes.Queries;
+namespace RecipeService.Application.Reports.Queries;
 public record GetRecipeReportsQuery : IRequest<Result<PaginatedAdminReportRecipeListResponse>>
 {
     public string Lang { get; init; } = "en";
@@ -44,7 +44,7 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
 
         var pipeline = userReportCollection.Aggregate()
             .Lookup<UserReportRecipe, Recipe, UserReportWithRecipe>(foreignCollection: recipeCollection,
-                                                                    localField: report => report.RecipeId,
+                                                                    localField: report => report.EntityId,
                                                                     foreignField: recipe => recipe.Id,
                                                                     @as: result => result.Recipe)
             .Unwind<UserReportWithRecipe, UserReportWithRecipe>(result => result.Recipe);
@@ -65,8 +65,8 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
                                                                                    .ToList();
             pipeline = pipeline.Match(report =>
                 report.Recipe!.Title.Contains(keyword) ||
-                (searchAuthorIds != null && searchAuthorIds.Contains(report.Recipe.AuthorId.ToString())) ||
-                (searchAuthorIds != null && searchAuthorIds.Contains(report.AccountId.ToString())) ||
+                searchAuthorIds != null && searchAuthorIds.Contains(report.Recipe.AuthorId.ToString()) ||
+                searchAuthorIds != null && searchAuthorIds.Contains(report.AccountId.ToString()) ||
                 searchRecipeReportReasonCode.Any(srrc => report.ReasonCodes.Contains(srrc))
             );
         }
@@ -93,11 +93,13 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
             AccountId = { repeatedField },
         }, cancellationToken: cancellationToken);
 
-        var totalPage = (userReportList.Count() + limit - 1) / limit;
+        var totalRow = userReportList.Count();
+        var totalPage = (totalRow + limit - 1) / limit;
 
         var adminReportRecipe = userReportList.Select(ur => new AdminReportRecipeResponse
         {
-            RecipeId = ur.RecipeId,
+            ReportId = ur.Id,
+            RecipeId = ur.EntityId,
             RecipeImageURL = ur.Recipe!.ImageUrl,
             RecipeTitle = ur.Recipe.Title,
             Status = ur.Status.ToString(),
@@ -125,7 +127,8 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
             Metadata = new NumberedPaginatedMetadata
             {
                 CurrentPage = (request.paginatedDTO?.Skip ?? 0) + 1,
-                TotalPage = totalPage
+                TotalPage = totalPage,
+                TotalRow = totalRow
             }
         };
 

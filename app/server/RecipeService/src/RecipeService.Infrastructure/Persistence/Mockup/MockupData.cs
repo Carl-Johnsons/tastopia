@@ -251,12 +251,11 @@ internal class MockupData
                     {
                         AdditionalDetails = seedRecipe.AdditionalDetails,
                         ReasonCodes = seedRecipe.ReasonCodes,
-                        RecipeId = recipeId,
+                        EntityId = recipeId,
                         Status = ReportStatus.Pending,
                         AccountId = Guid.Parse(seedAccounts[accountRandomIndex].Id)
                     });
                 }
-
 
                 mapRecipeTagsCode.Add(recipeId, seedRecipe.TagsCode);
             }
