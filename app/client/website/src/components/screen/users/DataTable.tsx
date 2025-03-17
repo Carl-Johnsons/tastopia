@@ -7,9 +7,9 @@ import ReactDataTable, { SortOrder, TableColumn } from 'react-data-table-compone
 import { IAdminGetUserResponse } from '@/generated/interfaces/user.interface';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useGetAdminUsers } from '@/api/user';
-import { Loader2, Search } from 'lucide-react';
 import useDebounce from '@/hooks/useDebounce';
 import { customStyles } from '@/constants/styles';
+import SearchBar from './SearchBar';
 
 const DataTable = () => {
   const [skip, setSkip] = useState(0);
@@ -64,19 +64,7 @@ const DataTable = () => {
   return (
      <>
        <div className='flex-center mt-4 flex-col gap-4'>
-          <div className="flex-center relative w-full max-w-lg items-center gap-2 rounded-2xl bg-primary/15 px-4 py-3">
-            <Search className="text-primary" size={20} />
-            <input
-              type="text"
-              placeholder="Search by username, name, gmail,..."
-              className="w-full bg-transparent text-primary outline-none placeholder:text-primary/50"
-              onChange={handleSearch}
-            />
-            {debouncedValue && isLoading && <div className='absolute right-3 top-3.5'>
-              <Loader2 className="size-5 animate-spin text-primary" />
-            </div>}
-          </div>
-  
+          <SearchBar onChange={handleSearch} isLoading={isLoading} />
           <p className="text-black_white base-medium flex w-full flex-col gap-4">Administer Users</p>
         </div>
           <ReactDataTable
@@ -108,6 +96,7 @@ const DataTable = () => {
               onSort={handleSort}
               progressComponent={<Loader />}
               noDataComponent={<NoRecord />}
+              persistTableHead
           />
      </>
     
