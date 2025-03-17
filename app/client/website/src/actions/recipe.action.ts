@@ -3,9 +3,11 @@
 import { protectedAxiosInstance } from "@/constants/host";
 import {
   IAdminReportRecipeDetailResponse,
-  IPaginatedAdminReportRecipeListResponse
+  IPaginatedAdminReportRecipeListResponse,
+  IPaginatedRecipeCommentListResponse
 } from "@/generated/interfaces/recipe.interface";
 import { stringify } from "@/utils/debug";
+import { IGetRecipeCommentsDTO } from "../../../mobile/generated/interfaces/recipe.interface";
 
 export type GetRecipeReportsParams = {
   limit?: number;
@@ -13,16 +15,18 @@ export type GetRecipeReportsParams = {
   sortBy?: string;
   sortOrder?: string;
   lang?: string;
+  keyword?: string;
 };
 
 export async function getRecipeReports(options?: GetRecipeReportsParams) {
-  const url = "/api/recipe/admin-get-recipe-reports";
+  const url = "/api/admin/recipe/get-recipe-reports";
   const {
     limit = 10,
-    skip = 1,
+    skip = 0,
     sortBy = "createdAt",
     sortOrder = "DESC",
-    lang = "vi"
+    lang = "vi",
+    keyword = ""
   } = options || {};
 
   try {
@@ -33,7 +37,8 @@ export async function getRecipeReports(options?: GetRecipeReportsParams) {
           skip,
           sortBy,
           sortOrder,
-          lang
+          lang,
+          keyword: encodeURIComponent(keyword)
         }
       });
 
@@ -55,7 +60,7 @@ export async function getRecipeReportById({
   recipeId,
   options
 }: GetRecipeReportDetailParams) {
-  const url = "/api/recipe/admin-get-recipe-report-detail";
+  const url = "/api/admin/recipe/get-recipe-report-detail";
   const { lang = "vi" } = options || {};
 
   try {
@@ -72,6 +77,28 @@ export async function getRecipeReportById({
     return data;
   } catch (error) {
     console.error("getRecipeReportById", stringify(error));
+    throw error;
+  }
+}
+
+export type GetRecipeCommentsParams = {
+  recipeId: string;
+  options?: Omit<IGetRecipeCommentsDTO, "recipeId">;
+};
+
+export async function getRecipeComments({ recipeId, options }: GetRecipeCommentsParams) {
+  const url = "/api/recipe/get-recipe-comments";
+
+  try {
+    const { data } =
+      await protectedAxiosInstance.post<IPaginatedRecipeCommentListResponse>(url, {
+        recipeId,
+        ...options
+      });
+
+    return data;
+  } catch (error) {
+    console.error("getRecipeComments", stringify(error));
     throw error;
   }
 }

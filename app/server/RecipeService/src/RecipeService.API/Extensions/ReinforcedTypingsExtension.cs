@@ -114,6 +114,9 @@ public static class ReinforcedTypingsExtension
             typeof(PaginatedAdminReportRecipeListResponse),
             typeof(ReportRecipeResponse),
             typeof(AdminReportRecipeDetailResponse),
+            typeof(AdvancePaginatedMetadata),
+            typeof(RecipeCommentResponse),
+            typeof(PaginatedRecipeCommentListResponse),
         ], config =>
         {
             config.FlattenHierarchy()

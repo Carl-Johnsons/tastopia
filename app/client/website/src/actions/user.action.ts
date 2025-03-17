@@ -6,12 +6,12 @@ import { AxiosError } from "axios";
 import { UserState } from "@/slices/user.slice";
 import { IErrorResponseDTO } from "../../generated/interfaces/common.interface";
 import { stringify } from "@/utils/debug";
-import { IPaginatedAdminGetUserListResponse } from "@/generated/interfaces/user.interface";
+import { IAdminGetUserDetailResponse, IPaginatedAdminGetUserListResponse } from "@/generated/interfaces/user.interface";
 
 export async function getUserById(id: string) {
   try {
     const url = "/api/user/admin-get-user-detail";
-    const { data } = await protectedAxiosInstance.post(url, {
+    const { data } = await protectedAxiosInstance.post<IAdminGetUserDetailResponse>(url, {
       accountId: id
     });
 

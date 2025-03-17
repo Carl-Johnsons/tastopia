@@ -2,13 +2,12 @@
 
 import { useGetRecipeReports } from "@/api/recipe";
 import Loader from "@/components/ui/Loader";
-import { colors } from "@/constants/colors";
 import { IAdminReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import useDebounce from "@/hooks/useDebounce";
 import { format } from "date-fns";
 import Image from "next/image";
-import { useCallback, useMemo, useState } from "react";
-import DataTable, { SortOrder, TableColumn, TableStyles } from "react-data-table-component";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import {
   MarkAsCompletedButton,
   RejectButton,
@@ -16,23 +15,27 @@ import {
   ViewDetailButton
 } from "./Button";
 import { customStyles } from "@/constants/styles";
+import { ChevronRight } from "lucide-react";
+import NoRecord from "@/components/ui/NoRecord";
+import SearchBar from "../../users/SearchBar";
 
 const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
     name: "Recipe Name",
     selector: row => row.recipeTitle,
     sortable: true,
+    grow: 4
   },
   {
     name: "Recipe Owner",
     selector: row => row.recipeOwnerUsername,
-    hide: 1200,
-    sortable: true,
+    hide: 1576,
+    sortable: true
   },
   {
     name: "Recipe Image",
-    compact: true,
-    hide: 1400,
+    hide: 1672,
+    center: true,
     cell: ({ recipeImageURL }) => (
       <div className='p-2'>
         <Image
@@ -48,14 +51,14 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
     name: "Reporter",
     selector: row => row.reporterUsername,
-    compact: true,
-    hide: 1200,
-    sortable: true,
+    hide: 1776,
+    sortable: true
   },
   {
     name: "Report Reason",
-    hide: 1050,
+    hide: 1368,
     sortable: true,
+    grow: 4,
     cell: ({ reportReason }) => {
       return (
         <span className='w-full overflow-hidden text-ellipsis text-nowrap text-sm'>
@@ -67,6 +70,7 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
     name: "Created Date",
     sortable: true,
+    hide: 1476,
     cell: ({ createdAt }) => {
       return (
         <span className='w-full overflow-hidden text-ellipsis text-nowrap text-sm'>
@@ -86,8 +90,14 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
     name: "Actions",
     center: true,
+    width: "300px",
     cell: ({ recipeId, status }) => {
-      return <ActionButtons recipeId={recipeId} isActive={true} />;
+      return (
+        <ActionButtons
+          recipeId={recipeId}
+          isActive={true}
+        />
+      );
     }
   }
 ];
@@ -130,18 +140,18 @@ export const StatusText = ({
   coloring?: boolean;
 }) => {
   return (
-    <div className='flex-center flex gap-2'>
+    <div className='flex-center flex gap-2 min-w-[75px]'>
       {status === "Done" ? (
         <>
           <div className='size-3 rounded-full bg-green-500' />
-          <span className={`font-medium text-sm ${coloring && "text-green-500"}`}>
+          <span className={`text-sm font-medium ${coloring && "text-green-500"}`}>
             Done
           </span>
         </>
       ) : (
         <>
           <div className='size-3 rounded-full bg-red-500' />
-          <span className={`font-medium text-sm ${coloring && "text-red-500"}`}>
+          <span className={`text-sm font-medium ${coloring && "text-red-500"}`}>
             Pending
           </span>
         </>
@@ -154,34 +164,39 @@ export const columnFieldMap: Record<string, keyof IAdminReportRecipeResponse> = 
   "Recipe Name": "recipeTitle",
   "Recipe Owner": "recipeOwnerUsername",
   "Recipe Image": "recipeImageURL",
-  "Reporter": "reporterUsername",
+  Reporter: "reporterUsername",
   "Report Reason": "reportReason",
   "Created Date": "createdAt",
-  "Status": "status"
+  Status: "status"
 };
 
 export default function Table() {
   const [limit, setLimit] = useState(10);
-  const [skip, setSkip] = useState(1);
+  const [skip, setSkip] = useState(0);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("DESC");
   const [lang, setLang] = useState("vi");
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
 
-  const { data, isLoading } = useGetRecipeReports({
+  console.log("debouncedValue", debouncedValue);
+
+  const { data, isLoading, refetch } = useGetRecipeReports({
     skip,
     sortBy,
     sortOrder,
     limit,
-    lang
+    lang,
+    keyword: debouncedValue
   });
+
+  console.log("data", data);
 
   const reports = useMemo(() => {
     return data?.paginatedData || [];
   }, [data]);
 
-  const handleChangeRowPerPage = useCallback((numOfRows: number, currentPage: number) => {
+  const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
   }, []);
 
@@ -189,33 +204,61 @@ export default function Table() {
     setSkip(page);
   }, []);
 
-  const onSort = useCallback((selectedColumn: TableColumn<IAdminReportRecipeResponse>, sortDirection: SortOrder) => {
-    const sortBy = columnFieldMap[selectedColumn.name as string]
-    const sortOrder = sortDirection.toString().toUpperCase();
+  const onSort = useCallback(
+    (
+      selectedColumn: TableColumn<IAdminReportRecipeResponse>,
+      sortDirection: SortOrder
+    ) => {
+      const sortBy = columnFieldMap[selectedColumn.name as string];
+      const sortOrder = sortDirection.toString().toUpperCase();
 
-    setSortBy(sortBy);
-    setSortOrder(sortOrder);
-  }, [])
+      setSortBy(sortBy);
+      setSortOrder(sortOrder);
+    },
+    []
+  );
 
-  console.log("total row", data?.metadata?.totalRow);
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyword(e.target.value.trim());
+    setSkip(0);
+  }, []);
+
+  useEffect(() => {
+    refetch();
+  }, [skip, sortBy, sortOrder, debouncedValue, limit, keyword]);
 
   return (
-    <DataTable
-      customStyles={customStyles}
-      columns={columns}
-      data={reports}
-      responsive
-      striped
-      highlightOnHover
-      progressPending={isLoading}
-      progressComponent={<Loader />}
-      pagination
-      paginationServer
-      onChangeRowsPerPage={handleChangeRowPerPage}
-      onChangePage={handleChangePage}
-      paginationTotalRows={data?.metadata?.totalRow}
-      sortServer
-      onSort={onSort}
-    />
+    <>
+      <div className='flex-center mt-4 flex-col gap-4'>
+        <SearchBar
+          onChange={handleSearch}
+          isLoading={isLoading}
+        />
+        <div className='flex gap-2 self-start'>
+          <span className='text-gray-500'>Administer Reports</span>
+          <ChevronRight className='text-black_white' />
+          <span className='text-black_white'>Recipe</span>
+        </div>
+      </div>
+
+      <DataTable
+        customStyles={customStyles}
+        columns={columns}
+        data={reports}
+        responsive
+        striped
+        highlightOnHover
+        progressPending={isLoading}
+        progressComponent={<Loader />}
+        noDataComponent={<NoRecord />}
+        pagination
+        paginationServer
+        onChangeRowsPerPage={handleChangeRowPerPage}
+        onChangePage={handleChangePage}
+        paginationTotalRows={data?.metadata?.totalRow}
+        sortServer
+        onSort={onSort}
+      />
+    </>
   );
 }
