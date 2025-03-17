@@ -1,4 +1,4 @@
-import { getUserDetails } from "@/api/user";
+import { getUserDetails } from "@/actions/user.action";
 import { saveUserData } from "@/slices/user.slice";
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -26,7 +26,7 @@ const useSyncUser = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [getUserDetails, dispatch]);
+  }, [dispatch]);
 
   return { fetch, isLoading, status };
 };

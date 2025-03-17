@@ -202,6 +202,10 @@
   .shadow-white100_blacknone {
     @apply shadow-white-100 dark:shadow-none;
   }
+  
+  .border-black_white{
+    @apply border-black dark:border-white;
+  }
 
   .primary-gradient {
     background: linear-gradient(129deg, #ffacde 0%, #fbd7ed 100%);
