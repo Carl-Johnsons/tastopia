@@ -10,7 +10,7 @@ using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using UserProto;
 
-namespace RecipeService.Application.UserReportRecipes.Queries;
+namespace RecipeService.Application.Reports.Queries;
 
 public record GetRecipeReportDetailQuery : IRequest<Result<AdminReportRecipeDetailResponse>>
 {
@@ -56,7 +56,7 @@ public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReport
             .Lookup<Recipe, UserReportRecipe, RecipeWithReportList>(
                 foreignCollection: userReportCollection,
                 localField: r => r.Id,
-                foreignField: ur => ur.RecipeId,
+                foreignField: ur => ur.EntityId,
                 @as: rwrl => rwrl.UserReportRecipes
             )
             .Project(r => new RecipeWithReportList

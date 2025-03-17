@@ -7,7 +7,7 @@ using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using UserProto;
-namespace RecipeService.Application.Activities.Queries;
+namespace RecipeService.Application.Activities;
 public class AdminGetUserActivityQuery : IRequest<Result<PaginatedUserActivityListResponse?>>
 {
     public int? Skip { get; set; }
@@ -35,7 +35,7 @@ public class AdminGetUserActivityQueryHandler : IRequestHandler<AdminGetUserActi
         var accountId = request.AccountId;
         var currentAccountId = request.CurrentAccountId;
         var lang = request.Language;
-        if(accountId == Guid.Empty || currentAccountId == Guid.Empty || skip == null || string.IsNullOrEmpty(lang))
+        if (accountId == Guid.Empty || currentAccountId == Guid.Empty || skip == null || string.IsNullOrEmpty(lang))
         {
             return Result<PaginatedUserActivityListResponse?>.Failure(RecipeError.NullParameter, "AccountId, CurrentAccountId, Language or Skip is null");
         }
@@ -45,7 +45,7 @@ public class AdminGetUserActivityQueryHandler : IRequestHandler<AdminGetUserActi
             AccountId = currentAccountId.ToString(),
         }, cancellationToken: cancellationToken);
 
-        if(adminResponse == null || !adminResponse.IsAdmin)
+        if (adminResponse == null || !adminResponse.IsAdmin)
         {
             return Result<PaginatedUserActivityListResponse?>.Failure(RecipeError.PermissionDeny);
         }
@@ -112,7 +112,7 @@ public class AdminGetUserActivityQueryHandler : IRequestHandler<AdminGetUserActi
                 Username = "",
                 Title = "",
                 TimeAgo = "",
-                Type = (rv.Vote.IsUpvote ? UserActivityType.UpvoteRecipe : UserActivityType.DownvoteRecipe),
+                Type = rv.Vote.IsUpvote ? UserActivityType.UpvoteRecipe : UserActivityType.DownvoteRecipe,
                 Description = "",
                 RecipeId = rv.Recipe.Id,
                 RecipeTitle = rv.Recipe.Title,
@@ -140,7 +140,7 @@ public class AdminGetUserActivityQueryHandler : IRequestHandler<AdminGetUserActi
 
         var totalPage = (combinedQuery.Count() + ActivityConstant.ACTIVITY_LIMIT - 1) / ActivityConstant.ACTIVITY_LIMIT;
         combinedQuery = combinedQuery.Skip(ActivityConstant.ACTIVITY_LIMIT * skip.Value).Take(ActivityConstant.ACTIVITY_LIMIT);
-       
+
 
         var usersResponse = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
         {
@@ -167,7 +167,7 @@ public class AdminGetUserActivityQueryHandler : IRequestHandler<AdminGetUserActi
         {
             a.AvtImageUrl = mapUsers[accountId].AvtUrl;
             a.Username = mapUsers[accountId].AccountUsername;
-            if(a.Type == UserActivityType.CreateRecipe)
+            if (a.Type == UserActivityType.CreateRecipe)
             {
                 a.Title = ActionTemplateConstant.Data.SingleOrDefault(t => t.TemplateCode == ActionTemplateCode.USER_CREATE_RECIPE)!.TranslationMessages[lang];
                 a.TimeAgo = ActionTemplateConstant.GetTimeElapsed(a.Time, lang);
@@ -181,7 +181,8 @@ public class AdminGetUserActivityQueryHandler : IRequestHandler<AdminGetUserActi
                 a.Description = FormatString(ActionTemplateConstant.Data.SingleOrDefault(t => t.TemplateCode == ActionTemplateCode.USER_COMMENT)!.TranslationMessages[lang], a.CommentContent!);
                 a.RecipeTimeAgo = ActionTemplateConstant.GetTimeElapsed(a.RecipeTime!.Value, lang);
             }
-            if (a.Type == UserActivityType.UpvoteRecipe || a.Type == UserActivityType.DownvoteRecipe) {
+            if (a.Type == UserActivityType.UpvoteRecipe || a.Type == UserActivityType.DownvoteRecipe)
+            {
                 a.Title = ActionTemplateConstant.Data.SingleOrDefault(t => t.TemplateCode == (a.Type == UserActivityType.UpvoteRecipe ? ActionTemplateCode.USER_UPVOTE : ActionTemplateCode.USER_DOWNVOTE))!.TranslationMessages[lang];
                 a.TimeAgo = ActionTemplateConstant.GetTimeElapsed(a.Time, lang);
                 a.Description = ActionTemplateConstant.Data.SingleOrDefault(t => t.TemplateCode == (a.Type == UserActivityType.UpvoteRecipe ? ActionTemplateCode.USER_UPVOTE : ActionTemplateCode.USER_DOWNVOTE))!.TranslationMessages[lang].TrimEnd('.');

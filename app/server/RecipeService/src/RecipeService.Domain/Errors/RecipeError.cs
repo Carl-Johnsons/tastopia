@@ -32,4 +32,14 @@ public class RecipeError
         new("RecipeError.PermissionDeny",
         Message: "Permission Deny",
         StatusCode: (int)HttpStatusCode.InternalServerError);
+
+    public static Error AlreadyInactive =>
+        new("RecipeError.AlreadyInactive",
+        Message: "Recipe already inactive",
+        StatusCode: (int)HttpStatusCode.BadRequest);
+
+    public static Error AlreadyActive =>
+        new("RecipeError.AlreadyActive",
+        Message: "Recipe already active",
+        StatusCode: (int)HttpStatusCode.BadRequest);
 }

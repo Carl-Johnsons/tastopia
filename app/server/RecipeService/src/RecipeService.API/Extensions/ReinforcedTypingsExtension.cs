@@ -101,6 +101,8 @@ public static class ReinforcedTypingsExtension
             typeof(CommentVote),
             typeof(RecipeTag),
             typeof(Recipe),
+            typeof(ReportDTO),
+            typeof(EntityIdDTO),
             typeof(AccountRecipeCommentResponse),
             typeof(NumberedPaginatedMetadata),
             typeof(PaginatedAccountRecipeCommentListResponse),
@@ -122,6 +124,7 @@ public static class ReinforcedTypingsExtension
         });
 
         builder.ExportAsEnums([
+            typeof(ReportType),
             typeof(ReportStatus)
         ], config =>
         {
