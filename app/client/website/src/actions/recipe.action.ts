@@ -19,11 +19,19 @@ export async function getRecipeReports(options?: GetRecipeReportsParams) {
   const url = "/api/recipe/admin-get-recipe-reports";
   const {
     limit = 10,
-    skip = 1,
+    skip = 0,
     sortBy = "createdAt",
     sortOrder = "DESC",
     lang = "vi"
   } = options || {};
+
+  console.log("getRecipeReports", {
+    limit,
+    skip,
+    sortBy,
+    sortOrder,
+    lang
+  });
 
   try {
     const { data } =

@@ -96,7 +96,6 @@ const DataTable = () => {
               onSort={handleSort}
               progressComponent={<Loader />}
               noDataComponent={<NoRecord />}
-              persistTableHead
           />
      </>
     
