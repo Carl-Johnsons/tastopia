@@ -3,6 +3,7 @@ import RecipeDetail from "@/components/screen/report/recipe/RecipeDetail";
 import ReportList from "@/components/screen/report/recipe/ReportList";
 import { ParamsProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 export default async function Page({ params }: ParamsProps) {
   try {
@@ -13,14 +14,16 @@ export default async function Page({ params }: ParamsProps) {
         <div className='flex gap-2'>
           <span className='text-gray-500'>Administer Reports</span>
           <ChevronRight className='text-black_white' />
-          <span className='text-black_white'>Recipe</span>
+          <Link href="/reports/recipes">
+            <span className='text-black_white'>Recipe</span>
+          </Link>
           <ChevronRight className='text-black_white' />
           <span className='text-black_white'>Detail</span>
         </div>
-        <div className='container grid xl:grid-cols-[70%_30%] gap-10 xl:gap-3'>
+        <div className='container grid gap-10 xl:grid-cols-[70%_30%] xl:gap-3'>
           <ReportList
             reports={reports}
-            className='xl:col-start-2' 
+            className='xl:col-start-2'
           />
           <RecipeDetail
             recipe={recipe}
