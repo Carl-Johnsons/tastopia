@@ -1,23 +1,17 @@
-"use server";
+import { getAdminUsers, getUserById } from "@/actions/user.action";
+import { IPaginatedAdminGetUserListResponse } from "@/generated/interfaces/user.interface";
+import { useQuery } from "@tanstack/react-query";
 
-import { protectedAxiosInstance } from "@/constants/host";
-import { UserState } from "@/slices/user.slice";
-import { AxiosError } from "axios";
+export const useGetAdminUsers = (skip = 0, sortBy = "", sortOrder = "asc", keyword = "", limit = 6) => {
+  return useQuery<IPaginatedAdminGetUserListResponse>({
+    queryKey: ["users", skip, sortBy, sortOrder, keyword, limit],
+    queryFn: () =>  getAdminUsers(skip, sortBy, sortOrder, keyword, limit),
+  });
+};
 
-export type GetUserDetailsResponse = UserState;
-
-export const getUserDetails = async () => {
-  const url = "/api/user/get-current-user-details";
-
-  try {
-    const { data } = await protectedAxiosInstance.get(url);
-    return data as GetUserDetailsResponse;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      const data = error.response?.data as IErrorResponseDTO;
-      throw new Error(data.message ? data.message : error.message);
-    }
-
-    throw new Error("An error has occurred.");
-  }
+export const useGetUserById = (userId: string) => {
+  return useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => getUserById(userId),
+  });
 };

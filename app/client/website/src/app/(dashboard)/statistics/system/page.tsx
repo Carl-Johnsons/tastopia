@@ -1,7 +1,14 @@
+import StackedAreaChart from "@/components/screen/statistics/StackedAreaChart";
+import BarChart from "@/components/screen/statistics/BarChart";
+import OnlineUserChart from "@/components/screen/statistics/OnlineUserChart";
+
 export default function System() {
   return (
-    <div className="flex size-full justify-center">
-      <div className="flex w-full flex-col gap-4">System</div>
+    <div className='flex size-full flex-col justify-center gap-4'>
+      <p>System</p>
+      <OnlineUserChart />
+      <StackedAreaChart />
+      <BarChart />
     </div>
   );
 }

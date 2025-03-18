@@ -3,7 +3,7 @@
 import { useCallback, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useAppDispatch } from "@/store/hooks";
-import { clearAuthData, saveAuthData } from "@/slices/auth.slice";
+import { clearAuthData } from "@/slices/auth.slice";
 import { clearUserData } from "@/slices/user.slice";
 import { clientAxiosInstance } from "@/constants/clientHost";
 

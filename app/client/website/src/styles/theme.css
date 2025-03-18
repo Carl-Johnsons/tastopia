@@ -87,6 +87,9 @@
   .text-white100_black200 {
     @apply text-white-100 dark:text-black-200;
   }
+  .text-black100_white900 {
+    @apply text-white-900 dark:text-black-100;
+  }
 
   .text-gray100_black100 {
     @apply text-gray-100 dark:text-black-100;
@@ -188,10 +191,6 @@
     @apply text-[10px] font-normal leading-[13px];
   }
 
-  .placeholder {
-    @apply placeholder:text-white-400 dark:placeholder:text-white-500;
-  }
-
   .invert-colors {
     @apply invert dark:invert-0;
   }
@@ -202,6 +201,10 @@
 
   .shadow-white100_blacknone {
     @apply shadow-white-100 dark:shadow-none;
+  }
+  
+  .border-black_white{
+    @apply border-black dark:border-white;
   }
 
   .primary-gradient {

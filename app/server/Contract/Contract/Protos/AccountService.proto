@@ -7,6 +7,8 @@ package AccountProto;
 service GrpcAccount {
     rpc GetAccountDetail (GrpcAccountIdRequest) returns (GrpcAccountDTO);
     rpc UpdateAccount (GrpcUpdateAccountRequest) returns (GrpcEmpty);
+    rpc GetSimpleAccounts (GrpcAccountIdListRequest) returns (GrpcListSimpleAccountsDTO);
+    rpc SearchAccount(GrpcSearchAccountRequest) returns (GrpcListAccountIds);
 }
 
 message GrpcEmpty {}
@@ -15,9 +17,17 @@ message GrpcAccountIdRequest {
     string AccountId = 1;
 }
 
+message GrpcAccountIdListRequest {
+    repeated string AccountIds = 1; // HashSet<Guid> represented as repeated strings
+}
+
 message GrpcUpdateAccountRequest {
     string AccountId = 1;
     string UserName = 2;
+}
+
+message GrpcSearchAccountRequest {
+    string Keyword = 1;
 }
 
 message GrpcAccountDTO {
@@ -30,4 +40,17 @@ message GrpcAccountDTO {
     bool IsGoogleLinked = 7;
     bool IsPhoneNumberLinked = 8;
     bool IsEmailLinked = 9;
+}
+
+message GrpcSimpleAccountDTO {
+    string Email = 3;
+    string PhoneNumber = 4;
+}
+
+message GrpcListSimpleAccountsDTO{
+    map<string, GrpcSimpleAccountDTO> Accounts = 1; // Dictionary <=> MapField
+}
+
+message GrpcListAccountIds{
+    repeated string AccountIds = 1;
 }

@@ -25,6 +25,7 @@ dotnet publish --packages "$project_root/data/nuget" -o ./app/server/Contract/Co
 cp -r ./app/server/NotificationService/src/EmailWorker/bin/*/Debug/net8.0/Auth.Store ./data
 
 build_service "./app/server/APIGateway/src/APIGateway" "api gateway" &&
+  build_service "./app/server/Contract/Contract" "contract" &&
   build_service "./app/server/IdentityService/src/DuendeIdentityServer" "identity" &&
   build_service "./app/server/UploadFileService/src/UploadFileService.API" "upload" &&
   build_service "./app/server/UserService/src/UserService.API" "user" &&
@@ -35,3 +36,5 @@ build_service "./app/server/APIGateway/src/APIGateway" "api gateway" &&
   build_service "./app/server/SignalRService/src/SignalRHub" "signalR" &&
   build_service "./app/server/TrackingService/src/TrackingService.API" "tracking" &&
   build_service "./app/server/SubscriptionService/src/SubscriptionService.API" "Subscription"
+
+./scripts/post-build.sh

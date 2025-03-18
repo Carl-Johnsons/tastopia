@@ -1,6 +1,6 @@
 "use client";
 
-import { ThemeProvider } from "@/context/ThemeProvider";
+import { ThemeProvider} from "@/context/ThemeProvider";
 import { SessionProvider } from "next-auth/react";
 import {
   isServer,
@@ -8,6 +8,10 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import StoreProvider from "./StoreProvider";
+import { I18nextProvider } from "react-i18next";
+import i18n from "@/i18n/i18next";
+import { ReactNode } from "react";
+import ToastProvider from "./ToastProvider";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -19,7 +23,7 @@ function makeQueryClient() {
   });
 }
 
-let browserQueryClient: QueryClient | undefined = undefined;
+let browserQueryClient: QueryClient | undefined;
 
 function getQueryClient() {
   if (isServer) {
@@ -35,14 +39,19 @@ function getQueryClient() {
  *
  * Refer to the [React Query docs](https://tanstack.com/query/latest/docs/framework/react/guides/advanced-ssr) for more information about the react query client initializing logic.
  */
-export default function Providers({ children }: { children: React.ReactNode }) {
+export default function Providers({ children }: { children: ReactNode }) {
   const queryClient = getQueryClient();
 
   return (
     <StoreProvider>
       <SessionProvider>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider>{children}</ThemeProvider>
+        <I18nextProvider i18n={i18n}>
+          <ThemeProvider>
+            <ToastProvider/>
+            {children}
+            </ThemeProvider>
+          </I18nextProvider>
         </QueryClientProvider>
       </SessionProvider>
     </StoreProvider>

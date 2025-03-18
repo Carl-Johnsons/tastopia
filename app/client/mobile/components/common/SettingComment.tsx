@@ -34,7 +34,7 @@ import Loading from "./Loading";
 
 type Props = {
   id: string;
-  recipeId?: string;
+  recipeId: string;
   authorId: string;
   content: string;
   deleteComment?: (commentId: string) => void;
@@ -196,6 +196,7 @@ const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
           {currentSetting === Settings.REPORT && (
             <ReportSetting
               commentId={props.id}
+              recipeId={props.recipeId}
               changeSetting={changeSetting}
               closeModal={closeModal}
             />
@@ -255,13 +256,19 @@ type Report = {
 
 type ReportSettingProps = {
   commentId: string;
+  recipeId: string;
   changeSetting: (setting: SettingState) => void;
   closeModal: () => void;
 };
 
-const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingProps) => {
+const ReportSetting = ({
+  commentId,
+  recipeId,
+  changeSetting,
+  closeModal
+}: ReportSettingProps) => {
   const { c } = useColorizer();
-  const { black, white, primary } = colors;
+  const { black, white, primary, gray } = colors;
   const { t } = useTranslation("report");
   const currentLanguage = i18n.languages[0];
   const [report, setReport] = useState<Report>({
@@ -293,6 +300,7 @@ const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingPr
       reportMutate(
         {
           commentId: commentId,
+          recipeId: recipeId,
           reasonCodes: [...report.reasonCodes],
           additionalDetails: report.additionalDetails
         },
@@ -382,6 +390,7 @@ const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingPr
                   color: c(black.DEFAULT, white.DEFAULT)
                 }}
                 placeholder={t("additionalDetails")}
+                placeholderTextColor={gray[500]}
               />
             </View>
           }
@@ -424,6 +433,11 @@ const UpdateSetting = ({
   const handleSubmit = () => {
     if (!content) {
       Alert.alert(t("required"));
+      return;
+    }
+
+    if (content.length > 500) {
+      Alert.alert(t("commentLimit"));
       return;
     }
 
@@ -480,6 +494,7 @@ const UpdateSetting = ({
         <View className='mt-2 px-5'>
           <BottomSheetTextInput
             value={content}
+            multiline
             onChangeText={handleChangeText}
             style={{
               borderBottomWidth: 2,

@@ -7,10 +7,10 @@ using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
 using DuendeIdentityServer.Pages.Account.Register;
+using IdentityService.Domain.Constants;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Net;
 
@@ -108,19 +108,40 @@ public class Index : PageModel
 
         if (ModelState.IsValid)
         {
+            var user = await _userManager.FindByNameAsync(Input.Username!);
+
+            if (user == null)
+            {
+                ModelState.AddModelError("InvalidCredential", RegisterOptions.InvalidCredentialsErrorMessage);
+                await BuildModelAsync(Input.ReturnUrl);
+                return Page();
+            }
+
+            if (!user!.IsActive)
+            {
+                ModelState.AddModelError("Disabled", RegisterOptions.AccountDisabledErrorMessage);
+                // account disabled, show form with error
+                await BuildModelAsync(Input.ReturnUrl);
+                return Page();
+            }
+
+            bool isAllowed = false;
+
+            foreach (var role in Roles.AllowedRoles.ADMIN)
+            {
+                isAllowed = isAllowed || await _userManager.IsInRoleAsync(user, role);
+            }
+
+            if (!isAllowed)
+            {
+                ModelState.AddModelError("InvalidCredential", RegisterOptions.InvalidCredentialsErrorMessage);
+                await BuildModelAsync(Input.ReturnUrl);
+                return Page();
+            }
+
             var result = await _signInManager.PasswordSignInAsync(Input.Username!, Input.Password!, Input.RememberLogin, lockoutOnFailure: true);
             if (result.Succeeded)
             {
-                var user = await _userManager.FindByNameAsync(Input.Username!);
-
-                if (!user!.IsActive)
-                {
-                    ModelState.AddModelError(string.Empty, RegisterOptions.AccountDisabledErrorMessage);
-                    // account disabled, show form with error
-                    await BuildModelAsync(Input.ReturnUrl);
-                    return Page();
-                }
-
                 await _events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
                 Telemetry.Metrics.UserLogin(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider);
 

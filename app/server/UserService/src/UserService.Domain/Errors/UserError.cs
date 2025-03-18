@@ -27,4 +27,9 @@ public class UserError
     new("UserError.PermissionDenied",
         Message: "Permission denied.",
         StatusCode: (int)HttpStatusCode.InternalServerError);
+
+    public static Error UpdateUserFail =>
+    new("UserError.UpdateUserFail",
+        Message: "Update user fail.",
+        StatusCode: (int)HttpStatusCode.InternalServerError);
 }

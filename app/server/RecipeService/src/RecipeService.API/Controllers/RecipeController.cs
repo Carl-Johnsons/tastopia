@@ -1,22 +1,22 @@
 ﻿using AutoMapper;
+using Contract.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeService.API.DTOs;
-using RecipeService.Application.Activities.Queries;
 using RecipeService.Application.Comments.Commands;
 using RecipeService.Application.Comments.Queries;
 using RecipeService.Application.Recipes.Commands;
 using RecipeService.Application.Recipes.Queries;
 using RecipeService.Application.ReportReasons.Queries;
+using RecipeService.Application.Reports.Commands;
 using RecipeService.Application.Tags.Queries;
 using RecipeService.Application.UserBookmarkRecipes.Commands;
 using RecipeService.Application.UserBookmarkRecipes.Queries;
 using RecipeService.Application.UserRecipeBins.Queries;
-using RecipeService.Application.UserReportComments.Commands;
-using RecipeService.Application.UserReportRecipes.Commands;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
+
 namespace RecipeService.API.Controllers;
 [Route("api/recipe")]
 [ApiController]
@@ -407,7 +407,7 @@ public class RecipeController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(UserReportCommentResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> UserReportComment([FromBody] UserReportCommentDTO userReportCommentDTO)
+    public async Task<IActionResult> UserReportComment([FromBody] UserReportCommentDTO dto)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
@@ -415,9 +415,10 @@ public class RecipeController : BaseApiController
         var result = await _sender.Send(new UserReportCommentCommand
         {
             ReporterId = Guid.Parse(subjectId!),
-            CommentId = userReportCommentDTO.CommentId,
-            ReasonCodes = userReportCommentDTO.ReasonCodes,
-            AdditionalDetails = userReportCommentDTO.AdditionalDetails,
+            CommentId = dto.CommentId,
+            RecipeId = dto.RecipeId,
+            ReasonCodes = dto.ReasonCodes,
+            AdditionalDetails = dto.AdditionalDetails,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -451,44 +452,6 @@ public class RecipeController : BaseApiController
         {
             Language = getReportReasonsDTO.Language,
             ReportType = getReportReasonsDTO.ReportType,
-        });
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    //ADMIN SECTION
-    [HttpPost("admin-get-recipes")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetRecipes([FromBody] AdminGetRecipesDTO adminGetRecipesDTO)
-    {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-        var result = await _sender.Send(new AdminGetRecipesQuery
-        {
-            AccountId = Guid.Parse(subjectId!),
-            Keyword = adminGetRecipesDTO.Keyword,
-            Page = adminGetRecipesDTO?.Page,
-        });
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    [HttpPost("admin-get-user-activities")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedUserActivityListResponse), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetUserActivities([FromBody] AdminGetUserActivityDTO adminGetUserActivityDTO)
-    {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-        var result = await _sender.Send(new AdminGetUserActivityQuery
-        {
-            CurrentAccountId = Guid.Parse(subjectId!),
-            AccountId = adminGetUserActivityDTO.AccountId,
-            Skip = adminGetUserActivityDTO.Skip,
-            Language = adminGetUserActivityDTO.Language,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

@@ -22,5 +22,8 @@ public class NumberedPaginatedMetadata : CommonPaginatedMetadata
 {
     [Required]
     [JsonProperty("currentPage")]
-    public int CurrentPage { get; set; } 
+    public int CurrentPage { get; set; }
+
+    [JsonProperty("totalRow")]
+    public int? TotalRow { get; set; }
 }

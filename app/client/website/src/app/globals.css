@@ -5,7 +5,7 @@
 @import url("../styles/theme.css");
 
 body {
-  font-family: "Inter", sans-serif;
+  font-family: var(--font-sofia), sans-serif;
 }
 
 body * {
@@ -14,19 +14,19 @@ body * {
 
 @layer utilities {
   .flex-center {
-    @apply flex justify-center items-center;
+    @apply flex items-center justify-center;
   }
 
   .flex-between {
-    @apply flex justify-between items-center;
+    @apply flex items-center justify-between;
   }
 
   .flex-start {
-    @apply flex justify-start items-center;
+    @apply flex items-center justify-start;
   }
 
   .card-wrapper {
-    @apply bg-light-900 dark:dark-gradient shadow-light-100 dark:shadow-dark-100;
+    @apply /* `1E1E1E` is a hexadecimal color code representing a shade of gray. In this context, it is used as one of the shades in the black color palette within the `colors` object. */ bg-light-900 dark:dark-gradient dark shadow-light-100 dark:shadow-dark-100;
   }
 
   .btn {
@@ -42,7 +42,7 @@ body * {
   }
 
   .markdown {
-    @apply max-w-full prose dark:prose-p:text-light-700 dark:prose-ol:text-light-700 dark:prose-ul:text-light-500 dark:prose-strong:text-white dark:prose-headings:text-white prose-headings:text-dark-400 prose-h1:text-dark-300 prose-h2:text-dark-300 prose-p:text-dark-500 prose-ul:text-dark-500 prose-ol:text-dark-500;
+    @apply dark:prose-p:text-light-700 dark:prose-ol:text-light-700 dark:prose-ul:text-light-500 prose-headings:text-dark-400 prose-h1:text-dark-300 prose-h2:text-dark-300 prose-p:text-dark-500 prose-ul:text-dark-500 prose-ol:text-dark-500 prose max-w-full dark:prose-headings:text-white dark:prose-strong:text-white;
   }
 
   .primary-gradient {
@@ -50,11 +50,38 @@ body * {
   }
 
   .dark-gradient {
-    background: linear-gradient(232deg, rgba(23, 28, 35, 0.41) 0%, rgba(19, 22, 28, 0.7) 100%);
+    background: linear-gradient(
+      232deg,
+      rgba(23, 28, 35, 0.41) 0%,
+      rgba(19, 22, 28, 0.7) 100%
+    );
   }
 
   .tab {
-    @apply min-h-full dark:bg-dark-400 bg-light-800 text-light-400 dark:data-[state=active]:bg-dark-300 data-[state=active]:bg-primary-200 data-[state=active]:text-primary-800 !important;
+    @apply dark:bg-dark-400 bg-light-800 text-light-400 dark:data-[state=active]:bg-dark-300 data-[state=active]:bg-primary-200 data-[state=active]:text-primary-800 min-h-full !important;
+  }
+
+  .rdt_TableHead {
+    background-color: #fe724c !important;
+  }
+
+  .dark .rdt_TableHeadRow {
+    border-bottom-color: #191919 !important ;
+  }
+  .dark .rdt_TableCol {
+    color: black !important;
+  }
+  .dark .rdt_TableRow {
+    background-color: #1e1e1e !important;
+    color: white !important;
+  }
+
+  .dark .rdt_Pagination {
+    background-color: #1e1e1e !important;
+    color: white !important;
+  }
+  .dark .sc-lertIE svg {
+    fill: white !important;
   }
 }
 
@@ -63,11 +90,16 @@ body * {
 }
 
 .active-theme {
-  filter: invert(98%) sepia(24%) saturate(140%) hue-rotate(279deg) brightness(150%) contrast(104%) !important;
+  filter: invert(56%) sepia(86%) saturate(586%) hue-rotate(332deg) brightness(102%)
+    contrast(101%);
 }
 
 .light-gradient {
-  background: linear-gradient(132deg, rgba(247, 249, 255, 0.5) 0%, rgba(229, 237, 255, 0.25) 100%);
+  background: linear-gradient(
+    132deg,
+    rgba(247, 249, 255, 0.5) 0%,
+    rgba(229, 237, 255, 0.25) 100%
+  );
 }
 
 .primary-text-gradient {

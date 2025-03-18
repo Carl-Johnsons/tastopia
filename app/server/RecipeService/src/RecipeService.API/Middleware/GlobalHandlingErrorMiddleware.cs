@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Contract.DTOs;
+using Newtonsoft.Json;
 using RecipeService.API.DTOs;
 using System.Net;
 
@@ -47,6 +48,7 @@ public class GlobalHandlingErrorMiddleware
                 Status = (int)HttpStatusCode.InternalServerError
             };
 
+            _logger.LogError(ex.Message + "\n" + ex.StackTrace);
             string jsonResponse = JsonConvert.SerializeObject(errorDTO);
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = errorDTO.Status;

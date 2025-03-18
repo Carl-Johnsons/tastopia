@@ -138,7 +138,6 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                 if (s == null) {
                     s = new Step();
                     s.Id = step.StepId != Guid.Empty ? step.StepId : Guid.NewGuid();
-                    await Console.Out.WriteLineAsync("id cua step moi:"+ step.StepId);
                     s.AttachedImageUrls = [];
                     s.CreatedAt = DateTime.Now;
                 }

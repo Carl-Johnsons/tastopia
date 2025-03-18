@@ -1,7 +1,7 @@
 ﻿using Contract.Event.TrackingEvent;
 using UserService.Domain.Errors;
 
-namespace RecipeService.Application.Recipes.Commands;
+namespace UserService.Application.Users.Commands;
 public class PublishUserSearchUserCommand : IRequest<Result<string?>>
 {
     public Guid AccountId { get; init; }
@@ -20,7 +20,8 @@ public class PublishUserSearchUserCommandHandler : IRequestHandler<PublishUserSe
     {
         var accountId = request.AccountId;
         var keyword = request.Keyword;
-        if(accountId == Guid.Empty || string.IsNullOrEmpty(keyword)) {
+        if (accountId == Guid.Empty || string.IsNullOrEmpty(keyword))
+        {
             return Result<string?>.Failure(UserError.NullParameters, "accountId or keyword is null");
         }
         await _serviceBus.Publish(new CreateUserSearchUserEvent

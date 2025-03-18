@@ -2,6 +2,12 @@
 public enum ReportStatus
 {
     Pending,
-    Approved,
-    Rejected
+    Done
+}
+
+public enum ReportType
+{
+    USER,
+    RECIPE,
+    COMMENT
 }
