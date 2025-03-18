@@ -48,9 +48,9 @@ const Header = ({
         alt={`Image of ${title}`}
         width={360}
         height={446}
-        className='h-[300px] w-full shrink rounded-md object-cover lg:h-[446px] lg:w-[360px]'
+        className='h-[300px] w-full shrink rounded-md object-cover grow lg:h-[446px] lg:min-w-[360px]'
       />
-      <div className='flex grow-[8] flex-col gap-3'>
+      <div className='flex grow-[6] flex-col gap-3'>
         <div className='flex items-center gap-3'>
           <h1 className='text-black_white font-semibold text-2xl'>{title}</h1>
           <StatusText

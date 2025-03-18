@@ -3,7 +3,9 @@ using Contract.Constants;
 using Contract.DTOs;
 using Contract.Utilities;
 using Google.Protobuf.Collections;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using UserProto;
@@ -58,17 +60,20 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
             }, cancellationToken: cancellationToken);
 
 
-            var searchAuthorIds = searchUserResponse.AccountIds.ToHashSet();
+            var searchAuthorIds = searchUserResponse.AccountIds.Select(Guid.Parse).ToHashSet();
             var searchRecipeReportReasonCode = ReportReasonData.RecipeReportReasons.Where(rrr => normalizedLangue
-                                                                                                 == LanguageValidation.Vi ? rrr.Vi.Contains(keyword) : rrr.En.Contains(keyword))
+                                                                                                 == LanguageValidation.Vi ? rrr.Vi.ToLower().Contains(keyword) : rrr.En.ToLower().Contains(keyword))
                                                                                    .Select(rrr => rrr.Code)
                                                                                    .ToList();
-            pipeline = pipeline.Match(report =>
-                report.Recipe!.Title.Contains(keyword) ||
-                searchAuthorIds != null && searchAuthorIds.Contains(report.Recipe.AuthorId.ToString()) ||
-                searchAuthorIds != null && searchAuthorIds.Contains(report.AccountId.ToString()) ||
-                searchRecipeReportReasonCode.Any(srrc => report.ReasonCodes.Contains(srrc))
-            );
+
+            var titleFilter = Builders<UserReportWithRecipe>.Filter.Regex(urwr => urwr.Recipe!.Title, new BsonRegularExpression(keyword, "i"));
+            var reasonFilter = Builders<UserReportWithRecipe>.Filter.In("ReasonCodes", searchRecipeReportReasonCode);
+            var authorIdFilter = Builders<UserReportWithRecipe>.Filter.In(urwr => urwr.Recipe!.AuthorId, searchAuthorIds);
+            var reporterIdFilter = Builders<UserReportWithRecipe>.Filter.In(urwr => urwr.AccountId, searchAuthorIds);
+
+            var combinedFilter = Builders<UserReportWithRecipe>.Filter.Or(titleFilter, reasonFilter, authorIdFilter, reporterIdFilter);
+
+            pipeline = pipeline.Match(combinedFilter);
         }
 
         var userReportList = await pipeline.ToListAsync(cancellationToken);
