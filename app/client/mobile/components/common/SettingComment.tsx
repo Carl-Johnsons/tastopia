@@ -427,6 +427,11 @@ const UpdateSetting = ({
       return;
     }
 
+    if (content.length > 500) {
+      Alert.alert(t("commentLimit"));
+      return;
+    }
+
     if (!isUpdating) {
       updateMutate(
         {
@@ -480,6 +485,7 @@ const UpdateSetting = ({
         <View className='mt-2 px-5'>
           <BottomSheetTextInput
             value={content}
+            multiline
             onChangeText={handleChangeText}
             style={{
               borderBottomWidth: 2,

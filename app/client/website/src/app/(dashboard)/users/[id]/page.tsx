@@ -68,7 +68,7 @@ export default async function UserProfile({ params }: ParamsProps) {
     if (!mockData) {
       return (
         <div className='flex h-screen flex-col items-center justify-center'>
-          <h1 className='font-bold text-2xl'>User not found</h1>
+          <h1 className='text-2xl font-bold'>User not found</h1>
         </div>
       );
     }

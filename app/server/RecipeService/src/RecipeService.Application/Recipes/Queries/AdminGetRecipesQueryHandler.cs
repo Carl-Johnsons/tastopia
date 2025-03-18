@@ -2,8 +2,6 @@
 using Contract.DTOs;
 using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using UserProto;
@@ -16,10 +14,10 @@ public class AdminGetRecipesQuery : IRequest<Result<PaginatedAdminRecipeListResp
 public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery, Result<PaginatedAdminRecipeListResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IPaginateDataUtility<Recipe, NumberedPaginatedMetadata> _paginateDataUtility;
+    private readonly IPaginateDataUtility<AdminRecipeResponse, NumberedPaginatedMetadata> _paginateDataUtility;
     private readonly IMapper _mapper;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
-    public AdminGetRecipesQueryHandler(IApplicationDbContext context, IPaginateDataUtility<Recipe, NumberedPaginatedMetadata> paginateDataUtility, IMapper mapper, GrpcUser.GrpcUserClient grpcUserClient)
+    public AdminGetRecipesQueryHandler(IApplicationDbContext context, IPaginateDataUtility<AdminRecipeResponse, NumberedPaginatedMetadata> paginateDataUtility, IMapper mapper, GrpcUser.GrpcUserClient grpcUserClient)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;
@@ -66,35 +64,26 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
             );
         }
 
-        var limit = RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT;
-        if(request.paginatedDTO.Limit != null)
-        {
-            limit = request.paginatedDTO.Limit.Value;
-        }
-        var totalRow = await recipesQuery.CountAsync();
-        var totalPage = (totalRow + limit - 1) / limit;
-        recipesQuery = _paginateDataUtility.PaginateQuery(recipesQuery, new PaginateParam
-        {
-            Offset = (skip ?? 0) * limit,
-            Limit = limit,
-            SortBy = request.paginatedDTO.SortBy != null ? request.paginatedDTO.SortBy : "CreatedAt",
-            SortOrder = request.paginatedDTO.SortOrder != null ? request.paginatedDTO.SortOrder : SortType.DESC,
-        });
-        var recipes = await recipesQuery.ToListAsync();
-        var recipeList = recipes.Select(r =>
-        new AdminRecipeResponse
-        {
-            Id = r.Id,
-            AuthorId = r.AuthorId,
-            Title = r.Title,
-            Ingredients = string.Join(", ", r.Ingredients),
-            RecipeImageUrl = r.ImageUrl,
-            CreatedAt = r.CreatedAt,
-            IsActive = r.IsActive,
-            AuthorDisplayName = "",
-            AuthorUsername = ""
-        }).ToList();
-        if (recipeList == null || !recipeList.Any())
+        var recipes = await recipesQuery
+            .Select(r => new
+            {
+                Recipe = new AdminRecipeResponse
+                {
+                    Id = r.Id,
+                    AuthorId = r.AuthorId,
+                    Title = r.Title,
+                    Ingredients = "",
+                    RecipeImageUrl = r.ImageUrl,
+                    CreatedAt = r.CreatedAt,
+                    IsActive = r.IsActive,
+                    AuthorDisplayName = "",
+                    AuthorUsername = ""
+                },
+                Ingredients = r.Ingredients
+            })
+            .ToListAsync();
+
+        if (recipes == null || recipes.Count == 0)
         {
             return Result<PaginatedAdminRecipeListResponse?>.Success(new PaginatedAdminRecipeListResponse
             {
@@ -106,8 +95,8 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
                 }
             });
         }
-        var authorIds = recipesQuery
-        .Select(r => r.AuthorId)
+        var authorIds = recipes
+        .Select(r => r.Recipe.AuthorId)
         .Distinct()
         .ToHashSet();
         var response = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
@@ -120,15 +109,45 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
             return Result<PaginatedAdminRecipeListResponse?>.Failure(RecipeError.NotFound);
         }
 
-        foreach (var recipe in recipeList)
+        foreach (var r in recipes)
         {
-            recipe.AuthorDisplayName = response.Users[recipe.AuthorId.ToString()].DisplayName;
-            recipe.AuthorUsername = response.Users[recipe.AuthorId.ToString()].AccountUsername;
+            r.Recipe.AuthorDisplayName = response.Users[r.Recipe.AuthorId.ToString()].DisplayName;
+            r.Recipe.AuthorUsername = response.Users[r.Recipe.AuthorId.ToString()].AccountUsername;
+            r.Recipe.Ingredients = string.Join(", ", r.Ingredients);
         }
 
+        var recipesResponseQuery = recipes.Select(r => r.Recipe).AsQueryable();
+
+        var limit = RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT;
+        if(request.paginatedDTO.Limit != null)
+        {
+            limit = request.paginatedDTO.Limit.Value;
+        }
+        var totalRow = recipesResponseQuery.Count();
+        var totalPage = (totalRow + limit - 1) / limit;
+        recipesResponseQuery = _paginateDataUtility.PaginateQuery(recipesResponseQuery, new PaginateParam
+        {
+            Offset = (skip ?? 0) * limit,
+            Limit = limit,
+            SortBy = request.paginatedDTO.SortBy != null ? request.paginatedDTO.SortBy : "CreatedAt",
+            SortOrder = request.paginatedDTO.SortOrder != null ? request.paginatedDTO.SortOrder : SortType.DESC,
+        });
+        var result = recipesResponseQuery.ToList();
+        if (result == null || result.Count == 0)
+        {
+            return Result<PaginatedAdminRecipeListResponse?>.Success(new PaginatedAdminRecipeListResponse
+            {
+                PaginatedData = [],
+                Metadata = new NumberedPaginatedMetadata
+                {
+                    CurrentPage = 0,
+                    TotalPage = 0,
+                }
+            });
+        }
         var paginatedResponse = new PaginatedAdminRecipeListResponse
         {
-            PaginatedData = recipeList,
+            PaginatedData = result,
             Metadata = new NumberedPaginatedMetadata
             {
                 TotalPage = totalPage,
