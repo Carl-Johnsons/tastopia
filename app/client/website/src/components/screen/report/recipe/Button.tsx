@@ -8,11 +8,17 @@ import {
 } from "@/api/recipe";
 import { BanIcon, LoadingIcon } from "@/components/shared/icons";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
 import { ReportType } from "@/constants/reports";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, RotateCw, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { ReactNode, useCallback, useState } from "react";
+import { ReactNode, useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 type TableDataButtonProps = {
@@ -250,27 +256,39 @@ export const InteractiveButton = ({
   noText,
   toolTip
 }: InteractiveButtonProps) => {
-  return (
-    <Button
-      className={`group relative flex items-center gap-1 ${className}`}
-      onClick={onClick}
-    >
-      {isLoading ? <LoadingIcon /> : icon}
+  const RenderedButton = useMemo(
+    () => (
+      <Button
+        className={`relative flex items-center gap-1 ${className}`}
+        onClick={onClick}
+      >
+        {isLoading ? <LoadingIcon /> : icon}
 
-      {!noText && (
-        <span
-          className={`${!noTruncateText && "hidden 2xl:inline"} text-white_black text-sm font-medium`}
-        >
-          {title}
-        </span>
-      )}
+        {!noText && (
+          <span
+            className={`${!noTruncateText && "hidden 2xl:inline"} text-white_black text-sm font-medium`}
+          >
+            {title}
+          </span>
+        )}
+      </Button>
+    ),
+    [icon, isLoading, title, onClick, className, noTruncateText, noText]
+  );
 
-      {toolTip && (
-        <div className='absolute bottom-[110%] left-1/2 z-[-999] mb-2 w-max -translate-x-1/2 rounded-md bg-gray-900 px-3 py-1 text-sm text-white opacity-0 transition-opacity duration-300 group-hover:z-[999] group-hover:opacity-100'>
-          <span>{title}</span>
-        </div>
-      )}
-    </Button>
+  return toolTip ? (
+    <TooltipProvider delayDuration={500}>
+      <Tooltip>
+        <TooltipTrigger className='w-fit'>{RenderedButton}</TooltipTrigger>
+        <TooltipContent className='rounded-md bg-gray-900'>
+          <div className='text-sm text-white'>
+            <span>{title}</span>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  ) : (
+    RenderedButton
   );
 };
 
