@@ -307,10 +307,7 @@ export const InteractiveButton = ({
     <TooltipProvider delayDuration={500}>
       <Tooltip>
         <TooltipTrigger
-          onClick={() => {
-            console.log("Click")
-            onClick && onClick();
-          }}
+          onClick={onClick}
           className={cn(
             buttonVariants({ variant: "default", size: "default", className })
           )}
@@ -325,7 +322,12 @@ export const InteractiveButton = ({
       </Tooltip>
     </TooltipProvider>
   ) : (
-    <Button className={className} onClick={onClick}>{RenderedContent}</Button>
+    <Button
+      className={className}
+      onClick={onClick}
+    >
+      {RenderedContent}
+    </Button>
   );
 };
 
