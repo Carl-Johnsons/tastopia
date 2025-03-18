@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DownvoteIcon, UpvoteIcon } from "@/components/shared/icons";
 import { useState } from "react";
 import { DisableRecipeButton, RestoreRecipeButton } from "./Button";
 import { IAdminGetUserDetailResponse } from "@/generated/interfaces/user.interface";
+import Image from "@/components/shared/common/Image";
 
 type HeaderProps = {
   recipeId: string;
@@ -53,43 +53,46 @@ const Header = ({
           disabled
         />
 
-        <div className='flex items-center gap-2'>
-          <Link href={`/users/${accountId}`}>
-            <Avatar>
-              <AvatarImage src={avatarUrl} />
-              <AvatarFallback>{accountUsername.substring(0, 1)}</AvatarFallback>
-            </Avatar>
-          </Link>
-          <div className='flex flex-col'>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center gap-2'>
             <Link href={`/users/${accountId}`}>
-              <div className='text-black_white flex gap-1.5'>
-                <span className='text-sm font-bold'>{displayName}</span>
-                <span className='text-sm'>@{accountUsername}</span>
-              </div>
+              <Avatar>
+                <AvatarImage src={avatarUrl} />
+                <AvatarFallback>{accountUsername.substring(0, 1)}</AvatarFallback>
+              </Avatar>
             </Link>
-            <span className='text-sm text-gray-700'>
-              {totalFollower || 0} follower
-              {!!totalFollower && totalFollower > 2 && "s"}
-            </span>
+            <div className='flex flex-col'>
+              <Link href={`/users/${accountId}`}>
+                <div className='text-black_white flex gap-1.5'>
+                  <span className='text-sm font-bold'>{displayName}</span>
+                  <span className='text-sm'>@{accountUsername}</span>
+                </div>
+              </Link>
+              <span className='text-sm text-gray-700'>
+                {totalFollower || 0} follower
+                {!!totalFollower && totalFollower > 2 && "s"}
+              </span>
+            </div>
           </div>
+
+          {isActive ? (
+            <DisableRecipeButton
+              title='Disable'
+              onSuccess={() => setIsActive(false)}
+              targetId={recipeId}
+              className='w-fit rounded-full'
+            />
+          ) : (
+            <RestoreRecipeButton
+              title='Restore'
+              onSuccess={() => setIsActive(true)}
+              targetId={recipeId}
+              className='w-fit rounded-full'
+            />
+          )}
         </div>
 
         <p className='text-black_white max-w-[70em]'>{description}</p>
-        {isActive ? (
-          <DisableRecipeButton
-            title='Delete'
-            onSuccess={() => setIsActive(false)}
-            targetId={recipeId}
-            className='w-fit rounded-full'
-          />
-        ) : (
-          <RestoreRecipeButton
-            title='Restore'
-            onSuccess={() => setIsActive(true)}
-            targetId={recipeId}
-            className='w-fit rounded-full'
-          />
-        )}
       </div>
     </div>
   );
@@ -103,7 +106,7 @@ export const StatusText = ({
   coloring?: boolean;
 }) => {
   return (
-    <div className='flex-center flex gap-2'>
+    <div className='flex-center flex min-w-[80px] gap-2'>
       {isActive ? (
         <>
           <div className='size-2.5 rounded-full bg-green-500' />

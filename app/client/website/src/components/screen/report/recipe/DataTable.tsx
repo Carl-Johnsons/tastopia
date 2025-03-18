@@ -21,7 +21,7 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
     name: "Recipe Name",
     selector: row => row.recipeTitle,
     sortable: true,
-    grow: 4
+    grow: 3
   },
   {
     name: "Recipe Owner",
@@ -31,7 +31,8 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   },
   {
     name: "Recipe Image",
-    hide: 1672,
+    hide: 1368,
+    width: "140px",
     center: true,
     cell: ({ recipeImageURL }) => (
       <div className='p-2'>
@@ -55,7 +56,7 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
     name: "Report Reason",
     hide: 1368,
     sortable: true,
-    grow: 4,
+    grow: 3,
     cell: ({ reportReason }) => {
       return (
         <span className='w-full overflow-hidden text-ellipsis text-nowrap text-sm'>
@@ -67,10 +68,12 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
     name: "Created Date",
     sortable: true,
+    width: "140px",
+    center: true,
     hide: 1476,
     cell: ({ createdAt }) => {
       return (
-        <span className='w-full overflow-hidden text-ellipsis text-nowrap text-sm'>
+        <span className='text-ellipsis text-nowrap text-sm'>
           {format(new Date(createdAt), "dd/MM/yyyy")}
         </span>
       );
@@ -93,7 +96,7 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
     name: "Actions",
     center: true,
-    width: "300px",
+    width: "150px",
     cell: ({ recipeId, reportId, status }) => {
       return (
         <ActionButtons
