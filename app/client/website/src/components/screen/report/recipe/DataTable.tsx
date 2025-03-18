@@ -191,6 +191,7 @@ export default function Table() {
   const {
     data: fetchedData,
     isLoading,
+    isFetching,
     refetch
   } = useGetRecipeReports({
     skip,
@@ -267,7 +268,7 @@ export default function Table() {
       <div className='flex-center mt-4 flex-col gap-4'>
         <SearchBar
           onChange={handleSearch}
-          isLoading={isLoading}
+          isLoading={isLoading || isFetching}
         />
         <div className='flex gap-2 self-start'>
           <span className='text-gray-500'>Administer Reports</span>
@@ -284,7 +285,7 @@ export default function Table() {
           responsive
           striped
           highlightOnHover
-          progressPending={isLoading}
+          progressPending={isLoading || isFetching}
           progressComponent={<Loader />}
           noDataComponent={<NoRecord />}
           pagination
