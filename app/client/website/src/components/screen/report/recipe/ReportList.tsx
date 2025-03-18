@@ -1,14 +1,14 @@
 "use client";
 
-import { Status, StatusText } from "./DataTable";
+import { StatusText } from "./DataTable";
 import { Clock } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
-import { faker } from "@faker-js/faker";
 import { format } from "date-fns";
-import { MarkAsCompletedButton, RejectButton, RestoreButton } from "./Button";
+import { MarkAsCompletedButton, ReopenReportButton } from "./Button";
+import { ReportStatus } from "@/constants/reports";
 
 type ReportListProps = {
   reports: IReportRecipeResponse[];
@@ -19,15 +19,23 @@ export default function ReportList({ reports, className }: ReportListProps) {
   return (
     <div className={`flex gap-8 overflow-x-scroll xl:flex-col ${className}`}>
       {reports.map(
-        ({ id, additionalDetail, reasons, status, reporterUsername, createdAt }) => (
+        ({
+          id,
+          additionalDetail,
+          reasons,
+          status,
+          reporterUsername,
+          createdAt,
+          reporterAvtUrl
+        }) => (
           <ReportItem
             key={id}
             reportId={id}
             reportReason={additionalDetail}
-            status={status as Status}
+            status={status as ReportStatus}
             reportCodes={reasons}
             reporter={reporterUsername}
-            reporterAvatar={faker.image.avatar()}
+            reporterAvatar={reporterAvtUrl}
             createdAt={format(new Date(createdAt), "h:mm a - dd/MM/yyyy")}
           />
         )
@@ -39,7 +47,7 @@ export default function ReportList({ reports, className }: ReportListProps) {
 type ReportItemProps = {
   reportId: string;
   reportReason?: string;
-  status: Status;
+  status: ReportStatus;
   reportCodes: string[];
   reporter: string;
   reporterAvatar: string;
@@ -56,37 +64,28 @@ const ReportItem = ({
   createdAt
 }: ReportItemProps) => {
   const router = useRouter();
-  const [isActive, setIsActive] = useState(status !== "Done");
+  const [isActive, setIsActive] = useState(status !== ReportStatus.Done);
 
   return (
     <div
-      className={`flex h-fit max-w-[400px] flex-col gap-3.5 rounded-md p-5 dark:border min-w-[340px] xl:min-w-fit ${isActive ? "bg-red-200 dark:border-red dark:bg-transparent" : "bg-green-100 dark:border-green dark:bg-transparent"}`}
+      className={`flex h-fit min-w-[340px] max-w-[400px] flex-col gap-3.5 rounded-md p-5 dark:border xl:min-w-fit ${isActive ? "bg-red-200 dark:border-red dark:bg-transparent" : "bg-green-100 dark:border-green dark:bg-transparent"}`}
     >
       <div className='flex justify-between'>
         <StatusText
-          status={isActive ? "Pending" : "Done"}
+          status={isActive ? ReportStatus.Pending : ReportStatus.Done}
           coloring
         />
         {isActive ? (
-          <div className='flex gap-2'>
-            <MarkAsCompletedButton
-              title='Mark as completed'
-              targetId={reportId}
-              onSuccess={() => {
-                setIsActive(false);
-              }}
-            />
-            <RejectButton
-              title='Reject'
-              targetId={reportId}
-              onSuccess={() => {
-                setIsActive(false);
-              }}
-            />
-          </div>
+          <MarkAsCompletedButton
+            title='Mark as completed'
+            targetId={reportId}
+            onSuccess={() => {
+              setIsActive(false);
+            }}
+          />
         ) : (
-          <RestoreButton
-            title='Restore'
+          <ReopenReportButton
+            title='Reopen report'
             targetId={reportId}
             onSuccess={() => {
               setIsActive(true);

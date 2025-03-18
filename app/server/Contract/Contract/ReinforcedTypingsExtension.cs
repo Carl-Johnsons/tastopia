@@ -9,33 +9,22 @@ namespace Contract;
 public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "common";
-    private static List<string> EXPORT_FILE_PATHS = [
-        "../../../client/mobile/generated",
-        "../../../client/website/src/generated"
-    ];
+    private static string EXPORT_FILE_PATH = "../../../client/mobile/generated";
 
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {
         // Custom export file
         List<Type> errorsTypes = [];
 
-        foreach (var path in EXPORT_FILE_PATHS)
-        {
-            Directory.CreateDirectory(path);
-            builder.ConfigCommonReinforcedTypings(path, FILE_NAME, errorsTypes);
-        }
-        // Common type
-        builder.GenerateTypesForMobileClient();
-        builder.GenerateTypesForWebsiteClient();
-    }
+        Directory.CreateDirectory(EXPORT_FILE_PATH);
+        builder.ConfigContractReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
 
-    private static void GenerateTypesForMobileClient(this ConfigurationBuilder builder)
-    {
         // DTO and Entites
         builder.ExportAsInterfaces([
             typeof(ErrorResponseDTO),
             typeof(AdvancePaginatedMetadata),
-            typeof(CommonPaginatedMetadata)
+            typeof(CommonPaginatedMetadata),
+            typeof(NumberedPaginatedMetadata)
 
         ], config =>
         {
@@ -43,24 +32,7 @@ public static class ReinforcedTypingsExtension
                   .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo($"mobile/generated/interfaces/{FILE_NAME}.interface.d.ts");
-        });
-    }
-
-    private static void GenerateTypesForWebsiteClient(this ConfigurationBuilder builder)
-    {
-        // DTO and Entites
-        builder.ExportAsInterfaces([
-            typeof(ErrorResponseDTO),
-            typeof(AdvancePaginatedMetadata),
-            typeof(CommonPaginatedMetadata)
-        ], config =>
-        {
-            config.FlattenHierarchy()
-                  .WithPublicProperties()
-                  .AutoI()
-                  .DontIncludeToNamespace()
-                  .ExportTo($"website/src/generated/interfaces/{FILE_NAME}.interface.d.ts");
+                  .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
         });
     }
 }

@@ -76,7 +76,7 @@ const LeftSidebar = () => {
                   </span>
                   {link.children && (
                     <svg
-                      className={`size-5 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+                      className={`text-black_white size-5 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'

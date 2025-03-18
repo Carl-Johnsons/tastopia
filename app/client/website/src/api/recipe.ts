@@ -1,13 +1,23 @@
 import {
+    disableRecipe,
   getRecipeComments,
   getRecipeReports,
-  GetRecipeReportsParams
+  GetRecipeReportsParams,
+  markReportAsCompleted,
+  reopenReport,
+  restoreRecipe
 } from "@/actions/recipe.action";
 import {
   IPaginatedAdminReportRecipeListResponse,
-  IPaginatedRecipeCommentListResponse
+  IPaginatedRecipeCommentListResponse,
+  IReportDTO
 } from "@/generated/interfaces/recipe.interface";
-import { InfiniteData, useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery
+} from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 export const useGetRecipeReports = ({
@@ -55,3 +65,28 @@ export const useGetRecipeComments = (recipeId: string) => {
     }
   });
 };
+
+export const useReopenReport = () => {
+  return useMutation<void, Error, IReportDTO>({
+    mutationFn: (params) => reopenReport(params)
+  });
+};
+
+export const useMarkReportAsCompleted = () => {
+  return useMutation<void, Error, IReportDTO>({
+    mutationFn: (params) => markReportAsCompleted(params)
+  });
+};
+
+export const useDisableRecipe = () => {
+  return useMutation<void, Error, string>({
+    mutationFn: (id) => disableRecipe(id)
+  });
+}
+
+export const useRestoreRecipe = () => {
+  return useMutation<void, Error, string>({
+    mutationFn: (id) => restoreRecipe(id)
+  });
+}
+

@@ -4,10 +4,11 @@ import { protectedAxiosInstance } from "@/constants/host";
 import {
   IAdminReportRecipeDetailResponse,
   IPaginatedAdminReportRecipeListResponse,
-  IPaginatedRecipeCommentListResponse
+  IPaginatedRecipeCommentListResponse,
+  IReportDTO
 } from "@/generated/interfaces/recipe.interface";
-import { stringify } from "@/utils/debug";
 import { IGetRecipeCommentsDTO } from "../../../mobile/generated/interfaces/recipe.interface";
+import { withErrorProcessor } from "@/utils/errorHanlder";
 
 export type GetRecipeReportsParams = {
   limit?: number;
@@ -76,7 +77,7 @@ export async function getRecipeReportById({
 
     return data;
   } catch (error) {
-    console.error("getRecipeReportById", stringify(error));
+    console.log(error);
     throw error;
   }
 }
@@ -98,7 +99,47 @@ export async function getRecipeComments({ recipeId, options }: GetRecipeComments
 
     return data;
   } catch (error) {
-    console.error("getRecipeComments", stringify(error));
+    console.log(error);
     throw error;
   }
 }
+
+export const markReportAsCompleted = async ({ reportId, reportType }: IReportDTO) => {
+  const url = "/api/admin/recipe/mark-report-complete";
+
+  try {
+    await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
+  } catch (error) {
+    withErrorProcessor(error);
+  }
+};
+
+export const reopenReport = async ({ reportId, reportType }: IReportDTO) => {
+  const url = "/api/admin/recipe/reopen-report";
+
+  try {
+    await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
+  } catch (error) {
+    withErrorProcessor(error);
+  }
+};
+
+export const disableRecipe = async (id: string) => {
+  const url = "/api/admin/recipe";
+
+  try {
+    await protectedAxiosInstance.delete<undefined>(url, { params: { id } });
+  } catch (error) {
+    withErrorProcessor(error);
+  }
+};
+
+export const restoreRecipe = async (id: string) => {
+  const url = `/api/admin/recipe/restore?id=${id}`;
+
+  try {
+    await protectedAxiosInstance.put<undefined>(url);
+  } catch (error) {
+    withErrorProcessor(error);
+  }
+};

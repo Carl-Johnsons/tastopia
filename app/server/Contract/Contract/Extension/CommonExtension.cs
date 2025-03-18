@@ -15,6 +15,11 @@ using Contract.DTOs;
 using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using System.Text;
+using Reinforced.Typings.Ast;
+using Reinforced.Typings.Generators;
+using Reinforced.Typings;
+using Reinforced.Typings.Visitors.TypeScript;
+using System.Reflection.Metadata;
 
 namespace Contract.Extension;
 
@@ -219,6 +224,29 @@ public static class CommonExtension
         }
     }
 
+    internal static void ConfigContractReinforcedTypings(this Reinforced.Typings.Fluent.ConfigurationBuilder builder,
+                                                 string exportFilePath,
+                                                 string fileName,
+                                                 List<Type> errorTypes)
+    {
+        builder.Global(config =>
+        {
+            config.CamelCaseForProperties()
+                  .AutoOptionalProperties()
+                  .ExportPureTypings(typings: true)
+                  .GenerateDocumentation()
+                  .UseModules();
+        });
+
+        // Substitute C# type to typescript type
+        builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
+        builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
+
+        // Custom export file
+        GenerateTypescriptEnumFile(errorTypes, exportFilePath, fileName);
+    }
+
+
     public static void ConfigCommonReinforcedTypings(this Reinforced.Typings.Fluent.ConfigurationBuilder builder,
                                                      string exportFilePath,
                                                      string fileName,
@@ -229,15 +257,56 @@ public static class CommonExtension
             config.CamelCaseForProperties()
                   .AutoOptionalProperties()
                   .ExportPureTypings(typings: true)
+                  .GenerateDocumentation()
+                  .UseVisitor<CustomExportVisitor>()
                   .UseModules();
         });
 
         // Substitute C# type to typescript type
         builder.Substitute(typeof(Guid), new RtSimpleTypeName("string"));
         builder.Substitute(typeof(DateTime), new RtSimpleTypeName("string"));
+        builder.Substitute(typeof(ErrorResponseDTO), new RtSimpleTypeName("IErrorResponseDTO"));
+        builder.Substitute(typeof(AdvancePaginatedMetadata), new RtSimpleTypeName("IAdvancePaginatedMetadata"));
+        builder.Substitute(typeof(CommonPaginatedMetadata), new RtSimpleTypeName("ICommonPaginatedMetadata"));
+        builder.Substitute(typeof(NumberedPaginatedMetadata), new RtSimpleTypeName("INumberedPaginatedMetadata"));
 
         // Custom export file
         GenerateTypescriptEnumFile(errorTypes, exportFilePath, fileName);
+    }
+
+    private class CustomExportVisitor : TypeScriptExportVisitor
+    {
+        public CustomExportVisitor(TextWriter writer, ExportContext exportContext) : base(writer, exportContext)
+        {
+        }
+
+        public override void VisitFile(ExportedFile file)
+        {
+            if (file.FileName.EndsWith(".interface.d.ts", StringComparison.OrdinalIgnoreCase))
+            {
+                WriteLine("// Generated at: " + DateTime.Now);
+                WriteLine(@"
+import {
+    IErrorResponseDTO,
+    IAdvancePaginatedMetadata,
+    ICommonPaginatedMetadata,
+    INumberedPaginatedMetadata
+} from ""./common.interface"";
+            ");
+            }
+
+            // Continue processing the rest of the file normally
+            base.VisitFile(file);
+        }
+    }
+
+    public class NamedImportGenerator : TsCodeGeneratorBase<string, RtRaw>
+    {
+        public override RtRaw GenerateNode(string memberName, RtRaw node, TypeResolver resolver)
+        {
+            // Generate a named import statement for the given member.
+            return new RtRaw($"import {{ {memberName} }} from './common.interface.d.ts';");
+        }
     }
 
     private static void GenerateTypescriptEnumFile(List<Type> errorsTypes, string exportFilePath, string fileName)
