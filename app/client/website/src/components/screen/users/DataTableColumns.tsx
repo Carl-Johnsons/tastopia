@@ -22,20 +22,24 @@ export const usersColumns = [
   {
     name: "Gmail",
     selector: (user: IAdminGetUserResponse) => user?.accountEmail ?? "",
-    hide: 1234
+    hide: 1234,
+    sortable: true
   },
   {
     name: "Phone number",
     selector: (user: IAdminGetUserResponse) => user?.accountPhoneNumber ?? "",
-    hide: 1026
+    hide: 1026,
+    sortable: true
   },
   {
     name: "Date of birth",
     selector: (user: IAdminGetUserResponse) => user?.dob ?? "",
-    hide: 1612
+    hide: 1612,
+    sortable: true
   },
   {
     name: "Status",
+    sortable: true,
     cell: (user: IAdminGetUserResponse) => <Status isActive={user.isAccountActive} />
   },
   {
