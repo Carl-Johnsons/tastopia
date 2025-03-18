@@ -21,8 +21,6 @@ type Props = {
 export default function Comments({ recipeId }: Props) {
   const { data, isLoading, hasNextPage, fetchNextPage } = useGetRecipeComments(recipeId);
 
-  console.log("data", data);
-
   if (isLoading) {
     return <Loader />;
   }
@@ -68,7 +66,6 @@ type CommentProps = {
 
 function Comment({ comment }: CommentProps) {
   const { content, createdAt, accountId, displayName, avatarUrl } = comment;
-  const { data: author, isLoading } = useGetUserById(accountId);
   const time = useMemo(
     () => formatRelative(new Date(createdAt), new Date()),
     [createdAt]
@@ -87,28 +84,15 @@ function Comment({ comment }: CommentProps) {
     toast.success("Restored comment successfully.");
   }, []);
 
-  if (isLoading || !author) {
-    return (
-      <div className='flex gap-3'>
-        <Skeleton className='h-12 w-12 rounded-full' />
-        <div className='flex w-full flex-col gap-1'>
-          <Skeleton className='h-4 w-24' />
-          <Skeleton className='h-4 w-36' />
-        </div>
-      </div>
-    );
-  }
-
-  const { totalFollower, accountUsername } = author;
   return (
-    <div className={`grid grid-cols-[auto_1fr] items-center gap-2`}>
+    <div className={`grid grid-cols-[auto_1fr] items-center gap-x-2`}>
       <Link
         href={`/users/${accountId}`}
         className={lowOpacityOnInactive}
       >
         <Avatar>
           <AvatarImage src={avatarUrl} />
-          <AvatarFallback>{accountUsername.substring(0, 1)}</AvatarFallback>
+          <AvatarFallback className="bg-black_white">{displayName.substring(0, 1)}</AvatarFallback>
         </Avatar>
       </Link>
 
@@ -119,7 +103,6 @@ function Comment({ comment }: CommentProps) {
             className={`flex items-center gap-1.5 ${lowOpacityOnInactive}`}
           >
             <span className='font-bold'>{displayName}</span>
-            <span className='text-sm opacity-75'>@{accountUsername}</span>
           </Link>
           <span
             className={`text-sm text-gray-700 opacity-50 dark:opacity-80 ${lowOpacityOnInactive}`}
@@ -137,15 +120,11 @@ function Comment({ comment }: CommentProps) {
               )
             }
             onClick={isActive ? handleDelete : handleRestore}
-            className={`hover:bg-transparent} ms-auto w-fit bg-transparent p-0 pb-1 shadow-none`}
+            className={`hover:bg-transparent} ms-auto h-fit w-fit bg-transparent p-0 pb-1 shadow-none`}
             noText
             toolTip
           />
         </div>
-        <span className={`text-sm text-gray-700 ${lowOpacityOnInactive}`}>
-          {totalFollower || 0} follower
-          {!!totalFollower && totalFollower > 2 && "s"}
-        </span>
       </div>
 
       <p className={`text-black_white col-start-2 max-w-[70em] ${lowOpacityOnInactive}`}>
