@@ -10,7 +10,7 @@ public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "common";
     private static List<string> EXPORT_FILE_PATHS = [
-        "../../../client/mobile/src/generated",
+        "../../../client/mobile/generated",
         "../../../client/website/src/generated"
     ];
 
@@ -43,7 +43,7 @@ public static class ReinforcedTypingsExtension
                   .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo($"mobile/src/generated/interfaces/{FILE_NAME}.interface.d.ts");
+                  .ExportTo($"mobile/generated/interfaces/{FILE_NAME}.interface.d.ts");
         });
     }
 
