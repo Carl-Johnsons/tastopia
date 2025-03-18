@@ -34,7 +34,7 @@ import Loading from "./Loading";
 
 type Props = {
   id: string;
-  recipeId?: string;
+  recipeId: string;
   authorId: string;
   content: string;
   deleteComment?: (commentId: string) => void;
@@ -196,6 +196,7 @@ const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
           {currentSetting === Settings.REPORT && (
             <ReportSetting
               commentId={props.id}
+              recipeId={props.recipeId}
               changeSetting={changeSetting}
               closeModal={closeModal}
             />
@@ -255,11 +256,17 @@ type Report = {
 
 type ReportSettingProps = {
   commentId: string;
+  recipeId: string;
   changeSetting: (setting: SettingState) => void;
   closeModal: () => void;
 };
 
-const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingProps) => {
+const ReportSetting = ({
+  commentId,
+  recipeId,
+  changeSetting,
+  closeModal
+}: ReportSettingProps) => {
   const { c } = useColorizer();
   const { black, white, primary } = colors;
   const { t } = useTranslation("report");
@@ -293,6 +300,7 @@ const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingPr
       reportMutate(
         {
           commentId: commentId,
+          recipeId: recipeId,
           reasonCodes: [...report.reasonCodes],
           additionalDetails: report.additionalDetails
         },

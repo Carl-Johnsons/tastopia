@@ -407,7 +407,7 @@ public class RecipeController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(UserReportCommentResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> UserReportComment([FromBody] UserReportCommentDTO userReportCommentDTO)
+    public async Task<IActionResult> UserReportComment([FromBody] UserReportCommentDTO dto)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
@@ -415,9 +415,10 @@ public class RecipeController : BaseApiController
         var result = await _sender.Send(new UserReportCommentCommand
         {
             ReporterId = Guid.Parse(subjectId!),
-            CommentId = userReportCommentDTO.CommentId,
-            ReasonCodes = userReportCommentDTO.ReasonCodes,
-            AdditionalDetails = userReportCommentDTO.AdditionalDetails,
+            CommentId = dto.CommentId,
+            RecipeId = dto.RecipeId,
+            ReasonCodes = dto.ReasonCodes,
+            AdditionalDetails = dto.AdditionalDetails,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

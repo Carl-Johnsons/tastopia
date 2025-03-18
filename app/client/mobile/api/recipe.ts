@@ -203,11 +203,12 @@ const useReportRecipe = () => {
 
 const useReportComment = () => {
   return useMutation<IUserReportRecipeResponse, Error, IUserReportCommentDTO>({
-    mutationFn: async ({ commentId, reasonCodes, additionalDetails }) => {
+    mutationFn: async ({ commentId, recipeId, reasonCodes, additionalDetails }) => {
       const { data } = await protectedAxiosInstance.post(
         "/api/recipe/user-report-comment",
         {
           commentId,
+          recipeId,
           reasonCodes,
           additionalDetails
         }
