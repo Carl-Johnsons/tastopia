@@ -108,7 +108,7 @@ const DataTable = () => {
         progressPending={isLoading}
         pagination
         paginationServer
-        paginationTotalRows={data?.metadata.totalRow}
+        paginationTotalRows={data?.metadata?.totalRow}
         onChangePage={handlePageChange}
         onChangeRowsPerPage={handlePerRowsChange}
         onSort={handleSort}
