@@ -262,7 +262,7 @@ export const InteractiveButton = ({
         className={`relative flex items-center gap-1 ${className}`}
         onClick={onClick}
       >
-        {isLoading ? <LoadingIcon /> : icon}
+        {isLoading ? <LoadingIcon className="text-white_black" /> : icon}
 
         {!noText && (
           <span
