@@ -35,7 +35,7 @@ const LeftSidebar = () => {
   };
 
   return (
-    <section className='bg-white_black100 custom-scrollbar sticky right-0 top-0 flex h-screen min-w-[276px] flex-col justify-between overflow-y-auto p-2 pt-28 shadow-lg shadow-gray-300 dark:shadow-none max-sm:hidden'>
+    <section className='bg-white_black100 custom-scrollbar sticky right-0 top-0 flex h-screen min-w-[276px] flex-col justify-between overflow-y-auto p-2 pt-28 shadow-lg shadow-gray-300 dark:shadow-none max-md:hidden'>
       <div className='flex flex-col'>
         <div className='flex h-full flex-col gap-6'>
           {sidebarLinks.map(link => {
