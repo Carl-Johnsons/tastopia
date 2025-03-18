@@ -22,4 +22,7 @@ public class CommonReportEntity : BaseMongoDBAuditableEntity
 public class UserReportRecipe : CommonReportEntity { }
 
 [Collection("UserReportComment")]
-public class UserReportComment : CommonReportEntity { }
+public class UserReportComment : CommonReportEntity
+{
+    public Guid RecipeId { get; set; }
+}

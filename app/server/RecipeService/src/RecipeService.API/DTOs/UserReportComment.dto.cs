@@ -7,6 +7,8 @@ public class UserReportCommentDTO
     [Required]
     [JsonProperty("commentId")]
     public Guid CommentId { get; set; }
+    [JsonProperty("recipeId")]
+    public Guid RecipeId { get; set; }
     [Required]
     [JsonProperty("reasonCodes")]
     [NonEmptyList]
