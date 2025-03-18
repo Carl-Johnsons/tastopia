@@ -261,7 +261,7 @@ type ReportSettingProps = {
 
 const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingProps) => {
   const { c } = useColorizer();
-  const { black, white, primary } = colors;
+  const { black, white, primary, gray } = colors;
   const { t } = useTranslation("report");
   const currentLanguage = i18n.languages[0];
   const [report, setReport] = useState<Report>({
@@ -382,6 +382,7 @@ const ReportSetting = ({ commentId, changeSetting, closeModal }: ReportSettingPr
                   color: c(black.DEFAULT, white.DEFAULT)
                 }}
                 placeholder={t("additionalDetails")}
+                placeholderTextColor={gray[500]}
               />
             </View>
           }
