@@ -13,7 +13,7 @@ public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "recipe";
     private static List<string> EXPORT_FILE_PATHS = [
-        "../../../../client/mobile/src/generated",
+        "../../../../client/mobile/generated",
         "../../../../client/website/src/generated"
     ];
 
@@ -78,7 +78,7 @@ public static class ReinforcedTypingsExtension
                   .WithPublicProperties()
                   .AutoI()
                   .DontIncludeToNamespace()
-                  .ExportTo($"mobile/src/generated/interfaces/{FILE_NAME}.interface.d.ts");
+                  .ExportTo($"mobile/generated/interfaces/{FILE_NAME}.interface.d.ts");
         });
 
         builder.ExportAsEnums([], config =>
@@ -86,7 +86,7 @@ public static class ReinforcedTypingsExtension
             config.FlattenHierarchy()
                   .DontIncludeToNamespace()
                   .UseString()
-                  .ExportTo($"mobile/src/generated/enums/{FILE_NAME}.enum.ts");
+                  .ExportTo($"mobile/generated/enums/{FILE_NAME}.enum.ts");
         });
     }
 
