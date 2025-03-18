@@ -1,5 +1,4 @@
 ﻿using TrackingService.API.DTOs;
-using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 using Contract.Extension;
@@ -9,7 +8,7 @@ namespace TrackingService.API.Extensions;
 public static class ReinforcedTypingsExtension
 {
     private static string FILE_NAME = "tracking";
-    private static string EXPORT_FILE_PATH = "../../../../client/mobile/src/generated";
+    private static string EXPORT_FILE_PATH = "../../../../client/mobile/generated";
     public static void ConfigureReinforcedTypings(ConfigurationBuilder builder)
     {
         List<Type> errorsTypes = [];
