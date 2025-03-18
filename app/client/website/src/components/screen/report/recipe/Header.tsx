@@ -6,7 +6,7 @@ import { DownvoteIcon, UpvoteIcon } from "@/components/shared/icons";
 import { useState } from "react";
 import { DisableRecipeButton, RestoreRecipeButton } from "./Button";
 import { IAdminGetUserDetailResponse } from "@/generated/interfaces/user.interface";
-import Image from "@/components/shared/common/Image";
+import Image from "next/image";
 
 type HeaderProps = {
   recipeId: string;
