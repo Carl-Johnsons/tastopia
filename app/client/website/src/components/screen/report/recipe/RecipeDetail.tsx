@@ -50,10 +50,7 @@ export default async function RecipeDetail({ recipe, className }: Props) {
         cookTime={cookTime}
       />
       <div className='w-full border-b border-gray-200 dark:border-gray-600' />
-      <Comments
-        comments={comments}
-        numberOfComment={numberOfComment}
-      />
+      <Comments recipeId={id} />
     </div>
   );
 }

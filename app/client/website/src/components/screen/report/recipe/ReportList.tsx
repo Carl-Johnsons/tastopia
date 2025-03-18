@@ -8,11 +8,7 @@ import { useState } from "react";
 import { IReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import { faker } from "@faker-js/faker";
 import { format } from "date-fns";
-import {
-  MarkAsCompletedButton,
-  RejectButton,
-  RestoreButton
-} from "./Button";
+import { MarkAsCompletedButton, RejectButton, RestoreButton } from "./Button";
 
 type ReportListProps = {
   reports: IReportRecipeResponse[];
@@ -21,7 +17,7 @@ type ReportListProps = {
 
 export default function ReportList({ reports, className }: ReportListProps) {
   return (
-    <div className={`flex flex-col gap-8 overflow-x-scroll ${className}`}>
+    <div className={`flex gap-8 overflow-x-scroll xl:flex-col ${className}`}>
       {reports.map(
         ({ id, additionalDetail, reasons, status, reporterUsername, createdAt }) => (
           <ReportItem
@@ -64,7 +60,7 @@ const ReportItem = ({
 
   return (
     <div
-      className={`flex h-fit max-w-[400px] flex-col gap-3.5 rounded-md p-5 dark:border ${isActive ? "bg-red-200 dark:border-red dark:bg-transparent" : "bg-green-100 dark:border-green dark:bg-transparent"}`}
+      className={`flex h-fit max-w-[400px] flex-col gap-3.5 rounded-md p-5 dark:border min-w-[340px] xl:min-w-fit ${isActive ? "bg-red-200 dark:border-red dark:bg-transparent" : "bg-green-100 dark:border-green dark:bg-transparent"}`}
     >
       <div className='flex justify-between'>
         <StatusText
@@ -72,7 +68,7 @@ const ReportItem = ({
           coloring
         />
         {isActive ? (
-        <div className='flex gap-2'>
+          <div className='flex gap-2'>
             <MarkAsCompletedButton
               title='Mark as completed'
               targetId={reportId}
@@ -105,7 +101,7 @@ const ReportItem = ({
         {reportCodes.map((code, index) => (
           <span
             key={code + index}
-            className='bg-white_black w-fit rounded-full px-3 py-1 font-medium text-sm text-primary'
+            className='bg-white_black w-fit rounded-full px-3 py-1 text-sm font-medium text-primary'
           >
             {code}
           </span>
@@ -126,7 +122,7 @@ const ReportItem = ({
             router.push("/users/bb06e4ec-f371-45d5-804e-22c65c77f67d");
           }}
         >
-          <span className='font-bold text-sm text-gray-700 hover:text-black dark:text-gray-400 dark:hover:text-white'>
+          <span className='text-sm font-bold text-gray-700 hover:text-black dark:text-gray-400 dark:hover:text-white'>
             {reporter}
           </span>
         </button>
