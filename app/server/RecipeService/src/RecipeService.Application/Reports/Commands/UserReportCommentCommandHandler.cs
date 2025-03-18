@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
-using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
@@ -9,6 +8,7 @@ public class UserReportCommentCommand : IRequest<Result<UserReportCommentRespons
 {
     public Guid ReporterId { get; set; }
     public Guid CommentId { get; set; }
+    public Guid RecipeId { get; set; }
     public List<string> ReasonCodes { get; set; } = null!;
     public string? AdditionalDetails { get; set; }
 }
@@ -28,65 +28,71 @@ public class UserReportCommentCommandHandler : IRequestHandler<UserReportComment
 
     public async Task<Result<UserReportCommentResponse?>> Handle(UserReportCommentCommand request, CancellationToken cancellationToken)
     {
-        try
+        var reporterId = request.ReporterId;
+        var commentId = request.CommentId;
+        var recipeId = request.RecipeId;
+        var reasonCodes = request.ReasonCodes;
+        var additionalDetails = request.AdditionalDetails;
+
+        if (reporterId == Guid.Empty || commentId == Guid.Empty || reasonCodes == null || reasonCodes.Count == 0)
         {
-            var reporterId = request.ReporterId;
-            var commentId = request.CommentId;
-            var reasonCodes = request.ReasonCodes;
-            var additionalDetails = request.AdditionalDetails;
+            return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NullParameter);
+        }
 
-            if (reporterId == Guid.Empty || commentId == Guid.Empty || reasonCodes == null || reasonCodes.Count == 0)
-            {
-                return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NullParameter);
-            }
+        var recipeCollection = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe));
 
-            var comment = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable().SelectMany(r => r.Comments).Where(c => c.Id == commentId).SingleOrDefault();
 
-            if (comment == null)
-            {
-                return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NotFound, "Not found comment");
-            }
+        var filter = Builders<Recipe>.Filter.And(
+                Builders<Recipe>.Filter.Eq(r => r.Id, recipeId),
+                Builders<Recipe>.Filter.ElemMatch(r => r.Comments, c => c.Id == commentId)
+            );
 
-            var report = _context.UserReportComments.Where(r => r.AccountId == reporterId && r.EntityId == commentId).FirstOrDefault();
-            if (report != null)
-            {
-                _context.UserReportComments.Remove(report);
-                await _unitOfWork.SaveChangeAsync();
-                return Result<UserReportCommentResponse?>.Success(new UserReportCommentResponse
-                {
-                    Report = report,
-                    IsRemoved = true,
-                });
-            }
+        var projection = Builders<Recipe>.Projection.Expression(r => r.Comments.FirstOrDefault(c => c.Id == commentId));
 
-            var codes = ReportReasonData.CommentReportReasons.Where(r => reasonCodes.Contains(r.Code)).Select(r => r.Code).ToList();
-            if (codes == null || codes.Count == 0)
-            {
-                return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NotFound, "Not found reason codes.");
-            }
+        var comment = recipeCollection.Find(filter).Project(projection).SingleOrDefault();
 
-            report = new UserReportComment
-            {
-                AccountId = reporterId,
-                EntityId = commentId,
-                ReasonCodes = codes,
-                AdditionalDetails = additionalDetails,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-            };
+        if (comment == null)
+        {
+            return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NotFound, "Comment not found");
+        }
 
-            _context.UserReportComments.Add(report);
+        var report = _context.UserReportComments.Where(r => r.AccountId == reporterId && r.EntityId == commentId).FirstOrDefault();
+        if (report != null)
+        {
+            _context.UserReportComments.Remove(report);
             await _unitOfWork.SaveChangeAsync();
             return Result<UserReportCommentResponse?>.Success(new UserReportCommentResponse
             {
                 Report = report,
-                IsRemoved = false
+                IsRemoved = true,
             });
         }
-        catch (Exception ex)
+
+        var codes = ReportReasonData.CommentReportReasons.Where(r => reasonCodes.Contains(r.Code)).Select(r => r.Code).ToList();
+        if (codes == null || codes.Count == 0)
         {
-            _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
-            return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.AddUserReportCommentFail, ex.Message);
+            return Result<UserReportCommentResponse?>.Failure(UserReportCommentError.NotFound, "Not found reason codes.");
         }
+
+        report = new UserReportComment
+        {
+            AccountId = reporterId,
+            EntityId = commentId,
+            RecipeId = recipeId,
+            ReasonCodes = codes,
+            AdditionalDetails = additionalDetails,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+        };
+
+        _context.UserReportComments.Add(report);
+        await _unitOfWork.SaveChangeAsync();
+
+        return Result<UserReportCommentResponse?>.Success(new UserReportCommentResponse
+        {
+            Report = report,
+            IsRemoved = false
+        });
+
     }
 }
