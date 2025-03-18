@@ -6,18 +6,15 @@ import { IAdminReportRecipeResponse } from "@/generated/interfaces/recipe.interf
 import useDebounce from "@/hooks/useDebounce";
 import { format } from "date-fns";
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
-import {
-  MarkAsCompletedButton,
-  RejectButton,
-  RestoreButton,
-  ViewDetailButton
-} from "./Button";
+import { MarkAsCompletedButton, ReopenReportButton, ViewDetailButton } from "./Button";
 import { customStyles } from "@/constants/styles";
 import { ChevronRight } from "lucide-react";
 import NoRecord from "@/components/ui/NoRecord";
 import SearchBar from "../../users/SearchBar";
+import { ReportStatus } from "@/constants/reports";
+import DataTableProvider, { DataTableContext, OnChangeActiveFn } from "./Provider";
 
 const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
@@ -82,20 +79,27 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
     name: "Status",
     sortable: true,
+    center: true,
     selector: row => row.status,
     cell: ({ status }) => {
-      return <StatusText status={status as any} />;
+      return (
+        <StatusText
+          status={status as ReportStatus}
+          coloring
+        />
+      );
     }
   },
   {
     name: "Actions",
     center: true,
     width: "300px",
-    cell: ({ recipeId, status }) => {
+    cell: ({ recipeId, reportId, status }) => {
       return (
         <ActionButtons
+          reportId={reportId}
           recipeId={recipeId}
-          isActive={true}
+          status={status as ReportStatus}
         />
       );
     }
@@ -104,56 +108,58 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
 
 type ActionButtonsProps = {
   recipeId: string;
-  isActive: boolean;
+  reportId: string;
+  status: ReportStatus;
 };
 
-const ActionButtons = ({ recipeId, isActive }: ActionButtonsProps) => {
+const ActionButtons = ({ reportId, recipeId, status }: ActionButtonsProps) => {
+  const { onChangeActive } = useContext(DataTableContext) as DataTableContext;
+
   return (
     <div className='flex gap-2'>
       <ViewDetailButton
-        title='Detail'
+        title='View detail'
         targetId={recipeId}
       />
-      <RestoreButton
-        title='Restore'
-        targetId={recipeId}
-      />
-      <MarkAsCompletedButton
-        title='Mark as completed'
-        targetId={recipeId}
-      />
-      <RejectButton
-        title='Reject'
-        targetId={recipeId}
-      />
+      {status === ReportStatus.Done ? (
+        <ReopenReportButton
+          title='Restore'
+          targetId={reportId}
+          onSuccess={() => {
+            onChangeActive({ reportId, value: true });
+          }}
+        />
+      ) : (
+        <MarkAsCompletedButton
+          title='Mark as completed'
+          targetId={reportId}
+          onSuccess={() => {
+            onChangeActive({ reportId, value: false });
+          }}
+        />
+      )}
     </div>
   );
 };
-
-export type Status = "Done" | "Pending";
 
 export const StatusText = ({
   status,
   coloring
 }: {
-  status: Status;
+  status: ReportStatus;
   coloring?: boolean;
 }) => {
   return (
-    <div className='flex-center flex gap-2 min-w-[75px]'>
-      {status === "Done" ? (
+    <div className='flex min-w-[75px] items-center gap-1 text-sm'>
+      {status === ReportStatus.Done ? (
         <>
-          <div className='size-3 rounded-full bg-green-500' />
-          <span className={`text-sm font-medium ${coloring && "text-green-500"}`}>
-            Done
-          </span>
+          <div className='size-2 rounded-full bg-green-500' />
+          <span className={`font-medium ${coloring && "text-green-500"}`}>Done</span>
         </>
       ) : (
         <>
-          <div className='size-3 rounded-full bg-red-500' />
-          <span className={`text-sm font-medium ${coloring && "text-red-500"}`}>
-            Pending
-          </span>
+          <div className='size-2 rounded-full bg-red-500' />
+          <span className={`font-medium ${coloring && "text-red-500"}`}>Pending</span>
         </>
       )}
     </div>
@@ -175,13 +181,15 @@ export default function Table() {
   const [skip, setSkip] = useState(0);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("DESC");
-  const [lang, setLang] = useState("vi");
+  const [lang, setLang] = useState("en");
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
 
-  console.log("debouncedValue", debouncedValue);
-
-  const { data, isLoading, refetch } = useGetRecipeReports({
+  const {
+    data: fetchedData,
+    isLoading,
+    refetch
+  } = useGetRecipeReports({
     skip,
     sortBy,
     sortOrder,
@@ -190,18 +198,18 @@ export default function Table() {
     keyword: debouncedValue
   });
 
-  console.log("data", data);
-
-  const reports = useMemo(() => {
-    return data?.paginatedData || [];
-  }, [data]);
+  const totalRow = useMemo(
+    () => (fetchedData?.metadata?.totalRow ? fetchedData.metadata.totalRow : 0),
+    [fetchedData]
+  );
+  const [reports, setReports] = useState<IAdminReportRecipeResponse[]>([]);
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
   }, []);
 
   const handleChangePage = useCallback((page: number) => {
-    setSkip(page);
+    setSkip(page - 1);
   }, []);
 
   const onSort = useCallback(
@@ -223,9 +231,33 @@ export default function Table() {
     setSkip(0);
   }, []);
 
+  const onChangeActive = useCallback<OnChangeActiveFn>(({ reportId, value }) => {
+    setReports(prev => {
+      return prev.map(report => {
+        if (report.reportId !== reportId) return report;
+
+        return {
+          ...report,
+          status: value ? ReportStatus.Pending : ReportStatus.Done
+        };
+      });
+    });
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({
+      onChangeActive
+    }),
+    [onChangeActive]
+  );
+
   useEffect(() => {
     refetch();
   }, [skip, sortBy, sortOrder, debouncedValue, limit, keyword]);
+
+  useEffect(() => {
+    setReports(fetchedData?.paginatedData || []);
+  }, [fetchedData]);
 
   return (
     <>
@@ -241,24 +273,26 @@ export default function Table() {
         </div>
       </div>
 
-      <DataTable
-        customStyles={customStyles}
-        columns={columns}
-        data={reports}
-        responsive
-        striped
-        highlightOnHover
-        progressPending={isLoading}
-        progressComponent={<Loader />}
-        noDataComponent={<NoRecord />}
-        pagination
-        paginationServer
-        onChangeRowsPerPage={handleChangeRowPerPage}
-        onChangePage={handleChangePage}
-        paginationTotalRows={data?.metadata?.totalRow}
-        sortServer
-        onSort={onSort}
-      />
+      <DataTableProvider value={contextValue}>
+        <DataTable
+          customStyles={customStyles}
+          columns={columns}
+          data={reports}
+          responsive
+          striped
+          highlightOnHover
+          progressPending={isLoading}
+          progressComponent={<Loader />}
+          noDataComponent={<NoRecord />}
+          pagination
+          paginationServer
+          onChangeRowsPerPage={handleChangeRowPerPage}
+          onChangePage={handleChangePage}
+          paginationTotalRows={totalRow}
+          sortServer
+          onSort={onSort}
+        />
+      </DataTableProvider>
     </>
   );
 }

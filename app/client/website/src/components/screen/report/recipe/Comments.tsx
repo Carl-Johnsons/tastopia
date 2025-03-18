@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import Loader from "@/components/ui/Loader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IRecipeCommentResponse } from "@/generated/interfaces/recipe.interface";
-import { format, formatRelative } from "date-fns";
+import { formatRelative } from "date-fns";
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -84,7 +84,7 @@ function Comment({ comment }: CommentProps) {
 
   const handleRestore = useCallback(() => {
     setIsActive(true);
-    toast.success("Restored comment successfully");
+    toast.success("Restored comment successfully.");
   }, []);
 
   if (isLoading || !author) {
