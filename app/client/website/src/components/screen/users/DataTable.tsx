@@ -91,6 +91,7 @@ const DataTable = () => {
               ...column,
               cell: (user: IAdminGetUserResponse) => (
                 <ActionButtons
+                  key={user.accountId}
                   accountId={user.accountId}
                   isActive={user.isAccountActive}
                   onStatusUpdate={handleStatusUpdate}
@@ -117,7 +118,5 @@ const DataTable = () => {
     </>
   );
 };
-
-export default DataTable;
 
 export default DataTable;

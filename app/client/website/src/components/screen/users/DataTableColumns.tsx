@@ -22,20 +22,25 @@ export const usersColumns = [
   {
     name: "Gmail",
     selector: (user: IAdminGetUserResponse) => user?.accountEmail ?? "",
-    hide: 1234
+    hide: 1234,
+    sortable: true
   },
   {
     name: "Phone number",
     selector: (user: IAdminGetUserResponse) => user?.accountPhoneNumber ?? "",
-    hide: 1026
+    hide: 1026,
+    sortable: true
   },
   {
     name: "Date of birth",
     selector: (user: IAdminGetUserResponse) => user?.dob ?? "",
-    hide: 1612
+    hide: 1612,
+    sortable: true
   },
   {
     name: "Status",
+    hide: 600,
+    sortable: true,
     cell: (user: IAdminGetUserResponse) => <Status isActive={user.isAccountActive} />
   },
   {
@@ -102,7 +107,8 @@ export const ActionButtons = ({
         className='rounded-full bg-primary text-white hover:bg-primary/90 dark:bg-primary/80'
         onClick={handleDetailClick}
       >
-        <Eye className='mr-2 size-4' /> Detail
+        <Eye className='mr-1 size-4' />
+        <p className='mt-1 max-sm:hidden'>Detail</p>
       </Button>
 
       {active ? (
@@ -110,14 +116,16 @@ export const ActionButtons = ({
           className='rounded-full bg-red text-white hover:bg-red/90 dark:bg-red/80'
           onClick={handleToggleStatus}
         >
-          <Ban className='mr-2 size-4' /> Disable
+          <Ban className='mr-1 size-4' />
+          <p className='mt-1 max-sm:hidden'>Disable</p>
         </Button>
       ) : (
         <Button
           className='rounded-full bg-green text-white hover:bg-green/90 dark:bg-green/80'
           onClick={handleToggleStatus}
         >
-          <RotateCcw className='mr-2 size-4' /> Restore
+          <RotateCcw className='mr-1 size-4' />
+          <p className='mt-1 max-sm:hidden'>Restore</p>
         </Button>
       )}
     </div>
