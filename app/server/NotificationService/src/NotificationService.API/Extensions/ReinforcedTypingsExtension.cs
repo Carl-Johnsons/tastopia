@@ -1,5 +1,4 @@
 ﻿using Contract.Constants;
-using Contract.DTOs;
 using Contract.Extension;
 using NotificationService.Domain.Errors;
 using NotificationService.Domain.Responses;

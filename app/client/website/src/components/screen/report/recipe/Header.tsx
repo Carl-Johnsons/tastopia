@@ -37,7 +37,7 @@ const Header = ({
         alt={`Image of ${title}`}
         width={360}
         height={446}
-        className='h-[300px] w-full shrink grow rounded-md object-cover lg:h-[446px] lg:min-w-[360px]'
+        className='h-[300px] w-full shrink grow rounded-md object-cover xl:h-[446px] xl:max-w-[360px]'
       />
       <div className='flex grow-[6] flex-col gap-3'>
         <div className='flex items-center gap-3'>
