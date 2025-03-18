@@ -1,7 +1,6 @@
 import Header from "./Header";
 import { IRecipe } from "../../../../../../mobile/generated/interfaces/recipe.interface";
 import { getUserById } from "@/actions/user.action";
-import { IUser } from "../../../../../../mobile/generated/interfaces/user.interface";
 import Content from "./Content";
 import Comments from "./Comments";
 
@@ -22,12 +21,10 @@ export default async function RecipeDetail({ recipe, className }: Props) {
     ingredients,
     serves,
     steps,
-    cookTime,
-    comments,
-    numberOfComment
+    cookTime
   } = recipe;
 
-  const author = (await getUserById(authorId)) as IUser;
+  const author = await getUserById(authorId);
 
   return (
     <div

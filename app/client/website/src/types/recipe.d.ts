@@ -1,3 +1,5 @@
+import { RecipeError } from "@/generated/enums/recipe.error.enum";
+import { IErrorResponseDTO as IBaseErrorResponseDTO } from "@/generated/interfaces/common.interface";
 
 export type GetRecipeCommentResponse = {
   paginatedData: CommentType[];
@@ -18,4 +20,8 @@ export type RecipeReport = {
   reportCodes: string[];
   createdDate: string;
   status: "PENDING" | "DONE";
+};
+
+export interface IErrorResponseDTO extends IBaseErrorResponseDTO {
+  message: RecipeError 
 };

@@ -41,7 +41,7 @@ const DataTable = () => {
   }
 
   const handlePerRowsChange = (newPerPage: number) => {
-    setLimit(newPerPage)
+    setLimit(newPerPage);
   }
 
   const handleSort = (selectedColumn: TableColumn<IAdminGetUserResponse>, sortDirection: SortOrder) => {
