@@ -124,7 +124,7 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminRestoreRecipe([FromQuery] EntityIdDTO dto)
     {
-        var result = await _sender.Send(new RestoreEntityCommand
+        var result = await _sender.Send(new RestoreRecipeCommand
         {
             Id = dto.Id
         });
@@ -164,6 +164,38 @@ public class AdminController : BaseApiController
 
         result.ThrowIfFailure();
         return Ok(result.Value);
+    }
+
+    [HttpDelete("comment")]
+    [Produces("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminDisableComment([FromQuery] Guid recipeId, [FromQuery] Guid commentId)
+    {
+        var result = await _sender.Send(new DisableCommentCommand
+        {
+            CommentId = commentId,
+            RecipeId = recipeId
+        });
+
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [HttpPut("comment/restore")]
+    [Produces("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminRestoreComment([FromQuery] Guid recipeId, [FromQuery] Guid commentId)
+    {
+        var result = await _sender.Send(new RestoreCommentCommand
+        {
+            CommentId = commentId,
+            RecipeId = recipeId
+        });
+
+        result.ThrowIfFailure();
+        return NoContent();
     }
 
     [HttpPost("get-user-activities")]
