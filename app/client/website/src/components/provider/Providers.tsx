@@ -1,25 +1,20 @@
 "use client";
 
-import { ThemeProvider} from "@/context/ThemeProvider";
+import { ThemeProvider } from "@/context/ThemeProvider";
 import { SessionProvider } from "next-auth/react";
-import {
-  isServer,
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { isServer, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import StoreProvider from "./StoreProvider";
-import { I18nextProvider } from "react-i18next";
-import i18n from "@/i18n/i18next";
 import { ReactNode } from "react";
 import ToastProvider from "./ToastProvider";
+import { NextIntlClientProvider } from "next-intl";
 
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 60 * 1000,
-      },
-    },
+        staleTime: 60 * 1000
+      }
+    }
   });
 }
 
@@ -46,12 +41,10 @@ export default function Providers({ children }: { children: ReactNode }) {
     <StoreProvider>
       <SessionProvider>
         <QueryClientProvider client={queryClient}>
-        <I18nextProvider i18n={i18n}>
           <ThemeProvider>
-            <ToastProvider/>
+            <ToastProvider />
             {children}
-            </ThemeProvider>
-          </I18nextProvider>
+          </ThemeProvider>
         </QueryClientProvider>
       </SessionProvider>
     </StoreProvider>

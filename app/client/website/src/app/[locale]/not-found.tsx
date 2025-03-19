@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import React from "react";
 
 const NotFound = () => {

@@ -1,12 +1,6 @@
 import navbarEn from "@/locales/en/navbar.json";
-import navbarVn from "@/locales/vn/navbar.json";
+import navbarVi from "@/locales/vi/navbar.json";
 import usersEn from "@/locales/en/users.json";
-import usersVn from "@/locales/vn/users.json";
+import usersVi from "@/locales/vi/users.json";
 
-
-export default {
-  navbarEn,
-  navbarVn,
-  usersEn,
-  usersVn
-};
+export default { navbarEn, navbarVi, usersEn, usersVi };
