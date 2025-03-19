@@ -44,12 +44,12 @@ internal class CommentData
         return new DateTime(year, month, day, hour, minute, second);
     }
 
-    internal static Comment GetRandomComment()
+    internal static Comment GetRandomComment(Guid? id)
     {
         var time = GetRandomDateTime();
         var comment = new Comment
         {
-            Id = Guid.NewGuid(),
+            Id = id ?? Guid.NewGuid(),
             Content = GetRandomCommentContent(),
             CreatedAt = time,
             UpdatedAt = time,

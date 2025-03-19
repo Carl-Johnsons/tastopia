@@ -219,21 +219,28 @@ internal class MockupData
 
         int wrongCommentRate = 10;
         int wrongCommentChance;
+        Guid commentId;
+
         for (int i = 0; i <= numberOfComment; i++)
         {
             var randomIndexAccount = GetRandomExcluding(seedAccounts.Count, currentAuthorIndex);
             wrongCommentChance = random.Next(100);
             Comment comment;
 
+            do
+            {
+                commentId = Guid.NewGuid();
+            } while (recipe.Comments.Any(c => c.Id == commentId));
+
             if (wrongCommentChance < wrongCommentRate)
             {
                 var wrongComment = CommentData.GetRandomWrongCommentContent();
 
-                AddUserReports(recipe, wrongComment, seedAccounts, random);
+                AddUserReports(recipe, commentId, wrongComment, seedAccounts, random);
                 var time = CommentData.GetRandomDateTime();
                 comment = new Comment
                 {
-                    Id = Guid.NewGuid(),
+                    Id = commentId,
                     Content = GetRandomCommentContent(),
                     CreatedAt = time,
                     UpdatedAt = time,
@@ -242,7 +249,7 @@ internal class MockupData
             }
             else
             {
-                comment = CommentData.GetRandomComment();
+                comment = CommentData.GetRandomComment(commentId);
             }
 
             comment.AccountId = Guid.Parse(seedAccounts[randomIndexAccount].Id);
@@ -305,7 +312,7 @@ internal class MockupData
         }
     }
 
-    private void AddUserReports(Recipe recipe, SeedWrongComment seedWrongComment, List<SeedAccount> seedAccounts, Random random)
+    private void AddUserReports(Recipe recipe, Guid commentId, SeedWrongComment seedWrongComment, List<SeedAccount> seedAccounts, Random random)
     {
         int numberOfReports = random.Next(5) + 1;
         // Exclude the author from potential reporters
@@ -327,7 +334,8 @@ internal class MockupData
             {
                 AdditionalDetails = seedWrongComment.AdditionalDetails[randomDetailIndex],
                 ReasonCodes = reasonCodesSubset,
-                EntityId = recipe.Id,
+                RecipeId = recipe.Id,
+                EntityId = commentId,
                 Status = ReportStatus.Pending,
                 AccountId = Guid.Parse(reportingAccounts[idx].Id)
             });

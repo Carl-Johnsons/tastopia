@@ -8,6 +8,7 @@ using MongoDB.Driver;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
+using System.Text.RegularExpressions;
 using UserProto;
 
 namespace RecipeService.Application.Reports.Queries;
@@ -39,10 +40,10 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
     {
         var keyword = request.paginatedDTO?.Keyword;
         var limit = request.paginatedDTO?.Limit ?? RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT;
+        var normalizedLangue = LanguageUtility.ToIso6391(request.Lang);
 
         var userReportCollection = _context.GetDatabase().GetCollection<UserReportRecipe>(nameof(UserReportRecipe));
         var recipeCollection = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe));
-        var normalizedLangue = LanguageUtility.ToIso6391(request.Lang);
 
         var pipeline = userReportCollection.Aggregate()
             .Lookup<UserReportRecipe, Recipe, UserReportWithRecipe>(foreignCollection: recipeCollection,
@@ -65,8 +66,9 @@ public class GetRecipeReportQueryHandler : IRequestHandler<GetRecipeReportsQuery
                                                                                                  == LanguageValidation.Vi ? rrr.Vi.ToLower().Contains(keyword) : rrr.En.ToLower().Contains(keyword))
                                                                                    .Select(rrr => rrr.Code)
                                                                                    .ToList();
-
-            var titleFilter = Builders<UserReportWithRecipe>.Filter.Regex(urwr => urwr.Recipe!.Title, new BsonRegularExpression(keyword, "i"));
+            // Escape the keyword to handle special regex characters like *
+            var escapedKeyword = Regex.Escape(keyword);
+            var titleFilter = Builders<UserReportWithRecipe>.Filter.Regex(urwr => urwr.Recipe!.Title, new BsonRegularExpression(escapedKeyword, "i"));
             var reasonFilter = Builders<UserReportWithRecipe>.Filter.In("ReasonCodes", searchRecipeReportReasonCode);
             var authorIdFilter = Builders<UserReportWithRecipe>.Filter.In(urwr => urwr.Recipe!.AuthorId, searchAuthorIds);
             var reporterIdFilter = Builders<UserReportWithRecipe>.Filter.In(urwr => urwr.AccountId, searchAuthorIds);
