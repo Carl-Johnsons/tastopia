@@ -10,7 +10,7 @@ import { IAdminGetUserDetailResponse, IPaginatedAdminGetUserListResponse } from 
 
 export async function getUserById(id: string) {
   try {
-    const url = "/api/user/admin-get-user-detail";
+    const url = "/api/admin/user/get-user-detail";
     const { data } = await protectedAxiosInstance.post<IAdminGetUserDetailResponse>(url, {
       accountId: id
     });
@@ -24,7 +24,7 @@ export async function getUserById(id: string) {
 
 export async function getUserActivitiesById(id: string, language: string) {
   try {
-    const url = "/api/recipe/admin-get-user-activities";
+    const url = "/api/admin/recipe/get-user-activities";
     const { data } = await protectedAxiosInstance.post(url, {
       accountId: id,
       language,
@@ -94,7 +94,7 @@ export async function getAdminUsers(
   limit = 6
 ) {
   try {
-    const url = `/api/user/admin-get-users?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&keyword=${encodeURIComponent(keyword)}`;
+    const url = `/api/admin/user/get-users?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&keyword=${encodeURIComponent(keyword)}`;
 
     const { data } = await protectedAxiosInstance.get(url);
 

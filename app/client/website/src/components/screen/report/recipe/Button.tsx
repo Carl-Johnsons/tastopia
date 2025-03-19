@@ -15,7 +15,10 @@ import {
   TooltipTrigger
 } from "@/components/ui/tooltip";
 import { ReportType } from "@/constants/reports";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
+import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
+import { cva } from "class-variance-authority";
 import { Check, RotateCw, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { ReactNode, useCallback, useMemo, useState } from "react";
@@ -146,8 +149,6 @@ export const RestoreRecipeButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`bg-green-400 hover:bg-green-500 ${className}`}
-      noText
-      toolTip
     />
   );
 };
@@ -229,11 +230,38 @@ export const DisableRecipeButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`bg-red-400 hover:bg-red-500 ${className}`}
-      noText
-      toolTip
     />
   );
 };
+
+const buttonVariants = cva(
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+        outline:
+          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+        ghost: "hover:bg-accent hover:text-accent-foreground",
+        link: "text-primary underline-offset-4 hover:underline"
+      },
+      size: {
+        default: "h-9 px-4 py-2",
+        sm: "h-8 rounded-md px-3 text-xs",
+        lg: "h-10 rounded-md px-8",
+        icon: "h-9 w-9"
+      }
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default"
+    }
+  }
+);
 
 type InteractiveButtonProps = {
   icon: ReactNode;
@@ -254,32 +282,38 @@ export const InteractiveButton = ({
   className,
   noTruncateText,
   noText,
-  toolTip
+  ...props
 }: InteractiveButtonProps) => {
-  const RenderedButton = useMemo(
+  const { width } = useWindowDimensions();
+  const toolTip = useMemo(() => width < 768 || props.toolTip, [width]);
+  const RenderedContent = useMemo(
     () => (
-      <Button
-        className={`relative flex items-center gap-1 ${className}`}
-        onClick={onClick}
-      >
-        {isLoading ? <LoadingIcon className="text-white_black" /> : icon}
+      <div className={`relative flex items-center gap-1.5`}>
+        {isLoading ? <LoadingIcon className='text-white_black' /> : icon}
 
         {!noText && (
           <span
-            className={`${!noTruncateText && "hidden 2xl:inline"} text-white_black text-sm font-medium`}
+            className={`${!noTruncateText && "hidden md:inline"} text-white_black text-sm font-medium`}
           >
             {title}
           </span>
         )}
-      </Button>
+      </div>
     ),
-    [icon, isLoading, title, onClick, className, noTruncateText, noText]
+    [icon, isLoading, title, className, noTruncateText, noText]
   );
 
   return toolTip ? (
     <TooltipProvider delayDuration={500}>
       <Tooltip>
-        <TooltipTrigger className='w-fit'>{RenderedButton}</TooltipTrigger>
+        <TooltipTrigger
+          onClick={onClick}
+          className={cn(
+            buttonVariants({ variant: "default", size: "default", className })
+          )}
+        >
+          {RenderedContent}
+        </TooltipTrigger>
         <TooltipContent className='rounded-md bg-gray-900'>
           <div className='text-sm text-white'>
             <span>{title}</span>
@@ -288,7 +322,12 @@ export const InteractiveButton = ({
       </Tooltip>
     </TooltipProvider>
   ) : (
-    RenderedButton
+    <Button
+      className={className}
+      onClick={onClick}
+    >
+      {RenderedContent}
+    </Button>
   );
 };
 

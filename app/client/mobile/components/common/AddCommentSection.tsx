@@ -22,6 +22,10 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
 
   const handleOnSubmit = useCallback(() => {
     if (!comment.trim()) return;
+    if (comment.length > 500) {
+      Alert.alert(t("commentLimit"));
+      return;
+    }
 
     createComment(
       {
@@ -57,6 +61,7 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
         editable={!isLoading}
         onSubmitEditing={handleOnSubmit}
         returnKeyType='send'
+        multiline={true}
       />
 
       {comment.trim() !== "" && (

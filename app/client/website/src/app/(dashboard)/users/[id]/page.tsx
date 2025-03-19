@@ -3,7 +3,6 @@ import { getUserActivitiesById, getUserById } from "@/actions/user.action";
 import ProfileHeader from "@/components/screen/profile/ProfileHeader";
 import ActivityFeed from "@/components/screen/profile/ActivityFeed";
 import ProfileInfo from "@/components/screen/profile/ProfileInfo";
-import ProfileSettings from "@/components/screen/profile/ProfileSettings";
 import SomeThingWentWrong from "@/components/shared/common/Error";
 
 export default async function UserProfile({ params }: ParamsProps) {
@@ -68,7 +67,7 @@ export default async function UserProfile({ params }: ParamsProps) {
     if (!mockData) {
       return (
         <div className='flex h-screen flex-col items-center justify-center'>
-          <h1 className='font-bold text-2xl'>User not found</h1>
+          <h1 className='text-2xl font-bold'>User not found</h1>
         </div>
       );
     }

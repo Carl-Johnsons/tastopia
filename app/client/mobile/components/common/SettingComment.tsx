@@ -268,7 +268,7 @@ const ReportSetting = ({
   closeModal
 }: ReportSettingProps) => {
   const { c } = useColorizer();
-  const { black, white, primary } = colors;
+  const { black, white, primary, gray } = colors;
   const { t } = useTranslation("report");
   const currentLanguage = i18n.languages[0];
   const [report, setReport] = useState<Report>({
@@ -390,6 +390,7 @@ const ReportSetting = ({
                   color: c(black.DEFAULT, white.DEFAULT)
                 }}
                 placeholder={t("additionalDetails")}
+                placeholderTextColor={gray[500]}
               />
             </View>
           }
@@ -432,6 +433,11 @@ const UpdateSetting = ({
   const handleSubmit = () => {
     if (!content) {
       Alert.alert(t("required"));
+      return;
+    }
+
+    if (content.length > 500) {
+      Alert.alert(t("commentLimit"));
       return;
     }
 
@@ -488,6 +494,7 @@ const UpdateSetting = ({
         <View className='mt-2 px-5'>
           <BottomSheetTextInput
             value={content}
+            multiline
             onChangeText={handleChangeText}
             style={{
               borderBottomWidth: 2,

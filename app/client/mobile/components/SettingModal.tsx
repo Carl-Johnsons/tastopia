@@ -604,7 +604,7 @@ export const ItemCard = ({
     ),
     <Text
       key='text'
-      className='text-black_white font-sans text-lg'
+      className='text-black_white font-sans text-lg max-sm:max-w-[300px]'
     >
       {title}
     </Text>
