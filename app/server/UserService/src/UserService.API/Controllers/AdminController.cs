@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
+using UserService.Application.UserReports.Queries;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
 using UserService.Domain.Responses;
@@ -69,6 +70,22 @@ public class AdminController : BaseApiController
             CurrentAccountId = Guid.Parse(subjectId!),
             AccountId = adminBanUserDTO.AccountId,
         });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpGet("get-user-reports")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(string), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetRecipeReports([FromQuery] GetReportReasonsDTO getReportReasonsDTO, [FromQuery] PaginatedDTO paginatedDTO)
+    {
+        var result = await _sender.Send(new GetUserReportsQuery
+        {
+            Lang = getReportReasonsDTO.Language,
+            paginatedDTO = paginatedDTO
+        });
+
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
