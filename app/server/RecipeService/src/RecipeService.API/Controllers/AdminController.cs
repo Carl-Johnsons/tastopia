@@ -59,12 +59,12 @@ public class AdminController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(AdminReportRecipeDetailResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetRecipeReportDetail([FromQuery] string? lang, [FromQuery] string recipeId)
+    public async Task<IActionResult> AdminGetRecipeReportDetail([FromQuery] string? lang, [FromQuery] Guid recipeId)
     {
         var result = await _sender.Send(new GetRecipeReportDetailQuery
         {
             Lang = lang ?? "en",
-            RecipeId = Guid.Parse(recipeId)
+            RecipeId = recipeId
         });
 
         result.ThrowIfFailure();
@@ -143,6 +143,23 @@ public class AdminController : BaseApiController
         {
             Lang = lang ?? "en",
             PaginatedDTO = paginatedDTO
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpGet("comment/reports")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(AdminReportCommentDetailResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetCommentReports([FromQuery] string? lang, [FromQuery] Guid recipeId, [FromQuery] Guid commentId)
+    {
+        var result = await _sender.Send(new GetCommentReportDetailQuery
+        {
+            Lang = lang ?? "en",
+            CommentId = commentId,
+            RecipeId = recipeId
         });
 
         result.ThrowIfFailure();

@@ -4,6 +4,7 @@ public class AdminReportCommentResponse
 {
     public Guid ReportId { get; set; }
     public Guid CommentId { get; set; }
+    public Guid RecipeId { get; set; }
     public string CommentOwnerUsername { get; set; } = null!;
     public string CommentContent { get; set; } = null!;
     public string RecipeTitle { get; set; } = null!;

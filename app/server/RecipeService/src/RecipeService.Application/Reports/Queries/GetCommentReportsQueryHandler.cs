@@ -5,10 +5,8 @@ using Contract.Utilities;
 using Google.Protobuf.Collections;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UserProto;
 
@@ -140,6 +138,7 @@ public class GetCommentReportsQueryHandler : IRequestHandler<GetCommentReportsQu
         var adminReportCommentResponse = userReportList.Select(ur => new AdminReportCommentResponse
         {
             CommentId = ur.Comment.Id,
+            RecipeId = ur.Recipe.Id,
             CommentContent = ur.Comment.Content,
             CommentOwnerUsername = mapGrpcUserResponse.Users[ur.Comment.AccountId.ToString()].AccountUsername,
             CreatedAt = ur.CreatedAt,
