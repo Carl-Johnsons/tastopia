@@ -47,7 +47,7 @@ internal class MockupData
         var backgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png";
 
         var seedUserFile = File.ReadAllText(Path.Combine(SeedDataPath, "accounts.json"));
-        var seedUsers = JsonConvert.DeserializeObject<List<SeedUser>>(seedUserFile) ?? [];
+        var seedAllUsers = JsonConvert.DeserializeObject<List<SeedUser>>(seedUserFile) ?? [];
 
         var seedWrongUserFile = File.ReadAllText(Path.Combine(SeedDataPath, "wrong-users.json"));
         var seedWrongUsers = JsonConvert.DeserializeObject<List<SeedUser>>(seedWrongUserFile) ?? [];
@@ -58,8 +58,8 @@ internal class MockupData
         var seedBioFile = File.ReadAllText(Path.Combine(SeedDataPath, "bios.json"));
         var seedBios = JsonConvert.DeserializeObject<List<string>>(seedBioFile) ?? [];
 
-        seedUsers = seedUsers.Where(u => u.RoleCode == "USER").ToList();
-        var seedAdminUsers = seedUsers.Where(u => u.RoleCode != "USER").ToList();
+        var seedUsers = seedAllUsers.Where(u => u.RoleCode == "USER").ToList();
+        var seedAdminUsers = seedAllUsers.Where(u => u.RoleCode != "USER").ToList();
 
         Random random = new Random();
         var users = seedUsers.Select(u => new User {
