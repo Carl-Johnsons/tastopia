@@ -1,5 +1,6 @@
 ﻿using Contract.DTOs;
 using Contract.Extension;
+using RecipeService.API.DTOs;
 using Reinforced.Typings.Fluent;
 using UserService.API.DTOs;
 using UserService.Domain.Entities;
@@ -19,7 +20,8 @@ public static class ReinforcedTypingsExtension
         //Custom export file
         List<Type> errorsTypes = [
             typeof(SettingError),
-            typeof(UserError)
+            typeof(UserError),
+            typeof(UserReportError)
         ];
 
         Directory.CreateDirectory(EXPORT_FILE_PATH);
@@ -27,6 +29,7 @@ public static class ReinforcedTypingsExtension
 
         // DTO and Entites
         builder.ExportAsInterfaces([
+            typeof(ReportDTO),
             typeof(PaginatedAdminUserReportListResponse),
             typeof(AdminUserReportResponse),
             typeof(AdminBanUserDTO),

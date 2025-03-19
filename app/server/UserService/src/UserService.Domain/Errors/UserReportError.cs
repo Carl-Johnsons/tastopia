@@ -22,5 +22,12 @@ public class UserReportError
             new("UserReportError.NullParameter",
             Message: "Null Parameter",
             StatusCode: (int)HttpStatusCode.InternalServerError);
-
+    public static Error AlreadyMarkComplete =>
+            new("UserReportError.AlreadyMarkComplete",
+            Message: "Already mark complete",
+            StatusCode: (int)HttpStatusCode.InternalServerError);
+    public static Error AlreadyPending =>
+            new("UserReportError.AlreadyPending",
+            Message: "Already pending",
+            StatusCode: (int)HttpStatusCode.InternalServerError);
 }

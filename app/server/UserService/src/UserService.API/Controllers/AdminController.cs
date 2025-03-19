@@ -1,11 +1,14 @@
 ﻿using Contract.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipeService.API.DTOs;
+using RecipeService.Application.Reports.Commands;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
 using UserService.Application.UserReports.Queries;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
+using UserService.Domain.Entities;
 using UserService.Domain.Responses;
 using ErrorResponseDTO = UserService.API.DTOs.ErrorResponseDTO;
 
@@ -104,6 +107,36 @@ public class AdminController : BaseApiController
             AccountId = adminGetUserReportByAccountIdDTO.AccountId,
             Lang = adminGetUserReportByAccountIdDTO.Language ?? "en",
             Skip = adminGetUserReportByAccountIdDTO.Skip
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("mark-report-complete")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(UserReport), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminMarkReportComplete([FromBody] ReportDTO reportDTO)
+    {
+        var result = await _sender.Send(new MarkReportCompleteCommand
+        {
+            ReportId = reportDTO.ReportId,
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("reopen-report")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(UserReport), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminReopenReport([FromBody] ReportDTO reportDTO)
+    {
+        var result = await _sender.Send(new ReopenReportCommand
+        {
+            ReportId = reportDTO.ReportId,
         });
 
         result.ThrowIfFailure();

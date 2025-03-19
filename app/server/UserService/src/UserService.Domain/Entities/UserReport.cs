@@ -1,4 +1,5 @@
-﻿using Contract.Constants;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,6 +21,7 @@ public class UserReport : BaseAuditableEntity
 
     [Required]
     [MaxLength(20)]
+    [JsonConverter(typeof(StringEnumConverter))]
     public ReportStatus Status { get; set; } = ReportStatus.Pending;
 
     public virtual User? Reported { get; set; }
