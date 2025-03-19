@@ -27,6 +27,8 @@ public static class ReinforcedTypingsExtension
 
         // DTO and Entites
         builder.ExportAsInterfaces([
+            typeof(PaginatedAdminUserReportListResponse),
+            typeof(AdminUserReportResponse),
             typeof(AdminBanUserDTO),
             typeof(AdminBanUserResponse),
             typeof(AdminGetUserDetailResponse),

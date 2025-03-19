@@ -76,7 +76,7 @@ public class AdminController : BaseApiController
 
     [HttpGet("get-user-reports")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(string), 200)]
+    [ProducesResponseType(typeof(PaginatedAdminUserReportListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminGetRecipeReports([FromQuery] GetReportReasonsDTO getReportReasonsDTO, [FromQuery] PaginatedDTO paginatedDTO)
     {
@@ -89,4 +89,20 @@ public class AdminController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    //[HttpGet("get-user-report-by-account-id")]
+    //[Produces("application/json")]
+    //[ProducesResponseType(typeof(PaginatedAdminUserReportListResponse), 200)]
+    //[ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    //public async Task<IActionResult> AdminGetRecipeReportDetail([FromQuery] string? lang, [FromQuery] string recipeId)
+    //{
+    //    var result = await _sender.Send(new GetRecipeReportDetailQuery
+    //    {
+    //        Lang = lang ?? "en",
+    //        RecipeId = Guid.Parse(recipeId)
+    //    });
+
+    //    result.ThrowIfFailure();
+    //    return Ok(result.Value);
+    //}
 }

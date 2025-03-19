@@ -1,9 +1,6 @@
-﻿using AutoMapper;
-using Contract.Constants;
+﻿using Contract.Constants;
 using Contract.DTOs;
 using Contract.Utilities;
-using Grpc.Core;
-using Microsoft.AspNetCore.Http.HttpResults;
 using MongoDB.Driver;
 using UserService.Domain.Responses;
 

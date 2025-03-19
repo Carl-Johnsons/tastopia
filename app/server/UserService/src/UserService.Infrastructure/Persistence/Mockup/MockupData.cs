@@ -59,6 +59,8 @@ internal class MockupData
         var seedBios = JsonConvert.DeserializeObject<List<string>>(seedBioFile) ?? [];
 
         seedUsers = seedUsers.Where(u => u.RoleCode == "USER").ToList();
+        var seedAdminUsers = seedUsers.Where(u => u.RoleCode != "USER").ToList();
+
         Random random = new Random();
         var users = seedUsers.Select(u => new User {
             AccountId = Guid.Parse(u.Id),
@@ -86,10 +88,24 @@ internal class MockupData
             Address = seedAddresses[random.Next(seedAddresses.Count)],
             Bio = seedBios[random.Next(seedBios.Count)],
         });
+
+        var adminUsers = seedAdminUsers.Select(u => new User
+        {
+            AccountId = Guid.Parse(u.Id),
+            AccountUsername = u.UserName,
+            DisplayName = u.DisplayName,
+            IsAdmin = true,
+            IsAccountActive = true,
+            AvatarUrl = u.Gender == "Male" ? maleAvtUrl : femaleAvtUrl,
+            BackgroundUrl = backgroundUrl,
+            Address = seedAddresses[random.Next(seedAddresses.Count)],
+        });
         _context.Users.AddRange(users);
         _context.Users.AddRange(wrongUsers);
+        _context.Users.AddRange(adminUsers);
         await _unitOfWork.SaveChangeAsync();
     }
+   
 
     private async Task SeedUserFollowDataAsync()
     {
@@ -99,7 +115,7 @@ internal class MockupData
         }
         var seedUserFile = File.ReadAllText(Path.Combine(SeedDataPath, "accounts.json"));
         var seedUsers = JsonConvert.DeserializeObject<List<SeedUser>>(seedUserFile) ?? [];
-        var userIds = seedUsers.Select(u => Guid.Parse(u.Id)).ToHashSet();
+        var userIds = seedUsers.Where(u => u.RoleCode == "USER").Select(u => Guid.Parse(u.Id)).ToHashSet();
         var users = _context.Users.Where(u => userIds.Contains(u.AccountId)).ToList();
         Random random = new Random();
         foreach ( var user in users ) {
@@ -136,7 +152,7 @@ internal class MockupData
         var seedWrongUserFile = File.ReadAllText(Path.Combine(SeedDataPath, "wrong-users.json"));
         var seedWrongUsers = JsonConvert.DeserializeObject<List<SeedWrongUser>>(seedWrongUserFile) ?? [];
 
-        var userIds = seedUsers.Select(u => Guid.Parse(u.Id)).ToHashSet();
+        var userIds = seedUsers.Where(u => u.RoleCode == "USER").Select(u => Guid.Parse(u.Id)).ToHashSet();
         var users = _context.Users.Where(u => userIds.Contains(u.AccountId)).ToList();
         Random random = new Random();
         foreach (var user in seedWrongUsers)
