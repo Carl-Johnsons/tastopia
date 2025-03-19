@@ -90,19 +90,23 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    //[HttpGet("get-user-report-by-account-id")]
-    //[Produces("application/json")]
-    //[ProducesResponseType(typeof(PaginatedAdminUserReportListResponse), 200)]
-    //[ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    //public async Task<IActionResult> AdminGetRecipeReportDetail([FromQuery] string? lang, [FromQuery] string recipeId)
-    //{
-    //    var result = await _sender.Send(new GetRecipeReportDetailQuery
-    //    {
-    //        Lang = lang ?? "en",
-    //        RecipeId = Guid.Parse(recipeId)
-    //    });
+    [HttpPost("get-user-report-by-account-id")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAdminUserReportDetailListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetRecipeReportDetail([FromBody] AdminGetUserReportByAccountIdDTO adminGetUserReportByAccountIdDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new GetUserReportDetailByAccountIdQuery
+        {
+            CurrentAccountId = Guid.Parse(subjectId!),
+            AccountId = adminGetUserReportByAccountIdDTO.AccountId,
+            Lang = adminGetUserReportByAccountIdDTO.Language ?? "en",
+            Skip = adminGetUserReportByAccountIdDTO.Skip
+        });
 
-    //    result.ThrowIfFailure();
-    //    return Ok(result.Value);
-    //}
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
 }

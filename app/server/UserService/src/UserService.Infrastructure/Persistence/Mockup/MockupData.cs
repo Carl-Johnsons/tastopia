@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
 using UserService.Domain.Entities;
 using UserService.Infrastructure.Persistence.Mockup.Data;
-
 namespace UserService.Infrastructure.Persistence.Mockup;
 
 internal class MockupData
