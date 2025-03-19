@@ -3,7 +3,7 @@
 import { StatusText } from "./DataTable";
 import { Clock } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 import { IReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import { format } from "date-fns";

@@ -5,7 +5,6 @@ using Contract.Utilities;
 using Google.Protobuf.Collections;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using UserProto;

@@ -56,7 +56,7 @@ public class UserReportUserCommandHandler : IRequestHandler<UserReportUserComman
                 return Result<UserReportUserResponse?>.Failure(UserReportError.AddUserReportFail, "Not found reporter or reported");
             }
 
-            var report = _context.UserReports.Where(r => r.AccountId == reporterId && r.ReportedId == reportedId).FirstOrDefault();
+            var report = _context.UserReports.Where(r => r.ReporterId == reporterId && r.ReportedId == reportedId).FirstOrDefault();
             if (report != null)
             {
                 _context.UserReports.Remove(report);
@@ -72,7 +72,7 @@ public class UserReportUserCommandHandler : IRequestHandler<UserReportUserComman
 
             report = new UserReport
             {
-                AccountId = reporterId,
+                ReporterId = reporterId,
                 ReportedId = reportedId,
                 ReasonCodes = codes,
                 AdditionalDetails = AdditionalDetails,

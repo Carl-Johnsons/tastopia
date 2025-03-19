@@ -7,7 +7,7 @@ import {
   DUENDE_IDS6_ISSUER
 } from "@/constants/api";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useCallback } from "react";
 
 export default function Login() {

@@ -125,9 +125,6 @@ namespace UserService.Infrastructure.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("AccountId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("AdditionalDetails")
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
@@ -142,6 +139,9 @@ namespace UserService.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("ReportedId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("ReporterId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -152,9 +152,9 @@ namespace UserService.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
-
                     b.HasIndex("ReportedId");
+
+                    b.HasIndex("ReporterId");
 
                     b.ToTable("UserReport");
                 });
@@ -199,21 +199,21 @@ namespace UserService.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("UserService.Domain.Entities.UserReport", b =>
                 {
-                    b.HasOne("UserService.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("UserService.Domain.Entities.User", "Reported")
                         .WithMany()
                         .HasForeignKey("ReportedId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("UserService.Domain.Entities.User", "Reporter")
+                        .WithMany()
+                        .HasForeignKey("ReporterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Reported");
 
-                    b.Navigation("User");
+                    b.Navigation("Reporter");
                 });
 
             modelBuilder.Entity("UserService.Domain.Entities.UserSetting", b =>
