@@ -24,7 +24,7 @@ public class MarkReportCommandHandler : IRequestHandler<MarkReportCommand, Resul
         {
             return Result<AdminMarkReportResponse?>.Failure(UserReportError.NullParameter, "ReportId is null.");
         }
-        var report = await _context.UserReports.SingleOrDefaultAsync(rp => rp.Id == request.ReportId);
+        var report = await _context.UserReports.Include(rp => rp.Reported).SingleOrDefaultAsync(rp => rp.Id == request.ReportId);
         if (report == null)
         {
             return Result<AdminMarkReportResponse?>.Failure(UserReportError.NotFound, "Not found report");
@@ -42,8 +42,10 @@ public class MarkReportCommandHandler : IRequestHandler<MarkReportCommand, Resul
         {
             UserReport = report,
             IsReopened = report.Status == ReportStatus.Pending,
+            ReportedStatus = report.Reported!.IsAccountActive
         };
         await _unitOfWork.SaveChangeAsync();
+        result.UserReport.Reported = null;
         return Result<AdminMarkReportResponse?>.Success(result);
     }
 }

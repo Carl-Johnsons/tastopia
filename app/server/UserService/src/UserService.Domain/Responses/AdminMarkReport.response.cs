@@ -4,4 +4,5 @@ public class AdminMarkReportResponse
 {
     public UserReport UserReport { get; set; } = null!;
     public bool IsReopened { get; set; } = false;
+    public bool ReportedStatus { get; set; } = true;
 }
