@@ -59,6 +59,9 @@ internal class MockupData
         var seedAccountFile = File.ReadAllText(Path.Combine(SeedDataPath, "accounts.json"));
         var seedAccounts = JsonConvert.DeserializeObject<List<SeedAccount>>(seedAccountFile) ?? [];
 
+        var seedWrongUserFile = File.ReadAllText(Path.Combine(SeedDataPath, "wrong-users.json"));
+        var seedWrongUsers = JsonConvert.DeserializeObject<List<SeedAccount>>(seedWrongUserFile) ?? [];
+
         foreach (var seedAccount in seedAccounts)
         {
             var account = new ApplicationAccount
@@ -84,6 +87,36 @@ internal class MockupData
                     throw new Exception(result.Errors.First().Description);
                 }
                 await _userManager.AddToRoleAsync(account, seedAccount.RoleCode);
+
+                _logger.LogInformation($"{account.UserName} created");
+            }
+        }
+
+        foreach (var seedWrongUser in seedWrongUsers)
+        {
+            var account = new ApplicationAccount
+            {
+                Id = seedWrongUser.Id,
+                UserName = seedWrongUser.Username,
+                Email = seedWrongUser.Email,
+                PhoneNumber = seedWrongUser.PhoneNumber,
+
+                EmailConfirmed = true,
+                PhoneNumberConfirmed = true,
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            var userResult = _userManager.FindByNameAsync(account.UserName).Result;
+            if (userResult == null)
+            {
+                var result = _userManager.CreateAsync(account, "Pass123$").Result;
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
+                await _userManager.AddToRoleAsync(account, seedWrongUser.RoleCode);
 
                 _logger.LogInformation($"{account.UserName} created");
             }
