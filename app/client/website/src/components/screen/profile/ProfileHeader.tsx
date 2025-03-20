@@ -65,19 +65,19 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
 
         {active ? (
           <Button
-            className='rounded-full bg-red text-white hover:bg-red/90 dark:bg-red/80'
+            className='text-white_black rounded-full bg-red hover:bg-red/90 dark:bg-red/80'
             onClick={handleToggleStatus}
           >
-            <Ban className='mr-1 size-4' />
-            <p className='mt-1 max-sm:hidden'>Disable</p>
+            <Ban />
+            <p>Disable</p>
           </Button>
         ) : (
           <Button
-            className='rounded-full bg-green text-white hover:bg-green/90 dark:bg-green/80'
+            className='text-white_black rounded-full bg-green hover:bg-green/90 dark:bg-green/80'
             onClick={handleToggleStatus}
           >
-            <RotateCcw className='mr-1 size-4' />
-            <p className='mt-1 max-sm:hidden'>Restore</p>
+            <RotateCcw />
+            <p>Restore</p>
           </Button>
         )}
       </div>

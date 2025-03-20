@@ -9,7 +9,7 @@ import {
   PhoneIcon,
   RecipesIcon,
   TimeIcon,
-  UserIcon,
+  UserIcon
 } from "@/components/shared/icons";
 
 export default function ProfileInfo({ user }: any) {
@@ -23,7 +23,7 @@ export default function ProfileInfo({ user }: any) {
     { icon: "followers", label: "FOLLOWERS", value: user.totalFollower },
     { icon: "following", label: "FOLLOWINGS", value: user.totalFollowing },
     { icon: "recipes", label: "RECIPES", value: user.totalRecipe },
-    { icon: "time", label: "ACTIVE TIME", value: user.activeTime },
+    { icon: "time", label: "ACTIVE TIME", value: user.activeTime }
   ];
 
   const getIcon = (type: string) => {
@@ -54,17 +54,22 @@ export default function ProfileInfo({ user }: any) {
   };
 
   return (
-    <div className="bg-white_black100 rounded-xl border border-gray-200 p-6 shadow-sm dark:border-gray-600">
-      <h2 className="h3-semibold text-black_white mb-6">Info</h2>
+    <div className='bg-white_black100 rounded-xl border border-gray-200 p-6 shadow-sm dark:border-gray-600'>
+      <h2 className='h3-semibold text-black_white mb-6'>Info</h2>
 
-      <div className="space-y-5">
+      <div className='space-y-5'>
         {infoItems.map((item, index) => (
-          <div key={index} className="flex items-start gap-4">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-full text-orange-500">{getIcon(item.icon)}</div>
+          <div
+            key={index}
+            className='flex items-start gap-4'
+          >
+            <div className='flex size-8 shrink-0 items-center justify-center rounded-full text-orange-500'>
+              {getIcon(item.icon)}
+            </div>
 
-            <div className="flex-1">
-              <p className="paragraph-regular text-black_white">{item.label}</p>
-              <p className="paragraph-regular text-gray-500">{item.value}</p>
+            <div className='flex-1'>
+              <p className='paragraph-regular text-black_white'>{item.label}</p>
+              <p className='paragraph-regular text-gray-500'>{item.value}</p>
             </div>
           </div>
         ))}

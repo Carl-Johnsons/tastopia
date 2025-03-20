@@ -1,4 +1,5 @@
 import { ActivityType } from "@/constants/activities";
+import { IAdminUserReportDetailResponse } from "@/generated/interfaces/user.interface";
 
 export interface ActivityItem {
   id?: string;
@@ -61,4 +62,12 @@ export interface UserProfileType {
   isCurrentUser: boolean;
   role: "User" | "Admin" | "Super Admin";
   settings: UserSettingType[];
+}
+
+export interface IInfiniteAdminUserReportListResponse {
+  paginatedData: IAdminUserReportDetailResponse[];
+  metadata: {
+    hasNextPage: boolean;
+    totalPage: number;
+  };
 }
