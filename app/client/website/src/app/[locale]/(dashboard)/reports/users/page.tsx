@@ -1,7 +1,9 @@
-export default function Users() {
+import DataTable from "@/components/screen/report/user/DataTable";
+
+export default async function Users() {
   return (
-    <div className="flex size-full justify-center">
-      <div className="flex w-full flex-col gap-4">Users</div>
+    <div className='flex size-full flex-col justify-center gap-4'>
+      <DataTable />
     </div>
   );
 }

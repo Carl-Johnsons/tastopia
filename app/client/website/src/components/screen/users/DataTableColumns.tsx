@@ -1,6 +1,6 @@
 import { IAdminGetUserResponse } from "@/generated/interfaces/user.interface";
 import { Button } from "@/components/ui/button";
-import { Ban, Eye, RotateCcw } from "lucide-react";
+import { Ban, RotateCcw, Search } from "lucide-react";
 import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 import { adminBanUser } from "@/actions/user.action";
@@ -104,27 +104,27 @@ export const ActionButtons = ({
   return (
     <div className='flex gap-2'>
       <Button
-        className='rounded-full bg-primary text-white hover:bg-primary/90 dark:bg-primary/80'
+        className='text-white_black bg-primary hover:bg-secondary'
         onClick={handleDetailClick}
       >
-        <Eye className='mr-1 size-4' />
+        <Search />
         <p className='mt-1 max-sm:hidden'>Detail</p>
       </Button>
 
       {active ? (
         <Button
-          className='rounded-full bg-red text-white hover:bg-red/90 dark:bg-red/80'
+          className='text-white_black bg-red hover:bg-red-600'
           onClick={handleToggleStatus}
         >
-          <Ban className='mr-1 size-4' />
+          <Ban />
           <p className='mt-1 max-sm:hidden'>Disable</p>
         </Button>
       ) : (
         <Button
-          className='rounded-full bg-green text-white hover:bg-green/90 dark:bg-green/80'
+          className='text-white_black bg-green hover:bg-green/90 dark:bg-green/80'
           onClick={handleToggleStatus}
         >
-          <RotateCcw className='mr-1 size-4' />
+          <RotateCcw />
           <p className='mt-1 max-sm:hidden'>Restore</p>
         </Button>
       )}
