@@ -82,10 +82,13 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminGetUserReports([FromQuery] GetReportReasonsDTO getReportReasonsDTO, [FromQuery] PaginatedDTO paginatedDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new GetUserReportsQuery
         {
             Lang = getReportReasonsDTO.Language,
-            paginatedDTO = paginatedDTO
+            paginatedDTO = paginatedDTO,
+            AccountId = Guid.Parse(subjectId!),
         });
 
         result.ThrowIfFailure();
@@ -118,9 +121,12 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminMarkReport([FromBody] ReportDTO reportDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new MarkReportCommand
         {
             ReportId = reportDTO.ReportId,
+            AccountId = Guid.Parse(subjectId!),
         });
 
         result.ThrowIfFailure();
