@@ -73,6 +73,9 @@ public static class ReinforcedTypingsExtension
             typeof(UserReportRecipeDTO),
             typeof(UserReportRecipeResponse),
             typeof(VoteRecipeDTO),
+            typeof(AdminReportCommentResponse),
+            typeof(PaginatedAdminReportCommentListResponse),
+            typeof(AdminReportCommentDetailResponse)
         ], config =>
         {
             config.FlattenHierarchy()

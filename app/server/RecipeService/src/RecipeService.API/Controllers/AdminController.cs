@@ -41,7 +41,7 @@ public class AdminController : BaseApiController
 
     [HttpGet("get-recipe-reports")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 200)]
+    [ProducesResponseType(typeof(PaginatedAdminReportRecipeListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminGetRecipeReports([FromQuery] string? lang, [FromQuery] PaginatedDTO paginatedDTO)
     {
@@ -57,14 +57,14 @@ public class AdminController : BaseApiController
 
     [HttpGet("get-recipe-report-detail")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 200)]
+    [ProducesResponseType(typeof(AdminReportRecipeDetailResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetRecipeReportDetail([FromQuery] string? lang, [FromQuery] string recipeId)
+    public async Task<IActionResult> AdminGetRecipeReportDetail([FromQuery] string? lang, [FromQuery] Guid recipeId)
     {
         var result = await _sender.Send(new GetRecipeReportDetailQuery
         {
             Lang = lang ?? "en",
-            RecipeId = Guid.Parse(recipeId)
+            RecipeId = recipeId
         });
 
         result.ThrowIfFailure();
@@ -73,7 +73,7 @@ public class AdminController : BaseApiController
 
     [HttpPost("mark-report-complete")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 204)]
+    [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminMarkReportComplete([FromBody] ReportDTO dto)
     {
@@ -89,7 +89,7 @@ public class AdminController : BaseApiController
 
     [HttpPost("reopen-report")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 204)]
+    [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminReopenReport([FromBody] ReportDTO dto)
     {
@@ -105,7 +105,7 @@ public class AdminController : BaseApiController
 
     [HttpDelete()]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 204)]
+    [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminDisableRecipe([FromQuery] EntityIdDTO dto)
     {
@@ -120,11 +120,11 @@ public class AdminController : BaseApiController
 
     [HttpPut("restore")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminRecipeListResponse), 204)]
+    [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminRestoreRecipe([FromQuery] EntityIdDTO dto)
     {
-        var result = await _sender.Send(new RestoreEntityCommand
+        var result = await _sender.Send(new RestoreRecipeCommand
         {
             Id = dto.Id
         });
@@ -133,6 +133,70 @@ public class AdminController : BaseApiController
         return NoContent();
     }
 
+    [HttpGet("comment/reports/all")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAccountRecipeCommentListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetCommentReports([FromQuery] string? lang, [FromQuery] PaginatedDTO paginatedDTO)
+    {
+        var result = await _sender.Send(new GetCommentReportsQuery
+        {
+            Lang = lang ?? "en",
+            PaginatedDTO = paginatedDTO
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpGet("comment/reports")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(AdminReportCommentDetailResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetCommentReports([FromQuery] string? lang, [FromQuery] Guid recipeId, [FromQuery] Guid commentId)
+    {
+        var result = await _sender.Send(new GetCommentReportDetailQuery
+        {
+            Lang = lang ?? "en",
+            CommentId = commentId,
+            RecipeId = recipeId
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpDelete("comment")]
+    [Produces("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminDisableComment([FromQuery] Guid recipeId, [FromQuery] Guid commentId)
+    {
+        var result = await _sender.Send(new DisableCommentCommand
+        {
+            CommentId = commentId,
+            RecipeId = recipeId
+        });
+
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [HttpPut("comment/restore")]
+    [Produces("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminRestoreComment([FromQuery] Guid recipeId, [FromQuery] Guid commentId)
+    {
+        var result = await _sender.Send(new RestoreCommentCommand
+        {
+            CommentId = commentId,
+            RecipeId = recipeId
+        });
+
+        result.ThrowIfFailure();
+        return NoContent();
+    }
 
     [HttpPost("get-user-activities")]
     [Produces("application/json")]

@@ -62,7 +62,7 @@ export async function getRecipeReportById({
   options
 }: GetRecipeReportDetailParams) {
   const url = "/api/admin/recipe/get-recipe-report-detail";
-  const { lang = "vi" } = options || {};
+  const { lang = "en" } = options || {};
 
   try {
     const { data } = await protectedAxiosInstance.get<IAdminReportRecipeDetailResponse>(

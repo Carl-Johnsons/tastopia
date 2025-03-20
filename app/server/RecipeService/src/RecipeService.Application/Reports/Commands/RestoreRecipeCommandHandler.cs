@@ -1,27 +1,25 @@
-﻿
-using MongoDB.Driver.Linq;
-using RecipeService.Domain.Errors;
+﻿using RecipeService.Domain.Errors;
 
 namespace RecipeService.Application.Reports.Commands;
 
-public record RestoreEntityCommand : IRequest<Result>
+public record RestoreRecipeCommand : IRequest<Result>
 {
     public Guid Id { get; set; }
 }
 
-public class RestoreEntityCommandHandler : IRequestHandler<RestoreEntityCommand, Result>
+public class RestoreRecipeCommandHandler : IRequestHandler<RestoreRecipeCommand, Result>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
 
-    public RestoreEntityCommandHandler(IApplicationDbContext context,
+    public RestoreRecipeCommandHandler(IApplicationDbContext context,
                                             IUnitOfWork unitOfWork)
     {
         _context = context;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> Handle(RestoreEntityCommand request,
+    public async Task<Result> Handle(RestoreRecipeCommand request,
                                CancellationToken cancellationToken)
     {
         var recipe = _context.Recipes.SingleOrDefault(r => r.Id == request.Id);
