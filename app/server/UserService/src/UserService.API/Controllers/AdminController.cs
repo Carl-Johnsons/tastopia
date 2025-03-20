@@ -80,7 +80,7 @@ public class AdminController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedAdminUserReportListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetRecipeReports([FromQuery] GetReportReasonsDTO getReportReasonsDTO, [FromQuery] PaginatedDTO paginatedDTO)
+    public async Task<IActionResult> AdminGetUserReports([FromQuery] GetReportReasonsDTO getReportReasonsDTO, [FromQuery] PaginatedDTO paginatedDTO)
     {
         var result = await _sender.Send(new GetUserReportsQuery
         {
@@ -96,7 +96,7 @@ public class AdminController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedAdminUserReportDetailListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetRecipeReportDetail([FromBody] AdminGetUserReportByAccountIdDTO adminGetUserReportByAccountIdDTO)
+    public async Task<IActionResult> AdminGetUserReportDetail([FromBody] AdminGetUserReportByAccountIdDTO adminGetUserReportByAccountIdDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;

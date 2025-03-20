@@ -62,6 +62,7 @@ public class GetUserReportDetailByAccountIdQueryHandler : IRequestHandler<GetUse
             ReportedId = rp.ReportedId,
             ReportedUsername = user.AccountUsername,
             ReportedDisplayName = user.DisplayName,
+            ReportedIsActive = user.IsAccountActive,
             ReportedAvtUrl = user.AvatarUrl,
             Status = rp.Status.ToString(),
             ReportReason = ReportReasonData.ReportUserReasons.Where(rs => rp.ReasonCodes.Contains(rs.Code)).Select(rs => normalizedLangue == LanguageValidation.Vi ? rs.Vi : rs.En).ToList(),

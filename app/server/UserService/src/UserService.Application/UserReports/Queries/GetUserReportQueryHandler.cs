@@ -38,6 +38,7 @@ public class GetUserReportsQueryHandler : IRequestHandler<GetUserReportsQuery, R
             ReportedId = rp.ReportedId,
             ReportedUsername = userDict[rp.ReportedId].AccountUsername,
             ReportedDisplayName = userDict[rp.ReportedId].DisplayName,
+            ReportedIsActive = userDict[rp.ReportedId].IsAccountActive,
             ReporterAccountId = rp.ReporterId,
             ReporterDisplayName = userDict[rp.ReporterId].DisplayName,
             Status = rp.Status.ToString(),

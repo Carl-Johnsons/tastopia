@@ -5,6 +5,7 @@ public class AdminUserReportDetailResponse
     public Guid ReportedId { get; set; }
     public string ReportedUsername { get; set; } = null!;
     public string ReportedDisplayName { get; set; } = null!;
+    public bool ReportedIsActive { get; set; }
     public string ReportedAvtUrl { get; set; } = null!;
     public List<string> ReportReason { get; set; } = [];
     public string? AdditionalDetails { get; set; } 
