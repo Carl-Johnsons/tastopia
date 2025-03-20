@@ -1,4 +1,5 @@
-﻿using Contract.Constants;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,10 +9,10 @@ namespace UserService.Domain.Entities;
 public class UserReport : BaseAuditableEntity
 {
     [Required]
-    public Guid AccountId { get; set; }
+    public Guid ReportedId { get; set; }
 
     [Required]
-    public Guid ReportedId { get; set; }
+    public Guid ReporterId { get; set; }
     [Required]
     public List<string> ReasonCodes { get; set; } = null!;
 
@@ -20,10 +21,11 @@ public class UserReport : BaseAuditableEntity
 
     [Required]
     [MaxLength(20)]
+    [JsonConverter(typeof(StringEnumConverter))]
     public ReportStatus Status { get; set; } = ReportStatus.Pending;
 
-    public virtual User? User { get; set; }
     public virtual User? Reported { get; set; }
+    public virtual User? Reporter { get; set; }
 
 
 }

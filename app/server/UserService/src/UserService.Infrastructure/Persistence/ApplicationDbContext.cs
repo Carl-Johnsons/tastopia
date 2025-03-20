@@ -86,14 +86,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
         modelBuilder.Entity<UserReport>(entity =>
         {
-            entity.HasOne(e => e.User)
-                .WithMany()
-                .HasForeignKey(e => e.AccountId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             entity.HasOne(e => e.Reported)
                 .WithMany()
                 .HasForeignKey(e => e.ReportedId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Reporter)
+                .WithMany()
+                .HasForeignKey(e => e.ReporterId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.Property(e => e.Status)

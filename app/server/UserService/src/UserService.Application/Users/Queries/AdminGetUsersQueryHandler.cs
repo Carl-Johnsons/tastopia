@@ -54,7 +54,7 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                 .FirstOrDefaultAsync();
             if (currentUser == null)
             {
-                return Result<PaginatedAdminGetUserListResponse?>.Failure(UserError.NotFound);
+                return Result<PaginatedAdminGetUserListResponse?>.Failure(UserError.NotFound, "Not found current user.");
             }
             if (!currentUser.IsAdmin)
             {
@@ -116,7 +116,7 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
 
             if (response == null || response.Accounts.Count != accountIds.Count)
             {
-                return Result<PaginatedAdminGetUserListResponse>.Failure(UserError.NotFound);
+                return Result<PaginatedAdminGetUserListResponse>.Failure(UserError.NotFound, "Get account grpc fail.");
             }
 
             foreach (var u in userList)

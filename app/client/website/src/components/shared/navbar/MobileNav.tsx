@@ -2,14 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { sidebarLinks } from "@/constants/nav";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useTranslations } from "next-intl";
 
 export const NavContent = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations("navbar");
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
 
   useEffect(() => {
@@ -61,7 +62,7 @@ export const NavContent = () => {
                     className='dark:invert'
                   />
                 </div>
-                <span className='text-black_white flex-1'>{link.label}</span>
+                <span className='text-black_white flex-1'>{t(link.label)}</span>
                 {link.children && (
                   <svg
                     className={`size-5 transition-transform dark:invert ${isDropdownOpen ? "rotate-180" : ""}`}
@@ -95,7 +96,7 @@ export const NavContent = () => {
                       className='dark:invert'
                     />
                   </div>
-                  <span className='flex-1'>{link.label}</span>
+                  <span className='flex-1'>{t(link.label)}</span>
                   {link.children && (
                     <svg
                       className={`size-5 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
@@ -130,7 +131,7 @@ export const NavContent = () => {
                         href={child.route}
                         className={`rounded-lg px-4 py-2 ${isChildItemActive ? "bg-primary" : "text-black_white"}`}
                       >
-                        {child.label}
+                        {t(child.label)}
                       </Link>
                     </SheetClose>
                   );
