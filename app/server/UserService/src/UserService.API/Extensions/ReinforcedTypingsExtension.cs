@@ -32,6 +32,7 @@ public static class ReinforcedTypingsExtension
             typeof(AdminMarkReportResponse),
             typeof(ReportDTO),
             typeof(PaginatedAdminUserReportListResponse),
+            typeof(AdminUserReportDetailResponse),
             typeof(AdminUserReportResponse),
             typeof(AdminBanUserDTO),
             typeof(AdminBanUserResponse),
