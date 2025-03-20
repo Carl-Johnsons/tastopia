@@ -1,3 +1,5 @@
+import createNextIntlPlugin from "next-intl/plugin";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // update image remote later
@@ -7,13 +9,14 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "**",
-        pathname: "/**",
-      },
-    ],
+        pathname: "/**"
+      }
+    ]
   },
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: true
   }
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin();
+export default withNextIntl(nextConfig);

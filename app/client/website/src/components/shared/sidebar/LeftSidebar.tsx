@@ -1,13 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { sidebarLinks } from "@/constants/nav";
+import { useTranslations } from "next-intl";
 
 const LeftSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations("navbar");
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
 
   useEffect(() => {
@@ -72,7 +73,7 @@ const LeftSidebar = () => {
                       isActive && !link.children ? "text-white_black" : "text-black_white"
                     }`}
                   >
-                    {link.label}
+                    {t(link.label)}
                   </span>
                   {link.children && (
                     <svg
@@ -102,7 +103,7 @@ const LeftSidebar = () => {
                           href={child.route}
                           className={`rounded-lg px-4 py-2 text-sm ${isChildItemActive ? "bg-primary font-semibold" : "text-black_white"}`}
                         >
-                          {child.label}
+                          {t(child.label)}
                         </Link>
                       );
                     })}

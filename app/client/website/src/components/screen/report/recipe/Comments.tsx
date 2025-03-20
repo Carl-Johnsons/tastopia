@@ -8,7 +8,7 @@ import Loader from "@/components/ui/Loader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { IRecipeCommentResponse } from "@/generated/interfaces/recipe.interface";
 import { formatRelative } from "date-fns";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import InteractiveButton from "./Button";
@@ -92,7 +92,9 @@ function Comment({ comment }: CommentProps) {
       >
         <Avatar>
           <AvatarImage src={avatarUrl} />
-          <AvatarFallback className="bg-black_white">{displayName.substring(0, 1)}</AvatarFallback>
+          <AvatarFallback className='bg-black_white'>
+            {displayName.substring(0, 1)}
+          </AvatarFallback>
         </Avatar>
       </Link>
 
@@ -120,7 +122,7 @@ function Comment({ comment }: CommentProps) {
               )
             }
             onClick={isActive ? handleDelete : handleRestore}
-            className={`hover:bg-transparent} ms-auto h-fit w-fit bg-transparent p-0 pb-1 shadow-none`}
+            className={`hover:bg-transparent} ms-auto size-fit bg-transparent p-0 pb-1 shadow-none`}
             noText
             toolTip
           />
