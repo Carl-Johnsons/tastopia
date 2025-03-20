@@ -31,6 +31,7 @@ public static class ReinforcedTypingsExtension
         builder.ExportAsInterfaces([
             typeof(AdminMarkReportResponse),
             typeof(ReportDTO),
+            typeof(PaginatedAdminUserReportDetailListResponse),
             typeof(PaginatedAdminUserReportListResponse),
             typeof(AdminUserReportDetailResponse),
             typeof(AdminUserReportResponse),
