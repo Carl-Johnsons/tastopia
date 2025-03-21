@@ -1,9 +1,11 @@
-﻿using Contract.DTOs;
+﻿using Contract.Common;
+using Contract.DTOs;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using RecipeService.API.DTOs;
 using System.Net;
 
-namespace RecipeService.API.Middleware;
+namespace Contract.Middleware;
 
 public class GlobalHandlingErrorMiddleware
 {
@@ -18,7 +20,6 @@ public class GlobalHandlingErrorMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-
         try
         {
             await _next(context);
@@ -54,14 +55,5 @@ public class GlobalHandlingErrorMiddleware
             context.Response.StatusCode = errorDTO.Status;
             await context.Response.WriteAsync(jsonResponse);
         }
-    }
-}
-
-// Extension method used to add the middleware to the HTTP request pipeline.
-public static class MiddlewareExtensions
-{
-    public static IApplicationBuilder UseGlobalHandlingErrorMiddleware(this IApplicationBuilder builder)
-    {
-        return builder.UseMiddleware<GlobalHandlingErrorMiddleware>();
     }
 }

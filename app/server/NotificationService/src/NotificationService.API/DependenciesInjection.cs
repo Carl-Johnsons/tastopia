@@ -1,7 +1,6 @@
 ﻿using Contract.Extension;
 using Contract.Utilities;
 using NotificationService.API.Extensions;
-using NotificationService.API.Middleware;
 using NotificationService.Application;
 using NotificationService.Infrastructure;
 
@@ -33,8 +32,7 @@ public static class DependenciesInjection
 
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
-        app.UseSerilogServices();
-        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_NOTIFICATION", "Not Found"));
+        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_NOTIFICATION", "Not Found"));
         app.UseSwaggerServices();
 
         app.UseHttpsRedirection();
@@ -43,18 +41,10 @@ public static class DependenciesInjection
 
         app.UseGrpcServices();
 
-        app.UseGlobalHandlingErrorMiddleware();
-
         app.UseAuthentication();
-
         app.UseAuthorization();
 
-        app.UseRouting();
-
         await app.UseSignalRServiceAsync();
-        
-        app.UseHealthCheck();
-
         return app;
     }
 }
