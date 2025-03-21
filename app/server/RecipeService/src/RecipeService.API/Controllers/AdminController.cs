@@ -174,6 +174,26 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
+    [HttpPost("create-tag")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> CreateTag([FromForm] CreateTagDTO createTagDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new CreateTagCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Code = createTagDTO.Code,
+            Value = createTagDTO.Value,
+            Category = createTagDTO.Category,
+            TagImage = createTagDTO.TagImage
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [HttpPost("update-tag")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(Tag), 200)]
@@ -191,6 +211,23 @@ public class AdminController : BaseApiController
             Category = updateTagDTO.Category,
             Status = updateTagDTO.Status,
             TagImage = updateTagDTO.TagImage
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("tag-detail")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetTagDetail([FromBody] AdminGetTagDetailDTO adminGetTagDetailDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new GetTagDetailQuery
+        {
+            AccountId = Guid.Parse(subjectId!),
+            TagId = adminGetTagDetailDTO.TagId
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
