@@ -38,7 +38,7 @@ export const ViewDetailButton = ({
     } finally {
       setIsLoading(false);
     }
-  }, [onSuccess, onFailure, targetId]);
+  }, [onSuccess, onFailure, targetId, router]);
 
   return (
     <DataTableButton
@@ -82,7 +82,7 @@ export const ReopenReportButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, targetId, mutate]);
+  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
 
   return (
     <DataTableButton
@@ -120,7 +120,7 @@ export const RestoreRecipeButton = ({
         onFailure && onFailure();
       }
     });
-  }, [onSuccess, onFailure, targetId, mutate]);
+  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
 
   return (
     <InteractiveButton
@@ -161,7 +161,7 @@ export const MarkAsCompletedButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, targetId, mutate]);
+  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
 
   return (
     <DataTableButton
@@ -199,7 +199,7 @@ export const DisableRecipeButton = ({
         onFailure && onFailure();
       }
     });
-  }, [onSuccess, onFailure, targetId, mutate]);
+  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
 
   return (
     <InteractiveButton

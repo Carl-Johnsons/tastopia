@@ -1,3 +1,4 @@
+/* eslint-disable tailwindcss/enforces-shorthand */
 "use client";
 
 import { Clock } from "lucide-react";
@@ -32,7 +33,7 @@ export default function ReportList({
 }: ReportListProps) {
   return (
     <div
-      className={`flex gap-8 overflow-x-scroll xl:flex-col ${reportType === ReportType.COMMENT && "grid sm:grid-cols-[repeat(auto-fill,minmax(400px,1fr))] justify-items-center gap-4"} ${className}`}
+      className={`flex gap-8 overflow-x-scroll xl:flex-col ${reportType === ReportType.COMMENT && "grid justify-items-center gap-4 sm:grid-cols-[repeat(auto-fill,minmax(400px,1fr))]"} ${className}`}
     >
       {reports.map(
         ({

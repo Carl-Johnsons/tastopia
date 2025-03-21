@@ -120,7 +120,7 @@ function Comment({ comment }: CommentProps) {
               )
             }
             onClick={isActive ? handleDelete : handleRestore}
-            className={`hover:bg-transparent} ms-auto size-fit bg-transparent p-0 pb-1 shadow-none`}
+            className={`ms-auto size-fit bg-transparent p-0 pb-1 shadow-none hover:bg-transparent`}
             noText
             toolTip
           />

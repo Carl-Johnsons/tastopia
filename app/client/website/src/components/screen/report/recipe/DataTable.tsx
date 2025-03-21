@@ -6,7 +6,14 @@ import { IAdminReportRecipeResponse } from "@/generated/interfaces/recipe.interf
 import useDebounce from "@/hooks/useDebounce";
 import { format } from "date-fns";
 import Image from "next/image";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import { MarkAsCompletedButton, ReopenReportButton, ViewDetailButton } from "./Button";
 import { customStyles } from "@/constants/styles";
@@ -14,7 +21,7 @@ import { ChevronRight } from "lucide-react";
 import NoRecord from "@/components/ui/NoRecord";
 import SearchBar from "../../users/SearchBar";
 import { ReportStatus } from "@/constants/reports";
-import DataTableProvider, { DataTableContext, OnChangeActiveFn } from "./Provider";
+import DataTableProvider, { DataTableContext, DataTableContextValue, OnChangeActiveFn } from "./Provider";
 import ReportStatusText from "../common/StatusText";
 
 const columns: TableColumn<IAdminReportRecipeResponse>[] = [
@@ -117,7 +124,7 @@ type ActionButtonsProps = {
 };
 
 const ActionButtons = ({ reportId, recipeId, status }: ActionButtonsProps) => {
-  const { onChangeActive } = useContext(DataTableContext) as DataTableContext;
+  const { onChangeActive } = useContext(DataTableContext) as DataTableContextValue;
 
   return (
     <div className='flex gap-2'>
@@ -207,7 +214,7 @@ export default function Table() {
     []
   );
 
-  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value.trim());
     setSkip(0);
   }, []);
@@ -234,6 +241,7 @@ export default function Table() {
 
   useEffect(() => {
     refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skip, sortBy, sortOrder, debouncedValue, limit, keyword]);
 
   useEffect(() => {

@@ -27,7 +27,7 @@ const Content = ({ commentId, recipeId, content, author, ...props }: Props) => {
   );
 
   return (
-    <div className='flex flex-col gap-3 min-w-[320px]'>
+    <div className='flex min-w-[320px] flex-col gap-3'>
       <div className='flex items-center justify-between'>
         <ItemStatusText
           isActive={isActive}
@@ -35,7 +35,7 @@ const Content = ({ commentId, recipeId, content, author, ...props }: Props) => {
         />
 
         <span
-          className={`text-sm text-gray-700 dark:text-gray-500 opacity-50 dark:opacity-80 ${lowOpacityOnInactive}`}
+          className={`text-sm text-gray-700 opacity-50 dark:text-gray-500 dark:opacity-80 ${lowOpacityOnInactive}`}
         >
           {createdAt}
         </span>
