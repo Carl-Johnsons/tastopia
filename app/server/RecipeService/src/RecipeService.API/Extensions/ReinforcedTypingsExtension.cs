@@ -28,6 +28,7 @@ public static class ReinforcedTypingsExtension
 
         // DTO and Entites
         builder.ExportAsInterfaces([
+            typeof(UpdateTagDTO),
             typeof(AdminTagResponse),
             typeof(PaginatedAdminTagListResponse),
             typeof(AccountRecipeCommentResponse),

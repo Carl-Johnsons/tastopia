@@ -7,7 +7,9 @@ using RecipeService.Application.Activities;
 using RecipeService.Application.Recipes.Queries;
 using RecipeService.Application.Reports.Commands;
 using RecipeService.Application.Reports.Queries;
+using RecipeService.Application.Tags.Commands;
 using RecipeService.Application.Tags.Queries;
+using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -167,6 +169,28 @@ public class AdminController : BaseApiController
         {
             AccountId = Guid.Parse(subjectId!),
             PaginatedDTO = paginatedDTO
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("update-tag")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UpdateTag([FromForm] UpdateTagDTO updateTagDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new UpdateTagCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            TagId = updateTagDTO.TagId,
+            Code = updateTagDTO.Code,
+            Value = updateTagDTO.Value,
+            Category = updateTagDTO.Category,
+            Status = updateTagDTO.Status,
+            TagImage = updateTagDTO.TagImage
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

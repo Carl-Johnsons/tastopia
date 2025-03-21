@@ -26,7 +26,6 @@ internal class MockupData
     public async Task SeedAllData()
     {
         await EnsureDatabaseIsReady();
-        await SeedPendingTags();
         await SeedRecipeTags();
     }
     private async Task EnsureDatabaseIsReady()
@@ -289,23 +288,12 @@ internal class MockupData
             _logger.LogInformation("Begin seed tag");
             _context.Tags.AddRange(tags);
 
-            await _unitOfWork.SaveChangeAsync();
-            var mapTagCode = tags.ToDictionary(t => t.Code, t => t.Id);
-            return mapTagCode;
-        }
-        return null;
-    }
-
-    public async Task SeedPendingTags()
-    {
-        if (!_context.Tags.Any())
-        {
-            var seedTagFile = File.ReadAllText(Path.Combine(SeedDataPath, "pending-tags.json"));
-            var seedTags = JsonConvert.DeserializeObject<List<SeedTag>>(seedTagFile) ?? [];
-            var tags = new List<Tag>();
-            foreach (var seedTag in seedTags)
+            var seedPendingTagFile = File.ReadAllText(Path.Combine(SeedDataPath, "pending-tags.json"));
+            var seedPendingTags = JsonConvert.DeserializeObject<List<SeedTag>>(seedPendingTagFile) ?? [];
+            var pendingTags = new List<Tag>();
+            foreach (var seedTag in seedPendingTags)
             {
-                tags.Add(new Tag
+                pendingTags.Add(new Tag
                 {
                     Id = Guid.NewGuid(),
                     Code = "",
@@ -317,10 +305,13 @@ internal class MockupData
             }
 
             _logger.LogInformation("Begin pending seed tag");
-            _context.Tags.AddRange(tags);
+            _context.Tags.AddRange(pendingTags);
 
             await _unitOfWork.SaveChangeAsync();
+            var mapTagCode = tags.ToDictionary(t => t.Code, t => t.Id);
+            return mapTagCode;
         }
+        return null;
     }
 
     public async Task SeedRecipeTags()
