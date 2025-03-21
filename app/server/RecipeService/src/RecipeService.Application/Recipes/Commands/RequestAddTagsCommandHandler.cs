@@ -54,7 +54,7 @@ public class RequestAddTagsCommandHandler : IRequestHandler<RequestAddTagsComman
                     Id = Guid.NewGuid(),
                     Value = value,
                     Category = TagCategory.All,
-                    Code = Guid.NewGuid().ToString(),
+                    Code = "",
                     ImageUrl = "",
                     Status = TagStatus.Pending,
                     CreatedAt = DateTime.Now,
