@@ -38,5 +38,6 @@ push_both_env_file "./" global_production &&
   push_both_env_file "./app/server/NotificationService" notification &&
   push_both_env_file "./app/server/SignalRService" signalR &&
   push_both_env_file "./app/server/TrackingService" tracking &&
-  push_both_env_file "./app/server/SubscriptionService" "subscription"
-  push_both_env_file "./app/client/mobile" "mobile"
+  push_both_env_file "./app/server/IngredientPredictService" "ingredient-predict" &&
+  push_both_env_file "./app/client/mobile" "mobile" &&
+  push_both_env_file "./app/client/website" "website"
