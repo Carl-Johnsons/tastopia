@@ -41,6 +41,7 @@ public static class ConsulExtension
                 Interval = TimeSpan.FromSeconds(20),
                 HTTP = healthCheckEndpoint,
                 TLSSkipVerify = true,
+                DeregisterCriticalServiceAfter = TimeSpan.FromMinutes(1)
             }
         };
 
