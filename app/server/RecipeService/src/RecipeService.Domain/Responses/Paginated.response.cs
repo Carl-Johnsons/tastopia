@@ -17,3 +17,5 @@ public class PaginatedUserActivityListResponse : BasePaginatedResponse<UserActiv
 public class PaginatedAdminRecipeListResponse : BasePaginatedResponse<AdminRecipeResponse, NumberedPaginatedMetadata>;
 
 public class PaginatedAdminReportRecipeListResponse : BasePaginatedResponse<AdminReportRecipeResponse, NumberedPaginatedMetadata>;
+
+public class PaginatedAdminTagListResponse : BasePaginatedResponse<AdminTagResponse, NumberedPaginatedMetadata>;
