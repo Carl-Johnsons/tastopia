@@ -1,18 +1,16 @@
 "use client";
 
 import { useGetRecipeComments } from "@/api/recipe";
-import { useGetUserById } from "@/api/user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/ui/Loader";
-import { Skeleton } from "@/components/ui/skeleton";
 import { IRecipeCommentResponse } from "@/generated/interfaces/recipe.interface";
 import { formatRelative } from "date-fns";
 import { Link } from "@/i18n/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import InteractiveButton from "./Button";
 import { RotateCw, Trash } from "lucide-react";
+import InteractiveButton from "@/components/shared/common/Button";
 
 type Props = {
   recipeId: string;
@@ -122,7 +120,7 @@ function Comment({ comment }: CommentProps) {
               )
             }
             onClick={isActive ? handleDelete : handleRestore}
-            className={`hover:bg-transparent} ms-auto size-fit bg-transparent p-0 pb-1 shadow-none`}
+            className={`ms-auto size-fit bg-transparent p-0 pb-1 shadow-none hover:bg-transparent`}
             noText
             toolTip
           />
@@ -132,7 +130,6 @@ function Comment({ comment }: CommentProps) {
       <p className={`text-black_white col-start-2 max-w-[70em] ${lowOpacityOnInactive}`}>
         {content}
       </p>
-      {}
     </div>
   );
 }

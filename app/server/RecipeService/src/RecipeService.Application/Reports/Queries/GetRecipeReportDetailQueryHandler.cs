@@ -5,20 +5,23 @@ using Contract.DTOs.UserDTO;
 using Contract.Utilities;
 using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson.IO;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
+using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using UserProto;
 
 namespace RecipeService.Application.Reports.Queries;
 
-public record GetRecipeReportDetailQuery : IRequest<Result<AdminReportRecipeDetailResponse>>
+public record GetRecipeReportDetailQuery : IRequest<Result<AdminReportRecipeDetailResponse?>>
 {
     public string Lang { get; init; } = "en";
     public Guid RecipeId { get; init; }
 }
 
-public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReportDetailQuery, Result<AdminReportRecipeDetailResponse>>
+public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReportDetailQuery, Result<AdminReportRecipeDetailResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
@@ -31,7 +34,7 @@ public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReport
         _mapper = mapper;
     }
 
-    public async Task<Result<AdminReportRecipeDetailResponse>> Handle(GetRecipeReportDetailQuery request, CancellationToken cancellationToken)
+    public async Task<Result<AdminReportRecipeDetailResponse?>> Handle(GetRecipeReportDetailQuery request, CancellationToken cancellationToken)
     {
         var userReportCollection = _context.GetDatabase().GetCollection<UserReportRecipe>(nameof(UserReportRecipe));
         var recipeCollection = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe));
@@ -82,6 +85,16 @@ public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReport
             .SingleOrDefaultAsync(cancellationToken);
 
         var result = await pipeline;
+
+        if (result == null)
+        {
+            return Result<AdminReportRecipeDetailResponse>.Failure(ReportError.NotFound);
+        }
+
+        if (result.UserReportRecipes == null || result.UserReportRecipes.Count == 0)
+        {
+            return Result<AdminReportRecipeDetailResponse>.Failure(ReportError.NotFound, "Recipe is valid but there are no report associate with it.");
+        }
 
         var accountIds = result.UserReportRecipes.Select(r => r.AccountId).ToList();
 
@@ -136,7 +149,7 @@ public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReport
         };
 
 
-        return Result<AdminReportRecipeDetailResponse>.Success(reportDetailResponse);
+        return Result<AdminReportRecipeDetailResponse?>.Success(reportDetailResponse);
     }
 
     private class RecipeWithReportList : Recipe

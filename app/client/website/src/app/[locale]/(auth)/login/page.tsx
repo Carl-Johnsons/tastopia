@@ -1,6 +1,5 @@
 "use client";
 
-import LoginForm from "@/components/screen/login/LoginForm";
 import {
   CLIENT_BASE_URL,
   DUENDE_IDENTITY_PROVIDER_NAME,

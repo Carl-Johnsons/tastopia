@@ -1,5 +1,15 @@
+export interface BaseParam {
+  id: string;
+}
+
 export interface ParamsProps {
-  params: { id: string };
+  params: BaseParam;
+}
+
+export interface CommentDetailParamProps {
+  params: BaseParam & {
+    recipeId: string;
+  };
 }
 
 export interface SidebarChildLink {

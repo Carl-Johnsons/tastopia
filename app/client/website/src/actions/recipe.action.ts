@@ -62,7 +62,7 @@ export async function getRecipeReportById({
   options
 }: GetRecipeReportDetailParams) {
   const url = "/api/admin/recipe/get-recipe-report-detail";
-  const { lang = "vi" } = options || {};
+  const { lang = "en" } = options || {};
 
   try {
     const { data } = await protectedAxiosInstance.get<IAdminReportRecipeDetailResponse>(
@@ -135,10 +135,10 @@ export const disableRecipe = async (id: string) => {
 };
 
 export const restoreRecipe = async (id: string) => {
-  const url = `/api/admin/recipe/restore?id=${id}`;
+  const url = "/api/admin/recipe/restore";
 
   try {
-    await protectedAxiosInstance.put<undefined>(url);
+    await protectedAxiosInstance.put<undefined>(url, undefined, { params: { id } });
   } catch (error) {
     withErrorProcessor(error);
   }

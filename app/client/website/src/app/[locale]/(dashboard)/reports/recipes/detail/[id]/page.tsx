@@ -7,7 +7,12 @@ import { ChevronRight } from "lucide-react";
 
 export default async function Page({ params }: ParamsProps) {
   try {
-    const { recipe, reports } = await getRecipeReportById({ recipeId: params.id });
+    const { recipe, reports } = await getRecipeReportById({
+      recipeId: params.id,
+      options: {
+        lang: "en"
+      }
+    });
 
     return (
       <div className='flex flex-col gap-10'>

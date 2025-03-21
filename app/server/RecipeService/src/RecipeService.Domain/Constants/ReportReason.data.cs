@@ -1,46 +1,39 @@
 ﻿namespace RecipeService.Domain.Constants;
 public class ReportReasonData
 {
-    public static List<RecipeReason> RecipeReportReasons = new List<RecipeReason>
-    {
-        new RecipeReason
-        {
+    public static List<RecipeReason> RecipeReportReasons =
+    [
+        new() {
             Code = "INAPPROPRIATE_CONTENT",
             En = "Inappropriate content",
             Vi = "Nội dung không phù hợp"
         },
-        new RecipeReason
-        {
+        new() {
             Code = "SPAM_ADVERTISEMENT",
             En = "Spam or advertisement",
             Vi = "Quảng cáo hoặc spam"
         },
-        new RecipeReason
-        {
+        new() {
             Code = "HARASSMENT",
             En = "Harassment or bullying",
             Vi = "Quấy rối hoặc bắt nạt"
         },
-        new RecipeReason
-        {
+        new() {
             Code = "PLAGIARISM",
             En = "Plagiarism or copyright infringement",
             Vi = "Sao chép hoặc vi phạm bản quyền"
         },
-        new RecipeReason
-        {
+        new() {
             Code = "SCAM_FRAUD",
             En = "Scam or fraud",
             Vi = "Lừa đảo hoặc gian lận"
         },
-        new RecipeReason
-        {
+        new() {
             Code = "EXPLICIT_CONTENT",
             En = "Explicit content (violence, 18+)",
             Vi = "Nội dung nhạy cảm (bạo lực, 18+)"
         },
-        new RecipeReason
-        {
+        new() {
             Code = "OFFENSIVE_LANGUAGE",
             En = "Offensive language",
             Vi = "Ngôn ngữ xúc phạm"
@@ -48,62 +41,54 @@ public class ReportReasonData
         new RecipeReason
         {
             Code = "HEALTH_RISK",
-            En = "Recipe may pose health risks",
-            Vi = "Công thức có thể gây hại cho sức khỏe"
+            En = "May pose health risks",
+            Vi = "Có thể gây hại cho sức khỏe"
         },
-    };
+    ];
 
-    public static List<CommentReason> CommentReportReasons = new List<CommentReason>
-    {
-        new CommentReason
-        {
+    public static List<CommentReason> CommentReportReasons =
+    [
+        new() {
             Code = "SPAM_COMMENT",
-            Vi = "Bình luận chứa spam hoặc quảng cáo",
-            En = "Spam or advertisement comment"
+            Vi = "Spam hoặc quảng cáo",
+            En = "Spam or advertisement"
         },
-        new CommentReason
-        {
+        new() {
             Code = "OFFENSIVE_COMMENT",
-            Vi = "Bình luận có ngôn từ xúc phạm",
-            En = "Offensive language comment"
+            Vi = "Ngôn từ xúc phạm",
+            En = "Offensive language"
         },
-        new CommentReason
-        {
+        new() {
             Code = "EXPLICIT_COMMENT",
-            Vi = "Bình luận chứa nội dung nhạy cảm (bạo lực, 18+)",
-            En = "Explicit content comment (violence, 18+)"
+            Vi = "Nội dung nhạy cảm (bạo lực, 18+)",
+            En = "Explicit content (violence, 18+)"
         },
-        new CommentReason
-        {
+        new() {
             Code = "SCAM_COMMENT",
-            Vi = "Bình luận chứa nội dung lừa đảo hoặc gian lận",
-            En = "Scam or fraudulent comment"
+            Vi = "Nội dung lừa đảo hoặc gian lận",
+            En = "Scam or fraudulent"
         },
-        new CommentReason
-        {
+        new() {
             Code = "MISINFORMATION_COMMENT",
-            Vi = "Bình luận lan truyền thông tin sai lệch",
-            En = "Misinformation or misleading comment"
+            Vi = "Thông tin sai lệch",
+            En = "Misinformation or misleading"
         },
-        new CommentReason
-        {
+        new() {
             Code = "PLAGIARIZED_COMMENT",
-            Vi = "Bình luận sao chép hoặc vi phạm bản quyền",
-            En = "Plagiarized or copyright-infringing comment"
+            Vi = "Sao chép hoặc vi phạm bản quyền",
+            En = "Plagiarized or copyright-infringing"
         },
-        new CommentReason
-        {
+        new() {
             Code = "IRRELEVANT_COMMENT",
-            Vi = "Bình luận không liên quan",
-            En = "Irrelevant or off-topic comment"
+            Vi = "Không liên quan",
+            En = "Irrelevant or off-topic"
         },
-        new CommentReason
-        {
+        new() {
             Code = "PERSONAL_ATTACK",
             Vi = "Công kích cá nhân",
             En = "Personal attack"
         }
-    };
+    ];
 }
 
 public class RecipeReason
