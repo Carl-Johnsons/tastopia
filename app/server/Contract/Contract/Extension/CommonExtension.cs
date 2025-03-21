@@ -19,7 +19,10 @@ using Reinforced.Typings.Ast;
 using Reinforced.Typings.Generators;
 using Reinforced.Typings;
 using Reinforced.Typings.Visitors.TypeScript;
-using System.Reflection.Metadata;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Logging;
+using Serilog.Events;
+using Contract.Middleware;
 
 namespace Contract.Extension;
 
@@ -57,10 +60,37 @@ public static class CommonExtension
 
         services.AddHttpContextAccessor();
 
-        services.AddCustomAuthentication();
+        services.AddCustomDownstreamAuthentication();
 
         return services;
     }
+
+    /**
+     * <summary>
+     *   Only usable for Identity server
+     *   Add ErrorValidation, Controller, HttpContextAccessor
+     * </summary>
+     */
+    public static IServiceCollection AddCommonAPIWithoutAuthServices(this IServiceCollection services)
+    {
+        services.AddErrorValidation();
+        services.AddControllers()
+            // Prevent circular JSON reach max depth of the object when serialization
+            //.AddJsonOptions(options =>
+            //{
+            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            //    options.JsonSerializerOptions.WriteIndented = true;
+            //})
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
+            });
+
+        services.AddHttpContextAccessor();
+
+        return services;
+    }
+
 
     /**
      * <summary>
@@ -163,10 +193,92 @@ public static class CommonExtension
                 };
                 // For development only
                 options.IncludeErrorDetails = true;
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        var logger = context.HttpContext.RequestServices
+                            .GetRequiredService<ILoggerFactory>()
+                            .CreateLogger("JwtBearer");
+                        logger.LogInformation("Token validated successfully.");
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        var logger = context.HttpContext.RequestServices
+                            .GetRequiredService<ILoggerFactory>()
+                            .CreateLogger("JwtBearer");
+                        logger.LogError(context.Exception, "Token authentication failed.");
+                        return Task.CompletedTask;
+                    }
+                };
             });
         return services;
     }
 
+    /**
+     * <summary>
+     *  Authenticate for downstream service, ignore jwt validation because api gateway does all the heavy work
+     * </summary>
+     */
+    private static IServiceCollection AddCustomDownstreamAuthentication(this IServiceCollection services)
+    {
+
+        services.AddAuthentication(option =>
+        {
+            option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.RequireHttpsMetadata = false;
+            // Clear default Microsoft's JWT claim mapping
+            // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
+            options.MapInboundClaims = false;
+            options.SaveToken = true;
+
+            // Completely disable token validations
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateIssuerSigningKey = false,
+                RequireSignedTokens = false,
+                ValidateLifetime = true,
+                RequireExpirationTime = true,
+                ClockSkew = TimeSpan.Zero,
+                /*  
+                 *  Return JwtSecurityToken(token) will cause this error
+                 *  
+                 *  Microsoft.IdentityModel.Tokens.SecurityTokenInvalidSignatureException: IDX10506: Signature validation failed.
+                 *  The user defined 'Delegate' specified on TokenValidationParameters did not return a 'Microsoft.IdentityModel.JsonWebTokens.JsonWebToken',
+                 *  but returned a 'System.IdentityModel.Tokens.Jwt.JwtSecurityToken' when validating token: '[PII of type 'Microsoft.IdentityModel.JsonWebTokens.
+                 *  JsonWebToken' is hidden. For more details, see https://aka.ms/IdentityModel/PII.]'
+                */
+                SignatureValidator = (token, parameters) => new Microsoft.IdentityModel.JsonWebTokens.JsonWebToken(token)
+            };
+            // For development only
+            options.IncludeErrorDetails = true;
+        });
+        return services;
+    }
+
+    public static WebApplication UseCommonServices(this WebApplication app, string serviceName)
+    {
+        app.UseSerilogServices();
+        app.UseConsulServiceDiscovery(serviceName);
+
+        app.UseRouting();
+        app.UseCustomHealthCheck();
+
+        app.UseMiddleware<GlobalHandlingErrorMiddleware>();
+        app.UseMiddleware<ValidateGatewayRequestMiddleware>();
+
+        return app;
+    }
+
+    // ================ Config masstransit ==========================================
     private static IServiceCollection AddMassTransitService(this IServiceCollection services, string apiPrjName)
     {
         services.AddMassTransit(busConfig =>
@@ -224,6 +336,7 @@ public static class CommonExtension
         }
     }
 
+    // ================ Config reinforcedTyping =================
     internal static void ConfigContractReinforcedTypings(this Reinforced.Typings.Fluent.ConfigurationBuilder builder,
                                                  string exportFilePath,
                                                  string fileName,
@@ -245,7 +358,6 @@ public static class CommonExtension
         // Custom export file
         GenerateTypescriptEnumFile(errorTypes, exportFilePath, fileName);
     }
-
 
     public static void ConfigCommonReinforcedTypings(this Reinforced.Typings.Fluent.ConfigurationBuilder builder,
                                                      string exportFilePath,

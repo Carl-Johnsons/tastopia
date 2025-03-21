@@ -1,4 +1,4 @@
-﻿namespace IdentityService.Domain.Constants;
+﻿namespace Contract.Constants;
 
 public static class Roles
 {

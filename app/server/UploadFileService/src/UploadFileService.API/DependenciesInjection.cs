@@ -3,7 +3,6 @@ using Contract.Extension;
 using Contract.Utilities;
 using UploadFileService.API.Configs;
 using UploadFileService.API.Extensions;
-using UploadFileService.API.Middleware;
 using UploadFileService.Application;
 using UploadFileService.Infrastructure;
 
@@ -36,8 +35,7 @@ public static class DependenciesInjection
 
     public static WebApplication UseAPIServices(this WebApplication app)
     {
-        app.UseSerilogServices();
-        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_UPLOAD", "Not Found"));
+        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_UPLOAD", "Not Found"));
         app.UseSwaggerServices();
 
         app.UseHttpsRedirection();
@@ -46,14 +44,8 @@ public static class DependenciesInjection
 
         app.UseGrpcServices();
 
-        app.UseGlobalHandlingErrorMiddleware();
-
         app.UseAuthentication();
-
         app.UseAuthorization();
-
-        app.UseRouting();
-        app.UseHealthCheck();
 
         return app;
     }
