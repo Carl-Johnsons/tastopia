@@ -241,7 +241,7 @@ internal class MockupData
                 comment = new Comment
                 {
                     Id = commentId,
-                    Content = GetRandomCommentContent(),
+                    Content = wrongComment.Content,
                     CreatedAt = time,
                     UpdatedAt = time,
                     IsActive = true,
