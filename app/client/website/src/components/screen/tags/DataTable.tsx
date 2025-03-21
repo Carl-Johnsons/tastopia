@@ -4,9 +4,7 @@ import Loader from "@/components/ui/Loader";
 import NoRecord from "@/components/ui/NoRecord";
 import { columnFieldMap, tagsColumns } from "./DataTableColumns";
 import ReactDataTable, { SortOrder, TableColumn } from "react-data-table-component";
-import { IAdminGetUserResponse } from "@/generated/interfaces/user.interface";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useGetAdminUsers } from "@/api/user";
 import useDebounce from "@/hooks/useDebounce";
 import { customStyles } from "@/constants/styles";
 import SearchBar from "../users/SearchBar";
@@ -15,8 +13,6 @@ import { useGetTags } from "@/api/tag";
 import { Tag } from "@/types/tag";
 
 const DataTable = () => {
-  const { tags, setTags } = useTags();
-
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [sortBy, setSortBy] = useState("");
@@ -31,6 +27,7 @@ const DataTable = () => {
     debouncedValue,
     limit
   );
+  const { tags, setTags } = useTags();
 
   const handlePageChange = (page: number) => {
     setSkip(page - 1);
@@ -54,8 +51,13 @@ const DataTable = () => {
   };
 
   useEffect(() => {
+    if (data?.paginatedData) {
+      setTags(data.paginatedData);
+    }
+  }, [data, setTags]);
+
+  useEffect(() => {
     refetch();
-    setTags(data?.paginatedData ?? []);
   }, [skip, sortBy, sortOrder, debouncedValue, limit]);
 
   return (

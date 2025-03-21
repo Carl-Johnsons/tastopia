@@ -6,7 +6,7 @@ import { adminBanUser } from "@/actions/user.action";
 import { toast } from "react-toastify";
 import { Tag, TagStatus } from "@/types/tag";
 import { format } from "date-fns";
-import ReportStatus from "@/components/ui/ReportStatus";
+import TagStatusComponent from "@/components/ui/TagStatus";
 import Image from "next/image";
 
 export const tagsColumns = [
@@ -37,12 +37,12 @@ export const tagsColumns = [
     name: "Status",
     hide: 600,
     sortable: true,
-    cell: (tag: Tag) => <ReportStatus status={tag.imageUrl} />
+    cell: (tag: Tag) => <TagStatusComponent status={tag.status} />
   },
   {
     name: "Ingredient Image",
     hide: 1368,
-    width: "140px",
+    width: "160px",
     center: true,
     cell: (tag: Tag) => (
       <div className='p-2'>
@@ -60,6 +60,12 @@ export const tagsColumns = [
     name: "Action",
     ignoreRowClick: true,
     button: true,
+    cell: (tag: Tag) => (
+      <ActionButtons
+        id={tag.id}
+        status={tag.status}
+      />
+    ),
     width: "300px"
   }
 ];
@@ -73,19 +79,19 @@ export const columnFieldMap: Record<string, keyof Tag> = {
 };
 
 type ActionButtonsProps = {
-  accountId: string;
+  id: string;
   status: TagStatus;
 };
-export const ActionButtons = ({ accountId, status }: ActionButtonsProps) => {
+export const ActionButtons = ({ id, status }: ActionButtonsProps) => {
   const router = useRouter();
   const [active, setActive] = useState<TagStatus>(status);
 
   const handleDetailClick = () => {
-    router.push(`/users/${accountId}`);
+    // router.push(`/users/${id}`);
   };
 
   const handleToggleStatus = async () => {
-    const result = await adminBanUser(accountId);
+    const result = await adminBanUser(id);
     if (result.userId) {
       const newStatus = result.isRestored;
       setActive(newStatus);

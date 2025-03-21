@@ -10,7 +10,7 @@ export const useGetTags = (
   limit = 6
 ) => {
   return useQuery<IPaginatedTagResponse>({
-    queryKey: ["users", skip, sortBy, sortOrder, keyword, limit],
+    queryKey: ["tags", skip, sortBy, sortOrder, keyword, limit],
     queryFn: () => getTags(skip, sortBy, sortOrder, keyword, limit)
   });
 };

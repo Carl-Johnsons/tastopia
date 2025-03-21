@@ -1,3 +1,5 @@
+"use server";
+
 import { protectedAxiosInstance } from "@/constants/host";
 import { IPaginatedTagResponse } from "@/types/tag";
 
@@ -9,7 +11,7 @@ export async function getTags(
   limit = 6
 ) {
   try {
-    const url = `/api/admin/recipe/get-tags?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&keyword=${encodeURIComponent(keyword)}`;
+    const url = `/api/admin/recipe/get-tags?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&Keyword=${encodeURIComponent(keyword)}`;
 
     const { data } = await protectedAxiosInstance.get(url);
 
