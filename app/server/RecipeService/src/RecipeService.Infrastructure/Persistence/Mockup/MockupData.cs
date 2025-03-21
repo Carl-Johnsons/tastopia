@@ -26,6 +26,7 @@ internal class MockupData
     public async Task SeedAllData()
     {
         await EnsureDatabaseIsReady();
+        await SeedPendingTags();
         await SeedRecipeTags();
     }
     private async Task EnsureDatabaseIsReady()
@@ -295,6 +296,33 @@ internal class MockupData
         return null;
     }
 
+    public async Task SeedPendingTags()
+    {
+        if (!_context.Tags.Any())
+        {
+            var seedTagFile = File.ReadAllText(Path.Combine(SeedDataPath, "pending-tags.json"));
+            var seedTags = JsonConvert.DeserializeObject<List<SeedTag>>(seedTagFile) ?? [];
+            var tags = new List<Tag>();
+            foreach (var seedTag in seedTags)
+            {
+                tags.Add(new Tag
+                {
+                    Id = Guid.NewGuid(),
+                    Code = "",
+                    Value = seedTag.Value,
+                    Category = Enum.Parse<TagCategory>(seedTag.Category),
+                    ImageUrl = "",
+                    Status = TagStatus.Pending
+                });
+            }
+
+            _logger.LogInformation("Begin pending seed tag");
+            _context.Tags.AddRange(tags);
+
+            await _unitOfWork.SaveChangeAsync();
+        }
+    }
+
     public async Task SeedRecipeTags()
     {
         if (!_context.RecipeTags.Any())
@@ -326,6 +354,20 @@ internal class MockupData
                         _logger.LogError($"There are no {tagCode} found in tags.json");
                     }
                 }
+            }
+
+            var pendingTags = _context.Tags.Where(t => t.Status == TagStatus.Pending).ToList();
+            foreach(var pendingTag in pendingTags)
+            {
+                var randomRecipe = await _context.Recipes
+                .OrderBy(r => Guid.NewGuid())
+                .FirstOrDefaultAsync();
+                var rt = new RecipeTag
+                {
+                    TagId = pendingTag.Id,
+                    RecipeId = randomRecipe!.Id
+                };
+                _context.RecipeTags.Add(rt);
             }
             await _unitOfWork.SaveChangeAsync();
         }
