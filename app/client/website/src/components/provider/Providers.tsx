@@ -6,7 +6,6 @@ import { isServer, QueryClient, QueryClientProvider } from "@tanstack/react-quer
 import StoreProvider from "./StoreProvider";
 import { ReactNode } from "react";
 import ToastProvider from "./ToastProvider";
-import { NextIntlClientProvider } from "next-intl";
 
 function makeQueryClient() {
   return new QueryClient({
