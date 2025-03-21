@@ -1,5 +1,5 @@
 import {
-    disableRecipe,
+  disableRecipe,
   getRecipeComments,
   getRecipeReports,
   GetRecipeReportsParams,
@@ -29,7 +29,7 @@ export const useGetRecipeReports = ({
   keyword
 }: GetRecipeReportsParams) => {
   return useQuery<IPaginatedAdminReportRecipeListResponse>({
-    queryKey: ["reports", skip, sortBy, sortOrder, lang, keyword, limit],
+    queryKey: ["recipeReports", skip, sortBy, sortOrder, lang, keyword, limit],
     queryFn: () =>
       getRecipeReports({
         limit,
@@ -50,7 +50,7 @@ export const useGetRecipeComments = (recipeId: string) => {
     string[],
     number | undefined
   >({
-    queryKey: ["comments", recipeId],
+    queryKey: ["recipeComments", recipeId],
     initialPageParam: 0,
     queryFn: ({ pageParam }) =>
       getRecipeComments({
@@ -68,25 +68,24 @@ export const useGetRecipeComments = (recipeId: string) => {
 
 export const useReopenReport = () => {
   return useMutation<void, Error, IReportDTO>({
-    mutationFn: (params) => reopenReport(params)
+    mutationFn: params => reopenReport(params)
   });
 };
 
 export const useMarkReportAsCompleted = () => {
   return useMutation<void, Error, IReportDTO>({
-    mutationFn: (params) => markReportAsCompleted(params)
+    mutationFn: params => markReportAsCompleted(params)
   });
 };
 
 export const useDisableRecipe = () => {
   return useMutation<void, Error, string>({
-    mutationFn: (id) => disableRecipe(id)
+    mutationFn: id => disableRecipe(id)
   });
-}
+};
 
 export const useRestoreRecipe = () => {
   return useMutation<void, Error, string>({
-    mutationFn: (id) => restoreRecipe(id)
+    mutationFn: id => restoreRecipe(id)
   });
-}
-
+};

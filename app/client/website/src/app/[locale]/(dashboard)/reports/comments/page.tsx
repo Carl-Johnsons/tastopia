@@ -1,7 +1,9 @@
-export default function Comments() {
+import Table from "@/components/screen/report/comment/DataTable";
+
+export default async function Page() {
   return (
-    <div className="flex size-full justify-center">
-      <div className="flex w-full flex-col gap-4">Comments</div>
+    <div className="flex size-full flex-col justify-center gap-4">
+      <Table />
     </div>
   );
 }

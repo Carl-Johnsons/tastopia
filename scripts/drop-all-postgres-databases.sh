@@ -24,6 +24,4 @@ drop_database() {
 
 drop_database "./app/server/IdentityService/.env" "./app/server/IdentityService/src/IdentityService.Infrastructure" "Identity" &&
     drop_database "./app/server/UploadFileService/.env" "./app/server/UploadFileService/src/UploadFileService.Infrastructure" "Upload" &&
-    drop_database "./app/server/UserService/.env" "./app/server/UserService/src/UserService.Infrastructure" "User" && 
-    drop_database "./app/server/SubscriptionService/.env" "./app/server/SubscriptionService/src/SubscriptionService.Infrastructure" "Subscription"
-
+    drop_database "./app/server/UserService/.env" "./app/server/UserService/src/UserService.Infrastructure" "User"

@@ -1,18 +1,18 @@
 "use client";
 
 import {
-  useDisableRecipe,
+  useDisableComment,
   useMarkReportAsCompleted,
   useReopenReport,
-  useRestoreRecipe
-} from "@/api/recipe";
+  useRestoreComment
+} from "@/api/comment";
 import InteractiveButton, { DataTableButton } from "@/components/shared/common/Button";
 import { BanIcon } from "@/components/shared/icons";
 import { ReportType } from "@/constants/reports";
-import { DataTableButtonProps } from "@/types/report";
+import { useRouter } from "@/i18n/navigation";
+import { CommentDataTableButtonProps, DataTableButtonProps } from "@/types/report";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, RotateCw, Search } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
 import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -20,9 +20,10 @@ export const ViewDetailButton = ({
   title,
   onSuccess,
   onFailure,
+  recipeId,
   targetId,
   className
-}: DataTableButtonProps) => {
+}: CommentDataTableButtonProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -30,7 +31,7 @@ export const ViewDetailButton = ({
     setIsLoading(true);
 
     try {
-      router.push(`/reports/recipes/detail/${targetId}`);
+      router.push(`/reports/comments/detail/recipe/${recipeId}/comment/${targetId}`);
       onSuccess && onSuccess();
     } catch (error) {
       onFailure && onFailure();
@@ -59,7 +60,8 @@ export const ReopenReportButton = ({
   targetId,
   onSuccess,
   onFailure,
-  className
+  className,
+  ...props
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useReopenReport();
   const queryClient = useQueryClient();
@@ -68,12 +70,12 @@ export const ReopenReportButton = ({
     mutate(
       {
         reportId: targetId,
-        reportType: ReportType.RECIPE
+        reportType: ReportType.COMMENT
       },
       {
         onSuccess: async () => {
           toast.success("Report reopened successfully.");
-          await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
+          await queryClient.invalidateQueries({ queryKey: ["commentReport", targetId] });
           onSuccess && onSuccess();
         },
         onError: ({ message }) => {
@@ -91,44 +93,7 @@ export const ReopenReportButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`bg-green-400 hover:bg-green-500 ${className}`}
-    />
-  );
-};
-
-/**
- * Restore a recipe.
- */
-export const RestoreRecipeButton = ({
-  title,
-  targetId,
-  onSuccess,
-  onFailure,
-  className
-}: DataTableButtonProps) => {
-  const { mutate, isPending } = useRestoreRecipe();
-  const queryClient = useQueryClient();
-
-  const handleClick = useCallback(async () => {
-    mutate(targetId, {
-      onSuccess: async () => {
-        toast.success("Recipe restored successfully.");
-        await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
-        onSuccess && onSuccess();
-      },
-      onError: ({ message }) => {
-        toast.error(message);
-        onFailure && onFailure();
-      }
-    });
-  }, [onSuccess, onFailure, targetId, mutate]);
-
-  return (
-    <InteractiveButton
-      title={title}
-      icon={<RotateCw className='text-white_black' />}
-      isLoading={isPending}
-      onClick={handleClick}
-      className={`bg-green-400 hover:bg-green-500 ${className}`}
+      {...props}
     />
   );
 };
@@ -141,18 +106,19 @@ export const MarkAsCompletedButton = ({
   targetId,
   onSuccess,
   onFailure,
-  className
+  className,
+  ...props
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useMarkReportAsCompleted();
   const queryClient = useQueryClient();
 
   const handleClick = useCallback(async () => {
     mutate(
-      { reportId: targetId, reportType: ReportType.RECIPE },
+      { reportId: targetId, reportType: ReportType.COMMENT },
       {
         onSuccess: async () => {
           toast.success("Report marked as completed successfully.");
-          await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
+          await queryClient.invalidateQueries({ queryKey: ["commentReport", targetId] });
           onSuccess && onSuccess();
         },
         onError: ({ message }) => {
@@ -170,36 +136,41 @@ export const MarkAsCompletedButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`bg-purple-400 hover:bg-purple-500 ${className}`}
+      {...props}
     />
   );
 };
 
 /**
- * Disable a recipe.
+ * Disable a comment.
  */
-export const DisableRecipeButton = ({
+export const DisableCommentButton = ({
   title,
   targetId,
+  recipeId,
   onSuccess,
   onFailure,
   className
-}: DataTableButtonProps) => {
-  const { mutate, isPending } = useDisableRecipe();
+}: CommentDataTableButtonProps) => {
+  const { mutate, isPending } = useDisableComment();
   const queryClient = useQueryClient();
 
   const handleClick = useCallback(async () => {
-    mutate(targetId, {
-      onSuccess: async () => {
-        toast.success("Recipe disabled successfully.");
-        await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
-        onSuccess && onSuccess();
-      },
-      onError: ({ message }) => {
-        toast.error(message);
-        onFailure && onFailure();
+    mutate(
+      { recipeId, commentId: targetId },
+      {
+        onSuccess: async () => {
+          toast.success("Comment disabled successfully.");
+          await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
+          onSuccess && onSuccess();
+        },
+        onError: ({ message }) => {
+          toast.error(message);
+          onFailure && onFailure();
+        }
       }
-    });
-  }, [onSuccess, onFailure, targetId, mutate]);
+    );
+  }, [onSuccess, onFailure, recipeId, targetId, mutate]);
 
   return (
     <InteractiveButton
@@ -208,6 +179,48 @@ export const DisableRecipeButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`bg-red-400 hover:bg-red-500 ${className}`}
+    />
+  );
+};
+
+/**
+ * Restore a comment.
+ */
+export const RestoreCommentButton = ({
+  title,
+  targetId,
+  recipeId,
+  onSuccess,
+  onFailure,
+  className
+}: CommentDataTableButtonProps) => {
+  const { mutate, isPending } = useRestoreComment();
+  const queryClient = useQueryClient();
+
+  const handleClick = useCallback(async () => {
+    mutate(
+      { recipeId, commentId: targetId },
+      {
+        onSuccess: async () => {
+          toast.success("Comment restored successfully.");
+          await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
+          onSuccess && onSuccess();
+        },
+        onError: ({ message }) => {
+          toast.error(message);
+          onFailure && onFailure();
+        }
+      }
+    );
+  }, [onSuccess, onFailure, recipeId, targetId, mutate]);
+
+  return (
+    <InteractiveButton
+      title={title}
+      icon={<RotateCw className='text-white_black' />}
+      isLoading={isPending}
+      onClick={handleClick}
+      className={`bg-green-400 hover:bg-green-500 ${className}`}
     />
   );
 };

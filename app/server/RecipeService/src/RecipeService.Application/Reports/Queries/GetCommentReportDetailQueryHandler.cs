@@ -4,7 +4,6 @@ using Contract.Constants;
 using Contract.Utilities;
 using Google.Protobuf.Collections;
 using MongoDB.Driver;
-using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
@@ -97,10 +96,16 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
 
         var reportDetailResponse = new AdminReportCommentDetailResponse
         {
-            CommentContent = result.MatchComment.Content,
-            CommentId = result.MatchComment.Id,
-            CreatedAt = result.CreatedAt,
-            CommentOwnerUsername = mapUserGrpc.Users[result.MatchComment.AccountId.ToString()].AccountUsername,
+            Comment = new CommentDetailResponse
+            {
+                Id = result.MatchComment.Id,
+                AuthorId = result.MatchComment.AccountId,
+                AuthorUsername = mapUserGrpc.Users[result.MatchComment.AccountId.ToString()].AccountUsername,
+                Content = result.MatchComment.Content,
+                IsActive = result.MatchComment.IsActive,
+                CreatedAt = result.MatchComment.CreatedAt,
+                UpdatedAt = result.MatchComment.UpdatedAt,
+            },
             Recipe = new AdminRecipeResponse
             {
                 Id = result.Id,

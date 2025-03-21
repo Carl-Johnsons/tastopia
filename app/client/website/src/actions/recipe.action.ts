@@ -135,10 +135,10 @@ export const disableRecipe = async (id: string) => {
 };
 
 export const restoreRecipe = async (id: string) => {
-  const url = `/api/admin/recipe/restore?id=${id}`;
+  const url = "/api/admin/recipe/restore";
 
   try {
-    await protectedAxiosInstance.put<undefined>(url);
+    await protectedAxiosInstance.put<undefined>(url, undefined, { params: { id } });
   } catch (error) {
     withErrorProcessor(error);
   }

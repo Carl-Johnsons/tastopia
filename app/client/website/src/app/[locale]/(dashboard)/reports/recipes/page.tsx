@@ -1,5 +1,4 @@
 import Table from "@/components/screen/report/recipe/DataTable";
-import { ChevronRight } from "lucide-react";
 
 export default async function Recipe() {
   return (
