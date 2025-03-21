@@ -29,7 +29,7 @@ export default async function Page({ params }: CommentDetailParamProps) {
           <ChevronRight className='text-black_white' />
           <span className='text-black_white'>Detail</span>
         </div>
-        <div className='container flex-center flex-col gap-10'>
+        <div className='flex-center container flex-col gap-10'>
           <CommentDetail
             comment={comment}
             recipeId={recipeId}
@@ -38,7 +38,7 @@ export default async function Page({ params }: CommentDetailParamProps) {
             reports={reports}
             recipeId={recipeId}
             reportType={ReportType.COMMENT}
-            className="w-full"
+            className='w-full'
           />
         </div>
       </div>

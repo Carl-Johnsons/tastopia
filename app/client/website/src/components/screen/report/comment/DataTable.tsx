@@ -4,18 +4,28 @@ import Loader from "@/components/ui/Loader";
 import useDebounce from "@/hooks/useDebounce";
 import { format } from "date-fns";
 import Image from "next/image";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import { customStyles } from "@/constants/styles";
 import { ChevronRight } from "lucide-react";
 import NoRecord from "@/components/ui/NoRecord";
 import SearchBar from "../../users/SearchBar";
 import { ReportStatus } from "@/constants/reports";
-import DataTableProvider, { DataTableContext, OnChangeActiveFn } from "./Provider";
+import DataTableProvider, {
+  DataTableContext,
+  DataTableContextValue,
+  OnChangeActiveFn
+} from "./Provider";
 import { CommentReportActionButtonsProps } from "@/types/report";
 import { MarkAsCompletedButton, ReopenReportButton, ViewDetailButton } from "./Button";
 import { useGetCommentReports } from "@/api/comment";
-import ReportDetailModal from "./ReportDetailModal";
 import { IAdminReportCommentResponse } from "@/generated/interfaces/recipe.interface";
 import ReportStatusText from "../common/StatusText";
 
@@ -120,7 +130,7 @@ const ActionButtons = ({
   targetId,
   status
 }: CommentReportActionButtonsProps) => {
-  const { onChangeActive } = useContext(DataTableContext) as DataTableContext;
+  const { onChangeActive } = useContext(DataTableContext) as DataTableContextValue;
 
   return (
     <div className='flex gap-2'>
@@ -167,8 +177,6 @@ export default function Table() {
   const [lang, setLang] = useState("en");
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
-  const [modalReportItem, setModalReportItem] = useState<IAdminReportCommentResponse>();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
     data: fetchedData,
@@ -213,21 +221,9 @@ export default function Table() {
     []
   );
 
-  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value.trim());
     setSkip(0);
-  }, []);
-
-  const onOpenModal = useCallback(
-    (index: number) => {
-      setModalReportItem(reports[index]);
-      setIsModalOpen(true);
-    },
-    [reports]
-  );
-
-  const onCloseModal = useCallback(() => {
-    setIsModalOpen(false);
   }, []);
 
   const onChangeActive = useCallback<OnChangeActiveFn>(({ reportId, value }) => {
@@ -243,17 +239,16 @@ export default function Table() {
     });
   }, []);
 
-  const contextValue: DataTableContext = useMemo(
+  const contextValue: DataTableContextValue = useMemo(
     () => ({
-      onChangeActive,
-      onOpenModal,
-      onCloseModal
+      onChangeActive
     }),
-    [onChangeActive, onOpenModal, onCloseModal]
+    [onChangeActive]
   );
 
   useEffect(() => {
     refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [skip, sortBy, sortOrder, debouncedValue, limit, keyword]);
 
   useEffect(() => {
@@ -293,11 +288,6 @@ export default function Table() {
           paginationTotalRows={totalRow}
           sortServer
           onSort={onSort}
-        />
-        <ReportDetailModal
-          report={modalReportItem}
-          isOpen={isModalOpen}
-          onClose={onCloseModal}
         />
       </DataTableProvider>
     </>
