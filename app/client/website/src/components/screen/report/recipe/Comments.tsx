@@ -7,10 +7,8 @@ import Loader from "@/components/ui/Loader";
 import { IRecipeCommentResponse } from "@/generated/interfaces/recipe.interface";
 import { formatRelative } from "date-fns";
 import { Link } from "@/i18n/navigation";
-import { useCallback, useMemo, useState } from "react";
-import { toast } from "react-toastify";
-import { RotateCw, Trash } from "lucide-react";
-import InteractiveButton from "@/components/shared/common/Button";
+import { useMemo, useState } from "react";
+import { SmallDisableCommentButton, SmallRestoreCommentButton } from "./Button";
 
 type Props = {
   recipeId: string;
@@ -39,6 +37,7 @@ export default function Comments({ recipeId }: Props) {
         page.paginatedData.map(comment => (
           <Comment
             key={comment.id}
+            recipeId={recipeId}
             comment={comment}
           />
         ))
@@ -60,10 +59,11 @@ export default function Comments({ recipeId }: Props) {
 
 type CommentProps = {
   comment: IRecipeCommentResponse;
+  recipeId: string;
 };
 
-function Comment({ comment }: CommentProps) {
-  const { content, createdAt, accountId, displayName, avatarUrl } = comment;
+function Comment({ comment, recipeId }: CommentProps) {
+  const { id, content, createdAt, accountId, displayName, avatarUrl } = comment;
   const time = useMemo(
     () => formatRelative(new Date(createdAt), new Date()),
     [createdAt]
@@ -71,16 +71,6 @@ function Comment({ comment }: CommentProps) {
 
   const [isActive, setIsActive] = useState(comment.isActive);
   const lowOpacityOnInactive = useMemo(() => (isActive ? "" : "opacity-50"), [isActive]);
-
-  const handleDelete = useCallback(() => {
-    setIsActive(false);
-    toast.success("Deleted comment successfully.");
-  }, []);
-
-  const handleRestore = useCallback(() => {
-    setIsActive(true);
-    toast.success("Restored comment successfully.");
-  }, []);
 
   return (
     <div className={`grid grid-cols-[auto_1fr] items-center gap-x-2`}>
@@ -110,20 +100,21 @@ function Comment({ comment }: CommentProps) {
             {time}
           </span>
 
-          <InteractiveButton
-            title={`${isActive ? "Delete" : "Restore"} comment`}
-            icon={
-              isActive ? (
-                <Trash className='text-black_white group-hover:text-red-500' />
-              ) : (
-                <RotateCw className='text-black_white group-hover:text-green-500' />
-              )
-            }
-            onClick={isActive ? handleDelete : handleRestore}
-            className={`ms-auto size-fit bg-transparent p-0 pb-1 shadow-none hover:bg-transparent`}
-            noText
-            toolTip
-          />
+          {isActive ? (
+            <SmallDisableCommentButton
+              title='Disable'
+              targetId={id}
+              recipeId={recipeId}
+              onSuccess={() => setIsActive(false)}
+            />
+          ) : (
+            <SmallRestoreCommentButton
+              title='Restore'
+              targetId={id}
+              recipeId={recipeId}
+              onSuccess={() => setIsActive(true)}
+            />
+          )}
         </div>
       </div>
 
