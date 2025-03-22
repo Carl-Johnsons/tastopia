@@ -1,6 +1,7 @@
 "use client";
 
 import Loader from "@/components/ui/Loader";
+import { IAdminRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import useDebounce from "@/hooks/useDebounce";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -13,66 +14,44 @@ import {
   useState
 } from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
+import { DisableRecipeButton, RestoreRecipeButton, ViewDetailButton } from "./Button";
 import { customStyles } from "@/constants/styles";
-import { ChevronRight } from "lucide-react";
 import NoRecord from "@/components/ui/NoRecord";
-import SearchBar from "../../users/SearchBar";
-import { ReportStatus } from "@/constants/reports";
 import DataTableProvider, {
   DataTableContext,
   DataTableContextValue,
   OnChangeActiveFn
 } from "./Provider";
-import { CommentReportActionButtonsProps } from "@/types/report";
-import { MarkAsCompletedButton, ReopenReportButton, ViewDetailButton } from "./Button";
-import { useGetCommentReports } from "@/api/comment";
-import { IAdminReportCommentResponse } from "@/generated/interfaces/recipe.interface";
-import ReportStatusText from "../common/StatusText";
+import { ItemStatusText } from "../report/common/StatusText";
+import { useGetRecipes } from "@/api/recipe";
+import SearchBar from "../users/SearchBar";
 
-const columns: TableColumn<IAdminReportCommentResponse>[] = [
+const columns: TableColumn<IAdminRecipeResponse>[] = [
   {
-    name: "Comment Owner",
-    selector: row => row.commentOwnerUsername,
-    maxWidth: "160px",
-    hide: 952,
-    sortable: true
-  },
-  {
-    name: "Content",
+    name: "Recipe Name",
+    selector: row => row.title,
     sortable: true,
-    minWidth: "200px",
-    cell: ({ commentContent }) => <span className='py-1'>{commentContent}</span>
+    maxWidth: "200px"
   },
   {
-    name: "Recipe Image",
-    hide: 1668,
-    width: "140px",
-    center: true,
-    cell: ({ recipeImageURL }) => (
-      <div className='p-2'>
-        <Image
-          src={recipeImageURL}
-          alt={""}
-          width={90}
-          height={50}
-          className='h-[50px] w-[90px] rounded-lg object-cover'
-        />
-      </div>
-    )
-  },
-  {
-    name: "Reporter",
-    selector: row => row.reporterUsername,
-    width: "160px",
-    hide: 1776,
-    sortable: true
-  },
-  {
-    name: "Report Reason",
+    name: "Ingredients",
     hide: 1368,
-    selector: row => row.reportReason,
     sortable: true,
-    wrap: true
+    wrap: true,
+    grow: 3,
+    cell: ({ ingredients }) => <span className='py-1'>{ingredients}</span>
+  },
+  {
+    name: "Username",
+    selector: row => row.authorUsername,
+    hide: 1576,
+    sortable: true
+  },
+  {
+    name: "Name",
+    selector: row => row.authorDisplayName,
+    hide: 1576,
+    sortable: true
   },
   {
     name: "Created Date",
@@ -91,64 +70,80 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
     name: "Status",
     sortable: true,
-    width: "100px",
     center: true,
-    selector: row => row.status,
-    cell: ({ status }) => {
+    cell: ({ isActive }) => {
       return (
-        <ReportStatusText
-          status={status as ReportStatus}
+        <ItemStatusText
+          isActive={isActive}
           coloring
         />
       );
     }
   },
   {
+    name: "Recipe Image",
+    hide: 1368,
+    width: "140px",
+    center: true,
+    cell: ({ recipeImageUrl }) => (
+      <div className='p-2'>
+        <Image
+          src={recipeImageUrl}
+          alt={"Recipe image figure"}
+          width={90}
+          height={50}
+          className='h-[50px] w-[90px] rounded-lg object-cover'
+        />
+      </div>
+    )
+  },
+  {
     name: "Actions",
     center: true,
     width: "150px",
-    cell: ({ commentId, recipeId, reportId, status }) => {
+    cell: ({ id, isActive }) => {
       return (
         <ActionButtons
-          reportId={reportId}
-          recipeId={recipeId}
-          targetId={commentId}
-          status={status as ReportStatus}
+          recipeId={id}
+          isActive={isActive}
         />
       );
     }
   }
 ];
 
-const ActionButtons = ({
-  reportId,
-  recipeId,
-  targetId,
-  status
-}: CommentReportActionButtonsProps) => {
+type ActionButtonsProps = {
+  recipeId: string;
+  isActive: boolean;
+};
+
+const ActionButtons = ({ recipeId, isActive }: ActionButtonsProps) => {
   const { onChangeActive } = useContext(DataTableContext) as DataTableContextValue;
 
   return (
     <div className='flex gap-2'>
       <ViewDetailButton
         title='View detail'
-        recipeId={recipeId}
-        targetId={targetId}
+        targetId={recipeId}
       />
-      {status === ReportStatus.Done ? (
-        <ReopenReportButton
+      {!isActive ? (
+        <RestoreRecipeButton
           title='Restore'
-          targetId={reportId}
+          targetId={recipeId}
+          noText
+          toolTip
           onSuccess={() => {
-            onChangeActive({ reportId, value: true });
+            onChangeActive({ recipeId, value: true });
           }}
         />
       ) : (
-        <MarkAsCompletedButton
-          title='Mark as completed'
-          targetId={reportId}
+        <DisableRecipeButton
+          title='Disable'
+          targetId={recipeId}
+          noText
+          toolTip
           onSuccess={() => {
-            onChangeActive({ reportId, value: false });
+            onChangeActive({ recipeId, value: false });
           }}
         />
       )}
@@ -156,13 +151,14 @@ const ActionButtons = ({
   );
 };
 
-export const columnFieldMap: Record<string, keyof IAdminReportCommentResponse> = {
-  "Comment Owner": "commentOwnerUsername",
-  "Recipe Image": "recipeImageURL",
-  Reporter: "reporterUsername",
-  "Report Reason": "reportReason",
+export const columnFieldMap: Record<string, keyof IAdminRecipeResponse> = {
+  "Recipe Name": "title",
+  Ingredients: "ingredients",
+  Username: "authorUsername",
+  Name: "authorDisplayName",
   "Created Date": "createdAt",
-  Status: "status"
+  Status: "isActive",
+  "Recipe Image": "recipeImageUrl"
 };
 
 export default function Table() {
@@ -179,7 +175,7 @@ export default function Table() {
     isLoading,
     isFetching,
     refetch
-  } = useGetCommentReports({
+  } = useGetRecipes({
     skip,
     sortBy,
     sortOrder,
@@ -188,12 +184,13 @@ export default function Table() {
     keyword: debouncedValue
   });
 
+  console.log("data", fetchedData);
+
   const totalRow = useMemo(
     () => (fetchedData?.metadata?.totalRow ? fetchedData.metadata.totalRow : 0),
     [fetchedData]
   );
-  const [reports, setReports] = useState<IAdminReportCommentResponse[]>([]);
-  console.log("data", fetchedData);
+  const [data, setData] = useState<IAdminRecipeResponse[]>([]);
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
@@ -204,10 +201,7 @@ export default function Table() {
   }, []);
 
   const onSort = useCallback(
-    (
-      selectedColumn: TableColumn<IAdminReportCommentResponse>,
-      sortDirection: SortOrder
-    ) => {
+    (selectedColumn: TableColumn<IAdminRecipeResponse>, sortDirection: SortOrder) => {
       const sortBy = columnFieldMap[selectedColumn.name as string];
       const sortOrder = sortDirection.toString().toUpperCase();
 
@@ -222,20 +216,20 @@ export default function Table() {
     setSkip(0);
   }, []);
 
-  const onChangeActive = useCallback<OnChangeActiveFn>(({ reportId, value }) => {
-    setReports(prev => {
-      return prev.map(report => {
-        if (report.reportId !== reportId) return report;
+  const onChangeActive = useCallback<OnChangeActiveFn>(({ recipeId, value }) => {
+    setData(prev => {
+      return prev.map(item => {
+        if (item.id !== recipeId) return item;
 
         return {
-          ...report,
-          status: value ? ReportStatus.Pending : ReportStatus.Done
+          ...item,
+          isActive: value
         };
       });
     });
   }, []);
 
-  const contextValue: DataTableContextValue = useMemo(
+  const contextValue = useMemo(
     () => ({
       onChangeActive
     }),
@@ -248,7 +242,7 @@ export default function Table() {
   }, [skip, sortBy, sortOrder, debouncedValue, limit]);
 
   useEffect(() => {
-    setReports(fetchedData?.paginatedData || []);
+    setData(fetchedData?.paginatedData || []);
   }, [fetchedData]);
 
   return (
@@ -258,11 +252,8 @@ export default function Table() {
           onChange={handleSearch}
           isLoading={isLoading || isFetching}
         />
-
         <div className='flex gap-2 self-start'>
-          <span className='text-gray-500'>Administer Reports</span>
-          <ChevronRight className='text-black_white' />
-          <span className='text-black_white'>Comment</span>
+          <span className='text-gray-500'>Administer Recipes</span>
         </div>
       </div>
 
@@ -270,17 +261,17 @@ export default function Table() {
         <DataTable
           customStyles={customStyles}
           columns={columns}
-          data={reports}
+          data={data}
           responsive
           striped
           highlightOnHover
           progressPending={isLoading || isFetching}
           progressComponent={<Loader />}
           noDataComponent={<NoRecord />}
-          onChangeRowsPerPage={handleChangeRowPerPage}
-          onChangePage={handleChangePage}
           pagination
           paginationServer
+          onChangeRowsPerPage={handleChangeRowPerPage}
+          onChangePage={handleChangePage}
           paginationTotalRows={totalRow}
           sortServer
           onSort={onSort}

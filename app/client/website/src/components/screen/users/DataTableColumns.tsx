@@ -1,8 +1,8 @@
 import { IAdminGetUserResponse } from "@/generated/interfaces/user.interface";
 import { Button } from "@/components/ui/button";
 import { Ban, Eye, RotateCcw } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
-import { useState } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
+import { useMemo, useState } from "react";
 import { adminBanUser } from "@/actions/user.action";
 import { toast } from "react-toastify";
 import Status from "@/components/ui/Status";
@@ -79,9 +79,10 @@ export const ActionButtons = ({
 }: ActionButtonsProps) => {
   const router = useRouter();
   const [active, setActive] = useState<boolean>(isActive);
+  const url = useMemo(() => `/users/${accountId}`, [accountId]);
 
   const handleDetailClick = () => {
-    router.push(`/users/${accountId}`);
+    router.push(url);
   };
 
   const handleToggleStatus = async () => {
@@ -103,13 +104,15 @@ export const ActionButtons = ({
 
   return (
     <div className='flex gap-2'>
-      <Button
-        className='rounded-full bg-primary text-white hover:bg-primary/90 dark:bg-primary/80'
-        onClick={handleDetailClick}
-      >
-        <Eye className='mr-1 size-4' />
-        <p className='mt-1 max-sm:hidden'>Detail</p>
-      </Button>
+      <Link href={url}>
+        <Button
+          className='rounded-full bg-primary text-white hover:bg-primary/90 dark:bg-primary/80'
+          onClick={handleDetailClick}
+        >
+          <Eye className='mr-1 size-4' />
+          <p className='mt-1 max-sm:hidden'>Detail</p>
+        </Button>
+      </Link>
 
       {active ? (
         <Button

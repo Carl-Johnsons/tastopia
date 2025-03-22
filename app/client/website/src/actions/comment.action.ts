@@ -7,10 +7,11 @@ import {
   IReportDTO
 } from "@/generated/interfaces/recipe.interface";
 import { withErrorProcessor } from "@/utils/errorHanlder";
-import { GetCommentReportDetailParams, GetReportsParams } from "@/types/report";
+import { GetCommentReportDetailParams } from "@/types/report";
 import { ChangeCommentStateDTO } from "@/types/comment";
+import { PaginatedQueryParams } from "@/types/common";
 
-export async function getCommentReports(options?: GetReportsParams) {
+export async function getCommentReports(options?: PaginatedQueryParams) {
   const url = "/api/admin/recipe/comment/reports/all";
   const {
     limit = 10,

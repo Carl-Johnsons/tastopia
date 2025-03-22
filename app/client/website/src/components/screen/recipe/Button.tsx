@@ -1,18 +1,12 @@
 "use client";
 
-import {
-  useDisableRecipe,
-  useMarkReportAsCompleted,
-  useReopenReport,
-  useRestoreRecipe
-} from "@/api/recipe";
+import { useDisableRecipe, useRestoreRecipe } from "@/api/recipe";
 import InteractiveButton, { DataTableButton } from "@/components/shared/common/Button";
 import { BanIcon } from "@/components/shared/icons";
-import { ReportType } from "@/constants/reports";
+import { Link, useRouter } from "@/i18n/navigation";
 import { DataTableButtonProps } from "@/types/report";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, RotateCw, Search } from "lucide-react";
-import { Link, useRouter } from "@/i18n/navigation";
+import { RotateCw, Search } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -25,7 +19,7 @@ export const ViewDetailButton = ({
 }: DataTableButtonProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const url = useMemo(() => `/reports/recipes/detail/${targetId}`, [targetId]);
+  const url = useMemo(() => `/recipes/${targetId}`, [targetId]);
 
   const handleClick = useCallback(() => {
     setIsLoading(true);
@@ -39,7 +33,7 @@ export const ViewDetailButton = ({
     } finally {
       setIsLoading(false);
     }
-  }, [onSuccess, onFailure, targetId, router, url]);
+  }, [onSuccess, onFailure, router, url]);
 
   return (
     <Link href={url}>
@@ -55,50 +49,6 @@ export const ViewDetailButton = ({
 };
 
 /**
- * Reopen a report.
- */
-export const ReopenReportButton = ({
-  title,
-  targetId,
-  onSuccess,
-  onFailure,
-  className
-}: DataTableButtonProps) => {
-  const { mutate, isPending } = useReopenReport();
-  const queryClient = useQueryClient();
-
-  const handleClick = useCallback(() => {
-    mutate(
-      {
-        reportId: targetId,
-        reportType: ReportType.RECIPE
-      },
-      {
-        onSuccess: async () => {
-          toast.success("Report reopened successfully.");
-          await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
-          onSuccess && onSuccess();
-        },
-        onError: ({ message }) => {
-          toast.error(message);
-          onFailure && onFailure();
-        }
-      }
-    );
-  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
-
-  return (
-    <DataTableButton
-      title={title}
-      icon={<RotateCw className='text-white_black' />}
-      isLoading={isPending}
-      onClick={handleClick}
-      className={`bg-green-400 hover:bg-green-500 ${className}`}
-    />
-  );
-};
-
-/**
  * Restore a recipe.
  */
 export const RestoreRecipeButton = ({
@@ -106,7 +56,8 @@ export const RestoreRecipeButton = ({
   targetId,
   onSuccess,
   onFailure,
-  className
+  className,
+  ...props
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useRestoreRecipe();
   const queryClient = useQueryClient();
@@ -132,47 +83,7 @@ export const RestoreRecipeButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`bg-green-400 hover:bg-green-500 ${className}`}
-    />
-  );
-};
-
-/**
- * Mark a report as completed.
- */
-export const MarkAsCompletedButton = ({
-  title,
-  targetId,
-  onSuccess,
-  onFailure,
-  className
-}: DataTableButtonProps) => {
-  const { mutate, isPending } = useMarkReportAsCompleted();
-  const queryClient = useQueryClient();
-
-  const handleClick = useCallback(async () => {
-    mutate(
-      { reportId: targetId, reportType: ReportType.RECIPE },
-      {
-        onSuccess: async () => {
-          toast.success("Report marked as completed successfully.");
-          await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
-          onSuccess && onSuccess();
-        },
-        onError: ({ message }) => {
-          toast.error(message);
-          onFailure && onFailure();
-        }
-      }
-    );
-  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
-
-  return (
-    <DataTableButton
-      title={title}
-      icon={<Check className='text-white_black' />}
-      isLoading={isPending}
-      onClick={handleClick}
-      className={`bg-purple-400 hover:bg-purple-500 ${className}`}
+      {...props}
     />
   );
 };
@@ -185,7 +96,8 @@ export const DisableRecipeButton = ({
   targetId,
   onSuccess,
   onFailure,
-  className
+  className,
+  ...props
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useDisableRecipe();
   const queryClient = useQueryClient();
@@ -211,6 +123,7 @@ export const DisableRecipeButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`bg-red-400 hover:bg-red-500 ${className}`}
+      {...props}
     />
   );
 };

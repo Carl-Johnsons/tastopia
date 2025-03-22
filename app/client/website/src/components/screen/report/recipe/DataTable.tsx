@@ -242,7 +242,7 @@ export default function Table() {
   useEffect(() => {
     refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [skip, sortBy, sortOrder, debouncedValue, limit, keyword]);
+  }, [skip, sortBy, sortOrder, debouncedValue, limit]);
 
   useEffect(() => {
     setReports(fetchedData?.paginatedData || []);

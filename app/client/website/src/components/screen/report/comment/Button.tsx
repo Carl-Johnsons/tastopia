@@ -9,11 +9,11 @@ import {
 import InteractiveButton, { DataTableButton } from "@/components/shared/common/Button";
 import { BanIcon } from "@/components/shared/icons";
 import { ReportType } from "@/constants/reports";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { CommentDataTableButtonProps, DataTableButtonProps } from "@/types/report";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, RotateCw, Search } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 export const ViewDetailButton = ({
@@ -26,12 +26,16 @@ export const ViewDetailButton = ({
 }: CommentDataTableButtonProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const url = useMemo(
+    () => `/reports/comments/detail/recipe/${recipeId}/comment/${targetId}`,
+    [recipeId, targetId]
+  );
 
   const handleClick = useCallback(() => {
     setIsLoading(true);
 
     try {
-      router.push(`/reports/comments/detail/recipe/${recipeId}/comment/${targetId}`);
+      router.push(url);
       onSuccess && onSuccess();
     } catch (error) {
       onFailure && onFailure();
@@ -39,16 +43,18 @@ export const ViewDetailButton = ({
     } finally {
       setIsLoading(false);
     }
-  }, [onSuccess, onFailure, targetId, router, recipeId]);
+  }, [onSuccess, onFailure, targetId, router, recipeId, url]);
 
   return (
-    <DataTableButton
-      title={title}
-      icon={<Search className='text-white_black' />}
-      isLoading={isLoading}
-      onClick={handleClick}
-      className={className}
-    />
+    <Link href={url}>
+      <DataTableButton
+        title={title}
+        icon={<Search className='text-white_black' />}
+        isLoading={isLoading}
+        onClick={handleClick}
+        className={className}
+      />
+    </Link>
   );
 };
 

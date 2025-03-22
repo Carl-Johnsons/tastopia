@@ -64,7 +64,7 @@ export const InteractiveButton = ({
   ...props
 }: InteractiveButtonProps) => {
   const { width } = useWindowDimensions();
-  const toolTip = useMemo(() => width < 768 || props.toolTip, [width]);
+  const toolTip = useMemo(() => width < 768 || props.toolTip, [width, props.toolTip]);
   const RenderedContent = useMemo(
     () => (
       <div className={`relative flex items-center gap-1.5`}>

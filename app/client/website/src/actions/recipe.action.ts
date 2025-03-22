@@ -3,30 +3,54 @@
 import { protectedAxiosInstance } from "@/constants/host";
 import {
   IAdminReportRecipeDetailResponse,
+  IPaginatedAdminRecipeListResponse,
   IPaginatedAdminReportRecipeListResponse,
   IPaginatedRecipeCommentListResponse,
   IReportDTO
 } from "@/generated/interfaces/recipe.interface";
 import { IGetRecipeCommentsDTO } from "../../../mobile/generated/interfaces/recipe.interface";
 import { withErrorProcessor } from "@/utils/errorHanlder";
+import { PaginatedQueryParams } from "@/types/common";
 
-export type GetRecipeReportsParams = {
-  limit?: number;
-  skip?: number;
-  sortBy?: string;
-  sortOrder?: string;
-  lang?: string;
-  keyword?: string;
-};
+export async function getRecipes(options?: PaginatedQueryParams) {
+  const url = "/api/admin/recipe/get-recipes";
+  const {
+    limit = 10,
+    skip = 0,
+    sortBy = "createdAt",
+    sortOrder = "DESC",
+    lang = "en",
+    keyword = ""
+  } = options || {};
 
-export async function getRecipeReports(options?: GetRecipeReportsParams) {
+  try {
+    const { data } =
+      await protectedAxiosInstance.get<IPaginatedAdminRecipeListResponse>(url, {
+        params: {
+          limit,
+          skip,
+          sortBy,
+          sortOrder,
+          lang,
+          keyword: encodeURIComponent(keyword)
+        }
+      });
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getRecipeReports(options?: PaginatedQueryParams) {
   const url = "/api/admin/recipe/get-recipe-reports";
   const {
     limit = 10,
     skip = 0,
     sortBy = "createdAt",
     sortOrder = "DESC",
-    lang = "vi",
+    lang = "en",
     keyword = ""
   } = options || {};
 

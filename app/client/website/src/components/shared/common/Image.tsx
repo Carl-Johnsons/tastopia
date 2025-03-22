@@ -18,6 +18,7 @@ export default function Image({
     <BaseImage
       {...props}
       quality={100}
+      onLoad={() => setIsLoading(false)}
       onError={err => {
         setHasError(true);
         onError && onError(err);

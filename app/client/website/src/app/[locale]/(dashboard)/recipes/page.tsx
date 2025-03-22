@@ -1,7 +1,9 @@
-export default function Recipes() {
+import Table from "@/components/screen/recipe/DataTable";
+
+export default async function Recipe() {
   return (
-    <div className="flex size-full justify-center">
-      <div className="flex w-full flex-col gap-4">hi recipes</div>
+    <div className='flex size-full flex-col justify-center gap-4'>
+      <Table />
     </div>
   );
 }

@@ -2,16 +2,18 @@ import {
   disableRecipe,
   getRecipeComments,
   getRecipeReports,
-  GetRecipeReportsParams,
+  getRecipes,
   markReportAsCompleted,
   reopenReport,
   restoreRecipe
 } from "@/actions/recipe.action";
 import {
+  IPaginatedAdminRecipeListResponse,
   IPaginatedAdminReportRecipeListResponse,
   IPaginatedRecipeCommentListResponse,
   IReportDTO
 } from "@/generated/interfaces/recipe.interface";
+import { PaginatedQueryParams } from "@/types/common";
 import {
   InfiniteData,
   useInfiniteQuery,
@@ -20,6 +22,28 @@ import {
 } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
+export const useGetRecipes = ({
+  limit,
+  skip,
+  sortBy,
+  sortOrder,
+  lang,
+  keyword
+}: PaginatedQueryParams) => {
+  return useQuery<IPaginatedAdminRecipeListResponse>({
+    queryKey: ["recipes", skip, sortBy, sortOrder, lang, keyword, limit],
+    queryFn: () =>
+      getRecipes({
+        limit,
+        skip,
+        sortBy,
+        sortOrder,
+        lang,
+        keyword
+      })
+  });
+};
+
 export const useGetRecipeReports = ({
   limit,
   skip,
@@ -27,7 +51,7 @@ export const useGetRecipeReports = ({
   sortOrder,
   lang,
   keyword
-}: GetRecipeReportsParams) => {
+}: PaginatedQueryParams) => {
   return useQuery<IPaginatedAdminReportRecipeListResponse>({
     queryKey: ["recipeReports", skip, sortBy, sortOrder, lang, keyword, limit],
     queryFn: () =>
