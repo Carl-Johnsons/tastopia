@@ -106,6 +106,25 @@ internal class MockupData
             _logger.LogInformation("Begin seed tag");
             _context.Tags.AddRange(tags);
 
+            var seedPendingTagFile = File.ReadAllText(Path.Combine(SeedDataPath, "pending-tags.json"));
+            var seedPendingTags = JsonConvert.DeserializeObject<List<SeedTag>>(seedPendingTagFile) ?? [];
+            var pendingTags = new List<Tag>();
+            foreach (var seedTag in seedPendingTags)
+            {
+                pendingTags.Add(new Tag
+                {
+                    Id = Guid.NewGuid(),
+                    Code = "",
+                    Value = seedTag.Value,
+                    Category = Enum.Parse<TagCategory>(seedTag.Category),
+                    ImageUrl = "",
+                    Status = TagStatus.Pending
+                });
+            }
+
+            _logger.LogInformation("Begin pending seed tag");
+            _context.Tags.AddRange(pendingTags);
+
             await _unitOfWork.SaveChangeAsync();
             var mapTagCode = tags.ToDictionary(t => t.Code, t => t.Id);
             return mapTagCode;
@@ -144,6 +163,20 @@ internal class MockupData
                         _logger.LogError($"There are no {tagCode} found in tags.json");
                     }
                 }
+            }
+
+            var pendingTags = _context.Tags.Where(t => t.Status == TagStatus.Pending).ToList();
+            foreach(var pendingTag in pendingTags)
+            {
+                var randomRecipe = await _context.Recipes
+                .OrderBy(r => Guid.NewGuid())
+                .FirstOrDefaultAsync();
+                var rt = new RecipeTag
+                {
+                    TagId = pendingTag.Id,
+                    RecipeId = randomRecipe!.Id
+                };
+                _context.RecipeTags.Add(rt);
             }
             await _unitOfWork.SaveChangeAsync();
         }

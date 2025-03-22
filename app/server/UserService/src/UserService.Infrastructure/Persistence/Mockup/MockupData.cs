@@ -156,7 +156,7 @@ internal class MockupData
         foreach (var user in seedWrongUsers)
         {
             var allUsers = users.ToList();
-            var randomUsers = allUsers.OrderBy(u => random.Next()).Take(1).ToList();
+            var randomUsers = allUsers.OrderBy(u => random.Next()).Take(25).ToList();
             foreach (var u in randomUsers)
             {
                 var report = new UserReport

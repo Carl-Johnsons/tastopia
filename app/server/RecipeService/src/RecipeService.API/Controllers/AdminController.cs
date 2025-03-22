@@ -7,6 +7,9 @@ using RecipeService.Application.Activities;
 using RecipeService.Application.Recipes.Queries;
 using RecipeService.Application.Reports.Commands;
 using RecipeService.Application.Reports.Queries;
+using RecipeService.Application.Tags.Commands;
+using RecipeService.Application.Tags.Queries;
+using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -212,6 +215,83 @@ public class AdminController : BaseApiController
             AccountId = adminGetUserActivityDTO.AccountId,
             Skip = adminGetUserActivityDTO.Skip,
             Language = adminGetUserActivityDTO.Language,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    //Tag
+    [HttpGet("get-tags")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAdminTagListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetTag([FromQuery] PaginatedDTO paginatedDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new AdminGetTagsQuery
+        {
+            AccountId = Guid.Parse(subjectId!),
+            PaginatedDTO = paginatedDTO
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("create-tag")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> CreateTag([FromForm] CreateTagDTO createTagDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new CreateTagCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            Code = createTagDTO.Code,
+            Value = createTagDTO.Value,
+            Category = createTagDTO.Category,
+            TagImage = createTagDTO.TagImage
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("update-tag")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UpdateTag([FromForm] UpdateTagDTO updateTagDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new UpdateTagCommand
+        {
+            AccountId = Guid.Parse(subjectId!),
+            TagId = updateTagDTO.TagId,
+            Code = updateTagDTO.Code,
+            Value = updateTagDTO.Value,
+            Category = updateTagDTO.Category,
+            Status = updateTagDTO.Status,
+            TagImage = updateTagDTO.TagImage
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("tag-detail")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetTagDetail([FromBody] AdminGetTagDetailDTO adminGetTagDetailDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new GetTagDetailQuery
+        {
+            AccountId = Guid.Parse(subjectId!),
+            TagId = adminGetTagDetailDTO.TagId
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

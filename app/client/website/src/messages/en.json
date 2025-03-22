@@ -16,5 +16,89 @@
     "administerReportsUser": "User",
     "administerAdmins": "Administer Admins",
     "activityLog": "Activity Log"
+  },
+  "component": {
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "done": "Done"
+    }
+  },
+  "administerUsers": {
+    "title": "Administer Users",
+    "search": "Search by username, name, gmail,...",
+    "columns": {
+      "username": "Username",
+      "name": "Name",
+      "gmail": "Gmail",
+      "phoneNumber": "Phone number",
+      "dateOfBirth": "Date of birth",
+      "status": "Status",
+      "address": "Address",
+      "action": "Action"
+    },
+    "actions": {
+      "detail": "Detail",
+      "disable": "Disable",
+      "restore": "Restore"
+    },
+    "notifications": {
+      "restoreSuccess": "Restore user successfully!",
+      "disableSuccess": "Disable user successfully!",
+      "error": "Something went wrong!"
+    }
+  },
+  "userDetail": {
+    "header": {
+      "role": "User",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "back": "Back to Users",
+        "disable": "Disable User",
+        "restore": "Restore User",
+        "edit": "Edit Profile"
+      }
+    },
+    "info": {
+      "title": "Profile Information",
+      "personalInfo": "Personal Information",
+      "accountInfo": "Account Information",
+      "statistics": "User Statistics",
+      "fields": {
+        "displayName": "Display Name",
+        "username": "Username",
+        "gmail": "Gmail",
+        "phoneNumber": "Phone Number",
+        "dob": "Date of Birth",
+        "address": "Address",
+        "bio": "Biography",
+        "activeTime": "Active time",
+        "recipes": "Recipes",
+        "followers": "Followers",
+        "following": "Following",
+        "likes": "Likes",
+        "comments": "Comments"
+      }
+    },
+    "activity": {
+      "title": "Latest Activity",
+      "empty": "No activity to display",
+      "ago": "ago",
+      "types": {
+        "createRecipe": "Create Recipe",
+        "commentRecipe": "Create Comment",
+        "upvoteRecipe": "Upvoted Recipe",
+        "downvoteRecipe": "Downvoted Recipe"
+      }
+    },
+    "notifications": {
+      "userDisabled": "User has been disabled successfully",
+      "userRestored": "User has been restored successfully",
+      "error": "An error occurred. Please try again."
+    }
   }
 }

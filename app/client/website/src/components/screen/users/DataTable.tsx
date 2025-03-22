@@ -2,7 +2,7 @@
 
 import Loader from "@/components/ui/Loader";
 import NoRecord from "@/components/ui/NoRecord";
-import { ActionButtons, columnFieldMap, usersColumns } from "./DataTableColumns";
+import { ActionButtons, usersColumns } from "./DataTableColumns";
 import ReactDataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import { IAdminGetUserResponse } from "@/generated/interfaces/user.interface";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -10,8 +10,10 @@ import { useGetAdminUsers } from "@/api/user";
 import useDebounce from "@/hooks/useDebounce";
 import { customStyles } from "@/constants/styles";
 import SearchBar from "./SearchBar";
+import { useTranslations } from "next-intl";
 
 const DataTable = () => {
+  const t = useTranslations("administerUsers");
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [sortBy, setSortBy] = useState("");
@@ -21,6 +23,16 @@ const DataTable = () => {
   const [updatedUserStatuses, setUpdatedUserStatuses] = useState<Record<string, boolean>>(
     {}
   );
+
+  const columnFieldMap: Record<string, keyof IAdminGetUserResponse> = {
+    [t("columns.username")]: "accountUsername",
+    [t("columns.name")]: "displayName",
+    [t("columns.gmail")]: "accountEmail",
+    [t("columns.phoneNumber")]: "accountPhoneNumber",
+    [t("columns.dateOfBirth")]: "dob",
+    [t("columns.status")]: "isAccountActive",
+    [t("columns.address")]: "address"
+  };
 
   const { data, isLoading, refetch } = useGetAdminUsers(
     skip,
@@ -79,14 +91,15 @@ const DataTable = () => {
         <SearchBar
           onChange={handleSearch}
           isLoading={isLoading}
+          placeholder={t("search")}
         />
         <p className='text-black_white base-medium flex w-full flex-col gap-4'>
-          Administer Users
+          {t("title")}
         </p>
       </div>
       <ReactDataTable
-        columns={usersColumns.map(column => {
-          if (column.name === "Action") {
+        columns={usersColumns(t).map(column => {
+          if (column.name === t("columns.action")) {
             return {
               ...column,
               cell: (user: IAdminGetUserResponse) => (

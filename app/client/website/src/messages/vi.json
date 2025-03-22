@@ -16,5 +16,89 @@
     "administerReportsUser": "Người dùng",
     "administerAdmins": "Quản lý quản trị viên",
     "activityLog": "Nhật ký hoạt động"
+  },
+  "component": {
+    "status": {
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động",
+      "pending": "Chờ",
+      "done": "Hoàn thành"
+    }
+  },
+  "administerUsers": {
+    "title": "Quản lý người dùng",
+    "search": "Tìm kiếm bằng tên tài khoản, tên, gmail,...",
+    "columns": {
+      "username": "Tên đăng nhập",
+      "name": "Họ tên",
+      "gmail": "Gmail",
+      "phoneNumber": "Số điện thoại",
+      "dateOfBirth": "Ngày sinh",
+      "status": "Trạng thái",
+      "address": "Địa chỉ",
+      "action": "Hành động"
+    },
+    "actions": {
+      "detail": "Chi tiết",
+      "disable": "Vô hiệu hóa",
+      "restore": "Khôi phục"
+    },
+    "notifications": {
+      "restoreSuccess": "Khôi phục người dùng thành công!",
+      "disableSuccess": "Vô hiệu hóa người dùng thành công!",
+      "error": "Đã xảy ra lỗi!"
+    }
+  },
+  "userDetail": {
+    "header": {
+      "role": "Người dùng",
+      "status": {
+        "active": "Đang hoạt động",
+        "inactive": "Đã vô hiệu hóa"
+      },
+      "actions": {
+        "back": "Quay lại danh sách",
+        "disable": "Vô hiệu hóa",
+        "restore": "Khôi phục",
+        "edit": "Chỉnh sửa"
+      }
+    },
+    "info": {
+      "title": "Thông tin hồ sơ",
+      "personalInfo": "Thông tin cá nhân",
+      "accountInfo": "Thông tin tài khoản",
+      "statistics": "Thống kê người dùng",
+      "fields": {
+        "displayName": "Tên hiển thị",
+        "username": "Tên đăng nhập",
+        "gmail": "Gmail",
+        "phoneNumber": "Số điện thoại",
+        "dob": "Ngày sinh",
+        "address": "Địa chỉ",
+        "bio": "Tiểu sử",
+        "activeTime": "Thời gian hoạt động",
+        "recipes": "Công thức",
+        "followers": "Người theo dõi",
+        "following": "Đang theo dõi",
+        "likes": "Lượt thích",
+        "comments": "Bình luận"
+      }
+    },
+    "activity": {
+      "title": "Hoạt động gần đây",
+      "empty": "Không có hoạt động nào",
+      "ago": "trước",
+      "types": {
+        "createRecipe": "Tạo công thức",
+        "commentRecipe": "Tạo bình luận",
+        "upvoteRecipe": "Đã thích công thức",
+        "downvoteRecipe": "Đã không thích công thức"
+      }
+    },
+    "notifications": {
+      "userDisabled": "Đã vô hiệu hóa người dùng thành công",
+      "userRestored": "Đã khôi phục người dùng thành công",
+      "error": "Đã xảy ra lỗi. Vui lòng thử lại."
+    }
   }
 }
