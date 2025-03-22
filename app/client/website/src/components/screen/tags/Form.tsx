@@ -1,7 +1,6 @@
 "use client";
 
-import { Tag } from "@/types/tag";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -17,7 +16,6 @@ import Image from "next/image";
 import { CreateTagSchema, UpdateTagSchema } from "@/schemas/tag";
 import { FORM_TYPE } from "@/constants/form";
 import { toast } from "react-toastify";
-import { encodeImages } from "@/utils/image";
 import { Button } from "@/components/ui/button";
 import ImageUploading from "react-images-uploading";
 import { Input } from "@/components/ui/input";
@@ -35,9 +33,7 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
@@ -57,81 +53,70 @@ const TagForm = ({ type }: FormProps) => {
     setOpenUpdateDialog,
     getTagToUpdate
   } = useTags();
+
   const tag = getTagToUpdate();
+  const isUpdate = type === FORM_TYPE.UPDATE;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [image, setImage] = useState<any>(
-    type === FORM_TYPE.UPDATE ? [tag?.imageUrl] : ""
-  );
+  const [image, setImage] = useState<any>(isUpdate ? [tag?.imageUrl] : undefined);
+  const [isImageModified, setIsImageModified] = useState(false);
 
-  const [isUploadedImage, setIsUploadedImage] = useState<boolean | undefined>(undefined);
+  const schema = isUpdate ? UpdateTagSchema : CreateTagSchema;
 
-  /** Define form */
-  const schema = type === FORM_TYPE.CREATE ? CreateTagSchema : UpdateTagSchema;
-
-  const baseDefaultValues = {
-    code: type === FORM_TYPE.UPDATE ? tag?.code || "" : "",
-    value: type === FORM_TYPE.UPDATE ? tag?.value || "" : "",
-    category: type === FORM_TYPE.UPDATE ? tag?.category || "" : "",
-    tagImage: type === FORM_TYPE.UPDATE ? tag?.imageUrl || "" : ""
+  const defaultValues = {
+    code: isUpdate ? tag?.code || "" : "",
+    value: isUpdate ? tag?.value || "" : "",
+    category: isUpdate ? tag?.category || "" : "",
+    tagImage: isUpdate ? tag?.imageUrl || "" : "",
+    ...(isUpdate && { status: tag?.status || "" })
   };
-
-  const defaultValues =
-    type === FORM_TYPE.UPDATE
-      ? {
-          ...baseDefaultValues,
-          status: tag?.status || ""
-        }
-      : baseDefaultValues;
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues
   });
 
-  const handleUploadImage = (imageFile: any) => {
-    setImage(imageFile);
-    setIsUploadedImage(true);
+  const handleUploadImage = (imageList: any) => {
+    setImage(imageList);
+    setIsImageModified(true);
   };
 
-  /** Submit handler */
   async function onSubmit(values: z.infer<typeof schema>) {
+    if (image.length === 0) {
+      toast.error("Image is required");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      if (type === FORM_TYPE.UPDATE) {
-        if (image.length === 0) return;
-        const formData = new FormData();
+      const formData = new FormData();
+
+      formData.append("code", values.code);
+      formData.append("value", values.value);
+      formData.append("category", values.category);
+
+      if (isImageModified || !isUpdate) {
+        formData.append("tagImage", image[0].file);
+      }
+
+      if (isUpdate) {
         formData.append("tagId", tag?.id ?? "");
-        formData.append("code", values.code);
-        formData.append("value", values.value);
-        formData.append("category", values.category);
         formData.append("status", values.status);
-        if (isUploadedImage) {
-          console.log("test", image[0].file);
-          formData.append("tagImage", image[0].file);
-        }
 
         const data = await updateTag(formData);
         updateTagInContext(data);
         setOpenUpdateDialog(false);
-        return toast.success("Update tag successful");
+        toast.success("Tag updated successfully");
       } else {
-        if (!isUploadedImage || image.length === 0) return;
-        const formData = new FormData();
-        formData.append("code", values.code);
-        formData.append("value", values.value);
-        formData.append("category", values.category);
-        formData.append("tagImage", image[0].file);
-
         const data = await createTag(formData);
         createTagInContext(data);
         setOpenCreateDialog(false);
-        return toast.success("Create tag successful");
+        toast.success("Tag created successfully");
       }
-    } catch (error: any) {
-      console.log(error);
-      return toast.error(`Something wrong please try later`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -206,14 +191,13 @@ const TagForm = ({ type }: FormProps) => {
                       <SelectItem value='Ingredient'>Ingredient</SelectItem>
                     </SelectContent>
                   </Select>
-
                   <FormMessage className='text-red-600' />
                 </FormItem>
               )}
             />
           </div>
 
-          {type === FORM_TYPE.UPDATE && (
+          {isUpdate && (
             <div className='flex-1'>
               <FormField
                 control={form.control}
@@ -238,7 +222,6 @@ const TagForm = ({ type }: FormProps) => {
                         <SelectItem value='Inactive'>Inactive</SelectItem>
                       </SelectContent>
                     </Select>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -247,165 +230,153 @@ const TagForm = ({ type }: FormProps) => {
           )}
         </div>
 
-        <FormField
-          control={form.control}
-          name='tagImage'
-          render={() => (
-            <FormItem className='relative flex w-full flex-col'>
-              <FormLabel className='paragraph-semibold text-black_white'>
-                Image <span className='text-red-600'>*</span>
-              </FormLabel>
-              <FormControl className='mt-3.5'>
-                <ImageUploading
-                  multiple={false}
-                  value={image}
-                  onChange={handleUploadImage}
-                  maxNumber={1}
-                  dataURLKey='data_url'
-                  maxFileSize={15242880}
-                  acceptType={["jpg", "jpeg", "png", "webp"]}
-                >
-                  {({
-                    imageList,
-                    onImageUpload,
-                    onImageRemoveAll,
-                    isDragging,
-                    dragProps,
-                    errors
-                  }) => (
-                    <>
-                      <div
-                        className={`flex flex-col items-center rounded-2xl ${isDragging && "bg-gray-400"}`}
+        <FormItem className='relative flex w-full flex-col'>
+          <FormLabel className='paragraph-semibold text-black_white'>
+            Image <span className='text-red-600'>*</span>
+          </FormLabel>
+          <FormControl className='mt-3.5'>
+            <ImageUploading
+              multiple={false}
+              value={image}
+              onChange={handleUploadImage}
+              maxNumber={1}
+              dataURLKey='data_url'
+              maxFileSize={15242880}
+              acceptType={["jpg", "jpeg", "png", "webp"]}
+            >
+              {({
+                imageList,
+                onImageUpload,
+                onImageRemoveAll,
+                isDragging,
+                dragProps,
+                errors
+              }) => (
+                <>
+                  <div
+                    className={`flex flex-col items-center rounded-2xl ${isDragging ? "bg-gray-400" : ""}`}
+                  >
+                    {imageList.length === 0 ? (
+                      <button
+                        className='w-full rounded-md px-1 py-2'
+                        onClick={onImageUpload}
+                        {...dragProps}
+                        type='button'
                       >
-                        {imageList.length === 0 && (
-                          <button
-                            style={isDragging ? { color: "red" } : undefined}
-                            className='w-full rounded-md px-1 py-2'
-                            onClick={onImageUpload}
-                            {...dragProps}
-                            type='button'
-                          >
-                            <div className='flex w-full items-center justify-center'>
-                              <div className='flex flex-col items-center justify-center pb-6 pt-5'>
-                                <svg
-                                  className='mb-4 size-8 text-gray-500 dark:text-gray-400'
-                                  aria-hidden='true'
-                                  xmlns='http://www.w3.org/2000/svg'
-                                  fill='none'
-                                  viewBox='0 0 20 16'
-                                >
-                                  <path
-                                    stroke='currentColor'
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                    strokeWidth='2'
-                                    d='M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2'
-                                  />
-                                </svg>
-                                <p className='mb-2 text-sm text-gray-500 dark:text-gray-400'>
-                                  <span className='font-semibold'>Click to upload</span>{" "}
-                                  or drag and drop
-                                </p>
-                                <p className='text-xs text-gray-500 dark:text-gray-400'>
-                                  <span>PNG, JPG, JPEG or WEBP (MAX 5MB)</span>
-                                </p>
-                              </div>
-                            </div>
-                          </button>
-                        )}
-                        &nbsp;
-                        <div className='flex w-full flex-col items-center justify-center gap-4'>
-                          {imageList.length > 0 &&
-                            imageList.map((image, index) => (
-                              <div
-                                className='flex w-full items-center justify-center gap-4'
-                                key={index}
-                              >
-                                <div className='relative flex w-full items-center justify-center gap-4'>
-                                  <Image
-                                    src={
-                                      type === FORM_TYPE.UPDATE && !image.data_url
-                                        ? image
-                                        : image.data_url
-                                    }
-                                    alt='uploaded image'
-                                    width={400}
-                                    height={40}
-                                    className='rounded-3xl'
-                                  />
-                                </div>
-                              </div>
-                            ))}
-
-                          {imageList.length > 0 && (
-                            <AlertDialog>
-                              <AlertDialogTrigger>
-                                <Button
-                                  type='button'
-                                  className='text-white_black w-fit cursor-pointer bg-primary hover:bg-secondary focus:ring'
-                                >
-                                  Remove image
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent className='bg-white_black'>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle className='text-black_white'>
-                                    Are you sure you want to delete all images?
-                                  </AlertDialogTitle>
-                                  <AlertDialogDescription className='text-black_white'>
-                                    Once deleted, it can&apos;t be undone. Please confirm
-                                    if you wish to proceed.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel className='bg-white_black text-black_white hover:bg-gray-100 dark:hover:bg-black-100'>
-                                    Cancel
-                                  </AlertDialogCancel>
-                                  <AlertDialogAction
-                                    className='text-black_white border-none bg-primary hover:bg-secondary'
-                                    onClick={onImageRemoveAll}
-                                  >
-                                    Continue
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          )}
+                        <div className='flex w-full items-center justify-center'>
+                          <div className='flex flex-col items-center justify-center pb-6 pt-5'>
+                            <svg
+                              className='mb-4 size-8 text-gray-500 dark:text-gray-400'
+                              aria-hidden='true'
+                              xmlns='http://www.w3.org/2000/svg'
+                              fill='none'
+                              viewBox='0 0 20 16'
+                            >
+                              <path
+                                stroke='currentColor'
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                strokeWidth='2'
+                                d='M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2'
+                              />
+                            </svg>
+                            <p className='mb-2 text-sm text-gray-500 dark:text-gray-400'>
+                              <span className='font-semibold'>Click to upload</span> or
+                              drag and drop
+                            </p>
+                            <p className='text-xs text-gray-500 dark:text-gray-400'>
+                              PNG, JPG, JPEG or WEBP (MAX 15MB)
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      </button>
+                    ) : (
+                      <>
+                        <div className='flex w-full flex-col items-center justify-center gap-4'>
+                          {imageList.map((image, index) => (
+                            <div
+                              className='flex w-full items-center justify-center gap-4'
+                              key={index}
+                            >
+                              <Image
+                                src={isUpdate && !image.data_url ? image : image.data_url}
+                                alt='uploaded image'
+                                width={400}
+                                height={400}
+                                className='max-h-[400px] w-auto rounded-3xl'
+                              />
+                            </div>
+                          ))}
 
-                      {!errors && isUploadedImage === false && (
+                          <AlertDialog>
+                            <AlertDialogTrigger>
+                              <Button
+                                type='button'
+                                className='text-white_black w-fit cursor-pointer bg-primary hover:bg-secondary focus:ring'
+                              >
+                                Remove image
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent className='bg-white_black'>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle className='text-black_white'>
+                                  Are you sure you want to delete this image?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription className='text-black_white'>
+                                  Once deleted, it can't be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel className='bg-white_black text-black_white hover:bg-gray-100 dark:hover:bg-black-100'>
+                                  Cancel
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                  className='text-black_white border-none bg-primary hover:bg-secondary'
+                                  onClick={() => {
+                                    onImageRemoveAll();
+                                    setIsImageModified(true);
+                                  }}
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  {!errors && image?.length === 0 && (
+                    <span className='body-medium text-red-600'>
+                      Tag image is required
+                    </span>
+                  )}
+
+                  {errors && (
+                    <div>
+                      {errors.maxNumber && (
                         <span className='body-medium text-red-600'>
-                          Tag image is required
+                          Number of selected images exceed 1
                         </span>
                       )}
-
-                      {errors && (
-                        <div>
-                          {errors.maxNumber && (
-                            <span className='body-medium text-red-600'>
-                              Number of selected images exceed 1
-                            </span>
-                          )}
-                          {errors.acceptType && (
-                            <span className='body-medium text-red-600'>
-                              Your selected file type is not allow
-                            </span>
-                          )}
-                          {errors.maxFileSize && (
-                            <span className='body-medium text-red-600'>
-                              Selected file size exceed max file size (15MB)
-                            </span>
-                          )}
-                        </div>
+                      {errors.acceptType && (
+                        <span className='body-medium text-red-600'>
+                          Your selected file type is not allowed
+                        </span>
                       )}
-                    </>
+                      {errors.maxFileSize && (
+                        <span className='body-medium text-red-600'>
+                          Selected file size exceeds max file size (15MB)
+                        </span>
+                      )}
+                    </div>
                   )}
-                </ImageUploading>
-              </FormControl>
-            </FormItem>
-          )}
-        />
+                </>
+              )}
+            </ImageUploading>
+          </FormControl>
+        </FormItem>
 
         <div className='flex justify-end'>
           <Button
@@ -414,11 +385,13 @@ const TagForm = ({ type }: FormProps) => {
             disabled={isSubmitting}
           >
             <Plus />
-            {isSubmitting ? (
-              <>{type === FORM_TYPE.UPDATE ? "Updating..." : "Creating..."}</>
-            ) : (
-              <>{type === FORM_TYPE.UPDATE ? "Update" : "Create"}</>
-            )}
+            {isSubmitting
+              ? isUpdate
+                ? "Updating..."
+                : "Creating..."
+              : isUpdate
+                ? "Update"
+                : "Create"}
           </Button>
         </div>
       </form>
