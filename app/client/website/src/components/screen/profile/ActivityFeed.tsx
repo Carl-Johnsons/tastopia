@@ -10,6 +10,9 @@ import {
 } from "@/components/shared/icons";
 import { ActivityType } from "@/constants/activities";
 import Empty from "@/components/shared/common/Empty";
+import { useLocale, useTranslations } from "next-intl";
+import { formatDistanceToNow } from "date-fns";
+import { enUS, vi } from "date-fns/locale";
 
 type ActivityFeedProps = {
   activities: ActivityItem[];
@@ -17,6 +20,9 @@ type ActivityFeedProps = {
 };
 
 export default function ActivityFeed({ activities }: ActivityFeedProps) {
+  const currentLanguage = useLocale();
+  const t = useTranslations("userDetail.activity");
+
   const getActivityIcon = (type: ActivityItem["type"]) => {
     switch (type) {
       case ActivityType.CreateRecipe:
@@ -75,7 +81,7 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
 
   return (
     <div className='bg-white_black100 rounded-xl border border-gray-200 p-6 shadow-sm dark:border-gray-600'>
-      <h2 className='h3-semibold text-black_white mb-6'>Latest Activity</h2>
+      <h2 className='h3-semibold text-black_white mb-6'>{t("title")}</h2>
 
       <div className='space-y-6'>
         {!activities.length && <Empty />}
@@ -101,7 +107,6 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
                 <h3 className='base-semibold text-black_white'>
                   {activity.type === ActivityType.Ban ? "System" : activity.username}
                 </h3>
-                {/* <p className="text-sm text-gray-500">{activity.title}</p> */}
                 <div className='flex items-center gap-2 text-sm text-gray-500'>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
@@ -126,15 +131,15 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
                     {(() => {
                       switch (activity.type) {
                         case ActivityType.CreateRecipe:
-                          return "Create Recipe";
+                          return t("types.createRecipe");
                         case ActivityType.Ban:
-                          return "Disable User";
+                          return t("types.disableUser");
                         case ActivityType.CommentRecipe:
-                          return "Create Comment";
+                          return t("types.commentRecipe");
                         case ActivityType.UpvoteRecipe:
-                          return "Upvoted Recipe";
+                          return t("types.upvoteRecipe");
                         case ActivityType.DownvoteRecipe:
-                          return "Downvoted Recipe";
+                          return t("types.downvoteRecipe");
                         default:
                           return "Activity";
                       }

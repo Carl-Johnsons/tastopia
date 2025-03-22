@@ -4,11 +4,13 @@ import ProfileHeader from "@/components/screen/profile/ProfileHeader";
 import ActivityFeed from "@/components/screen/profile/ActivityFeed";
 import ProfileInfo from "@/components/screen/profile/ProfileInfo";
 import SomeThingWentWrong from "@/components/shared/common/Error";
+import { getLocale } from "next-intl/server";
 
 export default async function UserProfile({ params }: ParamsProps) {
   try {
+    const currentLanguage = await getLocale();
     const currentUser = await getUserById(params.id);
-    const currentUserActivities = await getUserActivitiesById(params.id, "en");
+    const currentUserActivities = await getUserActivitiesById(params.id, currentLanguage);
 
     return (
       <div className='min-h-screen rounded-lg p-2'>

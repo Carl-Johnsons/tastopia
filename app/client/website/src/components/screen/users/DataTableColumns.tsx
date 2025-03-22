@@ -6,66 +6,57 @@ import { useState } from "react";
 import { adminBanUser } from "@/actions/user.action";
 import { toast } from "react-toastify";
 import Status from "@/components/ui/Status";
+import { useTranslations } from "next-intl";
 
-export const usersColumns = [
+export const usersColumns = (t: any) => [
   {
-    name: "Username",
+    name: t("columns.username"),
     selector: (user: IAdminGetUserResponse) => user?.accountUsername,
     sortable: true
   },
   {
-    name: "Name",
+    name: t("columns.name"),
     selector: (user: IAdminGetUserResponse) => user?.displayName,
     sortable: true,
     hide: 1460
   },
   {
-    name: "Gmail",
+    name: t("columns.gmail"),
     selector: (user: IAdminGetUserResponse) => user?.accountEmail ?? "",
     hide: 1234,
     sortable: true
   },
   {
-    name: "Phone number",
+    name: t("columns.phoneNumber"),
     selector: (user: IAdminGetUserResponse) => user?.accountPhoneNumber ?? "",
     hide: 1026,
     sortable: true
   },
   {
-    name: "Date of birth",
+    name: t("columns.dateOfBirth"),
     selector: (user: IAdminGetUserResponse) => user?.dob ?? "",
     hide: 1612,
     sortable: true
   },
   {
-    name: "Status",
+    name: t("columns.status"),
     hide: 600,
     sortable: true,
     cell: (user: IAdminGetUserResponse) => <Status isActive={user.isAccountActive} />
   },
   {
-    name: "Address",
+    name: t("columns.address"),
     selector: (user: IAdminGetUserResponse) => user?.address ?? "",
     sortable: true,
     hide: 1840
   },
   {
-    name: "Action",
+    name: t("columns.action"),
     ignoreRowClick: true,
     button: true,
     width: "300px"
   }
 ];
-
-export const columnFieldMap: Record<string, keyof IAdminGetUserResponse> = {
-  Username: "accountUsername",
-  Name: "displayName",
-  Gmail: "accountEmail",
-  "Phone number": "accountPhoneNumber",
-  "Date of birth": "dob",
-  Status: "isAccountActive",
-  Address: "address"
-};
 
 type ActionButtonsProps = {
   accountId: string;
@@ -77,6 +68,7 @@ export const ActionButtons = ({
   isActive,
   onStatusUpdate
 }: ActionButtonsProps) => {
+  const t = useTranslations("administerUsers");
   const router = useRouter();
   const [active, setActive] = useState<boolean>(isActive);
 
@@ -92,12 +84,12 @@ export const ActionButtons = ({
       onStatusUpdate(accountId, newStatus);
 
       if (result.isRestored) {
-        toast.success("Restore user successfully!");
+        toast.success(t("notifications.restoreSuccess"));
       } else {
-        toast.success("Disable user successfully!");
+        toast.success(t("notifications.disableSuccess"));
       }
     } else {
-      toast.error("Something went wrong!");
+      toast.error(t("notifications.error"));
     }
   };
 
@@ -108,7 +100,7 @@ export const ActionButtons = ({
         onClick={handleDetailClick}
       >
         <Search />
-        <p className='mt-1 max-sm:hidden'>Detail</p>
+        <p className='mt-1 max-sm:hidden'>{t("actions.detail")}</p>
       </Button>
 
       {active ? (
@@ -117,7 +109,7 @@ export const ActionButtons = ({
           onClick={handleToggleStatus}
         >
           <Ban />
-          <p className='mt-1 max-sm:hidden'>Disable</p>
+          <p className='mt-1 max-sm:hidden'>{t("actions.disable")}</p>
         </Button>
       ) : (
         <Button
@@ -125,7 +117,7 @@ export const ActionButtons = ({
           onClick={handleToggleStatus}
         >
           <RotateCcw />
-          <p className='mt-1 max-sm:hidden'>Restore</p>
+          <p className='mt-1 max-sm:hidden'>{t("actions.restore")}</p>
         </Button>
       )}
     </div>

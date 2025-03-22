@@ -1,7 +1,5 @@
 "use client";
 
-import { BanIcon, RestoreIcon } from "@/components/shared/icons";
-import { UserProfileType } from "@/types/user";
 import Image from "next/image";
 import Status from "@/components/ui/Status";
 import { IAdminGetUserDetailResponse } from "@/generated/interfaces/user.interface";
@@ -10,6 +8,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Ban, RotateCcw } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type ProfileHeaderProps = {
   user: IAdminGetUserDetailResponse;
@@ -18,6 +17,7 @@ type ProfileHeaderProps = {
 };
 
 export default function ProfileHeader({ user }: ProfileHeaderProps) {
+  const t = useTranslations("userDetail");
   const [active, setActive] = useState<boolean>(user.isAccountActive);
 
   const handleToggleStatus = async () => {
@@ -27,12 +27,12 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
       setActive(newStatus);
 
       if (result.isRestored) {
-        toast.success("Restore user successfully!");
+        toast.success(t("notifications.userRestored"));
       } else {
-        toast.success("Disable user successfully!");
+        toast.success(t("notifications.userDisabled"));
       }
     } else {
-      toast.error("Something went wrong!");
+      toast.error(t("notifications.error"));
     }
   };
   return (
@@ -57,7 +57,7 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
           <div>
             <h1 className='h3-semibold text-black_white'>{user.accountUsername}</h1>
             <div className='flex items-center gap-2'>
-              <p className='text-gray-600'>User</p>
+              <p className='text-gray-600'>{t("header.role")}</p>
               <Status isActive={active} />
             </div>
           </div>
@@ -69,7 +69,7 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
             onClick={handleToggleStatus}
           >
             <Ban />
-            <p>Disable</p>
+            <p>{t("header.actions.disable")}</p>
           </Button>
         ) : (
           <Button
@@ -77,7 +77,7 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
             onClick={handleToggleStatus}
           >
             <RotateCcw />
-            <p>Restore</p>
+            <p>{t("header.actions.restore")}</p>
           </Button>
         )}
       </div>

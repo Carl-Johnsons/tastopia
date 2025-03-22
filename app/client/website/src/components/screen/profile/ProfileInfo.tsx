@@ -11,19 +11,22 @@ import {
   TimeIcon,
   UserIcon
 } from "@/components/shared/icons";
+import { getTranslations } from "next-intl/server";
 
-export default function ProfileInfo({ user }: any) {
+export default async function ProfileInfo({ user }: any) {
+  const t = await getTranslations("userDetail.info");
+
   const infoItems = [
-    { icon: "user", label: "USERNAME", value: user.accountUsername },
-    { icon: "email", label: "EMAIL", value: user.accountEmail },
-    { icon: "phone", label: "PHONE", value: user.accountPhoneNumber },
-    { icon: "gender", label: "GENDER", value: user.gender },
-    { icon: "calendar", label: "DATE OF BIRTH", value: user.dob },
-    { icon: "location", label: "ADDRESS", value: user.address },
-    { icon: "followers", label: "FOLLOWERS", value: user.totalFollower },
-    { icon: "following", label: "FOLLOWINGS", value: user.totalFollowing },
-    { icon: "recipes", label: "RECIPES", value: user.totalRecipe },
-    { icon: "time", label: "ACTIVE TIME", value: user.activeTime }
+    { icon: "user", label: t("fields.username"), value: user.accountUsername },
+    { icon: "email", label: t("fields.gmail"), value: user.accountEmail },
+    { icon: "phone", label: t("fields.phoneNumber"), value: user.accountPhoneNumber },
+    { icon: "calendar", label: t("fields.dob"), value: user.dob },
+    { icon: "location", label: t("fields.address"), value: user.address },
+    { icon: "bio", label: t("fields.bio"), value: user.bio },
+    { icon: "followers", label: t("fields.followers"), value: user.totalFollower },
+    { icon: "following", label: t("fields.following"), value: user.totalFollowing },
+    { icon: "recipes", label: t("fields.recipes"), value: user.totalRecipe },
+    { icon: "time", label: t("fields.activeTime"), value: user.activeTime }
   ];
 
   const getIcon = (type: string) => {
@@ -55,7 +58,7 @@ export default function ProfileInfo({ user }: any) {
 
   return (
     <div className='bg-white_black100 rounded-xl border border-gray-200 p-6 shadow-sm dark:border-gray-600'>
-      <h2 className='h3-semibold text-black_white mb-6'>Info</h2>
+      <h2 className='h3-semibold text-black_white mb-6'>{t("title")}</h2>
 
       <div className='space-y-5'>
         {infoItems.map((item, index) => (
