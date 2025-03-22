@@ -1,47 +1,44 @@
 import { Button } from "@/components/ui/button";
-import { Pencil, Search } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
-import { useState } from "react";
-import { adminBanUser } from "@/actions/user.action";
-import { toast } from "react-toastify";
+import { Pencil } from "lucide-react";
 import { Tag, TagStatus } from "@/types/tag";
 import { format } from "date-fns";
-import TagStatusComponent from "@/components/ui/TagStatus";
+import TagStatusComponent from "@/components/ui/ReportStatus";
 import Image from "next/image";
 import { useTags } from "./TagsContext";
+import { useTranslations } from "next-intl";
 
-export const tagsColumns = [
+export const tagsColumns = (t: any) => [
   {
-    name: "Code",
+    name: t("columns.code"),
     selector: (tag: Tag) => tag?.code,
     sortable: true
   },
   {
-    name: "Ingredient name",
+    name: t("columns.value"),
     selector: (tag: Tag) => tag?.value,
     sortable: true,
     hide: 1460
   },
   {
-    name: "Category",
+    name: t("columns.category"),
     selector: (tag: Tag) => tag?.category ?? "",
     hide: 1234,
     sortable: true
   },
   {
-    name: "Created at",
+    name: t("columns.createDate"),
     selector: (tag: Tag) => format(new Date(tag?.createdAt), "dd/MM/yyyy") ?? "",
     hide: 1612,
     sortable: true
   },
   {
-    name: "Status",
+    name: t("columns.status"),
     hide: 600,
     sortable: true,
     cell: (tag: Tag) => <TagStatusComponent status={tag.status} />
   },
   {
-    name: "Ingredient Image",
+    name: t("columns.image"),
     hide: 1368,
     width: "160px",
     center: true,
@@ -58,7 +55,7 @@ export const tagsColumns = [
     )
   },
   {
-    name: "Action",
+    name: t("columns.action"),
     ignoreRowClick: true,
     button: true,
     cell: (tag: Tag) => (
@@ -71,19 +68,12 @@ export const tagsColumns = [
   }
 ];
 
-export const columnFieldMap: Record<string, keyof Tag> = {
-  Code: "code",
-  "Ingredient name": "value",
-  Category: "category",
-  "Created at": "createdAt",
-  Status: "status"
-};
-
 type ActionButtonsProps = {
   id: string;
   status: TagStatus;
 };
 export const ActionButtons = ({ id, status }: ActionButtonsProps) => {
+  const t = useTranslations("administerTags.actions");
   const { setTagIdToUpdate, setOpenUpdateDialog } = useTags();
 
   const handleOpenUpdateModel = () => {
@@ -97,7 +87,7 @@ export const ActionButtons = ({ id, status }: ActionButtonsProps) => {
       onClick={handleOpenUpdateModel}
     >
       <Pencil />
-      <p className='mt-1 max-sm:hidden'>Update</p>
+      <p className='mt-1 max-sm:hidden'>{t("update")}</p>
     </Button>
   );
 };

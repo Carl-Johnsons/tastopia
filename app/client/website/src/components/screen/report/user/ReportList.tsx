@@ -1,6 +1,5 @@
 "use client";
 
-import { StatusText } from "../recipe/DataTable";
 import { Check, Clock, Loader2, RotateCcw } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "@/i18n/navigation";
@@ -13,6 +12,8 @@ import { IAdminUserReportDetailResponse } from "@/generated/interfaces/user.inte
 import TooltipButton from "@/components/ui/TooltipButton";
 import { markUserReport } from "@/actions/user.action";
 import { toast } from "react-toastify";
+import StatusText from "../common/StatusText";
+import { useTranslations } from "next-intl";
 
 type ReportListType = {
   reportedId: string;
@@ -131,6 +132,7 @@ const ReportItem = ({
 }: ReportItemProps) => {
   const router = useRouter();
   const [isActive, setIsActive] = useState(status);
+  const t = useTranslations("administerReportUsers.notifications");
 
   const handleMarkReport = async () => {
     const result = await markUserReport(reportId);
@@ -138,13 +140,13 @@ const ReportItem = ({
       const newStatus = result.userReport.status;
       setIsActive(newStatus);
 
-      if (result.isRestored) {
-        toast.success("Reopen report successfully!");
+      if (result.isReopened) {
+        toast.success(t("restoreReportSuccess"));
       } else {
-        toast.success("Disable report successfully!");
+        toast.success(t("completeReportSuccess"));
       }
     } else {
-      toast.error("Something went wrong!");
+      toast.error(t("error"));
     }
   };
 
