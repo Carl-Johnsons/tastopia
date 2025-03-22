@@ -160,8 +160,8 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
 
                   <div className='mt-3 overflow-hidden rounded-lg'>
                     <Image
-                      src={"/assets/images/pizza.jpg"}
-                      alt={activity.recipeTitle ?? "activity comment"}
+                      src={activity.recipeImageUrl ?? "/assets/images/pizza.jpg"}
+                      alt={"activity comment"}
                       width={600}
                       height={300}
                       className='h-auto w-full object-cover'

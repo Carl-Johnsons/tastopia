@@ -2,6 +2,7 @@
 
 import Loader from "@/components/ui/Loader";
 import NoRecord from "@/components/ui/NoRecord";
+import { Button } from "@/components/ui/button";
 import { columnFieldMap, tagsColumns } from "./DataTableColumns";
 import ReactDataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -11,6 +12,16 @@ import SearchBar from "../users/SearchBar";
 import { useTags } from "./TagsContext";
 import { useGetTags } from "@/api/tag";
 import { Tag } from "@/types/tag";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
+import { Plus } from "lucide-react";
+import TagForm from "./Form";
+import { FORM_TYPE } from "@/constants/form";
 
 const DataTable = () => {
   const [skip, setSkip] = useState(0);
@@ -27,7 +38,14 @@ const DataTable = () => {
     debouncedValue,
     limit
   );
-  const { tags, setTags } = useTags();
+  const {
+    tags,
+    setTags,
+    openCreateDialog,
+    setOpenCreateDialog,
+    openUpdateDialog,
+    setOpenUpdateDialog
+  } = useTags();
 
   const handlePageChange = (page: number) => {
     setSkip(page - 1);
@@ -70,7 +88,52 @@ const DataTable = () => {
         <p className='text-black_white base-medium flex w-full flex-col gap-4'>
           Administer Tags
         </p>
+
+        <div className='flex-start w-full'>
+          <Dialog
+            open={openCreateDialog}
+            onOpenChange={setOpenCreateDialog}
+          >
+            <DialogTrigger asChild>
+              <Button className='text-white_black bg-primary hover:bg-secondary'>
+                <Plus />
+                <p className='mt-1 max-sm:hidden'>Create</p>
+              </Button>
+            </DialogTrigger>
+            <DialogContent
+              className='bg-white_black200 sm:max-w-[525px]'
+              onPointerDownOutside={e => e.preventDefault()}
+            >
+              <DialogHeader>
+                <DialogTitle className='text-black_white'>Create tag</DialogTitle>
+              </DialogHeader>
+
+              <div>
+                <TagForm type={FORM_TYPE.CREATE} />
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={openUpdateDialog}
+            onOpenChange={setOpenUpdateDialog}
+          >
+            <DialogContent
+              className='bg-white_black200 sm:max-w-[525px]'
+              onPointerDownOutside={e => e.preventDefault()}
+            >
+              <DialogHeader>
+                <DialogTitle className='text-black_white'>Update tag</DialogTitle>
+              </DialogHeader>
+
+              <div>
+                <TagForm type={FORM_TYPE.UPDATE} />
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
+
       <ReactDataTable
         data={tags}
         columns={tagsColumns}

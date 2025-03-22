@@ -4,7 +4,7 @@
 
 @layer utilities {
   .flex-center {
-    @apply flex justify-center items-center;
+    @apply flex items-center justify-center;
   }
   .bg-black_white {
     @apply bg-black dark:bg-white;
@@ -111,36 +111,40 @@
     @apply text-gray-400 dark:text-white;
   }
 
+  .light-border {
+    @apply border-gray-300 dark:border-gray-600;
+  }
+
   .h1-bold {
-    @apply font-bold text-[30px] leading-[42px] tracking-tighter;
+    @apply text-[30px] font-bold leading-[42px] tracking-tighter;
   }
 
   .h2-bold {
-    @apply font-bold text-[24px] leading-[31.2px];
+    @apply text-[24px] font-bold leading-[31.2px];
   }
 
   .h2-semibold {
-    @apply font-semibold text-[24px] leading-[31.2px];
+    @apply text-[24px] font-semibold leading-[31.2px];
   }
 
   .h3-bold {
-    @apply font-bold text-[20px] leading-[26px];
+    @apply text-[20px] font-bold leading-[26px];
   }
 
   .h3-semibold {
-    @apply font-semibold text-[20px] leading-[24.8px];
+    @apply text-[20px] font-semibold leading-[24.8px];
   }
 
   .base-medium {
-    @apply font-medium text-[18px] leading-[25.2px];
+    @apply text-[18px] font-medium leading-[25.2px];
   }
 
   .base-semibold {
-    @apply font-semibold text-[18px] leading-[25.2px];
+    @apply text-[18px] font-semibold leading-[25.2px];
   }
 
   .base-bold {
-    @apply font-bold text-[18px] leading-[140%];
+    @apply text-[18px] font-bold leading-[140%];
   }
 
   .paragraph-regular {
@@ -148,15 +152,15 @@
   }
 
   .paragraph-medium {
-    @apply font-medium text-[16px] leading-[22.4px];
+    @apply text-[16px] font-medium leading-[22.4px];
   }
 
   .paragraph-bold {
-    @apply font-bold text-[16px] leading-[20.8px];
+    @apply text-[16px] font-bold leading-[20.8px];
   }
 
   .paragraph-semibold {
-    @apply font-semibold text-[16px] leading-[20.8px];
+    @apply text-[16px] font-semibold leading-[20.8px];
   }
 
   .body-regular {
@@ -164,11 +168,11 @@
   }
 
   .body-medium {
-    @apply font-medium text-[14px] leading-[18.2px];
+    @apply text-[14px] font-medium leading-[18.2px];
   }
 
   .body-semibold {
-    @apply font-semibold text-[14px] leading-[18.2px];
+    @apply text-[14px] font-semibold leading-[18.2px];
   }
 
   .small-regular {
@@ -176,15 +180,15 @@
   }
 
   .small-medium {
-    @apply font-medium text-[12px] leading-[15.6px];
+    @apply text-[12px] font-medium leading-[15.6px];
   }
 
   .small-semibold {
-    @apply font-semibold text-[12px] leading-[15.6px];
+    @apply text-[12px] font-semibold leading-[15.6px];
   }
 
   .subtle-medium {
-    @apply font-medium text-[10px] leading-[13px] !important;
+    @apply text-[10px] font-medium leading-[13px] !important;
   }
 
   .subtle-regular {
@@ -202,8 +206,8 @@
   .shadow-white100_blacknone {
     @apply shadow-white-100 dark:shadow-none;
   }
-  
-  .border-black_white{
+
+  .border-black_white {
     @apply border-black dark:border-white;
   }
 
@@ -212,6 +216,10 @@
   }
 
   .dark-gradient {
-    background: linear-gradient(232deg, rgba(23, 28, 35, 0.41) 0%, rgba(19, 22, 28, 0.7) 100%);
+    background: linear-gradient(
+      232deg,
+      rgba(23, 28, 35, 0.41) 0%,
+      rgba(19, 22, 28, 0.7) 100%
+    );
   }
 }

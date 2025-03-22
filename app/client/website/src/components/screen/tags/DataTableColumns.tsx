@@ -8,6 +8,7 @@ import { Tag, TagStatus } from "@/types/tag";
 import { format } from "date-fns";
 import TagStatusComponent from "@/components/ui/TagStatus";
 import Image from "next/image";
+import { useTags } from "./TagsContext";
 
 export const tagsColumns = [
   {
@@ -83,48 +84,20 @@ type ActionButtonsProps = {
   status: TagStatus;
 };
 export const ActionButtons = ({ id, status }: ActionButtonsProps) => {
-  const router = useRouter();
-  const [active, setActive] = useState<TagStatus>(status);
+  const { setTagIdToUpdate, setOpenUpdateDialog } = useTags();
 
-  const handleDetailClick = () => {
-    // router.push(`/users/${id}`);
+  const handleOpenUpdateModel = () => {
+    setTagIdToUpdate(id);
+    setOpenUpdateDialog(true);
   };
-
-  const handleToggleStatus = async () => {
-    const result = await adminBanUser(id);
-    if (result.userId) {
-      const newStatus = result.isRestored;
-      setActive(newStatus);
-
-      if (result.isRestored) {
-        toast.success("Restore user successfully!");
-      } else {
-        toast.success("Disable user successfully!");
-      }
-    } else {
-      toast.error("Something went wrong!");
-    }
-  };
-
-  const handleOpenUpdateModel = () => {};
 
   return (
-    <div className='flex gap-2'>
-      <Button
-        className='text-white_black bg-primary hover:bg-secondary'
-        onClick={handleDetailClick}
-      >
-        <Search />
-        <p className='mt-1 max-sm:hidden'>Detail</p>
-      </Button>
-
-      <Button
-        className='text-white_black bg-primary hover:bg-secondary'
-        onClick={handleOpenUpdateModel}
-      >
-        <Pencil />
-        <p className='mt-1 max-sm:hidden'>Update</p>
-      </Button>
-    </div>
+    <Button
+      className='text-white_black bg-primary hover:bg-secondary'
+      onClick={handleOpenUpdateModel}
+    >
+      <Pencil />
+      <p className='mt-1 max-sm:hidden'>Update</p>
+    </Button>
   );
 };
