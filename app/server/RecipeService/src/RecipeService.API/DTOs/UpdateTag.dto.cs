@@ -10,19 +10,24 @@ public class UpdateTagDTO
     public Guid TagId { get; set; }
     [Required]
     [JsonProperty("code")]
+    [MaxLength(50)]
     public string Code { get; set; } = null!;
     [Required]
     [JsonProperty("value")]
+    [MaxLength(50)]
     public string Value { get; set; } = null!;
     [Required]
     [JsonProperty("status")]
     [TagStatusValidation]
+    [MaxLength(20)]
     public string Status { get; set; } = null!;
     [Required]
     [JsonProperty("category")]
     [CategoryValidation]
+    [MaxLength(20)]
     public string Category { get; set; } = null!;
 
     [JsonProperty("tagImage")]
+    [MaxFileSize(17)]
     public IFormFile? TagImage { get; set; }
 }
