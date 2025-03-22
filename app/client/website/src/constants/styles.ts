@@ -17,7 +17,7 @@ export const customStyles: TableStyles = {
       paddingLeft: "10px"
     },
     stripedStyle: {
-      backgroundColor: "rgba(254, 114, 76, 0.15)"
+      backgroundColor: "rgba(247, 195, 193, 0.15)"
     },
     highlightOnHoverStyle: {
       backgroundColor: "rgba(254, 114, 76, 0.3)"
