@@ -9,12 +9,13 @@ import {
 import InteractiveButton, { DataTableButton } from "@/components/shared/common/Button";
 import { BanIcon } from "@/components/shared/icons";
 import { ReportType } from "@/constants/reports";
-import { DataTableButtonProps } from "@/types/report";
+import { CommentDataTableButtonProps, DataTableButtonProps } from "@/types/report";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, RotateCw, Search } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
-import { useCallback, useState } from "react";
+import { Check, RotateCw, Search, Trash } from "lucide-react";
+import { Link, useRouter } from "@/i18n/navigation";
+import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { useDisableComment, useRestoreComment } from "@/api/comment";
 
 export const ViewDetailButton = ({
   title,
@@ -25,12 +26,13 @@ export const ViewDetailButton = ({
 }: DataTableButtonProps) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const url = useMemo(() => `/reports/recipes/detail/${targetId}`, [targetId]);
 
   const handleClick = useCallback(() => {
     setIsLoading(true);
 
     try {
-      router.push(`/reports/recipes/detail/${targetId}`);
+      router.push(url);
       onSuccess && onSuccess();
     } catch (error) {
       onFailure && onFailure();
@@ -38,16 +40,18 @@ export const ViewDetailButton = ({
     } finally {
       setIsLoading(false);
     }
-  }, [onSuccess, onFailure, targetId, router]);
+  }, [onSuccess, onFailure, targetId, router, url]);
 
   return (
-    <DataTableButton
-      title={title}
-      icon={<Search className='text-white_black' />}
-      isLoading={isLoading}
-      onClick={handleClick}
-      className={className}
-    />
+    <Link href={url}>
+      <DataTableButton
+        title={title}
+        icon={<Search className='text-white_black' />}
+        isLoading={isLoading}
+        onClick={handleClick}
+        className={className}
+      />
+    </Link>
   );
 };
 
@@ -208,6 +212,89 @@ export const DisableRecipeButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`bg-red-400 hover:bg-red-500 ${className}`}
+    />
+  );
+};
+
+export const SmallDisableCommentButton = ({
+  title,
+  targetId,
+  recipeId,
+  onSuccess,
+  onFailure,
+  className
+}: CommentDataTableButtonProps) => {
+  const { mutate, isPending } = useDisableComment();
+  const queryClient = useQueryClient();
+
+  const handleClick = useCallback(async () => {
+    mutate(
+      { recipeId, commentId: targetId },
+      {
+        onSuccess: async () => {
+          toast.success("Comment disabled successfully.");
+          await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
+          onSuccess && onSuccess();
+        },
+        onError: ({ message }) => {
+          toast.error(message);
+          onFailure && onFailure();
+        }
+      }
+    );
+  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient]);
+
+  return (
+    <DataTableButton
+      title={title}
+      icon={<Trash className='text-black_white group-hover:text-red-500' />}
+      isLoading={isPending}
+      onClick={handleClick}
+      className={`ms-auto size-fit bg-transparent p-0 pb-1 shadow-none hover:bg-transparent ${className}`}
+      loaderClassName="text-black_white"
+    />
+  );
+};
+
+/**
+ * Restore a comment.
+ */
+export const SmallRestoreCommentButton = ({
+  title,
+  targetId,
+  recipeId,
+  onSuccess,
+  onFailure,
+  className
+}: CommentDataTableButtonProps) => {
+  const { mutate, isPending } = useRestoreComment();
+  const queryClient = useQueryClient();
+
+  const handleClick = useCallback(async () => {
+    mutate(
+      { recipeId, commentId: targetId },
+      {
+        onSuccess: async () => {
+          toast.success("Comment restored successfully.");
+          await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
+          onSuccess && onSuccess();
+        },
+        onError: ({ message }) => {
+          toast.error(message);
+          onFailure && onFailure();
+        }
+      }
+    );
+  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient]);
+
+  return (
+    <DataTableButton
+      title={title}
+      icon={<RotateCw className='text-black_white group-hover:text-green-500' />}
+      isLoading={isPending}
+      onClick={handleClick}
+      className={`ms-auto size-fit bg-transparent p-0 pb-1 shadow-none hover:bg-transparent ${className}`}
+      loaderClassName="text-black_white"
     />
   );
 };

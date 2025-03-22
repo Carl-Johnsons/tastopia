@@ -1,4 +1,7 @@
 import { InteractiveButtonProps } from "@/components/shared/common/Button";
+import { ReportStatus } from "@/constants/reports";
+import { INumberedPaginatedMetadata } from "@/generated/interfaces/common.interface";
+import { IAdminReportCommentDetailResponse } from "@/generated/interfaces/recipe.interface";
 
 type ReportActionButtonsProps = {
   targetId: string;
@@ -6,16 +9,16 @@ type ReportActionButtonsProps = {
   status: ReportStatus;
 };
 
-type CommentReportActionButtonsProps = ReportActionButtonsProps & {
+export type CommentReportActionButtonsProps = ReportActionButtonsProps & {
   recipeId: string;
 };
 
-interface IPaginatedAdminReportCommentListResponse {
-  paginatedData: IAdminReportCommentResponse[];
+export interface IPaginatedAdminReportCommentListResponse {
+  paginatedData: IAdminReportCommentDetailResponse[];
   metadata?: INumberedPaginatedMetadata;
 }
 
-interface IAdminReportCommentResponse {
+export interface IAdminReportCommentResponse {
   reportId: string;
   commentId: string;
   commentOwnerUsername: string;
@@ -32,7 +35,7 @@ interface IAdminReportCommentResponse {
 
 export type DataTableButtonProps = Pick<
   InteractiveButtonProps,
-  "noTruncateText" | "noText"
+  "noTruncateText" | "noText" | "toolTip"
 > & {
   title: string;
   recipeId?: string;
@@ -44,11 +47,11 @@ export type DataTableButtonProps = Pick<
   className?: string;
 };
 
-type CommentDataTableButtonProps = DataTableButtonProps & {
+export type CommentDataTableButtonProps = DataTableButtonProps & {
   recipeId: string;
 };
 
-type GetReportsParams = {
+export type GetReportsParams = {
   limit?: number;
   skip?: number;
   sortBy?: string;
@@ -57,13 +60,13 @@ type GetReportsParams = {
   keyword?: string;
 };
 
-type GetReportDetailOptions = {
+export type GetReportDetailOptions = {
   options?: {
     lang?: string;
   };
 };
 
-type GetCommentReportDetailParams = GetReportDetailOptions & {
+export type GetCommentReportDetailParams = GetReportDetailOptions & {
   recipeId: string;
   commentId: string;
 };

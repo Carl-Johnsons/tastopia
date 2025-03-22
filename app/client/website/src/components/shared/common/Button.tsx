@@ -45,6 +45,7 @@ const buttonVariants = cva(
 export type InteractiveButtonProps = {
   icon: ReactNode;
   isLoading?: boolean;
+  loaderClassName?: string;
   title: string;
   onClick?: () => void;
   className?: string;
@@ -56,6 +57,7 @@ export type InteractiveButtonProps = {
 export const InteractiveButton = ({
   icon,
   isLoading,
+  loaderClassName,
   title,
   onClick,
   className,
@@ -64,11 +66,15 @@ export const InteractiveButton = ({
   ...props
 }: InteractiveButtonProps) => {
   const { width } = useWindowDimensions();
-  const toolTip = useMemo(() => width < 768 || props.toolTip, [width]);
+  const toolTip = useMemo(() => width < 768 || props.toolTip, [width, props.toolTip]);
   const RenderedContent = useMemo(
     () => (
       <div className={`relative flex items-center gap-1.5`}>
-        {isLoading ? <LoadingIcon className='text-white_black' /> : icon}
+        {isLoading ? (
+          <LoadingIcon className={`text-white_black ${loaderClassName}`} />
+        ) : (
+          icon
+        )}
 
         {!noText && (
           <span
@@ -79,7 +85,7 @@ export const InteractiveButton = ({
         )}
       </div>
     ),
-    [icon, isLoading, title, className, noTruncateText, noText]
+    [icon, isLoading, title, className, noTruncateText, noText, loaderClassName]
   );
 
   return toolTip ? (

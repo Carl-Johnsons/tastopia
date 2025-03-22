@@ -1,8 +1,7 @@
 "use client";
 
-import { useGetRecipeReports } from "@/api/recipe";
 import Loader from "@/components/ui/Loader";
-import { IAdminReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
+import { IAdminRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import useDebounce from "@/hooks/useDebounce";
 import { format } from "date-fns";
 import {
@@ -14,68 +13,45 @@ import {
   useState
 } from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
-import { MarkAsCompletedButton, ReopenReportButton, ViewDetailButton } from "./Button";
-import { ChevronRight } from "lucide-react";
+import { DisableRecipeButton, RestoreRecipeButton, ViewDetailButton } from "./Button";
 import NoRecord from "@/components/ui/NoRecord";
-import SearchBar from "../../users/SearchBar";
-import { ReportStatus } from "@/constants/reports";
 import DataTableProvider, {
   DataTableContext,
   DataTableContextValue,
   OnChangeActiveFn
 } from "./Provider";
-import ReportStatusText from "../common/StatusText";
+import { ItemStatusText } from "../report/common/StatusText";
+import { useGetRecipes } from "@/api/recipe";
+import SearchBar from "../users/SearchBar";
 import Image from "@/components/shared/common/Image";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 
-const columns: TableColumn<IAdminReportRecipeResponse>[] = [
+const columns: TableColumn<IAdminRecipeResponse>[] = [
   {
     name: "Recipe Name",
-    selector: row => row.recipeTitle,
+    selector: row => row.title,
     sortable: true,
-    grow: 3
+    maxWidth: "200px"
   },
   {
-    name: "Recipe Owner",
-    selector: row => row.recipeOwnerUsername,
+    name: "Ingredients",
+    hide: 1368,
+    sortable: true,
+    wrap: true,
+    grow: 3,
+    cell: ({ ingredients }) => <span className='py-1'>{ingredients}</span>
+  },
+  {
+    name: "Username",
+    selector: row => row.authorUsername,
     hide: 1576,
     sortable: true
   },
   {
-    name: "Recipe Image",
-    hide: 1368,
-    width: "140px",
-    center: true,
-    cell: ({ recipeImageURL }) => (
-      <div className='p-2'>
-        <Image
-          src={recipeImageURL}
-          alt={""}
-          width={90}
-          height={50}
-          className='h-[50px] w-[90px] rounded-lg object-cover'
-        />
-      </div>
-    )
-  },
-  {
-    name: "Reporter",
-    selector: row => row.reporterUsername,
-    hide: 1776,
+    name: "Name",
+    selector: row => row.authorDisplayName,
+    hide: 1576,
     sortable: true
-  },
-  {
-    name: "Report Reason",
-    hide: 1368,
-    sortable: true,
-    grow: 3,
-    cell: ({ reportReason }) => {
-      return (
-        <span className='w-full overflow-hidden text-ellipsis text-nowrap text-sm'>
-          {reportReason}
-        </span>
-      );
-    }
   },
   {
     name: "Created Date",
@@ -95,26 +71,41 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
     name: "Status",
     sortable: true,
     center: true,
-    selector: row => row.status,
-    cell: ({ status }) => {
+    cell: ({ isActive }) => {
       return (
-        <ReportStatusText
-          status={status as ReportStatus}
+        <ItemStatusText
+          isActive={isActive}
           coloring
         />
       );
     }
   },
   {
+    name: "Recipe Image",
+    hide: 1368,
+    width: "140px",
+    center: true,
+    cell: ({ recipeImageUrl }) => (
+      <div className='p-2'>
+        <Image
+          src={recipeImageUrl}
+          alt={"Recipe image figure"}
+          width={90}
+          height={50}
+          className='h-[50px] w-[90px] rounded-lg object-cover'
+        />
+      </div>
+    )
+  },
+  {
     name: "Actions",
     center: true,
     width: "150px",
-    cell: ({ recipeId, reportId, status }) => {
+    cell: ({ id, isActive }) => {
       return (
         <ActionButtons
-          reportId={reportId}
-          recipeId={recipeId}
-          status={status as ReportStatus}
+          recipeId={id}
+          isActive={isActive}
         />
       );
     }
@@ -123,11 +114,10 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
 
 type ActionButtonsProps = {
   recipeId: string;
-  reportId: string;
-  status: ReportStatus;
+  isActive: boolean;
 };
 
-const ActionButtons = ({ reportId, recipeId, status }: ActionButtonsProps) => {
+const ActionButtons = ({ recipeId, isActive }: ActionButtonsProps) => {
   const { onChangeActive } = useContext(DataTableContext) as DataTableContextValue;
 
   return (
@@ -136,20 +126,24 @@ const ActionButtons = ({ reportId, recipeId, status }: ActionButtonsProps) => {
         title='View detail'
         targetId={recipeId}
       />
-      {status === ReportStatus.Done ? (
-        <ReopenReportButton
+      {!isActive ? (
+        <RestoreRecipeButton
           title='Restore'
-          targetId={reportId}
+          targetId={recipeId}
+          noText
+          toolTip
           onSuccess={() => {
-            onChangeActive({ reportId, value: true });
+            onChangeActive({ recipeId, value: true });
           }}
         />
       ) : (
-        <MarkAsCompletedButton
-          title='Mark as completed'
-          targetId={reportId}
+        <DisableRecipeButton
+          title='Disable'
+          targetId={recipeId}
+          noText
+          toolTip
           onSuccess={() => {
-            onChangeActive({ reportId, value: false });
+            onChangeActive({ recipeId, value: false });
           }}
         />
       )}
@@ -157,14 +151,14 @@ const ActionButtons = ({ reportId, recipeId, status }: ActionButtonsProps) => {
   );
 };
 
-export const columnFieldMap: Record<string, keyof IAdminReportRecipeResponse> = {
-  "Recipe Name": "recipeTitle",
-  "Recipe Owner": "recipeOwnerUsername",
-  "Recipe Image": "recipeImageURL",
-  Reporter: "reporterUsername",
-  "Report Reason": "reportReason",
+export const columnFieldMap: Record<string, keyof IAdminRecipeResponse> = {
+  "Recipe Name": "title",
+  Ingredients: "ingredients",
+  Username: "authorUsername",
+  Name: "authorDisplayName",
   "Created Date": "createdAt",
-  Status: "status"
+  Status: "isActive",
+  "Recipe Image": "recipeImageUrl"
 };
 
 export default function Table() {
@@ -181,7 +175,7 @@ export default function Table() {
     isLoading,
     isFetching,
     refetch
-  } = useGetRecipeReports({
+  } = useGetRecipes({
     skip,
     sortBy,
     sortOrder,
@@ -190,12 +184,13 @@ export default function Table() {
     keyword: debouncedValue
   });
 
+  const { tableStyles } = useDataTableStyles();
+
   const totalRow = useMemo(
     () => (fetchedData?.metadata?.totalRow ? fetchedData.metadata.totalRow : 0),
     [fetchedData]
   );
-  const [reports, setReports] = useState<IAdminReportRecipeResponse[]>([]);
-  const { tableStyles } = useDataTableStyles();
+  const [data, setData] = useState<IAdminRecipeResponse[]>([]);
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
@@ -206,10 +201,7 @@ export default function Table() {
   }, []);
 
   const onSort = useCallback(
-    (
-      selectedColumn: TableColumn<IAdminReportRecipeResponse>,
-      sortDirection: SortOrder
-    ) => {
+    (selectedColumn: TableColumn<IAdminRecipeResponse>, sortDirection: SortOrder) => {
       const sortBy = columnFieldMap[selectedColumn.name as string];
       const sortOrder = sortDirection.toString().toUpperCase();
 
@@ -224,14 +216,14 @@ export default function Table() {
     setSkip(0);
   }, []);
 
-  const onChangeActive = useCallback<OnChangeActiveFn>(({ reportId, value }) => {
-    setReports(prev => {
-      return prev.map(report => {
-        if (report.reportId !== reportId) return report;
+  const onChangeActive = useCallback<OnChangeActiveFn>(({ recipeId, value }) => {
+    setData(prev => {
+      return prev.map(item => {
+        if (item.id !== recipeId) return item;
 
         return {
-          ...report,
-          status: value ? ReportStatus.Pending : ReportStatus.Done
+          ...item,
+          isActive: value
         };
       });
     });
@@ -250,7 +242,7 @@ export default function Table() {
   }, [skip, sortBy, sortOrder, debouncedValue, limit]);
 
   useEffect(() => {
-    setReports(fetchedData?.paginatedData || []);
+    setData(fetchedData?.paginatedData || []);
   }, [fetchedData]);
 
   return (
@@ -261,9 +253,7 @@ export default function Table() {
           isLoading={isLoading || isFetching}
         />
         <div className='flex gap-2 self-start'>
-          <span className='text-gray-500'>Administer Reports</span>
-          <ChevronRight className='text-black_white' />
-          <span className='text-black_white'>Recipe</span>
+          <span className='text-gray-500'>Administer Recipes</span>
         </div>
       </div>
 
@@ -271,7 +261,7 @@ export default function Table() {
         <DataTable
           customStyles={tableStyles}
           columns={columns}
-          data={reports}
+          data={data}
           responsive
           striped
           highlightOnHover

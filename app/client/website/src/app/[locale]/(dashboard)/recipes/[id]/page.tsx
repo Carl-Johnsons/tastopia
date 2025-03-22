@@ -17,19 +17,19 @@ export default async function Page({ params }: ParamsProps) {
     return (
       <div className='flex flex-col gap-10'>
         <div className='flex gap-2'>
-          <span className='text-gray-500'>Administer Reports</span>
-          <ChevronRight className='text-black_white' />
-          <Link href='/reports/recipes'>
-            <span className='text-black_white'>Recipe</span>
+          <Link href='/recipes'>
+            <span className='text-gray-500'>Administer Recipes</span>
           </Link>
           <ChevronRight className='text-black_white' />
           <span className='text-black_white'>{recipe.title}</span>
         </div>
-        <div className='container grid gap-10 xl:grid-cols-[70%_30%] xl:gap-3'>
-          <ReportList
-            reports={reports}
-            className='xl:col-start-2'
-          />
+        <div className={`container grid gap-10 ${reports.length > 0 ? 'xl:grid-cols-[70%_30%] xl:gap-3' : ''}`}>
+          {reports.length > 0 && (
+            <ReportList
+              reports={reports}
+              className='xl:col-start-2'
+            />
+          )}
           <RecipeDetail
             recipe={recipe}
             className='xl:col-start-1 xl:row-start-1'

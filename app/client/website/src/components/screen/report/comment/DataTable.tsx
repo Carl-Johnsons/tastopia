@@ -13,7 +13,6 @@ import {
   useState
 } from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
-import { customStyles } from "@/constants/styles";
 import { ChevronRight } from "lucide-react";
 import NoRecord from "@/components/ui/NoRecord";
 import SearchBar from "../../users/SearchBar";
@@ -28,20 +27,21 @@ import { MarkAsCompletedButton, ReopenReportButton, ViewDetailButton } from "./B
 import { useGetCommentReports } from "@/api/comment";
 import { IAdminReportCommentResponse } from "@/generated/interfaces/recipe.interface";
 import ReportStatusText from "../common/StatusText";
+import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 
 const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
     name: "Comment Owner",
     selector: row => row.commentOwnerUsername,
-    maxWidth: "200px",
+    maxWidth: "160px",
     hide: 952,
     sortable: true
   },
   {
     name: "Content",
-    selector: row => row.commentContent,
-    maxWidth: "200px",
-    sortable: true
+    sortable: true,
+    minWidth: "200px",
+    cell: ({ commentContent }) => <span className='py-1'>{commentContent}</span>
   },
   {
     name: "Recipe Image",
@@ -63,21 +63,16 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
     name: "Reporter",
     selector: row => row.reporterUsername,
+    width: "160px",
     hide: 1776,
     sortable: true
   },
   {
     name: "Report Reason",
     hide: 1368,
+    selector: row => row.reportReason,
     sortable: true,
-    maxWidth: "570px",
-    cell: ({ reportReason }) => {
-      return (
-        <span className='w-full overflow-hidden text-ellipsis text-nowrap text-sm'>
-          {reportReason}
-        </span>
-      );
-    }
+    wrap: true
   },
   {
     name: "Created Date",
@@ -96,6 +91,7 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
     name: "Status",
     sortable: true,
+    width: "100px",
     center: true,
     selector: row => row.status,
     cell: ({ status }) => {
@@ -197,7 +193,7 @@ export default function Table() {
     [fetchedData]
   );
   const [reports, setReports] = useState<IAdminReportCommentResponse[]>([]);
-  console.log("data", fetchedData);
+  const { tableStyles } = useDataTableStyles();
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
@@ -249,7 +245,7 @@ export default function Table() {
   useEffect(() => {
     refetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [skip, sortBy, sortOrder, debouncedValue, limit, keyword]);
+  }, [skip, sortBy, sortOrder, debouncedValue, limit]);
 
   useEffect(() => {
     setReports(fetchedData?.paginatedData || []);
@@ -272,7 +268,7 @@ export default function Table() {
 
       <DataTableProvider value={contextValue}>
         <DataTable
-          customStyles={customStyles}
+          customStyles={tableStyles}
           columns={columns}
           data={reports}
           responsive

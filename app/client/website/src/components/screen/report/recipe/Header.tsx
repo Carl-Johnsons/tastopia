@@ -6,8 +6,8 @@ import { DownvoteIcon, UpvoteIcon } from "@/components/shared/icons";
 import { useState } from "react";
 import { DisableRecipeButton, RestoreRecipeButton } from "./Button";
 import { IAdminGetUserDetailResponse } from "@/generated/interfaces/user.interface";
-import Image from "next/image";
 import { ItemStatusText } from "../common/StatusText";
+import Image from "@/components/shared/common/Image";
 
 type HeaderProps = {
   recipeId: string;
@@ -32,15 +32,16 @@ const Header = ({
   const [isActive, setIsActive] = useState(props.isActive);
 
   return (
-    <div className='flex flex-col gap-6 lg:flex-row'>
-      <Image
-        src={imageUrl}
-        alt={`Image of ${title}`}
-        width={360}
-        height={446}
-        className='h-[300px] w-full shrink grow rounded-md object-cover xl:h-[446px] xl:max-w-[360px]'
-      />
-      <div className='flex grow-[6] flex-col gap-3'>
+    <div className='grid gap-6 lg:grid-cols-[300px_1fr]'>
+      <div className='relative h-[300px]'>
+        <Image
+          src={imageUrl}
+          alt={`Image of ${title}`}
+          fill
+          className='rounded-md object-cover'
+        />
+      </div>
+      <div className='flex flex-col gap-3'>
         <div className='flex items-center gap-3'>
           <h1 className='text-black_white text-2xl font-semibold'>{title}</h1>
           <ItemStatusText

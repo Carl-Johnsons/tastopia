@@ -33,7 +33,7 @@ export default function ReportList({
 }: ReportListProps) {
   return (
     <div
-      className={`flex gap-8 overflow-x-scroll xl:flex-col ${reportType === ReportType.COMMENT && "grid justify-items-center gap-4 sm:grid-cols-[repeat(auto-fill,minmax(400px,1fr))]"} ${className}`}
+      className={`flex gap-8 overflow-x-scroll xl:flex-col ${reportType === ReportType.COMMENT && "grid justify-items-center gap-4 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] overflow-x-auto"} ${className}`}
     >
       {reports.map(
         ({

@@ -1,8 +1,8 @@
 import { IAdminGetUserResponse } from "@/generated/interfaces/user.interface";
 import { Button } from "@/components/ui/button";
 import { Ban, RotateCcw, Search } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
-import { useState } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
+import { useMemo, useState } from "react";
 import { adminBanUser } from "@/actions/user.action";
 import { toast } from "react-toastify";
 import Status from "@/components/ui/Status";
@@ -71,9 +71,10 @@ export const ActionButtons = ({
   const t = useTranslations("administerUsers");
   const router = useRouter();
   const [active, setActive] = useState<boolean>(isActive);
+  const url = useMemo(() => `/users/${accountId}`, [accountId]);
 
   const handleDetailClick = () => {
-    router.push(`/users/${accountId}`);
+    router.push(url);
   };
 
   const handleToggleStatus = async () => {
@@ -95,13 +96,15 @@ export const ActionButtons = ({
 
   return (
     <div className='flex gap-2'>
-      <Button
-        className='text-white_black bg-primary hover:bg-secondary'
-        onClick={handleDetailClick}
-      >
-        <Search />
-        <p className='mt-1 max-sm:hidden'>{t("actions.detail")}</p>
-      </Button>
+      <Link href={url}>
+        <Button
+          className='text-white_black bg-primary hover:bg-secondary'
+          onClick={handleDetailClick}
+        >
+          <Search />
+          <p className='mt-1 max-sm:hidden'>{t("actions.detail")}</p>
+        </Button>
+      </Link>
 
       {active ? (
         <Button
