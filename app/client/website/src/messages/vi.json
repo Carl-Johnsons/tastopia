@@ -23,6 +23,10 @@
       "inactive": "Không hoạt động",
       "pending": "Chờ",
       "done": "Hoàn thành"
+    },
+    "empty": {
+      "title": "Chưa có gì ở đây",
+      "description": "Không có mục để hiển thị tại thời điểm này."
     }
   },
   "administerUsers": {
@@ -99,6 +103,123 @@
       "userDisabled": "Đã vô hiệu hóa người dùng thành công",
       "userRestored": "Đã khôi phục người dùng thành công",
       "error": "Đã xảy ra lỗi. Vui lòng thử lại."
+    }
+  },
+  "administerReportUsers": {
+    "title": "Quản lý báo cáo",
+    "subtitle": "Người dùng",
+    "search": "Tìm kiếm bằng tên tài khoản, tên,...",
+    "columns": {
+      "username": "Tên đăng nhập",
+      "name": "Họ tên",
+      "reporter": "Người báo cáo",
+      "reportReason": "Lý do báo cáo",
+      "createDate": "Ngày tạo",
+      "status": "Trạng thái",
+      "action": "Hành động"
+    },
+    "actions": {
+      "detail": "Chi tiết",
+      "disable": "Vô hiệu hóa",
+      "restore": "Khôi phục"
+    },
+    "tooltip": {
+      "reportDetail": "Chi tiết báo cáo",
+      "disableUser": "Vô hiệu hoá người dùng",
+      "restoreUser": "Khôi phục người dùng",
+      "markAsComplete": "Đánh dấu hoàn tất",
+      "restoreReport": "Khôi phục báo cáo"
+    },
+    "notifications": {
+      "restoreUserSuccess": "Khôi phục người dùng thành công!",
+      "disableUserSuccess": "Vô hiệu hóa người dùng thành công!",
+      "restoreReportSuccess": "Khôi phục báo cáo thành công!",
+      "completeReportSuccess": "Đánh dấu báo cáo hoàn thành!",
+      "error": "Đã xảy ra lỗi!"
+    }
+  },
+  "administerTags": {
+    "title": "Quản lý thẻ",
+    "search": "Tìm kiếm theo mã, tên nguyên liệu...",
+    "actions": {
+      "create": "Tạo mới",
+      "update": "Cập nhật",
+      "delete": "Xóa"
+    },
+    "dialogs": {
+      "create": {
+        "title": "Tạo thẻ mới"
+      },
+      "update": {
+        "title": "Cập nhật thẻ"
+      }
+    },
+    "form": {
+      "code": {
+        "label": "Mã",
+        "placeholder": "Nhập mã thẻ"
+      },
+      "value": {
+        "label": "Tên nguyên liệu",
+        "placeholder": "Nhập tên nguyên liệu"
+      },
+      "category": {
+        "label": "Danh mục",
+        "placeholder": "Chọn danh mục",
+        "options": {
+          "all": "Tất cả",
+          "dishType": "Loại món",
+          "ingredient": "Nguyên liệu"
+        }
+      },
+      "status": {
+        "label": "Trạng thái",
+        "placeholder": "Chọn trạng thái",
+        "options": {
+          "active": "Hoạt động",
+          "inactive": "Không hoạt động",
+          "pending": "Chờ"
+        }
+      },
+      "image": {
+        "label": "Hình ảnh",
+        "required": "Hình ảnh thẻ là bắt buộc",
+        "errors": {
+          "maxNumber": "Số lượng hình ảnh đã vượt quá 1",
+          "acceptType": "Loại tệp đã chọn không được phép",
+          "maxFileSize": "Kích thước tệp đã chọn vượt quá kích thước tối đa (15MB)"
+        },
+        "upload": {
+          "clickToUpload": "Nhấn để tải lên",
+          "dragAndDrop": "hoặc kéo và thả",
+          "fileTypes": "PNG, JPG, JPEG hoặc WEBP (TỐI ĐA 15MB)",
+          "removeImage": "Xóa hình ảnh",
+          "confirmDelete": {
+            "title": "Bạn có chắc chắn muốn xóa hình ảnh này?",
+            "description": "Một khi đã xóa, không thể hoàn tác.",
+            "confirm": "Xóa",
+            "cancel": "Hủy"
+          }
+        }
+      },
+      "creating": "Đang tạo...",
+      "updating": "Đang cập nhật...",
+      "submit": "Lưu",
+      "cancel": "Hủy"
+    },
+    "columns": {
+      "code": "Mã",
+      "value": "Giá trị",
+      "category": "Danh mục",
+      "createDate": "Ngày tạo",
+      "status": "Trạng thái",
+      "image": "Ảnh nguyên liệu",
+      "action": "Hành động"
+    },
+    "notifications": {
+      "createSuccess": "Tạo thẻ thành công",
+      "updateSuccess": "Cập nhật thẻ thành công",
+      "error": "Đã xảy ra lỗi. Vui lòng thử lại sau."
     }
   }
 }

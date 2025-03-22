@@ -8,34 +8,35 @@ import { ReportStatus } from "@/constants/reports";
 import ReportStatusComponent from "@/components/ui/ReportStatus";
 import { format } from "date-fns";
 import TooltipButton from "@/components/ui/TooltipButton";
+import { useTranslations } from "next-intl";
 
-export const reportColumns = [
+export const reportColumns = (t: any) => [
   {
-    name: "Username",
+    name: t("columns.username"),
     selector: (report: IAdminUserReportResponse) => report?.reportedUsername,
     sortable: true
   },
   {
-    name: "Name",
+    name: t("columns.name"),
     selector: (report: IAdminUserReportResponse) => report?.reportedDisplayName,
     sortable: true,
     hide: 1460
   },
   {
-    name: "Reporter",
+    name: t("columns.reporter"),
     selector: (report: IAdminUserReportResponse) => report?.reporterDisplayName ?? "",
     hide: 1234,
     sortable: true
   },
   {
-    name: "Report reason",
+    name: t("columns.reportReason"),
     selector: (report: IAdminUserReportResponse) => report?.reportReason ?? "",
     hide: 1026,
     width: "300px",
     sortable: true
   },
   {
-    name: "Created date",
+    name: t("columns.createDate"),
     selector: (report: IAdminUserReportResponse) =>
       format(new Date(report?.createdAt), "dd/MM/yyyy") ?? "",
     hide: 1612,
@@ -43,7 +44,7 @@ export const reportColumns = [
     center: true
   },
   {
-    name: "Status",
+    name: t("columns.status"),
     hide: 600,
     sortable: true,
     cell: (report: IAdminUserReportResponse) => (
@@ -51,21 +52,12 @@ export const reportColumns = [
     )
   },
   {
-    name: "Action",
+    name: t("columns.action"),
     ignoreRowClick: true,
     button: true,
     width: "190px"
   }
 ];
-
-export const columnFieldMap: Record<string, keyof IAdminUserReportResponse> = {
-  Username: "reportedUsername",
-  Name: "reportedDisplayName",
-  Reporter: "reporterDisplayName",
-  "Report reason": "reportReason",
-  "Created date": "createdAt",
-  Status: "status"
-};
 
 type ActionButtonsProps = {
   reportId: string;
@@ -81,6 +73,7 @@ export const ActionButtons = ({
   reportedIsActive,
   onStatusUpdate
 }: ActionButtonsProps) => {
+  const t = useTranslations("administerReportUsers");
   const router = useRouter();
   const [reportStatus, setReportStatus] = useState<ReportStatus>(status);
   const [reportedStatus, setReportedStatus] = useState<boolean>(reportedIsActive);
@@ -96,12 +89,12 @@ export const ActionButtons = ({
       setReportedStatus(newStatus);
 
       if (result.isRestored) {
-        toast.success("Reopen user successfully!");
+        toast.success(t("notifications.restoreUserSuccess"));
       } else {
-        toast.success("Disable user successfully!");
+        toast.success(t("notifications.disableUserSuccess"));
       }
     } else {
-      toast.error("Something went wrong!");
+      toast.error(t("notifications.error"));
     }
   };
 
@@ -112,20 +105,20 @@ export const ActionButtons = ({
       setReportStatus(newStatus);
       onStatusUpdate(reportId, newStatus);
 
-      if (result.isRestored) {
-        toast.success("Reopen report successfully!");
+      if (result.isReopened) {
+        toast.success(t("notifications.restoreReportSuccess"));
       } else {
-        toast.success("Disable report successfully!");
+        toast.success(t("notifications.completeReportSuccess"));
       }
     } else {
-      toast.error("Something went wrong!");
+      toast.error(t("notifications.error"));
     }
   };
 
   return (
     <div className='flex gap-2'>
       <TooltipButton
-        title='Go to reported detail'
+        title={t("tooltip.reportDetail")}
         icon={<Search className='text-white_black' />}
         onClick={handleDetailClick}
         className='bg-primary hover:bg-secondary'
@@ -134,14 +127,14 @@ export const ActionButtons = ({
       {/* Ban */}
       {reportedStatus ? (
         <TooltipButton
-          title='Ban user'
+          title={t("tooltip.disableUser")}
           icon={<Ban className='text-white_black' />}
           onClick={handleBanUser}
           className='bg-red hover:bg-red-600'
         />
       ) : (
         <TooltipButton
-          title='Restore user'
+          title={t("tooltip.restoreUser")}
           icon={<RotateCcw className='text-white_black' />}
           onClick={handleBanUser}
           className='bg-green-400 hover:bg-green-500'
@@ -151,14 +144,14 @@ export const ActionButtons = ({
       {/* Mark report */}
       {reportStatus === ReportStatus.Pending ? (
         <TooltipButton
-          title='Mark report as complete'
+          title={t("tooltip.markAsComplete")}
           icon={<Check className='text-white_black' />}
           onClick={handleMarkReport}
           className='bg-purple-400 hover:bg-purple-500'
         />
       ) : (
         <TooltipButton
-          title='Restore report'
+          title={t("tooltip.restoreReport")}
           icon={<RotateCcw className='text-white_black' />}
           onClick={handleMarkReport}
           className='bg-green-400 hover:bg-green-500'

@@ -1,8 +1,9 @@
+import { useTranslations } from "next-intl";
 import React from "react";
 
 export const Empty = ({
-  title = "Nothing here yet",
-  description = "No items to display at the moment.",
+  title = useTranslations("component")("empty.title"),
+  description = useTranslations("component")("empty.description"),
   icon = "list",
   actionButton = null
 }) => {

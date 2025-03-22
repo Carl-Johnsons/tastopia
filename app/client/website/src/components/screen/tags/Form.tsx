@@ -40,6 +40,7 @@ import {
 import { Plus } from "lucide-react";
 import { createTag, updateTag } from "@/actions/tag.action";
 import { useTags } from "./TagsContext";
+import { useTranslations } from "next-intl";
 
 type FormProps = {
   type: string;
@@ -53,6 +54,7 @@ const TagForm = ({ type }: FormProps) => {
     setOpenUpdateDialog,
     getTagToUpdate
   } = useTags();
+  const t = useTranslations("administerTags");
 
   const tag = getTagToUpdate();
   const isUpdate = type === FORM_TYPE.UPDATE;
@@ -83,7 +85,7 @@ const TagForm = ({ type }: FormProps) => {
 
   async function onSubmit(values: z.infer<typeof schema>) {
     if (image.length === 0) {
-      toast.error("Image is required");
+      toast.error(t("form.image.required"));
       return;
     }
 
@@ -107,16 +109,16 @@ const TagForm = ({ type }: FormProps) => {
         const data = await updateTag(formData);
         updateTagInContext(data);
         setOpenUpdateDialog(false);
-        toast.success("Tag updated successfully");
+        toast.success(t("notifications.updateSuccess"));
       } else {
         const data = await createTag(formData);
         createTagInContext(data);
         setOpenCreateDialog(false);
-        toast.success("Tag created successfully");
+        toast.success(t("notifications.createSuccess"));
       }
     } catch (error) {
       console.error(error);
-      toast.error("Something went wrong. Please try again later.");
+      toast.error(t("notifications.error"));
     } finally {
       setIsSubmitting(false);
     }
@@ -134,7 +136,7 @@ const TagForm = ({ type }: FormProps) => {
           render={({ field }) => (
             <FormItem className='flex w-full flex-col'>
               <FormLabel className='paragraph-semibold text-black_white'>
-                Code <span className='text-red-600'>*</span>
+                {t("form.code.label")} <span className='text-red-600'>*</span>
               </FormLabel>
               <FormControl>
                 <Input
@@ -153,7 +155,7 @@ const TagForm = ({ type }: FormProps) => {
           render={({ field }) => (
             <FormItem className='flex w-full flex-col'>
               <FormLabel className='paragraph-semibold text-black_white'>
-                Ingredient name <span className='text-red-600'>*</span>
+                {t("form.value.label")} <span className='text-red-600'>*</span>
               </FormLabel>
               <FormControl>
                 <Input
@@ -174,7 +176,7 @@ const TagForm = ({ type }: FormProps) => {
               render={({ field }) => (
                 <FormItem className='relative'>
                   <FormLabel className='paragraph-semibold text-black_white'>
-                    Category <span className='text-red-600'>*</span>
+                    {t("form.category.label")} <span className='text-red-600'>*</span>
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -186,9 +188,15 @@ const TagForm = ({ type }: FormProps) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className='bg-white_black100 text-black_white'>
-                      <SelectItem value='All'>All</SelectItem>
-                      <SelectItem value='DishType'>Dish Type</SelectItem>
-                      <SelectItem value='Ingredient'>Ingredient</SelectItem>
+                      <SelectItem value='All'>
+                        {t("form.category.options.all")}
+                      </SelectItem>
+                      <SelectItem value='DishType'>
+                        {t("form.category.options.dishType")}
+                      </SelectItem>
+                      <SelectItem value='Ingredient'>
+                        {t("form.category.options.ingredient")}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage className='text-red-600' />
@@ -205,7 +213,7 @@ const TagForm = ({ type }: FormProps) => {
                 render={({ field }) => (
                   <FormItem className='relative'>
                     <FormLabel className='paragraph-semibold text-black_white'>
-                      Status <span className='text-red-600'>*</span>
+                      {t("form.status.label")} <span className='text-red-600'>*</span>
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -217,9 +225,15 @@ const TagForm = ({ type }: FormProps) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className='bg-white_black100 text-black_white'>
-                        <SelectItem value='Pending'>Pending</SelectItem>
-                        <SelectItem value='Active'>Active</SelectItem>
-                        <SelectItem value='Inactive'>Inactive</SelectItem>
+                        <SelectItem value='Pending'>
+                          {t("form.status.options.pending")}
+                        </SelectItem>
+                        <SelectItem value='Active'>
+                          {t("form.status.options.active")}
+                        </SelectItem>
+                        <SelectItem value='Inactive'>
+                          {t("form.status.options.inactive")}
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -232,7 +246,7 @@ const TagForm = ({ type }: FormProps) => {
 
         <FormItem className='relative flex w-full flex-col'>
           <FormLabel className='paragraph-semibold text-black_white'>
-            Image <span className='text-red-600'>*</span>
+            {t("form.image.label")} <span className='text-red-600'>*</span>
           </FormLabel>
           <FormControl className='mt-3.5'>
             <ImageUploading
@@ -281,11 +295,13 @@ const TagForm = ({ type }: FormProps) => {
                               />
                             </svg>
                             <p className='mb-2 text-sm text-gray-500 dark:text-gray-400'>
-                              <span className='font-semibold'>Click to upload</span> or
-                              drag and drop
+                              <span className='font-semibold'>
+                                {t("form.image.upload.clickToUpload")}
+                              </span>{" "}
+                              {t("form.image.upload.dragAndDrop")}
                             </p>
                             <p className='text-xs text-gray-500 dark:text-gray-400'>
-                              PNG, JPG, JPEG or WEBP (MAX 15MB)
+                              {t("form.image.upload.fileTypes")}
                             </p>
                           </div>
                         </div>
@@ -314,21 +330,21 @@ const TagForm = ({ type }: FormProps) => {
                                 type='button'
                                 className='text-white_black w-fit cursor-pointer bg-primary hover:bg-secondary focus:ring'
                               >
-                                Remove image
+                                {t("form.image.upload.removeImage")}
                               </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent className='bg-white_black'>
                               <AlertDialogHeader>
                                 <AlertDialogTitle className='text-black_white'>
-                                  Are you sure you want to delete this image?
+                                  {t("form.image.upload.confirmDelete.title")}
                                 </AlertDialogTitle>
                                 <AlertDialogDescription className='text-black_white'>
-                                  Once deleted, it can't be undone.
+                                  {t("form.image.upload.confirmDelete.description")}
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel className='bg-white_black text-black_white hover:bg-gray-100 dark:hover:bg-black-100'>
-                                  Cancel
+                                  {t("form.image.upload.confirmDelete.cancel")}
                                 </AlertDialogCancel>
                                 <AlertDialogAction
                                   className='text-black_white border-none bg-primary hover:bg-secondary'
@@ -337,7 +353,7 @@ const TagForm = ({ type }: FormProps) => {
                                     setIsImageModified(true);
                                   }}
                                 >
-                                  Delete
+                                  {t("form.image.upload.confirmDelete.confirm")}
                                 </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
@@ -349,7 +365,7 @@ const TagForm = ({ type }: FormProps) => {
 
                   {!errors && image?.length === 0 && (
                     <span className='body-medium text-red-600'>
-                      Tag image is required
+                      {t("form.image.required")}
                     </span>
                   )}
 
@@ -357,17 +373,17 @@ const TagForm = ({ type }: FormProps) => {
                     <div>
                       {errors.maxNumber && (
                         <span className='body-medium text-red-600'>
-                          Number of selected images exceed 1
+                          {t("form.image.errors.maxNumber")}
                         </span>
                       )}
                       {errors.acceptType && (
                         <span className='body-medium text-red-600'>
-                          Your selected file type is not allowed
+                          {t("form.image.errors.acceptType")}
                         </span>
                       )}
                       {errors.maxFileSize && (
                         <span className='body-medium text-red-600'>
-                          Selected file size exceeds max file size (15MB)
+                          {t("form.image.errors.maxFileSize")}
                         </span>
                       )}
                     </div>
@@ -387,11 +403,11 @@ const TagForm = ({ type }: FormProps) => {
             <Plus />
             {isSubmitting
               ? isUpdate
-                ? "Updating..."
-                : "Creating..."
+                ? t("form.updating")
+                : t("form.creating")
               : isUpdate
-                ? "Update"
-                : "Create"}
+                ? t("actions.update")
+                : t("actions.create")}
           </Button>
         </div>
       </form>
