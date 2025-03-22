@@ -58,12 +58,12 @@ public static class DependenciesInjection
         // Set endpoint for a chat hub
         app.UseSerilogServices();
         app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_SIGNALR", "Not Found"));
-        app.UseSerilogRequestLogging();
         app.UseCors("AllowSPAClientOrigin");
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapHub<HubServer>(HUB_ENDPOINT);
-        app.UseHealthCheck();
+        app.UseCustomHealthCheck();
         return app;
     }
 }
