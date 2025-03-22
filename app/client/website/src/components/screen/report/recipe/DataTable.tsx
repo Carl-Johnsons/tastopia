@@ -5,7 +5,6 @@ import Loader from "@/components/ui/Loader";
 import { IAdminReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import useDebounce from "@/hooks/useDebounce";
 import { format } from "date-fns";
-import Image from "next/image";
 import {
   ChangeEvent,
   useCallback,
@@ -23,6 +22,7 @@ import SearchBar from "../../users/SearchBar";
 import { ReportStatus } from "@/constants/reports";
 import DataTableProvider, { DataTableContext, DataTableContextValue, OnChangeActiveFn } from "./Provider";
 import ReportStatusText from "../common/StatusText";
+import Image from "@/components/shared/common/Image";
 
 const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
