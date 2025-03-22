@@ -8,10 +8,10 @@ import { IAdminUserReportResponse } from "@/generated/interfaces/user.interface"
 import { ChangeEvent, useEffect, useState } from "react";
 import { useGetUserReports } from "@/api/user";
 import useDebounce from "@/hooks/useDebounce";
-import { customStyles } from "@/constants/styles";
 import SearchBar from "../../users/SearchBar";
 import { ReportStatus } from "@/constants/reports";
 import { ChevronRight } from "lucide-react";
+import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 
 const DataTable = () => {
   const [skip, setSkip] = useState(0);
@@ -40,6 +40,8 @@ const DataTable = () => {
           ? updatedReportStatuses[report.reportId]
           : report.status
     })) || [];
+
+  const { tableStyles } = useDataTableStyles();
 
   const handleStatusUpdate = (reportId: string, status: string) => {
     setUpdatedReportStatuses(prev => ({
@@ -109,7 +111,7 @@ const DataTable = () => {
           return column;
         })}
         data={tableData.slice(0, limit)}
-        customStyles={customStyles}
+        customStyles={tableStyles}
         striped
         highlightOnHover
         progressPending={isLoading}

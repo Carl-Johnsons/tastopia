@@ -14,7 +14,6 @@ import {
 } from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import { DisableRecipeButton, RestoreRecipeButton, ViewDetailButton } from "./Button";
-import { customStyles } from "@/constants/styles";
 import NoRecord from "@/components/ui/NoRecord";
 import DataTableProvider, {
   DataTableContext,
@@ -25,6 +24,7 @@ import { ItemStatusText } from "../report/common/StatusText";
 import { useGetRecipes } from "@/api/recipe";
 import SearchBar from "../users/SearchBar";
 import Image from "@/components/shared/common/Image";
+import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 
 const columns: TableColumn<IAdminRecipeResponse>[] = [
   {
@@ -184,7 +184,7 @@ export default function Table() {
     keyword: debouncedValue
   });
 
-  console.log("data", fetchedData);
+  const { tableStyles } = useDataTableStyles();
 
   const totalRow = useMemo(
     () => (fetchedData?.metadata?.totalRow ? fetchedData.metadata.totalRow : 0),
@@ -259,7 +259,7 @@ export default function Table() {
 
       <DataTableProvider value={contextValue}>
         <DataTable
-          customStyles={customStyles}
+          customStyles={tableStyles}
           columns={columns}
           data={data}
           responsive

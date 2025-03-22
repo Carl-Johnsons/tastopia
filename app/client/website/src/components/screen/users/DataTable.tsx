@@ -8,9 +8,9 @@ import { IAdminGetUserResponse } from "@/generated/interfaces/user.interface";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useGetAdminUsers } from "@/api/user";
 import useDebounce from "@/hooks/useDebounce";
-import { customStyles } from "@/constants/styles";
 import SearchBar from "./SearchBar";
 import { useTranslations } from "next-intl";
+import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 
 const DataTable = () => {
   const t = useTranslations("administerUsers");
@@ -49,6 +49,7 @@ const DataTable = () => {
           ? updatedUserStatuses[user.accountId]
           : user.isAccountActive
     })) || [];
+  const { tableStyles } = useDataTableStyles();
 
   const handleStatusUpdate = (accountId: string, isActive: boolean) => {
     setUpdatedUserStatuses(prev => ({
@@ -115,7 +116,7 @@ const DataTable = () => {
           return column;
         })}
         data={tableData}
-        customStyles={customStyles}
+        customStyles={tableStyles}
         striped
         highlightOnHover
         progressPending={isLoading}

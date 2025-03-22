@@ -1,16 +1,17 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
+import { ColorScheme } from "@/types/theme";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, SetStateAction, Dispatch } from "react";
 
 interface ThemeContextProps {
-    mode: string;
-    setMode: (mode: string) => void;
+    mode: ColorScheme;
+    setMode: Dispatch<SetStateAction<ColorScheme>>;
 }
 
 const ThemeContext = createContext<ThemeContextProps | undefined>(undefined);
 
 export function ThemeProvider({ children }: { readonly children: React.ReactNode }) {
-    const [mode, setMode] = useState("light");
+    const [mode, setMode] = useState<ColorScheme>("light");
 
     const value = useMemo(() => {
         return {

@@ -15,14 +15,18 @@ import {
 } from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import { MarkAsCompletedButton, ReopenReportButton, ViewDetailButton } from "./Button";
-import { customStyles } from "@/constants/styles";
 import { ChevronRight } from "lucide-react";
 import NoRecord from "@/components/ui/NoRecord";
 import SearchBar from "../../users/SearchBar";
 import { ReportStatus } from "@/constants/reports";
-import DataTableProvider, { DataTableContext, DataTableContextValue, OnChangeActiveFn } from "./Provider";
+import DataTableProvider, {
+  DataTableContext,
+  DataTableContextValue,
+  OnChangeActiveFn
+} from "./Provider";
 import ReportStatusText from "../common/StatusText";
 import Image from "@/components/shared/common/Image";
+import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 
 const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
@@ -191,6 +195,7 @@ export default function Table() {
     [fetchedData]
   );
   const [reports, setReports] = useState<IAdminReportRecipeResponse[]>([]);
+  const { tableStyles } = useDataTableStyles();
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
@@ -264,7 +269,7 @@ export default function Table() {
 
       <DataTableProvider value={contextValue}>
         <DataTable
-          customStyles={customStyles}
+          customStyles={tableStyles}
           columns={columns}
           data={reports}
           responsive

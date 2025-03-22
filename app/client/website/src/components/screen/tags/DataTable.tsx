@@ -7,7 +7,6 @@ import { columnFieldMap, tagsColumns } from "./DataTableColumns";
 import ReactDataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import { ChangeEvent, useEffect, useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
-import { customStyles } from "@/constants/styles";
 import SearchBar from "../users/SearchBar";
 import { useTags } from "./TagsContext";
 import { useGetTags } from "@/api/tag";
@@ -22,6 +21,7 @@ import {
 import { Plus } from "lucide-react";
 import TagForm from "./Form";
 import { FORM_TYPE } from "@/constants/form";
+import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 
 const DataTable = () => {
   const [skip, setSkip] = useState(0);
@@ -46,6 +46,8 @@ const DataTable = () => {
     openUpdateDialog,
     setOpenUpdateDialog
   } = useTags();
+
+  const { tableStyles } = useDataTableStyles();
 
   const handlePageChange = (page: number) => {
     setSkip(page - 1);
@@ -137,7 +139,7 @@ const DataTable = () => {
       <ReactDataTable
         data={tags}
         columns={tagsColumns}
-        customStyles={customStyles}
+        customStyles={tableStyles}
         striped
         highlightOnHover
         progressPending={isLoading}

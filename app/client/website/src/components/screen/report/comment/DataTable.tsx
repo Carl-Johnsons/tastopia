@@ -13,7 +13,6 @@ import {
   useState
 } from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
-import { customStyles } from "@/constants/styles";
 import { ChevronRight } from "lucide-react";
 import NoRecord from "@/components/ui/NoRecord";
 import SearchBar from "../../users/SearchBar";
@@ -28,6 +27,7 @@ import { MarkAsCompletedButton, ReopenReportButton, ViewDetailButton } from "./B
 import { useGetCommentReports } from "@/api/comment";
 import { IAdminReportCommentResponse } from "@/generated/interfaces/recipe.interface";
 import ReportStatusText from "../common/StatusText";
+import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 
 const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
@@ -193,7 +193,7 @@ export default function Table() {
     [fetchedData]
   );
   const [reports, setReports] = useState<IAdminReportCommentResponse[]>([]);
-  console.log("data", fetchedData);
+  const { tableStyles } = useDataTableStyles();
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
@@ -268,7 +268,7 @@ export default function Table() {
 
       <DataTableProvider value={contextValue}>
         <DataTable
-          customStyles={customStyles}
+          customStyles={tableStyles}
           columns={columns}
           data={reports}
           responsive
