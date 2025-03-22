@@ -2,7 +2,7 @@
 
 import Loader from "@/components/ui/Loader";
 import NoRecord from "@/components/ui/NoRecord";
-import { ActionButtons, columnFieldMap, reportColumns } from "./DataTableColumns";
+import { ActionButtons, reportColumns } from "./DataTableColumns";
 import ReactDataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import { IAdminUserReportResponse } from "@/generated/interfaces/user.interface";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -12,8 +12,10 @@ import { customStyles } from "@/constants/styles";
 import SearchBar from "../../users/SearchBar";
 import { ReportStatus } from "@/constants/reports";
 import { ChevronRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const DataTable = () => {
+  const t = useTranslations("administerReportUsers");
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [sortBy, setSortBy] = useState("");
@@ -23,6 +25,15 @@ const DataTable = () => {
   const [updatedReportStatuses, setUpdatedReportStatuses] = useState<
     Record<string, string>
   >({});
+
+  const columnFieldMap: Record<string, keyof IAdminUserReportResponse> = {
+    [t("columns.username")]: "reportedUsername",
+    [t("columns.name")]: "reportedDisplayName",
+    [t("columns.reporter")]: "reporterDisplayName",
+    [t("columns.reportReason")]: "reportReason",
+    [t("columns.createDate")]: "createdAt",
+    [t("columns.status")]: "status"
+  };
 
   const { data, isLoading, refetch } = useGetUserReports(
     skip,
@@ -82,16 +93,17 @@ const DataTable = () => {
         <SearchBar
           onChange={handleSearch}
           isLoading={isLoading}
+          placeholder={t("search")}
         />
         <div className='flex gap-2 self-start'>
-          <span className='text-gray-500'>Administer Reports</span>
+          <span className='text-gray-500'>{t("title")}</span>
           <ChevronRight className='text-black_white' />
-          <span className='text-black_white'>User</span>
+          <span className='text-black_white'>{t("subtitle")}</span>
         </div>
       </div>
       <ReactDataTable
-        columns={reportColumns.map(column => {
-          if (column.name === "Action") {
+        columns={reportColumns(t).map(column => {
+          if (column.name === t("columns.action")) {
             return {
               ...column,
               cell: (report: IAdminUserReportResponse) => (

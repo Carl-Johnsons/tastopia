@@ -23,6 +23,10 @@
       "inactive": "Không hoạt động",
       "pending": "Chờ",
       "done": "Hoàn thành"
+    },
+    "empty": {
+      "title": "Chưa có gì ở đây",
+      "description": "Không có mục để hiển thị tại thời điểm này."
     }
   },
   "administerUsers": {
@@ -99,6 +103,39 @@
       "userDisabled": "Đã vô hiệu hóa người dùng thành công",
       "userRestored": "Đã khôi phục người dùng thành công",
       "error": "Đã xảy ra lỗi. Vui lòng thử lại."
+    }
+  },
+  "administerReportUsers": {
+    "title": "Quản lý báo cáo",
+    "subtitle": "Người dùng",
+    "search": "Tìm kiếm bằng tên tài khoản, tên,...",
+    "columns": {
+      "username": "Tên đăng nhập",
+      "name": "Họ tên",
+      "reporter": "Người báo cáo",
+      "reportReason": "Lý do báo cáo",
+      "createDate": "Ngày tạo",
+      "status": "Trạng thái",
+      "action": "Hành động"
+    },
+    "actions": {
+      "detail": "Chi tiết",
+      "disable": "Vô hiệu hóa",
+      "restore": "Khôi phục"
+    },
+    "tooltip": {
+      "reportDetail": "Chi tiết báo cáo",
+      "disableUser": "Vô hiệu hoá người dùng",
+      "restoreUser": "Khôi phục người dùng",
+      "markAsComplete": "Đánh dấu hoàn tất",
+      "restoreReport": "Khôi phục báo cáo"
+    },
+    "notifications": {
+      "restoreUserSuccess": "Khôi phục người dùng thành công!",
+      "disableUserSuccess": "Vô hiệu hóa người dùng thành công!",
+      "restoreReportSuccess": "Khôi phục báo cáo thành công!",
+      "completeReportSuccess": "Đánh dấu báo cáo hoàn thành!",
+      "error": "Đã xảy ra lỗi!"
     }
   }
 }

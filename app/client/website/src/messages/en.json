@@ -23,6 +23,10 @@
       "inactive": "Inactive",
       "pending": "Pending",
       "done": "Done"
+    },
+    "empty": {
+      "title": "Nothing here yet",
+      "description": "No items to display at the moment."
     }
   },
   "administerUsers": {
@@ -99,6 +103,39 @@
       "userDisabled": "User has been disabled successfully",
       "userRestored": "User has been restored successfully",
       "error": "An error occurred. Please try again."
+    }
+  },
+  "administerReportUsers": {
+    "title": "Administer Reports",
+    "subtitle": "User",
+    "search": "Search by username, name,...",
+    "columns": {
+      "username": "Username",
+      "name": "Name",
+      "reporter": "Reporter",
+      "reportReason": "Report reason",
+      "createDate": "Create date",
+      "status": "Status",
+      "action": "Action"
+    },
+    "actions": {
+      "detail": "Detail",
+      "disable": "Disable",
+      "restore": "Restore"
+    },
+    "tooltip": {
+      "reportDetail": "Report detail",
+      "disableUser": "Disable user",
+      "restoreUser": "Restore user",
+      "markAsComplete": "Mark report as complete",
+      "restoreReport": "Restore report"
+    },
+    "notifications": {
+      "restoreUserSuccess": "Restore user successfully!",
+      "disableUserSuccess": "Disable user successfully!",
+      "restoreReportSuccess": "Restore report successfully!",
+      "completeReportSuccess": "Mark report as complete successfully!",
+      "error": "Something went wrong!"
     }
   }
 }

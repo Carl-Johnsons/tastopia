@@ -1,12 +1,8 @@
 import { Button } from "@/components/ui/button";
-import { Pencil, Search } from "lucide-react";
-import { useRouter } from "@/i18n/navigation";
-import { useState } from "react";
-import { adminBanUser } from "@/actions/user.action";
-import { toast } from "react-toastify";
+import { Pencil } from "lucide-react";
 import { Tag, TagStatus } from "@/types/tag";
 import { format } from "date-fns";
-import TagStatusComponent from "@/components/ui/TagStatus";
+import TagStatusComponent from "@/components/ui/ReportStatus";
 import Image from "next/image";
 import { useTags } from "./TagsContext";
 

@@ -1,4 +1,5 @@
 import { ReportStatus } from "@/constants/reports";
+import { useTranslations } from "next-intl";
 
 export const ReportStatusText = ({
   status,
@@ -7,17 +8,23 @@ export const ReportStatusText = ({
   status: ReportStatus;
   coloring?: boolean;
 }) => {
+  const t = useTranslations("component.status");
+
   return (
     <div className='flex min-w-[75px] items-center gap-1 text-sm'>
       {status === ReportStatus.Done ? (
         <>
           <div className='size-2 rounded-full bg-green-500' />
-          <span className={`font-medium ${coloring && "text-green-500"}`}>Done</span>
+          <span className={`font-medium ${coloring && "text-green-500"}`}>
+            {t("done")}
+          </span>
         </>
       ) : (
         <>
           <div className='size-2 rounded-full bg-red-500' />
-          <span className={`font-medium ${coloring && "text-red-500"}`}>Pending</span>
+          <span className={`font-medium ${coloring && "text-red-500"}`}>
+            {t("pending")}
+          </span>
         </>
       )}
     </div>
