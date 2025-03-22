@@ -8,7 +8,6 @@ using UserService.API.DTOs;
 using UserService.Application.UserReports.Queries;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
-using UserService.Domain.Entities;
 using UserService.Domain.Responses;
 using ErrorResponseDTO = UserService.API.DTOs.ErrorResponseDTO;
 
@@ -81,12 +80,15 @@ public class AdminController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedAdminUserReportListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetRecipeReports([FromQuery] GetReportReasonsDTO getReportReasonsDTO, [FromQuery] PaginatedDTO paginatedDTO)
+    public async Task<IActionResult> AdminGetUserReports([FromQuery] GetReportReasonsDTO getReportReasonsDTO, [FromQuery] PaginatedDTO paginatedDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new GetUserReportsQuery
         {
             Lang = getReportReasonsDTO.Language,
-            paginatedDTO = paginatedDTO
+            paginatedDTO = paginatedDTO,
+            AccountId = Guid.Parse(subjectId!),
         });
 
         result.ThrowIfFailure();
@@ -97,7 +99,7 @@ public class AdminController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedAdminUserReportDetailListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetRecipeReportDetail([FromBody] AdminGetUserReportByAccountIdDTO adminGetUserReportByAccountIdDTO)
+    public async Task<IActionResult> AdminGetUserReportDetail([FromBody] AdminGetUserReportByAccountIdDTO adminGetUserReportByAccountIdDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
@@ -113,33 +115,22 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpPost("mark-report-complete")]
+    [HttpPost("mark-report")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(UserReport), 200)]
+    [ProducesResponseType(typeof(AdminMarkReportResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminMarkReportComplete([FromBody] ReportDTO reportDTO)
+    public async Task<IActionResult> AdminMarkReport([FromBody] ReportDTO reportDTO)
     {
-        var result = await _sender.Send(new MarkReportCompleteCommand
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new MarkReportCommand
         {
             ReportId = reportDTO.ReportId,
+            AccountId = Guid.Parse(subjectId!),
         });
 
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
 
-    [HttpPost("reopen-report")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(UserReport), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminReopenReport([FromBody] ReportDTO reportDTO)
-    {
-        var result = await _sender.Send(new ReopenReportCommand
-        {
-            ReportId = reportDTO.ReportId,
-        });
-
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
 }

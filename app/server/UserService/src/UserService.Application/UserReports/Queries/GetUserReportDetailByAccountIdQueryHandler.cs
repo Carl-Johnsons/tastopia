@@ -56,13 +56,17 @@ public class GetUserReportDetailByAccountIdQueryHandler : IRequestHandler<GetUse
             return Result<PaginatedAdminUserReportDetailListResponse?>.Failure(UserError.NotFound, "Not found user.");
         }
 
-        var resultQuery = _context.UserReports.Where(rp => rp.ReportedId == user.AccountId).AsEnumerable().Select(rp => new AdminUserReportDetailResponse
+        var resultQuery = _context.UserReports.Include(rp => rp.Reporter).Where(rp => rp.ReportedId == user.AccountId).AsEnumerable().Select(rp => new AdminUserReportDetailResponse
         {
             ReportId = rp.Id,
             ReportedId = rp.ReportedId,
+            ReporterId = rp.ReporterId,
             ReportedUsername = user.AccountUsername,
+            ReporterUsername = rp.Reporter!.AccountUsername,
             ReportedDisplayName = user.DisplayName,
+            ReportedIsActive = user.IsAccountActive,
             ReportedAvtUrl = user.AvatarUrl,
+            ReporterAvtUrl = rp.Reporter!.AvatarUrl,
             Status = rp.Status.ToString(),
             ReportReason = ReportReasonData.ReportUserReasons.Where(rs => rp.ReasonCodes.Contains(rs.Code)).Select(rs => normalizedLangue == LanguageValidation.Vi ? rs.Vi : rs.En).ToList(),
             AdditionalDetails = rp.AdditionalDetails,

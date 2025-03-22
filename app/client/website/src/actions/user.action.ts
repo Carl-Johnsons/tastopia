@@ -8,8 +8,10 @@ import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 import { stringify } from "@/utils/debug";
 import {
   IAdminGetUserDetailResponse,
-  IPaginatedAdminGetUserListResponse
+  IPaginatedAdminGetUserListResponse,
+  IPaginatedAdminUserReportListResponse
 } from "@/generated/interfaces/user.interface";
+import { IInfiniteAdminUserReportListResponse } from "@/types/user";
 
 export async function getUserById(id: string) {
   try {
@@ -116,6 +118,60 @@ export async function adminBanUser(accountId: string) {
     });
 
     return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function markUserReport(reportId: string) {
+  try {
+    const url = "/api/admin/user/mark-report";
+    const { data } = await protectedAxiosInstance.post(url, {
+      reportId
+    });
+
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getUserReports(
+  skip = 0,
+  sortBy = "",
+  sortOrder = "asc",
+  keyword = "",
+  limit = 6,
+  language = "en"
+) {
+  try {
+    const url = `/api/admin/user/get-user-reports?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&language=${language}&keyword=${encodeURIComponent(keyword)}`;
+
+    const { data } = await protectedAxiosInstance.get(url);
+
+    return data as IPaginatedAdminUserReportListResponse;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getUserDetailReports(
+  accountId = "",
+  language = "en",
+  pageParam = 0
+) {
+  try {
+    const url = "/api/admin/user/get-user-report-by-account-id";
+    const { data } = await protectedAxiosInstance.post(url, {
+      accountId,
+      language,
+      skip: pageParam.toString()
+    });
+
+    return data as IInfiniteAdminUserReportListResponse;
   } catch (error) {
     console.log(error);
     throw error;

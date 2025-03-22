@@ -187,9 +187,11 @@ const Input = ({
                       keyboardType={isNumeric ? "numeric" : "default"}
                       style={getInputStyles()}
                       editable={!(disabled || isLoading)}
-                      selectTextOnFocus={!(disabled || isLoading)}
+                      selectTextOnFocus={false}
                       selectionColor={globalStyles.color.primary}
                       cursorColor={globalStyles.color.primary}
+                      multiline={false}
+                      numberOfLines={1}
                       {...restProps}
                       {...customProps}
                       onChangeText={value => {
@@ -268,7 +270,9 @@ const Input = ({
                 }
               ]}
               editable={!(disabled || isLoading)}
-              selectTextOnFocus={!(disabled || isLoading)}
+              selectTextOnFocus={false}
+              multiline={false}
+              numberOfLines={1}
               {...restProps}
               {...customProps}
               onFocus={e => {

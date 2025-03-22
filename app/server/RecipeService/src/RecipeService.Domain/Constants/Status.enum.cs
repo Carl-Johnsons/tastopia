@@ -1,7 +1,7 @@
 ﻿namespace RecipeService.Domain.Constants;
 public enum TagStatus
 {
-    Requested,
+    Rejected,
     Pending,
     Active,
     Inactive
