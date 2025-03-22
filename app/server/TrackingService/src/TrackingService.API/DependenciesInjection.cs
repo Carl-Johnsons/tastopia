@@ -1,14 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.Text.Json.Serialization;
-using Newtonsoft.Json;
-using AutoMapper;
+﻿using AutoMapper;
 using TrackingService.API.Configs;
-using TrackingService.API.Middleware;
 using TrackingService.Infrastructure;
 using TrackingService.Application;
 using Contract.Utilities;
 using TrackingService.API.Extensions;
-using Serilog;
 using Contract.Extension;
 
 namespace TrackingService.API;
@@ -46,23 +41,16 @@ public static class DependenciesInjection
 
     public static WebApplication UseAPIServices(this WebApplication app)
     {
-        app.UseSerilogServices();
-        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_TRACKING", "Not Found"));
+        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_TRACKING", "Not Found"));
 
         app.UseSwaggerServices();
 
         app.UseHttpsRedirection();
 
-        app.UseRouting();
-
         app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
-
-        app.UseGlobalHandlingErrorMiddleware();
-
-        app.UseHealthCheck();
 
         return app;
     }

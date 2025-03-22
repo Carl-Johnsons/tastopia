@@ -122,7 +122,6 @@ run_services() {
   run_service 5004 "./app/server/SignalRService/src/SignalRHub" "$LIGHT_YELLOW" "SignalR" &
   run_service 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" &
   run_service 5006 "./app/server/NotificationService/src/NotificationService.API" "$LIGHT_CYAN" "Notification" &
-  run_service 5007 "./app/server/SubscriptionService/src/SubscriptionService.API" "$DEBUG" "Subscription" &
   run_service 5008 "./app/server/TrackingService/src/TrackingService.API" "$LIGHT_YELLOW" "Tracking" &
   run_python_service 5009 "./app/server/IngredientPredictService" "$LIGHT_RED" "Ingredient Predict" &
   run_service 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker" &

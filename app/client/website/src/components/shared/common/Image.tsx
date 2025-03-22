@@ -1,7 +1,6 @@
 "use client";
 
 import BaseImage, { ImageProps } from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ImageOff } from "lucide-react";
 import { useState } from "react";
 
@@ -13,28 +12,13 @@ export default function Image({
   ...props
 }: ImageProps) {
   const [hasError, setHasError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
   if (hasError) return <FallbackComponent />;
-  if (isLoading) {
-    return (
-      <Skeleton
-        className={className}
-        style={{
-          width,
-          height
-        }}
-      />
-    );
-  }
 
   return (
     <BaseImage
       {...props}
       quality={100}
-      onLoad={() => setIsLoading(false)}
       onError={err => {
-        setIsLoading(false);
         setHasError(true);
         onError && onError(err);
       }}

@@ -18,4 +18,6 @@ public class PaginatedAdminRecipeListResponse : BasePaginatedResponse<AdminRecip
 
 public class PaginatedAdminReportRecipeListResponse : BasePaginatedResponse<AdminReportRecipeResponse, NumberedPaginatedMetadata>;
 
+public class PaginatedAdminReportCommentListResponse : BasePaginatedResponse<AdminReportCommentResponse, NumberedPaginatedMetadata>;
+
 public class PaginatedAdminTagListResponse : BasePaginatedResponse<AdminTagResponse, NumberedPaginatedMetadata>;

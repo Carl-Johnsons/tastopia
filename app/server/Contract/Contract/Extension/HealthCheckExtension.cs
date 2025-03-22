@@ -16,7 +16,7 @@ public static class HealthCheckExtension
      *  In order to use the health check UseHealthCheck after UseRouting
      * </summary>
      */
-    public static WebApplication UseHealthCheck(this WebApplication app)
+    public static WebApplication UseCustomHealthCheck(this WebApplication app)
     {
         app.MapHealthChecks("/health");
         return app;

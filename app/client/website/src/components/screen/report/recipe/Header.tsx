@@ -7,6 +7,7 @@ import { useState } from "react";
 import { DisableRecipeButton, RestoreRecipeButton } from "./Button";
 import { IAdminGetUserDetailResponse } from "@/generated/interfaces/user.interface";
 import Image from "next/image";
+import { ItemStatusText } from "../common/StatusText";
 
 type HeaderProps = {
   recipeId: string;
@@ -42,7 +43,7 @@ const Header = ({
       <div className='flex grow-[6] flex-col gap-3'>
         <div className='flex items-center gap-3'>
           <h1 className='text-black_white text-2xl font-semibold'>{title}</h1>
-          <StatusText
+          <ItemStatusText
             isActive={isActive}
             coloring
           />
@@ -94,30 +95,6 @@ const Header = ({
 
         <p className='text-black_white max-w-[70em]'>{description}</p>
       </div>
-    </div>
-  );
-};
-
-export const StatusText = ({
-  isActive,
-  coloring
-}: {
-  isActive: boolean;
-  coloring?: boolean;
-}) => {
-  return (
-    <div className='flex-center flex min-w-[80px] gap-2'>
-      {isActive ? (
-        <>
-          <div className='size-2.5 rounded-full bg-green-500' />
-          <span className={`font-medium ${coloring && "text-green-500"}`}>Active</span>
-        </>
-      ) : (
-        <>
-          <div className='size-2.5 rounded-full bg-red' />
-          <span className={`font-medium ${coloring && "text-red"}`}>Inactive</span>
-        </>
-      )}
     </div>
   );
 };

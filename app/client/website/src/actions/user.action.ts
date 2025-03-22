@@ -4,7 +4,7 @@ import { protectedAxiosInstance } from "@/constants/host";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 import { AxiosError } from "axios";
 import { UserState } from "@/slices/user.slice";
-import { IErrorResponseDTO } from "../../generated/interfaces/common.interface";
+import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 import { stringify } from "@/utils/debug";
 import {
   IAdminGetUserDetailResponse,

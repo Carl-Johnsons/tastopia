@@ -26,5 +26,4 @@ update_database() {
 
 update_database "./app/server/IdentityService/.env" "./app/server/IdentityService/src/IdentityService.Infrastructure" "Identity" &&
     update_database "./app/server/UploadFileService/.env" "./app/server/UploadFileService/src/UploadFileService.Infrastructure" "Upload" &&
-    update_database "./app/server/UserService/.env" "./app/server/UserService/src/UserService.Infrastructure" "User" && 
-    update_database "./app/server/SubscriptionService/.env" "./app/server/SubscriptionService/src/SubscriptionService.Infrastructure" "Subscription"
+    update_database "./app/server/UserService/.env" "./app/server/UserService/src/UserService.Infrastructure" "User"

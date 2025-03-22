@@ -23,18 +23,8 @@ export const sidebarLinks: SidebarLink[] = [
   },
   {
     imgURL: "/assets/icons/avocado.svg",
-    route: "/tags/all",
-    label: "administerTags",
-    children: [
-      {
-        route: "/tags/all",
-        label: "administerTagsAll"
-      },
-      {
-        route: "/tags/review",
-        label: "administerTagsReview"
-      }
-    ]
+    route: "/tags",
+    label: "administerTags"
   },
   {
     imgURL: "/assets/icons/user.svg",

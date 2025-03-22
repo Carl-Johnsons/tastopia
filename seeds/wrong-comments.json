@@ -1,0 +1,540 @@
+[
+  {
+    "content": "Check out my secret recipe for the best chocolate cake! Limited time discount on my recipe ebook at www.cooksecrets.com!",
+    "ReasonCodes": ["SPAM_COMMENT"],
+    "AdditionalDetails": ["Self-promotion and advertisement of a paid ebook."]
+  },
+  {
+    "content": "This pasta recipe is a complete mess - even a microwave meal is better than this disaster!",
+    "ReasonCodes": ["OFFENSIVE_COMMENT"],
+    "AdditionalDetails": ["Insulting tone towards the recipe creator."]
+  },
+  {
+    "content": "Your recipe for spicy chili is f***ing awful - no one in their right mind would eat this slop!",
+    "ReasonCodes": ["EXPLICIT_COMMENT"],
+    "AdditionalDetails": ["Contains explicit language and harsh criticism."]
+  },
+  {
+    "content": "I've got a family recipe that guarantees you'll win cooking contests. Just send your bank info and I'll share it with you!",
+    "ReasonCodes": ["SCAM_COMMENT"],
+    "AdditionalDetails": ["Fraudulent offer trying to scam personal information."]
+  },
+  {
+    "content": "Forget the pros - adding salt instead of sugar to your cake is the real secret. Trust me, all culinary experts are lying!",
+    "ReasonCodes": ["MISINFORMATION_COMMENT"],
+    "AdditionalDetails": ["Spreading false cooking advice that contradicts standard recipes."]
+  },
+  {
+    "content": "Here's a recipe for the best apple pie: Lorem ipsum dolor sit amet, consectetur adipiscing elit. (Copied from a popular food blog)",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT"],
+    "AdditionalDetails": ["Content appears to be copied without proper attribution."]
+  },
+  {
+    "content": "I don't care about your cookie recipe - I'm here to talk about my cat's favorite toys, not baking tips!",
+    "ReasonCodes": ["IRRELEVANT_COMMENT"],
+    "AdditionalDetails": ["Comment is off-topic and unrelated to the recipe."]
+  },
+  {
+    "content": "Anyone who thinks this salad recipe is good must be clueless about real cooking. Stick to fast food if you're that bad!",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Direct personal attack on the poster's cooking skills."]
+  },
+  {
+    "content": "Your recipe is not only stupid, it's a total scam! Click on my profile for the REAL recipe that actually works!",
+    "ReasonCodes": ["OFFENSIVE_COMMENT", "SPAM_COMMENT", "SCAM_COMMENT"],
+    "AdditionalDetails": ["Mix of insults, self-promotion, and fraudulent claims."]
+  },
+  {
+    "content": "Stop wasting time on your outdated pasta tips - adding ketchup is the only way to make it tasty, and everything else is a lie!",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Spreading false culinary advice while insulting the recipe creator."]
+  },
+  {
+    "content": "Your post is a total waste of time. The instructions are vague and it's obvious you're just trying to drive traffic to your site.",
+    "ReasonCodes": ["SPAM_COMMENT", "MISINFORMATION_COMMENT"],
+    "AdditionalDetails": [
+      "Accuses the post of being self-promotional",
+      "Criticizes the lack of clear instructions",
+      "Implies deceptive intent"
+    ]
+  },
+  {
+    "content": "This post is absolute garbage. It offers no real value and only serves as a platform for your spammy link.",
+    "ReasonCodes": ["SPAM_COMMENT", "OFFENSIVE_COMMENT"],
+    "AdditionalDetails": [
+      "Dismisses the post as worthless",
+      "Mentions spam without naming any specific content",
+      "Uses harsh language to insult the poster"
+    ]
+  },
+  {
+    "content": "I can't believe you copied everything from another source. There's zero originality in this post.",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Accuses the post of plagiarism", "Attacks the poster's creative abilities", "Highlights the lack of originality"]
+  },
+  {
+    "content": "Stop trying to scam people with misleading instructions. It's clear that your post is designed to misinform and trick readers.",
+    "ReasonCodes": ["SCAM_COMMENT", "MISINFORMATION_COMMENT"],
+    "AdditionalDetails": [
+      "Claims the post has fraudulent intentions",
+      "Points out the misleading nature of the content",
+      "Warns readers against following the advice"
+    ]
+  },
+  {
+    "content": "This is nothing but an irrelevant rant that doesn't belong in a cooking forum. Keep your off-topic noise to yourself.",
+    "ReasonCodes": ["IRRELEVANT_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Criticizes the post's lack of relevance", "Uses dismissive language", "Attacks the credibility of the author"]
+  },
+  {
+    "content": "Your post is a sham. The details are copied and the instructions are so confusing that even a beginner would know better.",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "OFFENSIVE_COMMENT"],
+    "AdditionalDetails": [
+      "Accuses the post of being copied",
+      "Critiques the clarity of instructions",
+      "Uses derogatory language to insult the creator"
+    ]
+  },
+  {
+    "content": "Honestly, anyone following your advice is bound to fail. Your post spreads misinformation that could ruin someone's cooking efforts.",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": [
+      "Directly insults the audience's abilities",
+      "Warns against following the provided instructions",
+      "Accuses the post of dangerous misinformation"
+    ]
+  },
+  {
+    "content": "This post is completely off-topic and feels like an attempt to push unrelated advertisements. It doesn't belong here.",
+    "ReasonCodes": ["IRRELEVANT_COMMENT", "SPAM_COMMENT"],
+    "AdditionalDetails": [
+      "States that the post is not relevant to cooking",
+      "Criticizes the advertisement nature",
+      "Advises readers to ignore the post"
+    ]
+  },
+  {
+    "content": "Your content is a total disaster—copied material combined with misleading advice. It's obvious you don't care about quality.",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "MISINFORMATION_COMMENT"],
+    "AdditionalDetails": [
+      "Accuses the post of being a mix of copied and false content",
+      "Criticizes the overall quality",
+      "Uses strong language to undermine trust"
+    ]
+  },
+  {
+    "content": "Stop pretending your post has any real value. It's just a vehicle for spam and personal attacks, and it misleads everyone.",
+    "ReasonCodes": ["SPAM_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": [
+      "Denounces the post as worthless",
+      "Accuses it of being designed for personal gain",
+      "Critiques the intent behind the content"
+    ]
+  },
+  {
+    "content": "This post is so lame and just trying to get clicks with a weird link. Total spam!",
+    "ReasonCodes": ["SPAM_COMMENT", "IRRELEVANT_COMMENT"],
+    "AdditionalDetails": ["Uses clickbait link", "Dismissive tone", "Off-topic for the community"]
+  },
+  {
+    "content": "Your instructions are a joke. Even a beginner could mess this up. No offense, but it's wrong.",
+    "ReasonCodes": ["OFFENSIVE_COMMENT", "MISINFORMATION_COMMENT"],
+    "AdditionalDetails": ["Insults the effort", "Criticizes clarity", "Promotes wrong techniques"]
+  },
+  {
+    "content": "I think you copied everything from another post. Your copy-paste game is weak!",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Accuses plagiarism", "Mocks creativity", "Attacks the poster's skills"]
+  },
+  {
+    "content": "OMG, this is such a scam! You're trying to steal info with your shady link. Not cool!",
+    "ReasonCodes": ["SCAM_COMMENT", "SPAM_COMMENT"],
+    "AdditionalDetails": ["Claims fraudulent intent", "Uses casual language", "Warns against clicking the link"]
+  },
+  {
+    "content": "Your post is super confusing and misleads everyone. I tried it and ended up with a total mess.",
+    "ReasonCodes": ["MISINFORMATION_COMMENT"],
+    "AdditionalDetails": ["Criticizes clarity", "Claims instructions are misleading", "Warns beginners"]
+  },
+  {
+    "content": "Bruh, this post is totally off-topic. Why would you even post something like this here?",
+    "ReasonCodes": ["IRRELEVANT_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Accuses of being off-topic", "Uses slang", "Attacks relevancy"]
+  },
+  {
+    "content": "Yo, your post is full of errors and looks copied. It's obvious you didn't put any effort in!",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "OFFENSIVE_COMMENT"],
+    "AdditionalDetails": ["Criticizes lack of originality", "Uses insulting language", "Dismisses effort"]
+  },
+  {
+    "content": "Dude, stop trying to sell your random link here. It's super spammy and a total scam move.",
+    "ReasonCodes": ["SPAM_COMMENT", "SCAM_COMMENT"],
+    "AdditionalDetails": ["Accuses of self-promotion", "Uses casual tone", "Warns others about the link"]
+  },
+  {
+    "content": "This is so boring and irrelevant. I came for real content, not this random chatter.",
+    "ReasonCodes": ["IRRELEVANT_COMMENT"],
+    "AdditionalDetails": ["Dismisses content", "Uses casual slang", "Accuses post of being off-topic"]
+  },
+  {
+    "content": "Not cool at all. Your post misleads everyone with false info. Feels like you're just messing with us.",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Accuses of false info", "Uses harsh tone", "Warns others about misleading content"]
+  },
+  {
+    "content": "Your instructions are so basic and look copied. I can't believe you think this is original.",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "OFFENSIVE_COMMENT"],
+    "AdditionalDetails": ["Accuses of copying", "Insults creativity", "Uses casual, dismissive tone"]
+  },
+  {
+    "content": "Stop being shady with your links and promises. This post is just a scam to get clicks.",
+    "ReasonCodes": ["SCAM_COMMENT", "SPAM_COMMENT"],
+    "AdditionalDetails": ["Accuses of trickery", "Uses informal language", "Warns fellow users"]
+  },
+  {
+    "content": "I'm not buying your BS! The directions here are totally messed up and misleading.",
+    "ReasonCodes": ["OFFENSIVE_COMMENT", "MISINFORMATION_COMMENT"],
+    "AdditionalDetails": ["Uses slang", "Criticizes clarity", "Accuses intentional deception"]
+  },
+  {
+    "content": "This post is completely off-base. It doesn't even belong in this discussion. Find something relevant!",
+    "ReasonCodes": ["IRRELEVANT_COMMENT"],
+    "AdditionalDetails": ["Accuses post of being off-topic", "Uses dismissive language", "Criticizes content alignment"]
+  },
+  {
+    "content": "Ugh, you just copied stuff from somewhere else. That's so lazy and it shows your lack of effort.",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Accuses of plagiarism", "Criticizes effort", "Uses casual, insulting tone"]
+  },
+  {
+    "content": "Your content is a total scam! Trying to trick everyone with your random link is gross.",
+    "ReasonCodes": ["SCAM_COMMENT", "SPAM_COMMENT"],
+    "AdditionalDetails": ["Accuses of trickery", "Uses informal tone", "Warns about shady links"]
+  },
+  {
+    "content": "Man, your post is so unclear it messes up the whole vibe. Just drop it already!",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "IRRELEVANT_COMMENT"],
+    "AdditionalDetails": ["Criticizes clarity", "Accuses of ruining the vibe", "Uses dismissive language"]
+  },
+  {
+    "content": "Seriously, your post is pathetic. It doesn't give any real info and seems totally copied.",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "OFFENSIVE_COMMENT"],
+    "AdditionalDetails": ["Insults the content", "Accuses of copying", "Criticizes lack of originality"]
+  },
+  {
+    "content": "Your post is so spammy and full of shady links. It looks like you're just out to scam everyone here.",
+    "ReasonCodes": ["SPAM_COMMENT", "SCAM_COMMENT"],
+    "AdditionalDetails": ["Warns about link abuse", "Accuses of scam tactics", "Uses casual slang"]
+  },
+  {
+    "content": "I can't even take your post seriously. It misleads people and is totally off-topic for what we want here.",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "IRRELEVANT_COMMENT"],
+    "AdditionalDetails": ["Accuses of misleading info", "Criticizes irrelevance", "Uses dismissive language"]
+  },
+  {
+    "content": "Yo, this post is hella lame, smh. Your link is mad sus and looks like a total scam. Bruh, get real!",
+    "ReasonCodes": ["SPAM_COMMENT", "SCAM_COMMENT"],
+    "AdditionalDetails": ["Uses casual teen slang", "Accuses the post of being spammy", "Calls the link suspicious and a scam"]
+  },
+  {
+    "content": "Bro, your instructions are so confusing it's like, who even gets what you're saying? Tbh, it's a mess.",
+    "ReasonCodes": ["MISINFORMATION_COMMENT"],
+    "AdditionalDetails": [
+      "Criticizes the clarity of the post",
+      "Uses casual, dismissive tone",
+      "Accuses the post of spreading misleading info"
+    ]
+  },
+  {
+    "content": "OMG, did you just copy someone else's content? That's basic AF and hella unoriginal, fr.",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "OFFENSIVE_COMMENT"],
+    "AdditionalDetails": ["Accuses the post of being copied", "Insults the lack of originality", "Uses teen slang to call it basic"]
+  },
+  {
+    "content": "Dude, your post is off-topic AF. Stop trying to flex with random links—it's just cringe, yo.",
+    "ReasonCodes": ["IRRELEVANT_COMMENT", "SPAM_COMMENT"],
+    "AdditionalDetails": [
+      "Labels the post as off-topic",
+      "Criticizes the use of unrelated links",
+      "Uses casual slang like 'cringe' and 'flex'"
+    ]
+  },
+  {
+    "content": "Lol, your post is full of lies. It's like you're tryna trick us with bogus info. Not cool, fam.",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": [
+      "Accuses the post of being misleading",
+      "Uses slang like 'bogus' and 'fam'",
+      "Criticizes the integrity of the info"
+    ]
+  },
+  {
+    "content": "Bruh, this is such a fail. Your instructions are straight-up confusing and seem copied from somewhere else.",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "PLAGIARIZED_COMMENT"],
+    "AdditionalDetails": [
+      "Criticizes the clarity and originality",
+      "Uses slang like 'fail' and 'bruh'",
+      "Accuses the post of being a copy-paste job"
+    ]
+  },
+  {
+    "content": "Yo, your post is a total scam. Who even falls for these shady links? Get outta here, bro.",
+    "ReasonCodes": ["SCAM_COMMENT", "SPAM_COMMENT"],
+    "AdditionalDetails": [
+      "Accuses the post of scamming users",
+      "Uses casual language like 'yo' and 'bro'",
+      "Warns others against shady links"
+    ]
+  },
+  {
+    "content": "Not even gonna lie, this post is trash. It's like you didn't even try to make something decent.",
+    "ReasonCodes": ["OFFENSIVE_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Uses blunt, harsh language", "Insults the effort behind the post", "Dismisses the content as worthless"]
+  },
+  {
+    "content": "Ugh, your post is hella off-topic and doesn't vibe with what we're here for. Chill and post something relevant, ok?",
+    "ReasonCodes": ["IRRELEVANT_COMMENT", "MISINFORMATION_COMMENT"],
+    "AdditionalDetails": [
+      "Accuses the post of being off-topic",
+      "Uses casual slang like 'vibe' and 'ok'",
+      "Criticizes the relevancy and clarity of the info"
+    ]
+  },
+  {
+    "content": "Seriously, this post is weak AF. It's just a mashup of copied stuff and sketchy info. Lame, bro.",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "MISINFORMATION_COMMENT"],
+    "AdditionalDetails": [
+      "Labels the post as weak and unoriginal",
+      "Uses slang like 'weak AF' and 'lame'",
+      "Accuses the post of being a mix of copied and sketchy content"
+    ]
+  },
+  {
+    "content": "Yo, your post is straight-up cringe 🤡! The link you dropped is super sus and feels like a scam 💀.",
+    "ReasonCodes": ["SPAM_COMMENT", "SCAM_COMMENT"],
+    "AdditionalDetails": ["Uses teen slang and meme emoji", "Accuses post of being spammy", "Highlights suspicious link behavior"]
+  },
+  {
+    "content": "Bruh, your instructions are a hot mess 🤦‍♀️. They're confusing AF—like, did you even try? 😂",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "OFFENSIVE_COMMENT"],
+    "AdditionalDetails": ["Criticizes unclear instructions", "Uses dismissive language", "Throws in meme emoji for extra sass"]
+  },
+  {
+    "content": "OMG, copied content much? Basic AF 😤. Stop reusing other people's work—it's so lame 🤢.",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Accuses post of plagiarism", "Mocks the lack of originality", "Uses meme emoji to show disgust"]
+  },
+  {
+    "content": "This post is off-topic af 🙄! Like, why are you even posting here? Save your link spam for somewhere else 🤨.",
+    "ReasonCodes": ["IRRELEVANT_COMMENT", "SPAM_COMMENT"],
+    "AdditionalDetails": ["Criticizes the off-topic content", "Mentions spammy behavior", "Uses meme emoji to emphasize irrelevance"]
+  },
+  {
+    "content": "Lol, your info is bogus fr 🥴. It's like you're tryna trick us with fake advice—get real 😤!",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Accuses post of spreading false info", "Uses slang to express disbelief", "Meme emoji enhance the casual tone"]
+  },
+  {
+    "content": "Dude, this is such a copy-paste fail 😩. It's like you're too lazy to create original content 😂.",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "OFFENSIVE_COMMENT"],
+    "AdditionalDetails": ["Accuses post of being copied", "Mocks lack of effort", "Mixes humor with meme emoji for extra impact"]
+  },
+  {
+    "content": "Stop being shady with your links, fr! They look hella sketchy 😒 and straight up scammy 💀.",
+    "ReasonCodes": ["SCAM_COMMENT", "SPAM_COMMENT"],
+    "AdditionalDetails": ["Warns about dubious links", "Uses teen slang and emoji", "Accuses the post of scam tactics"]
+  },
+  {
+    "content": "Not even gonna lie, your post is a total mess 🤦‍♂️. It's unclear and confusing—like, what are you even saying? 😵",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "IRRELEVANT_COMMENT"],
+    "AdditionalDetails": ["Criticizes the clarity of the post", "Uses meme emoji to show confusion", "Points out off-topic content"]
+  },
+  {
+    "content": "Yo, this is weak AF 😤! It's just a mashup of copied stuff and sketchy info 🤢. Step up your game, bro!",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "MISINFORMATION_COMMENT"],
+    "AdditionalDetails": ["Criticizes lack of originality", "Uses aggressive slang", "Enhances the tone with meme emoji"]
+  },
+  {
+    "content": "For real, your post is trash 😂. It's like you threw random stuff together and ended up with a hot mess 🤡. Do better!",
+    "ReasonCodes": ["OFFENSIVE_COMMENT", "IRRELEVANT_COMMENT"],
+    "AdditionalDetails": ["Uses blunt, dismissive language", "Accuses the post of being random", "Meme emoji add extra punch to the insult"]
+  },
+  {
+    "content": "Bro, your post is like that viral TikTok no one asked for—full hype with zero substance 😂💀. Your link is sketchier than mystery meat in the cafeteria, fr.",
+    "ReasonCodes": ["SPAM_COMMENT", "MISINFORMATION_COMMENT"],
+    "AdditionalDetails": ["Uses a viral TikTok reference", "Compares link to mystery meat", "Adds humor with meme-style language"]
+  },
+  {
+    "content": "Dude, this post is extra 🤡—like a tired meme from last year. Straight-up recycled and boring! Try being original for once, fam.",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "OFFENSIVE_COMMENT"],
+    "AdditionalDetails": [
+      "Accuses post of being recycled",
+      "Uses teen slang 'extra' and 'fam'",
+      "Mocks lack of originality with meme humor"
+    ]
+  },
+  {
+    "content": "OMG, your post is a hot mess express 🚂💀. It's got more plot twists than a soap opera, but none of 'em make sense—lmao.",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "IRRELEVANT_COMMENT"],
+    "AdditionalDetails": ["Compares post to a chaotic soap opera", "Uses exaggeration for humor", "Employs meme emoji to drive the point"]
+  },
+  {
+    "content": "Bruh, your info is straight-up bogus 🤓💀. It's like you got your facts from a fortune cookie—random and unpredictable, smh.",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Uses a fortune cookie joke", "Accuses post of being random", "Mixes humor with casual teen slang"]
+  },
+  {
+    "content": "Yo, saw your post and thought it was an April Fools' prank in July 🤡😂. Fake links and copy-paste vibes? Not the move, bro.",
+    "ReasonCodes": ["SCAM_COMMENT", "PLAGIARIZED_COMMENT"],
+    "AdditionalDetails": [
+      "References April Fools' in the wrong season",
+      "Mocks fake links and recycled content",
+      "Uses casual tone with meme emoji"
+    ]
+  },
+  {
+    "content": "This is peak cringe, fam 🤦‍♀️💀. Your post is like a meme from 2010 trying to be edgy in 2025—so outdated, lmao.",
+    "ReasonCodes": ["IRRELEVANT_COMMENT", "OFFENSIVE_COMMENT"],
+    "AdditionalDetails": ["Compares post to outdated memes", "Uses teen slang to highlight cringe factor", "Mocks the attempt at edginess"]
+  },
+  {
+    "content": "Dude, your post is as useful as a chocolate teapot 🤡😂. Recycled garbage with a side of shady links—epic fail!",
+    "ReasonCodes": ["PLAGIARIZED_COMMENT", "SCAM_COMMENT"],
+    "AdditionalDetails": [
+      "Uses absurd metaphor 'chocolate teapot'",
+      "Criticizes both content and links",
+      "Mixes humor with a strong insult"
+    ]
+  },
+  {
+    "content": "Yo, your post is like a broken emoji—confused and misfiring 🤡💀. Trying too hard to be funny and just missing the mark, lmao.",
+    "ReasonCodes": ["MISINFORMATION_COMMENT", "OFFENSIVE_COMMENT"],
+    "AdditionalDetails": [
+      "Compares post to a malfunctioning emoji",
+      "Uses teen slang to mock the attempt at humor",
+      "Highlights confusion and lack of clarity"
+    ]
+  },
+  {
+    "content": "Seriously, your post is an unfunny meme lost in the sauce 🤓💀. Random ideas mashed together with zero effort—bruh, do better!",
+    "ReasonCodes": ["IRRELEVANT_COMMENT", "PLAGIARIZED_COMMENT"],
+    "AdditionalDetails": [
+      "Uses 'lost in the sauce' as a teen phrase",
+      "Accuses post of randomness and low effort",
+      "Mocks the unfunny nature of the content"
+    ]
+  },
+  {
+    "content": "Dude, your post is like a decaf latte—pointless and disappointing 🤡😭. Spreading shady links and bogus advice doesn't make you cool, just extra.",
+    "ReasonCodes": ["SPAM_COMMENT", "MISINFORMATION_COMMENT"],
+    "AdditionalDetails": [
+      "Uses a decaf latte metaphor for lack of impact",
+      "Criticizes shady links and fake advice",
+      "Mixes teen slang 'extra' with meme emoji"
+    ]
+  },
+  {
+    "content": "Yo, you're such a clout chaser with zero talent. Your posts are as fake as your flex 🤡.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Insults the poster's character", "Uses teen slang", "Mocks authenticity"]
+  },
+  {
+    "content": "Bruh, your personality is as bland as your posts. No one cares about your weak opinions 🤦‍♂️.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Attacks personal qualities", "Uses casual teen language", "Expresses disinterest"]
+  },
+  {
+    "content": "OMG, you're such a wannabe. Your vibe is totally off and you come off as a total loser 😭.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Insults self-image", "Uses teen slang", "Expresses negativity"]
+  },
+  {
+    "content": "Dude, get real! Your posts are basic and so are you. Try upgrading your personality, fam 🤓.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Mocks lack of originality", "Uses casual tone", "Suggests self-improvement in a sarcastic way"]
+  },
+  {
+    "content": "Not gonna lie, you're a total joke. Your opinions are as empty as your mind, bruh 💀.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Mocks intelligence", "Uses harsh language", "Employs meme emoji for emphasis"]
+  },
+  {
+    "content": "Seriously, you need to step up your game because your current vibe is straight-up pathetic 🤡.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Attacks character", "Uses teen slang", "Mocks the poster's effort"]
+  },
+  {
+    "content": "Your posts are like your personality—completely forgettable and cringe-worthy. No offense, but for real 🙄.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Criticizes both post and personality", "Uses dismissive emoji", "Delivers a casual insult"]
+  },
+  {
+    "content": "Yo, if being basic was a contest, you'd win by default. Your posts don't even hit, bro 🤦‍♀️.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Mocks being basic", "Uses teen slang", "Accuses lack of originality"]
+  },
+  {
+    "content": "Stop trying to be the next big thing. You're just another face in the crowd with zero originality, fam 😤.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Insults the poster's originality", "Uses teen slang", "Expresses dismissiveness"]
+  },
+  {
+    "content": "Dude, your vibe is so off it's almost funny—but not in a good way. Just sad, honestly 🤓.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Criticizes the poster's vibe", "Uses humor to deliver the insult", "Mixes teen slang with meme emoji"]
+  },
+  {
+    "content": "Yo, your vibe is like a broken emoji—totally outdated and only good for a laugh 😂💀.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Mocks outdated personality", "Uses playful emoji", "Infuses teen humor"]
+  },
+  {
+    "content": "Bruh, if being extra was an Olympic sport, you'd be the MVP. Your attempts at cool are as lame as dial-up internet 🤡😭.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Mocks over-the-top behavior", "Compares to outdated tech", "Uses teen slang with humor"]
+  },
+  {
+    "content": "OMG, your posts are like expired memes—so stale that even my grandma would be laughing at you 🤓💀.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Accuses posts of being outdated", "Uses meme culture for humor", "Delivers a playful jab"]
+  },
+  {
+    "content": "Dude, your humor is like a busted meme generator—nonexistent and cringey. Even autocorrect wouldn't save you 🤦‍♂️😂.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Insults sense of humor", "Uses tech metaphor humor", "Mixes teen slang and emoji"]
+  },
+  {
+    "content": "Your personality is so basic, it's like you downloaded it from a free app. Update needed ASAP, fam 🤡.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Mocks lack of originality", "Uses app download metaphor", "Incorporates casual teen slang"]
+  },
+  {
+    "content": "Yo, you're the human version of a '404 Error'—nobody finds you, and you just crash every convo 🤣💀.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Uses tech reference for insult", "Mocks social skills", "Delivers a humorous burn"]
+  },
+  {
+    "content": "Bruh, your style is as outdated as last year's memes. It's like you're stuck in a time warp, and it's kinda hilarious 🤓😭.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Critiques outdated style", "Uses time warp metaphor", "Delivers a playful dig"]
+  },
+  {
+    "content": "Dude, if your vibe was a playlist, it'd be on repeat as the worst song ever. No one asked for that noise 🤡💀.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Mocks personal vibe", "Uses music metaphor", "Incorporates teen language and emoji"]
+  },
+  {
+    "content": "Yo, you got more issues than a magazine subscription—each one more cringey than the last. Time to fix yourself, fr 😂.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": [
+      "Criticizes personal issues humorously",
+      "Uses magazine subscription metaphor",
+      "Mixes teen slang with playful insult"
+    ]
+  },
+  {
+    "content": "OMG, you're so extra that even your shadow is trying to run away. That level of cringe is next-level, dude 🤦‍♀️💀.",
+    "ReasonCodes": ["PERSONAL_ATTACK"],
+    "AdditionalDetails": ["Mocks excessive behavior", "Uses creative imagery with a shadow joke", "Delivers a playful roast"]
+  }
+]
