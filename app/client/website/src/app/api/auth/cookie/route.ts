@@ -1,4 +1,4 @@
-import { getAuthCookie, setAuthCookies } from "@/utils/auth";
+import { getAuthCookie } from "@/utils/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {

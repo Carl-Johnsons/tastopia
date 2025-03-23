@@ -28,7 +28,7 @@ export default async function RecipeDetail({ recipe, className }: Props) {
 
   return (
     <div
-      className={`bg-white_black100 flex flex-col gap-9 rounded-xl border border-gray-200 p-6 shadow-sm dark:border-gray-600 ${className}`}
+      className={`bg-white_black100 flex h-fit flex-col gap-9 rounded-xl border border-gray-200 p-6 shadow-sm dark:border-gray-600 ${className}`}
     >
       <Header
         recipeId={id}

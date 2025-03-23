@@ -1,6 +1,7 @@
 ﻿using Contract.Common;
 using Contract.DTOs;
 using Contract.Extension;
+using Contract.Interfaces;
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 namespace Contract;
@@ -24,7 +25,8 @@ public static class ReinforcedTypingsExtension
             typeof(ErrorResponseDTO),
             typeof(AdvancePaginatedMetadata),
             typeof(CommonPaginatedMetadata),
-            typeof(NumberedPaginatedMetadata)
+            typeof(NumberedPaginatedMetadata),
+            typeof(PaginateParam)
 
         ], config =>
         {
@@ -33,6 +35,16 @@ public static class ReinforcedTypingsExtension
                   .AutoI()
                   .DontIncludeToNamespace()
                   .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
+        });
+
+        builder.ExportAsEnums([
+            typeof(SortType)
+        ], config =>
+        {
+            config.FlattenHierarchy()
+                  .DontIncludeToNamespace()
+                  .UseString()
+                  .ExportTo($"enums/{FILE_NAME}.enum.ts");
         });
     }
 }

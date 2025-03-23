@@ -47,6 +47,7 @@ public static class DependenciesInjection
         // Configure service
 
         services.AddOcelot()
+                .AddDelegatingHandler<SecretHeaderHandler>(global: true)
                 .AddConsul();
 
         services.AddSwaggerServices(config);
@@ -71,15 +72,16 @@ public static class DependenciesInjection
     public static WebApplication UseAPIServices(this WebApplication app)
     {
         app.UseSerilogServices();
+        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_API_GATEWAY", "Not Found"));
+
+        app.UseRouting();
+        app.UseCustomHealthCheck();
 
         app.UseCors("AllowAnyOriginPolicy");
 
         app.UseAuthentication();
-
         app.UseAuthorization();
 
-        app.UseRouting();
-        app.UseHealthCheck();
 #pragma warning disable ASP0014 // Suggest using top level route registrations
         app.UseEndpoints(e =>
         {
@@ -89,7 +91,6 @@ public static class DependenciesInjection
 
         app.UseOcelot().Wait();
 
-        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_API_GATEWAY", "Not Found"));
         return app;
     }
 }

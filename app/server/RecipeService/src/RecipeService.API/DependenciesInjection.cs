@@ -1,6 +1,5 @@
 ﻿using RecipeService.Application;
 using RecipeService.Infrastructure;
-using RecipeService.API.Middleware;
 using AutoMapper;
 using RecipeService.API.Configs;
 using Contract.Utilities;
@@ -37,8 +36,7 @@ public static class DependenciesInjection
 
     public static WebApplication UseAPIServices(this WebApplication app)
     {
-        app.UseSerilogServices();
-        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_RECIPE", "Not Found"));
+        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_RECIPE", "Not Found"));
 
         app.UseSwaggerServices();
 
@@ -48,14 +46,9 @@ public static class DependenciesInjection
 
         app.UseGrpcServices();
 
-        app.UseGlobalHandlingErrorMiddleware();
-
         app.UseAuthentication();
 
         app.UseAuthorization();
-
-        app.UseRouting();
-        app.UseHealthCheck();
 
         return app;
     }

@@ -96,9 +96,9 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
             });
         }
         var authorIds = recipes
-        .Select(r => r.Recipe.AuthorId)
-        .Distinct()
-        .ToHashSet();
+            .Select(r => r.Recipe.AuthorId)
+            .Distinct()
+            .ToHashSet();
         var response = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
         {
             AccountId = { _mapper.Map<RepeatedField<string>>(authorIds) }

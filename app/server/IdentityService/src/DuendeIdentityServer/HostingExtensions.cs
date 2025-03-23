@@ -3,7 +3,6 @@ using Contract.Utilities;
 using Duende.IdentityServer;
 using Duende.IdentityServer.ResponseHandling;
 using DuendeIdentityServer.Extensions;
-using DuendeIdentityServer.Middleware;
 using DuendeIdentityServer.Services;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
@@ -45,7 +44,7 @@ internal static class HostingExtensions
         services.AddSingleton(mapper);
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddCommonAPIServices();
+        services.AddCommonAPIWithoutAuthServices();
         services
             .AddIdentityServer(options =>
             {
@@ -124,7 +123,7 @@ internal static class HostingExtensions
 
     public static WebApplication ConfigurePipeline(this WebApplication app)
     {
-        app.UseSerilogServices();
+        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
         app.UseSwaggerServices();
 
         if (EnvUtility.IsDevelopment())
@@ -135,28 +134,25 @@ internal static class HostingExtensions
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
 
-        app.UseCookiePolicy();
+        //app.UseCookiePolicy();
 
-        app.UseCookiePolicy(new CookiePolicyOptions
-        {
-            MinimumSameSitePolicy = SameSiteMode.None,
-            Secure = EnvUtility.IsDevelopment()
-                ? CookieSecurePolicy.SameAsRequest // Allow http in development
-                : CookieSecurePolicy.Always        // Enforce https in production
-        });
+        //app.UseCookiePolicy(new CookiePolicyOptions
+        //{
+        //    MinimumSameSitePolicy = SameSiteMode.None,
+        //    Secure = EnvUtility.IsDevelopment()
+        //        ? CookieSecurePolicy.SameAsRequest // Allow http in development
+        //        : CookieSecurePolicy.Always        // Enforce https in production
+        //});
 
         app.UseCors("AllowSpecificOrigins");
 
         app.UseStaticFiles();
-        app.UseRouting();
         // UseIdentityServer already call UseAuthenticate()
         app.UseGrpcServices();
         app.UseIdentityServer();
         app.UseAuthorization();
-        app.UseGlobalHandlingErrorMiddleware();
         app.MapRazorPages();
 
-        app.UseHealthCheck();
         // Add a user api endpoint so this will not be a minimal API
 #pragma warning disable ASP0014
         app.UseEndpoints(endpoints =>
@@ -165,7 +161,6 @@ internal static class HostingExtensions
                 .RequireAuthorization();
         });
 
-        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
         return app;
     }
 }

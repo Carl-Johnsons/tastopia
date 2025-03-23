@@ -16,6 +16,8 @@ public class MappingConfig
             config.CreateMap<User, GetUserDetailsResponse>().ReverseMap();
             config.CreateMap<User, AdminGetUserDetailResponse>().ReverseMap();
             config.CreateMap<UserDetailsDTO, GetUserDetailsResponse>().ReverseMap();
+            config.CreateMap<UserReport, AdminUserReportResponse>().ReverseMap();
+
 
             // Grpc mapping
             config.CreateMap(typeof(List<>), typeof(RepeatedField<>)).ConvertUsing(typeof(ListToRepeatedFieldConverter<,>));

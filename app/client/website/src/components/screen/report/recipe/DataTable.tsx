@@ -5,16 +5,28 @@ import Loader from "@/components/ui/Loader";
 import { IAdminReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import useDebounce from "@/hooks/useDebounce";
 import { format } from "date-fns";
-import Image from "next/image";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import { MarkAsCompletedButton, ReopenReportButton, ViewDetailButton } from "./Button";
-import { customStyles } from "@/constants/styles";
 import { ChevronRight } from "lucide-react";
 import NoRecord from "@/components/ui/NoRecord";
 import SearchBar from "../../users/SearchBar";
 import { ReportStatus } from "@/constants/reports";
-import DataTableProvider, { DataTableContext, OnChangeActiveFn } from "./Provider";
+import DataTableProvider, {
+  DataTableContext,
+  DataTableContextValue,
+  OnChangeActiveFn
+} from "./Provider";
+import ReportStatusText from "../common/StatusText";
+import Image from "@/components/shared/common/Image";
+import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 
 const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
@@ -86,7 +98,7 @@ const columns: TableColumn<IAdminReportRecipeResponse>[] = [
     selector: row => row.status,
     cell: ({ status }) => {
       return (
-        <StatusText
+        <ReportStatusText
           status={status as ReportStatus}
           coloring
         />
@@ -116,7 +128,7 @@ type ActionButtonsProps = {
 };
 
 const ActionButtons = ({ reportId, recipeId, status }: ActionButtonsProps) => {
-  const { onChangeActive } = useContext(DataTableContext) as DataTableContext;
+  const { onChangeActive } = useContext(DataTableContext) as DataTableContextValue;
 
   return (
     <div className='flex gap-2'>
@@ -140,30 +152,6 @@ const ActionButtons = ({ reportId, recipeId, status }: ActionButtonsProps) => {
             onChangeActive({ reportId, value: false });
           }}
         />
-      )}
-    </div>
-  );
-};
-
-export const StatusText = ({
-  status,
-  coloring
-}: {
-  status: ReportStatus;
-  coloring?: boolean;
-}) => {
-  return (
-    <div className='flex min-w-[75px] items-center gap-1 text-sm'>
-      {status === ReportStatus.Done ? (
-        <>
-          <div className='size-2 rounded-full bg-green-500' />
-          <span className={`font-medium ${coloring && "text-green-500"}`}>Done</span>
-        </>
-      ) : (
-        <>
-          <div className='size-2 rounded-full bg-red-500' />
-          <span className={`font-medium ${coloring && "text-red-500"}`}>Pending</span>
-        </>
       )}
     </div>
   );
@@ -207,6 +195,7 @@ export default function Table() {
     [fetchedData]
   );
   const [reports, setReports] = useState<IAdminReportRecipeResponse[]>([]);
+  const { tableStyles } = useDataTableStyles();
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
@@ -230,7 +219,7 @@ export default function Table() {
     []
   );
 
-  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value.trim());
     setSkip(0);
   }, []);
@@ -257,7 +246,8 @@ export default function Table() {
 
   useEffect(() => {
     refetch();
-  }, [skip, sortBy, sortOrder, debouncedValue, limit, keyword]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [skip, sortBy, sortOrder, debouncedValue, limit]);
 
   useEffect(() => {
     setReports(fetchedData?.paginatedData || []);
@@ -279,7 +269,7 @@ export default function Table() {
 
       <DataTableProvider value={contextValue}>
         <DataTable
-          customStyles={customStyles}
+          customStyles={tableStyles}
           columns={columns}
           data={reports}
           responsive

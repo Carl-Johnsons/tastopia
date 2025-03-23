@@ -24,6 +24,11 @@ public class MappingConfig
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.RecipeImgUrl))
             .ReverseMap();
 
+            config.CreateMap<Tag, AdminTagResponse>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ReverseMap()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse(typeof(TagStatus),src.Status)));
+
             // Grpc mapping
             config.CreateMap(typeof(List<>), typeof(RepeatedField<>)).ConvertUsing(typeof(ListToRepeatedFieldConverter<,>));
             config.CreateMap(typeof(RepeatedField<>), typeof(List<>)).ConvertUsing(typeof(RepeatedFieldToListConverter<,>));
@@ -41,8 +46,10 @@ public class MappingConfig
 
             config.CreateMap<SimpleRecipeResponse, GrpcSimpleRecipe>()
             .ReverseMap();
+
         });
         //mappingConfig.AssertConfigurationIsValid();
+
 
         return mappingConfig;
     }

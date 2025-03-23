@@ -54,7 +54,8 @@ async def lifespan(app: FastAPI):
         "Tags": ["fastapi", "python"],
         "Check": {
             "HTTP": health_check_url,
-            "Interval": "10s"
+            "Interval": "10s",
+            "DeregisterCriticalServiceAfter": "1m"
         }
     }
     async with httpx.AsyncClient() as client:

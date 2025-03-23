@@ -1,50 +1,77 @@
 "use client";
 
 import BaseImage, { ImageProps } from "next/image";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ImageOff } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function Image({
-  className,
-  width,
-  height,
-  onError,
-  ...props
-}: ImageProps) {
-  const [hasError, setHasError] = useState(false);
+export default function Image({ width, height, onError, ...props }: ImageProps) {
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
-  if (hasError) return <FallbackComponent />;
-  if (isLoading) {
+  if (hasError)
     return (
-      <Skeleton
-        className={className}
-        style={{
-          width,
-          height
-        }}
+      <FallbackComponent
+        width={width}
+        height={height}
+        fill={props.fill}
       />
     );
-  }
 
   return (
-    <BaseImage
-      {...props}
-      quality={100}
-      onLoad={() => setIsLoading(false)}
-      onError={err => {
-        setIsLoading(false);
-        setHasError(true);
-        onError && onError(err);
-      }}
-    />
+    <div className='relative size-full'>
+      {isLoading && (
+        <Skeleton
+          className='absolute inset-0'
+          style={{ width, height }}
+        />
+      )}
+      <BaseImage
+        {...props}
+        width={width}
+        height={height}
+        quality={100}
+        onLoad={() => setIsLoading(false)}
+        onError={err => {
+          setHasError(true);
+          onError && onError(err);
+        }}
+      />
+    </div>
   );
 }
 
-const FallbackComponent = () => (
-  <div className='flex-center bg-white_black flex flex-col gap-5 rounded-md border border-transparent p-5 dark:border-gray-500'>
-    <ImageOff className='size-5' />
-    <p className='text-black_white text-sm'>Oops! The image failed to load.</p>
-  </div>
-);
+type FallbackComponentProps = Pick<ImageProps, "width" | "height" | "fill">;
+
+const FallbackComponent = ({ fill, ...props }: FallbackComponentProps) => {
+  let width = props.width;
+  let height = props.height;
+
+  if (typeof width === "string") {
+    width = parseInt(width);
+  }
+
+  if (typeof height === "string") {
+    height = parseInt(height);
+  }
+
+  const isBig = useMemo(
+    () => (!!width && width > 100) || (!!height && height > 100),
+    [width, height]
+  );
+
+  return (
+    <div
+      className={`flex-center flex-col gap-5 rounded-md border border-gray-500 bg-transparent ${isBig && "p-5"} ${fill && "size-full"}`}
+      style={{ width, height }}
+      aria-label='Image failed to load'
+    >
+      <ImageOff className='size-1/2 text-gray-500' />
+      {!fill && isBig && (
+        <p className='text-center text-lg text-gray-500'>
+          Oops! The image failed to load.
+        </p>
+      )}
+    </div>
+  );
+};

@@ -4,9 +4,10 @@ import { ChangeEvent, useRef, useState } from "react";
 type Props = {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   isLoading: boolean;
+  placeholder?: string;
 };
 
-export default function SearchBar({ onChange, isLoading }: Props) {
+export default function SearchBar({ onChange, isLoading, placeholder }: Props) {
   const ref = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -21,7 +22,7 @@ export default function SearchBar({ onChange, isLoading }: Props) {
       <input
         ref={ref}
         type='text'
-        placeholder='Search by username, name, gmail,...'
+        placeholder={placeholder || "Search by username, name, gmail,..."}
         className='w-full bg-transparent text-primary outline-none placeholder:text-primary/50'
         onChange={onChange}
         onFocus={() => setIsFocused(true)}

@@ -1,14 +1,14 @@
 "use client";
 
-import { StatusText } from "./DataTable";
 import { Clock } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useState } from "react";
 import { IReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import { format } from "date-fns";
 import { MarkAsCompletedButton, ReopenReportButton } from "./Button";
 import { ReportStatus } from "@/constants/reports";
+import StatusText from "../common/StatusText";
 
 type ReportListProps = {
   reports: IReportRecipeResponse[];
@@ -68,7 +68,7 @@ const ReportItem = ({
 
   return (
     <div
-      className={`flex h-fit min-w-[340px] max-w-[400px] flex-col gap-3.5 rounded-md p-5 dark:border xl:min-w-fit ${isActive ? "bg-red-200 dark:border-red dark:bg-transparent" : "bg-green-100 dark:border-green dark:bg-transparent"}`}
+      className={`flex min-w-[340px] max-w-[400px] flex-col gap-3.5 rounded-md p-5 dark:border xl:h-fit xl:min-w-fit ${isActive ? "bg-red-200 dark:border-red dark:bg-transparent" : "bg-green-100 dark:border-green dark:bg-transparent"}`}
     >
       <div className='flex justify-between'>
         <StatusText

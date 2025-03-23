@@ -18,6 +18,7 @@ public class Tag : BaseMongoDBAuditableEntity
     public string Code { get; set; } = null!;
 
     [Required]
+    [JsonConverter(typeof(StringEnumConverter))]
     [BsonRepresentation(BsonType.String)]
     public TagCategory Category { get; set; } = TagCategory.All;
 

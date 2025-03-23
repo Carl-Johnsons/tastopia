@@ -1,9 +1,12 @@
-import { useRouter } from "next/router";
+import { useRouter } from "@/i18n/navigation";
 import { Roles } from "@/constants/role";
 import { useEffect, ComponentType } from "react";
 import { useSelectRole } from "@/slices/auth.slice";
 
-const withAuth = <P extends object>(WrappedComponent: ComponentType<P>, allowedRoles: Roles[]) => {
+const withAuth = <P extends object>(
+  WrappedComponent: ComponentType<P>,
+  allowedRoles: Roles[]
+) => {
   const ProtectedComponent = (props: P) => {
     const role = useSelectRole();
 

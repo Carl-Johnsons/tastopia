@@ -1,24 +1,24 @@
 ﻿
 using AutoMapper;
 using Contract.Constants;
-using Contract.DTOs.UserDTO;
 using Contract.Utilities;
 using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using RecipeService.Domain.Entities;
+using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using UserProto;
 
 namespace RecipeService.Application.Reports.Queries;
 
-public record GetRecipeReportDetailQuery : IRequest<Result<AdminReportRecipeDetailResponse>>
+public record GetRecipeReportDetailQuery : IRequest<Result<AdminReportRecipeDetailResponse?>>
 {
     public string Lang { get; init; } = "en";
     public Guid RecipeId { get; init; }
 }
 
-public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReportDetailQuery, Result<AdminReportRecipeDetailResponse>>
+public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReportDetailQuery, Result<AdminReportRecipeDetailResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
@@ -31,7 +31,7 @@ public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReport
         _mapper = mapper;
     }
 
-    public async Task<Result<AdminReportRecipeDetailResponse>> Handle(GetRecipeReportDetailQuery request, CancellationToken cancellationToken)
+    public async Task<Result<AdminReportRecipeDetailResponse?>> Handle(GetRecipeReportDetailQuery request, CancellationToken cancellationToken)
     {
         var userReportCollection = _context.GetDatabase().GetCollection<UserReportRecipe>(nameof(UserReportRecipe));
         var recipeCollection = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe));
@@ -83,13 +83,10 @@ public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReport
 
         var result = await pipeline;
 
-        var accountIds = result.UserReportRecipes.Select(r => r.AccountId).ToList();
-
-        var repeatedField = _mapper.Map<RepeatedField<string>>(accountIds);
-        var mapUserGrpc = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
+        if (result == null)
         {
-            AccountId = { repeatedField }
-        }, cancellationToken: cancellationToken);
+            return Result<AdminReportRecipeDetailResponse>.Failure(ReportError.NotFound);
+        }
 
         var grpcGetAccountDetail = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
         {
@@ -121,22 +118,39 @@ public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReport
             AuthorUsername = grpcGetAccountDetail.AccountUsername,
             AuthorNumberOfFollower = grpcGetAccountDetail.TotalFollower ?? 0,
             Tags = tagList,
-            Reports = result.UserReportRecipes.OrderByDescending(urr => urr.CreatedAt).Select(urr => new ReportRecipeResponse
-            {
-                Id = urr.Id,
-                AdditionalDetail = urr.AdditionalDetails,
-                CreatedAt = urr.CreatedAt,
-                Status = urr.Status.ToString(),
-                ReporterUsername = mapUserGrpc.Users[urr.AccountId.ToString()].AccountUsername,
-                ReporterAvtUrl = mapUserGrpc.Users[urr.AccountId.ToString()].AvtUrl,
-                Reasons = ReportReasonData.RecipeReportReasons.Where(rrr => urr.ReasonCodes.Contains(rrr.Code))
-                                                              .Select(rrr => request.Lang == LanguageValidation.Vi ? rrr.Vi : rrr.En)
-                                                              .ToList(),
-            }).ToList()
+            Reports = []
         };
 
 
-        return Result<AdminReportRecipeDetailResponse>.Success(reportDetailResponse);
+        if (result.UserReportRecipes == null || result.UserReportRecipes.Count == 0)
+        {
+            return Result<AdminReportRecipeDetailResponse?>.Success(reportDetailResponse);
+        }
+
+        var accountIds = result.UserReportRecipes.Select(r => r.AccountId).ToList();
+
+        var repeatedField = _mapper.Map<RepeatedField<string>>(accountIds);
+
+        var mapUserGrpc = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
+        {
+            AccountId = { repeatedField }
+        }, cancellationToken: cancellationToken);
+
+
+        reportDetailResponse.Reports = result.UserReportRecipes.OrderByDescending(urr => urr.CreatedAt).Select(urr => new ReportRecipeResponse
+        {
+            Id = urr.Id,
+            AdditionalDetail = urr.AdditionalDetails,
+            CreatedAt = urr.CreatedAt,
+            Status = urr.Status.ToString(),
+            ReporterUsername = mapUserGrpc.Users[urr.AccountId.ToString()].AccountUsername,
+            ReporterAvtUrl = mapUserGrpc.Users[urr.AccountId.ToString()].AvtUrl,
+            Reasons = ReportReasonData.RecipeReportReasons.Where(rrr => urr.ReasonCodes.Contains(rrr.Code))
+                                                              .Select(rrr => request.Lang == LanguageValidation.Vi ? rrr.Vi : rrr.En)
+                                                              .ToList(),
+        }).ToList();
+
+        return Result<AdminReportRecipeDetailResponse?>.Success(reportDetailResponse);
     }
 
     private class RecipeWithReportList : Recipe

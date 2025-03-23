@@ -25,7 +25,7 @@ export type Colors = {
 
 export const colors: Colors = {
   primary: "#FE724C",
-  secondary: { DEFAULT: "#FF9C01", 100: "#FF9001", 200: "#FF8E01" },
+  secondary: { DEFAULT: "#EB5B00", 100: "#FF9001", 200: "#FF8E01" },
   black: {
     DEFAULT: "#000000",
     100: "#1E1E1E",
@@ -33,14 +33,17 @@ export const colors: Colors = {
     300: "#0D0D0D",
     400: "#1E201E",
     450: "#2a3b42",
-    500: "#101012",
+    500: "#101012"
   },
-  white: { DEFAULT: "#FFFFFF", 100: "#EFEFEF",
+  white: {
+    DEFAULT: "#FFFFFF",
+    100: "#EFEFEF",
     600: "#e9edf7",
     700: "#DCE3F1",
     800: "#F4F6F8",
     850: "#FDFDFD",
-    900: "#FFFFFF", },
+    900: "#FFFFFF"
+  },
   gray: {
     DEFAULT: "#C4C4C4",
     100: "#F3F4F6",
@@ -49,7 +52,7 @@ export const colors: Colors = {
     400: "#C4C7D0",
     500: "#9CA3AF",
     600: "#626C70",
-    700: "#5B5B5E",
+    700: "#5B5B5E"
   },
   green: {
     DEFAULT: "#0B986D"

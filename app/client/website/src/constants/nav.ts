@@ -4,70 +4,60 @@ export const sidebarLinks: SidebarLink[] = [
   {
     imgURL: "/assets/icons/chart-dots-2.svg",
     route: "/statistics/system",
-    label: "Statistics",
+    label: "statistics",
     children: [
       {
         route: "/statistics/system",
-        label: "System",
+        label: "statisticsSystem"
       },
       {
         route: "/statistics/income",
-        label: "Income",
-      },
-    ],
+        label: "statisticsIncome"
+      }
+    ]
   },
   {
     imgURL: "/assets/icons/grill.svg",
     route: "/recipes",
-    label: "Administer Recipes",
+    label: "administerRecipes"
   },
   {
     imgURL: "/assets/icons/avocado.svg",
-    route: "/tags/all",
-    label: "Administer Tags",
-    children: [
-      {
-        route: "/tags/all",
-        label: "All",
-      },
-      {
-        route: "/tags/review",
-        label: "Review",
-      },
-    ],
+    route: "/tags",
+    label: "administerTags"
   },
   {
     imgURL: "/assets/icons/user.svg",
     route: "/users",
-    label: "Administer Users",
+    label: "administerUsers"
   },
   {
     imgURL: "/assets/icons/message-report.svg",
     route: "/reports/recipes",
-    label: "Administer Reports",
+    label: "administerReports",
     children: [
       {
         route: "/reports/recipes",
-        label: "Recipe",
+        label: "administerReportsRecipe"
       },
       {
         route: "/reports/comments",
-        label: "Comment",
+        label: "administerReportsComment"
       },
       {
         route: "/reports/users",
-        label: "User",
-      },
-    ],
+        label: "administerReportsUser"
+      }
+    ]
   },
   {
     imgURL: "/assets/icons/shield-minus.svg",
     route: "/admins",
-    label: "Administer Admins",
+    label: "administerAdmins"
   },
   {
     imgURL: "/assets/icons/activity.svg",
     route: "/activity-log",
-    label: "Activity Log",
-  },
+    label: "activityLog"
+  }
 ];

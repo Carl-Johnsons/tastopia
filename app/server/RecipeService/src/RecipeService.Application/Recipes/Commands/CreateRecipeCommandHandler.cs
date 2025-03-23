@@ -75,8 +75,6 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
     public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
     {
         List<string>? rollbaclUrls = null;
-
-
         try
         {
             var steps = request.Steps;

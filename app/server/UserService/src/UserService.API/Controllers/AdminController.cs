@@ -1,8 +1,11 @@
 ﻿using Contract.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipeService.API.DTOs;
+using RecipeService.Application.Reports.Commands;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
+using UserService.Application.UserReports.Queries;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
 using UserService.Domain.Responses;
@@ -72,4 +75,62 @@ public class AdminController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    [HttpGet("get-user-reports")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAdminUserReportListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetUserReports([FromQuery] GetReportReasonsDTO getReportReasonsDTO, [FromQuery] PaginatedDTO paginatedDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new GetUserReportsQuery
+        {
+            Lang = getReportReasonsDTO.Language,
+            paginatedDTO = paginatedDTO,
+            AccountId = Guid.Parse(subjectId!),
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("get-user-report-by-account-id")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAdminUserReportDetailListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminGetUserReportDetail([FromBody] AdminGetUserReportByAccountIdDTO adminGetUserReportByAccountIdDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new GetUserReportDetailByAccountIdQuery
+        {
+            CurrentAccountId = Guid.Parse(subjectId!),
+            AccountId = adminGetUserReportByAccountIdDTO.AccountId,
+            Lang = adminGetUserReportByAccountIdDTO.Language ?? "en",
+            Skip = adminGetUserReportByAccountIdDTO.Skip
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("mark-report")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(AdminMarkReportResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminMarkReport([FromBody] ReportDTO reportDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new MarkReportCommand
+        {
+            ReportId = reportDTO.ReportId,
+            AccountId = Guid.Parse(subjectId!),
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
 }

@@ -16,7 +16,7 @@ type ContentProps = IngredientProps & InstructionProps;
 
 export default function Content({ ingredient, serves, steps, cookTime }: ContentProps) {
   return (
-    <div className='flex gap-6'>
+    <div className='grid gap-6 lg:grid-cols-[300px_1fr]'>
       <Ingredient
         ingredient={ingredient}
         serves={serves}
@@ -31,8 +31,8 @@ export default function Content({ ingredient, serves, steps, cookTime }: Content
 
 const Ingredient = ({ ingredient, serves = 0 }: IngredientProps) => {
   return (
-    <div className='flex max-w-[360px] flex-col gap-3'>
-      <h2 className='text-black_white font-semibold text-2xl'>Ingredient</h2>
+    <div className='flex flex-col gap-3'>
+      <h2 className='text-black_white text-2xl font-semibold'>Ingredient</h2>
       <span className='text-sm text-gray-600'>
         For {serves} Serving{serves > 2 && "s"}
       </span>
@@ -54,7 +54,7 @@ const Ingredient = ({ ingredient, serves = 0 }: IngredientProps) => {
 const Instruction = ({ steps, cookTime = "Not specified" }: InstructionProps) => {
   return (
     <div className='flex flex-col gap-3'>
-      <h2 className='text-black_white font-semibold text-2xl'>Instruction</h2>
+      <h2 className='text-black_white text-2xl font-semibold'>Instruction</h2>
       <div className='flex items-center gap-2'>
         <ClockIcon className='size-6 text-gray-600' />
         <span className='text-sm text-gray-600'>Cook Time: {cookTime}</span>

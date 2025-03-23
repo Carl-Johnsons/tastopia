@@ -20,4 +20,12 @@ public class CommentError
             new("CommentError.UpdateCommentFail",
             Message: "Update Comment fail",
             StatusCode: (int)HttpStatusCode.InternalServerError);
+    public static Error AlreadyInactive =>
+            new("CommentError.AlreadyInactive",
+            Message: "Comment already inactive",
+            StatusCode: (int)HttpStatusCode.BadRequest);
+    public static Error AlreadyActive =>
+        new("CommentError.AlreadyActive",
+        Message: "Comment already active",
+        StatusCode: (int)HttpStatusCode.BadRequest);
 }

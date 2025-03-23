@@ -1,0 +1,225 @@
+{
+  "navbar": {
+    "en": "English",
+    "vi": "Vietnamese",
+    "statistics": "Statistics",
+    "statisticsSystem": "System",
+    "statisticsIncome": "Income",
+    "administerRecipes": "Administer Recipes",
+    "administerTags": "Administer Tags",
+    "administerTagsAll": "All",
+    "administerTagsReview": "Review",
+    "administerUsers": "Administer Users",
+    "administerReports": "Administer Reports",
+    "administerReportsRecipe": "Recipe",
+    "administerReportsComment": "Comment",
+    "administerReportsUser": "User",
+    "administerAdmins": "Administer Admins",
+    "activityLog": "Activity Log"
+  },
+  "component": {
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "done": "Done"
+    },
+    "empty": {
+      "title": "Nothing here yet",
+      "description": "No items to display at the moment."
+    }
+  },
+  "administerUsers": {
+    "title": "Administer Users",
+    "search": "Search by username, name, gmail,...",
+    "columns": {
+      "username": "Username",
+      "name": "Name",
+      "gmail": "Gmail",
+      "phoneNumber": "Phone number",
+      "dateOfBirth": "Date of birth",
+      "status": "Status",
+      "address": "Address",
+      "action": "Action"
+    },
+    "actions": {
+      "detail": "Detail",
+      "disable": "Disable",
+      "restore": "Restore"
+    },
+    "notifications": {
+      "restoreSuccess": "Restore user successfully!",
+      "disableSuccess": "Disable user successfully!",
+      "error": "Something went wrong!"
+    }
+  },
+  "userDetail": {
+    "header": {
+      "role": "User",
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "back": "Back to Users",
+        "disable": "Disable User",
+        "restore": "Restore User",
+        "edit": "Edit Profile"
+      }
+    },
+    "info": {
+      "title": "Profile Information",
+      "personalInfo": "Personal Information",
+      "accountInfo": "Account Information",
+      "statistics": "User Statistics",
+      "fields": {
+        "displayName": "Display Name",
+        "username": "Username",
+        "gmail": "Gmail",
+        "phoneNumber": "Phone Number",
+        "dob": "Date of Birth",
+        "address": "Address",
+        "bio": "Biography",
+        "activeTime": "Active time",
+        "recipes": "Recipes",
+        "followers": "Followers",
+        "following": "Following",
+        "likes": "Likes",
+        "comments": "Comments"
+      }
+    },
+    "activity": {
+      "title": "Latest Activity",
+      "empty": "No activity to display",
+      "ago": "ago",
+      "types": {
+        "createRecipe": "Create Recipe",
+        "commentRecipe": "Create Comment",
+        "upvoteRecipe": "Upvoted Recipe",
+        "downvoteRecipe": "Downvoted Recipe"
+      }
+    },
+    "notifications": {
+      "userDisabled": "User has been disabled successfully",
+      "userRestored": "User has been restored successfully",
+      "error": "An error occurred. Please try again."
+    }
+  },
+  "administerReportUsers": {
+    "title": "Administer Reports",
+    "subtitle": "User",
+    "search": "Search by username, name,...",
+    "columns": {
+      "username": "Username",
+      "name": "Name",
+      "reporter": "Reporter",
+      "reportReason": "Report reason",
+      "createDate": "Create date",
+      "status": "Status",
+      "action": "Action"
+    },
+    "actions": {
+      "detail": "Detail",
+      "disable": "Disable",
+      "restore": "Restore"
+    },
+    "tooltip": {
+      "reportDetail": "Report detail",
+      "disableUser": "Disable user",
+      "restoreUser": "Restore user",
+      "markAsComplete": "Mark report as complete",
+      "restoreReport": "Restore report"
+    },
+    "notifications": {
+      "restoreUserSuccess": "Restore user successfully!",
+      "disableUserSuccess": "Disable user successfully!",
+      "restoreReportSuccess": "Restore report successfully!",
+      "completeReportSuccess": "Mark report as complete successfully!",
+      "error": "Something went wrong!"
+    }
+  },
+  "administerTags": {
+    "title": "Administer Tags",
+    "search": "Search by tag code, ingredient name...",
+    "actions": {
+      "create": "Create",
+      "update": "Update",
+      "delete": "Delete"
+    },
+    "dialogs": {
+      "create": {
+        "title": "Create tag"
+      },
+      "update": {
+        "title": "Update tag"
+      }
+    },
+    "form": {
+      "code": {
+        "label": "Code",
+        "placeholder": "Enter tag code"
+      },
+      "value": {
+        "label": "Ingredient name",
+        "placeholder": "Enter ingredient name"
+      },
+      "category": {
+        "label": "Category",
+        "placeholder": "Select a category",
+        "options": {
+          "all": "All",
+          "dishType": "Dish Type",
+          "ingredient": "Ingredient"
+        }
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Select a status",
+        "options": {
+          "active": "Active",
+          "inactive": "Inactive",
+          "pending": "Pending"
+        }
+      },
+      "image": {
+        "label": "Image",
+        "required": "Tag image is required",
+        "errors": {
+          "maxNumber": "Number of selected images exceed 1",
+          "acceptType": "Your selected file type is not allowed",
+          "maxFileSize": "Selected file size exceeds max file size (15MB)"
+        },
+        "upload": {
+          "clickToUpload": "Click to upload",
+          "dragAndDrop": "or drag and drop",
+          "fileTypes": "PNG, JPG, JPEG or WEBP (MAX 15MB)",
+          "removeImage": "Remove image",
+          "confirmDelete": {
+            "title": "Are you sure you want to delete this image?",
+            "description": "Once deleted, it can't be undone.",
+            "confirm": "Yes, delete",
+            "cancel": "Cancel"
+          }
+        }
+      },
+      "creating": "Creating...",
+      "updating": "Updating...",
+      "submit": "Submit",
+      "cancel": "Cancel"
+    },
+    "columns": {
+      "code": "Code",
+      "value": "Ingredient name",
+      "category": "Category",
+      "createDate": "Create date",
+      "status": "Status",
+      "image": "Ingredient image",
+      "action": "Action"
+    },
+    "notifications": {
+      "createSuccess": "Tag created successfully",
+      "updateSuccess": "Tag updated successfully",
+      "error": "Something went wrong. Please try again later."
+    }
+  }
+}
