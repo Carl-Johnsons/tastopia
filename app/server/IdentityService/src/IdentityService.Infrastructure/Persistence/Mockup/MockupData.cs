@@ -64,6 +64,12 @@ internal class MockupData
 
         foreach (var seedAccount in seedAccounts)
         {
+            if (!Enum.IsDefined(typeof(Contract.Constants.Roles.Code), seedAccount.RoleCode))
+            {
+                _logger.LogError($"Malicious seed account data with role {seedAccount.RoleCode}");
+                continue;
+            }
+
             var account = new ApplicationAccount
             {
                 Id = seedAccount.Id,
@@ -86,7 +92,7 @@ internal class MockupData
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
-                await _userManager.AddToRoleAsync(account, seedAccount.RoleCode);
+                await _userManager.AddToRoleAsync(account, seedAccount.RoleCode.ToUpper());
 
                 _logger.LogInformation($"{account.UserName} created");
             }
@@ -94,6 +100,12 @@ internal class MockupData
 
         foreach (var seedWrongUser in seedWrongUsers)
         {
+            if (!Enum.IsDefined(typeof(Contract.Constants.Roles.Code), seedWrongUser.RoleCode))
+            {
+                _logger.LogError($"Malicious seed account data with role {seedWrongUser.RoleCode}");
+                continue;
+            }
+
             var account = new ApplicationAccount
             {
                 Id = seedWrongUser.Id,
@@ -116,6 +128,7 @@ internal class MockupData
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
+
                 await _userManager.AddToRoleAsync(account, seedWrongUser.RoleCode);
 
                 _logger.LogInformation($"{account.UserName} created");

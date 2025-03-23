@@ -4,14 +4,15 @@ public static class Roles
 {
     public static class AllowedRoles
     {
-        public static readonly List<string> SUPER_ADMIN = [Code.SUPER_ADMIN];
-        public static readonly List<string> ADMIN = [Code.ADMIN, Code.SUPER_ADMIN];
-        public static readonly List<string> USER = [Code.USER, Code.ADMIN, Code.SUPER_ADMIN];
+        public static readonly List<string> SUPER_ADMIN = [Code.SUPER_ADMIN.ToString()];
+        public static readonly List<string> ADMIN = [Code.ADMIN.ToString(), Code.SUPER_ADMIN.ToString()];
+        public static readonly List<string> USER = [Code.USER.ToString(), Code.ADMIN.ToString(), Code.SUPER_ADMIN.ToString()];
     }
-    public static class Code
+    public enum Code
     {
-        public static readonly string SUPER_ADMIN = "SUPER ADMIN";
-        public static readonly string ADMIN = "ADMIN";
-        public static readonly string USER = "USER";
+        SUPER_ADMIN,
+        ADMIN,
+        USER,
+        GUEST
     }
 }

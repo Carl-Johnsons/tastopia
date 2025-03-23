@@ -27,7 +27,6 @@ public static class ReinforcedTypingsExtension
             typeof(CommonPaginatedMetadata),
             typeof(NumberedPaginatedMetadata),
             typeof(PaginateParam)
-
         ], config =>
         {
             config.FlattenHierarchy()
