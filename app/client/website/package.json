@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "sh -c \"export NODE_TLS_REJECT_UNAUTHORIZED=0 && npx env-cmd -f .env next dev\"",
-    "start": "next start",
+    "start": "sh -c \"export NODE_TLS_REJECT_UNAUTHORIZED=0 && npx env-cmd -f .env next start\"",
     "build": "next build",
     "lint": "next lint",
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
