@@ -14,7 +14,10 @@
         "DELETE"
       ],
       "UpstreamPathTemplate": "/api/admin/recipe/{everything}",
-      "SwaggerKey": "recipe"
+      "SwaggerKey": "recipe",
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN"
+      }
     },
     {
       "ServiceName": "recipe-service",

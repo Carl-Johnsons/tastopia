@@ -14,7 +14,10 @@
         "DELETE"
       ],
       "UpstreamPathTemplate": "/api/admin/user/{everything}",
-      "SwaggerKey": "user"
+      "SwaggerKey": "user",
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN"
+      }
     },
     {
       "ServiceName": "user-service",
