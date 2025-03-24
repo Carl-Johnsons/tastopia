@@ -11,4 +11,5 @@ public interface IHubClient
     Task ReceiveTest(TestObject obj);
     Task ReceiveNotification();
     Task ForcedLogout();
+    Task OnlineUserNumberChanged(int number);
 }

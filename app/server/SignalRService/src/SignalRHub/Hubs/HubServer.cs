@@ -5,6 +5,7 @@ using Serilog;
 using SignalRHub.DTOs;
 using Contract.Interfaces;
 using Contract.DTOs.SignalRDTO;
+using SignalRHub.Interfaces;
 
 namespace SignalRHub.Hubs;
 
@@ -15,11 +16,14 @@ public class HubServer : Hub<IHubClient>
     private readonly IHttpContextAccessor _httpContextAccessor;
     // rabbitmq
     private readonly IServiceBus _bus;
+    private readonly IMemoryTracker _memoryTracker;
     public HubServer(IHttpContextAccessor httpContextAccessor,
-                     IServiceBus bus)
+                     IServiceBus bus,
+                     IMemoryTracker memoryTracker)
     {
         _httpContextAccessor = httpContextAccessor;
         _bus = bus;
+        _memoryTracker = memoryTracker;
     }
 
     // The url would be like "https://yourhubURL:port?userId=abc&access_token=abc"
@@ -38,6 +42,8 @@ public class HubServer : Hub<IHubClient>
             {
                 Log.Information($"user with id {userId} has connected to signalR sucessfully!");
                 await ConnectWithUserIdAsync(Guid.Parse(userId));
+                _memoryTracker.UserConnected(userId);
+                await Clients.Group("Admin").OnlineUserNumberChanged(_memoryTracker.OnlineUserNumber);
             }
         }
         catch (Exception ex)
@@ -54,6 +60,8 @@ public class HubServer : Hub<IHubClient>
         {
             Log.Information($"Connection {Context.ConnectionId} disconnected and removed from UserConnectionMap.");
             await Clients.All.Disconnected(userDisconnectedId);
+            _memoryTracker.UserDisconnected(userDisconnectedId.ToString());
+            await Clients.Group("Admin").OnlineUserNumberChanged(_memoryTracker.OnlineUserNumber);
         }
         else
         {
