@@ -47,19 +47,6 @@ public static class KestrelExtension
                 });
 
             }
-
-            options.ConfigureHttpsDefaults(httpsOptions =>
-            {
-                httpsOptions.ServerCertificate =
-                    X509Certificate2
-                        .CreateFromEncryptedPemFile(
-                            "/path/to/cert.pem",
-                            "",
-                            "/path/to/key.pem");
-
-            });
-
-
         });
 
         return builder;
