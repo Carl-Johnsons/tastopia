@@ -76,9 +76,9 @@ public class HubServer : Hub<IHubClient>
         await Clients.Group("Admin").TotalRecipeNumberChanged(totalRecipe);
     }
 
-    public async Task UserRegister(int totalRecipe)
+    public async Task UserRegister(int totalUser)
     {
-        await Clients.Group("Admin").TotalUserNumberChanged(totalRecipe);
+        await Clients.Group("Admin").TotalUserNumberChanged(totalUser);
     }
 
     public async Task LeaveGroup(int groupId)
