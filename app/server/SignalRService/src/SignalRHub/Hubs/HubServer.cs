@@ -71,6 +71,16 @@ public class HubServer : Hub<IHubClient>
         await base.OnDisconnectedAsync(exception);
     }
 
+    public async Task CreateRecipe(int totalRecipe)
+    {
+        await Clients.Group("Admin").TotalRecipeNumberChanged(totalRecipe);
+    }
+
+    public async Task UserRegister(int totalRecipe)
+    {
+        await Clients.Group("Admin").TotalUserNumberChanged(totalRecipe);
+    }
+
     public async Task LeaveGroup(int groupId)
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId.ToString());

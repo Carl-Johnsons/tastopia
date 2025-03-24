@@ -2,6 +2,7 @@
 using IdentityModel.Client;
 using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
@@ -29,18 +30,21 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
     private readonly IConsulRegistryService _consulRegistryService;
     private readonly ILogger<RegisterAccountCommandHandler> _logger;
+    private readonly ISignalRService _signalRService;
 
     public RegisterAccountCommandHandler(UserManager<ApplicationAccount> userManager,
         IServiceBus serviceBus,
         GrpcUser.GrpcUserClient grpcUserClient,
         IConsulRegistryService consulRegistryService,
-        ILogger<RegisterAccountCommandHandler> logger)
+        ILogger<RegisterAccountCommandHandler> logger,
+        ISignalRService signalRService)
     {
         _userManager = userManager;
         _serviceBus = serviceBus;
         _grpcUserClient = grpcUserClient;
         _consulRegistryService = consulRegistryService;
         _logger = logger;
+        _signalRService = signalRService;
     }
 
     public async Task<Result<TokenResponse?>> Handle(RegisterAccountCommand request, CancellationToken cancellationToken)
@@ -103,6 +107,8 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
         });
 
         var tokenIssued = await RequestTokenAsync(username, request.Password);
+
+        await _signalRService.InvokeAction(SignalREvent.USER_REGISTER_ACTION, await _userManager.Users.CountAsync());
         return Result<TokenResponse?>.Success(tokenIssued);
     }
 
@@ -145,6 +151,7 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
         });
 
         var tokenIssued = await RequestTokenAsync(username, request.Password);
+        await _signalRService.InvokeAction(SignalREvent.USER_REGISTER_ACTION, await _userManager.Users.CountAsync());
         return Result<TokenResponse?>.Success(tokenIssued);
     }
 

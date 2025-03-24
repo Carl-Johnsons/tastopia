@@ -12,4 +12,8 @@ public interface IHubClient
     Task ReceiveNotification();
     Task ForcedLogout();
     Task OnlineUserNumberChanged(int number);
+    Task TotalRecipeNumberChanged(int number);
+    Task TotalUserNumberChanged(int number);
+
+
 }

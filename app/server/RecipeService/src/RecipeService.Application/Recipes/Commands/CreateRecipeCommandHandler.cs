@@ -7,6 +7,7 @@ using Contract.Event.UserEvent;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Newtonsoft.Json;
@@ -56,13 +57,14 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
+    private readonly ISignalRService _signalRService;
     private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
     private readonly ILogger<CreateRecipeCommandHandler> _logger;
 
 
-    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, ILogger<CreateRecipeCommandHandler> logger, GrpcUser.GrpcUserClient grpcUserClient)
+    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, ILogger<CreateRecipeCommandHandler> logger, GrpcUser.GrpcUserClient grpcUserClient, ISignalRService signalRService)
     {
         _context = context;
         _unitOfWork = unitOfWork;
@@ -70,11 +72,12 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         _grpcUploadFileClient = grpcUploadFileClient;
         _logger = logger;
         _grpcUserClient = grpcUserClient;
+        _signalRService = signalRService;
     }
 
     public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
     {
-        List<string>? rollbaclUrls = null;
+        List<string>? rollbackUrls = null;
         try
         {
             var steps = request.Steps;
@@ -90,7 +93,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
                 return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
             }
 
-            rollbaclUrls = response.Files.Select(f => f.Url).ToList();
+            rollbackUrls = response.Files.Select(f => f.Url).ToList();
 
             var recipe = new Recipe();
 
@@ -170,16 +173,15 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
                 Delta = 1
             });
 
+            await _signalRService.InvokeAction(SignalREvent.CREATE_RECIPE_ACTION, await _context.Recipes.CountAsync());
             return Result<Recipe?>.Success(recipe);
         }
         catch (Exception ex)
         {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
-            await RollBackImageGrpc(rollbaclUrls);
+            await RollBackImageGrpc(rollbackUrls);
         }
-
         return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
-
     }
 
     public async Task RollBackImage(List<FileDTO>? files)
