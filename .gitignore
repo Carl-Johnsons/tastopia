@@ -396,6 +396,13 @@ FodyWeavers.xsd
 **/certificate.pem
 **/*.env
 **/*.env.*
+cert.csr
+server-cert.pem
+private-key.pem
+ca-cert.pem
+self-ca.key
+self-ca.pem
+ssl
 # Data bind mount
 data/*
 !data/sh
@@ -428,4 +435,4 @@ app/server/NotificationService/src/EmailWorker/Tokens
 /app/server/Contract/Contract/Published/*
 
 # docker-compose
-docker-compose.override.yaml
+docker-compose.override.yml

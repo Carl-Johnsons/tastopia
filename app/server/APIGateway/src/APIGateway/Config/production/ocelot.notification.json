@@ -1,0 +1,23 @@
+{
+  "Routes": [
+    {
+      "ServiceName": "notification-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/notification/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "DELETE"
+      ],
+      "UpstreamPathTemplate": "/api/notification/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "SwaggerKey": "notification"
+    }
+  ]
+}
