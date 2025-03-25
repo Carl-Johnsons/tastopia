@@ -400,8 +400,8 @@ internal class MockupData
     private DateTime GetRandomDateTime()
     {
         Random random = new Random();
-        DateTime start = new DateTime(2023, 1, 1);
-        DateTime end = new DateTime(2024, 12, 12);
+        DateTime start = new DateTime(2023, 11, 1);
+        DateTime end = new DateTime(2025, 3, 24);
 
         int range = (end - start).Days;
         return start.AddDays(random.Next(range + 1))

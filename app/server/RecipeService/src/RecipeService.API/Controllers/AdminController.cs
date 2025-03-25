@@ -12,6 +12,7 @@ using RecipeService.Application.Tags.Queries;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
+using static RecipeService.Application.Recipes.Queries.AdminGetNumberOfRecipesStatisticQueryHandler;
 
 namespace RecipeService.API.Controllers;
 [Route("api/admin/recipe")]
@@ -292,6 +293,21 @@ public class AdminController : BaseApiController
         {
             AccountId = Guid.Parse(subjectId!),
             TagId = adminGetTagDetailDTO.TagId
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpPost("get-recipe-statistic")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<StatisticEntity>), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetRecipeStatistic([FromBody] AdminGetRecipeStatisticDTO adminGetRecipeStatisticDTO)
+    {
+        var result = await _sender.Send(new AdminGetNumberOfRecipesStatisticQuery
+        {
+            Language = adminGetRecipeStatisticDTO.Language,
+            RangeType = adminGetRecipeStatisticDTO.RangeType,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
