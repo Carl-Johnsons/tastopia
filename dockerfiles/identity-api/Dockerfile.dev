@@ -21,5 +21,6 @@ COPY ["./app/server/Contract/Contract/Published", "Contract/"]
 WORKDIR "/src/DuendeIdentityServer"
 RUN dotnet restore --packages "../nuget" --verbosity normal
 COPY ["./app/server/IdentityService/src","/src"]
+COPY seeds seeds
 
 ENTRYPOINT ["dotnet","watch","run", "--no-restore", "--packages", "./nuget"]
