@@ -27,6 +27,7 @@ import DataTableProvider, {
 import ReportStatusText from "../common/StatusText";
 import Image from "@/components/shared/common/Image";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
+import useLocaleTable from "@/hooks/table/useLocaleTable";
 
 const columns: TableColumn<IAdminReportRecipeResponse>[] = [
   {
@@ -196,6 +197,7 @@ export default function Table() {
   );
   const [reports, setReports] = useState<IAdminReportRecipeResponse[]>([]);
   const { tableStyles } = useDataTableStyles();
+  const tableLocale = useLocaleTable();
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
@@ -285,6 +287,7 @@ export default function Table() {
           paginationTotalRows={totalRow}
           sortServer
           onSort={onSort}
+          paginationComponentOptions={tableLocale}
         />
       </DataTableProvider>
     </>
