@@ -5,7 +5,7 @@ import NoRecord from "@/components/ui/NoRecord";
 import { Button } from "@/components/ui/button";
 import { tagsColumns } from "./DataTableColumns";
 import ReactDataTable, { SortOrder, TableColumn } from "react-data-table-component";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
 import SearchBar from "../users/SearchBar";
 import { useTags } from "./TagsContext";
