@@ -5,7 +5,7 @@ import NoRecord from "@/components/ui/NoRecord";
 import { Button } from "@/components/ui/button";
 import { tagsColumns } from "./DataTableColumns";
 import ReactDataTable, { SortOrder, TableColumn } from "react-data-table-component";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import useDebounce from "@/hooks/useDebounce";
 import SearchBar from "../users/SearchBar";
 import { useTags } from "./TagsContext";
@@ -23,6 +23,7 @@ import TagForm from "./Form";
 import { FORM_TYPE } from "@/constants/form";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import { useTranslations } from "next-intl";
+import useLocaleTable from "@/hooks/table/useLocaleTable";
 
 const DataTable = () => {
   const t = useTranslations("administerTags");
@@ -59,6 +60,7 @@ const DataTable = () => {
   } = useTags();
 
   const { tableStyles } = useDataTableStyles();
+  const tableLocale = useLocaleTable();
 
   const handlePageChange = (page: number) => {
     setSkip(page - 1);
@@ -167,6 +169,7 @@ const DataTable = () => {
         onSort={handleSort}
         progressComponent={<Loader />}
         noDataComponent={<NoRecord />}
+        paginationComponentOptions={tableLocale}
       />
     </>
   );

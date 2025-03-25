@@ -3,7 +3,7 @@ import { Pencil } from "lucide-react";
 import { Tag, TagStatus } from "@/types/tag";
 import { format } from "date-fns";
 import TagStatusComponent from "@/components/ui/ReportStatus";
-import Image from "next/image";
+import Image from "@/components/shared/common/Image";
 import { useTags } from "./TagsContext";
 import { useTranslations } from "next-intl";
 

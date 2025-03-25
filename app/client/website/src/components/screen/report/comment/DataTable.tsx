@@ -28,6 +28,7 @@ import { useGetCommentReports } from "@/api/comment";
 import { IAdminReportCommentResponse } from "@/generated/interfaces/recipe.interface";
 import ReportStatusText from "../common/StatusText";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
+import useLocaleTable from "@/hooks/table/useLocaleTable";
 
 const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
@@ -194,6 +195,7 @@ export default function Table() {
   );
   const [reports, setReports] = useState<IAdminReportCommentResponse[]>([]);
   const { tableStyles } = useDataTableStyles();
+  const tableLocale = useLocaleTable();
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
@@ -284,6 +286,7 @@ export default function Table() {
           paginationTotalRows={totalRow}
           sortServer
           onSort={onSort}
+          paginationComponentOptions={tableLocale}
         />
       </DataTableProvider>
     </>
