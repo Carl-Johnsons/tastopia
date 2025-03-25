@@ -11,9 +11,9 @@ public interface IHubClient
     Task ReceiveTest(TestObject obj);
     Task ReceiveNotification();
     Task ForcedLogout();
-    Task OnlineUserNumberChanged(int number);
-    Task TotalRecipeNumberChanged(int number);
-    Task TotalUserNumberChanged(int number);
+    Task ReceiveOnlineUserNumber(int number);
+    Task ReceiveTotalRecipeNumber(int number);
+    Task ReceiveTotalUserNumber(int number);
 
 
 }

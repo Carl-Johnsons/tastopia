@@ -27,7 +27,7 @@ public static class DependenciesInjection
 
         var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
 
-        services.AddScoped<IMemoryTracker, MemoryTracker>();
+        services.AddSingleton<IMemoryTracker, MemoryTracker>();
 
         services.AddHttpContextAccessor();
 

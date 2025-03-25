@@ -6,6 +6,7 @@ using SignalRHub.DTOs;
 using Contract.Interfaces;
 using Contract.DTOs.SignalRDTO;
 using SignalRHub.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace SignalRHub.Hubs;
 
@@ -43,7 +44,8 @@ public class HubServer : Hub<IHubClient>
                 Log.Information($"user with id {userId} has connected to signalR sucessfully!");
                 await ConnectWithUserIdAsync(Guid.Parse(userId));
                 _memoryTracker.UserConnected(userId);
-                await Clients.Group("Admin").OnlineUserNumberChanged(_memoryTracker.OnlineUserNumber);
+                Log.Information($"Trigger event in client: number:"+_memoryTracker.OnlineUserNumber);
+                await Clients.Group("Admin").ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
             }
         }
         catch (Exception ex)
@@ -61,7 +63,8 @@ public class HubServer : Hub<IHubClient>
             Log.Information($"Connection {Context.ConnectionId} disconnected and removed from UserConnectionMap.");
             await Clients.All.Disconnected(userDisconnectedId);
             _memoryTracker.UserDisconnected(userDisconnectedId.ToString());
-            await Clients.Group("Admin").OnlineUserNumberChanged(_memoryTracker.OnlineUserNumber);
+            Log.Information($"Trigger event in client: number:" + _memoryTracker.OnlineUserNumber);
+            await Clients.Group("Admin").ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
         }
         else
         {
@@ -73,12 +76,12 @@ public class HubServer : Hub<IHubClient>
 
     public async Task CreateRecipe(int totalRecipe)
     {
-        await Clients.Group("Admin").TotalRecipeNumberChanged(totalRecipe);
+        await Clients.Group("Admin").ReceiveTotalRecipeNumber(totalRecipe);
     }
 
     public async Task UserRegister(int totalUser)
     {
-        await Clients.Group("Admin").TotalUserNumberChanged(totalUser);
+        await Clients.Group("Admin").ReceiveTotalUserNumber(totalUser);
     }
 
     public async Task LeaveGroup(int groupId)
@@ -122,6 +125,15 @@ public class HubServer : Hub<IHubClient>
         await Task.WhenAll(tasks);
     }
 
+    private string? GetRoleFromToken(string? accessToken)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(accessToken);
+
+        var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "role");
+        return roleClaim?.Value;
+    }
+
     #region Helper method
     private async Task ConnectWithUserIdAsync(Guid userId)
     {
@@ -130,7 +142,10 @@ public class HubServer : Hub<IHubClient>
         Log.Information(userId + " Connected");
 
         // Admin user
-        if (Context.User != null && Context.User.IsInRole("Admin"))
+        var userToken = _httpContextAccessor.HttpContext?.Request.Query["access_token"].ToString();
+        var role = GetRoleFromToken(userToken);
+     
+        if (Context.User != null && (role == "ADMIN" || role == "SUPER ADMIN"))
         {
             Log.Information("Add admin to group admin");
             await Groups.AddToGroupAsync(Context.ConnectionId, "Admin");
