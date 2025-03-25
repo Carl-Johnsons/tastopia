@@ -39,14 +39,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user, account }) {
-      let accessToken = token.accessToken as string;
-      let idToken = token.idToken as string;
-
       if (account && user) {
         token.idToken = account.id_token;
         token.accessToken = account.access_token;
-        accessToken = account.access_token as string;
-        idToken = account.id_token as string;
       }
 
       return token;
