@@ -2,13 +2,11 @@
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using System.Globalization;
-using static RecipeService.Application.Recipes.Queries.AdminGetNumberOfRecipesStatisticQueryHandler;
 namespace RecipeService.Application.Recipes.Queries;
 public class AdminGetNumberOfRecipesStatisticQuery : IRequest<Result<List<StatisticEntity>?>>
 {
     public string RangeType { get; set; } = null!;
     public string Language { get; set; } = null!;
-
 }
 public class AdminGetNumberOfRecipesStatisticQueryHandler : IRequestHandler<AdminGetNumberOfRecipesStatisticQuery, Result<List<StatisticEntity>?>>
 {
@@ -168,26 +166,5 @@ public class AdminGetNumberOfRecipesStatisticQueryHandler : IRequestHandler<Admi
                     ?? new DateStatisticEntity { Date = dayLabel, Number = 0 });
             })
             .ToList();
-    }
-
-
-
-    public class StatisticEntity
-    {
-        public int Number { get; set; }
-    }
-
-    public class HourStatisticEntity : StatisticEntity {
-        public string Hour { get; set; } = null!;
-    }
-
-    public class DateStatisticEntity : StatisticEntity
-    {
-        public string Date { get; set; } = null!;
-    }
-
-    public class MonthStatisticEntity : StatisticEntity
-    {
-        public string Month { get; set; } = null!;
     }
 }
