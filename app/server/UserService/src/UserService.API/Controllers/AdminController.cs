@@ -147,4 +147,20 @@ public class AdminController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    [HttpGet("detail")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAdminListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetAdminDetail([FromQuery] Guid id)
+    {
+        var result = await _sender.Send(new GetAdminDetailQuery
+        {
+            AccountId = id
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
 }

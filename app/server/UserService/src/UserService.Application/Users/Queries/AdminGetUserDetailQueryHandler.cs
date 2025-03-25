@@ -43,13 +43,13 @@ public class AdminGetUserDetailQueryHandler : IRequestHandler<AdminGetUserDetail
         }
 
         var currentUser = await _context.Users
-            .Where(user => user.AccountId == currentAccountId)
+            .Where(user => user.AccountId == currentAccountId && !user.IsAdmin)
             .FirstOrDefaultAsync();
         if (currentUser == null)
         {
             return Result<AdminGetUserDetailResponse?>.Failure(UserError.NotFound);
         }
-        if(!currentUser.IsAdmin)
+        if (!currentUser.IsAdmin)
         {
             return Result<AdminGetUserDetailResponse?>.Failure(UserError.PermissionDenied);
         }
