@@ -1,14 +1,31 @@
 {
   "Routes": [
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "recipe-api",
-          "Port": 80
-        }
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/admin/recipe/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
       ],
+      "UpstreamPathTemplate": "/api/admin/recipe/{everything}",
+      "SwaggerKey": "recipe",
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN"
+      }
+    },
+    {
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/recipe/get-recipe-feed",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -17,14 +34,26 @@
       "SwaggerKey": "recipe"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "recipe-api",
-          "Port": 80
-        }
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/recipe/get-recipe-feed-by-author-id",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
       ],
+      "UpstreamPathTemplate": "/api/recipe/get-recipe-feed-by-author-id",
+      "SwaggerKey": "recipe"
+    },
+    {
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/recipe/search-recipe",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -33,14 +62,12 @@
       "SwaggerKey": "recipe"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "recipe-api",
-          "Port": 80
-        }
-      ],
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/recipe/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"

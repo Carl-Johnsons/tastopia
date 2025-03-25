@@ -130,6 +130,7 @@ public static class CommonExtension
                 var scheme = DotNetEnv.Env.GetString("CONSUL_SCHEME", "Not found");
                 var host = DotNetEnv.Env.GetString("CONSUL_HOST", "Not found");
                 var port = DotNetEnv.Env.GetString("CONSUL_PORT", "Not found");
+
                 config.Address = new Uri($"{scheme}://{host}:{port}");
             });
         });
@@ -193,6 +194,11 @@ public static class CommonExtension
                 };
                 // For development only
                 options.IncludeErrorDetails = true;
+
+                options.BackchannelHttpHandler = new HttpClientHandler
+                {
+                    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                };
 
                 options.Events = new JwtBearerEvents
                 {

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Contract.Utilities;
+using Newtonsoft.Json;
 using UserService.Domain.Entities;
 using UserService.Infrastructure.Persistence.Mockup.Data;
 namespace UserService.Infrastructure.Persistence.Mockup;
@@ -7,7 +8,7 @@ internal class MockupData
 {
     private readonly ApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly string SeedDataPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.Parent?.FullName!, "seeds") ?? "";
+    private readonly string SeedDataPath = EnvUtility.IsProduction() ? "seeds" : Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.Parent?.FullName!, "seeds") ?? "";
 
     public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork)
     {

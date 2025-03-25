@@ -9,5 +9,5 @@ openssl rsa -pubout -in "$PRIVATE_KEY" -out "$PUBLIC_KEY"
 
 echo "RSA key pair generated successfully! :)"
 
-mv "$PRIVATE_KEY" ./solutions/IdentitySolution/DuendeIdentityServer
-mv "$PUBLIC_KEY" ./solutions/IdentitySolution/DuendeIdentityServer
+# mv "$PRIVATE_KEY" ./solutions/IdentitySolution/DuendeIdentityServer
+# mv "$PUBLIC_KEY" ./solutions/IdentitySolution/DuendeIdentityServer
