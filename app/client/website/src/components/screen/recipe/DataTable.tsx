@@ -25,6 +25,7 @@ import { useGetRecipes } from "@/api/recipe";
 import SearchBar from "../users/SearchBar";
 import Image from "@/components/shared/common/Image";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
+import useLocaleTable from "@/hooks/table/useLocaleTable";
 
 const columns: TableColumn<IAdminRecipeResponse>[] = [
   {
@@ -185,6 +186,7 @@ export default function Table() {
   });
 
   const { tableStyles } = useDataTableStyles();
+  const tableLocale = useLocaleTable();
 
   const totalRow = useMemo(
     () => (fetchedData?.metadata?.totalRow ? fetchedData.metadata.totalRow : 0),
@@ -275,6 +277,7 @@ export default function Table() {
           paginationTotalRows={totalRow}
           sortServer
           onSort={onSort}
+          paginationComponentOptions={tableLocale}
         />
       </DataTableProvider>
     </>
