@@ -143,13 +143,17 @@ public class HubServer : Hub<IHubClient>
 
         // Admin user
         var userToken = _httpContextAccessor.HttpContext?.Request.Query["access_token"].ToString();
-        var role = GetRoleFromToken(userToken);
-     
-        if (Context.User != null && (role == "ADMIN" || role == "SUPER ADMIN"))
+        if(!string.IsNullOrEmpty(userToken))
         {
-            Log.Information("Add admin to group admin");
-            await Groups.AddToGroupAsync(Context.ConnectionId, "Admin");
-            return;
+            Log.Information("user token:" + userToken); 
+            var role = GetRoleFromToken(userToken);
+
+            if (Context.User != null && (role == "ADMIN" || role == "SUPER ADMIN"))
+            {
+                Log.Information("Add admin to group admin");
+                await Groups.AddToGroupAsync(Context.ConnectionId, "Admin");
+                return;
+            }
         }
 
         foreach (var key in UserConnectionMap.Keys)
