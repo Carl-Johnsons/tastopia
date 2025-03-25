@@ -11,9 +11,11 @@ import useDebounce from "@/hooks/useDebounce";
 import SearchBar from "./SearchBar";
 import { useTranslations } from "next-intl";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
+import useLocaleTable from "@/hooks/table/useLocaleTable";
 
 const DataTable = () => {
   const t = useTranslations("administerUsers");
+  const tableLocale = useLocaleTable();
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [sortBy, setSortBy] = useState("");
@@ -128,6 +130,7 @@ const DataTable = () => {
         onSort={handleSort}
         progressComponent={<Loader />}
         noDataComponent={<NoRecord />}
+        paginationComponentOptions={tableLocale}
       />
     </>
   );

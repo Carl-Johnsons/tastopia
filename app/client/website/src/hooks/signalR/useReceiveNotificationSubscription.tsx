@@ -1,0 +1,35 @@
+import { useCallback } from "react";
+import { HubConnection } from "@microsoft/signalr";
+import { useQueryClient } from "@tanstack/react-query";
+import { SignalREvent } from "@/constants/signalr";
+
+const useReceiveNotificationSubscription = () => {
+  const queryClient = useQueryClient();
+  const subscribeReceiveNotificationEvent = useCallback((connection?: HubConnection) => {
+    if (!connection) {
+      return;
+    }
+    connection.on(SignalREvent.RECEIVE_NOTIFICATION, () => {
+      if (!connection) {
+        return;
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["getNotification"] });
+      console.log("SignalR: Receive notification");
+    });
+  }, []);
+
+  const unsubscribeReceiveNotificationEvent = useCallback(
+    (connection?: HubConnection) => {
+      if (!connection) {
+        return;
+      }
+      connection.off(SignalREvent.RECEIVE_NOTIFICATION);
+    },
+    []
+  );
+
+  return { subscribeReceiveNotificationEvent, unsubscribeReceiveNotificationEvent };
+};
+
+export { useReceiveNotificationSubscription };

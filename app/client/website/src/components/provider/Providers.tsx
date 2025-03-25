@@ -6,6 +6,7 @@ import { isServer, QueryClient, QueryClientProvider } from "@tanstack/react-quer
 import StoreProvider from "./StoreProvider";
 import { ReactNode } from "react";
 import ToastProvider from "./ToastProvider";
+import { SignalRHubProvider } from "./SignalRProvider";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -40,10 +41,12 @@ export default function Providers({ children }: { children: ReactNode }) {
     <StoreProvider>
       <SessionProvider>
         <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            <ToastProvider />
-            {children}
-          </ThemeProvider>
+          <SignalRHubProvider>
+            <ThemeProvider>
+              <ToastProvider />
+              {children}
+            </ThemeProvider>
+          </SignalRHubProvider>
         </QueryClientProvider>
       </SessionProvider>
     </StoreProvider>
