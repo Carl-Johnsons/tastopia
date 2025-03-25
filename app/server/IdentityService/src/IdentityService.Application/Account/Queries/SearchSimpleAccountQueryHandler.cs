@@ -25,9 +25,10 @@ public class SearchSimpleAccountQueryHandler : IRequestHandler<SearchSimpleAccou
             return Result<List<string>?>.Failure(AccountError.NotFound, "Keyword is null!");
         }
         keyword = keyword.ToLower();
-        var result = await _userManager.Users.Where(u => 
+        var result = await _userManager.Users.Where(u =>
             (
-                u.Email!.ToLower().Contains(keyword)
+                u.Email != null && u.Email.ToLower().Contains(keyword) &&
+                u.PhoneNumber != null && u.PhoneNumber.ToLower().Contains(keyword)
             )
         ).Select(u => u.Id).Distinct().ToListAsync();
 

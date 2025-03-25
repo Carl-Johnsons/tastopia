@@ -133,4 +133,18 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
+    [HttpGet]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAdminListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetAdmins([FromQuery] PaginatedDTO paginatedDTO)
+    {
+        var result = await _sender.Send(new GetAdminsQuery
+        {
+            DTO = paginatedDTO
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
 }

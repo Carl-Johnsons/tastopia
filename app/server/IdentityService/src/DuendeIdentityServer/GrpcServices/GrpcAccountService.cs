@@ -3,7 +3,6 @@ using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using IdentityService.Application.Account.Commands;
 using IdentityService.Application.Account.Queries;
-using Newtonsoft.Json;
 
 namespace DuendeIdentityServer.GrpcServices;
 
@@ -42,7 +41,6 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
         };
 
         _logger.LogInformation("Grpc get account detail successfully!");
-        _logger.LogInformation(JsonConvert.SerializeObject(grpcResponse, Formatting.Indented));
 
         return grpcResponse;
     }
@@ -64,7 +62,7 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
     public override async Task<GrpcListSimpleAccountsDTO> GetSimpleAccounts(GrpcAccountIdListRequest request, ServerCallContext context)
     {
         var accountIdSets = new HashSet<Guid>();
-        foreach(var id in request.AccountIds)
+        foreach (var id in request.AccountIds)
         {
             accountIdSets.Add(Guid.Parse(id));
         }
@@ -77,7 +75,7 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
         result.ThrowIfFailure();
 
         var grpcResponse = new GrpcListSimpleAccountsDTO();
-      
+
         foreach (var acc in result.Value!)
         {
             grpcResponse.Accounts.Add(acc.Id, new GrpcSimpleAccountDTO
@@ -87,7 +85,6 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
             });
         }
         _logger.LogInformation("Grpc get simple account successfully!");
-        _logger.LogInformation(JsonConvert.SerializeObject(grpcResponse, Formatting.Indented));
         return grpcResponse;
     }
 
@@ -102,8 +99,43 @@ public class GrpcAccountService : GrpcAccount.GrpcAccountBase
 
         var result = new GrpcListAccountIds
         {
-            AccountIds = { response.Value}
+            AccountIds = { response.Value }
         };
         return result;
+    }
+
+    public override async Task<GrpcListAdminAccountsDTO> GetAdminAccountDetail(GrpcAccountIdListRequest request, ServerCallContext context)
+    {
+        var accountIdSets = new HashSet<Guid>();
+        foreach (var id in request.AccountIds)
+        {
+            accountIdSets.Add(Guid.Parse(id));
+        }
+
+        var result = await _sender.Send(new GetAdminAccountDetailQuery
+        {
+            Ids = accountIdSets
+        });
+
+        result.ThrowIfFailure();
+
+        var grpcResponse = new GrpcListAdminAccountsDTO();
+
+        foreach (var account in result.Value!)
+        {
+            grpcResponse.Accounts.Add(account.Id, new GrpcAdminAccountDTO
+            {
+                Email = account.Email ?? "",
+                IsActive = account.IsActive,
+                PhoneNumber = account.PhoneNumber ?? "",
+                UserName = account.UserName,
+                CreatedAt = Timestamp.FromDateTime(account.CreatedAt.ToUniversalTime()),
+                UpdatedAt = Timestamp.FromDateTime(account.UpdatedAt.ToUniversalTime()),
+            });
+        }
+
+        _logger.LogInformation("Grpc get admin account detail successfully!");
+
+        return grpcResponse;
     }
 }
