@@ -1,29 +1,27 @@
-﻿using MongoDB.Driver;
-using RecipeService.Domain.Entities;
-using RecipeService.Domain.Errors;
+﻿using Microsoft.AspNetCore.Identity;
 using System.Globalization;
-namespace RecipeService.Application.Recipes.Queries;
-public class AdminGetNumberOfRecipesStatisticQuery : IRequest<Result<List<StatisticEntity>?>>
+namespace IdentityService.Application.Account.Queries;
+public class AdminGetNumberOfAccountStatisticQuery : IRequest<Result<List<StatisticEntity>?>>
 {
     public string RangeType { get; set; } = null!;
     public string Language { get; set; } = null!;
 }
-public class AdminGetNumberOfRecipesStatisticQueryHandler : IRequestHandler<AdminGetNumberOfRecipesStatisticQuery, Result<List<StatisticEntity>?>>
+public class AdminGetNumberOfAccountStatisticQueryHandler : IRequestHandler<AdminGetNumberOfAccountStatisticQuery, Result<List<StatisticEntity>?>>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly UserManager<ApplicationAccount> _userManager;
 
-    public AdminGetNumberOfRecipesStatisticQueryHandler(IApplicationDbContext context)
+    public AdminGetNumberOfAccountStatisticQueryHandler(UserManager<ApplicationAccount> userManager)
     {
-        _context = context;
+        _userManager = userManager;
     }
 
-    public Task<Result<List<StatisticEntity>?>> Handle(AdminGetNumberOfRecipesStatisticQuery request, CancellationToken cancellationToken)
+    public Task<Result<List<StatisticEntity>?>> Handle(AdminGetNumberOfAccountStatisticQuery request, CancellationToken cancellationToken)
     {
         var range = request.RangeType;
         var lang = request.Language;
         if (string.IsNullOrEmpty(range) || string.IsNullOrEmpty(lang))
         {
-            return Task.FromResult(Result<List<StatisticEntity>?>.Failure(RecipeError.NullParameter, "Language or RangeType is null"));
+            return Task.FromResult(Result<List<StatisticEntity>?>.Failure(AccountError.NullParameter, "Language or RangeType is null"));
         }
 
         DateTime now = DateTime.UtcNow;
@@ -31,7 +29,7 @@ public class AdminGetNumberOfRecipesStatisticQueryHandler : IRequestHandler<Admi
 
         if (lang != "en" && lang != "vi")
         {
-            return Task.FromResult(Result<List<StatisticEntity>?>.Failure(RecipeError.NullParameter, "Invalid language:" + lang));
+            return Task.FromResult(Result<List<StatisticEntity>?>.Failure(AccountError.NullParameter, "Invalid language:" + lang));
         }
 
         switch (range.ToLower())
@@ -54,15 +52,15 @@ public class AdminGetNumberOfRecipesStatisticQueryHandler : IRequestHandler<Admi
                 startTime = new DateTime(now.Year, now.Month, 1).AddMonths(-months + 1);
                 return Task.FromResult(Result<List<StatisticEntity>?>.Success(GetMonthlyStatistics(startTime, now, lang)));
             default:
-                return Task.FromResult(Result<List<StatisticEntity>?>.Failure(RecipeError.NullParameter, "Invalid RangeType:" + range));
+                return Task.FromResult(Result<List<StatisticEntity>?>.Failure(AccountError.NullParameter, "Invalid RangeType:" + range));
         }
     }
 
 
     private List<StatisticEntity> GetHourlyStatistics(DateTime from, DateTime to)
     {
-        var recipes = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable().AsQueryable();
-        var rawData = recipes
+        var users = _userManager.Users.AsQueryable();
+        var rawData = users
             .Where(r => r.CreatedAt >= from && r.CreatedAt <= to)
             .GroupBy(r => new { r.CreatedAt.Hour }).AsEnumerable()
             .Select(g => new HourStatisticEntity
@@ -85,8 +83,8 @@ public class AdminGetNumberOfRecipesStatisticQueryHandler : IRequestHandler<Admi
     private List<StatisticEntity> GetDailyStatistics(DateTime from, DateTime to, string lang, string format = "dddd")
     {
         var culture = lang == "vi" ? new CultureInfo("vi-VN") : new CultureInfo("en-US");
-        var recipes = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable().AsQueryable();
-        var rawData = recipes
+        var users = _userManager.Users.AsQueryable();
+        var rawData = users
             .Where(r => r.CreatedAt >= from && r.CreatedAt <= to)
             .GroupBy(r => r.CreatedAt.Date).AsEnumerable()
             .Select(g => new DateStatisticEntity
@@ -113,8 +111,8 @@ public class AdminGetNumberOfRecipesStatisticQueryHandler : IRequestHandler<Admi
                   "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" }
             : new[] { "January", "February", "March", "April", "May", "June", "July",
                   "August", "September", "October", "November", "December" };
-        var recipes = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable().AsQueryable();
-        var rawData = recipes
+        var users = _userManager.Users.AsQueryable();
+        var rawData = users
             .Where(r => r.CreatedAt >= from && r.CreatedAt <= to)
             .GroupBy(r => new { r.CreatedAt.Year, r.CreatedAt.Month })
             .Select(g => new MonthStatisticEntity
@@ -142,13 +140,13 @@ public class AdminGetNumberOfRecipesStatisticQueryHandler : IRequestHandler<Admi
         string dateFormat = "dd/MM/yyyy";
 
         var totalDays = (to - from).Days;
-        var step = totalDays / 30; 
+        var step = totalDays / 30;
         var selectedDays = Enumerable.Range(0, 30)
             .Select(i => from.AddDays(i * step).Date)
             .ToList();
 
-        var recipes = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable().AsQueryable();
-        var rawData = recipes
+        var users = _userManager.Users.AsQueryable();
+        var rawData = users
             .Where(r => r.CreatedAt >= from && r.CreatedAt <= to)
             .GroupBy(r => r.CreatedAt.Date).AsEnumerable()
             .Select(g => new DateStatisticEntity
