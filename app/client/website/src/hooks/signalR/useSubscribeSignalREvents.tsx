@@ -34,7 +34,13 @@ const useSubscribeSignalREvents = () => {
     subscribeReceiveOnlineUserNumberEvent(connection);
     subscribeReceiveTotalUserNumberEvent(connection);
     subscribeReceiveTotalRecipeNumberEvent(connection);
-  }, []);
+  }, [
+    subscribeConnectedEvent,
+    subscribeReceiveNotificationEvent,
+    subscribeReceiveOnlineUserNumberEvent,
+    subscribeReceiveTotalUserNumberEvent,
+    subscribeReceiveTotalRecipeNumberEvent
+  ]);
 
   const unsubscribeAllEvents = useCallback((connection: HubConnection) => {
     unsubscribeConnectedEvent(connection);
@@ -42,7 +48,13 @@ const useSubscribeSignalREvents = () => {
     unsubscribeReceiveOnlineUserNumberEvent(connection);
     unsubscribeReceiveTotalUserNumberEvent(connection);
     unsubscribeReceiveTotalRecipeNumberEvent(connection);
-  }, []);
+  }, [
+    unsubscribeConnectedEvent,
+    unsubscribeReceiveNotificationEvent,
+    unsubscribeReceiveOnlineUserNumberEvent,
+    unsubscribeReceiveTotalUserNumberEvent,
+    unsubscribeReceiveTotalRecipeNumberEvent
+  ]);
 
   return {
     subscribeAllEvents,
