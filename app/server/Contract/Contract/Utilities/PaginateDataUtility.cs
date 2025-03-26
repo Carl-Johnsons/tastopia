@@ -32,4 +32,18 @@ public class PaginateDataUtility<Type, ResponseMetadataType> : IPaginateDataUtil
         return query.Skip(param.Offset)
                     .Take(param.Limit);
     }
+
+    public IQueryable<OtherType> PaginateQuery<OtherType>(IQueryable<OtherType> query, PaginateParam param)
+    {
+        if (param.SortOrder == null) param.SortOrder = SortType.DESC;
+        if (param.SortBy != null)
+        {
+            var parameter = Expression.Parameter(typeof(OtherType), "x");
+            var property = Expression.Property(parameter, param.SortBy);
+            var keySelector = Expression.Lambda<Func<OtherType, object>>(Expression.Convert(property, typeof(object)), parameter);
+            query = param.SortOrder == SortType.ASC ? query.OrderBy(keySelector) : query.OrderByDescending(keySelector);
+        }
+        return query.Skip(param.Offset)
+                    .Take(param.Limit);
+    }
 }

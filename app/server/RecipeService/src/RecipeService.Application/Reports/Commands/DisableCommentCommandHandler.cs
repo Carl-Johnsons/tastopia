@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Contract.Event.TrackingEvent;
+using MongoDB.Driver;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 
@@ -8,18 +9,22 @@ public record DisableCommentCommand : IRequest<Result>
 {
     public Guid CommentId { get; set; }
     public Guid RecipeId { get; set; }
+    public Guid CurrentAccountId { get; set; }
 }
 
 public class DisableCommentCommandHandler : IRequestHandler<DisableCommentCommand, Result>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IServiceBus _serviceBus;
 
     public DisableCommentCommandHandler(IApplicationDbContext context,
-                                            IUnitOfWork unitOfWork)
+                                            IUnitOfWork unitOfWork,
+                                            IServiceBus serviceBus)
     {
         _context = context;
         _unitOfWork = unitOfWork;
+        _serviceBus = serviceBus;
     }
 
     public async Task<Result> Handle(DisableCommentCommand request,
@@ -61,6 +66,15 @@ public class DisableCommentCommandHandler : IRequestHandler<DisableCommentComman
             return Result.Failure(CommentError.NotFound);
         }
 
+        await _serviceBus.Publish(new AddActivityLogEvent
+        {
+            AccountId = request.CurrentAccountId,
+            ActivityType = Contract.Constants.ActivityType.DISABLE,
+            EntityId = request.CommentId,
+            EntityType = Contract.Constants.ActivityEntityType.COMMENT,
+            SecondaryEntityId = request.RecipeId,
+            SecondaryEntityType = Contract.Constants.ActivityEntityType.RECIPE
+        });
         return Result.Success();
     }
 }

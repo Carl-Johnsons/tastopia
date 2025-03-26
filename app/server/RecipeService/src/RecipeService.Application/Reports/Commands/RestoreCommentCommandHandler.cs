@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Contract.Event.TrackingEvent;
+using MongoDB.Driver;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 
@@ -8,18 +9,22 @@ public record RestoreCommentCommand : IRequest<Result>
 {
     public Guid CommentId { get; set; }
     public Guid RecipeId { get; set; }
+    public Guid CurrentAccountId { get; set; }
 }
 
 public class RestoreCommentCommandHandler : IRequestHandler<RestoreCommentCommand, Result>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IServiceBus _serviceBus;
 
     public RestoreCommentCommandHandler(IApplicationDbContext context,
-                                            IUnitOfWork unitOfWork)
+                                            IUnitOfWork unitOfWork,
+                                            IServiceBus serviceBus)
     {
         _context = context;
         _unitOfWork = unitOfWork;
+        _serviceBus = serviceBus;
     }
 
     public async Task<Result> Handle(RestoreCommentCommand request,
@@ -60,6 +65,16 @@ public class RestoreCommentCommandHandler : IRequestHandler<RestoreCommentComman
         {
             return Result.Failure(CommentError.NotFound);
         }
+
+        await _serviceBus.Publish(new AddActivityLogEvent
+        {
+            AccountId = request.CurrentAccountId,
+            ActivityType = Contract.Constants.ActivityType.RESTORE,
+            EntityId = request.CommentId,
+            EntityType = Contract.Constants.ActivityEntityType.COMMENT,
+            SecondaryEntityId = request.RecipeId,
+            SecondaryEntityType = Contract.Constants.ActivityEntityType.RECIPE
+        });
 
         return Result.Success();
     }

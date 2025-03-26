@@ -1,5 +1,4 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
 WORKDIR /app
 EXPOSE 8080
 
@@ -30,10 +29,13 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-USER root
 # Ensure the app user owns the ./keys directory
-RUN chown -R app:app ./keys/
-RUN chmod -R 755 ./keys/
-USER app
+# RUN chown -R app:app ./keys/
+# RUN chmod -R 755 ./keys/
+
+COPY seeds seeds
+COPY ./ssl/certs/root-ca.crt /usr/local/share/ca-certificates/ca.crt
+COPY ./ssl/certs/self-root-ca.crt /usr/local/share/ca-certificates/ca.crt
+RUN update-ca-certificates
 
 ENTRYPOINT ["dotnet", "DuendeIdentityServer.dll"]

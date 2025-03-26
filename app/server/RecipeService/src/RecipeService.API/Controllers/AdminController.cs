@@ -2,6 +2,7 @@
 using Contract.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MongoDB.Bson;
 using RecipeService.API.DTOs;
 using RecipeService.Application.Activities;
 using RecipeService.Application.Recipes.Queries;
@@ -78,10 +79,14 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminMarkReportComplete([FromBody] ReportDTO dto)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new MarkReportCompleteCommand
         {
             ReportId = dto.ReportId,
-            ReportType = dto.ReportType
+            ReportType = dto.ReportType,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -94,10 +99,14 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminReopenReport([FromBody] ReportDTO dto)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new ReopenReportCommand
         {
             ReportId = dto.ReportId,
-            ReportType = dto.ReportType
+            ReportType = dto.ReportType,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -110,9 +119,13 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminDisableRecipe([FromQuery] EntityIdDTO dto)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new DisableRecipeCommand
         {
-            Id = dto.Id
+            Id = dto.Id,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -125,9 +138,12 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminRestoreRecipe([FromQuery] EntityIdDTO dto)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new RestoreRecipeCommand
         {
-            Id = dto.Id
+            Id = dto.Id,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -173,10 +189,14 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminDisableComment([FromQuery] Guid recipeId, [FromQuery] Guid commentId)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new DisableCommentCommand
         {
             CommentId = commentId,
-            RecipeId = recipeId
+            RecipeId = recipeId,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -189,10 +209,14 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminRestoreComment([FromQuery] Guid recipeId, [FromQuery] Guid commentId)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new RestoreCommentCommand
         {
             CommentId = commentId,
-            RecipeId = recipeId
+            RecipeId = recipeId,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();

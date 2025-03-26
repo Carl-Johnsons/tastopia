@@ -11,15 +11,15 @@ WORKDIR /src
 # Copy pre-build lib
 COPY ["./data/nuget", "./nuget"]
 
-COPY ["./app/server/RecipeService/src/RecipeService.API/RecipeService.API.csproj", "RecipeService.API/"]
-COPY ["./app/server/RecipeService/src/RecipeService.Application/RecipeService.Application.csproj", "RecipeService.Application/"]
-COPY ["./app/server/RecipeService/src/RecipeService.Infrastructure/RecipeService.Infrastructure.csproj", "RecipeService.Infrastructure/"]
-COPY ["./app/server/RecipeService/src/RecipeService.Domain/RecipeService.Domain.csproj", "RecipeService.Domain/"]
+COPY ["./app/server/UserService/src/UserService.API/UserService.API.csproj", "UserService.API/"]
+COPY ["./app/server/UserService/src/UserService.Application/UserService.Application.csproj", "UserService.Application/"]
+COPY ["./app/server/UserService/src/UserService.Infrastructure/UserService.Infrastructure.csproj", "UserService.Infrastructure/"]
+COPY ["./app/server/UserService/src/UserService.Domain/UserService.Domain.csproj", "UserService.Domain/"]
 COPY ["./app/server/Contract/Contract/Published", "Contract/"]
 
 # Building the services
-WORKDIR "/src/RecipeService.API"
+WORKDIR "/src/UserService.API"
 RUN dotnet restore --packages "../nuget" --verbosity normal
-COPY ["./app/server/RecipeService/src","/src"]
+COPY ["./app/server/UserService/src","/src"]
 
 ENTRYPOINT ["dotnet", "watch", "run", "--no-restore"]

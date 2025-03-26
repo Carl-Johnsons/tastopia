@@ -2,6 +2,9 @@
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 using Contract.Extension;
+using TrackingService.Domain.Responses;
+using Reinforced.Typings.Ast.TypeNames;
+using Contract.Constants;
 namespace TrackingService.API.Extensions;
 
 // TrackingService.API.Extensions.ReinforcedTypingsExtension.ConfigureReinforcedTypings
@@ -14,10 +17,16 @@ public static class ReinforcedTypingsExtension
         List<Type> errorsTypes = [];
 
         builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
+        builder.Substitute(typeof(ActivityType), new RtSimpleTypeName("ActivityType"));
+        builder.Substitute(typeof(ActivityEntityType), new RtSimpleTypeName("ActivityEntityType"));
         // DTO 
         builder.ExportAsInterfaces([
             typeof(GetUserViewRecipeDetailHistoryDTO),
-            typeof(SearchUserViewRecipeDetailHistoryDTO)
+            typeof(SearchUserViewRecipeDetailHistoryDTO),
+            typeof(AdminActivityLogResponse),
+            typeof(PaginatedAdminActivityLogListResponse),
+            typeof(RecipeAdminActivityLogResponse),
+            typeof(RecipeLogResponse),
         ], config =>
         {
             config.FlattenHierarchy()
