@@ -31,6 +31,7 @@ public static class ReinforcedTypingsExtension
             typeof(DateStatisticEntity),
             typeof(MonthStatisticEntity),
             typeof(HourStatisticEntity),
+            typeof(AdminGetRecipeStatisticDTO),
             typeof(StatisticEntity),
             typeof(AdminGetTagDetailDTO),
             typeof(CreateTagDTO),

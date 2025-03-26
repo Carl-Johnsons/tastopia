@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using RecipeService.API.ValidationAttributes;
+﻿using Contract.ValidationAttributes;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 namespace RecipeService.API.DTOs;
 public class AdminGetRecipeStatisticDTO
