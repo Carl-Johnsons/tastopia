@@ -312,4 +312,17 @@ public class AdminController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    [HttpGet("get-total-recipe")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(int), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetTotalRecipe()
+    {
+        var result = await _sender.Send(new AdminGetTotalRecipeNumberQuery
+        {
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
 }

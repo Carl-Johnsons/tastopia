@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeService.API.DTOs;
+using RecipeService.Application.Recipes.Queries;
 using RecipeService.Application.Reports.Commands;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
@@ -129,6 +130,19 @@ public class AdminController : BaseApiController
             AccountId = Guid.Parse(subjectId!),
         });
 
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpGet("get-total-user")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(int), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetTotalUser()
+    {
+        var result = await _sender.Send(new AdminGetTotalUserNumberQuery
+        {
+        });
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
