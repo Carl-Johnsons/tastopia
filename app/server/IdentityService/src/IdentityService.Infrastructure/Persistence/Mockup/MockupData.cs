@@ -125,18 +125,14 @@ internal class MockupData
         }
     }
 
-    //random datetime from 1/1/2023 - 12/12/2024
+    //random datetime from today to last 365 days
     private DateTime GetRandomDateTime()
     {
         Random random = new Random();
-        DateTime start = new DateTime(2023, 11, 1);
-        DateTime end = new DateTime(2025, 3, 24);
-
-        int range = (end - start).Days;
-        return start.AddDays(random.Next(range + 1))
-                    .AddHours(random.Next(0, 24))
-                    .AddMinutes(random.Next(0, 60))
-                    .AddSeconds(random.Next(0, 60));
+        DateTime today = DateTime.Today;
+        int daysRange = 365;
+        int randomDays = random.Next(0, daysRange + 1);
+        return today.AddDays(-randomDays);
     }
 
     private class SeedAccount

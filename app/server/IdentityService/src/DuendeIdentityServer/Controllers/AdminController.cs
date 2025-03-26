@@ -10,18 +10,15 @@ public class AdminController : BaseApiController
     {
     }
 
-    [HttpPost("get-account-statistic")]
+    [HttpGet("get-account-statistic")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<StatisticEntity>), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> GetAccountStatistic([FromBody] AdminGetAccountStatisticDTO adminGetAccountStatisticDTO)
+    public async Task<IActionResult> GetAccountStatistic()
     {
         var result = await _sender.Send(new AdminGetNumberOfAccountStatisticQuery
         {
-            Language = adminGetAccountStatisticDTO.Language,
-            RangeType = adminGetAccountStatisticDTO.RangeType,
         });
-
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
