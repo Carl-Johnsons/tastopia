@@ -325,4 +325,30 @@ public class AdminController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    [HttpGet("get-recipe-ranking-by-views")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetRecipeRankingByView()
+    {
+        var result = await _sender.Send(new AdminGetRankingRecipesStatisticQuery
+        {
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpGet("get-tag-ranking-by-popular")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetTagRankingByPopular()
+    {
+        var result = await _sender.Send(new AdminGetRankingTagsStatisticQuery
+        {
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
 }

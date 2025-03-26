@@ -19,3 +19,8 @@ public class MonthStatisticEntity : StatisticEntity
 {
     public string Month { get; set; } = null!;
 }
+
+public class RankingStatisticEntity : StatisticEntity
+{
+    public string Title { get; set; } = null!;
+}
