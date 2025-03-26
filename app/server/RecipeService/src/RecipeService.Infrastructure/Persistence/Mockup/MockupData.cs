@@ -223,7 +223,8 @@ internal class MockupData
             Steps = steps,
             IsActive = true,
             CreatedAt = time,
-            UpdatedAt = time
+            UpdatedAt = time,
+            TotalView = GetRandomNumber(5, 1000),
         };
 
         // Set author, comments and votes
@@ -408,6 +409,12 @@ internal class MockupData
                     .AddHours(random.Next(0, 24))
                     .AddMinutes(random.Next(0, 60))
                     .AddSeconds(random.Next(0, 60));
+    }
+
+    private int GetRandomNumber(int min, int max)
+    {
+        Random random = new Random();
+        return random.Next(min, max + 1);
     }
 
 

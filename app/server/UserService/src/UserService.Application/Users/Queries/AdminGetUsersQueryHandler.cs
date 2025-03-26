@@ -4,7 +4,6 @@ using Contract.DTOs;
 using Google.Protobuf.Collections;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using UserService.Domain.Entities;
 using UserService.Domain.Errors;
 using UserService.Domain.Responses;
 
@@ -46,19 +45,7 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
 
             if (accountId == Guid.Empty || paginatedDTO.Skip == null)
             {
-                return Result<PaginatedAdminGetUserListResponse?>.Failure(UserError.NullParameters, "Account or Skip Id is null");
-            }
-
-            var currentUser = await _context.Users
-                .Where(user => user.AccountId == accountId)
-                .FirstOrDefaultAsync();
-            if (currentUser == null)
-            {
-                return Result<PaginatedAdminGetUserListResponse?>.Failure(UserError.NotFound, "Not found current user.");
-            }
-            if (!currentUser.IsAdmin)
-            {
-                return Result<PaginatedAdminGetUserListResponse?>.Failure(UserError.PermissionDenied);
+                return Result<PaginatedAdminGetUserListResponse?>.Failure(UserError.NullParameters, "Account or Skip is null");
             }
 
             var usersQuery = _context.Users.Where(u => !u.IsAdmin && u.AccountId != accountId).AsQueryable();

@@ -7,7 +7,6 @@ using Contract.Event.UserEvent;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Newtonsoft.Json;
@@ -16,10 +15,7 @@ using RecipeService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
 using UploadFileProto;
 using UserProto;
-
-
 namespace RecipeService.Application.Recipes.Commands;
-
 public record CreateRecipeCommand : IRequest<Result<Recipe?>>
 {
     public Guid AuthorId { get; set; }
@@ -40,7 +36,6 @@ public record CreateRecipeCommand : IRequest<Result<Recipe?>>
 
     public List<string>? TagValues { get; set; }
 }
-
 public class StepDTO
 {
     [Required]
@@ -51,28 +46,23 @@ public class StepDTO
     public string Content { get; init; } = null!;
     public List<IFormFile>? Images { get; init; } = null!;
 }
-
 public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, Result<Recipe?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
-    private readonly ISignalRService _signalRService;
     private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
-
     private readonly ILogger<CreateRecipeCommandHandler> _logger;
 
-
-    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, ILogger<CreateRecipeCommandHandler> logger, GrpcUser.GrpcUserClient grpcUserClient, ISignalRService signalRService)
+    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, GrpcUser.GrpcUserClient grpcUserClient, ILogger<CreateRecipeCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _serviceBus = serviceBus;
         _grpcUploadFileClient = grpcUploadFileClient;
-        _logger = logger;
         _grpcUserClient = grpcUserClient;
-        _signalRService = signalRService;
+        _logger = logger;
     }
 
     public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
@@ -173,7 +163,6 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
                 Delta = 1
             });
 
-            await _signalRService.InvokeAction(SignalREvent.CREATE_RECIPE_ACTION, await _context.Recipes.CountAsync());
             return Result<Recipe?>.Success(recipe);
         }
         catch (Exception ex)

@@ -13,8 +13,6 @@ public class AdminGetUserActivityQuery : IRequest<Result<PaginatedUserActivityLi
     public int? Skip { get; set; }
     public string? Language { get; set; }
     public Guid AccountId { get; set; }
-    public Guid CurrentAccountId { get; set; }
-
 }
 public class AdminGetUserActivityQueryHandler : IRequestHandler<AdminGetUserActivityQuery, Result<PaginatedUserActivityListResponse?>>
 {
@@ -33,21 +31,10 @@ public class AdminGetUserActivityQueryHandler : IRequestHandler<AdminGetUserActi
     {
         var skip = request.Skip;
         var accountId = request.AccountId;
-        var currentAccountId = request.CurrentAccountId;
         var lang = request.Language;
-        if (accountId == Guid.Empty || currentAccountId == Guid.Empty || skip == null || string.IsNullOrEmpty(lang))
+        if (accountId == Guid.Empty || skip == null || string.IsNullOrEmpty(lang))
         {
-            return Result<PaginatedUserActivityListResponse?>.Failure(RecipeError.NullParameter, "AccountId, CurrentAccountId, Language or Skip is null");
-        }
-
-        var adminResponse = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
-        {
-            AccountId = currentAccountId.ToString(),
-        }, cancellationToken: cancellationToken);
-
-        if (adminResponse == null || !adminResponse.IsAdmin)
-        {
-            return Result<PaginatedUserActivityListResponse?>.Failure(RecipeError.PermissionDeny);
+            return Result<PaginatedUserActivityListResponse?>.Failure(RecipeError.NullParameter, "AccountId, Language or Skip is null");
         }
 
         var userResponse = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
