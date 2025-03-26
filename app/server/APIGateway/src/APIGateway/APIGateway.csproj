@@ -14,12 +14,12 @@
 		<PackageReference Include="DotNetEnv" Version="3.0.0" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
 		<PackageReference Include="MMLib.SwaggerForOcelot" Version="8.3.2" />
-		<PackageReference Include="Ocelot" Version="23.2.0" />
+		<PackageReference Include="Ocelot" Version="23.4.3" />
 		<PackageReference Include="Ocelot.Provider.Consul" Version="23.2.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.2.0" />
 		<!-- Extension dependencies -->
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.4" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.12" />
 		<!-- Serilog dependencies -->
 		<PackageReference Include="Serilog" Version="4.1.0" />
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
@@ -31,9 +31,5 @@
 			<HintPath Condition="Exists('..\..\..\Contract\Contract\Published\Contract.dll')">..\..\..\Contract\Contract\Published\Contract.dll</HintPath>
 			<HintPath Condition="Exists('..\Contract\Contract.dll')">..\Contract\Contract.dll</HintPath>
 		</Reference>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Config\development\" />
 	</ItemGroup>
 </Project>

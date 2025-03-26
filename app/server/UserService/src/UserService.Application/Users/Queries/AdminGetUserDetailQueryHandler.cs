@@ -43,7 +43,7 @@ public class AdminGetUserDetailQueryHandler : IRequestHandler<AdminGetUserDetail
         }
 
         var user = await _context.Users
-         .Where(user => user.AccountId == accountId)
+         .Where(user => user.AccountId == accountId && !user.IsAdmin)
          .FirstOrDefaultAsync();
 
         if (user == null)

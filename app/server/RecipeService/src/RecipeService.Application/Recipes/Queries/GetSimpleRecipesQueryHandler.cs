@@ -34,7 +34,7 @@ public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuer
         var accountId = request.AccountId;
         var recipeIds = request.RecipeIds;
 
-        if(accountId == Guid.Empty || recipeIds == null || recipeIds.Count == 0)
+        if (accountId == Guid.Empty || recipeIds == null || recipeIds.Count == 0)
         {
             return Result<List<SimpleRecipeResponse>?>.Failure(RecipeError.NotFound, "AccountId and RecipeIds cannot be null or empty.");
         }
@@ -49,7 +49,9 @@ public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuer
             NumberOfComment = r.NumberOfComment,
             Vote = Vote.None,
             AuthorAvtUrl = "",
-            AuthorDisplayName = ""
+            AuthorDisplayName = "",
+            CreatedAt = r.CreatedAt,
+            UpdatedAt = r.UpdatedAt
         }).ToListAsync();
 
         if (recipes == null || recipes.Count == 0)

@@ -37,7 +37,6 @@ public static class DependenciesInjection
         app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_USER", "Not Found"));
         
         app.UseSwaggerServices();
-        app.UseHttpsRedirection();
         app.MapControllers();
         app.UseGrpcServices();
 

@@ -5,6 +5,29 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
+      "DownstreamPathTemplate": "/api/admin/account/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "UpstreamPathTemplate": "/api/admin/account/{everything}",
+      "SwaggerKey": "identity",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN"
+      }
+    },
+    {
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamScheme": "https",
       "DownstreamPathTemplate": "/connect/userinfo",
       "UpstreamHttpMethod": [

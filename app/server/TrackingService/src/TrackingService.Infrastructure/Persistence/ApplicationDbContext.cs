@@ -1,4 +1,5 @@
-﻿using Contract.Utilities;
+﻿using Contract.Constants;
+using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -23,6 +24,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserViewRecipeDetail> UserViewRecipeDetails { get; set; }
     public DbSet<UserSearchRecipe> UserSearchRecipes { get; set; }
     public DbSet<UserSearchUser> UserSearchUsers { get; set; }
+    public DbSet<AdminActivityLog> AdminActivityLogs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -60,7 +62,18 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 }
             }
         }
-
+        modelBuilder.Entity<AdminActivityLog>(entity =>
+        {
+            entity.Property(e => e.ActivityType)
+                  .HasConversion(typeof(string));
+            entity.Property(e => e.EntityType)
+                  .HasConversion(typeof(string));
+            entity.Property(e => e.SecondaryEntityType)
+                  .HasConversion(
+                      v => v.HasValue ? v.Value.ToString() : null,  // convert enum to string (or null)
+                      v => string.IsNullOrEmpty(v) ? (ActivityEntityType?)null : Enum.Parse<ActivityEntityType>(v) // convert string back to enum
+                  );
+        });
     }
     public IMongoDatabase GetDatabase()
     {

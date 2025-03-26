@@ -1,11 +1,13 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
 package RecipeProto;
 
 service GrpcRecipe {
     rpc GetAllTags(GrpcEmpty) returns (GrpcListTagDTO);
     rpc GetRecipeDetails(GrpcRecipeIdRequest) returns (GrpcRecipeDetailsDTO);
     rpc GetSimpleRecipes(GrpcGetSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
+    rpc GetSimpleComments(GrpcGetSimpleCommentRequest) returns (GrpcMapSimpleComments);
     rpc SearchSimpleRecipes(GrpcSearchSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
 }
 ////////////////////////// COMMON
@@ -18,6 +20,15 @@ message GrpcRecipeIdRequest{
 message GrpcGetSimpleRecipeRequest {
     string AccountId = 1;
     repeated string RecipeIds = 2; 
+}
+
+message GrpcGetSimpleCommentRequest {
+    repeated GrpcRecipeIdsAndCommentIds Ids = 1; 
+}
+
+message GrpcRecipeIdsAndCommentIds {
+    string RecipeId = 1;
+    string CommentId = 2;
 }
 
 message GrpcSearchSimpleRecipeRequest {
@@ -85,6 +96,10 @@ message GrpcMapSimpleRecipes {
     map<string, GrpcSimpleRecipe> Recipes = 1;
 }
 
+message GrpcMapSimpleComments {
+    map<string, GrpcSimpleComment> Comments = 1;
+}
+
 message GrpcSimpleRecipe {
     string Id = 1;
     string AuthorId = 2;
@@ -96,4 +111,17 @@ message GrpcSimpleRecipe {
     string AuthorDisplayName = 8;
     string AuthorAvtUrl = 9;
     string Vote = 10;
+    google.protobuf.Timestamp CreatedAt = 11;
+    google.protobuf.Timestamp UpdatedAt = 12;
+}
+
+message GrpcSimpleComment {
+    string Id = 1;
+    string AuthorId = 2;
+    string AuthorUsername = 3;
+    string AuthorAvatarURL = 4;
+    string Content = 5;
+    string IsActive = 6;
+    google.protobuf.Timestamp CreatedAt = 7;
+    google.protobuf.Timestamp UpdatedAt = 8;
 }

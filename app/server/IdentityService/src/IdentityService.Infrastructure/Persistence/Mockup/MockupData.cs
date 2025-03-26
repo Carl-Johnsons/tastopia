@@ -1,4 +1,5 @@
-﻿using IdentityService.Infrastructure.Persistence.Mockup.Data;
+﻿using Contract.Utilities;
+using IdentityService.Infrastructure.Persistence.Mockup.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -7,7 +8,7 @@ namespace IdentityService.Infrastructure.Persistence.Mockup;
 
 internal class MockupData
 {
-    private readonly string SeedDataPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.Parent?.FullName!, "seeds") ?? "";
+    private readonly string SeedDataPath = EnvUtility.IsProduction() ? "seeds" : Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.Parent?.FullName!, "seeds") ?? "";
     private UserManager<ApplicationAccount> _userManager;
     private RoleManager<IdentityRole> _roleManager;
     private readonly ApplicationDbContext _context;
@@ -64,6 +65,12 @@ internal class MockupData
 
         foreach (var seedAccount in seedAccounts)
         {
+            if (!Enum.IsDefined(typeof(Contract.Constants.Roles.Code), seedAccount.RoleCode))
+            {
+                _logger.LogError($"Malicious seed account data with role {seedAccount.RoleCode}");
+                continue;
+            }
+
             var time = GetRandomDateTime().ToUniversalTime();
             var account = new ApplicationAccount
             {
@@ -87,7 +94,7 @@ internal class MockupData
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
-                await _userManager.AddToRoleAsync(account, seedAccount.RoleCode);
+                await _userManager.AddToRoleAsync(account, seedAccount.RoleCode.ToUpper());
 
                 _logger.LogInformation($"{account.UserName} created");
             }
@@ -95,6 +102,12 @@ internal class MockupData
 
         foreach (var seedWrongUser in seedWrongUsers)
         {
+            if (!Enum.IsDefined(typeof(Contract.Constants.Roles.Code), seedWrongUser.RoleCode))
+            {
+                _logger.LogError($"Malicious seed account data with role {seedWrongUser.RoleCode}");
+                continue;
+            }
+
             var time = GetRandomDateTime().ToUniversalTime();
             var account = new ApplicationAccount
             {
@@ -118,6 +131,7 @@ internal class MockupData
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
+
                 await _userManager.AddToRoleAsync(account, seedWrongUser.RoleCode);
 
                 _logger.LogInformation($"{account.UserName} created");

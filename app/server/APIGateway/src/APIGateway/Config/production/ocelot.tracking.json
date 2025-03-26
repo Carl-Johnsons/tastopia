@@ -1,14 +1,12 @@
 {
   "Routes": [
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "tracking-api",
-          "Port": 80
-        }
-      ],
+      "ServiceName": "tracking-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/tracking/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"

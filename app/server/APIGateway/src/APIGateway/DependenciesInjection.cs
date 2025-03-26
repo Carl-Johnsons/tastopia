@@ -30,10 +30,6 @@ public static class DependenciesInjection
         {
             config.AddOcelot("Config/development", env);
         }
-        else if (env.IsEnvironment("Kubernetes"))
-        {
-            config.AddOcelot("Config/kubernetes", env);
-        }
         else
         {
             config.AddOcelot("Config/production", env);

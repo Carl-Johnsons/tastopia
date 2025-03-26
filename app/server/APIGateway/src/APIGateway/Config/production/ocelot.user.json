@@ -1,35 +1,70 @@
 {
   "Routes": [
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "user-api",
-          "Port": 80
-        }
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/admin/user/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
       ],
-      "DownstreamPathTemplate": "/api/user/search",
-      "DownstreamScheme": "http",
+      "UpstreamPathTemplate": "/api/admin/user/{everything}",
+      "SwaggerKey": "user",
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN"
+      }
+    },
+    {
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/user/get-user-detail-by-account-id",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
       ],
-      "UpstreamPathTemplate": "/api/user/search",
+      "UpstreamPathTemplate": "/api/user/get-user-detail-by-account-id",
       "SwaggerKey": "user"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "user-api",
-          "Port": 80
-        }
-      ],
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/user/{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
         "GET",
-        "POST"
+        "POST",
+        "PATCH"
       ],
       "UpstreamPathTemplate": "/api/user/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "SwaggerKey": "user"
+    },
+    {
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/setting/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT"
+      ],
+      "UpstreamPathTemplate": "/api/setting/{everything}",
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [ "Bearer" ],
         "AllowedScopes": [ "openid" ]
