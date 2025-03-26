@@ -32,6 +32,7 @@ public static class RabbitMQConstant
 
             // ======================= TRACKING ============================
             public const string CREATE_USER_VIEW_RECIPE_DETAIL = "create-user-view-recipe-detail-queue";
+            public const string ADD_ACTIVITY_LOG = "add-activity-log-queue";
             // ======================= NOTIFICATION ============================
             public const string NOTIFY_USER = "notify-user-queue";
             public const string CREATE_USER_SEARCH_RECIPE = "create-user-search-recipe-queue";
@@ -67,6 +68,7 @@ public static class RabbitMQConstant
 
             // ======================= TRACKING ============================
             public const string CREATE_USER_VIEW_RECIPE_DETAIL = "create-user-view-recipe-detail-event";
+            public const string ADD_ACTIVITY_LOG = "add-activity-log-event";
             // ======================= NOTIFICATION ============================
             public const string NOTIFY_USER = "notify-user-event";
             public const string CREATE_USER_SEARCH_RECIPE = "create-user-search-recipe-event";

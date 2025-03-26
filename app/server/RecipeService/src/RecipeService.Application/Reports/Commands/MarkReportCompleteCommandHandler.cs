@@ -1,5 +1,6 @@
 ﻿
 using Contract.Constants;
+using Contract.Event.TrackingEvent;
 using Microsoft.EntityFrameworkCore;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
@@ -10,18 +11,21 @@ public record MarkReportCompleteCommand : IRequest<Result>
 {
     public Guid ReportId { get; set; }
     public ReportType ReportType { get; set; }
+    public Guid CurrentAccountId { get; set; }
 }
 
 public class MarkReportCompleteCommandHandler : IRequestHandler<MarkReportCompleteCommand, Result>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
-
+    private readonly IServiceBus _serviceBus;
     public MarkReportCompleteCommandHandler(IApplicationDbContext context,
-                                            IUnitOfWork unitOfWork)
+                                            IUnitOfWork unitOfWork,
+                                            IServiceBus serviceBus)
     {
         _context = context;
         _unitOfWork = unitOfWork;
+        _serviceBus = serviceBus;
     }
 
     public async Task<Result> Handle(MarkReportCompleteCommand request,
@@ -44,6 +48,32 @@ public class MarkReportCompleteCommandHandler : IRequestHandler<MarkReportComple
         UpdateReportEntity(request.ReportType, report);
 
         await _unitOfWork.SaveChangeAsync();
+
+        switch (request.ReportType)
+        {
+            case ReportType.RECIPE:
+                _context.UserReportRecipes.Update((UserReportRecipe)report);
+                await _serviceBus.Publish(new AddActivityLogEvent
+                {
+                    AccountId = request.CurrentAccountId,
+                    ActivityType = ActivityType.MARK_COMPLETE,
+                    EntityId = report.Id,
+                    EntityType = ActivityEntityType.REPORT_RECIPE
+                });
+                break;
+            case ReportType.COMMENT:
+                _context.UserReportComments.Update((UserReportComment)report);
+                await _serviceBus.Publish(new AddActivityLogEvent
+                {
+                    AccountId = request.CurrentAccountId,
+                    ActivityType = ActivityType.MARK_COMPLETE,
+                    EntityId = report.Id,
+                    EntityType = ActivityEntityType.REPORT_COMMENT
+                });
+                break;
+            default:
+                throw new NotImplementedException();
+        }
 
         return Result.Success();
     }

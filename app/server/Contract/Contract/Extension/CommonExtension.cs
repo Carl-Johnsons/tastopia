@@ -410,6 +410,12 @@ import {
     ICommonPaginatedMetadata,
     INumberedPaginatedMetadata
 } from ""./common.interface"";
+
+import {
+    ActivityType,
+    ActivityEntityType,
+    ActivityType
+} from ""../enums/common.enum"";
             ");
             }
 

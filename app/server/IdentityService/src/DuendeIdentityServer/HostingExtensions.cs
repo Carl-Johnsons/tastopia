@@ -151,7 +151,6 @@ internal static class HostingExtensions
         app.UseGrpcServices();
         app.UseIdentityServer();
         app.UseAuthorization();
-        await app.UseSignalRServiceAsync();
         app.MapRazorPages();
 
         // Add a user api endpoint so this will not be a minimal API
@@ -161,6 +160,8 @@ internal static class HostingExtensions
             endpoints.MapDefaultControllerRoute()
                 .RequireAuthorization();
         });
+
+        app.UseSignalRServiceAsync();
 
         return app;
     }

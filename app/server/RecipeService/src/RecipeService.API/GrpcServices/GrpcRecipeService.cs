@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Google.Protobuf.Collections;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Newtonsoft.Json;
 using RecipeProto;
@@ -88,6 +89,8 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
                 NumberOfComment = value.NumberOfComment,
                 VoteDiff = value.VoteDiff,
                 Vote = value.Vote.ToString(),
+                CreatedAt = value.CreatedAt.ToTimestamp(),
+                UpdatedAt = value.UpdatedAt.ToTimestamp()
             };
         }
 
@@ -151,5 +154,10 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
 
         _logger.LogInformation("Grpc SearchSimpleRecipes successfully!");
         return grpcResult;
+    }
+
+    public override Task<GrpcMapSimpleComments> GetSimpleComments(GrpcGetSimpleCommentRequest request, ServerCallContext context)
+    {
+        return base.GetSimpleComments(request, context);
     }
 }

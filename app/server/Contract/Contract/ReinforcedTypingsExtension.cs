@@ -1,4 +1,5 @@
 ﻿using Contract.Common;
+using Contract.Constants;
 using Contract.DTOs;
 using Contract.Extension;
 using Contract.Interfaces;
@@ -37,7 +38,9 @@ public static class ReinforcedTypingsExtension
         });
 
         builder.ExportAsEnums([
-            typeof(SortType)
+            typeof(SortType),
+            typeof(ActivityEntityType),
+            typeof(ActivityType)
         ], config =>
         {
             config.FlattenHierarchy()

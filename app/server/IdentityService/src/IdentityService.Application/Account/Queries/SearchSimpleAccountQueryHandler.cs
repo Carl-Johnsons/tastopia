@@ -27,8 +27,8 @@ public class SearchSimpleAccountQueryHandler : IRequestHandler<SearchSimpleAccou
         keyword = keyword.ToLower();
         var result = await _userManager.Users.Where(u =>
             (
-                u.Email != null && u.Email.ToLower().Contains(keyword) &&
-                u.PhoneNumber != null && u.PhoneNumber.ToLower().Contains(keyword)
+                (u.Email != null && u.Email.ToLower().Contains(keyword)) ||
+                (u.PhoneNumber != null && u.PhoneNumber.ToLower().Contains(keyword))
             )
         ).Select(u => u.Id).Distinct().ToListAsync();
 
