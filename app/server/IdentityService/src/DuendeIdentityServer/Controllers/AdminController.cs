@@ -1,9 +1,11 @@
 ﻿using IdentityService.Application.Account.Queries;
 using Microsoft.AspNetCore.Authorization;
+using static Duende.IdentityServer.IdentityServerConstants;
 namespace DuendeIdentityServer.Controllers;
 [Route("api/admin/account")]
 [ApiController]
-[Authorize]
+[Authorize(LocalApi.PolicyName)]
+
 public class AdminController : BaseApiController
 {
     public AdminController(ISender sender, IHttpContextAccessor httpContextAccessor, IMapper mapper) : base(sender, httpContextAccessor, mapper)
