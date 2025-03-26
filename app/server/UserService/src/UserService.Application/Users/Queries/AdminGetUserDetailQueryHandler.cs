@@ -42,18 +42,6 @@ public class AdminGetUserDetailQueryHandler : IRequestHandler<AdminGetUserDetail
             return Result<AdminGetUserDetailResponse?>.Failure(UserError.NullParameters, "Account or CurrentAccountId Id is null");
         }
 
-        var currentUser = await _context.Users
-            .Where(user => user.AccountId == currentAccountId)
-            .FirstOrDefaultAsync();
-        if (currentUser == null)
-        {
-            return Result<AdminGetUserDetailResponse?>.Failure(UserError.NotFound);
-        }
-        if (!currentUser.IsAdmin)
-        {
-            return Result<AdminGetUserDetailResponse?>.Failure(UserError.PermissionDenied);
-        }
-
         var user = await _context.Users
          .Where(user => user.AccountId == accountId && !user.IsAdmin)
          .FirstOrDefaultAsync();
@@ -63,9 +51,9 @@ public class AdminGetUserDetailQueryHandler : IRequestHandler<AdminGetUserDetail
             return Result<AdminGetUserDetailResponse?>.Failure(UserError.NotFound);
         }
 
-        if (user.IsAdmin && user.AccountId != currentUser.AccountId)
+        if (user.IsAdmin && user.AccountId != currentAccountId)
         {
-            return Result<AdminGetUserDetailResponse?>.Failure(UserError.PermissionDenied);
+            return Result<AdminGetUserDetailResponse?>.Failure(UserError.PermissionDenied, "Cannot view other admin profile.");
         }
 
         var grpcRequest = new GrpcAccountIdRequest

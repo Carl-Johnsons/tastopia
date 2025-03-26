@@ -1,4 +1,4 @@
-﻿namespace RecipeService.Domain.Constants;
+﻿namespace Contract.Constants;
 
 public static class SignalREvent
 {

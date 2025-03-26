@@ -8,13 +8,11 @@ using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using UploadFileProto;
-using UserProto;
 
 namespace RecipeService.Application.Tags.Commands;
 
 public class UpdateTagCommand : IRequest<Result<Tag?>>
 {
-    public Guid AccountId { get; set; }
     public Guid TagId { get; set; }
     public string Code { get; set; } = null!;
     public string Value { get; set; } = null!;
@@ -29,15 +27,14 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
     private readonly ILogger<UpdateTagCommandHandler> _logger;
-    private readonly GrpcUser.GrpcUserClient _grpcUserClient;
     private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
-    public UpdateTagCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, ILogger<UpdateTagCommandHandler> logger, GrpcUser.GrpcUserClient grpcUserClient, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient)
+
+    public UpdateTagCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, ILogger<UpdateTagCommandHandler> logger, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _serviceBus = serviceBus;
         _logger = logger;
-        _grpcUserClient = grpcUserClient;
         _grpcUploadFileClient = grpcUploadFileClient;
     }
     public async Task<Result<Tag?>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
@@ -45,21 +42,10 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
         var rollbackUrl = new List<string>();
         try
         {
-            var accountId = request.AccountId;
             var tagId = request.TagId;
-            if (accountId == Guid.Empty || tagId == Guid.Empty)
+            if (tagId == Guid.Empty)
             {
-                return Result<Tag?>.Failure(TagError.NullParameter, "AccountId or TagId is null.");
-            }
-
-            var adminResponse = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
-            {
-                AccountId = accountId.ToString(),
-            }, cancellationToken: cancellationToken);
-
-            if (adminResponse == null || !adminResponse.IsAdmin)
-            {
-                return Result<Tag?>.Failure(TagError.PermissionDeny);
+                return Result<Tag?>.Failure(TagError.NullParameter, "TagId is null.");
             }
 
             var tag = _context.Tags.SingleOrDefault(t => t.Id == tagId);

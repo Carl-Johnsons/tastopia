@@ -85,4 +85,8 @@ public class AccountError
         new("AccountError.ResetPasswordFailed",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Reset Password failed");
+    public static Error NullParameter =>
+        new("AccountError.NullParameter",
+            StatusCode: (int)HttpStatusCode.InternalServerError,
+            Message: "Null Parameter");
 }

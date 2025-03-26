@@ -28,6 +28,11 @@ public static class ReinforcedTypingsExtension
 
         // DTO and Entites
         builder.ExportAsInterfaces([
+            typeof(DateStatisticEntity),
+            typeof(MonthStatisticEntity),
+            typeof(HourStatisticEntity),
+            typeof(AdminGetRecipeStatisticDTO),
+            typeof(StatisticEntity),
             typeof(AdminGetTagDetailDTO),
             typeof(CreateTagDTO),
             typeof(UpdateTagDTO),

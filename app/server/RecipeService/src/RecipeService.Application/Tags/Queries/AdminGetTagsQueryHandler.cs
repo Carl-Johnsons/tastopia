@@ -4,14 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
-using UserProto;
-using static UserProto.GrpcUser;
-
 namespace RecipeService.Application.Tags.Queries;
 
 public class AdminGetTagsQuery: IRequest<Result<PaginatedAdminTagListResponse?>>
 {
-    public Guid AccountId { get; set; }
     public PaginatedDTO PaginatedDTO { get; set; } = null!;
 }
 
@@ -19,37 +15,22 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaginateDataUtility<Tag, AdvancePaginatedMetadata> _paginateDataUtility;
-    private readonly GrpcUser.GrpcUserClient _grpcUserClient;
     private readonly IMapper _mapper;
-
-    public AdminGetTagsQueryHandler(IApplicationDbContext context, IPaginateDataUtility<Tag, AdvancePaginatedMetadata> paginateDataUtility, GrpcUserClient grpcUserClient, IMapper mapper)
+    public AdminGetTagsQueryHandler(IApplicationDbContext context, IPaginateDataUtility<Tag, AdvancePaginatedMetadata> paginateDataUtility, IMapper mapper)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;
-        _grpcUserClient = grpcUserClient;
         _mapper = mapper;
     }
 
     public async Task<Result<PaginatedAdminTagListResponse?>> Handle(AdminGetTagsQuery request, CancellationToken cancellationToken)
     {
-        var accountId = request.AccountId;
         var paginatedDto = request.PaginatedDTO;
 
-        if(accountId == Guid.Empty || paginatedDto.Skip == null)
+        if(paginatedDto.Skip == null)
         {
             return Result<PaginatedAdminTagListResponse?>.Failure(TagError.NullParameter, "AccountId or Skip is null.");
         }
-
-        var adminResponse = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
-        {
-            AccountId = accountId.ToString(),
-        }, cancellationToken: cancellationToken);
-
-        if (adminResponse == null || !adminResponse.IsAdmin)
-        {
-            return Result<PaginatedAdminTagListResponse?>.Failure(TagError.PermissionDeny);
-        }
-
 
         var tagsQuery = _context.Tags.AsQueryable();
 

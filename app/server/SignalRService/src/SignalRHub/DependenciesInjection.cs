@@ -6,6 +6,8 @@ using Serilog;
 using SignalRHub.Extensions;
 using SignalRHub.Filters;
 using SignalRHub.Hubs;
+using SignalRHub.Interfaces;
+using SignalRHub.Services;
 
 namespace SignalRHub;
 
@@ -24,6 +26,8 @@ public static class DependenciesInjection
         services.AddCommonInfrastructureServices("SignalRHub");
 
         var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
+
+        services.AddSingleton<IMemoryTracker, MemoryTracker>();
 
         services.AddHttpContextAccessor();
 

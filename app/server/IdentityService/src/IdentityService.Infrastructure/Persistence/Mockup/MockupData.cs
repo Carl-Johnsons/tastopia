@@ -71,6 +71,7 @@ internal class MockupData
                 continue;
             }
 
+            var time = GetRandomDateTime().ToUniversalTime();
             var account = new ApplicationAccount
             {
                 Id = seedAccount.Id,
@@ -81,8 +82,8 @@ internal class MockupData
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = time,
+                UpdatedAt = time
             };
 
             var userResult = _userManager.FindByNameAsync(account.UserName).Result;
@@ -107,6 +108,7 @@ internal class MockupData
                 continue;
             }
 
+            var time = GetRandomDateTime().ToUniversalTime();
             var account = new ApplicationAccount
             {
                 Id = seedWrongUser.Id,
@@ -117,8 +119,8 @@ internal class MockupData
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = time,
+                UpdatedAt = time
             };
 
             var userResult = _userManager.FindByNameAsync(account.UserName).Result;
@@ -135,6 +137,20 @@ internal class MockupData
                 _logger.LogInformation($"{account.UserName} created");
             }
         }
+    }
+
+    //random datetime from 1/1/2023 - 12/12/2024
+    private DateTime GetRandomDateTime()
+    {
+        Random random = new Random();
+        DateTime start = new DateTime(2023, 11, 1);
+        DateTime end = new DateTime(2025, 3, 24);
+
+        int range = (end - start).Days;
+        return start.AddDays(random.Next(range + 1))
+                    .AddHours(random.Next(0, 24))
+                    .AddMinutes(random.Next(0, 60))
+                    .AddSeconds(random.Next(0, 60));
     }
 
     private class SeedAccount

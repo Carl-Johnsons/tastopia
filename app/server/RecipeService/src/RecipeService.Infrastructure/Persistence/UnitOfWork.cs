@@ -25,12 +25,22 @@ internal class UnitOfWork : IUnitOfWork
         {
             if (entry.Properties.Any(p => p.Metadata.Name == "CreatedAt"))
             {
-                entry.Property("CreatedAt").CurrentValue = currentTime;
+                var createdAtProp = entry.Property("CreatedAt");
+
+                if (createdAtProp.CurrentValue == null || (DateTime)createdAtProp.CurrentValue == default)
+                {
+                    createdAtProp.CurrentValue = currentTime;
+                }
             }
 
             if (entry.Properties.Any(p => p.Metadata.Name == "UpdatedAt"))
             {
-                entry.Property("UpdatedAt").CurrentValue = currentTime;
+                var updatedAtProp = entry.Property("UpdatedAt");
+
+                if (updatedAtProp.CurrentValue == null || (DateTime)updatedAtProp.CurrentValue == default)
+                {
+                    updatedAtProp.CurrentValue = currentTime;
+                }
             }
         }
 
@@ -38,7 +48,12 @@ internal class UnitOfWork : IUnitOfWork
         {
             if (entry.Properties.Any(p => p.Metadata.Name == "UpdatedAt"))
             {
-                entry.Property("UpdatedAt").CurrentValue = currentTime;
+                var updatedAtProp = entry.Property("UpdatedAt");
+
+                if (updatedAtProp.CurrentValue == null || (DateTime)updatedAtProp.CurrentValue == default)
+                {
+                    updatedAtProp.CurrentValue = currentTime;
+                }
             }
         }
 

@@ -4,10 +4,10 @@ export default function LoginForm() {
   return (
     <form
       action={handleSignIn}
-      className="border border-gray-200 hover:bg-gray-200 rounded-md "
+      className='rounded-lg border border-gray-200 p-1 hover:bg-gray-200'
     >
-      <button type="submit">
-        Sign in with <span className="text-primary">Tastopia account</span>
+      <button type='submit'>
+        Sign in with <span className='text-primary'>Tastopia account</span>
       </button>
     </form>
   );

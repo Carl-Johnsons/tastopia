@@ -35,6 +35,22 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
+      "DownstreamPathTemplate": "/api/admin/account/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ],
+      "UpstreamPathTemplate": "/api/admin/account/{everything}",
+      "SwaggerKey": "identity"
+    },
+    {
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamScheme": "https",
       "DownstreamPathTemplate": "/api/account/register/{everything}",
       "UpstreamHttpMethod": [

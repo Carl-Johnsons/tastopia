@@ -34,7 +34,7 @@ public static class DependenciesInjection
         return builder;
     }
 
-    public static WebApplication UseAPIServices(this WebApplication app)
+    public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
         app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_RECIPE", "Not Found"));
 
@@ -49,6 +49,8 @@ public static class DependenciesInjection
         app.UseAuthentication();
 
         app.UseAuthorization();
+
+        await app.UseSignalRServiceAsync();
 
         return app;
     }

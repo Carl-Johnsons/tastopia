@@ -1,9 +1,7 @@
 ﻿using Contract.Constants;
 using Contract.DTOs;
 using Contract.Utilities;
-using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
-using UserService.Domain.Errors;
 using UserService.Domain.Responses;
 
 namespace UserService.Application.UserReports.Queries;
@@ -11,7 +9,6 @@ public record GetUserReportsQuery : IRequest<Result<PaginatedAdminUserReportList
 {
     public string Lang { get; init; } = "en";
     public PaginatedDTO? paginatedDTO { get; init; } = null!;
-    public Guid AccountId { get; init; }
 }
 
 public class GetUserReportsQueryHandler : IRequestHandler<GetUserReportsQuery, Result<PaginatedAdminUserReportListResponse?>>
@@ -26,24 +23,8 @@ public class GetUserReportsQueryHandler : IRequestHandler<GetUserReportsQuery, R
         _paginateDataUtility = paginateDataUtility;
     }
 
-    public async Task<Result<PaginatedAdminUserReportListResponse?>> Handle(GetUserReportsQuery request, CancellationToken cancellationToken)
+    public Task<Result<PaginatedAdminUserReportListResponse?>> Handle(GetUserReportsQuery request, CancellationToken cancellationToken)
     {
-        if (request.AccountId == Guid.Empty)
-        {
-            return Result<PaginatedAdminUserReportListResponse>.Failure(UserReportError.NullParameter, "AccountId, CurrentAccountId or Skip is null");
-        }
-
-        var users = await _context.Users
-            .SingleOrDefaultAsync(u => u.AccountId == request.AccountId);
-
-        if (users == null)
-        {
-            return Result<PaginatedAdminUserReportListResponse?>.Failure(UserError.NotFound, "Not found current user.");
-        }
-        if (!users.IsAdmin)
-        {
-            return Result<PaginatedAdminUserReportListResponse?>.Failure(UserError.PermissionDenied);
-        }
         var keyword = request.paginatedDTO?.Keyword;
         var normalizedLangue = LanguageUtility.ToIso6391(request.Lang);
         var reportedIds = _context.UserReports.Select(rp => rp.ReportedId);
@@ -98,7 +79,6 @@ public class GetUserReportsQueryHandler : IRequestHandler<GetUserReportsQuery, R
                 TotalRow = totalRow
             }
         };
-
-        return Result<PaginatedAdminUserReportListResponse?>.Success(adminGetUserReportResponse);
+        return Task.FromResult(Result<PaginatedAdminUserReportListResponse?>.Success(adminGetUserReportResponse));
     }
 }
