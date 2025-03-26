@@ -1,5 +1,6 @@
 import {
   getAdminUsers,
+  getCurrentUserDetails,
   getUserById,
   getUserDetailReports,
   getUserReports
@@ -76,5 +77,12 @@ export const useGetUserDetailReports = (accountId: string, language?: string) =>
       }
       return pages.length;
     }
+  });
+};
+
+export const useGetCurrentUser = () => {
+  return useQuery({
+    queryKey: ["currentUser"],
+    queryFn: () => getCurrentUserDetails()
   });
 };
