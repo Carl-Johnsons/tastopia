@@ -121,7 +121,7 @@ internal static class HostingExtensions
         return builder.Build();
     }
 
-    public static WebApplication ConfigurePipeline(this WebApplication app)
+    public static async Task<WebApplication> ConfigurePipelineAsync(this WebApplication app)
     {
         app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
         app.UseSwaggerServices();
@@ -151,6 +151,7 @@ internal static class HostingExtensions
         app.UseGrpcServices();
         app.UseIdentityServer();
         app.UseAuthorization();
+        await app.UseSignalRServiceAsync();
         app.MapRazorPages();
 
         // Add a user api endpoint so this will not be a minimal API

@@ -7,9 +7,7 @@ using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using UserProto;
-
 namespace IdentityService.Application.Account.Commands;
-
 public record RegisterAccountCommand : IRequest<Result<TokenResponse?>>
 {
     [Required]
@@ -21,7 +19,6 @@ public record RegisterAccountCommand : IRequest<Result<TokenResponse?>>
     [Required]
     public AccountMethod Method { get; set; }
 }
-
 public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountCommand, Result<TokenResponse?>>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
@@ -29,12 +26,7 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
     private readonly IConsulRegistryService _consulRegistryService;
     private readonly ILogger<RegisterAccountCommandHandler> _logger;
-
-    public RegisterAccountCommandHandler(UserManager<ApplicationAccount> userManager,
-        IServiceBus serviceBus,
-        GrpcUser.GrpcUserClient grpcUserClient,
-        IConsulRegistryService consulRegistryService,
-        ILogger<RegisterAccountCommandHandler> logger)
+    public RegisterAccountCommandHandler(UserManager<ApplicationAccount> userManager, IServiceBus serviceBus, GrpcUser.GrpcUserClient grpcUserClient, IConsulRegistryService consulRegistryService, ILogger<RegisterAccountCommandHandler> logger)
     {
         _userManager = userManager;
         _serviceBus = serviceBus;
@@ -42,7 +34,6 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
         _consulRegistryService = consulRegistryService;
         _logger = logger;
     }
-
     public async Task<Result<TokenResponse?>> Handle(RegisterAccountCommand request, CancellationToken cancellationToken)
     {
         switch (request.Method)

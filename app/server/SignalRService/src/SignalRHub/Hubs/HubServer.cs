@@ -5,6 +5,8 @@ using Serilog;
 using SignalRHub.DTOs;
 using Contract.Interfaces;
 using Contract.DTOs.SignalRDTO;
+using SignalRHub.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace SignalRHub.Hubs;
 
@@ -15,11 +17,14 @@ public class HubServer : Hub<IHubClient>
     private readonly IHttpContextAccessor _httpContextAccessor;
     // rabbitmq
     private readonly IServiceBus _bus;
+    private readonly IMemoryTracker _memoryTracker;
     public HubServer(IHttpContextAccessor httpContextAccessor,
-                     IServiceBus bus)
+                     IServiceBus bus,
+                     IMemoryTracker memoryTracker)
     {
         _httpContextAccessor = httpContextAccessor;
         _bus = bus;
+        _memoryTracker = memoryTracker;
     }
 
     // The url would be like "https://yourhubURL:port?userId=abc&access_token=abc"
@@ -38,6 +43,9 @@ public class HubServer : Hub<IHubClient>
             {
                 Log.Information($"user with id {userId} has connected to signalR sucessfully!");
                 await ConnectWithUserIdAsync(Guid.Parse(userId));
+                _memoryTracker.UserConnected(userId);
+                Log.Information($"Trigger event in client: number:"+_memoryTracker.OnlineUserNumber);
+                await Clients.Group("Admin").ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
             }
         }
         catch (Exception ex)
@@ -54,6 +62,9 @@ public class HubServer : Hub<IHubClient>
         {
             Log.Information($"Connection {Context.ConnectionId} disconnected and removed from UserConnectionMap.");
             await Clients.All.Disconnected(userDisconnectedId);
+            _memoryTracker.UserDisconnected(userDisconnectedId.ToString());
+            Log.Information($"Trigger event in client: number:" + _memoryTracker.OnlineUserNumber);
+            await Clients.Group("Admin").ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
         }
         else
         {
@@ -104,6 +115,15 @@ public class HubServer : Hub<IHubClient>
         await Task.WhenAll(tasks);
     }
 
+    private string? GetRoleFromToken(string? accessToken)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(accessToken);
+
+        var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "role");
+        return roleClaim?.Value;
+    }
+
     #region Helper method
     private async Task ConnectWithUserIdAsync(Guid userId)
     {
@@ -112,11 +132,18 @@ public class HubServer : Hub<IHubClient>
         Log.Information(userId + " Connected");
 
         // Admin user
-        if (Context.User != null && Context.User.IsInRole("Admin"))
+        var userToken = _httpContextAccessor.HttpContext?.Request.Query["access_token"].ToString();
+        if(!string.IsNullOrEmpty(userToken))
         {
-            Log.Information("Add admin to group admin");
-            await Groups.AddToGroupAsync(Context.ConnectionId, "Admin");
-            return;
+            Log.Information("user token:" + userToken); 
+            var role = GetRoleFromToken(userToken);
+
+            if (Context.User != null && (role == "ADMIN" || role == "SUPER ADMIN"))
+            {
+                Log.Information("Add admin to group admin");
+                await Groups.AddToGroupAsync(Context.ConnectionId, "Admin");
+                return;
+            }
         }
 
         foreach (var key in UserConnectionMap.Keys)

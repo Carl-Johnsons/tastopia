@@ -6,8 +6,6 @@ namespace RecipeService.Application.Reports.Commands;
 public record MarkReportCommand : IRequest<Result<AdminMarkReportResponse?>>
 {
     public Guid ReportId { get; set; }
-    public Guid AccountId { get; set; }
-
 }
 public class MarkReportCommandHandler : IRequestHandler<MarkReportCommand, Result<AdminMarkReportResponse?>>
 {
@@ -26,24 +24,6 @@ public class MarkReportCommandHandler : IRequestHandler<MarkReportCommand, Resul
         {
             return Result<AdminMarkReportResponse?>.Failure(UserReportError.NullParameter, "ReportId is null.");
         }
-
-        if (request.AccountId == Guid.Empty)
-        {
-            return Result<AdminMarkReportResponse>.Failure(UserReportError.NullParameter, "AccountId, CurrentAccountId or Skip is null");
-        }
-
-        var users = await _context.Users
-            .SingleOrDefaultAsync(u => u.AccountId == request.AccountId);
-
-        if (users == null)
-        {
-            return Result<AdminMarkReportResponse?>.Failure(UserError.NotFound, "Not found current user.");
-        }
-        if (!users.IsAdmin)
-        {
-            return Result<AdminMarkReportResponse?>.Failure(UserError.PermissionDenied);
-        }
-
         var report = await _context.UserReports.SingleOrDefaultAsync(rp => rp.Id == request.ReportId);
         if (report == null)
         {

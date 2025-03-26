@@ -35,18 +35,6 @@ public class AdminBanUserCommandHandler : IRequestHandler<AdminBanUserCommand, R
                 return Result<AdminBanUserResponse?>.Failure(UserError.NullParameters, "Account or CurrentAccountId Id is null");
             }
 
-            var currentUser = await _context.Users
-                .Where(user => user.AccountId == currentAccountId)
-                .FirstOrDefaultAsync();
-            if (currentUser == null)
-            {
-                return Result<AdminBanUserResponse?>.Failure(UserError.NotFound, "Not found admin");
-            }
-            if (!currentUser.IsAdmin)
-            {
-                return Result<AdminBanUserResponse?>.Failure(UserError.PermissionDenied);
-            }
-
             var user = await _context.Users
              .Where(user => user.AccountId == accountId)
              .FirstOrDefaultAsync();

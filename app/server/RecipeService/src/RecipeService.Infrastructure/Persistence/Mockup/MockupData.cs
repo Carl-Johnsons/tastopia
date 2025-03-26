@@ -210,7 +210,7 @@ internal class MockupData
     {
         var steps = CreateSteps(seedRecipe.Steps);
         var recipeId = GenerateUniqueRecipeId();
-
+        var time = GetRandomDateTime().ToUniversalTime();
         var recipe = new Recipe
         {
             Id = recipeId,
@@ -222,8 +222,9 @@ internal class MockupData
             Ingredients = seedRecipe.Ingredients,
             Steps = steps,
             IsActive = true,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedAt = time,
+            UpdatedAt = time,
+            TotalView = GetRandomNumber(5, 1000),
         };
 
         // Set author, comments and votes
@@ -395,6 +396,25 @@ internal class MockupData
             });
         }
         return steps;
+    }
+    //random datetime from 1/1/2023 - 12/12/2024
+    private DateTime GetRandomDateTime()
+    {
+        Random random = new Random();
+        DateTime start = new DateTime(2023, 11, 1);
+        DateTime end = new DateTime(2025, 3, 24);
+
+        int range = (end - start).Days;
+        return start.AddDays(random.Next(range + 1))
+                    .AddHours(random.Next(0, 24))
+                    .AddMinutes(random.Next(0, 60))
+                    .AddSeconds(random.Next(0, 60));
+    }
+
+    private int GetRandomNumber(int min, int max)
+    {
+        Random random = new Random();
+        return random.Next(min, max + 1);
     }
 
 

@@ -11,7 +11,7 @@ const useConnectedSubscription = () => {
       if (!connection) {
         return;
       }
-      console.log("Connect to signalR");
+      console.log("Connected to signalR");
     });
   }, []);
 

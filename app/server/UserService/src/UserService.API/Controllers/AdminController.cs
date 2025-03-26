@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeService.API.DTOs;
+using RecipeService.Application.Recipes.Queries;
 using RecipeService.Application.Reports.Commands;
 using System.IdentityModel.Tokens.Jwt;
 using UserService.API.DTOs;
@@ -30,7 +31,6 @@ public class AdminController : BaseApiController
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-
         var result = await _sender.Send(new AdminGetUserDetailQuery
         {
             CurrentAccountId = Guid.Parse(subjectId!),
@@ -48,7 +48,6 @@ public class AdminController : BaseApiController
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-
         var result = await _sender.Send(new AdminGetUsersQuery
         {
             AccountId = Guid.Parse(subjectId!),
@@ -66,7 +65,6 @@ public class AdminController : BaseApiController
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-
         var result = await _sender.Send(new AdminBanUserCommand
         {
             CurrentAccountId = Guid.Parse(subjectId!),
@@ -82,13 +80,10 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminGetUserReports([FromQuery] GetReportReasonsDTO getReportReasonsDTO, [FromQuery] PaginatedDTO paginatedDTO)
     {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new GetUserReportsQuery
         {
             Lang = getReportReasonsDTO.Language,
             paginatedDTO = paginatedDTO,
-            AccountId = Guid.Parse(subjectId!),
         });
 
         result.ThrowIfFailure();
@@ -101,11 +96,8 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminGetUserReportDetail([FromBody] AdminGetUserReportByAccountIdDTO adminGetUserReportByAccountIdDTO)
     {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new GetUserReportDetailByAccountIdQuery
         {
-            CurrentAccountId = Guid.Parse(subjectId!),
             AccountId = adminGetUserReportByAccountIdDTO.AccountId,
             Lang = adminGetUserReportByAccountIdDTO.Language ?? "en",
             Skip = adminGetUserReportByAccountIdDTO.Skip
@@ -121,14 +113,24 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminMarkReport([FromBody] ReportDTO reportDTO)
     {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new MarkReportCommand
         {
             ReportId = reportDTO.ReportId,
-            AccountId = Guid.Parse(subjectId!),
         });
 
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpGet("get-total-user")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(int), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetTotalUser()
+    {
+        var result = await _sender.Send(new AdminGetTotalUserNumberQuery
+        {
+        });
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
