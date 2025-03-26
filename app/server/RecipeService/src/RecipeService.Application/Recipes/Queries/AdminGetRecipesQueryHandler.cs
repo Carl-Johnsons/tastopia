@@ -8,7 +8,6 @@ using UserProto;
 namespace RecipeService.Application.Recipes.Queries;
 public class AdminGetRecipesQuery : IRequest<Result<PaginatedAdminRecipeListResponse?>>
 {
-    public Guid AccountId { get; set; }
     public PaginatedDTO paginatedDTO { get; set; } = null!;
 }
 public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery, Result<PaginatedAdminRecipeListResponse?>>
@@ -28,22 +27,10 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
     {
         var skip = request.paginatedDTO.Skip;
         var keyword = request.paginatedDTO.Keyword;
-        var accountId = request.AccountId;
-        if(accountId == Guid.Empty || skip == null || skip < 0)
+        if(skip == null || skip < 0)
         {
-            return Result<PaginatedAdminRecipeListResponse?>.Failure(RecipeError.NullParameter, "AccountId or Page is null");
+            return Result<PaginatedAdminRecipeListResponse?>.Failure(RecipeError.NullParameter, "Page is null");
         }
-
-        var adminResponse = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
-        {
-            AccountId = accountId.ToString(),
-        }, cancellationToken: cancellationToken);
-
-        if(adminResponse == null || !adminResponse.IsAdmin)
-        {
-            return Result<PaginatedAdminRecipeListResponse?>.Failure(RecipeError.PermissionDeny);
-        }
-
         var recipesQuery = _context.Recipes.AsQueryable();
         if (!string.IsNullOrEmpty(keyword))
         {
