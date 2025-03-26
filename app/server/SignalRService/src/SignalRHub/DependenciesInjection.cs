@@ -38,10 +38,10 @@ public static class DependenciesInjection
             //Global filter
             options.AddFilter<GlobalLoggingFilter>();
         })
-            .AddNewtonsoftJsonProtocol(options =>
-            {
-                options.PayloadSerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            });
+        .AddNewtonsoftJsonProtocol(options =>
+        {
+            options.PayloadSerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        });
 
         services.AddCors(options =>
         {
