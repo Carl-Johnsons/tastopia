@@ -3,18 +3,8 @@ import { SidebarLink } from "@/types/link";
 export const sidebarLinks: SidebarLink[] = [
   {
     imgURL: "/assets/icons/chart-dots-2.svg",
-    route: "/statistics/system",
-    label: "statistics",
-    children: [
-      {
-        route: "/statistics/system",
-        label: "statisticsSystem"
-      },
-      {
-        route: "/statistics/income",
-        label: "statisticsIncome"
-      }
-    ]
+    route: "/statistics",
+    label: "statistics"
   },
   {
     imgURL: "/assets/icons/grill.svg",
