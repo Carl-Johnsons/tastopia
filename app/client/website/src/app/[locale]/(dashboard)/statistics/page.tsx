@@ -1,21 +1,36 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import StackedAreaChart from "@/components/screen/statistics/StackedAreaChart";
-import BarChart from "@/components/screen/statistics/BarChart";
-import OnlineUserChart from "@/components/screen/statistics/OnlineUserChart";
 import TotalRecipe from "@/components/screen/statistics/TotalRecipe";
 import TotalOnlineUser from "@/components/screen/statistics/TotalOnlineUser";
 import TotalUser from "@/components/screen/statistics/TotalUser";
-import { getTotalRecipes } from "@/actions/recipe.action";
-import { getTotalUsers } from "@/actions/user.action";
+import {
+  getRecipeRanking,
+  getRecipeStatistic,
+  getTotalRecipes
+} from "@/actions/recipe.action";
+import { getAccountStatistic, getTotalUsers } from "@/actions/user.action";
 import { getTranslations } from "next-intl/server";
+import { RecipeChart } from "@/components/screen/statistics/RecipeChart";
+import { RecipeRanking } from "@/components/screen/statistics/RecipeRanking";
+import { getTagRanking } from "@/actions/tag.action";
+import { TagRanking } from "@/components/screen/statistics/TagRanking";
+import { AccountChart } from "@/components/screen/statistics/AccountChart";
+import LogoutButton from "@/components/shared/navbar/LogoutButton";
 
 export default async function System() {
   const t = await getTranslations("statistic");
   const totalRecipe = await getTotalRecipes();
   const totalUser = await getTotalUsers();
+  const recipeRankingList = await getRecipeRanking();
+  const tagRankingList = await getTagRanking();
+  const recipeStatistic = await getRecipeStatistic();
+  const accountStatistic = await getAccountStatistic();
+
+  console.log("accountStatistic", accountStatistic);
 
   return (
     <div className='flex size-full flex-col justify-center gap-4'>
+      {/* Overview */}
+      <LogoutButton />
       <Card className='flex flex-col'>
         <CardHeader className='items-center pb-0'>
           <CardTitle className='h2-bold text-black_white mb-8'>
@@ -28,9 +43,14 @@ export default async function System() {
           {totalUser !== 0 && <TotalUser totalUser={totalUser} />}
         </CardContent>
       </Card>
-      <OnlineUserChart />
-      <StackedAreaChart />
-      <BarChart />
+
+      {/* Chart */}
+      <RecipeChart chartData={recipeStatistic} />
+      <AccountChart chartData={accountStatistic} />
+
+      {/* Ranking */}
+      <RecipeRanking chartData={recipeRankingList} />
+      <TagRanking chartData={tagRankingList} />
     </div>
   );
 }
