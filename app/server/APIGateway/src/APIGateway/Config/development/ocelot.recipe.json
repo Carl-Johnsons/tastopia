@@ -15,6 +15,10 @@
       ],
       "UpstreamPathTemplate": "/api/admin/recipe/{everything}",
       "SwaggerKey": "recipe",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
       "RouteClaimsRequirement": {
         "role": "SUPER_ADMIN"
       }

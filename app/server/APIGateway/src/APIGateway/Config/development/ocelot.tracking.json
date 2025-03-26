@@ -13,6 +13,10 @@
       ],
       "UpstreamPathTemplate": "/api/admin/tracking/{everything}",
       "SwaggerKey": "tracking",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
       "RouteClaimsRequirement": {
         "role": "SUPER_ADMIN"
       }
