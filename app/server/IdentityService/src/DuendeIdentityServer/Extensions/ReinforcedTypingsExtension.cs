@@ -26,7 +26,6 @@ public static class ReinforcedTypingsExtension
             typeof(HourStatisticEntity),
             typeof(DateStatisticEntity),
             typeof(MonthStatisticEntity),
-            typeof(AdminGetAccountStatisticDTO),
             typeof(AccountIdentifierDTO),
             typeof(RegisterAccountDTO),
             typeof(VerifyAccountDTO),
