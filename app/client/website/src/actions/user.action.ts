@@ -175,3 +175,14 @@ export async function getUserDetailReports(
     throw error;
   }
 }
+
+export async function getTotalUsers() {
+  const url = "/api/admin/user/get-total-user";
+  try {
+    const { data } = await protectedAxiosInstance.get<number>(url);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}

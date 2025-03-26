@@ -3,43 +3,24 @@
 import * as React from "react";
 import { Label, Pie, PieChart } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-
-const chartData = [{ browser: "edge", visitors: 173, fill: "var(--color-edge)" }];
+import { useTranslations } from "next-intl";
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors"
-  },
-  chrome: {
-    label: "Chrome",
-    color: "hsl(var(--chart-1))"
-  },
-  safari: {
-    label: "Safari",
-    color: "hsl(var(--chart-2))"
-  },
-  firefox: {
-    label: "Firefox",
-    color: "hsl(var(--chart-3))"
-  },
   edge: {
     label: "Edge",
     color: "hsl(var(--chart-4))"
-  },
-  other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))"
   }
 } satisfies ChartConfig;
 
-export default function TotalUser() {
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-  }, []);
+export default function TotalUser({ totalUser }: { totalUser: number }) {
+  const t = useTranslations("statistic.platformOverview");
+  const chartData = [{ name: "user", value: totalUser, fill: "var(--color-edge)" }];
 
   return (
     <div className='flex-center mx-auto flex-col'>
-      <h3 className='base-bold text-black_white'>Total User</h3>
+      <h3 className='base-bold text-black_white'>
+        {t("totalUsers", { count: totalUser ?? 0 })}
+      </h3>
 
       <ChartContainer
         config={chartConfig}
@@ -48,8 +29,8 @@ export default function TotalUser() {
         <PieChart>
           <Pie
             data={chartData}
-            dataKey='visitors'
-            nameKey='browser'
+            dataKey='value'
+            nameKey='name'
             innerRadius={60}
             strokeWidth={5}
           >
@@ -68,14 +49,14 @@ export default function TotalUser() {
                         y={viewBox.cy}
                         className='fill-foreground text-3xl font-bold'
                       >
-                        {totalVisitors.toLocaleString()}
+                        {totalUser.toLocaleString()}
                       </tspan>
                       <tspan
                         x={viewBox.cx}
                         y={(viewBox.cy || 0) + 24}
                         className='fill-muted-foreground'
                       >
-                        Visitors
+                        {t("users", { count: totalUser ?? 0 })}
                       </tspan>
                     </text>
                   );

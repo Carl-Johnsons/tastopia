@@ -1,12 +1,18 @@
 "use client";
 import { API_GATEWAY_HOST } from "@/constants/api";
-import { HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
+import {
+  HubConnection,
+  HubConnectionBuilder,
+  HubConnectionState,
+  LogLevel
+} from "@microsoft/signalr";
 import { useSelectAccessToken } from "@/slices/auth.slice";
 import { useSelectUser, useSelectUserId } from "@/slices/user.slice";
 import {
   createContext,
   ReactNode,
   useCallback,
+  useContext,
   useEffect,
   useRef,
   useState
@@ -18,6 +24,7 @@ interface SignalRHubContextType {
   startConnection: () => Promise<void>;
   stopConnection: () => Promise<void>;
   connected: boolean;
+  onlineUserCount: number;
 }
 
 interface Props {
@@ -33,7 +40,8 @@ const SignalRHubProvider = ({ children }: Props) => {
   const user = useSelectUser();
   const currentUserId = useSelectUserId();
 
-  const { subscribeAllEvents, unsubscribeAllEvents } = useSubscribeSignalREvents();
+  const { subscribeAllEvents, unsubscribeAllEvents, onlineUserCount } =
+    useSubscribeSignalREvents();
   const connectionRef = useRef<HubConnection | null>(null);
   const isConnected = connectionRef?.current?.state === HubConnectionState.Connected;
 
@@ -41,7 +49,7 @@ const SignalRHubProvider = ({ children }: Props) => {
     if (!connectionRef.current || isConnected) return;
 
     console.log("starting signalr with user", user, "accessToken", accessToken);
-    console.log("connectionRef.current", connectionRef.current); 
+    console.log("connectionRef.current", connectionRef.current);
 
     connectionRef.current
       .start()
@@ -91,7 +99,8 @@ const SignalRHubProvider = ({ children }: Props) => {
         connection: connectionRef.current,
         startConnection,
         stopConnection,
-        connected: !waitingToReconnect
+        connected: !waitingToReconnect,
+        onlineUserCount
       }}
     >
       {children}
@@ -99,4 +108,13 @@ const SignalRHubProvider = ({ children }: Props) => {
   );
 };
 
-export { SignalRHubProvider, SignalRHubContext };
+const useSignalR = () => {
+  const context = useContext(SignalRHubContext);
+  if (context === undefined) {
+    throw new Error("useSignalR must be use within a SignalRProvider");
+  }
+
+  return context;
+};
+
+export { SignalRHubProvider, SignalRHubContext, useSignalR };

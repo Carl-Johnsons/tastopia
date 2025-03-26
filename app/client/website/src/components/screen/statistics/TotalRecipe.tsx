@@ -3,42 +3,23 @@
 import * as React from "react";
 import { Label, Pie, PieChart } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-const chartData = [{ browser: "chrome", visitors: 275, fill: "var(--color-chrome)" }];
+import { useTranslations } from "next-intl";
 
 const chartConfig = {
-  visitors: {
-    label: "Visitors"
-  },
   chrome: {
-    label: "Chrome",
+    label: "Recipe",
     color: "hsl(var(--chart-1))"
-  },
-  safari: {
-    label: "Safari",
-    color: "hsl(var(--chart-2))"
-  },
-  firefox: {
-    label: "Firefox",
-    color: "hsl(var(--chart-3))"
-  },
-  edge: {
-    label: "Edge",
-    color: "hsl(var(--chart-4))"
-  },
-  other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))"
   }
 } satisfies ChartConfig;
 
-export default function TotalRecipe() {
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-  }, []);
-
+export default function TotalRecipe({ totalRecipe }: { totalRecipe: number }) {
+  const t = useTranslations("statistic.platformOverview");
+  const chartData = [{ name: "recipe", value: totalRecipe, fill: "var(--color-chrome)" }];
   return (
     <div className='flex-center mx-auto flex-col'>
-      <h3 className='base-bold text-black_white'>Total Recipe</h3>
+      <h3 className='base-bold text-black_white'>
+        {t("totalRecipes", { count: totalRecipe })}
+      </h3>
 
       <ChartContainer
         config={chartConfig}
@@ -47,8 +28,8 @@ export default function TotalRecipe() {
         <PieChart>
           <Pie
             data={chartData}
-            dataKey='visitors'
-            nameKey='browser'
+            dataKey='value'
+            nameKey='name'
             innerRadius={60}
             strokeWidth={5}
           >
@@ -67,14 +48,14 @@ export default function TotalRecipe() {
                         y={viewBox.cy}
                         className='fill-foreground text-3xl font-bold'
                       >
-                        {totalVisitors.toLocaleString()}
+                        {totalRecipe.toLocaleString()}
                       </tspan>
                       <tspan
                         x={viewBox.cx}
                         y={(viewBox.cy || 0) + 24}
                         className='fill-muted-foreground'
                       >
-                        Recipes
+                        {t("recipes", { count: totalRecipe })}
                       </tspan>
                     </text>
                   );
