@@ -5,16 +5,18 @@ import { ReportType } from "@/constants/reports";
 import { Link } from "@/i18n/navigation";
 import { CommentDetailParamProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
+import { getLocale } from "next-intl/server";
 
 export default async function Page({ params }: CommentDetailParamProps) {
   const { id, recipeId } = params;
+  const lang = await getLocale();
 
   try {
     const { reports, comment } = await getCommentReportById({
       commentId: id,
       recipeId,
       options: {
-        lang: "en"
+        lang
       }
     });
 

@@ -13,7 +13,7 @@ import { ReportStatus } from "@/constants/reports";
 import DataTableProvider, { OnChangeActiveFn } from "./Provider";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import useReportRecipeTableColumns from "@/hooks/table/useReportRecipeTableColumns";
 
 export default function Table() {
@@ -21,7 +21,7 @@ export default function Table() {
   const [skip, setSkip] = useState(0);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("DESC");
-  const [lang, setLang] = useState("en");
+  const lang = useLocale();
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
   const t = useTranslations("administerReportRecipes");

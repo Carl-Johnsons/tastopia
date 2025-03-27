@@ -7,6 +7,7 @@ import { adminBanUser } from "@/actions/user.action";
 import { toast } from "react-toastify";
 import Status from "@/components/ui/Status";
 import { useTranslations } from "next-intl";
+import { useInvalidateAdmin } from "@/hooks/query";
 
 export const usersColumns = (t: any) => [
   {
@@ -72,6 +73,7 @@ export const ActionButtons = ({
   const router = useRouter();
   const [active, setActive] = useState<boolean>(isActive);
   const url = useMemo(() => `/users/${accountId}`, [accountId]);
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleDetailClick = () => {
     router.push(url);
@@ -89,6 +91,8 @@ export const ActionButtons = ({
       } else {
         toast.success(t("notifications.disableSuccess"));
       }
+
+      invalidateCurrentAdminActivities();
     } else {
       toast.error(t("notifications.error"));
     }

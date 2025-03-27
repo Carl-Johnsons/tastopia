@@ -27,6 +27,7 @@ import Image from "@/components/shared/common/Image";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
 import { useSelectUserId } from "@/slices/user.slice";
+import { useLocale } from "next-intl";
 
 const columns: TableColumn<IAdminRecipeResponse>[] = [
   {
@@ -121,7 +122,6 @@ type ActionButtonsProps = {
 
 const ActionButtons = ({ recipeId, isActive }: ActionButtonsProps) => {
   const { onChangeActive } = useContext(DataTableContext) as DataTableContextValue;
-  const currentUserId = useSelectUserId();
 
   return (
     <div className='flex gap-2'>
@@ -133,7 +133,6 @@ const ActionButtons = ({ recipeId, isActive }: ActionButtonsProps) => {
         <RestoreRecipeButton
           title='Restore'
           targetId={recipeId}
-          currentUserId={currentUserId}
           noText
           toolTip
           onSuccess={() => {
@@ -144,7 +143,6 @@ const ActionButtons = ({ recipeId, isActive }: ActionButtonsProps) => {
         <DisableRecipeButton
           title='Disable'
           targetId={recipeId}
-          currentUserId={currentUserId}
           noText
           toolTip
           onSuccess={() => {
@@ -171,7 +169,7 @@ export default function Table() {
   const [skip, setSkip] = useState(0);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("DESC");
-  const [lang, setLang] = useState("en");
+  const lang = useLocale();
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
 
