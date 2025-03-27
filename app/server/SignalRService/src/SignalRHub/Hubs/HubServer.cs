@@ -6,7 +6,8 @@ using SignalRHub.DTOs;
 using Contract.Interfaces;
 using Contract.DTOs.SignalRDTO;
 using SignalRHub.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
+using Contract.Constants;
+using SignalRHub.Constants;
 
 namespace SignalRHub.Hubs;
 
@@ -37,15 +38,18 @@ public class HubServer : Hub<IHubClient>
             if (string.IsNullOrEmpty(userId))
             {
                 var RequestUrl = Context.GetHttpContext()?.Request.GetDisplayUrl() ?? "Unknown";
-                Log.Information($"Service with url {RequestUrl} has connected to signalR sucessfully!");
+                Log.Information($"Service with url {RequestUrl} has connected to signalR successfully!");
             }
             else
             {
-                Log.Information($"user with id {userId} has connected to signalR sucessfully!");
+                Log.Information($"user with id {userId} has connected to signalR successfully!");
                 await ConnectWithUserIdAsync(Guid.Parse(userId));
-                _memoryTracker.UserConnected(userId);
-                Log.Information($"Trigger event in client: number:"+_memoryTracker.OnlineUserNumber);
-                await Clients.Group("Admin").ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
+                if(Context.User != null && Context.User.IsInRole(Roles.Code.USER.ToString()))
+                {
+                    _memoryTracker.UserConnected(userId);
+                    Log.Information($"Trigger event in client: number:"+_memoryTracker.OnlineUserNumber);
+                    await Clients.Group(ROLE_BASED_GROUP.ADMIN).ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
+                }
             }
         }
         catch (Exception ex)
@@ -62,9 +66,12 @@ public class HubServer : Hub<IHubClient>
         {
             Log.Information($"Connection {Context.ConnectionId} disconnected and removed from UserConnectionMap.");
             await Clients.All.Disconnected(userDisconnectedId);
-            _memoryTracker.UserDisconnected(userDisconnectedId.ToString());
-            Log.Information($"Trigger event in client: number:" + _memoryTracker.OnlineUserNumber);
-            await Clients.Group("Admin").ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
+            if(Context.User != null && Context.User.IsInRole(Roles.Code.USER.ToString()))
+            {
+                _memoryTracker.UserDisconnected(userDisconnectedId.ToString());
+                Log.Information($"Trigger event in client: number:" + _memoryTracker.OnlineUserNumber);
+                await Clients.Group(ROLE_BASED_GROUP.ADMIN).ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
+            }
         }
         else
         {
@@ -115,15 +122,6 @@ public class HubServer : Hub<IHubClient>
         await Task.WhenAll(tasks);
     }
 
-    private string? GetRoleFromToken(string? accessToken)
-    {
-        var handler = new JwtSecurityTokenHandler();
-        var jwtToken = handler.ReadJwtToken(accessToken);
-
-        var roleClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "role");
-        return roleClaim?.Value;
-    }
-
     #region Helper method
     private async Task ConnectWithUserIdAsync(Guid userId)
     {
@@ -132,18 +130,11 @@ public class HubServer : Hub<IHubClient>
         Log.Information(userId + " Connected");
 
         // Admin user
-        var userToken = _httpContextAccessor.HttpContext?.Request.Query["access_token"].ToString();
-        if(!string.IsNullOrEmpty(userToken))
+        if (Context.User != null && (Context.User.IsInRole(Roles.Code.SUPER_ADMIN.ToString()) || Context.User.IsInRole(Roles.Code.ADMIN.ToString())))
         {
-            Log.Information("user token:" + userToken); 
-            var role = GetRoleFromToken(userToken);
-
-            if (Context.User != null && (role == "ADMIN" || role == "SUPER ADMIN"))
-            {
-                Log.Information("Add admin to group admin");
-                await Groups.AddToGroupAsync(Context.ConnectionId, "Admin");
-                return;
-            }
+            Log.Information("Add admin to group Admin");
+            await Groups.AddToGroupAsync(Context.ConnectionId, ROLE_BASED_GROUP.ADMIN);
+            return;
         }
 
         foreach (var key in UserConnectionMap.Keys)
