@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { StatisticDateItem } from "@/types/statistic";
+import { useLocale, useTranslations } from "next-intl";
 
 const chartConfig = {
   accounts: {
@@ -43,6 +44,8 @@ type AccountChartProps = {
 };
 
 export function AccountChart({ chartData }: AccountChartProps) {
+  const currentLanguage = useLocale();
+  const t = useTranslations("statistic.charts.accountStatistic");
   const [timeRange, setTimeRange] = useState("90d");
 
   const filteredData = chartData.filter(item => {
@@ -69,51 +72,49 @@ export function AccountChart({ chartData }: AccountChartProps) {
     <Card>
       <CardHeader className='flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row'>
         <div className='grid flex-1 gap-1 text-center sm:text-left'>
-          <CardTitle>Account statistic</CardTitle>
-          <CardDescription>
-            Displays the number of accounts created over the selected time period
-          </CardDescription>
+          <CardTitle className='text-black_white'>{t("title")}</CardTitle>
+          <CardDescription>{t("description")}</CardDescription>
         </div>
         <Select
           value={timeRange}
           onValueChange={setTimeRange}
         >
           <SelectTrigger
-            className='w-[160px] rounded-lg sm:ml-auto'
+            className='text-black_white w-[160px] rounded-lg sm:ml-auto'
             aria-label='Select a value'
           >
-            <SelectValue placeholder='Last 3 months' />
+            <SelectValue placeholder={t("filter.placeholder")} />
           </SelectTrigger>
-          <SelectContent className='bg-white_black rounded-xl'>
+          <SelectContent className='bg-white_black100 text-black_white rounded-xl'>
             <SelectItem
               value='1d'
               className='rounded-lg'
             >
-              Last 24 hours
+              {t("filter.options.1d")}
             </SelectItem>
             <SelectItem
               value='7d'
               className='rounded-lg'
             >
-              Last 7 days
+              {t("filter.options.7d")}
             </SelectItem>
             <SelectItem
               value='30d'
               className='rounded-lg'
             >
-              Last 30 days
+              {t("filter.options.30d")}
             </SelectItem>
             <SelectItem
               value='90d'
               className='rounded-lg'
             >
-              Last 3 months
+              {t("filter.options.90d")}
             </SelectItem>
             <SelectItem
               value='360d'
               className='rounded-lg'
             >
-              Last 12 months
+              {t("filter.options.360d")}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -159,7 +160,7 @@ export function AccountChart({ chartData }: AccountChartProps) {
               minTickGap={32}
               tickFormatter={value => {
                 const date = new Date(value);
-                return date.toLocaleDateString("en-US", {
+                return date.toLocaleDateString(currentLanguage, {
                   month: "short",
                   day: "numeric"
                 });
@@ -169,12 +170,14 @@ export function AccountChart({ chartData }: AccountChartProps) {
               cursor={false}
               content={
                 <ChartTooltipContent
+                  className='text-black_white'
                   labelFormatter={value => {
-                    return new Date(value).toLocaleDateString("en-US", {
+                    return new Date(value).toLocaleDateString(currentLanguage, {
                       month: "short",
                       day: "numeric"
                     });
                   }}
+                  customLabel={t("accountCount")}
                   indicator='dot'
                 />
               }

@@ -44,8 +44,8 @@ type RecipeChartProps = {
 };
 
 export function RecipeChart({ chartData }: RecipeChartProps) {
-  const t = useTranslations("Statistics"); // Assuming 'Statistics' is your namespace
   const currentLanguage = useLocale();
+  const t = useTranslations("statistic.charts.recipeStatistic");
   const [timeRange, setTimeRange] = useState("90d");
 
   const filteredData = chartData.filter(item => {
@@ -72,10 +72,8 @@ export function RecipeChart({ chartData }: RecipeChartProps) {
     <Card>
       <CardHeader className='flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row'>
         <div className='grid flex-1 gap-1 text-center sm:text-left'>
-          <CardTitle className='text-black_white'>Recipe statistic</CardTitle>
-          <CardDescription>
-            Displays the number of recipes created over the selected time period
-          </CardDescription>
+          <CardTitle className='text-black_white'>{t("title")}</CardTitle>
+          <CardDescription>{t("description")}</CardDescription>
         </div>
         <Select
           value={timeRange}
@@ -85,38 +83,38 @@ export function RecipeChart({ chartData }: RecipeChartProps) {
             className='text-black_white w-[160px] rounded-lg sm:ml-auto'
             aria-label='Select a value'
           >
-            <SelectValue placeholder='Last 3 months' />
+            <SelectValue placeholder={t("filter.placeholder")} />
           </SelectTrigger>
           <SelectContent className='bg-white_black100 text-black_white rounded-xl'>
             <SelectItem
               value='1d'
               className='rounded-lg'
             >
-              Last 24 hours
+              {t("filter.options.1d")}
             </SelectItem>
             <SelectItem
               value='7d'
               className='rounded-lg'
             >
-              Last 7 days
+              {t("filter.options.7d")}
             </SelectItem>
             <SelectItem
               value='30d'
               className='rounded-lg'
             >
-              Last 30 days
+              {t("filter.options.30d")}
             </SelectItem>
             <SelectItem
               value='90d'
               className='rounded-lg'
             >
-              Last 3 months
+              {t("filter.options.90d")}
             </SelectItem>
             <SelectItem
               value='360d'
               className='rounded-lg'
             >
-              Last 12 months
+              {t("filter.options.360d")}
             </SelectItem>
           </SelectContent>
         </Select>
@@ -179,17 +177,7 @@ export function RecipeChart({ chartData }: RecipeChartProps) {
                       day: "numeric"
                     });
                   }}
-                  // Add the formatter prop here
-                  formatter={(value, name) => {
-                    // Assuming 'recipeCount' is the key in your translation file
-                    // e.g., "recipeCount": "{count, plural, =1 {# recipe} other {# recipes}}"
-                    // The 'name' parameter helps if you have multiple lines in the chart,
-                    // but here we only have 'number' (mapped to 'recipe' in config).
-                    if (name === "recipe") {
-                      return t("recipeCount", { count: value });
-                    }
-                    return value; // Fallback for other potential data keys
-                  }}
+                  customLabel={t("recipeCount")}
                   indicator='dot'
                 />
               }
