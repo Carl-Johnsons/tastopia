@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { StatisticDateItem } from "@/types/statistic";
+import { useLocale } from "next-intl";
 
 const chartConfig = {
   recipes: {
@@ -43,6 +44,7 @@ type RecipeChartProps = {
 };
 
 export function RecipeChart({ chartData }: RecipeChartProps) {
+  const currentLanguage = useLocale();
   const [timeRange, setTimeRange] = useState("90d");
 
   const filteredData = chartData.filter(item => {
@@ -69,7 +71,7 @@ export function RecipeChart({ chartData }: RecipeChartProps) {
     <Card>
       <CardHeader className='flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row'>
         <div className='grid flex-1 gap-1 text-center sm:text-left'>
-          <CardTitle>Recipe statistic</CardTitle>
+          <CardTitle className='text-black_white'>Recipe statistic</CardTitle>
           <CardDescription>
             Displays the number of recipes created over the selected time period
           </CardDescription>
@@ -79,12 +81,12 @@ export function RecipeChart({ chartData }: RecipeChartProps) {
           onValueChange={setTimeRange}
         >
           <SelectTrigger
-            className='w-[160px] rounded-lg sm:ml-auto'
+            className='text-black_white w-[160px] rounded-lg sm:ml-auto'
             aria-label='Select a value'
           >
             <SelectValue placeholder='Last 3 months' />
           </SelectTrigger>
-          <SelectContent className='bg-white_black rounded-xl'>
+          <SelectContent className='bg-white_black100 text-black_white rounded-xl'>
             <SelectItem
               value='1d'
               className='rounded-lg'
@@ -159,7 +161,7 @@ export function RecipeChart({ chartData }: RecipeChartProps) {
               minTickGap={32}
               tickFormatter={value => {
                 const date = new Date(value);
-                return date.toLocaleDateString("en-US", {
+                return date.toLocaleDateString(currentLanguage, {
                   month: "short",
                   day: "numeric"
                 });
@@ -169,8 +171,9 @@ export function RecipeChart({ chartData }: RecipeChartProps) {
               cursor={false}
               content={
                 <ChartTooltipContent
+                  className='text-black_white'
                   labelFormatter={value => {
-                    return new Date(value).toLocaleDateString("en-US", {
+                    return new Date(value).toLocaleDateString(currentLanguage, {
                       month: "short",
                       day: "numeric"
                     });
