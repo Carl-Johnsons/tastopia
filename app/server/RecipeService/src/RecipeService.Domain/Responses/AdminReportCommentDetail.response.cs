@@ -1,4 +1,6 @@
-﻿namespace RecipeService.Domain.Responses;
+﻿using Contract.DTOs.UserDTO;
+
+namespace RecipeService.Domain.Responses;
 
 public class AdminReportCommentDetailResponse
 {
@@ -9,9 +11,10 @@ public class AdminReportCommentDetailResponse
 
 public class AdminSingleReportCommentDetailResponse
 {
+    public SimpleUser Reporter { get; set; } = null!;
     public CommentDetailResponse Comment { get; set; } = null!;
     public AdminRecipeResponse Recipe { get; set; } = null!;
-    public ReportRecipeResponse Report { get; set; } = null!;
+    public SimpleReportResponse Report { get; set; } = null!;
 }
 
 public class CommentDetailResponse

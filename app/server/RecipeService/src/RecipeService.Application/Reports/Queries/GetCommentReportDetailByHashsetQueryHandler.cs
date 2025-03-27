@@ -43,12 +43,26 @@ public class GetCommentReportDetailByHashSetQueryHandler : IRequestHandler<GetCo
         var pipeline = userReportCommentCollection.Aggregate()
             .Match(urc => request.ReportIds.Contains(urc.Id))
             .Lookup<UserReportComment, Recipe, CommentReportWithRecipe>(foreignCollection: recipeCollection,
-                                                                     localField: urc => urc.Id,
+                                                                     localField: urc => urc.RecipeId,
                                                                      foreignField: r => r.Id,
                                                                      @as: rwrl => rwrl.Recipe)
+            .Unwind<CommentReportWithRecipe, CommentReportWithRecipe>(rwrl => rwrl.Recipe)
             .Project(r => new CommentReportWithRecipe
             {
-                Recipe = r.Recipe,
+                Recipe = new Recipe
+                {
+                    Id = r.Recipe.Id,
+                    Description = r.Recipe.Description,
+                    AuthorId = r.Recipe.AuthorId,
+                    CreatedAt = r.Recipe.CreatedAt,
+                    UpdatedAt = r.Recipe.UpdatedAt,
+                    CookTime = r.Recipe.CookTime,
+                    ImageUrl = r.Recipe.ImageUrl,
+                    IsActive = r.Recipe.IsActive,
+                    Title = r.Recipe.Title,
+                    VoteDiff = r.Recipe.VoteDiff,
+                    Ingredients = r.Recipe.Ingredients,
+                },
                 Id = r.Id,
                 MatchComment = r.Recipe.Comments.FirstOrDefault(c => c.Id == r.EntityId)!,
                 AccountId = r.AccountId,
@@ -63,14 +77,15 @@ public class GetCommentReportDetailByHashSetQueryHandler : IRequestHandler<GetCo
             .ToListAsync(cancellationToken);
 
         var result = await pipeline;
-        if (result == null)
+
+        if (result == null || result.Count == 0)
         {
             return Result<Dictionary<Guid, AdminSingleReportCommentDetailResponse>?>.Failure(ReportError.NotFound);
         }
-
-        List<Guid> accountIds = result.Select(r => r.AccountId).ToList();
-        accountIds.Union(result.Select(r => r.MatchComment.AccountId));
-        accountIds.Union(result.Select(r => r.Recipe.AuthorId));
+        List<Guid> accountIds = result.Select(r => r.AccountId)
+            .Union(result.Select(r => r.MatchComment.AccountId))
+            .Union(result.Select(r => r.Recipe.AuthorId))
+            .ToList();
 
         var repeatedField = _mapper.Map<RepeatedField<string>>(accountIds);
         var mapUserGrpc = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
@@ -80,6 +95,13 @@ public class GetCommentReportDetailByHashSetQueryHandler : IRequestHandler<GetCo
 
         var reportDict = result.ToDictionary(r => r.Id, report => new AdminSingleReportCommentDetailResponse
         {
+            Reporter = new Contract.DTOs.UserDTO.SimpleUser
+            {
+                AccountId = report.AccountId,
+                AvtUrl = mapUserGrpc.Users[report.AccountId.ToString()].AvtUrl,
+                AccountUsername = mapUserGrpc.Users[report.AccountId.ToString()].AccountUsername,
+                DisplayName = mapUserGrpc.Users[report.AccountId.ToString()].DisplayName,
+            },
             Comment = new CommentDetailResponse
             {
                 Id = report.MatchComment.Id,
@@ -96,23 +118,23 @@ public class GetCommentReportDetailByHashSetQueryHandler : IRequestHandler<GetCo
             {
                 Id = report.Recipe.Id,
                 AuthorId = report.Recipe.AuthorId,
-                AuthorAvatarURL = mapUserGrpc.Users[report.MatchComment.AccountId.ToString()].AvtUrl,
-                AuthorDisplayName = mapUserGrpc.Users[report.MatchComment.AccountId.ToString()].DisplayName,
-                AuthorUsername = mapUserGrpc.Users[report.MatchComment.AccountId.ToString()].AccountUsername,
+                AuthorAvatarURL = mapUserGrpc.Users[report.Recipe.AuthorId.ToString()].AvtUrl,
+                AuthorDisplayName = mapUserGrpc.Users[report.Recipe.AuthorId.ToString()].DisplayName,
+                AuthorUsername = mapUserGrpc.Users[report.Recipe.AuthorId.ToString()].AccountUsername,
                 CreatedAt = report.Recipe.CreatedAt,
                 Ingredients = string.Join(", ", report.Recipe.Ingredients),
                 IsActive = report.Recipe.IsActive,
                 RecipeImageUrl = report.Recipe.ImageUrl,
+                Description = report.Recipe.Description,
+                UpdatedAt = report.Recipe.UpdatedAt,
                 Title = report.Recipe.Title
             },
-            Report = new ReportRecipeResponse
+            Report = new SimpleReportResponse
             {
                 Id = report.Id,
                 AdditionalDetail = report.AdditionalDetails,
                 CreatedAt = report.CreatedAt,
-                ReporterAvtUrl = mapUserGrpc.Users[report.AccountId.ToString()].AvtUrl,
-                ReporterUsername = mapUserGrpc.Users[report.AccountId.ToString()].AccountUsername,
-                ReporterDisplayName = mapUserGrpc.Users[report.AccountId.ToString()].DisplayName,
+                ReporterAccountId = report.AccountId,
                 Status = report.Status.ToString(),
                 Reasons = ReportReasonData.CommentReportReasons.Where(rrr => report.ReasonCodes.Contains(rrr.Code))
                                                               .Select(rrr => request.Lang == LanguageValidation.Vi ? rrr.Vi : rrr.En)

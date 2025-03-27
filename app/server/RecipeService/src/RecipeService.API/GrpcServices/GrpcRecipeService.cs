@@ -195,4 +195,136 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
 
         return grpcResult;
     }
+
+    public override async Task<GrpcMapCommentReports> GetCommentReports(GrpcGetCommentReportRequest request, ServerCallContext context)
+    {
+        var set = request.Ids.Select(Guid.Parse).ToHashSet();
+
+        var result = await _sender.Send(new GetCommentReportDetailByHashSetQuery
+        {
+            Lang = request.Lang,
+            ReportIds = set
+        });
+        result.ThrowIfFailure();
+
+        var mapField = new MapField<string, GrpcCommentReportResponse>();
+        foreach (var (k, v) in result.Value!)
+        {
+            RepeatedField<string> reasonRepeatedField = [.. v.Report.Reasons];
+
+            mapField.Add(k.ToString(), new GrpcCommentReportResponse
+            {
+                Reporter = new CommonProto.GrpcSimpleUser
+                {
+                    AccountId = v.Reporter.AccountId.ToString(),
+                    AccountUsername = v.Reporter.AccountUsername,
+                    AvtUrl = v.Reporter.AvtUrl,
+                    DisplayName = v.Reporter.DisplayName
+                },
+                Comment = new GrpcSimpleComment
+                {
+                    Id = v.Comment.Id.ToString(),
+                    AuthorAvatarURL = v.Comment.AuthorAvatarURL,
+                    AuthorDisplayName = v.Comment.AuthorDisplayName,
+                    AuthorId = v.Comment.Id.ToString(),
+                    AuthorUsername = v.Comment.AuthorUsername,
+                    Content = v.Comment.Content,
+                    IsActive = v.Comment.IsActive,
+                    CreatedAt = v.Comment.CreatedAt.ToTimestamp(),
+                    UpdatedAt = v.Comment.UpdatedAt.ToTimestamp()
+                },
+                Recipe = new GrpcSimpleRecipe
+                {
+                    Id = v.Recipe.Id.ToString(),
+                    AuthorAvtUrl = v.Recipe.AuthorAvatarURL,
+                    AuthorDisplayName = v.Recipe.AuthorDisplayName,
+                    UpdatedAt = v.Recipe.UpdatedAt.ToTimestamp(),
+                    CreatedAt = v.Recipe.CreatedAt.ToTimestamp(),
+                    AuthorId = v.Recipe.AuthorId.ToString(),
+                    AuthorUsername = v.Recipe.AuthorUsername,
+                    Description = v.Recipe.Description,
+                    Title = v.Recipe.Title,
+                    RecipeImgUrl = v.Recipe.RecipeImageUrl,
+                    //Not need mapping this right now
+                    VoteDiff = 0,
+                    NumberOfComment = 0,
+                    Vote = ""
+                },
+                Report = new CommonProto.GrpcSimpleReport
+                {
+                    Id = v.Report.Id.ToString(),
+                    AdditionalDetail = v.Report.AdditionalDetail,
+                    ReporterAccountId = v.Report.ReporterAccountId.ToString(),
+                    CreatedAt = v.Report.CreatedAt.ToTimestamp(),
+                    Reasons = { reasonRepeatedField },
+                    Status = v.Report.Status
+                }
+            });
+        }
+
+        return new GrpcMapCommentReports
+        {
+            CommentReports = { mapField }
+        };
+    }
+
+    public override async Task<GrpcMapRecipeReports> GetRecipeReports(GrpcGetRecipeReportRequest request, ServerCallContext context)
+    {
+        var set = request.Ids.Select(Guid.Parse).ToHashSet();
+
+        var result = await _sender.Send(new GetRecipeReportDetailByHashSetQuery
+        {
+            Lang = request.Lang,
+            ReportIds = set
+        });
+        result.ThrowIfFailure();
+
+        var mapField = new MapField<string, GrpcRecipeReportResponse>();
+        foreach (var (k, v) in result.Value!)
+        {
+            RepeatedField<string> reasonRepeatedField = [.. v.Report.Reasons];
+
+            mapField.Add(k.ToString(), new GrpcRecipeReportResponse
+            {
+                Reporter = new CommonProto.GrpcSimpleUser
+                {
+                    AccountId = v.Reporter.AccountId.ToString(),
+                    DisplayName = v.Reporter.DisplayName,
+                    AccountUsername = v.Reporter.AccountUsername,
+                    AvtUrl = v.Reporter.AvtUrl
+                },
+                Recipe = new GrpcSimpleRecipe
+                {
+                    Id = v.Recipe.Id.ToString(),
+                    AuthorAvtUrl = v.Recipe.AuthorAvatarURL,
+                    AuthorDisplayName = v.Recipe.AuthorDisplayName,
+                    UpdatedAt = v.Recipe.UpdatedAt.ToTimestamp(),
+                    CreatedAt = v.Recipe.CreatedAt.ToTimestamp(),
+                    AuthorId = v.Recipe.AuthorId.ToString(),
+                    AuthorUsername = v.Recipe.AuthorUsername,
+                    Description = v.Recipe.Description,
+                    Title = v.Recipe.Title,
+                    RecipeImgUrl = v.Recipe.RecipeImageUrl,
+                    //Not need mapping this right now
+                    VoteDiff = 0,
+                    NumberOfComment = 0,
+                    Vote = ""
+                },
+                Report = new CommonProto.GrpcSimpleReport
+                {
+                    Id = v.Report.Id.ToString(),
+                    AdditionalDetail = v.Report.AdditionalDetail,
+                    CreatedAt = v.Report.CreatedAt.ToTimestamp(),
+                    ReporterAccountId = v.Report.ReporterAccountId.ToString(),
+                    Reasons = { reasonRepeatedField },
+                    Status = v.Report.Status
+                }
+            });
+        }
+
+        return new GrpcMapRecipeReports
+        {
+            RecipeReports = { mapField }
+        };
+    }
 }

@@ -111,6 +111,8 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
                 AuthorDisplayName = mapUserGrpc.Users[result.AuthorId.ToString()].DisplayName,
                 AuthorUsername = mapUserGrpc.Users[result.AuthorId.ToString()].AccountUsername,
                 CreatedAt = result.CreatedAt,
+                Description = result.Description,
+                UpdatedAt = result.UpdatedAt,
                 Ingredients = string.Join(", ", result.Ingredients),
                 IsActive = result.IsActive,
                 RecipeImageUrl = result.ImageUrl,

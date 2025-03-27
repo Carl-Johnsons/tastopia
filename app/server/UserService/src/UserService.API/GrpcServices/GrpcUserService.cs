@@ -54,10 +54,10 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         }).ToDictionary(u => u.AccountId);
 
 
-        var mapField = new MapField<string, GrpcSimpleUser>();
+        var mapField = new MapField<string, CommonProto.GrpcSimpleUser>();
         foreach (var (key, value) in mapUser)
         {
-            mapField[key.ToString()] = new GrpcSimpleUser
+            mapField[key.ToString()] = new CommonProto.GrpcSimpleUser
             {
                 AccountId = value.AccountId.ToString(),
                 AvtUrl = value.AvtUrl,
@@ -266,18 +266,33 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         var mapField = new MapField<string, GrpcUserReport>();
         foreach (var (k, v) in result.Value!)
         {
+            RepeatedField<string> reasonRepeatedField = [.. v.Report.Reasons];
+
             mapField.Add(k.ToString(), new GrpcUserReport
             {
-                ReportedId = v.ReportedId.ToString(),
-                CreatedAt = v.CreatedAt.ToTimestamp(),
-                ReportedDisplayName = v.ReportedDisplayName,
-                ReportedIsActive = v.ReportedIsActive,
-                ReportedUsername = v.ReportedUsername,
-                ReporterAccountId = v.ReporterAccountId.ToString(),
-                ReporterDisplayName = v.ReporterDisplayName,
-                ReportReason = v.ReportReason,
-                Status = v.Status,
-                ReportId = v.ReportId.ToString(),
+                Report = new CommonProto.GrpcSimpleReport
+                {
+                    Id = v.Report.Id.ToString(),
+                    AdditionalDetail = v.Report.AdditionalDetail,
+                    CreatedAt = v.Report.CreatedAt.ToTimestamp(),
+                    Reasons = { reasonRepeatedField },
+                    ReporterAccountId = v.Report.ReporterAccountId.ToString(),
+                    Status = v.Report.Status
+                },
+                User = new CommonProto.GrpcSimpleUser
+                {
+                    AccountId = v.User.AccountId.ToString(),
+                    AccountUsername = v.User.AccountUsername,
+                    AvtUrl = v.User.AvtUrl,
+                    DisplayName = v.User.DisplayName
+                },
+                Reporter = new CommonProto.GrpcSimpleUser
+                {
+                    AccountId = v.Reporter.AccountId.ToString(),
+                    AccountUsername = v.Reporter.AccountUsername,
+                    AvtUrl = v.Reporter.AvtUrl,
+                    DisplayName = v.Reporter.DisplayName
+                }
             });
         }
 

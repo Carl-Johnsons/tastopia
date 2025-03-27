@@ -32,13 +32,26 @@ public class CommentAdminActivityLogResponse : AdminActivityLogResponse
 
 public class UserReportAdminActivityLogResponse : AdminActivityLogResponse
 {
-    public UserReportLogResponse Report { get; set; } = null!;
+    public UserLogResponse User { get; set; } = null!;
+    public UserLogResponse Reporter { get; set; } = null!;
+    public ReportLogResponse Report { get; set; } = null!;
 }
 
-public class UserAdminActivityLogResponse : AdminActivityLogResponse
+public class CommentReportAdminActivityLogResponse : AdminActivityLogResponse
 {
-    public UserLogResponse User { get; set; } = null!;
+    public UserLogResponse Reporter { get; set; } = null!;
+    public RecipeLogResponse Recipe { get; set; } = null!;
+    public CommentLogResponse Comment { get; set; } = null!;
+    public ReportLogResponse Report { get; set; } = null!;
 }
+
+public class RecipeReportAdminActivityLogResponse : AdminActivityLogResponse
+{
+    public UserLogResponse Reporter { get; set; } = null!;
+    public RecipeLogResponse Recipe { get; set; } = null!;
+    public ReportLogResponse Report { get; set; } = null!;
+}
+
 
 public class RecipeLogResponse
 {
@@ -75,16 +88,16 @@ public class UserLogResponse
     public string AvatarURL { get; set; } = null!;
 }
 
-public class UserReportLogResponse
+public class UserAdminActivityLogResponse : AdminActivityLogResponse
 {
-    public Guid ReportId { get; set; }
-    public Guid ReportedId { get; set; }
-    public string ReportedUsername { get; set; } = null!;
-    public string ReportedDisplayName { get; set; } = null!;
-    public bool ReportedIsActive { get; set; }
+    public UserLogResponse User { get; set; } = null!;
+}
+public class ReportLogResponse
+{
+    public Guid Id { get; set; }
     public Guid ReporterAccountId { get; set; }
-    public string ReporterDisplayName { get; set; } = null!;
-    public string ReportReason { get; set; } = null!;
-    public DateTime CreatedAt { get; set; }
+    public List<string> Reasons { get; set; } = [];
+    public string? AdditionalDetail { get; set; }
     public string Status { get; set; } = null!;
+    public DateTime CreatedAt { get; set; }
 }

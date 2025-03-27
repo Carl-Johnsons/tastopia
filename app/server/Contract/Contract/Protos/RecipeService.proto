@@ -1,6 +1,8 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "Protos/Common.proto";
+
 package RecipeProto;
 
 service GrpcRecipe {
@@ -9,7 +11,8 @@ service GrpcRecipe {
     rpc GetSimpleRecipes(GrpcGetSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
     rpc GetSimpleComments(GrpcGetSimpleCommentRequest) returns (GrpcMapSimpleComments);
     rpc SearchSimpleRecipes(GrpcSearchSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
-    rpc GetCommentReports(GrpcGetCommentReportRequest) returns (GrpcMapSimpleComments);
+    rpc GetCommentReports(GrpcGetCommentReportRequest) returns (GrpcMapCommentReports);
+    rpc GetRecipeReports(GrpcGetRecipeReportRequest) returns (GrpcMapRecipeReports);
 }
 ////////////////////////// COMMON
 message GrpcEmpty {}
@@ -29,6 +32,12 @@ message GrpcGetSimpleCommentRequest {
 
 message GrpcGetCommentReportRequest {
     repeated string Ids = 1;
+    string Lang = 2;
+}
+
+message GrpcGetRecipeReportRequest {
+    repeated string Ids = 1;
+    string Lang = 2;
 }
 
 message GrpcSearchSimpleRecipeRequest {
@@ -128,23 +137,23 @@ message GrpcSimpleComment {
     google.protobuf.Timestamp UpdatedAt = 9;
 }
 
-message GrpcCommentReport {
-    string Id = 1;
-    string ReporterUsername = 2;
-    string ReporterDisplayName = 3;
-    string ReporterAvatarURL = 4;
-    repeated string Reasons = 5;
-    string AdditionalDetail = 6;
-    string Status = 7;
-    google.protobuf.Timestamp CreatedAt = 8;
+message GrpcCommentReportResponse {
+    CommonProto.GrpcSimpleUser Reporter = 1;
+    GrpcSimpleRecipe Recipe = 2;
+    GrpcSimpleComment Comment = 3;
+    CommonProto.GrpcSimpleReport Report = 4;
 }
 
-message GrpcCommentReportResponse {
-    GrpcSimpleRecipe Recipe = 1;
-    GrpcSimpleComment Comment = 2;
-    GrpcCommentReport Report = 3;
+message GrpcRecipeReportResponse {
+    CommonProto.GrpcSimpleUser Reporter = 1;
+    GrpcSimpleRecipe Recipe = 2;
+    CommonProto.GrpcSimpleReport Report = 3;
 }
 
 message GrpcMapCommentReports {
     map<string, GrpcCommentReportResponse> CommentReports = 1;
+}
+
+message GrpcMapRecipeReports {
+    map<string, GrpcRecipeReportResponse> RecipeReports = 1;
 }

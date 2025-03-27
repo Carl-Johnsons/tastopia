@@ -20,7 +20,7 @@ public class MappingConfig
                 .ForMember(dest => dest.Users,
                     opt => opt.MapFrom(src => src.Users.ToDictionary(
                         user => user.Key,
-                        user => new GrpcSimpleUser
+                        user => new CommonProto.GrpcSimpleUser
                         {
                             AccountId = user.Value.AccountId.ToString(),
                             AvtUrl = user.Value.AvtUrl,

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
+import "Protos/Common.proto";
 
 package UserProto;
 
@@ -52,14 +53,7 @@ message GrpcListAccountIds{
 }
 
 message GrpcGetSimpleUsersDTO {
-    map<string, GrpcSimpleUser> Users = 1; // Dictionary <=> MapField
-}
-
-message GrpcSimpleUser {
-    string AccountId = 1;
-    string AvtUrl = 2;
-    string DisplayName = 3;
-    string AccountUsername = 4;
+    map<string, CommonProto.GrpcSimpleUser> Users = 1; // Dictionary <=> MapField
 }
 
 message GrpcUserDetailDTO {
@@ -102,14 +96,16 @@ message GrpcSimpleUserReport {
 }
 
 message GrpcUserReport {
-    string ReportId = 1;
-    string ReportedId = 2;
-    string ReportedUsername = 3;
-    string ReportedDisplayName = 4;
-    bool ReportedIsActive = 5;
-    string ReporterAccountId = 6;
-    string ReporterDisplayName = 7;
-    string ReportReason = 8;
-    google.protobuf.Timestamp CreatedAt = 9;
-    string Status = 10;
+    CommonProto.GrpcSimpleUser Reporter = 1;
+    CommonProto.GrpcSimpleUser User = 2;
+    CommonProto.GrpcSimpleReport Report = 3;
+}
+
+message GrpcSimpleReport {
+    string Id = 1;
+    string ReporterAccountId = 2;
+    repeated string Reasons = 3;
+    string AdditionalDetail = 4;
+    string Status = 5;
+    google.protobuf.Timestamp CreatedAt = 6;
 }

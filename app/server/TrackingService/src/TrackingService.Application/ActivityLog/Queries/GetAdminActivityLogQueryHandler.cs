@@ -140,6 +140,47 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
             }, cancellationToken: cancellationToken);
         }
 
+
+        // Get comment report dictionary
+
+        GrpcMapCommentReports? grpcCommentReportMap = null;
+        var commentReportIdList = paginatedQuery
+            .ToList()
+            .Where(aal => aal.EntityType == ActivityEntityType.REPORT_COMMENT)
+            .Select(aal => aal.EntityId)
+            .ToList();
+
+        if (commentReportIdList.Count > 0)
+        {
+            var repeatedField = _mapper.Map<RepeatedField<string>>(commentReportIdList);
+
+            grpcCommentReportMap = await _grpcRecipeClient.GetCommentReportsAsync(new GrpcGetCommentReportRequest
+            {
+                Ids = { repeatedField },
+                Lang = normalizedLanguage
+            }, cancellationToken: cancellationToken);
+        }
+
+        // Get comment report dictionary
+
+        GrpcMapRecipeReports? grpcRecipeReportMap = null;
+        var recipeReportIdList = paginatedQuery
+            .ToList()
+            .Where(aal => aal.EntityType == ActivityEntityType.REPORT_RECIPE)
+            .Select(aal => aal.EntityId)
+            .ToList();
+
+        if (recipeReportIdList.Count > 0)
+        {
+            var repeatedField = _mapper.Map<RepeatedField<string>>(recipeReportIdList);
+
+            grpcRecipeReportMap = await _grpcRecipeClient.GetRecipeReportsAsync(new GrpcGetRecipeReportRequest
+            {
+                Ids = { repeatedField },
+                Lang = normalizedLanguage
+            }, cancellationToken: cancellationToken);
+        }
+
         // Get user dictionary
 
         GrpcGetSimpleUsersDTO? grpcUserMap = null;
@@ -290,20 +331,157 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                              UpdatedAt = aal.UpdatedAt,
                                          };
 
-                                         var report = new UserReportLogResponse
+                                         var report = new ReportLogResponse
                                          {
-                                             ReportedDisplayName = grpcUserReport.ReportedDisplayName,
-                                             CreatedAt = grpcUserReport.CreatedAt.ToDateTime(),
-                                             ReportedId = Guid.Parse(grpcUserReport.ReportedId),
-                                             ReportedIsActive = grpcUserReport.ReportedIsActive,
-                                             ReportedUsername = grpcUserReport.ReportedUsername,
-                                             ReporterAccountId = Guid.Parse(grpcUserReport.ReporterAccountId),
-                                             ReporterDisplayName = grpcUserReport.ReporterDisplayName,
-                                             ReportId = Guid.Parse(grpcUserReport.ReportId),
-                                             ReportReason = grpcUserReport.ReportReason,
-                                             Status = grpcUserReport.Status,
+                                             AdditionalDetail = grpcUserReport.Report.AdditionalDetail,
+                                             CreatedAt = grpcUserReport.Report.CreatedAt.ToDateTime(),
+                                             Id = aal.EntityId,
+                                             Reasons = grpcUserReport.Report.Reasons.ToList(),
+                                             ReporterAccountId = Guid.Parse(grpcUserReport.Report.ReporterAccountId),
+                                             Status = grpcUserReport.Report.Status
+                                         };
+
+                                         var user = new UserLogResponse
+                                         {
+                                             Id = Guid.Parse(grpcUserReport.User.AccountId),
+                                             AvatarURL = grpcUserReport.User.AvtUrl,
+                                             DisplayName = grpcUserReport.User.DisplayName,
+                                             Username = grpcUserReport.User.AccountUsername
+                                         };
+
+                                         var reporter = new UserLogResponse
+                                         {
+                                             Id = Guid.Parse(grpcUserReport.Reporter.AccountId),
+                                             AvatarURL = grpcUserReport.Reporter.AvtUrl,
+                                             DisplayName = grpcUserReport.Reporter.DisplayName,
+                                             Username = grpcUserReport.Reporter.AccountUsername
                                          };
                                          mapEntity.Report = report;
+                                         mapEntity.User = user;
+                                         mapEntity.Reporter = reporter;
+
+                                         return mapEntity;
+                                     }
+
+                                     if (aal.EntityType == ActivityEntityType.REPORT_COMMENT && grpcCommentReportMap != null)
+                                     {
+                                         var grpcCommentReport = grpcCommentReportMap.CommentReports[aal.EntityId.ToString()];
+
+                                         var mapEntity = new CommentReportAdminActivityLogResponse
+                                         {
+                                             AccountId = aal.AccountId,
+                                             ActivityType = aal.ActivityType,
+                                             EntityId = aal.EntityId,
+                                             EntityType = aal.EntityType,
+                                             SecondaryEntityId = aal.SecondaryEntityId,
+                                             SecondaryEntityType = aal.SecondaryEntityType,
+                                             CreatedAt = aal.CreatedAt,
+                                             UpdatedAt = aal.UpdatedAt,
+                                         };
+
+                                         var report = new ReportLogResponse
+                                         {
+                                             Id = aal.EntityId,
+                                             AdditionalDetail = grpcCommentReport.Report.AdditionalDetail,
+                                             ReporterAccountId = Guid.Parse(grpcCommentReport.Report.ReporterAccountId),
+                                             CreatedAt = grpcCommentReport.Report.CreatedAt.ToDateTime(),
+                                             Reasons = grpcCommentReport.Report.Reasons.ToList(),
+                                             Status = grpcCommentReport.Report.Status
+                                         };
+
+                                         var recipeLogResponse = new RecipeLogResponse
+                                         {
+                                             Id = Guid.Parse(grpcCommentReport.Recipe.Id),
+                                             Title = grpcCommentReport.Recipe.Title,
+                                             AuthorId = Guid.Parse(grpcCommentReport.Recipe.AuthorId),
+                                             AuthorDisplayName = grpcCommentReport.Recipe.AuthorDisplayName,
+                                             AuthorUsername = grpcCommentReport.Recipe.AuthorUsername,
+                                             ImageURL = grpcCommentReport.Recipe.RecipeImgUrl,
+                                             CreatedAt = grpcCommentReport.Recipe.CreatedAt.ToDateTime(),
+                                             UpdatedAt = grpcCommentReport.Recipe.UpdatedAt.ToDateTime(),
+                                             VoteDiff = grpcCommentReport.Recipe.VoteDiff
+                                         };
+
+                                         var commentLogResponse = new CommentLogResponse
+                                         {
+                                             Id = Guid.Parse(grpcCommentReport.Comment.Id),
+                                             RecipeId = Guid.Parse(grpcCommentReport.Recipe.Id),
+                                             AuthorAvatarURL = grpcCommentReport.Comment.AuthorAvatarURL,
+                                             AuthorDisplayName = grpcCommentReport.Comment.AuthorDisplayName,
+                                             AuthorId = Guid.Parse(grpcCommentReport.Comment.AuthorId),
+                                             AuthorUsername = grpcCommentReport.Comment.AuthorUsername,
+                                             Content = grpcCommentReport.Comment.Content,
+                                             CreatedAt = grpcCommentReport.Comment.CreatedAt.ToDateTime(),
+                                             UpdatedAt = grpcCommentReport.Comment.UpdatedAt.ToDateTime(),
+                                             IsActive = grpcCommentReport.Comment.IsActive
+                                         };
+
+                                         var reporter = new UserLogResponse
+                                         {
+                                             Id = Guid.Parse(grpcCommentReport.Reporter.AccountId),
+                                             AvatarURL = grpcCommentReport.Reporter.AvtUrl,
+                                             DisplayName = grpcCommentReport.Reporter.DisplayName,
+                                             Username = grpcCommentReport.Reporter.AccountUsername
+                                         };
+
+                                         mapEntity.Recipe = recipeLogResponse;
+                                         mapEntity.Comment = commentLogResponse;
+                                         mapEntity.Report = report;
+                                         mapEntity.Reporter = reporter;
+
+                                         return mapEntity;
+                                     }
+
+                                     if (aal.EntityType == ActivityEntityType.REPORT_RECIPE && grpcRecipeReportMap != null)
+                                     {
+                                         var grpcRecipeReport = grpcRecipeReportMap.RecipeReports[aal.EntityId.ToString()];
+
+                                         var mapEntity = new RecipeReportAdminActivityLogResponse
+                                         {
+                                             AccountId = aal.AccountId,
+                                             ActivityType = aal.ActivityType,
+                                             EntityId = aal.EntityId,
+                                             EntityType = aal.EntityType,
+                                             SecondaryEntityId = aal.SecondaryEntityId,
+                                             SecondaryEntityType = aal.SecondaryEntityType,
+                                             CreatedAt = aal.CreatedAt,
+                                             UpdatedAt = aal.UpdatedAt,
+                                         };
+
+                                         var report = new ReportLogResponse
+                                         {
+                                             Id = aal.EntityId,
+                                             AdditionalDetail = grpcRecipeReport.Report.AdditionalDetail,
+                                             ReporterAccountId = Guid.Parse(grpcRecipeReport.Report.ReporterAccountId),
+                                             CreatedAt = grpcRecipeReport.Report.CreatedAt.ToDateTime(),
+                                             Reasons = grpcRecipeReport.Report.Reasons.ToList(),
+                                             Status = grpcRecipeReport.Report.Status
+                                         };
+
+                                         var recipeLogResponse = new RecipeLogResponse
+                                         {
+                                             Id = Guid.Parse(grpcRecipeReport.Recipe.Id),
+                                             Title = grpcRecipeReport.Recipe.Title,
+                                             AuthorId = Guid.Parse(grpcRecipeReport.Recipe.AuthorId),
+                                             AuthorDisplayName = grpcRecipeReport.Recipe.AuthorDisplayName,
+                                             AuthorUsername = grpcRecipeReport.Recipe.AuthorUsername,
+                                             ImageURL = grpcRecipeReport.Recipe.RecipeImgUrl,
+                                             CreatedAt = grpcRecipeReport.Recipe.CreatedAt.ToDateTime(),
+                                             UpdatedAt = grpcRecipeReport.Recipe.UpdatedAt.ToDateTime(),
+                                             VoteDiff = grpcRecipeReport.Recipe.VoteDiff
+                                         };
+
+                                         var reporter = new UserLogResponse
+                                         {
+                                             AvatarURL = grpcRecipeReport.Reporter.AvtUrl,
+                                             DisplayName = grpcRecipeReport.Reporter.DisplayName,
+                                             Id = Guid.Parse(grpcRecipeReport.Reporter.AccountId),
+                                             Username = grpcRecipeReport.Reporter.AccountUsername
+                                         };
+
+                                         mapEntity.Recipe = recipeLogResponse;
+                                         mapEntity.Report = report;
+                                         mapEntity.Reporter = reporter;
 
                                          return mapEntity;
                                      }
