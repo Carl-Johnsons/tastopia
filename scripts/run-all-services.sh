@@ -52,7 +52,8 @@ cd ./scripts
 ./kill-port.sh 5008 &
 ./kill-port.sh 6000 &
 ./kill-port.sh 6001 &
-./kill-port.sh 6002
+./kill-port.sh 6002 &
+./kill-port.sh 6003
 
 cd "$project_root"
 
@@ -127,6 +128,7 @@ run_services() {
   run_service 6000 "./app/server/NotificationService/src/EmailWorker" "$CYAN" "Email Worker" &
   run_service 6001 "./app/server/RecipeService/src/RecipeWorker" "$LIGHT_BLUE" "Recipe Worker" &
   run_service 6002 "./app/server/NotificationService/src/PushNotificationWorker" "$CYAN" "Push notification Worker" &
+  run_service 6003 "./app/server/NotificationService/src/SMSWorker" "$CYAN" "SMS Worker" &
 }
 
 test_services() {

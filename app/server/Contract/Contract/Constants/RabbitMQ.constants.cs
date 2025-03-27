@@ -22,6 +22,7 @@ public static class RabbitMQConstant
             public const string REQUEST_ADD_TAGS = "request-add-tags-queue";
             // ======================= OTHER ============================
             public const string SEND_EMAIL = "send-email-queue";
+            public const string SEND_SMS = "send-sms-queue";
             public const string PUSH_NOTIFICATION = "push-notification-queue";
             public const string VALIDATE_RECIPE = "validate-recipe-queue";
 
@@ -58,6 +59,7 @@ public static class RabbitMQConstant
             public const string REQUEST_ADD_TAGS = "request-add-tags-event";
             // ======================= OTHER ============================
             public const string SEND_EMAIL = "send-email-event";
+            public const string SEND_SMS = "send-sms-event";
             public const string PUSH_NOTIFICATION = "push-notification-event";
             public const string VALIDATE_RECIPE = "validate-recipe-event";
 
