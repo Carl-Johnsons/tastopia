@@ -174,7 +174,7 @@
   },
   "administerAdmins": {
     "title": "Quản lý quản trị viên",
-    "search": "Tìm kiếm quản trị viên",
+    "search": "Tìm kiếm theo tên đăng nhập, tên, gmail, ...",
     "columns": {
       "username": "Tên đăng nhập",
       "displayName": "Tên hiển thị",
@@ -188,12 +188,114 @@
     "tooltip": {
       "viewDetail": "Xem chi tiết",
       "restore": "Khôi phục",
-      "disable": "Vô hiệu hóa"
+      "disable": "Vô hiệu hóa",
+      "create": "Tạo mới"
     },
     "notifications": {
       "restoreSuccess": "Khôi phục quản trị viên thành công!",
       "disableSuccess": "Vô hiệu hóa quản trị viên thành công!",
-      "error": "Đã xảy ra lỗi!"
+      "create": {
+        "success": "Tạo quản trị viên mới thành công!"
+      },
+      "error": "Đã có lỗi xảy ra!"
+    },
+    "form": {
+      "title": "Tạo quản trị viên mới",
+      "name": {
+        "label": "Tên",
+        "placeholder": "Ví dụ: John Doe",
+        "errors": {
+          "required": "Tên là bắt buộc",
+          "max": "Tên phải ít hơn 50 ký tự"
+        }
+      },
+      "gmail": {
+        "label": "Gmail",
+        "placeholder": "Ví dụ: johndoe@gmail.com",
+        "errors": {
+          "required": "Gmail là bắt buộc",
+          "invalid": "Địa chỉ gmail không hợp lệ"
+        }
+      },
+      "phone": {
+        "label": "Số điện thoại",
+        "placeholder": "Ví dụ: 0364295940",
+        "errors": {
+          "required": "Số điện thoại là bắt buộc",
+          "invalid": "Số điện thoại không hợp lệ"
+        }
+      },
+      "password": {
+        "label": "Mật khẩu",
+        "placeholder": "Ví dụ: TastopiaPassword@123",
+        "errors": {
+          "required": "Mật khẩu là bắt buộc",
+          "min": "Mật khẩu phải có ít nhất 6 ký tự",
+          "max": "Mật khẩu phải ít hơn 50 ký tự"
+        }
+      },
+      "gender": {
+        "label": "Giới tính",
+        "placeholder": "Chọn giới tính",
+        "options": {
+          "male": "Nam",
+          "female": "Nữ"
+        },
+        "errors": {
+          "required": "Giới tính là bắt buộc",
+          "invalid": "Giới tính không hợp lệ"
+        }
+      },
+      "dateOfBirth": {
+        "label": "Ngày sinh",
+        "placeholder": "DD/MM/YYYY",
+        "errors": {
+          "required": "Ngày sinh là bắt buộc",
+          "invalid": "Ngày sinh không hợp lệ"
+        }
+      },
+      "address": {
+        "label": "Địa chỉ",
+        "placeholder": "Ví dụ: Cần Thơ",
+        "errors": {
+          "required": "Địa chỉ là bắt buộc",
+          "max": "Địa chỉ phải ít hơn 255 ký tự"
+        }
+      },
+      "status": {
+        "label": "Trạng thái",
+        "placeholder": "Chọn trạng thái",
+        "options": {
+          "active": "Hoạt động",
+          "inactive": "Không hoạt động"
+        },
+        "errors": {
+          "required": "Trạng thái là bắt buộc",
+          "invalid": "Trạng thái không hợp lệ"
+        }
+      },
+      "image": {
+        "label": "Hình ảnh",
+        "required": "Hình ảnh là bắt buộc",
+        "errors": {
+          "required": "Ảnh đại diện là bắt buộc",
+          "maxSize": "Kích thước file vượt quá mức cho phép (15MB)",
+          "maxNumber": "Số lượng ảnh được chọn vượt quá 1",
+          "acceptType": "Chỉ hỗ trợ định dạng .jpg, .jpeg, .png và .webp"
+        },
+        "upload": {
+          "clickToUpload": "Nhấn để tải lên",
+          "dragAndDrop": "hoặc kéo thả",
+          "fileTypes": "PNG, JPG, JPEG, hoặc WEBP (TỐI ĐA 15MB)",
+          "removeImage": "Xóa ảnh",
+          "confirmDelete": {
+            "title": "Bạn có chắc muốn xóa ảnh này?",
+            "description": "Khi xóa, ảnh sẽ không thể khôi phục.",
+            "confirm": "Đồng ý, xóa",
+            "cancel": "Hủy"
+          }
+        }
+      }
     },
     "detail": {
       "header": {
@@ -205,7 +307,7 @@
       "info": {
         "title": "Thông tin hồ sơ",
         "fields": {
-          "username": "Tên người dùng",
+          "username": "Tên đăng nhập",
           "displayName": "Tên hiển thị",
           "email": "Email",
           "phoneNumber": "Số điện thoại",

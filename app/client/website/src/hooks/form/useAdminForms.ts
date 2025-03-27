@@ -2,19 +2,19 @@ import { createAdmin } from "@/actions/admin.action";
 import { Gender } from "@/constants/gender";
 import { BinaryStatus } from "@/constants/status";
 import { getCreateAdminSchema } from "@/schemas/admin";
-import { setAdminData } from "@/slices/admin.slice";
-import { useAppDispatch } from "@/store/hooks";
 import { CreateAdminFormFields } from "@/types/admin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { BaseSyntheticEvent, useCallback } from "react";
+import { BaseSyntheticEvent, useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
 export const useCreateAdminForm = () => {
-  const t = useTranslations("administerAdmins.form");
-  const schema = getCreateAdminSchema(t);
-  const dispatch = useAppDispatch();
+  const tNotification = useTranslations("administerAdmins.notifications");
+  const tForm = useTranslations("administerAdmins.form");
+  const schema = useMemo(() => getCreateAdminSchema(tForm), [tForm]);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<CreateAdminFormFields>({
     resolver: zodResolver(schema),
@@ -42,7 +42,7 @@ export const useCreateAdminForm = () => {
       address,
       image
     }: CreateAdminFormFields) => {
-      dispatch(setAdminData({ isLoading: true }));
+      setIsSubmitting(true);
 
       try {
         const formData = new FormData();
@@ -59,20 +59,20 @@ export const useCreateAdminForm = () => {
 
         console.log("sending create admin request with data:", formData);
         await createAdmin(formData);
-        toast.success(t("notifications.create.success"));
+        toast.success(tNotification("create.success"));
       } catch (error) {
         console.error(error);
 
         if (error instanceof Error) {
-          return toast.error(t(`notifications.create.${error.message}`));
+          return toast.error(tNotification(`create.${error.message}`));
         }
 
-        toast.error(t("notifications.error"));
+        toast.error(tNotification("error"));
       } finally {
-        dispatch(setAdminData({ isLoading: false }));
+        setIsSubmitting(false);
       }
     },
-    [t, dispatch]
+    [tNotification]
   );
 
   const submitForm = useCallback(
@@ -80,5 +80,5 @@ export const useCreateAdminForm = () => {
     [form, onSubmit]
   );
 
-  return { submitForm, form };
+  return { submitForm, form, isSubmitting };
 };

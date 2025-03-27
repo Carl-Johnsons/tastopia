@@ -15,7 +15,6 @@ import { Edit, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import AdminForm from "./Form";
 import { useCreateAdminForm } from "@/hooks/form";
-import { useSelectAdmin } from "@/slices/admin.slice";
 
 type Props = DialogProps & {
   type: "create" | "update";
@@ -23,8 +22,7 @@ type Props = DialogProps & {
 };
 
 const AdminDialog = ({ type, buttonClassName, ...props }: Props) => {
-  const { form, submitForm } = useCreateAdminForm();
-  const { isLoading } = useSelectAdmin();
+  const { form, submitForm, isSubmitting } = useCreateAdminForm();
   const tTooltip = useTranslations("administerAdmins.tooltip");
   const tForm = useTranslations("administerAdmins.form");
   const { height } = useWindowDimensions();
@@ -55,7 +53,6 @@ const AdminDialog = ({ type, buttonClassName, ...props }: Props) => {
         <AdminForm
           type={type}
           form={form}
-          onSubmit={submitForm}
         />
         <DialogFooter>
           <InteractiveButton
@@ -68,7 +65,7 @@ const AdminDialog = ({ type, buttonClassName, ...props }: Props) => {
               )
             }
             onClick={submitForm}
-            isLoading={isLoading}
+            isLoading={isSubmitting}
             className='text-white_black rounded-full bg-primary hover:bg-secondary'
           />
         </DialogFooter>

@@ -1,8 +1,7 @@
 "use client";
 
-import React, { BaseSyntheticEvent, FC, useCallback, useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -11,7 +10,6 @@ import {
   FormLabel,
   FormMessage
 } from "@/components/ui/form";
-import { toast } from "react-toastify";
 import ImageUploading from "@/components/shared/common/ImageUploading";
 import { Input } from "@/components/ui/input";
 import {
@@ -32,11 +30,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Image from "@/components/shared/common/Image";
+import { BinaryStatus } from "@/constants/status";
+import { ImageListType } from "react-images-uploading";
 
 type Props = {
   type: "create" | "update";
   form: ReturnType<typeof useForm<CreateAdminFormFields>>;
-  onSubmit: (e?: BaseSyntheticEvent) => void;
 };
 
 type FormInputProps = {
@@ -59,15 +58,12 @@ type FormSelectProps = FormInputProps & {
 type FormDatePickerProps = FormInputProps;
 type FormImageUploadProps = Omit<FormInputProps, "placeholder">;
 
-const AdminForm = ({ type, form, onSubmit }: Props) => {
+const AdminForm = ({ form }: Props) => {
   const t = useTranslations("administerAdmins.form");
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={onSubmit}
-        className='flex w-full flex-col gap-10'
-      >
+      <form className='flex w-full flex-col gap-4'>
         <FormField
           control={form.control}
           name='name'
@@ -118,22 +114,6 @@ const AdminForm = ({ type, form, onSubmit }: Props) => {
 
         <FormField
           control={form.control}
-          name='gender'
-          render={({ field }) => (
-            <FormSelect
-              field={field}
-              label={t("gender.label")}
-              placeholder={t("gender.placeholder")}
-              items={[
-                { value: Gender.Male, label: t("gender.options.male") },
-                { value: Gender.Female, label: t("gender.options.female") }
-              ]}
-            />
-          )}
-        />
-
-        <FormField
-          control={form.control}
           name='address'
           render={({ field }) => (
             <FormInput
@@ -146,13 +126,33 @@ const AdminForm = ({ type, form, onSubmit }: Props) => {
 
         <FormField
           control={form.control}
+          name='gender'
+          render={({ field }) => (
+            <div className='w-[240px]'>
+              <FormSelect
+                field={field}
+                label={t("gender.label")}
+                placeholder={t("gender.placeholder")}
+                items={[
+                  { value: Gender.Male, label: t("gender.options.male") },
+                  { value: Gender.Female, label: t("gender.options.female") }
+                ]}
+              />
+            </div>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name='dateOfBirth'
           render={({ field }) => (
-            <FormDatePicker
-              field={field}
-              label={t("dateOfBirth.label")}
-              placeholder={t("dateOfBirth.placeholder")}
-            />
+            <div className='w-[240px]'>
+              <FormDatePicker
+                field={field}
+                label={t("dateOfBirth.label")}
+                placeholder={t("dateOfBirth.placeholder")}
+              />
+            </div>
           )}
         />
 
@@ -160,18 +160,20 @@ const AdminForm = ({ type, form, onSubmit }: Props) => {
           control={form.control}
           name='status'
           render={({ field }) => (
-            <FormSelect
-              field={field}
-              label={t("status.label")}
-              placeholder={t("status.placeholder")}
-              items={[
-                { value: "Active", label: t("status.options.active") },
-                { value: "Inactive", label: t("status.options.inactive") }
-              ]}
-              SelectItemChild={({ value }) => (
-                <ItemStatusText isActive={value === "active"} />
-              )}
-            />
+            <div className='w-[240px]'>
+              <FormSelect
+                field={field}
+                label={t("status.label")}
+                placeholder={t("status.placeholder")}
+                items={[
+                  { value: BinaryStatus.Active, label: t("status.options.active") },
+                  { value: BinaryStatus.Inactive, label: t("status.options.inactive") }
+                ]}
+                SelectItemChild={({ value }) => (
+                  <ItemStatusText isActive={value === BinaryStatus.Active} />
+                )}
+              />
+            </div>
           )}
         />
 
@@ -193,6 +195,8 @@ const AdminForm = ({ type, form, onSubmit }: Props) => {
 const Askterisk = () => <span className='text-red-600'>*</span>;
 
 const FormInput = ({ field, label, placeholder }: FormInputProps) => {
+  const { value, ...fields } = field;
+
   return (
     <FormItem className='flex w-full flex-col'>
       <FormLabel className='paragraph-semibold text-black_white'>
@@ -200,9 +204,10 @@ const FormInput = ({ field, label, placeholder }: FormInputProps) => {
       </FormLabel>
       <FormControl>
         <Input
+          value={value as string}
           className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
           placeholder={placeholder}
-          {...field}
+          {...fields}
         />
       </FormControl>
       <FormMessage className='text-red-600' />
@@ -227,7 +232,7 @@ const FormSelect = ({
 
       <Select
         onValueChange={onChange}
-        defaultValue={value}
+        defaultValue={value as string}
       >
         <FormControl>
           <SelectTrigger className='bg-white_black200 text-black_white'>
@@ -272,11 +277,13 @@ const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
           <FormControl>
             <Button
               variant={"outline"}
-              className={cn("w-[240px] pl-0", !value && "text-muted-foreground")}
+              className={cn("pl-0", !value && "text-muted-foreground")}
             >
               <div className='text-black_white flex w-full items-center gap-2 px-3'>
                 <CalendarIcon className='size-4 text-primary' />
-                {value ? format(value, "MM/dd/yyyy") : <span>{placeholder}</span>}
+                <span className='block pt-1'>
+                  {value ? format(value as Date, "MM/dd/yyyy") : placeholder}
+                </span>
               </div>
             </Button>
           </FormControl>
@@ -287,7 +294,7 @@ const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
         >
           <Calendar
             mode='single'
-            selected={value}
+            selected={value as Date}
             onSelect={onChange}
             disabled={date => date > new Date() || date < new Date("1900-01-01")}
             className='text-black_white'
@@ -311,7 +318,7 @@ const FormImageUpload = ({ label, field }: FormImageUploadProps) => {
       <FormControl className='mt-3.5'>
         <ImageUploading
           multiple={false}
-          value={value}
+          value={value as ImageListType}
           onChange={onChange}
           dataURLKey='data_url'
           maxFileSize={15242880}

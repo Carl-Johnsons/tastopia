@@ -1,5 +1,4 @@
 import { Gender } from "@/constants/gender";
-import { ImageListType } from "react-images-uploading";
 import * as z from "zod";
 
 const MAX_FILE_SIZE = 15000000;
