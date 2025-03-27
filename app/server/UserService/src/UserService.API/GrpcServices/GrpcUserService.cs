@@ -6,6 +6,7 @@ using Grpc.Core;
 using Newtonsoft.Json;
 using UserProto;
 using UserService.Application.Settings.Queries;
+using UserService.Application.UserReports.Queries;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
 using UserService.Domain.Entities;
@@ -227,7 +228,6 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
 
 
     }
-
     public override async Task<GrpcListAccountIds> GetUserFollowing(GrpcAccountIdRequest request, ServerCallContext context)
     {
         if (string.IsNullOrEmpty(request.AccountId))
@@ -250,4 +250,40 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         return result;
     }
 
+    public override async Task<GrpcSimpleUserReport> GetSimpleUserReport(GrpcGetUserReportRequest request, ServerCallContext context)
+    {
+        var hashSet = request.ReportIds.Select(Guid.Parse).ToHashSet();
+
+        var result = await _sender.Send(new GetUserReportQueryByHashSet
+        {
+            Lang = request.Lang,
+            ReportIds = hashSet
+        });
+
+        result.ThrowIfFailure();
+
+
+        var mapField = new MapField<string, GrpcUserReport>();
+        foreach (var (k, v) in result.Value!)
+        {
+            mapField.Add(k.ToString(), new GrpcUserReport
+            {
+                ReportedId = v.ReportedId.ToString(),
+                CreatedAt = v.CreatedAt.ToTimestamp(),
+                ReportedDisplayName = v.ReportedDisplayName,
+                ReportedIsActive = v.ReportedIsActive,
+                ReportedUsername = v.ReportedUsername,
+                ReporterAccountId = v.ReporterAccountId.ToString(),
+                ReporterDisplayName = v.ReporterDisplayName,
+                ReportReason = v.ReportReason,
+                Status = v.Status,
+                ReportId = v.ReportId.ToString(),
+            });
+        }
+
+        return new GrpcSimpleUserReport
+        {
+            Reports = { mapField }
+        };
+    }
 }

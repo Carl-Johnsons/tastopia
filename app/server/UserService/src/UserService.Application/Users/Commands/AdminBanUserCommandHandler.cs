@@ -2,7 +2,6 @@
 using Contract.Event.TrackingEvent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using UserService.Domain.Errors;
 using UserService.Domain.Responses;
 namespace UserService.Application.Users.Commands;
@@ -62,8 +61,8 @@ public class AdminBanUserCommandHandler : IRequestHandler<AdminBanUserCommand, R
         await _serviceBus.Publish(new AddActivityLogEvent
         {
             AccountId = currentAccountId,
-            ActivityType = Contract.Constants.ActivityType.DISABLE,
-            EntityId = currentAccountId,
+            ActivityType = isRestored ? Contract.Constants.ActivityType.RESTORE : Contract.Constants.ActivityType.DISABLE,
+            EntityId = request.AccountId,
             EntityType = Contract.Constants.ActivityEntityType.USER
         });
 

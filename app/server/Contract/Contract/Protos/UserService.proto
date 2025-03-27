@@ -14,6 +14,7 @@ service GrpcUser {
     rpc CreateUser(GrpcCreateUserRequest) returns (GrpcEmpty);
     rpc GetUserFollowing(GrpcAccountIdRequest) returns (GrpcListAccountIds);
     rpc GetUserFollower(GrpcAccountIdRequest) returns (GrpcListAccountIds);
+    rpc GetSimpleUserReport(GrpcGetUserReportRequest) returns (GrpcSimpleUserReport);
 }
 
 message GrpcEmpty {}
@@ -28,6 +29,11 @@ message GrpcGetUserSettingRequest {
 
 message GrpcGetSimpleUsersRequest {
     repeated string AccountId = 1; // HashSet<Guid> represented as repeated strings
+}
+
+message GrpcGetUserReportRequest {
+    string Lang = 1; // 'en' or 'vi'
+    repeated string ReportIds = 2;
 }
 
 message GrpcCreateUserRequest {
@@ -89,4 +95,21 @@ message GrpcSetting {
     string SettingValue = 3;
     string SettingType = 4;
     string DefaultValue = 5;
+}
+
+message GrpcSimpleUserReport {
+    map<string, GrpcUserReport> Reports = 2; // Dictionary <=> MapField
+}
+
+message GrpcUserReport {
+    string ReportId = 1;
+    string ReportedId = 2;
+    string ReportedUsername = 3;
+    string ReportedDisplayName = 4;
+    bool ReportedIsActive = 5;
+    string ReporterAccountId = 6;
+    string ReporterDisplayName = 7;
+    string ReportReason = 8;
+    google.protobuf.Timestamp CreatedAt = 9;
+    string Status = 10;
 }
