@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useState } from "react";
 import { StatisticDateItem } from "@/types/statistic";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 const chartConfig = {
   recipes: {
@@ -44,6 +44,7 @@ type RecipeChartProps = {
 };
 
 export function RecipeChart({ chartData }: RecipeChartProps) {
+  const t = useTranslations("Statistics"); // Assuming 'Statistics' is your namespace
   const currentLanguage = useLocale();
   const [timeRange, setTimeRange] = useState("90d");
 
@@ -177,6 +178,17 @@ export function RecipeChart({ chartData }: RecipeChartProps) {
                       month: "short",
                       day: "numeric"
                     });
+                  }}
+                  // Add the formatter prop here
+                  formatter={(value, name) => {
+                    // Assuming 'recipeCount' is the key in your translation file
+                    // e.g., "recipeCount": "{count, plural, =1 {# recipe} other {# recipes}}"
+                    // The 'name' parameter helps if you have multiple lines in the chart,
+                    // but here we only have 'number' (mapped to 'recipe' in config).
+                    if (name === "recipe") {
+                      return t("recipeCount", { count: value });
+                    }
+                    return value; // Fallback for other potential data keys
                   }}
                   indicator='dot'
                 />
