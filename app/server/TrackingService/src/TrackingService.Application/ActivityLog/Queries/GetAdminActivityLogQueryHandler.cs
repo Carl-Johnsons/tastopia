@@ -179,13 +179,15 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                          };
                                          var recipeLogResponse = new RecipeLogResponse
                                          {
-                                             RecipeTitle = grpcSimpleRecipe.Title,
-                                             RecipeAuthorId = Guid.Parse(grpcSimpleRecipe.AuthorId),
-                                             RecipeAuthorDisplayName = grpcSimpleRecipe.AuthorDisplayName,
-                                             RecipeImageURL = grpcSimpleRecipe.RecipeImgUrl,
-                                             RecipeCreatedAt = grpcSimpleRecipe.CreatedAt.ToDateTime(),
-                                             RecipeUpdatedAt = grpcSimpleRecipe.UpdatedAt.ToDateTime(),
-                                             RecipeVoteDiff = grpcSimpleRecipe.VoteDiff
+                                             Id = aal.EntityId,
+                                             Title = grpcSimpleRecipe.Title,
+                                             AuthorId = Guid.Parse(grpcSimpleRecipe.AuthorId),
+                                             AuthorDisplayName = grpcSimpleRecipe.AuthorDisplayName,
+                                             AuthorUsername = grpcSimpleRecipe.AuthorUsername,
+                                             ImageURL = grpcSimpleRecipe.RecipeImgUrl,
+                                             CreatedAt = grpcSimpleRecipe.CreatedAt.ToDateTime(),
+                                             UpdatedAt = grpcSimpleRecipe.UpdatedAt.ToDateTime(),
+                                             VoteDiff = grpcSimpleRecipe.VoteDiff
                                          };
 
                                          mapEntity.Recipe = recipeLogResponse;
@@ -212,17 +214,21 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
 
                                          var recipeLogResponse = new RecipeLogResponse
                                          {
-                                             RecipeTitle = grpcSimpleRecipe.Title,
-                                             RecipeAuthorId = Guid.Parse(grpcSimpleRecipe.AuthorId),
-                                             RecipeAuthorDisplayName = grpcSimpleRecipe.AuthorDisplayName,
-                                             RecipeImageURL = grpcSimpleRecipe.RecipeImgUrl,
-                                             RecipeCreatedAt = grpcSimpleRecipe.CreatedAt.ToDateTime(),
-                                             RecipeUpdatedAt = grpcSimpleRecipe.UpdatedAt.ToDateTime(),
-                                             RecipeVoteDiff = grpcSimpleRecipe.VoteDiff
+                                             Id = (Guid)aal.SecondaryEntityId!,
+                                             Title = grpcSimpleRecipe.Title,
+                                             AuthorId = Guid.Parse(grpcSimpleRecipe.AuthorId),
+                                             AuthorDisplayName = grpcSimpleRecipe.AuthorDisplayName,
+                                             AuthorUsername = grpcSimpleRecipe.AuthorUsername,
+                                             ImageURL = grpcSimpleRecipe.RecipeImgUrl,
+                                             CreatedAt = grpcSimpleRecipe.CreatedAt.ToDateTime(),
+                                             UpdatedAt = grpcSimpleRecipe.UpdatedAt.ToDateTime(),
+                                             VoteDiff = grpcSimpleRecipe.VoteDiff
                                          };
 
                                          var commentLogResponse = new CommentLogResponse
                                          {
+                                             Id = aal.EntityId,
+                                             RecipeId = (Guid)aal.SecondaryEntityId!,
                                              AuthorAvatarURL = grpcSimpleComment.AuthorAvatarURL,
                                              AuthorDisplayName = grpcSimpleComment.AuthorDisplayName,
                                              AuthorId = Guid.Parse(grpcSimpleComment.AuthorId),
@@ -267,7 +273,6 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
 
                                          return mapEntity;
                                      }
-
 
                                      if (aal.EntityType == ActivityEntityType.REPORT_USER && grpcUserReportMap != null)
                                      {

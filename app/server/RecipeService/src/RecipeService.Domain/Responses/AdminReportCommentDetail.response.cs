@@ -7,6 +7,13 @@ public class AdminReportCommentDetailResponse
     public List<ReportRecipeResponse> Reports { get; set; } = [];
 }
 
+public class AdminSingleReportCommentDetailResponse
+{
+    public CommentDetailResponse Comment { get; set; } = null!;
+    public AdminRecipeResponse Recipe { get; set; } = null!;
+    public ReportRecipeResponse Report { get; set; } = null!;
+}
+
 public class CommentDetailResponse
 {
     public Guid Id { get; set; }

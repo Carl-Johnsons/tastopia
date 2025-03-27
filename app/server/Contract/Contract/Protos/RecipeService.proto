@@ -9,6 +9,7 @@ service GrpcRecipe {
     rpc GetSimpleRecipes(GrpcGetSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
     rpc GetSimpleComments(GrpcGetSimpleCommentRequest) returns (GrpcMapSimpleComments);
     rpc SearchSimpleRecipes(GrpcSearchSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
+    rpc GetCommentReports(GrpcGetCommentReportRequest) returns (GrpcMapSimpleComments);
 }
 ////////////////////////// COMMON
 message GrpcEmpty {}
@@ -24,6 +25,10 @@ message GrpcGetSimpleRecipeRequest {
 
 message GrpcGetSimpleCommentRequest {
     repeated string Ids = 1; // Key syntax is recipeId~commentId
+}
+
+message GrpcGetCommentReportRequest {
+    repeated string Ids = 1;
 }
 
 message GrpcSearchSimpleRecipeRequest {
@@ -103,11 +108,12 @@ message GrpcSimpleRecipe {
     string Description = 5;
     int32 VoteDiff = 6;
     int32 NumberOfComment = 7;
-    string AuthorDisplayName = 8;
-    string AuthorAvtUrl = 9;
-    string Vote = 10;
-    google.protobuf.Timestamp CreatedAt = 11;
-    google.protobuf.Timestamp UpdatedAt = 12;
+    string AuthorUsername = 8;
+    string AuthorDisplayName = 9;
+    string AuthorAvtUrl = 10;
+    string Vote = 11;
+    google.protobuf.Timestamp CreatedAt = 12;
+    google.protobuf.Timestamp UpdatedAt = 13;
 }
 
 message GrpcSimpleComment {
@@ -120,4 +126,25 @@ message GrpcSimpleComment {
     bool IsActive = 7;
     google.protobuf.Timestamp CreatedAt = 8;
     google.protobuf.Timestamp UpdatedAt = 9;
+}
+
+message GrpcCommentReport {
+    string Id = 1;
+    string ReporterUsername = 2;
+    string ReporterDisplayName = 3;
+    string ReporterAvatarURL = 4;
+    repeated string Reasons = 5;
+    string AdditionalDetail = 6;
+    string Status = 7;
+    google.protobuf.Timestamp CreatedAt = 8;
+}
+
+message GrpcCommentReportResponse {
+    GrpcSimpleRecipe Recipe = 1;
+    GrpcSimpleComment Comment = 2;
+    GrpcCommentReport Report = 3;
+}
+
+message GrpcMapCommentReports {
+    map<string, GrpcCommentReportResponse> CommentReports = 1;
 }

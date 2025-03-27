@@ -2,7 +2,6 @@
 using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
-using Newtonsoft.Json;
 using RecipeProto;
 using RecipeService.Application.Recipes.Queries;
 using RecipeService.Application.Reports.Queries;
@@ -84,6 +83,7 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
                 AuthorId = value.AuthorId.ToString(),
                 AuthorAvtUrl = value.AuthorAvtUrl,
                 AuthorDisplayName = value.AuthorDisplayName,
+                AuthorUsername = value.AuthorUsername,
                 Title = value.Title,
                 Description = value.Description,
                 RecipeImgUrl = value.RecipeImgUrl,
@@ -91,7 +91,7 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
                 VoteDiff = value.VoteDiff,
                 Vote = value.Vote.ToString(),
                 CreatedAt = value.CreatedAt.ToTimestamp(),
-                UpdatedAt = value.UpdatedAt.ToTimestamp()
+                UpdatedAt = value.UpdatedAt.ToTimestamp(),
             };
         }
 
@@ -139,12 +139,15 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
                 AuthorId = value.AuthorId.ToString(),
                 AuthorAvtUrl = value.AuthorAvtUrl,
                 AuthorDisplayName = value.AuthorDisplayName,
+                AuthorUsername = value.AuthorUsername,
                 Title = value.Title,
                 Description = value.Description,
                 RecipeImgUrl = value.RecipeImgUrl,
                 NumberOfComment = value.NumberOfComment,
                 VoteDiff = value.VoteDiff,
                 Vote = value.Vote.ToString(),
+                CreatedAt = value.CreatedAt.ToTimestamp(),
+                UpdatedAt = value.UpdatedAt.ToTimestamp()
             };
         }
 

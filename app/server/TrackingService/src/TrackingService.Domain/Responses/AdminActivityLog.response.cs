@@ -42,17 +42,21 @@ public class UserAdminActivityLogResponse : AdminActivityLogResponse
 
 public class RecipeLogResponse
 {
-    public string? RecipeTitle { get; set; }
-    public Guid? RecipeAuthorId { get; set; }
-    public string? RecipeAuthorDisplayName { get; set; }
-    public string? RecipeImageURL { get; set; }
-    public DateTime? RecipeCreatedAt { get; set; }
-    public DateTime? RecipeUpdatedAt { get; set; }
-    public int? RecipeVoteDiff { get; set; }
+    public Guid Id { get; set; }
+    public string? Title { get; set; }
+    public Guid? AuthorId { get; set; }
+    public string AuthorUsername { get; set; } = null!;
+    public string? AuthorDisplayName { get; set; }
+    public string? ImageURL { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public int? VoteDiff { get; set; }
 }
 
 public class CommentLogResponse
 {
+    public Guid Id { get; set; }
+    public Guid RecipeId { get; set; }
     public string AuthorAvatarURL { get; set; } = null!;
     public Guid? AuthorId { get; set; }
     public string AuthorDisplayName { get; set; } = null!;

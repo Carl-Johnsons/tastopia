@@ -15,6 +15,8 @@ public class AdminRecipeResponse
     [Required]
     public string Ingredients { get; set; } = null!;
     [Required]
+    public string AuthorAvatarURL { get; set; } = null!;
+    [Required]
     public string AuthorDisplayName { get; set; } = null!;
     [Required]
     public string AuthorUsername { get; set; } = null!;
