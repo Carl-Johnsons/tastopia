@@ -9,10 +9,10 @@ import DataTableProvider, { OnChangeActiveFn } from "./Provider";
 import SearchBar from "../users/SearchBar";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import { useGetAdmins } from "@/api/admin";
-import { IAdminListResponse } from "@/types/admin";
 import useAdminTableColumns from "@/hooks/table/useAdminTableColumns";
 import { useLocale, useTranslations } from "next-intl";
 import AdminDialog from "./Dialog";
+import { IAdminResponse } from "@/generated/interfaces/user.interface";
 
 export default function Table() {
   const [limit, setLimit] = useState(10);
@@ -45,7 +45,7 @@ export default function Table() {
     () => (fetchedData?.metadata?.totalRow ? fetchedData.metadata.totalRow : 0),
     [fetchedData]
   );
-  const [data, setData] = useState<IAdminListResponse[]>([]);
+  const [data, setData] = useState<IAdminResponse[]>([]);
 
   console.log("fetchedData", fetchedData);
 
@@ -58,7 +58,7 @@ export default function Table() {
   }, []);
 
   const onSort = useCallback(
-    (selectedColumn: TableColumn<IAdminListResponse>, sortDirection: SortOrder) => {
+    (selectedColumn: TableColumn<IAdminResponse>, sortDirection: SortOrder) => {
       const sortBy = columnFieldMap[selectedColumn.name as string];
       const sortOrder = sortDirection.toString().toUpperCase();
 
