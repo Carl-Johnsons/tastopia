@@ -81,7 +81,6 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
         }
 
         var accountIds = result.UserReportComments.Select(r => r.AccountId).ToList();
-        accountIds.Add(result.MatchComment.AccountId);
 
         var repeatedField = _mapper.Map<RepeatedField<string>>(accountIds);
         var mapUserGrpc = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
@@ -89,9 +88,14 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
             AccountId = { repeatedField }
         }, cancellationToken: cancellationToken);
 
-        var grpcGetAccountDetail = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
+        var grpcAuthorAccountDetail = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
         {
             AccountId = result.AuthorId.ToString()
+        });
+
+        var grpcCommentAuthorAccountDetail = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
+        {
+            AccountId = result.MatchComment.AccountId.ToString()
         });
 
         var reportDetailResponse = new AdminReportCommentDetailResponse
@@ -100,7 +104,9 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
             {
                 Id = result.MatchComment.Id,
                 AuthorId = result.MatchComment.AccountId,
-                AuthorUsername = mapUserGrpc.Users[result.MatchComment.AccountId.ToString()].AccountUsername,
+                AuthorUsername = grpcCommentAuthorAccountDetail.AccountUsername,
+                AuthorAvatarURL = grpcCommentAuthorAccountDetail.AvatarUrl,
+                AuthorDisplayName = grpcCommentAuthorAccountDetail.DisplayName,
                 Content = result.MatchComment.Content,
                 IsActive = result.MatchComment.IsActive,
                 CreatedAt = result.MatchComment.CreatedAt,
@@ -110,8 +116,8 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
             {
                 Id = result.Id,
                 AuthorId = result.AuthorId,
-                AuthorDisplayName = grpcGetAccountDetail.DisplayName,
-                AuthorUsername = grpcGetAccountDetail.AccountUsername,
+                AuthorDisplayName = grpcAuthorAccountDetail.DisplayName,
+                AuthorUsername = grpcAuthorAccountDetail.AccountUsername,
                 CreatedAt = result.CreatedAt,
                 Ingredients = string.Join(", ", result.Ingredients),
                 IsActive = result.IsActive,

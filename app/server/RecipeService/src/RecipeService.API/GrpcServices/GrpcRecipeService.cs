@@ -5,6 +5,7 @@ using Grpc.Core;
 using Newtonsoft.Json;
 using RecipeProto;
 using RecipeService.Application.Recipes.Queries;
+using RecipeService.Application.Reports.Queries;
 using RecipeService.Application.Tags.Queries;
 
 namespace RecipeService.API.GrpcServices;
@@ -156,8 +157,39 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
         return grpcResult;
     }
 
-    public override Task<GrpcMapSimpleComments> GetSimpleComments(GrpcGetSimpleCommentRequest request, ServerCallContext context)
+    public override async Task<GrpcMapSimpleComments> GetSimpleComments(GrpcGetSimpleCommentRequest request, ServerCallContext context)
     {
-        return base.GetSimpleComments(request, context);
+        var result = await _sender.Send(new GetCommentDetailQuery
+        {
+            RecipeAndCommentIdSet = request.Ids.ToHashSet(),
+        });
+
+        result.ThrowIfFailure();
+        var mapField = new MapField<string, GrpcSimpleComment>();
+        foreach (var (key, simpleComment) in result.Value!)
+        {
+            if (simpleComment == null)
+            {
+                throw new NullReferenceException("Simple comment is null");
+            }
+            mapField.Add(key, new GrpcSimpleComment
+            {
+                Id = simpleComment.Id.ToString(),
+                AuthorAvatarURL = simpleComment.AuthorAvatarURL,
+                AuthorDisplayName = simpleComment.AuthorDisplayName,
+                AuthorId = simpleComment.AuthorId.ToString(),
+                AuthorUsername = simpleComment.AuthorUsername,
+                Content = simpleComment.Content,
+                CreatedAt = simpleComment.CreatedAt.ToTimestamp(),
+                UpdatedAt = simpleComment.UpdatedAt.ToTimestamp(),
+                IsActive = simpleComment.IsActive
+            });
+        }
+        var grpcResult = new GrpcMapSimpleComments
+        {
+            Comments = { mapField }
+        };
+
+        return grpcResult;
     }
 }

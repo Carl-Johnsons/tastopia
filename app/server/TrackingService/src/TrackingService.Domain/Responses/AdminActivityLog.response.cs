@@ -44,5 +44,12 @@ public class RecipeLogResponse
 
 public class CommentLogResponse
 {
-    public string CommentContent { get; set; } = null!;
+    public string AuthorAvatarURL { get; set; } = null!;
+    public Guid? AuthorId { get; set; }
+    public string AuthorDisplayName { get; set; } = null!;
+    public string AuthorUsername { get; set; } = null!;
+    public string Content { get; set; } = null!;
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+    public bool IsActive { get; set; }
 }

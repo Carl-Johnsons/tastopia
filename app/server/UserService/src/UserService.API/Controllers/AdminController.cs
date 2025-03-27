@@ -113,9 +113,12 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminMarkReport([FromBody] ReportDTO reportDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new MarkReportCommand
         {
             ReportId = reportDTO.ReportId,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -139,7 +142,7 @@ public class AdminController : BaseApiController
 
     [HttpGet("detail")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminListResponse), 200)]
+    [ProducesResponseType(typeof(AdminDetailResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> GetAdminDetail([FromQuery] Guid id)
     {

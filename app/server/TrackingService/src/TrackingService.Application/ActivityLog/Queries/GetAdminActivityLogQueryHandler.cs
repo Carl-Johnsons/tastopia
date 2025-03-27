@@ -2,8 +2,6 @@
 using Contract.Constants;
 using Contract.DTOs;
 using Google.Protobuf.Collections;
-using MongoDB.Bson.IO;
-using Newtonsoft.Json;
 using RecipeProto;
 using TrackingService.Domain.Responses;
 
@@ -77,8 +75,7 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                 }
             });
         }
-        Console.WriteLine("Count is " + paginatedQuery.Count());
-
+        // Get recipe detail dictionary
         var recipeIdList = paginatedQuery
             .ToList()
             .Where(aal => aal.EntityType == ActivityEntityType.RECIPE || (aal.SecondaryEntityId != null && aal.SecondaryEntityType == ActivityEntityType.RECIPE))
@@ -95,9 +92,28 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
             {
                 AccountId = request.AccountId.ToString(),
                 RecipeIds = { repeatedField }
-            });
+            }, cancellationToken: cancellationToken);
+        }
+        // Get comment detail dictionary
+
+        GrpcMapSimpleComments? grpcCommentMap = null;
+        var commentAndRecipeIdList = paginatedQuery
+            .ToList()
+            .Where(aal => aal.EntityType == ActivityEntityType.COMMENT && aal.SecondaryEntityType == ActivityEntityType.RECIPE)
+            .Select(aal => (aal.SecondaryEntityId + "~" + aal.EntityId))
+            .ToList();
+
+        if (commentAndRecipeIdList.Count > 0)
+        {
+            var repeatedField = _mapper.Map<RepeatedField<string>>(commentAndRecipeIdList);
+
+            grpcCommentMap = await _grpcRecipeClient.GetSimpleCommentsAsync(new GrpcGetSimpleCommentRequest
+            {
+                Ids = { repeatedField }
+            }, cancellationToken: cancellationToken);
         }
 
+        // Get account detail dictionary
 
         var list = paginatedQuery.ToList()
                                  .Select(aal =>
@@ -105,8 +121,9 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                      if (aal.EntityType == ActivityEntityType.RECIPE && grpcRecipeMap != null)
                                      {
                                          var grpcSimpleRecipe = grpcRecipeMap.Recipes[aal.EntityId.ToString()];
-                                         
-                                         var mapEntity = new RecipeAdminActivityLogResponse {
+
+                                         var mapEntity = new RecipeAdminActivityLogResponse
+                                         {
                                              AccountId = aal.AccountId,
                                              ActivityType = aal.ActivityType,
                                              EntityId = aal.EntityId,
@@ -132,9 +149,10 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                          return mapEntity;
                                      }
 
-                                     if (aal.EntityType == ActivityEntityType.COMMENT && grpcRecipeMap != null)
+                                     if (aal.EntityType == ActivityEntityType.COMMENT && grpcRecipeMap != null && grpcCommentMap != null)
                                      {
                                          var grpcSimpleRecipe = grpcRecipeMap.Recipes[aal.SecondaryEntityId.ToString()];
+                                         var grpcSimpleComment = grpcCommentMap.Comments[aal.SecondaryEntityId.ToString() + "~" + aal.EntityId.ToString()];
 
                                          var mapEntity = new CommentAdminActivityLogResponse
                                          {
@@ -159,11 +177,20 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                              RecipeVoteDiff = grpcSimpleRecipe.VoteDiff
                                          };
 
-                                         var commentLogResponse = new CommentLogResponse { 
-                                            
+                                         var commentLogResponse = new CommentLogResponse
+                                         {
+                                             AuthorAvatarURL = grpcSimpleComment.AuthorAvatarURL,
+                                             AuthorDisplayName = grpcSimpleComment.AuthorDisplayName,
+                                             AuthorId = Guid.Parse(grpcSimpleComment.AuthorId),
+                                             AuthorUsername = grpcSimpleComment.AuthorUsername,
+                                             Content = grpcSimpleComment.Content,
+                                             CreatedAt = grpcSimpleComment.CreatedAt.ToDateTime(),
+                                             UpdatedAt = grpcSimpleComment.UpdatedAt.ToDateTime(),
+                                             IsActive = grpcSimpleComment.IsActive
                                          };
 
                                          mapEntity.Recipe = recipeLogResponse;
+                                         mapEntity.Comment = commentLogResponse;
 
                                          return mapEntity;
                                      }
@@ -184,7 +211,6 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
             }
         };
 
-        Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(paginatedResponse, Formatting.Indented));
         return Result<PaginatedAdminActivityLogListResponse>.Success(paginatedResponse);
     }
 }

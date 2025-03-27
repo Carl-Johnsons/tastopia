@@ -23,12 +23,7 @@ message GrpcGetSimpleRecipeRequest {
 }
 
 message GrpcGetSimpleCommentRequest {
-    repeated GrpcRecipeIdsAndCommentIds Ids = 1; 
-}
-
-message GrpcRecipeIdsAndCommentIds {
-    string RecipeId = 1;
-    string CommentId = 2;
+    repeated string Ids = 1; // Key syntax is recipeId~commentId
 }
 
 message GrpcSearchSimpleRecipeRequest {
@@ -119,9 +114,10 @@ message GrpcSimpleComment {
     string Id = 1;
     string AuthorId = 2;
     string AuthorUsername = 3;
-    string AuthorAvatarURL = 4;
-    string Content = 5;
-    string IsActive = 6;
-    google.protobuf.Timestamp CreatedAt = 7;
-    google.protobuf.Timestamp UpdatedAt = 8;
+    string AuthorDisplayName = 4;
+    string AuthorAvatarURL = 5;
+    string Content = 6;
+    bool IsActive = 7;
+    google.protobuf.Timestamp CreatedAt = 8;
+    google.protobuf.Timestamp UpdatedAt = 9;
 }
