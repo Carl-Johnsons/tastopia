@@ -24,6 +24,7 @@ import { FORM_TYPE } from "@/constants/form";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import { useTranslations } from "next-intl";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
+import useWindowDimensions from "@/hooks/useWindowDimensions";
 
 const DataTable = () => {
   const t = useTranslations("administerTags");
@@ -33,6 +34,8 @@ const DataTable = () => {
   const [keyword, setKeyword] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const debouncedValue = useDebounce(keyword, 300);
+  const { height } = useWindowDimensions();
+  const PADDING_Y = 50;
 
   const columnFieldMap: Record<string, keyof Tag> = {
     [t("columns.code")]: "code",
@@ -117,8 +120,9 @@ const DataTable = () => {
               </Button>
             </DialogTrigger>
             <DialogContent
-              className='bg-white_black200 sm:max-w-[525px]'
+              className='bg-white_black200 overflow-y-scroll sm:max-w-[525px]'
               onPointerDownOutside={e => e.preventDefault()}
+              style={{ maxHeight: height - 2 * PADDING_Y }}
             >
               <DialogHeader>
                 <DialogTitle className='text-black_white'>

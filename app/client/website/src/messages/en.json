@@ -105,6 +105,35 @@
       "error": "An error occurred. Please try again."
     }
   },
+  "administerReportRecipes": {
+    "title": "Administer Reports",
+    "subtitle": "Recipe",
+    "search": "Search by username, name, gmail,...",
+    "columns": {
+      "recipeName": "Recipe name",
+      "recipeOwner": "Recipe owner",
+      "recipeImage": "Image",
+      "reporter": "Reporter",
+      "reportReason": "Report reason",
+      "createdDate": "Created date",
+      "status": "Status",
+      "action": "Actions"
+    },
+    "tooltip": {
+      "viewDetail": "Report detail",
+      "disableRecipe": "Disable recipe",
+      "restoreRecipe": "Restore recipe",
+      "markAsCompleted": "Mark report as completed",
+      "restoreReport": "Restore report"
+    },
+    "notifications": {
+      "restoreRecipeSuccess": "Restore recipe successfully!",
+      "disableRecipeSuccess": "Disable recipe successfully!",
+      "restoreReportSuccess": "Restore report successfully!",
+      "completeReportSuccess": "Mark report as completed successfully!",
+      "error": "Something went wrong!"
+    }
+  },
   "administerReportUsers": {
     "title": "Administer Reports",
     "subtitle": "User",
@@ -127,15 +156,169 @@
       "reportDetail": "Report detail",
       "disableUser": "Disable user",
       "restoreUser": "Restore user",
-      "markAsComplete": "Mark report as complete",
+      "markAsComplete": "Mark report as completed",
       "restoreReport": "Restore report"
     },
     "notifications": {
       "restoreUserSuccess": "Restore user successfully!",
       "disableUserSuccess": "Disable user successfully!",
       "restoreReportSuccess": "Restore report successfully!",
-      "completeReportSuccess": "Mark report as complete successfully!",
+      "completeReportSuccess": "Mark report as completed successfully!",
       "error": "Something went wrong!"
+    }
+  },
+  "administerAdmins": {
+    "title": "Administer Admins",
+    "search": "Search by username, name ,gmail, ...",
+    "columns": {
+      "username": "Username",
+      "displayName": "Display Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "dateOfBirth": "Date of Birth",
+      "status": "Status",
+      "address": "Address",
+      "actions": "Actions"
+    },
+    "tooltip": {
+      "viewDetail": "View detail",
+      "restore": "Restore",
+      "disable": "Disable",
+      "create": "Create"
+    },
+    "notifications": {
+      "restoreSuccess": "Restore admin successfully!",
+      "disableSuccess": "Disable admin successfully!",
+      "create": {
+        "success": "Create new admin successfully!"
+      },
+      "error": "Something went wrong!"
+    },
+    "form": {
+      "title": "Create New Admin",
+      "name": {
+        "label": "Name",
+        "placeholder": "Enter your name",
+        "errors": {
+          "required": "Name is required",
+          "max": "Name must be less than 50 characters"
+        }
+      },
+      "gmail": {
+        "label": "Gmail",
+        "placeholder": "Enter your Gmail address",
+        "errors": {
+          "required": "Gmail is required",
+          "email": "Invalid gmail address"
+        }
+      },
+      "phone": {
+        "label": "Phone",
+        "placeholder": "Enter your phone number",
+        "errors": {
+          "required": "Phone number is required",
+          "regex": "Invalid phone number"
+        }
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password",
+        "errors": {
+          "required": "Password is required",
+          "min": "Password must be at least 6 characters",
+          "max": "Password must be less than 50 characters"
+        }
+      },
+      "gender": {
+        "label": "Gender",
+        "placeholder": "Select your gender",
+        "options": {
+          "male": "Male",
+          "female": "Female"
+        },
+        "errors": {
+          "required": "Gender is required",
+          "invalid": "Invalid gender"
+        }
+      },
+      "dateOfBirth": {
+        "label": "Date of Birth",
+        "placeholder": "DD/MM/YYYY",
+        "errors": {
+          "required": "Date of birth is required",
+          "invalid": "Invalid date of birth"
+        }
+      },
+      "address": {
+        "label": "Address",
+        "placeholder": "Enter your address",
+        "errors": {
+          "required": "Address is required",
+          "max": "Address must be less than 255 characters"
+        }
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Select a status",
+        "options": {
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "errors": {
+          "required": "Status is required",
+          "invalid": "Invalid status"
+        }
+      },
+      "image": {
+        "label": "Image",
+        "required": "Image is required",
+        "errors": {
+          "required": "Avatar is required",
+          "maxSize": "Selected file size exceeds the maximum allowed (15MB)",
+          "maxNumber": "Number of selected images exceed 1",
+          "acceptType": "Only .jpg, .jpeg, .png and .webp formats are supported",
+          "maxFileSize": "Selected file size exceeds max file size (15MB)"
+        },
+        "upload": {
+          "clickToUpload": "Click to upload",
+          "dragAndDrop": "or drag and drop",
+          "fileTypes": "PNG, JPG, JPEG, or WEBP (MAX 15MB)",
+          "removeImage": "Remove image",
+          "confirmDelete": {
+            "title": "Are you sure you want to delete this image?",
+            "description": "Once deleted, it cannot be undone.",
+            "confirm": "Yes, delete",
+            "cancel": "Cancel"
+          }
+        }
+      }
+    },
+    "detail": {
+      "header": {
+        "roles": {
+          "ADMIN": "Admin",
+          "SUPER ADMIN": "Super Admin"
+        }
+      },
+      "info": {
+        "title": "Profile Information",
+        "fields": {
+          "username": "Username",
+          "displayName": "Display name",
+          "email": "Email",
+          "phoneNumber": "Phone Number",
+          "dob": "Date of Birth",
+          "address": "Address",
+          "gender": "Gender",
+          "genders": {
+            "male": "Male",
+            "female": "Female"
+          }
+        }
+      },
+      "activity": {
+        "title": "Latest Activity"
+      }
     }
   },
   "administerTags": {

@@ -24,8 +24,9 @@ export async function getRecipes(options?: PaginatedQueryParams) {
   } = options || {};
 
   try {
-    const { data } =
-      await protectedAxiosInstance.get<IPaginatedAdminRecipeListResponse>(url, {
+    const { data } = await protectedAxiosInstance.get<IPaginatedAdminRecipeListResponse>(
+      url,
+      {
         params: {
           limit,
           skip,
@@ -34,7 +35,8 @@ export async function getRecipes(options?: PaginatedQueryParams) {
           lang,
           keyword: encodeURIComponent(keyword)
         }
-      });
+      }
+    );
 
     return data;
   } catch (error) {
@@ -135,6 +137,7 @@ export const markReportAsCompleted = async ({ reportId, reportType }: IReportDTO
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };
 
@@ -145,6 +148,7 @@ export const reopenReport = async ({ reportId, reportType }: IReportDTO) => {
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };
 
@@ -155,6 +159,7 @@ export const disableRecipe = async (id: string) => {
     await protectedAxiosInstance.delete<undefined>(url, { params: { id } });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };
 
@@ -165,5 +170,6 @@ export const restoreRecipe = async (id: string) => {
     await protectedAxiosInstance.put<undefined>(url, undefined, { params: { id } });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };

@@ -1,20 +1,18 @@
 "use client";
 
-import { useGetRecipeReports } from "@/api/recipe";
 import Loader from "@/components/ui/Loader";
-import { IAdminReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import useDebounce from "@/hooks/useDebounce";
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
-import { ChevronRight } from "lucide-react";
 import NoRecord from "@/components/ui/NoRecord";
-import SearchBar from "../../users/SearchBar";
-import { ReportStatus } from "@/constants/reports";
 import DataTableProvider, { OnChangeActiveFn } from "./Provider";
+import SearchBar from "../users/SearchBar";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
-import useLocaleTable from "@/hooks/table/useLocaleTable";
+import { useGetAdmins } from "@/api/admin";
+import { IAdminListResponse } from "@/types/admin";
+import useAdminTableColumns from "@/hooks/table/useAdminTableColumns";
 import { useTranslations } from "next-intl";
-import useReportRecipeTableColumns from "@/hooks/table/useReportRecipeTableColumns";
+import AdminDialog from "./Dialog";
 
 export default function Table() {
   const [limit, setLimit] = useState(10);
@@ -24,15 +22,14 @@ export default function Table() {
   const [lang, setLang] = useState("en");
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
-  const t = useTranslations("administerReportRecipes");
-  const { columns, columnFieldMap } = useReportRecipeTableColumns();
+  const { columns, columnFieldMap } = useAdminTableColumns();
 
   const {
     data: fetchedData,
     isLoading,
     isFetching,
     refetch
-  } = useGetRecipeReports({
+  } = useGetAdmins({
     skip,
     sortBy,
     sortOrder,
@@ -41,13 +38,14 @@ export default function Table() {
     keyword: debouncedValue
   });
 
+  const { tableStyles } = useDataTableStyles();
+  const t = useTranslations("administerAdmins");
+
   const totalRow = useMemo(
     () => (fetchedData?.metadata?.totalRow ? fetchedData.metadata.totalRow : 0),
     [fetchedData]
   );
-  const [reports, setReports] = useState<IAdminReportRecipeResponse[]>([]);
-  const { tableStyles } = useDataTableStyles();
-  const tableLocale = useLocaleTable();
+  const [data, setData] = useState<IAdminListResponse[]>([]);
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
@@ -58,10 +56,7 @@ export default function Table() {
   }, []);
 
   const onSort = useCallback(
-    (
-      selectedColumn: TableColumn<IAdminReportRecipeResponse>,
-      sortDirection: SortOrder
-    ) => {
+    (selectedColumn: TableColumn<IAdminListResponse>, sortDirection: SortOrder) => {
       const sortBy = columnFieldMap[selectedColumn.name as string];
       const sortOrder = sortDirection.toString().toUpperCase();
 
@@ -76,14 +71,14 @@ export default function Table() {
     setSkip(0);
   }, []);
 
-  const onChangeActive = useCallback<OnChangeActiveFn>(({ reportId, value }) => {
-    setReports(prev => {
-      return prev.map(report => {
-        if (report.reportId !== reportId) return report;
+  const onChangeActive = useCallback<OnChangeActiveFn>(({ id, value }) => {
+    setData(prev => {
+      return prev.map(item => {
+        if (item.accountId !== id) return item;
 
         return {
-          ...report,
-          status: value ? ReportStatus.Pending : ReportStatus.Done
+          ...item,
+          isActive: value
         };
       });
     });
@@ -102,11 +97,11 @@ export default function Table() {
   }, [skip, sortBy, sortOrder, debouncedValue, limit]);
 
   useEffect(() => {
-    setReports(fetchedData?.paginatedData || []);
+    setData(fetchedData?.paginatedData || []);
   }, [fetchedData]);
 
   return (
-    <>
+    <DataTableProvider value={contextValue}>
       <div className='flex-center mt-4 flex-col gap-4'>
         <SearchBar
           onChange={handleSearch}
@@ -114,33 +109,34 @@ export default function Table() {
           placeholder={t("search")}
         />
         <div className='flex gap-2 self-start'>
-          <span className='text-gray-500'>{t("title")}</span>
-          <ChevronRight className='text-black_white' />
-          <span className='text-black_white'>{t("subtitle")}</span>
+          <span className='text-black_white base-medium flex w-full flex-col gap-4'>
+            {t("title")}
+          </span>
         </div>
+        <AdminDialog
+          type='create'
+          buttonClassName='self-start'
+        />
       </div>
 
-      <DataTableProvider value={contextValue}>
-        <DataTable
-          customStyles={tableStyles}
-          columns={columns}
-          data={reports}
-          responsive
-          striped
-          highlightOnHover
-          progressPending={isLoading || isFetching}
-          progressComponent={<Loader />}
-          noDataComponent={<NoRecord />}
-          pagination
-          paginationServer
-          onChangeRowsPerPage={handleChangeRowPerPage}
-          onChangePage={handleChangePage}
-          paginationTotalRows={totalRow}
-          sortServer
-          onSort={onSort}
-          paginationComponentOptions={tableLocale}
-        />
-      </DataTableProvider>
-    </>
+      <DataTable
+        customStyles={tableStyles}
+        columns={columns}
+        data={data}
+        responsive
+        striped
+        highlightOnHover
+        progressPending={isLoading || isFetching}
+        progressComponent={<Loader />}
+        noDataComponent={<NoRecord />}
+        pagination
+        paginationServer
+        onChangeRowsPerPage={handleChangeRowPerPage}
+        onChangePage={handleChangePage}
+        paginationTotalRows={totalRow}
+        sortServer
+        onSort={onSort}
+      />
+    </DataTableProvider>
   );
 }

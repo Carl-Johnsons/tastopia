@@ -105,6 +105,40 @@
       "error": "Đã xảy ra lỗi. Vui lòng thử lại."
     }
   },
+  "administerReportRecipes": {
+    "title": "Quản lý báo cáo",
+    "subtitle": "Công thức",
+    "search": "Tìm kiếm bằng tên người dùng, tên hiển thị, gmail...",
+    "columns": {
+      "recipeName": "Tên công thức",
+      "recipeOwner": "Người tạo",
+      "recipeImage": "Hình ảnh",
+      "reporter": "Người báo cáo",
+      "reportReason": "Lý do báo cáo",
+      "createdDate": "Ngày tạo",
+      "status": "Trạng thái",
+      "action": "Hành động"
+    },
+    "actions": {
+      "detail": "Chi tiết",
+      "disable": "Vô hiệu hóa",
+      "restore": "Khôi phục"
+    },
+    "tooltip": {
+      "viewDetail": "Xem chi tiết",
+      "disableRecipe": "Vô hiệu hóa công thức",
+      "restoreRecipe": "Khôi phục công thức",
+      "markAsCompleted": "Đánh dấu hoàn tất",
+      "restoreReport": "Khôi phục báo cáo"
+    },
+    "notifications": {
+      "restoreRecipeSuccess": "Khôi phục công thức thành công!",
+      "disableRecipeSuccess": "Vô hiệu hóa công thức thành công!",
+      "restoreReportSuccess": "Khôi phục báo cáo thành công!",
+      "completeReportSuccess": "Đánh dấu báo cáo hoàn thành!",
+      "error": "Đã xảy ra lỗi!"
+    }
+  },
   "administerReportUsers": {
     "title": "Quản lý báo cáo",
     "subtitle": "Người dùng",
@@ -136,6 +170,57 @@
       "restoreReportSuccess": "Khôi phục báo cáo thành công!",
       "completeReportSuccess": "Đánh dấu báo cáo hoàn thành!",
       "error": "Đã xảy ra lỗi!"
+    }
+  },
+  "administerAdmins": {
+    "title": "Quản lý quản trị viên",
+    "search": "Tìm kiếm quản trị viên",
+    "columns": {
+      "username": "Tên đăng nhập",
+      "displayName": "Tên hiển thị",
+      "email": "Email",
+      "phoneNumber": "Số điện thoại",
+      "dateOfBirth": "Ngày sinh",
+      "status": "Trạng thái",
+      "address": "Địa chỉ",
+      "actions": "Hành động"
+    },
+    "tooltip": {
+      "viewDetail": "Xem chi tiết",
+      "restore": "Khôi phục",
+      "disable": "Vô hiệu hóa"
+    },
+    "notifications": {
+      "restoreSuccess": "Khôi phục quản trị viên thành công!",
+      "disableSuccess": "Vô hiệu hóa quản trị viên thành công!",
+      "error": "Đã xảy ra lỗi!"
+    },
+    "detail": {
+      "header": {
+        "roles": {
+          "ADMIN": "Quản trị viên",
+          "SUPER ADMIN": "Siêu quản trị viên"
+        }
+      },
+      "info": {
+        "title": "Thông tin hồ sơ",
+        "fields": {
+          "username": "Tên người dùng",
+          "displayName": "Tên hiển thị",
+          "email": "Email",
+          "phoneNumber": "Số điện thoại",
+          "dob": "Ngày sinh",
+          "address": "Địa chỉ",
+          "gender": "Giới tính",
+          "genders": {
+            "male": "Nam",
+            "female": "Nữ"
+          }
+        }
+      },
+      "activity": {
+        "title": "Hoạt động gần đây"
+      }
     }
   },
   "administerTags": {
