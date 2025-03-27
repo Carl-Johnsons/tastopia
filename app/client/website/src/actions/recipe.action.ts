@@ -11,6 +11,7 @@ import {
 import { IGetRecipeCommentsDTO } from "../../../mobile/generated/interfaces/recipe.interface";
 import { withErrorProcessor } from "@/utils/errorHanlder";
 import { PaginatedQueryParams } from "@/types/common";
+import { StatisticDateItem, StatisticItem } from "@/types/statistic";
 
 export async function getRecipes(options?: PaginatedQueryParams) {
   const url = "/api/admin/recipe/get-recipes";
@@ -24,8 +25,9 @@ export async function getRecipes(options?: PaginatedQueryParams) {
   } = options || {};
 
   try {
-    const { data } =
-      await protectedAxiosInstance.get<IPaginatedAdminRecipeListResponse>(url, {
+    const { data } = await protectedAxiosInstance.get<IPaginatedAdminRecipeListResponse>(
+      url,
+      {
         params: {
           limit,
           skip,
@@ -34,7 +36,8 @@ export async function getRecipes(options?: PaginatedQueryParams) {
           lang,
           keyword: encodeURIComponent(keyword)
         }
-      });
+      }
+    );
 
     return data;
   } catch (error) {
@@ -167,3 +170,36 @@ export const restoreRecipe = async (id: string) => {
     withErrorProcessor(error);
   }
 };
+
+export async function getTotalRecipes() {
+  const url = "/api/admin/recipe/get-total-recipe";
+  try {
+    const { data } = await protectedAxiosInstance.get<number>(url);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getRecipeRanking() {
+  const url = "/api/admin/recipe/get-recipe-ranking-by-views";
+  try {
+    const { data } = await protectedAxiosInstance.get<StatisticItem[]>(url);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getRecipeStatistic() {
+  const url = "/api/admin/recipe/get-recipe-statistic";
+  try {
+    const { data } = await protectedAxiosInstance.get<StatisticDateItem[]>(url);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}

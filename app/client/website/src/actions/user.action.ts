@@ -14,6 +14,7 @@ import {
 } from "@/generated/interfaces/user.interface";
 import { IInfiniteAdminUserReportListResponse } from "@/types/user";
 import { withErrorProcessor } from "@/utils/errorHanlder";
+import { StatisticDateItem, StatisticItem } from "@/types/statistic";
 
 export async function getUserById(id: string) {
   try {
@@ -170,6 +171,28 @@ export async function getUserDetailReports(
     });
 
     return data as IInfiniteAdminUserReportListResponse;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getTotalUsers() {
+  const url = "/api/admin/user/get-total-user";
+  try {
+    const { data } = await protectedAxiosInstance.get<number>(url);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getAccountStatistic() {
+  const url = "/api/admin/account/get-account-statistic";
+  try {
+    const { data } = await protectedAxiosInstance.get<StatisticDateItem[]>(url);
+    return data;
   } catch (error) {
     console.log(error);
     throw error;

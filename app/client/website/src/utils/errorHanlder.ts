@@ -7,6 +7,7 @@ import { AxiosError } from "axios";
  */
 export const withErrorProcessor = (error: unknown) => {
   if (error instanceof AxiosError) {
+    if (!error.response || !error.response.data) throw error;
     const { code } = error.response?.data as IErrorResponseDTO;
     throw new Error(code);
   }
