@@ -1,6 +1,7 @@
 "use server";
 
 import { protectedAxiosInstance } from "@/constants/host";
+import { StatisticItem } from "@/types/statistic";
 import { IPaginatedTagResponse, Tag } from "@/types/tag";
 
 export async function getTags(
@@ -48,6 +49,17 @@ export async function updateTag(formData: FormData) {
     });
 
     return response.data as Tag;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getTagRanking() {
+  const url = "/api/admin/recipe/get-tag-ranking-by-popular";
+  try {
+    const { data } = await protectedAxiosInstance.get<StatisticItem[]>(url);
+    return data;
   } catch (error) {
     console.log(error);
     throw error;

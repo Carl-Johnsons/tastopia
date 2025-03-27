@@ -14,6 +14,7 @@ const useSubscribeSignalREvents = () => {
     useReceiveNotificationSubscription();
 
   const {
+    onlineUserCount,
     subscribeReceiveOnlineUserNumberEvent,
     unsubscribeReceiveOnlineUserNumberEvent
   } = useReceiveOnlineUserNumberSubscription();
@@ -31,6 +32,7 @@ const useSubscribeSignalREvents = () => {
   }, []);
 
   return {
+    onlineUserCount,
     subscribeAllEvents,
     unsubscribeAllEvents
   };

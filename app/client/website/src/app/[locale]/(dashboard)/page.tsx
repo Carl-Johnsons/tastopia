@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
 export default function AdminPage() {
-  redirect("/statistics/income");
+  redirect("/statistics");
   return null;
 }
