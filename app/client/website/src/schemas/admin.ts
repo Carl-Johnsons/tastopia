@@ -8,51 +8,57 @@ const GENDER: Array<string> = [Gender.Male, Gender.Female];
 const STATUS: Array<string> = ["Active", "Inactive"];
 const IMAGE_TYPE = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
 
+const imageSchemma = (t: (key: string) => string) =>
+  z.array(
+    z.object({
+      dataURL: z.string().optional(),
+      file: z
+        .object({
+          size: z.number().max(MAX_FILE_SIZE, t("image.errors.maxSize")),
+          type: z.string().refine(type => IMAGE_TYPE.includes(type), {
+            message: t("image.errors.acceptType")
+          })
+        })
+        .optional()
+    }),
+    {
+      required_error: t("image.errors.required")
+    }
+  );
+
 export const getCreateAdminSchema = (t: (key: string) => string) =>
   z.object({
-    name: z.string().nonempty(t("name.errors.required")).max(50, t("name.errors.max")),
+    name: z
+      .string({
+        required_error: t("name.errors.required")
+      })
+      .max(50, t("name.errors.max")),
     gmail: z
-      .string()
-      .nonempty(t("gmail.errors.required"))
+      .string({ required_error: t("gmail.errors.required") })
       .email(t("gmail.errors.invalid")),
     phone: z
-      .string()
-      .nonempty(t("phone.errors.required"))
+      .string({ required_error: t("phone.errors.required") })
       .refine(val => PHONE_REGEX.test(val), {
         message: t("phone.errors.invalid")
       }),
     password: z
-      .string()
-      .nonempty(t("password.errors.required"))
-      .min(6, t("password.errors.min")),
+      .string({ required_error: t("password.errors.required") })
+      .min(6, t("password.errors.min"))
+      .max(50, t("password.errors.max")),
     gender: z
-      .string()
-      .nonempty(t("gender.errors.required"))
+      .string({ required_error: t("gender.errors.required") })
       .refine(val => GENDER.includes(val), {
         message: t("gender.errors.invalid")
       }),
     dateOfBirth: z.date({
-      required_error: t("dateOfBirth.errors.required")
+      required_error: t("dateOfBirth.errors.required"),
+      invalid_type_error: t("dateOfBirth.errors.invalid")
     }),
-    address: z.string().nonempty(t("address.errors.required")),
+    address: z.string({ required_error: t("address.errors.required") }),
     status: z
-      .string()
-      .nonempty(t("status.errors.required"))
+      .string({ required_error: t("status.errors.required") })
       .refine(val => STATUS.includes(val), {
         message: t("status.errors.invalid")
       }),
-    image: z
-      .any({
-        required_error: t("image.errors.required")
-      })
-      .refine(image => {
-        if (!image) return false;
-        const size = (image as ImageListType)[0].file?.size;
-        return !!size && size <= MAX_FILE_SIZE;
-      }, t("image.errors.maxSize"))
-      .refine(image => {
-        if (!image) return false;
-        const type = (image as ImageListType)[0].file?.type;
-        return !!type && IMAGE_TYPE.includes(type);
-      }, t("image.errors.acceptType"))
+    image: imageSchemma(t)
   });

@@ -14,7 +14,8 @@ import { DialogProps } from "@radix-ui/react-dialog";
 import { Edit, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import AdminForm from "./Form";
-import { useAdminsContext } from "./Provider";
+import { useCreateAdminForm } from "@/hooks/form";
+import { useSelectAdmin } from "@/slices/admin.slice";
 
 type Props = DialogProps & {
   type: "create" | "update";
@@ -22,8 +23,8 @@ type Props = DialogProps & {
 };
 
 const AdminDialog = ({ type, buttonClassName, ...props }: Props) => {
-  const { formStates } = useAdminsContext();
-  const { isSubmitting, submitForm } = formStates;
+  const { form, submitForm } = useCreateAdminForm();
+  const { isLoading } = useSelectAdmin();
   const tTooltip = useTranslations("administerAdmins.tooltip");
   const tForm = useTranslations("administerAdmins.form");
   const { height } = useWindowDimensions();
@@ -34,7 +35,13 @@ const AdminDialog = ({ type, buttonClassName, ...props }: Props) => {
       <DialogTrigger asChild>
         <InteractiveButton
           title={type === "create" ? tTooltip("create") : "Update"}
-          icon={type === "create" ? <Plus /> : <Edit />}
+          icon={
+            type === "create" ? (
+              <Plus className='text-white_black' />
+            ) : (
+              <Edit className='text-white_black' />
+            )
+          }
           className={buttonClassName}
         />
       </DialogTrigger>
@@ -45,13 +52,23 @@ const AdminDialog = ({ type, buttonClassName, ...props }: Props) => {
         <DialogHeader>
           <DialogTitle className='text-black_white'>{tForm("title")}</DialogTitle>
         </DialogHeader>
-        <AdminForm type={type} />
+        <AdminForm
+          type={type}
+          form={form}
+          onSubmit={submitForm}
+        />
         <DialogFooter>
           <InteractiveButton
             title={type === "create" ? tTooltip("create") : "Update"}
-            icon={type === "create" ? <Plus /> : <Edit />}
+            icon={
+              type === "create" ? (
+                <Plus className='text-white_black' />
+              ) : (
+                <Edit className='text-white_black' />
+              )
+            }
             onClick={submitForm}
-            isLoading={isSubmitting}
+            isLoading={isLoading}
             className='text-white_black rounded-full bg-primary hover:bg-secondary'
           />
         </DialogFooter>

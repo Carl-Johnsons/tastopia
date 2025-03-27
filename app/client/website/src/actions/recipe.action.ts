@@ -40,7 +40,7 @@ export async function getRecipes(options?: PaginatedQueryParams) {
 
     return data;
   } catch (error) {
-    console.log(error);
+    withErrorProcessor(error);
     throw error;
   }
 }
@@ -71,7 +71,7 @@ export async function getRecipeReports(options?: PaginatedQueryParams) {
 
     return data;
   } catch (error) {
-    console.log(error);
+    withErrorProcessor(error);
     throw error;
   }
 }
@@ -103,7 +103,7 @@ export async function getRecipeReportById({
 
     return data;
   } catch (error) {
-    console.log(error);
+    withErrorProcessor(error);
     throw error;
   }
 }
@@ -125,7 +125,7 @@ export async function getRecipeComments({ recipeId, options }: GetRecipeComments
 
     return data;
   } catch (error) {
-    console.log(error);
+    withErrorProcessor(error);
     throw error;
   }
 }

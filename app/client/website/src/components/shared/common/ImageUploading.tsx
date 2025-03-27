@@ -211,7 +211,7 @@ const ImagePreview = ({
   );
 };
 
-const Errors = ({ errors, imageList }: ErrorsProps) => {
+const Errors = ({ errors }: ErrorsProps) => {
   const t = useTranslations("administerAdmins.form.image.errors");
 
   return (
@@ -221,7 +221,7 @@ const Errors = ({ errors, imageList }: ErrorsProps) => {
         <>
           {errors.maxNumber && <span>{t("maxNumber")}</span>}
           {errors.acceptType && <span>{t("acceptType")}</span>}
-          {errors.maxFileSize && <span>{t("maxFileSize")}</span>}
+          {errors.maxFileSize && <span>{t("maxSize")}</span>}
         </>
       )}
     </div>

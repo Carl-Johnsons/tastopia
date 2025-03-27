@@ -198,7 +198,7 @@
       "title": "Create New Admin",
       "name": {
         "label": "Name",
-        "placeholder": "Enter your name",
+        "placeholder": "Ex. John Doe",
         "errors": {
           "required": "Name is required",
           "max": "Name must be less than 50 characters"
@@ -206,23 +206,23 @@
       },
       "gmail": {
         "label": "Gmail",
-        "placeholder": "Enter your Gmail address",
+        "placeholder": "Ex. johndoe@gmail.com",
         "errors": {
           "required": "Gmail is required",
-          "email": "Invalid gmail address"
+          "invalid": "Invalid gmail address"
         }
       },
       "phone": {
         "label": "Phone",
-        "placeholder": "Enter your phone number",
+        "placeholder": "Ex. 0364295940",
         "errors": {
           "required": "Phone number is required",
-          "regex": "Invalid phone number"
+          "invalid": "Invalid phone number"
         }
       },
       "password": {
         "label": "Password",
-        "placeholder": "Enter your password",
+        "placeholder": "Ex. TastopiaPassword@123",
         "errors": {
           "required": "Password is required",
           "min": "Password must be at least 6 characters",
@@ -231,7 +231,7 @@
       },
       "gender": {
         "label": "Gender",
-        "placeholder": "Select your gender",
+        "placeholder": "Select gender",
         "options": {
           "male": "Male",
           "female": "Female"
@@ -251,7 +251,7 @@
       },
       "address": {
         "label": "Address",
-        "placeholder": "Enter your address",
+        "placeholder": "Ex. Can Tho",
         "errors": {
           "required": "Address is required",
           "max": "Address must be less than 255 characters"
@@ -276,8 +276,7 @@
           "required": "Avatar is required",
           "maxSize": "Selected file size exceeds the maximum allowed (15MB)",
           "maxNumber": "Number of selected images exceed 1",
-          "acceptType": "Only .jpg, .jpeg, .png and .webp formats are supported",
-          "maxFileSize": "Selected file size exceeds max file size (15MB)"
+          "acceptType": "Only .jpg, .jpeg, .png and .webp formats are supported"
         },
         "upload": {
           "clickToUpload": "Click to upload",

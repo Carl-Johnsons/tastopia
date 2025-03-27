@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useCallback, useEffect } from "react";
+import React, { BaseSyntheticEvent, FC, useCallback, useEffect } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -9,7 +9,7 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form";
 import { toast } from "react-toastify";
 import ImageUploading from "@/components/shared/common/ImageUploading";
@@ -22,10 +22,7 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
-import { useAdminsContext } from "./Provider";
-import { getCreateAdminSchema } from "@/schemas/admin";
 import { CreateAdminFormFields } from "@/types/admin";
-import { createAdmin } from "@/actions/admin.action";
 import { Gender } from "@/constants/gender";
 import { ItemStatusText } from "../report/common/StatusText";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -38,6 +35,8 @@ import Image from "@/components/shared/common/Image";
 
 type Props = {
   type: "create" | "update";
+  form: ReturnType<typeof useForm<CreateAdminFormFields>>;
+  onSubmit: (e?: BaseSyntheticEvent) => void;
 };
 
 type FormInputProps = {
@@ -60,77 +59,13 @@ type FormSelectProps = FormInputProps & {
 type FormDatePickerProps = FormInputProps;
 type FormImageUploadProps = Omit<FormInputProps, "placeholder">;
 
-const AdminForm = ({ type }: Props) => {
-  const { formStates } = useAdminsContext();
-  const { setIsSubmitting, setSubmitForm } = formStates;
+const AdminForm = ({ type, form, onSubmit }: Props) => {
   const t = useTranslations("administerAdmins.form");
-  const schema = getCreateAdminSchema(t);
-
-  const form = useForm<CreateAdminFormFields>({
-    resolver: zodResolver(schema),
-    reValidateMode: "onSubmit"
-  });
-
-  const onSubmit = useCallback(
-    async ({
-      name,
-      gmail,
-      phone,
-      password,
-      gender,
-      status,
-      dateOfBirth,
-      address,
-      image
-    }: CreateAdminFormFields) => {
-      if (image.length === 0) {
-        toast.error(t("form.image.required"));
-        return;
-      }
-
-      setIsSubmitting(true);
-
-      try {
-        const formData = new FormData();
-
-        formData.append("name", name);
-        formData.append("gmail", gmail);
-        formData.append("phone", phone);
-        formData.append("password", password);
-        formData.append("gender", gender);
-        formData.append("status", status);
-        formData.append("dateOfBirth", dateOfBirth.toISOString());
-        formData.append("address", address);
-        formData.append("image", image[0].file);
-
-        console.log("sending create admin request with data:", formData);
-        await createAdmin(formData);
-        toast.success(t("notifications.create.success"));
-      } catch (error) {
-        console.error(error);
-
-        if (error instanceof Error) {
-          return toast.error(t(`notifications.create.${error.message}`));
-        }
-
-        toast.error(t("notifications.error"));
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [t, setIsSubmitting]
-  );
-
-  const submitForm = useCallback(() => form.handleSubmit(onSubmit), [form, onSubmit]);
-
-  useEffect(() => {
-    setSubmitForm(submitForm);
-  }, [submitForm, setSubmitForm]);
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={onSubmit}
         className='flex w-full flex-col gap-10'
       >
         <FormField

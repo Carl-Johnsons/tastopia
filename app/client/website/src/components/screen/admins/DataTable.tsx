@@ -11,7 +11,7 @@ import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import { useGetAdmins } from "@/api/admin";
 import { IAdminListResponse } from "@/types/admin";
 import useAdminTableColumns from "@/hooks/table/useAdminTableColumns";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import AdminDialog from "./Dialog";
 
 export default function Table() {
@@ -19,7 +19,7 @@ export default function Table() {
   const [skip, setSkip] = useState(0);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("DESC");
-  const [lang, setLang] = useState("en");
+  const lang = useLocale();
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
   const { columns, columnFieldMap } = useAdminTableColumns();
