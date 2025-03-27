@@ -132,6 +132,9 @@
       "restoreReportSuccess": "Restore report successfully!",
       "completeReportSuccess": "Mark report as completed successfully!",
       "error": "Something went wrong!"
+    },
+    "detail": {
+      "loadMore": "Load more"
     }
   },
   "administerReportUsers": {
@@ -316,7 +319,26 @@
         }
       },
       "activity": {
-        "title": "Latest Activity"
+        "title": "Latest Activity",
+        "ago": "ago",
+        "loadMore": "Load more",
+        "types": {
+          "create": "Create",
+          "update": "Update",
+          "disable": "Disable",
+          "restore": "Restore",
+          "markComplete": "Mark as completed",
+          "reopen": "Reopen"
+        },
+        "entity": {
+          "recipe": "Recipe",
+          "comment": "Comment",
+          "user": "User",
+          "tag": "Tag",
+          "reportUser": "User Report",
+          "reportRecipe": "Recipe Report",
+          "reportComment": "Comment Report"
+        }
       }
     }
   },

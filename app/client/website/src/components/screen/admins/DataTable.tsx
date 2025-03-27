@@ -47,6 +47,8 @@ export default function Table() {
   );
   const [data, setData] = useState<IAdminListResponse[]>([]);
 
+  console.log("fetchedData", fetchedData);
+
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
   }, []);

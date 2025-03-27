@@ -137,6 +137,9 @@
       "restoreReportSuccess": "Khôi phục báo cáo thành công!",
       "completeReportSuccess": "Đánh dấu báo cáo hoàn thành!",
       "error": "Đã xảy ra lỗi!"
+    },
+    "detail": {
+      "loadMore": "Xem thêm"
     }
   },
   "administerReportUsers": {
@@ -307,7 +310,7 @@
       "info": {
         "title": "Thông tin hồ sơ",
         "fields": {
-          "username": "Tên đăng nhập",
+          "username": "Tên người dùng",
           "displayName": "Tên hiển thị",
           "email": "Email",
           "phoneNumber": "Số điện thoại",
@@ -321,7 +324,26 @@
         }
       },
       "activity": {
-        "title": "Hoạt động gần đây"
+        "title": "Hoạt động gần đây",
+        "ago": "trước",
+        "loadMore": "Xem thêm",
+        "types": {
+          "create": "Tạo",
+          "update": "Cập nhật",
+          "disable": "Vô hiệu hóa",
+          "restore": "Khôi phục",
+          "markComplete": "Đánh dấu là hoàn thành",
+          "reopen": "Mở lại"
+        },
+        "entity": {
+          "recipe": "Công thức",
+          "comment": "Bình luận",
+          "user": "Người dùng",
+          "tag": "Thẻ",
+          "reportUser": "Báo cáo người dùng",
+          "reportRecipe": "Báo cáo công thức",
+          "reportComment": "Báo cáo bình luận"
+        }
       }
     }
   },

@@ -7,14 +7,14 @@ import {
   PhoneIcon,
   UserIcon
 } from "@/components/shared/icons";
-import { IAdminGetAdminDetailResponse } from "@/types/admin";
 import { getTranslations } from "next-intl/server";
 import { Gender } from "@/constants/gender";
 import { ReactNode } from "react";
-import { format, formatISO } from "date-fns";
+import { format } from "date-fns";
+import { IAdminDetailResponse } from "@/generated/interfaces/user.interface";
 
 type Props = {
-  admin: IAdminGetAdminDetailResponse;
+  admin: IAdminDetailResponse;
 };
 
 export enum Icon {
@@ -37,15 +37,15 @@ export default async function ProfileInfo({ admin }: Props) {
   const t = await getTranslations("administerAdmins.detail.info");
 
   const { username, displayName, email, phoneNumber, address, gender } = admin;
-  const dob = format(new Date(admin.dob), "dd/MM/yyyy");
+  const dob = format(new Date(admin.dob as string), "dd/MM/yyyy");
 
   const infoItems: InfoItem[] = [
     { icon: Icon.USER, label: t("fields.username"), value: username },
     { icon: Icon.DISPLAY_NAME, label: t("fields.displayName"), value: displayName },
-    { icon: Icon.EMAIL, label: t("fields.email"), value: email },
-    { icon: Icon.PHONE, label: t("fields.phoneNumber"), value: phoneNumber },
+    { icon: Icon.EMAIL, label: t("fields.email"), value: email as string },
+    { icon: Icon.PHONE, label: t("fields.phoneNumber"), value: phoneNumber as string },
     { icon: Icon.CALENDAR, label: t("fields.dob"), value: dob },
-    { icon: Icon.LOCATION, label: t("fields.address"), value: address },
+    { icon: Icon.LOCATION, label: t("fields.address"), value: address as string },
     {
       icon: Icon.GENDER,
       label: t("fields.gender"),
@@ -92,7 +92,9 @@ export default async function ProfileInfo({ admin }: Props) {
 
             <div className='flex-1'>
               <p className='paragraph-regular text-black_white'>{label}</p>
-              <p className='paragraph-regular text-gray-500 text-wrap break-all'>{value}</p>
+              <p className='paragraph-regular text-wrap break-all text-gray-500'>
+                {value}
+              </p>
             </div>
           </div>
         ))}

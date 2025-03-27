@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import {
   Form,
@@ -277,7 +277,7 @@ const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
           <FormControl>
             <Button
               variant={"outline"}
-              className={cn("pl-0", !value && "text-muted-foreground")}
+              className={cn("bg-white_black200 pl-0", !value && "text-muted-foreground")}
             >
               <div className='text-black_white flex w-full items-center gap-2 px-3'>
                 <CalendarIcon className='size-4 text-primary' />

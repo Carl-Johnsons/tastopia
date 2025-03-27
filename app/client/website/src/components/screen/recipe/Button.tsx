@@ -54,6 +54,7 @@ export const ViewDetailButton = ({
 export const RestoreRecipeButton = ({
   title,
   targetId,
+  currentUserId,
   onSuccess,
   onFailure,
   className,
@@ -67,6 +68,7 @@ export const RestoreRecipeButton = ({
       onSuccess: async () => {
         toast.success("Recipe restored successfully.");
         await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
+        await queryClient.invalidateQueries({ queryKey: ["adminActivities", currentUserId] });
         onSuccess && onSuccess();
       },
       onError: ({ message }) => {
@@ -94,6 +96,7 @@ export const RestoreRecipeButton = ({
 export const DisableRecipeButton = ({
   title,
   targetId,
+  currentUserId,
   onSuccess,
   onFailure,
   className,
@@ -107,6 +110,7 @@ export const DisableRecipeButton = ({
       onSuccess: async () => {
         toast.success("Recipe disabled successfully.");
         await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
+        await queryClient.invalidateQueries({ queryKey: ["adminActivities", currentUserId] });
         onSuccess && onSuccess();
       },
       onError: ({ message }) => {

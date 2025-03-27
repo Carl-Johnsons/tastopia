@@ -9,6 +9,7 @@ import { formatRelative } from "date-fns";
 import { Link } from "@/i18n/navigation";
 import { useMemo, useState } from "react";
 import { SmallDisableCommentButton, SmallRestoreCommentButton } from "./Button";
+import { useTranslations } from "next-intl";
 
 type Props = {
   recipeId: string;
@@ -16,6 +17,7 @@ type Props = {
 
 export default function Comments({ recipeId }: Props) {
   const { data, isLoading, hasNextPage, fetchNextPage } = useGetRecipeComments(recipeId);
+  const t = useTranslations("administerReportRecipes.detail");
 
   if (isLoading) {
     return <Loader />;
@@ -49,7 +51,7 @@ export default function Comments({ recipeId }: Props) {
             onClick={() => fetchNextPage()}
             className='w-fit rounded-full'
           >
-            <span className='text-white_black'>Load more</span>
+            <span className='text-white_black'>{t("loadMore")}</span>
           </Button>
         </div>
       )}
