@@ -3,16 +3,18 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { IAdminGetAdminDetailResponse } from "@/types/admin";
 import { DisableAdminButton, RestoreAdminButton } from "./Button";
 import { ItemStatusText } from "../report/common/StatusText";
+import { IAdminDetailResponse } from "@/generated/interfaces/user.interface";
+import { Roles } from "@/constants/role";
 
 type Props = {
-  admin: IAdminGetAdminDetailResponse;
+  admin: IAdminDetailResponse;
 };
 
 export default function ProfileHeader({ admin }: Props) {
-  const { accountId, role, avatarUrl, username } = admin;
+  const { accountId, avatarUrl, username } = admin;
+  const role = Roles.ADMIN;
   const [isActive, setIsActive] = useState(admin.isActive);
   const tRole = useTranslations("administerAdmins.detail.header.roles");
   const tTooltip = useTranslations("administerAdmins.tooltip");

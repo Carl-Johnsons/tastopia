@@ -11,7 +11,7 @@ export const ReportStatusText = ({
   const t = useTranslations("component.status");
 
   return (
-    <div className='flex min-w-[90px] items-center gap-1 text-sm'>
+    <div className='flex min-w-fit items-center gap-1 text-sm'>
       {status === ReportStatus.Done ? (
         <>
           <div className='size-2 rounded-full bg-green-500' />
@@ -41,7 +41,7 @@ export const ItemStatusText = ({
   const t = useTranslations("component.status");
 
   return (
-    <div className='flex-center flex min-w-[80px] gap-2'>
+    <div className='flex-center flex min-w-fit gap-2'>
       {isActive ? (
         <>
           <div className='size-2.5 rounded-full bg-green-500' />

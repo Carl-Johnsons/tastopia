@@ -2,9 +2,9 @@
 
 import { withErrorProcessor } from "@/utils/errorHanlder";
 import { PaginatedQueryParams } from "@/types/common";
-import { adminDetailData, adminListData } from "@/constants/admin";
 import { protectedAxiosInstance } from "@/constants/host";
-import { IAdminListResponse } from "@/types/admin";
+import { IPaginatedAdminActivityLogListResponse } from "@/generated/interfaces/tracking.interface";
+import { IAdminDetailResponse, IPaginatedAdminListResponse } from "@/generated/interfaces/user.interface";
 
 export async function getAdmins(options?: PaginatedQueryParams) {
   const url = "/api/admin/user";
@@ -18,19 +18,18 @@ export async function getAdmins(options?: PaginatedQueryParams) {
   } = options || {};
 
   try {
-    // const { data } =
-    // await protectedAxiosInstance.get<IPaginatedAdminListResponse>(url, {
-    // params: {
-    // limit,
-    // skip,
-    // sortBy,
-    // sortOrder,
-    // lang,
-    // keyword: encodeURIComponent(keyword)
-    // }
-    // });
+    const { data } = await protectedAxiosInstance.get<IPaginatedAdminListResponse>(url, {
+      params: {
+        limit,
+        skip,
+        sortBy,
+        sortOrder,
+        lang,
+        keyword: encodeURIComponent(keyword)
+      }
+    });
 
-    return adminListData;
+    return data;
   } catch (error) {
     withErrorProcessor(error);
     throw error;
@@ -41,16 +40,13 @@ export async function getAdminById(id: string) {
   const url = "/api/admin/user/detail";
 
   try {
-    // const { data } = await protectedAxiosInstance.get<IAdminReportRecipeDetailResponse>(
-    // url,
-    // {
-    // params: {
-    // id,
-    // }
-    // }
-    // );
+    const { data } = await protectedAxiosInstance.get<IAdminDetailResponse>(url, {
+      params: {
+        id
+      }
+    });
 
-    return adminDetailData;
+    return data;
   } catch (error) {
     withErrorProcessor(error);
     throw error;
@@ -84,14 +80,38 @@ export async function createAdmin(formData: FormData) {
 
   try {
     // const { data } = await protectedAxiosInstance.post<IAdminListResponse>(
-      // url,
-      // formData,
-      // {
-        // headers: {
-          // "Content-Type": "multipart/form-data"
-        // }
-      // }
+    // url,
+    // formData,
+    // {
+    // headers: {
+    // "Content-Type": "multipart/form-data"
+    // }
+    // }
     // );
+  } catch (error) {
+    withErrorProcessor(error);
+    throw error;
+  }
+}
+
+export async function getAdminActivies(
+  accountId: string,
+  options?: Pick<PaginatedQueryParams, "skip" | "limit">
+) {
+  const url = "/api/admin/tracking";
+  const { limit = 10, skip = 0 } = options || {};
+
+  try {
+    const { data } =
+      await protectedAxiosInstance.get<IPaginatedAdminActivityLogListResponse>(url, {
+        params: {
+          accountId,
+          limit,
+          skip
+        }
+      });
+
+    return data;
   } catch (error) {
     withErrorProcessor(error);
     throw error;

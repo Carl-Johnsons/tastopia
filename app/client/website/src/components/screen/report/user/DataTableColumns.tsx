@@ -9,6 +9,7 @@ import ReportStatusComponent from "@/components/ui/ReportStatus";
 import { format } from "date-fns";
 import TooltipButton from "@/components/ui/TooltipButton";
 import { useTranslations } from "next-intl";
+import { useInvalidateAdmin } from "@/hooks/query";
 
 export const reportColumns = (t: any) => [
   {
@@ -77,6 +78,7 @@ export const ActionButtons = ({
   const router = useRouter();
   const [reportStatus, setReportStatus] = useState<ReportStatus>(status);
   const [reportedStatus, setReportedStatus] = useState<boolean>(reportedIsActive);
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleDetailClick = () => {
     router.push(`/reports/users/detail/${reportedId}`);
@@ -93,6 +95,8 @@ export const ActionButtons = ({
       } else {
         toast.success(t("notifications.disableUserSuccess"));
       }
+
+      invalidateCurrentAdminActivities();
     } else {
       toast.error(t("notifications.error"));
     }
@@ -110,6 +114,8 @@ export const ActionButtons = ({
       } else {
         toast.success(t("notifications.completeReportSuccess"));
       }
+
+      invalidateCurrentAdminActivities();
     } else {
       toast.error(t("notifications.error"));
     }

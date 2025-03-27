@@ -1,7 +1,7 @@
 import { getAdminById } from "@/actions/admin.action";
+import ActivityFeed from "@/components/screen/admins/ActivityFeed";
 import ProfileHeader from "@/components/screen/admins/ProfileHeader";
 import ProfileInfo from "@/components/screen/admins/ProfileInfo";
-import ActivityFeed from "@/components/screen/profile/ActivityFeed";
 import SomethingWentWrong from "@/components/shared/common/Error";
 import { Link } from "@/i18n/navigation";
 import { ParamsProps } from "@/types/link";
@@ -14,8 +14,6 @@ export default async function Page({ params }: ParamsProps) {
 
   try {
     const currentUser = await getAdminById(id);
-    // const currentLanguage = await getLocale();
-    // const currentUserActivities = await getUserActivitiesById(id, currentLanguage);
 
     return (
       <div className='min-h-screen rounded-lg p-2'>
@@ -27,11 +25,11 @@ export default async function Page({ params }: ParamsProps) {
           <span className='text-black_white'>{t("detail.info.title")}</span>
         </div>
 
-        <div className='mx-auto max-w-[96]'>
+        <div className='mx-auto max-w-[960px]'>
           <ProfileHeader admin={currentUser} />
 
           <div className='mt-6 flex flex-col-reverse gap-6 lg:flex-row'>
-            <div className='flex-1'>{<ActivityFeed activities={[]} />}</div>
+            <div className='flex-1'>{<ActivityFeed accountId={id} />}</div>
 
             <div className='flex flex-col space-y-6 lg:w-1/3'>
               <ProfileInfo admin={currentUser} />

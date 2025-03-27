@@ -35,10 +35,10 @@ const AuthListener = () => {
     const idToken = session.idToken as string;
     dispatch(saveAuthData({ accessToken, idToken }));
 
-    clientAxiosInstance.post("/api/auth/cookie", {
-      accessToken,
-      idToken
-    });
+    // clientAxiosInstance.post("/api/auth/cookie", {
+      // accessToken,
+      // idToken
+    // });
   }, [session, dispatch, clearData, fetchUserDetails]);
 
   return null;

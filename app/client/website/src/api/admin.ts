@@ -1,7 +1,20 @@
-import { disableAdmin, getAdmins, restoreAdmin } from "@/actions/admin.action";
+import {
+  disableAdmin,
+  getAdminActivies,
+  getAdminById,
+  getAdmins,
+  restoreAdmin
+} from "@/actions/admin.action";
+import { IPaginatedAdminActivityLogListResponse } from "@/generated/interfaces/tracking.interface";
 import { IPaginatedAdminListResponse } from "@/types/admin";
 import { PaginatedQueryParams } from "@/types/common";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  useInfiniteQuery,
+  useMutation,
+  useQuery
+} from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 export const useGetAdmins = ({
   limit,
@@ -11,7 +24,7 @@ export const useGetAdmins = ({
   lang,
   keyword
 }: PaginatedQueryParams) => {
-  return useQuery<IPaginatedAdminListResponse>({
+  return useQuery({
     queryKey: ["admins", skip, sortBy, sortOrder, lang, keyword, limit],
     queryFn: () =>
       getAdmins({
@@ -25,6 +38,13 @@ export const useGetAdmins = ({
   });
 };
 
+export const useGetAdminById = (id: string) => {
+  return useQuery({
+    queryKey: ["admin", id],
+    queryFn: () => getAdminById(id)
+  });
+}
+
 export const useDisableAdmin = () => {
   return useMutation<void, Error, string>({
     mutationFn: id => disableAdmin(id)
@@ -34,5 +54,32 @@ export const useDisableAdmin = () => {
 export const useRestoreAdmin = () => {
   return useMutation<void, Error, string>({
     mutationFn: id => restoreAdmin(id)
+  });
+};
+
+export const useGetAdminActivities = (accountId: string) => {
+  return useInfiniteQuery<
+    IPaginatedAdminActivityLogListResponse,
+    AxiosError,
+    InfiniteData<IPaginatedAdminActivityLogListResponse>,
+    string[],
+    number | undefined
+  >({
+    queryKey: ["adminActivities", accountId],
+    initialPageParam: 0,
+    queryFn: ({ pageParam }) =>
+      getAdminActivies(accountId, {
+        skip: pageParam
+      }),
+    getNextPageParam: (lastPage, allPages) => {
+      const totalPage = lastPage.metadata?.totalPage;
+      const currentPage = lastPage.metadata?.currentPage;
+
+      if (!totalPage || !currentPage) return undefined;
+      const hasNextPage = currentPage < totalPage;
+
+      if (!hasNextPage) return undefined;
+      return allPages.length;
+    }
   });
 };

@@ -7,7 +7,7 @@ import {
   useAdminsContext
 } from "@/components/screen/admins/Provider";
 import { ItemStatusText } from "@/components/screen/report/common/StatusText";
-import { IAdminListResponse } from "@/types/admin";
+import { IAdminResponse } from "@/generated/interfaces/user.interface";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
@@ -16,11 +16,11 @@ import { TableColumn } from "react-data-table-component";
 export default function useAdminTableColumns() {
   const t = useTranslations("administerAdmins.columns");
 
-  const columns: TableColumn<IAdminListResponse>[] = useMemo(
+  const columns: TableColumn<IAdminResponse>[] = useMemo(
     () => [
       {
         name: t("username"),
-        selector: row => row.username,
+        selector: row => row.userName,
         sortable: true,
         maxWidth: "200px"
       },
@@ -32,12 +32,12 @@ export default function useAdminTableColumns() {
       },
       {
         name: t("email"),
-        selector: row => row.email,
+        selector: row => row.email as string,
         sortable: true
       },
       {
         name: t("phoneNumber"),
-        selector: row => row.email,
+        selector: row => row.phoneNumber as string,
         sortable: true
       },
       {
@@ -49,7 +49,7 @@ export default function useAdminTableColumns() {
         cell: ({ dob }) => {
           return (
             <span className='text-ellipsis text-nowrap text-sm'>
-              {format(new Date(dob), "dd/MM/yyyy")}
+              {format(new Date(dob as string), "dd/MM/yyyy")}
             </span>
           );
         }
@@ -90,9 +90,9 @@ export default function useAdminTableColumns() {
     [t]
   );
 
-  const columnFieldMap: Record<string, keyof IAdminListResponse> = useMemo(
+  const columnFieldMap: Record<string, keyof IAdminResponse> = useMemo(
     () => ({
-      [t("username")]: "username",
+      [t("username")]: "userName",
       [t("displayName")]: "displayName",
       [t("email")]: "email",
       [t("phoneNumber")]: "phoneNumber",

@@ -48,7 +48,7 @@ export async function getCommentReportById({
   options
 }: GetCommentReportDetailParams) {
   const url = "/api/admin/recipe/comment/reports";
-  const { lang = "en" } = options || {};
+  const { lang } = options || {};
 
   try {
     const { data } = await protectedAxiosInstance.get<IAdminReportCommentDetailResponse>(

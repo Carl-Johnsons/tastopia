@@ -4,13 +4,15 @@ import ReportList from "@/components/screen/report/recipe/ReportList";
 import { Link } from "@/i18n/navigation";
 import { ParamsProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
+import { getLocale } from "next-intl/server";
 
 export default async function Page({ params }: ParamsProps) {
   try {
+    const lang = await getLocale();
     const { recipe, reports } = await getRecipeReportById({
       recipeId: params.id,
       options: {
-        lang: "en"
+        lang
       }
     });
 
