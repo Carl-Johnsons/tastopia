@@ -4,7 +4,10 @@ import { withErrorProcessor } from "@/utils/errorHanlder";
 import { PaginatedQueryParams } from "@/types/common";
 import { protectedAxiosInstance } from "@/constants/host";
 import { IPaginatedAdminActivityLogListResponse } from "@/generated/interfaces/tracking.interface";
-import { IAdminDetailResponse, IPaginatedAdminListResponse } from "@/generated/interfaces/user.interface";
+import {
+  IAdminDetailResponse,
+  IPaginatedAdminListResponse
+} from "@/generated/interfaces/user.interface";
 
 export async function getAdmins(options?: PaginatedQueryParams) {
   const url = "/api/admin/user";
@@ -96,10 +99,10 @@ export async function createAdmin(formData: FormData) {
 
 export async function getAdminActivies(
   accountId: string,
-  options?: Pick<PaginatedQueryParams, "skip" | "limit">
+  options?: Pick<PaginatedQueryParams, "skip" | "limit" | "lang">
 ) {
   const url = "/api/admin/tracking";
-  const { limit = 10, skip = 0 } = options || {};
+  const { limit = 10, skip = 0, lang = "en" } = options || {};
 
   try {
     const { data } =
@@ -107,7 +110,8 @@ export async function getAdminActivies(
         params: {
           accountId,
           limit,
-          skip
+          skip,
+          lang
         }
       });
 

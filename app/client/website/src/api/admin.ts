@@ -15,6 +15,7 @@ import {
   useQuery
 } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { Locale } from "next-intl";
 
 export const useGetAdmins = ({
   limit,
@@ -43,7 +44,7 @@ export const useGetAdminById = (id: string) => {
     queryKey: ["admin", id],
     queryFn: () => getAdminById(id)
   });
-}
+};
 
 export const useDisableAdmin = () => {
   return useMutation<void, Error, string>({
@@ -57,7 +58,10 @@ export const useRestoreAdmin = () => {
   });
 };
 
-export const useGetAdminActivities = (accountId: string) => {
+export const useGetAdminActivities = (
+  accountId: string,
+  { lang }: Pick<PaginatedQueryParams, "lang">
+) => {
   return useInfiniteQuery<
     IPaginatedAdminActivityLogListResponse,
     AxiosError,
@@ -69,7 +73,8 @@ export const useGetAdminActivities = (accountId: string) => {
     initialPageParam: 0,
     queryFn: ({ pageParam }) =>
       getAdminActivies(accountId, {
-        skip: pageParam
+        skip: pageParam,
+        lang
       }),
     getNextPageParam: (lastPage, allPages) => {
       const totalPage = lastPage.metadata?.totalPage;

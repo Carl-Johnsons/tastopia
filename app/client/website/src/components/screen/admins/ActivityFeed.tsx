@@ -3,7 +3,7 @@
 import Empty from "@/components/shared/common/Empty";
 import { IAdminActivityLogResponse } from "@/generated/interfaces/tracking.interface";
 import { ActivityItem } from "./ActivityItem";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useGetAdminActivities } from "@/api/admin";
 import Loader from "@/components/ui/Loader";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,11 @@ type ActivityFeedProps = {
 
 export default function ActivityFeed({ accountId }: ActivityFeedProps) {
   const t = useTranslations("administerAdmins.detail.activity");
+  const lang = useLocale();
   const { data, isFetching, isLoading, hasNextPage, fetchNextPage } =
-    useGetAdminActivities(accountId);
+    useGetAdminActivities(accountId, { lang });
+
+  console.log(data);
 
   return (
     <div className='bg-white_black100 rounded-xl border border-gray-200 p-6 shadow-sm dark:border-gray-600'>
