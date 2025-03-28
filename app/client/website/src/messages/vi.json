@@ -440,6 +440,45 @@
       "recipes": "{count, plural, one {Công thức} other {Công thức}}",
       "onlineUsers": "{count, plural, one {Trực tuyến} other {Trực tuyến}}",
       "users": "{count, plural, one {Người dùng} other {Người dùng}}"
+    },
+    "charts": {
+      "recipeStatistic": {
+        "title": "Thống kê công thức",
+        "description": "Hiển thị tổng số lượng công thức được tạo theo thời gian được chọn.",
+        "recipeCount": "Công thức",
+        "filter": {
+          "placeholder": "Last 3 months",
+          "options": {
+            "1d": "24 giờ qua",
+            "7d": "7 ngày qua",
+            "30d": "30 ngày qua",
+            "90d": "3 tháng qua",
+            "360d": "12 tháng qua"
+          }
+        }
+      },
+      "accountStatistic": {
+        "title": "Thống kê người dùng",
+        "description": "Hiển thị tổng số lượng người dùng được tạo theo thời gian được chọn.",
+        "accountCount": "Người dùng",
+        "filter": {
+          "placeholder": "Last 3 months",
+          "options": {
+            "1d": "24 giờ qua",
+            "7d": "7 ngày qua",
+            "30d": "30 ngày qua",
+            "90d": "3 tháng qua",
+            "360d": "12 tháng qua"
+          }
+        }
+      }
+    },
+    "ranking": {
+      "recipeRanking": "Xếp hạng công thức",
+      "recipeRankingDescription": "Các công thức hàng đầu có lượt xem cao nhất",
+      "tagRanking": "Xếp hạng thẻ",
+      "tagRankingDescription": "Các thẻ hàng đầu có lượt xem cao nhất",
+      "viewCount": "Lượt xem"
     }
   }
 }

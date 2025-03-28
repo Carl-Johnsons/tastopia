@@ -45,6 +45,11 @@ public class UserSendOTPConsumer : IConsumer<UserSendOTPEvent>
                 });
                 break;
             case AccountMethod.Phone:
+                await _sender.Send(new SendSMSCommand
+                {
+                    Message = $"Your Tastopia account is create. Your OTP to verify is {context.Message.OTP}",
+                    PhoneTo = context.Message.Identifier,
+                });
                 break;
             default:
                 break;
@@ -64,6 +69,11 @@ public class UserSendOTPConsumer : IConsumer<UserSendOTPEvent>
                 });
                 break;
             case AccountMethod.Phone:
+                await _sender.Send(new SendSMSCommand
+                {
+                    Message = $"Your Tastopia account request to reset the password. Your OTP to verify reset password is {context.Message.OTP}",
+                    PhoneTo = context.Message.Identifier,
+                });
                 break;
             default:
                 break;
