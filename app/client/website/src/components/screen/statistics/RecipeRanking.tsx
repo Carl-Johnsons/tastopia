@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/chart";
 import { StatisticItem } from "@/types/statistic";
 import { chartColors } from "@/constants/colors";
+import { useTranslations } from "next-intl";
 
 const chartConfig = {
   number: {
@@ -32,6 +33,7 @@ type RecipeRankingProps = {
 };
 
 export function RecipeRanking({ chartData }: RecipeRankingProps) {
+  const t = useTranslations("statistic.ranking");
   const coloredChartData = chartData.map((item, index) => ({
     ...item,
     fill: chartColors[index % chartColors.length]
@@ -40,8 +42,8 @@ export function RecipeRanking({ chartData }: RecipeRankingProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recipe ranking</CardTitle>
-        <CardDescription>Top recipes with the highest views</CardDescription>
+        <CardTitle className='text-black_white'>{t("recipeRanking")}</CardTitle>
+        <CardDescription>{t("recipeRankingDescription")}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -69,7 +71,13 @@ export function RecipeRanking({ chartData }: RecipeRankingProps) {
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator='line' />}
+              content={
+                <ChartTooltipContent
+                  className='text-black_white'
+                  indicator='line'
+                  customLabel={t("viewCount")}
+                />
+              }
             />
             <Bar
               dataKey='number'

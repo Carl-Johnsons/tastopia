@@ -231,6 +231,45 @@
       "recipes": "{count, plural, one {Recipe} other {Recipes}}",
       "onlineUsers": "{count, plural, one {Online user} other {Online users}}",
       "users": "{count, plural, one {User} other {Users}}"
+    },
+    "charts": {
+      "recipeStatistic": {
+        "title": "Recipe Statistics",
+        "description": "Displays the total number of recipes created within the selected time period.",
+        "recipeCount": "Recipe",
+        "filter": {
+          "placeholder": "Last 3 months",
+          "options": {
+            "1d": "Last 24 hours",
+            "7d": "Last 7 days",
+            "30d": "Last 30 days",
+            "90d": "Last 3 months",
+            "360d": "Last 12 months"
+          }
+        }
+      },
+      "accountStatistic": {
+        "title": "User Statistics",
+        "description": "Displays the total number of users created within the selected time period.",
+        "accountCount": "User",
+        "filter": {
+          "placeholder": "Last 3 months",
+          "options": {
+            "1d": "Last 24 hours",
+            "7d": "Last 7 days",
+            "30d": "Last 30 days",
+            "90d": "Last 3 months",
+            "360d": "Last 12 months"
+          }
+        }
+      }
+    },
+    "ranking": {
+      "recipeRanking": "Recipe Ranking",
+      "recipeRankingDescription": "Top recipes with the highest views",
+      "tagRanking": "Tag Ranking",
+      "tagRankingDescription": "Top tags with the highest views",
+      "viewCount": "View"
     }
   }
 }

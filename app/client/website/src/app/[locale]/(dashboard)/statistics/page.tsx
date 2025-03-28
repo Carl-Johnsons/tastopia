@@ -14,7 +14,6 @@ import { RecipeRanking } from "@/components/screen/statistics/RecipeRanking";
 import { getTagRanking } from "@/actions/tag.action";
 import { TagRanking } from "@/components/screen/statistics/TagRanking";
 import { AccountChart } from "@/components/screen/statistics/AccountChart";
-import LogoutButton from "@/components/shared/navbar/LogoutButton";
 
 export default async function System() {
   const t = await getTranslations("statistic");
@@ -30,7 +29,6 @@ export default async function System() {
   return (
     <div className='flex size-full flex-col justify-center gap-4'>
       {/* Overview */}
-      <LogoutButton />
       <Card className='flex flex-col'>
         <CardHeader className='items-center pb-0'>
           <CardTitle className='h2-bold text-black_white mb-8'>
