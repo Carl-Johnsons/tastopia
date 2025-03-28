@@ -74,6 +74,23 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
+    [HttpPost("toggle-admin-active")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(AdminBanUserResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> BanAdmin([FromBody] AdminBanUserDTO adminBanUserDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new BanAdminCommand
+        {
+            CurrentAccountId = Guid.Parse(subjectId!),
+            AccountId = adminBanUserDTO.AccountId,
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [HttpGet("get-user-reports")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedAdminUserReportListResponse), 200)]

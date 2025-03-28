@@ -5,18 +5,18 @@ using Microsoft.Extensions.Logging;
 using UserService.Domain.Errors;
 using UserService.Domain.Responses;
 namespace UserService.Application.Users.Commands;
-public class BanAdminCommand : IRequest<Result<AdminBanUserResponse?>>
+public class AdminBanUserCommand : IRequest<Result<AdminBanUserResponse?>>
 {
     public Guid AccountId { get; set; }
     public Guid CurrentAccountId { get; set; }
 }
-public class BanAdminCommandHandler : IRequestHandler<BanAdminCommand, Result<AdminBanUserResponse?>>
+public class AdminBanUserCommandHandler : IRequestHandler<AdminBanUserCommand, Result<AdminBanUserResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
-    private readonly ILogger<BanAdminCommandHandler> _logger;
-    public BanAdminCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<BanAdminCommandHandler> logger, IServiceBus serviceBus)
+    private readonly ILogger<AdminBanUserCommandHandler> _logger;
+    public AdminBanUserCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<AdminBanUserCommandHandler> logger, IServiceBus serviceBus)
     {
         _context = context;
         _unitOfWork = unitOfWork;
@@ -24,10 +24,15 @@ public class BanAdminCommandHandler : IRequestHandler<BanAdminCommand, Result<Ad
         _serviceBus = serviceBus;
     }
 
-    public async Task<Result<AdminBanUserResponse?>> Handle(BanAdminCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AdminBanUserResponse?>> Handle(AdminBanUserCommand request, CancellationToken cancellationToken)
     {
         var accountId = request.AccountId;
         var currentAccountId = request.CurrentAccountId;
+
+        if (accountId == Guid.Empty || currentAccountId == Guid.Empty)
+        {
+            return Result<AdminBanUserResponse?>.Failure(UserError.NullParameters, "Account or CurrentAccountId Id is null");
+        }
 
         var user = await _context.Users
              .Where(user => user.AccountId == accountId)
@@ -35,10 +40,10 @@ public class BanAdminCommandHandler : IRequestHandler<BanAdminCommand, Result<Ad
 
         if (user == null)
         {
-            return Result<AdminBanUserResponse?>.Failure(UserError.NotFound, "Not found admin");
+            return Result<AdminBanUserResponse?>.Failure(UserError.NotFound, "Not found user");
         }
 
-        if (!user.IsAdmin)
+        if (user.IsAdmin)
         {
             return Result<AdminBanUserResponse?>.Failure(UserError.PermissionDenied);
         }
