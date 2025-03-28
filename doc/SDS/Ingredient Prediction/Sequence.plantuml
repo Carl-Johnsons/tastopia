@@ -1,0 +1,33 @@
+@startuml Sequence
+title "Ingredient Prediction sequence diagram"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+
+actor User
+boundary MobileUI
+participant "<<coordinator>>\nApiGateWay" as ApiGateway
+participant "<<service>>\nIdentityService" as IdentityService
+participant "<<service>>\nIngredientPredictService" as IngredientPredictService
+
+User -> MobileUI++: 1. User capture photo \n or upload photo
+MobileUI -> ApiGateway++: 2. Request ingredient prediction 
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> IngredientPredictService++: 4. Forward request
+ApiGateway <-- IngredientPredictService--: 5. return response
+MobileUI <-- ApiGateway--: 6. Forward response
+User <-- MobileUI--: 7. Display ingredient prediction result
+
+@enduml
