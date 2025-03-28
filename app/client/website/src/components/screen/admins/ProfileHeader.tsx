@@ -31,7 +31,9 @@ export default function ProfileHeader({ admin }: Props) {
           />
 
           <div>
-            <h1 className='h3-semibold text-black_white text-center'>{username}</h1>
+            <h1 className='h3-semibold text-black_white text-center sm:text-left'>
+              {username}
+            </h1>
             <div className='flex flex-col items-center gap-x-2 sm:flex-row'>
               <p className='text-center text-gray-600 dark:text-gray-500'>
                 {tRole(role)}
