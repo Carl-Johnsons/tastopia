@@ -1,4 +1,5 @@
-﻿using Contract.Event.UploadEvent;
+﻿using Contract.Event.TrackingEvent;
+using Contract.Event.UploadEvent;
 using Contract.Utilities;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +16,7 @@ public class CreateTagCommand : IRequest<Result<Tag?>>
     public string Value { get; set; } = null!;
     public string Category { get; set; } = null!;
     public IFormFile TagImage { get; set; } = null!;
+    public Guid CurrentAccountId { get; set; }
 
 }
 public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<Tag?>>
@@ -59,7 +61,6 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
 
             var tag = new Tag
             {
-                Id = Guid.NewGuid(),
                 Code = request.Code,
                 Value = request.Value,
                 Status = TagStatus.Active,
@@ -71,9 +72,17 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
 
             _context.Tags.Add(tag);
             await _unitOfWork.SaveChangeAsync();
+            await _serviceBus.Publish(new AddActivityLogEvent
+            {
+                AccountId = request.CurrentAccountId,
+                ActivityType = Contract.Constants.ActivityType.CREATE,
+                EntityId = tag.Id,
+                EntityType = Contract.Constants.ActivityEntityType.TAG,
+            });
             return Result<Tag?>.Success(tag);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             await RollBackImageGrpc(rollbackUrl);
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<Tag?>.Failure(TagError.AddTagFail, ex.Message);
@@ -104,7 +113,7 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
             return null;
         }
         result = uploadResponse.Files[0].Url;
-        
+
         if (string.IsNullOrEmpty(result))
         {
             return null;

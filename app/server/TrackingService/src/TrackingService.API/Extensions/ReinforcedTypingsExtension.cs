@@ -35,6 +35,8 @@ public static class ReinforcedTypingsExtension
             typeof(ReportLogResponse),
             typeof(CommentReportAdminActivityLogResponse),
             typeof(RecipeReportAdminActivityLogResponse),
+            typeof(TagAdminActivityLogResponse),
+            typeof(TagLogResponse),
         ], config =>
         {
             config.FlattenHierarchy()

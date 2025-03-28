@@ -1,6 +1,10 @@
 ﻿using Contract.Constants;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace TrackingService.Domain.Responses;
 
@@ -52,7 +56,10 @@ public class RecipeReportAdminActivityLogResponse : AdminActivityLogResponse
     public ReportLogResponse Report { get; set; } = null!;
 }
 
-
+public class TagAdminActivityLogResponse : AdminActivityLogResponse
+{
+    public TagLogResponse Tag { get; set; } = null!;
+}
 public class RecipeLogResponse
 {
     public Guid Id { get; set; }
@@ -78,6 +85,16 @@ public class CommentLogResponse
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     public bool IsActive { get; set; }
+}
+
+public class TagLogResponse
+{
+    public Guid Id { get; set; }
+    public string Value { get; set; } = null!;
+    public string Code { get; set; } = null!;
+    public string Category { get; set; } = null!;
+    public string Status { get; set; } = null!;
+    public string ImageUrl { get; set; } = null!;
 }
 
 public class UserLogResponse

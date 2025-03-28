@@ -327,4 +327,33 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
             RecipeReports = { mapField }
         };
     }
+
+    public override async Task<GrpcMapTagResponse> GetTags(GrpcGetTagsRequest request, ServerCallContext context)
+    {
+        var hashSet = request.Ids.Select(Guid.Parse).ToHashSet();
+        var result = await _sender.Send(new GetTagsByHashSetQuery
+        {
+            TagIds = hashSet,
+        });
+        result.ThrowIfFailure();
+
+        var mapField = new MapField<string, GrpcTagDTO>();
+        foreach (var (k, v) in result.Value)
+        {
+            mapField.Add(k.ToString(), new GrpcTagDTO
+            {
+                Id = v.Id.ToString(),
+                Category = v.Category.ToString(),
+                Code = v.Code,
+                ImageUrl = v.ImageUrl,
+                Status = v.Status.ToString(),
+                Value = v.Value,
+            });
+        }
+
+        return new GrpcMapTagResponse
+        {
+            Tags = { mapField }
+        };
+    }
 }

@@ -7,6 +7,7 @@ package RecipeProto;
 
 service GrpcRecipe {
     rpc GetAllTags(GrpcEmpty) returns (GrpcListTagDTO);
+    rpc GetTags(GrpcGetTagsRequest) returns (GrpcMapTagResponse);
     rpc GetRecipeDetails(GrpcRecipeIdRequest) returns (GrpcRecipeDetailsDTO);
     rpc GetSimpleRecipes(GrpcGetSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
     rpc GetSimpleComments(GrpcGetSimpleCommentRequest) returns (GrpcMapSimpleComments);
@@ -38,6 +39,10 @@ message GrpcGetCommentReportRequest {
 message GrpcGetRecipeReportRequest {
     repeated string Ids = 1;
     string Lang = 2;
+}
+
+message GrpcGetTagsRequest {
+    repeated string Ids = 1;
 }
 
 message GrpcSearchSimpleRecipeRequest {
@@ -74,6 +79,10 @@ message GrpcCommentDTO {
     string Content = 2;
     string AccountId = 3;
     bool IsActive = 4;
+}
+
+message GrpcMapTagResponse {
+    map<string, GrpcTagDTO> Tags = 1;
 }
 
 message GrpcListTagDTO{

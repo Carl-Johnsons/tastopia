@@ -200,6 +200,23 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
             }, cancellationToken: cancellationToken);
         }
 
+        // Get tags dictionary
+        GrpcMapTagResponse? grpcTagMap = null;
+        var tagIdList = paginatedQuery
+            .ToList()
+            .Where(aal => aal.EntityType == ActivityEntityType.TAG)
+            .Select(aal => aal.EntityId)
+            .ToList();
+
+        if (tagIdList.Count > 0)
+        {
+            var repeatedField = _mapper.Map<RepeatedField<string>>(tagIdList);
+
+            grpcTagMap = await _grpcRecipeClient.GetTagsAsync(new GrpcGetTagsRequest
+            {
+                Ids = { repeatedField },
+            }, cancellationToken: cancellationToken);
+        }
         var list = paginatedQuery.ToList()
                                  .Select(aal =>
                                  {
@@ -483,6 +500,35 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                          mapEntity.Report = report;
                                          mapEntity.Reporter = reporter;
 
+                                         return mapEntity;
+                                     }
+
+                                     if (aal.EntityType == ActivityEntityType.TAG && grpcTagMap != null)
+                                     {
+                                         var grpcTag = grpcTagMap.Tags[aal.EntityId.ToString()];
+
+                                         var mapEntity = new TagAdminActivityLogResponse
+                                         {
+                                             AccountId = aal.AccountId,
+                                             ActivityType = aal.ActivityType,
+                                             EntityId = aal.EntityId,
+                                             EntityType = aal.EntityType,
+                                             SecondaryEntityId = aal.SecondaryEntityId,
+                                             SecondaryEntityType = aal.SecondaryEntityType,
+                                             CreatedAt = aal.CreatedAt,
+                                             UpdatedAt = aal.UpdatedAt,
+                                         };
+
+                                         var tag = new TagLogResponse
+                                         {
+                                             Id = aal.EntityId,
+                                             Code = grpcTag.Code,
+                                             Category = grpcTag.Category,
+                                             ImageUrl = grpcTag.ImageUrl,
+                                             Status = grpcTag.Status,
+                                             Value = grpcTag.Value,
+                                         };
+                                         mapEntity.Tag = tag;
                                          return mapEntity;
                                      }
 

@@ -260,12 +260,16 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> CreateTag([FromForm] CreateTagDTO createTagDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new CreateTagCommand
         {
             Code = createTagDTO.Code,
             Value = createTagDTO.Value,
             Category = createTagDTO.Category,
-            TagImage = createTagDTO.TagImage
+            TagImage = createTagDTO.TagImage,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -277,6 +281,9 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> UpdateTag([FromForm] UpdateTagDTO updateTagDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new UpdateTagCommand
         {
             TagId = updateTagDTO.TagId,
@@ -284,7 +291,8 @@ public class AdminController : BaseApiController
             Value = updateTagDTO.Value,
             Category = updateTagDTO.Category,
             Status = updateTagDTO.Status,
-            TagImage = updateTagDTO.TagImage
+            TagImage = updateTagDTO.TagImage,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
