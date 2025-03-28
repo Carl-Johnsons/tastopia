@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import {
   Form,
@@ -20,7 +20,7 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
-import { CreateAdminFormFields } from "@/types/admin";
+import { CreateAdminFormFields, UpdateAdminFormFields } from "@/types/admin";
 import { Gender } from "@/constants/gender";
 import { ItemStatusText } from "../report/common/StatusText";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -32,10 +32,10 @@ import { Button } from "@/components/ui/button";
 import Image from "@/components/shared/common/Image";
 import { BinaryStatus } from "@/constants/status";
 import { ImageListType } from "react-images-uploading";
+import { useSelectAdmin } from "@/slices/admin.slice";
 
 type Props = {
-  type: "create" | "update";
-  form: ReturnType<typeof useForm<CreateAdminFormFields>>;
+  form: ReturnType<typeof useForm<CreateAdminFormFields | UpdateAdminFormFields>>;
 };
 
 type FormInputProps = {
@@ -59,7 +59,9 @@ type FormDatePickerProps = FormInputProps;
 type FormImageUploadProps = Omit<FormInputProps, "placeholder">;
 
 const AdminForm = ({ form }: Props) => {
+  const { formType: type } = useSelectAdmin();
   const t = useTranslations("administerAdmins.form");
+  const isUpdate = useMemo(() => type === "update", [type]);
 
   return (
     <Form {...form}>
@@ -100,17 +102,19 @@ const AdminForm = ({ form }: Props) => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name='password'
-          render={({ field }) => (
-            <FormInput
-              field={field}
-              label={t("password.label")}
-              placeholder={t("password.placeholder")}
-            />
-          )}
-        />
+        {!isUpdate && (
+          <FormField
+            control={form.control}
+            name='password'
+            render={({ field }) => (
+              <FormInput
+                field={field}
+                label={t("password.label")}
+                placeholder={t("password.placeholder")}
+              />
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}
@@ -144,7 +148,7 @@ const AdminForm = ({ form }: Props) => {
 
         <FormField
           control={form.control}
-          name='dateOfBirth'
+          name='dob'
           render={({ field }) => (
             <div className='w-[240px]'>
               <FormDatePicker
@@ -179,7 +183,7 @@ const AdminForm = ({ form }: Props) => {
 
         <FormField
           control={form.control}
-          name='image'
+          name='avatarFile'
           render={({ field }) => (
             <FormImageUpload
               field={field}
@@ -296,7 +300,7 @@ const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
             mode='single'
             selected={value as Date}
             onSelect={onChange}
-            disabled={date => date > new Date() || date < new Date("1900-01-01")}
+            disabled={(date: Date) => date > new Date() || date < new Date("1900-01-01")}
             className='text-black_white'
             initialFocus
           />

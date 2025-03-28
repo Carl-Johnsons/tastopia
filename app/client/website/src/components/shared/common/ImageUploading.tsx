@@ -151,28 +151,32 @@ const ImagePreview = ({
 
   return (
     <div className='flex-center w-full flex-col gap-4'>
-      {imageList.map((image, index) => (
-        <div
-          className='flex-center w-full gap-4'
-          key={index}
-        >
-          {ImageComponent ? (
-            <ImageComponent
-              src={image.data_url}
-              alt='uploaded image'
-            />
-          ) : (
-            <Image
-              src={image.data_url}
-              alt='uploaded image'
-              width={400}
-              height={400}
-              className='max-h-[400px] w-auto rounded-3xl'
-              wrapperClassName='w-fit'
-            />
-          )}
-        </div>
-      ))}
+      {imageList.map((image, index) => {
+        const src = image.dataURL ?? image.data_url ?? "";
+
+        return (
+          <div
+            className='flex-center w-full gap-4'
+            key={index}
+          >
+            {ImageComponent ? (
+              <ImageComponent
+                src={src}
+                alt='uploaded image'
+              />
+            ) : (
+              <Image
+                src={src}
+                alt='uploaded image'
+                width={400}
+                height={400}
+                className='max-h-[400px] w-auto rounded-3xl'
+                wrapperClassName='w-fit'
+              />
+            )}
+          </div>
+        );
+      })}
 
       <AlertDialog>
         <AlertDialogTrigger>

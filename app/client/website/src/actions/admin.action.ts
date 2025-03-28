@@ -8,6 +8,7 @@ import {
   IAdminDetailResponse,
   IPaginatedAdminListResponse
 } from "@/generated/interfaces/user.interface";
+import { ICreateAdminAccountDTO } from "@/generated/interfaces/identity.interface";
 
 export async function getAdmins(options?: PaginatedQueryParams) {
   const url = "/api/admin/user";
@@ -79,18 +80,29 @@ export const restoreAdmin = async (id: string) => {
 };
 
 export async function createAdmin(formData: FormData) {
-  const url = "/api/admin/admin/create-admin";
+  const url = "/api/admin/account";
 
   try {
-    // const { data } = await protectedAxiosInstance.post<IAdminListResponse>(
-    // url,
-    // formData,
-    // {
-    // headers: {
-    // "Content-Type": "multipart/form-data"
-    // }
-    // }
-    // );
+    await protectedAxiosInstance.post<undefined>(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
+  } catch (error) {
+    withErrorProcessor(error);
+    throw error;
+  }
+}
+
+export async function updateAdmin(formData: FormData) {
+  const url = "/api/admin/account";
+
+  try {
+    await protectedAxiosInstance.patch<undefined>(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    });
   } catch (error) {
     withErrorProcessor(error);
     throw error;

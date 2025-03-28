@@ -203,7 +203,13 @@
       "error": "Đã có lỗi xảy ra!"
     },
     "form": {
-      "title": "Tạo quản trị viên mới",
+      "createAdmin": "Tạo quản trị viên",
+      "updateAdmin": "Cập nhật quản trị viên",
+      "accountId": {
+        "errors": {
+          "required": "Không tìm thấy ID của tài khoản"
+        }
+      },
       "name": {
         "label": "Tên",
         "placeholder": "Ví dụ: John Doe",

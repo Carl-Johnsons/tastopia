@@ -198,7 +198,13 @@
       "error": "Something went wrong!"
     },
     "form": {
-      "title": "Create New Admin",
+      "createAdmin": "Create New Admin",
+      "updateAdmin": "Update Admin",
+      "accountId": {
+        "errors": {
+          "required": "Account's ID is required"
+        }
+      },
       "name": {
         "label": "Name",
         "placeholder": "Ex. John Doe",

@@ -1,7 +1,7 @@
 import { Gender } from "@/constants/gender";
 import { Roles } from "@/constants/role";
 import { INumberedPaginatedMetadata } from "@/generated/interfaces/common.interface";
-import { getCreateAdminSchema } from "@/schemas/admin";
+import { getCreateAdminSchema, getUpdateAdminSchema } from "@/schemas/admin";
 import { z } from "zod";
 
 export type IAdminListResponse = {
@@ -26,5 +26,11 @@ export type IAdminGetAdminDetailResponse = IAdminListResponse & {
   avatarUrl: string;
 };
 
-const CreateAdminSchema = getCreateAdminSchema((key: string) => key);
-export type CreateAdminFormFields = z.infer<typeof CreateAdminSchema>;
+const createAdminSchema = getCreateAdminSchema((key: string) => key);
+export type CreateAdminSchema = typeof createAdminSchema;
+export type CreateAdminFormFields = z.infer<typeof createAdminSchema>;
+
+const updateAdminSchema = getUpdateAdminSchema((key: string) => key);
+export type UpdateAdminSchema = typeof updateAdminSchema;
+export type UpdateAdminFormFields = z.infer<typeof updateAdminSchema>;
+export type ImageFieldType = Pick<CreateAdminFormFields, "image">["image"];

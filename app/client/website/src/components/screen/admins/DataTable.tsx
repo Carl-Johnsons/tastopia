@@ -13,6 +13,8 @@ import useAdminTableColumns from "@/hooks/table/useAdminTableColumns";
 import { useLocale, useTranslations } from "next-intl";
 import AdminDialog from "./Dialog";
 import { IAdminResponse } from "@/generated/interfaces/user.interface";
+import { useAppDispatch } from "@/store/hooks";
+import { createAdmin } from "@/slices/admin.slice";
 
 export default function Table() {
   const [limit, setLimit] = useState(10);
@@ -23,6 +25,7 @@ export default function Table() {
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
   const { columns, columnFieldMap } = useAdminTableColumns();
+  const dispatch = useAppDispatch();
 
   const {
     data: fetchedData,
@@ -46,8 +49,6 @@ export default function Table() {
     [fetchedData]
   );
   const [data, setData] = useState<IAdminResponse[]>([]);
-
-  console.log("fetchedData", fetchedData);
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
@@ -86,6 +87,10 @@ export default function Table() {
     });
   }, []);
 
+  const openCreateAdminDialog = useCallback(() => {
+    dispatch(createAdmin());
+  }, [dispatch]);
+
   const contextValue = useMemo(
     () => ({
       onChangeActive
@@ -116,8 +121,8 @@ export default function Table() {
           </span>
         </div>
         <AdminDialog
-          type='create'
           buttonClassName='self-start'
+          onClick={openCreateAdminDialog}
         />
       </div>
 
@@ -131,7 +136,6 @@ export default function Table() {
         progressPending={isLoading || isFetching}
         progressComponent={<Loader />}
         noDataComponent={<NoRecord />}
-        pagination
         paginationServer
         onChangeRowsPerPage={handleChangeRowPerPage}
         onChangePage={handleChangePage}

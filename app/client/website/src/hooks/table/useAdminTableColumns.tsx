@@ -1,13 +1,13 @@
 import {
   DisableAdminButton,
   RestoreAdminButton,
+  UpdateAdminButton,
   ViewDetailButton
 } from "@/components/screen/admins/Button";
-import {
-  useAdminsContext
-} from "@/components/screen/admins/Provider";
+import { useAdminsContext } from "@/components/screen/admins/Provider";
 import { ItemStatusText } from "@/components/screen/report/common/StatusText";
 import { IAdminResponse } from "@/generated/interfaces/user.interface";
+import { useAppDispatch } from "@/store/hooks";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
@@ -142,6 +142,12 @@ const ActionButtons = ({ id, isActive }: ActionButtonsProps) => {
           }}
         />
       )}
+      <UpdateAdminButton
+        title={t("update")}
+        targetId={id}
+        noText
+        toolTip
+      />
     </div>
   );
 };

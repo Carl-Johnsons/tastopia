@@ -4,9 +4,11 @@ import { useDisableAdmin, useRestoreAdmin } from "@/api/admin";
 import InteractiveButton, { DataTableButton } from "@/components/shared/common/Button";
 import { BanIcon } from "@/components/shared/icons";
 import { Link, useRouter } from "@/i18n/navigation";
+import { updateAdmin } from "@/slices/admin.slice";
+import { useAppDispatch } from "@/store/hooks";
 import { DataTableButtonProps } from "@/types/report";
 import { useQueryClient } from "@tanstack/react-query";
-import { RotateCw, Search } from "lucide-react";
+import { Pen, RotateCw, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -120,6 +122,31 @@ export const DisableAdminButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`bg-red-400 hover:bg-red-500 ${className}`}
+      {...props}
+    />
+  );
+};
+
+export const UpdateAdminButton = ({
+  title,
+  targetId,
+  onSuccess,
+  onFailure,
+  className,
+  ...props
+}: DataTableButtonProps) => {
+  const dispatch = useAppDispatch();
+
+  const handleClick = useCallback(async () => {
+    dispatch(updateAdmin({ targetId }));
+  }, [dispatch, targetId]);
+
+  return (
+    <InteractiveButton
+      title={title}
+      icon={<Pen className='text-white_black' />}
+      onClick={handleClick}
+      className={`bg-blue-400 hover:bg-blue-500 ${className}`}
       {...props}
     />
   );
