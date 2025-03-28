@@ -44,7 +44,7 @@ public class MarkReportCommandHandler : IRequestHandler<MarkReportCommand, Resul
                 break;
             default:
                 report.Status = ReportStatus.Pending;
-                activityType = ActivityType.RESTORE;
+                activityType = ActivityType.REOPEN;
                 break;
         }
         _context.UserReports.Update(report);
