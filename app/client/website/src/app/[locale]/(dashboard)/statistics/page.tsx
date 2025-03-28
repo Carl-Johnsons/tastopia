@@ -24,8 +24,6 @@ export default async function System() {
   const recipeStatistic = await getRecipeStatistic();
   const accountStatistic = await getAccountStatistic();
 
-  console.log("accountStatistic", accountStatistic);
-
   return (
     <div className='flex size-full flex-col justify-center gap-4'>
       {/* Overview */}
