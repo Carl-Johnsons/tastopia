@@ -1,4 +1,5 @@
 ﻿using Contract.Extension;
+using IdentityService.Domain.Constants;
 using IdentityService.Domain.Errors;
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
@@ -46,7 +47,7 @@ public static class ReinforcedTypingsExtension
                   .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
         });
 
-        builder.ExportAsEnums([], config =>
+        builder.ExportAsEnums([typeof(VerifyAccountMethod)], config =>
         {
             config.FlattenHierarchy()
                   .DontIncludeToNamespace()
