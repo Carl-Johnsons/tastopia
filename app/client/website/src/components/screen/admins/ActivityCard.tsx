@@ -37,9 +37,11 @@ export const RecipeCard = ({
       <div className='mt-1 flex flex-wrap gap-2'>
         <Link
           href={`/users/${authorId}`}
-          className='text-sm font-bold text-gray-700 transition-colors hover:text-primary dark:text-gray-400'
+          className='group'
         >
-          @{authorUsername}
+          <span className='text-sm font-bold text-gray-700 transition-colors group-hover:text-primary dark:text-gray-400'>
+            @{authorUsername}
+          </span>
         </Link>
 
         <div className='flex items-center gap-1 text-gray-500'>
@@ -135,7 +137,7 @@ export const UserCard = ({
             <span className='font-bold transition-colors hover:text-primary'>
               {displayName}
             </span>
-            <span className='text-gray-500 transition-colors hover:text-gray-700 dark:hover:text-gray-300'>
+            <span className='text-gray-500 transition-colors hover:text-primary'>
               @{username}
             </span>
           </div>
@@ -230,8 +232,11 @@ export const RecipeReportCard = ({
                   alt={reporter.username}
                 />
               </Link>
-              <Link href={`/users/${reporter.id}`}>
-                <span className='text-sm font-bold text-gray-700 hover:text-primary dark:text-gray-400'>
+              <Link
+                href={`/users/${reporter.id}`}
+                className='group'
+              >
+                <span className='text-sm font-bold text-gray-700 group-hover:text-primary dark:text-gray-400'>
                   {reporter.displayName}
                 </span>
               </Link>
@@ -246,10 +251,7 @@ export const RecipeReportCard = ({
       </div>
 
       <div className='flex gap-2'>
-        <CornerDownRight
-          size={18}
-          className='text-gray-500'
-        />
+        <Reference />
         <RecipeCard
           recipe={recipe}
           className='grow'
@@ -302,8 +304,11 @@ export const CommentReportCard = ({
                   alt={reporter.username}
                 />
               </Link>
-              <Link href={`/users/${reporter.id}`}>
-                <span className='text-sm font-bold text-gray-700 hover:text-primary dark:text-gray-400'>
+              <Link
+                href={`/users/${reporter.id}`}
+                className='group'
+              >
+                <span className='text-sm font-bold text-gray-700 group-hover:text-primary dark:text-gray-400'>
                   {reporter.displayName}
                 </span>
               </Link>
@@ -318,20 +323,11 @@ export const CommentReportCard = ({
       </div>
 
       <div className='flex gap-2'>
-        <CornerDownRight
-          size={18}
-          className='text-gray-500'
-        />
+        <Reference />
         <div className='grow'>
-          <CommentCard
-            comment={comment}
-            className='grow'
-          />
-          <div className='ml-8 mt-2 flex grow gap-2'>
-            <CornerDownRight
-              size={18}
-              className='text-gray-500'
-            />
+          <CommentCard comment={comment} />
+          <div className='mt-2 flex grow gap-2'>
+            <Reference />
             <RecipeCard
               recipe={recipe}
               className='w-full'
@@ -386,8 +382,11 @@ export const UserReportCard = ({
                   alt={reporter.username}
                 />
               </Link>
-              <Link href={`/users/${reporter.id}`}>
-                <span className='text-sm font-bold text-gray-700 hover:text-primary dark:text-gray-400'>
+              <Link
+                href={`/users/${reporter.id}`}
+                className='group'
+              >
+                <span className='text-sm font-bold text-gray-700 group-hover:text-primary dark:text-gray-400'>
                   {reporter.displayName}
                 </span>
               </Link>
@@ -402,15 +401,21 @@ export const UserReportCard = ({
       </div>
 
       <div className='flex gap-2'>
-        <CornerDownRight
-          size={18}
-          className='text-gray-500'
-        />
+        <Reference />
         <UserCard
           user={user}
           className='grow'
         />
       </div>
     </div>
+  );
+};
+
+const Reference = () => {
+  return (
+    <CornerDownRight
+      size={18}
+      className='min-w-fit text-gray-500'
+    />
   );
 };

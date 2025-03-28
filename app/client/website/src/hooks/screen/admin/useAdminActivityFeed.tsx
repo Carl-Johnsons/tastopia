@@ -136,7 +136,7 @@ export const useAdminActivityFeed = () => {
         );
       case ActivityType.MARK_COMPLETE:
         return (
-          <div className='flex size-8 items-center justify-center rounded-full bg-blue-100 text-blue-600'>
+          <div className='flex size-8 items-center justify-center rounded-full bg-purple-100 text-purple-600'>
             <Check />
           </div>
         );
