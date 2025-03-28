@@ -59,20 +59,19 @@ public class UpdateAdminAccountCommandHandler : IRequestHandler<UpdateAdminAccou
             Dob = DateTime.UtcNow.ToTimestamp(),
             IsDoBUpdated = false,
         };
+        if (account == null)
+        {
+            return Result.Failure(AccountError.NotFound);
+        }
 
-        if (account != null)
+        if (request.Username != null)
         {
             if (_userManager.Users.Any(u => u.UserName == request.Username && u.Id != request.AccountId.ToString()))
             {
                 return Result.Failure(AccountError.UsernameAlreadyExisted);
             }
             account.UserName = request.Username;
-            grpcUserRequest.AccountUsername = account.UserName;
-        }
-
-        if (account == null)
-        {
-            return Result.Failure(AccountError.NotFound);
+            grpcUserRequest.AccountUsername = request.Username;
         }
 
         if (request.Gmail != null)
