@@ -34,7 +34,9 @@ public static class ReinforcedTypingsExtension
             typeof(Permission),
             typeof(RoleGroupPermission),
             typeof(CheckForgotPasswordDTO),
-            typeof(ChangePasswordDTO)
+            typeof(ChangePasswordDTO),
+            typeof(CreateAdminAccountDTO),
+            typeof(UpdateAdminAccountDTO)
         ], config =>
         {
             config.FlattenHierarchy()
