@@ -1,4 +1,5 @@
 ﻿using Contract.Extension;
+using IdentityService.Domain.Constants;
 using IdentityService.Domain.Errors;
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
@@ -34,7 +35,9 @@ public static class ReinforcedTypingsExtension
             typeof(Permission),
             typeof(RoleGroupPermission),
             typeof(CheckForgotPasswordDTO),
-            typeof(ChangePasswordDTO)
+            typeof(ChangePasswordDTO),
+            typeof(CreateAdminAccountDTO),
+            typeof(UpdateAdminAccountDTO)
         ], config =>
         {
             config.FlattenHierarchy()
@@ -44,7 +47,7 @@ public static class ReinforcedTypingsExtension
                   .ExportTo($"interfaces/{FILE_NAME}.interface.d.ts");
         });
 
-        builder.ExportAsEnums([], config =>
+        builder.ExportAsEnums([typeof(VerifyAccountMethod)], config =>
         {
             config.FlattenHierarchy()
                   .DontIncludeToNamespace()

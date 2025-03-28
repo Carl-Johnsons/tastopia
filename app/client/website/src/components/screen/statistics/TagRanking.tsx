@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/chart";
 import { StatisticItem } from "@/types/statistic";
 import { chartColors } from "@/constants/colors";
+import { useTranslations } from "next-intl";
 
 const chartConfig = {
   number: {
@@ -32,6 +33,7 @@ type TagRankingProps = {
 };
 
 export function TagRanking({ chartData }: TagRankingProps) {
+  const t = useTranslations("statistic.ranking");
   const coloredChartData = chartData.map((item, index) => ({
     ...item,
     fill: chartColors[index % chartColors.length]
@@ -40,8 +42,8 @@ export function TagRanking({ chartData }: TagRankingProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Tag ranking</CardTitle>
-        <CardDescription>Top tags with the highest views</CardDescription>
+        <CardTitle className='text-black_white'>{t("tagRanking")}</CardTitle>
+        <CardDescription>{t("tagRankingDescription")}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -69,7 +71,13 @@ export function TagRanking({ chartData }: TagRankingProps) {
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent indicator='line' />}
+              content={
+                <ChartTooltipContent
+                  className='text-black_white'
+                  indicator='line'
+                  customLabel={t("viewCount")}
+                />
+              }
             />
             <Bar
               dataKey='number'

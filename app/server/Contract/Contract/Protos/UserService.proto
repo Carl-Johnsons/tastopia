@@ -16,6 +16,8 @@ service GrpcUser {
     rpc GetUserFollowing(GrpcAccountIdRequest) returns (GrpcListAccountIds);
     rpc GetUserFollower(GrpcAccountIdRequest) returns (GrpcListAccountIds);
     rpc GetSimpleUserReport(GrpcGetUserReportRequest) returns (GrpcSimpleUserReport);
+    rpc CreateAdminUser(GrpcCreateAdminRequest) returns (GrpcEmpty);
+    rpc UpdateAdminUser(GrpcUpdateAdminRequest) returns (GrpcEmpty);
 }
 
 message GrpcEmpty {}
@@ -30,6 +32,27 @@ message GrpcGetUserSettingRequest {
 
 message GrpcGetSimpleUsersRequest {
     repeated string AccountId = 1; // HashSet<Guid> represented as repeated strings
+}
+
+message GrpcCreateAdminRequest {
+    string AccountId = 1;
+    string AccountUsername = 2;
+    string DisplayName = 3;
+    string Gender = 4;
+    google.protobuf.Timestamp Dob = 5;
+    string Address = 6;
+    string AvatarURL = 7;
+}
+
+message GrpcUpdateAdminRequest {
+    string AccountId = 1;
+    string AccountUsername = 2;
+    string DisplayName = 3;
+    string Gender = 4;
+    google.protobuf.Timestamp Dob = 5;
+    string Address = 6;
+    string AvatarURL = 7;
+    bool IsDoBUpdated = 8;
 }
 
 message GrpcGetUserReportRequest {

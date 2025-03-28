@@ -3,6 +3,7 @@ using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using UserProto;
 using UserService.Application.Settings.Queries;
@@ -300,5 +301,52 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         {
             Reports = { mapField }
         };
+    }
+
+    public override async Task<GrpcEmpty> CreateAdminUser(GrpcCreateAdminRequest request, ServerCallContext context)
+    {
+        var result = await _sender.Send(new CreateUserCommand
+        {
+            User = new User
+            {
+                AccountId = Guid.Parse(request.AccountId),
+                AccountUsername = request.AccountUsername,
+                Address = request.Address,
+                AvatarUrl = request.AvatarURL,
+                DisplayName = request.DisplayName,
+                Dob = request.Dob.ToDateTime(),
+                Gender = request.Gender,
+                IsAdmin = true,
+                IsAccountActive = true,
+                Bio = "",
+                BackgroundUrl = "",
+                TotalFollower = 0,
+                TotalFollowing = 0,
+                TotalRecipe = 0
+            }
+        });
+
+        result.ThrowIfFailure();
+
+        return new GrpcEmpty();
+    }
+
+    public override async Task<GrpcEmpty> UpdateAdminUser(GrpcUpdateAdminRequest request, ServerCallContext context)
+    {
+        var result = await _sender.Send(new UpdateGprcUserCommand
+        {
+            AccountId = Guid.Parse(request.AccountId),
+            Username = request.AccountUsername,
+            Address = request.Address,
+            AvatarUrl = request.AvatarURL,
+            DisplayName = request.DisplayName,
+            Dob = request.Dob.ToDateTime(),
+            Gender = request.Gender,
+            IsDobUpdate = request.IsDoBUpdated
+        });
+
+        result.ThrowIfFailure();
+
+        return new GrpcEmpty();
     }
 }
