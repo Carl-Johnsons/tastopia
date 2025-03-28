@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { DisableAdminButton, RestoreAdminButton } from "./Button";
