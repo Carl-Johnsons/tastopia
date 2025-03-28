@@ -1,16 +1,27 @@
+import {
+  CommentCard,
+  CommentReportCard,
+  RecipeCard,
+  RecipeReportCard,
+  TagCard,
+  UserCard,
+  UserReportCard
+} from "@/components/screen/admins/ActivityCard";
 import { ActivityItemType } from "@/components/screen/admins/ActivityFeed";
-import { CommentCard, RecipeCard, UserCard } from "@/components/screen/admins/ActivityCard";
 import { UpvoteIcon } from "@/components/shared/icons";
 import { ActivityEntityType, ActivityType } from "@/constants/admin";
+import {
+  ICommentAdminActivityLogResponse,
+  ICommentReportAdminActivityLogResponse,
+  IRecipeAdminActivityLogResponse,
+  IRecipeReportAdminActivityLogResponse,
+  ITagAdminActivityLogResponse,
+  IUserAdminActivityLogResponse,
+  IUserReportAdminActivityLogResponse
+} from "@/generated/interfaces/tracking.interface";
 import { BanIcon, Check, Info, Plus, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback } from "react";
-import {
-  ICommentAdminActivityLogResponse,
-  ICommentLogResponse,
-  IRecipeAdminActivityLogResponse,
-  IUserAdminActivityLogResponse
-} from "@/generated/interfaces/tracking.interface";
 
 export const useAdminActivityFeed = () => {
   const tT = useTranslations("administerAdmins.detail.activity.types");
@@ -75,8 +86,22 @@ export const useAdminActivityFeed = () => {
           <CommentCard comment={(activity as ICommentAdminActivityLogResponse).comment} />
         );
       case ActivityEntityType.USER:
+        return <UserCard user={(activity as IUserAdminActivityLogResponse).user} />;
+      case ActivityEntityType.TAG:
+        return <TagCard tag={(activity as ITagAdminActivityLogResponse).tag} />;
+      case ActivityEntityType.REPORT_RECIPE:
         return (
-          <UserCard user={(activity as IUserAdminActivityLogResponse).user} />
+          <RecipeReportCard report={activity as IRecipeReportAdminActivityLogResponse} />
+        );
+      case ActivityEntityType.REPORT_COMMENT:
+        return (
+          <CommentReportCard
+            report={activity as ICommentReportAdminActivityLogResponse}
+          />
+        );
+      case ActivityEntityType.REPORT_USER:
+        return (
+          <UserReportCard report={activity as IUserReportAdminActivityLogResponse} />
         );
       default:
         throw new Error("Invalid activity type");
