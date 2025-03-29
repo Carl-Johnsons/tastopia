@@ -1,5 +1,7 @@
 import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
+import { redirect } from "@/i18n/navigation";
 import { AxiosError } from "axios";
+import { getLocale } from "next-intl/server";
 
 /**
  * Handle Axios error by throwing a customised Error object. Intented to be used in a catch
@@ -13,4 +15,16 @@ export const withErrorProcessor = (error: unknown) => {
   }
 
   throw error;
+};
+
+export const withPapeErrorProcessor = async (error: unknown) => {
+  if (error instanceof AxiosError && error.status === 403) {
+    const locale = await getLocale();
+    redirect({
+      href: {
+        pathname: "/auth"
+      },
+      locale
+    });
+  }
 };

@@ -1,15 +1,23 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { sidebarLinks } from "@/constants/nav";
+import { sidebarLinks, superAdminSidebarLinks } from "@/constants/nav";
 import { useTranslations } from "next-intl";
+import { useSelectRole } from "@/slices/auth.slice";
+import { Roles } from "@/constants/role";
 
 const LeftSidebar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations("navbar");
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
+  const role = useSelectRole();
+  const isSuperAdmin = useMemo(() => role === Roles.SUPER_ADMIN, [role]);
+  const links = useMemo(
+    () => (isSuperAdmin ? superAdminSidebarLinks : sidebarLinks),
+    [isSuperAdmin]
+  );
 
   useEffect(() => {
     const initialOpenDropdowns = sidebarLinks
@@ -39,7 +47,7 @@ const LeftSidebar = () => {
     <section className='bg-white_black100 custom-scrollbar sticky right-0 top-0 flex h-screen min-w-[276px] flex-col justify-between overflow-y-auto p-2 pt-28 shadow-lg shadow-gray-300 dark:shadow-none max-md:hidden'>
       <div className='flex flex-col'>
         <div className='flex h-full flex-col gap-6'>
-          {sidebarLinks.map(link => {
+          {links.map(link => {
             const isActive =
               pathname === link.route || pathname.startsWith(link.route + "/");
             const isDropdownOpen = openDropdowns.includes(link.route);

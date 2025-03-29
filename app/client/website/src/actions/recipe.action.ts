@@ -176,7 +176,7 @@ export const restoreRecipe = async (id: string) => {
 };
 
 export async function getTotalRecipes() {
-  const url = "/api/admin/recipe/get-total-recipe";
+  const url = "/api/admin/recipe/statistic/get-total-recipe";
   try {
     const { data } = await protectedAxiosInstance.get<number>(url);
     return data;
@@ -187,7 +187,7 @@ export async function getTotalRecipes() {
 }
 
 export async function getRecipeRanking() {
-  const url = "/api/admin/recipe/get-recipe-ranking-by-views";
+  const url = "/api/admin/recipe/statistic/get-recipe-ranking-by-views";
   try {
     const { data } = await protectedAxiosInstance.get<StatisticItem[]>(url);
     return data;
@@ -198,7 +198,7 @@ export async function getRecipeRanking() {
 }
 
 export async function getRecipeStatistic() {
-  const url = "/api/admin/recipe/get-recipe-statistic";
+  const url = "/api/admin/recipe/statistic/get-recipe-statistic";
   try {
     const { data } = await protectedAxiosInstance.get<StatisticDateItem[]>(url);
     return data;
