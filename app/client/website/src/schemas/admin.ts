@@ -1,4 +1,5 @@
 import { Gender } from "@/constants/gender";
+import { ImageListType } from "react-images-uploading";
 import * as z from "zod";
 
 const MAX_FILE_SIZE = 15000000;
@@ -12,13 +13,13 @@ const imageSchemma = (t: (key: string) => string) =>
     z.object({
       dataURL: z.string().optional(),
       file: z
-        .object({
-          size: z.number().max(MAX_FILE_SIZE, t("image.errors.maxSize")),
-          type: z.string().refine(type => IMAGE_TYPE.includes(type), {
-            message: t("image.errors.acceptType")
-          })
+        .any()
+        .refine(image => image?.size <= MAX_FILE_SIZE, {
+          message: t("image.errors.maxSize")
         })
-        .optional()
+        .refine(image => IMAGE_TYPE.includes(image?.type), {
+          message: t("image.errors.acceptType")
+        })
     }),
     {
       required_error: t("image.errors.required")
@@ -55,9 +56,8 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
       .min(6, t("password.errors.min"))
       .max(50, t("password.errors.max")),
     gender: z
-      .string()
-      .nonempty({
-        message: t("gender.errors.required")
+      .string({
+        required_error: t("gender.errors.required")
       })
       .refine(val => GENDER.includes(val), {
         message: t("gender.errors.invalid")
@@ -66,9 +66,13 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
       required_error: t("dateOfBirth.errors.required"),
       invalid_type_error: t("dateOfBirth.errors.invalid")
     }),
-    address: z.string().nonempty({
-      message: t("address.errors.required")
-    }),
+    address: z
+      .string({
+        required_error: t("address.errors.required")
+      })
+      .nonempty({
+        message: t("address.errors.required")
+      }),
     avatarFile: imageSchemma(t)
   });
 

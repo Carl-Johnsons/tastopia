@@ -84,13 +84,13 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   const onSubmit = useCallback(
     async (data: CreateAdminFormFields | UpdateAdminFormFields) => {
       setIsSubmitting(true);
-      console.log("data", data);
 
       try {
         const formData = new FormData();
 
         Object.entries(data).forEach(([key, value]) => {
           if (key === "avatarFile" && !!value) {
+            console.log("image", value);
             formData.append(key, (value as ImageFieldType)?.at(0)?.file as Blob);
           } else if (key === "dob" && value instanceof Date) {
             formData.append(key, value.toISOString());
@@ -144,7 +144,6 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   );
 
   useEffect(() => {
-    console.log("fetchedAmin", fetchedAmin);
     if (fetchedAmin) {
       setAdmin(fetchedAmin);
     }

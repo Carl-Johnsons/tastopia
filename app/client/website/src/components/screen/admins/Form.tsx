@@ -330,7 +330,6 @@ const FormImageUpload = ({ label, field }: FormImageUploadProps) => {
           multiple={false}
           value={value as ImageListType}
           onChange={onChange}
-          dataURLKey='data_url'
           maxFileSize={15242880}
           acceptType={["jpg", "jpeg", "png", "webp"]}
           ImageComponent={({ src, alt }) => (
