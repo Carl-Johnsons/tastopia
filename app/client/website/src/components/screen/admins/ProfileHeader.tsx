@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { DisableAdminButton, RestoreAdminButton } from "./Button";
+import { DisableAdminButton, RestoreAdminButton, SignOutButton } from "./Button";
 import { ItemStatusText } from "../report/common/StatusText";
 import { IAdminDetailResponse } from "@/generated/interfaces/user.interface";
 import { Roles } from "@/constants/role";
 import Avatar from "@/components/shared/common/Avatar";
+import { Button } from "@/components/ui/button";
+import { handleSignOut } from "@/actions/auth";
 
 type Props = {
   admin: IAdminDetailResponse;
@@ -45,23 +47,7 @@ export default function ProfileHeader({ admin }: Props) {
           </div>
         </div>
 
-        {isActive ? (
-          <DisableAdminButton
-            title={tTooltip("disable")}
-            targetId={accountId}
-            onSuccess={() => {
-              setIsActive(false);
-            }}
-          />
-        ) : (
-          <RestoreAdminButton
-            title={tTooltip("restore")}
-            targetId={accountId}
-            onSuccess={() => {
-              setIsActive(true);
-            }}
-          />
-        )}
+        <SignOutButton />
       </div>
     </div>
   );

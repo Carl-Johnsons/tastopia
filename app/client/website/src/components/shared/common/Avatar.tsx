@@ -5,14 +5,14 @@ import {
 } from "@/components/ui/avatar";
 import { AvatarProps } from "@radix-ui/react-avatar";
 
-type Props = {
+type Props = AvatarProps & {
   src: string;
   alt: string;
-} & Pick<AvatarProps, "className">;
+};
 
-export default function Avatar({ src, alt, className }: Props) {
+export default function Avatar({ src, alt, className, ...props }: Props) {
   return (
-    <BaseAvatar className={`min-w-fit cursor-pointer ${className}`}>
+    <BaseAvatar className={`min-w-fit cursor-pointer ${className}`} {...props}>
       <AvatarImage
         className='bg-orange-100'
         src={src}

@@ -1,8 +1,9 @@
 "use client";
 
+import { handleSignOut } from "@/actions/auth";
 import { useDisableAdmin, useRestoreAdmin } from "@/api/admin";
 import InteractiveButton, { DataTableButton } from "@/components/shared/common/Button";
-import { BanIcon } from "@/components/shared/icons";
+import { BanIcon, SignOutIcon } from "@/components/shared/icons";
 import { Link, useRouter } from "@/i18n/navigation";
 import { updateAdmin } from "@/slices/admin.slice";
 import { useAppDispatch } from "@/store/hooks";
@@ -148,6 +149,23 @@ export const UpdateAdminButton = ({
       onClick={handleClick}
       className={`bg-blue-400 hover:bg-blue-500 ${className}`}
       {...props}
+    />
+  );
+};
+
+export const SignOutButton = ({ className }: Pick<DataTableButtonProps, "className">) => {
+  const t = useTranslations("administerAdmins.detail.header");
+
+  const handleClick = useCallback(async () => {
+    handleSignOut();
+  }, []);
+
+  return (
+    <InteractiveButton
+      title={t("signOut")}
+      icon={<SignOutIcon className='text-white_black' />}
+      onClick={handleClick}
+      className={`bg-blue-400 hover:bg-blue-500 ${className}`}
     />
   );
 };
