@@ -11,8 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using Reinforced.Typings.Ast;
 using UserProto;
 
 namespace DuendeIdentityServer.Pages.Account.ForgotPassword;
@@ -109,7 +107,7 @@ public class Index : PageModel
         var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
 
         // the user clicked the "cancel" button
-        if (Input.Button != "Recover")
+        if (Input.Button != "Recover" && Input.Button != "ReturnFind")
         {
             if (context != null)
             {
@@ -140,28 +138,38 @@ public class Index : PageModel
 
         if (ModelState.IsValid)
         {
-            Console.WriteLine("Model valid");
-            try
+            switch (Input.Button)
             {
-                var method = IdentifierUtility.Check(Input.Identifier);
+                case "Recover":
+                    try
+                    {
+                        var method = IdentifierUtility.Check(Input.Identifier);
 
-                var result = await _sender.Send(new RequestChangePasswordCommand
-                {
-                    Identifier = Input.Identifier,
-                    Method = method
-                });
-                result.ThrowIfFailure();
-                string url = $"~/Account/VerifyForgotPassword?returnUrl={Uri.EscapeDataString(Input.ReturnUrl!)}&identifier={Uri.EscapeDataString(Input.Identifier)}";
-                return Redirect(url);
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError(string.Empty, "Send OTP failed! Please try again");
+                        var result = await _sender.Send(new RequestChangePasswordCommand
+                        {
+                            Identifier = Input.Identifier,
+                            Method = method
+                        });
+                        result.ThrowIfFailure();
+                        string url = $"~/Account/VerifyForgotPassword?returnUrl={Uri.EscapeDataString(Input.ReturnUrl!)}&identifier={Uri.EscapeDataString(Input.Identifier)}";
+                        return Redirect(url);
+                    }
+                    catch (Exception ex)
+                    {
+                        ModelState.AddModelError(string.Empty, "Send OTP failed! Please try again");
+                    }
+                    break;
+                case "ReturnFind":
+                    View = new ViewModel
+                    {
+                        Identifier = Input.Identifier,
+                        User = null
+                    };
+                    break;
             }
         }
 
         // something went wrong, show form with error
-        Console.WriteLine("Return to page");
         return Page();
     }
 }
