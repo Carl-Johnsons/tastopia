@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { useAppDispatch } from "@/store/hooks";
 import { clearAuthData, saveAuthData } from "@/slices/auth.slice";
 import { clearUserData, saveUserData } from "@/slices/user.slice";
-import { clientAxiosInstance } from "@/constants/clientHost";
 import { useGetCurrentUser } from "@/api/user";
 
 const AuthListener = () => {
