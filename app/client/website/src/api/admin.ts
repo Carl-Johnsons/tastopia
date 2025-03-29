@@ -6,7 +6,6 @@ import {
   restoreAdmin
 } from "@/actions/admin.action";
 import { IPaginatedAdminActivityLogListResponse } from "@/generated/interfaces/tracking.interface";
-import { IPaginatedAdminListResponse } from "@/types/admin";
 import { PaginatedQueryParams } from "@/types/common";
 import {
   InfiniteData,
@@ -15,7 +14,6 @@ import {
   useQuery
 } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Locale } from "next-intl";
 
 export const useGetAdmins = ({
   limit,

@@ -101,6 +101,7 @@ const TagForm = ({ type }: FormProps) => {
       formData.append("category", values.category);
 
       if (isImageModified || !isUpdate) {
+        console.log("image", image);
         formData.append("tagImage", image[0].file);
       }
 
