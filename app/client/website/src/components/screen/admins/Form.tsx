@@ -286,7 +286,7 @@ const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
               <div className='text-black_white flex w-full items-center gap-2 px-3'>
                 <CalendarIcon className='size-4 text-primary' />
                 <span className='block pt-1'>
-                  {value ? format(value as Date, "MM/dd/yyyy") : placeholder}
+                  {value ? format(value as Date, "MM/dd/yyyy") : <span className="text-muted-foreground">{placeholder}</span>}
                 </span>
               </div>
             </Button>

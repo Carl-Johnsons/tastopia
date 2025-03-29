@@ -177,9 +177,9 @@
   },
   "administerAdmins": {
     "title": "Quản lý quản trị viên",
-    "search": "Tìm kiếm theo tên đăng nhập, tên, gmail, ...",
+    "search": "Tìm kiếm theo tên người dùng, họ tên, Gmail, ...",
     "columns": {
-      "username": "Tên đăng nhập",
+      "username": "Tên người dùng",
       "displayName": "Tên hiển thị",
       "email": "Email",
       "phoneNumber": "Số điện thoại",
@@ -192,7 +192,8 @@
       "viewDetail": "Xem chi tiết",
       "restore": "Khôi phục",
       "disable": "Vô hiệu hóa",
-      "create": "Tạo mới"
+      "create": "Tạo mới",
+      "update": "Cập nhật"
     },
     "notifications": {
       "restoreSuccess": "Khôi phục quản trị viên thành công!",
@@ -200,47 +201,50 @@
       "create": {
         "success": "Tạo quản trị viên mới thành công!"
       },
-      "error": "Đã có lỗi xảy ra!"
+      "update": {
+        "success": "Cập nhật quản trị viên thành công!"
+      },
+      "error": "Đã xảy ra lỗi!"
     },
     "form": {
-      "createAdmin": "Tạo quản trị viên",
-      "updateAdmin": "Cập nhật quản trị viên",
+      "createAdmin": "Tạo Quản trị viên mới",
+      "updateAdmin": "Cập nhật Quản trị viên",
       "accountId": {
         "errors": {
-          "required": "Không tìm thấy ID của tài khoản"
+          "required": "Vui lòng nhập mã tài khoản"
         }
       },
       "name": {
-        "label": "Tên",
-        "placeholder": "Ví dụ: John Doe",
+        "label": "Họ tên",
+        "placeholder": "Ví dụ: Nguyễn Văn A",
         "errors": {
-          "required": "Tên là bắt buộc",
-          "max": "Tên phải ít hơn 50 ký tự"
+          "required": "Vui lòng nhập họ tên",
+          "max": "Họ tên không được quá 50 ký tự"
         }
       },
       "gmail": {
         "label": "Gmail",
-        "placeholder": "Ví dụ: johndoe@gmail.com",
+        "placeholder": "Ví dụ: nguyenvana@gmail.com",
         "errors": {
-          "required": "Gmail là bắt buộc",
-          "invalid": "Địa chỉ gmail không hợp lệ"
+          "required": "Vui lòng nhập Gmail",
+          "invalid": "Địa chỉ Gmail không hợp lệ"
         }
       },
       "phone": {
         "label": "Số điện thoại",
         "placeholder": "Ví dụ: 0364295940",
         "errors": {
-          "required": "Số điện thoại là bắt buộc",
+          "required": "Vui lòng nhập số điện thoại",
           "invalid": "Số điện thoại không hợp lệ"
         }
       },
       "password": {
         "label": "Mật khẩu",
-        "placeholder": "Ví dụ: TastopiaPassword@123",
+        "placeholder": "Ví dụ: MatKhau123@",
         "errors": {
-          "required": "Mật khẩu là bắt buộc",
+          "required": "Vui lòng nhập mật khẩu",
           "min": "Mật khẩu phải có ít nhất 6 ký tự",
-          "max": "Mật khẩu phải ít hơn 50 ký tự"
+          "max": "Mật khẩu không được quá 50 ký tự"
         }
       },
       "gender": {
@@ -251,24 +255,24 @@
           "female": "Nữ"
         },
         "errors": {
-          "required": "Giới tính là bắt buộc",
+          "required": "Vui lòng chọn giới tính",
           "invalid": "Giới tính không hợp lệ"
         }
       },
       "dateOfBirth": {
         "label": "Ngày sinh",
-        "placeholder": "DD/MM/YYYY",
+        "placeholder": "Chọn ngày sinh",
         "errors": {
-          "required": "Ngày sinh là bắt buộc",
+          "required": "Vui lòng nhập ngày sinh",
           "invalid": "Ngày sinh không hợp lệ"
         }
       },
       "address": {
         "label": "Địa chỉ",
-        "placeholder": "Ví dụ: Cần Thơ",
+        "placeholder": "Ví dụ: TP. Hồ Chí Minh",
         "errors": {
-          "required": "Địa chỉ là bắt buộc",
-          "max": "Địa chỉ phải ít hơn 255 ký tự"
+          "required": "Vui lòng nhập địa chỉ",
+          "max": "Địa chỉ không được quá 255 ký tự"
         }
       },
       "status": {
@@ -276,31 +280,31 @@
         "placeholder": "Chọn trạng thái",
         "options": {
           "active": "Hoạt động",
-          "inactive": "Không hoạt động"
+          "inactive": "Ngừng hoạt động"
         },
         "errors": {
-          "required": "Trạng thái là bắt buộc",
+          "required": "Vui lòng chọn trạng thái",
           "invalid": "Trạng thái không hợp lệ"
         }
       },
       "image": {
         "label": "Hình ảnh",
-        "required": "Hình ảnh là bắt buộc",
+        "required": "Vui lòng chọn hình ảnh",
         "errors": {
-          "required": "Ảnh đại diện là bắt buộc",
-          "maxSize": "Kích thước file vượt quá mức cho phép (15MB)",
-          "maxNumber": "Số lượng ảnh được chọn vượt quá 1",
+          "required": "Vui lòng chọn ảnh đại diện",
+          "maxSize": "Kích thước tệp vượt quá giới hạn cho phép (15MB)",
+          "maxNumber": "Chỉ được chọn 1 ảnh",
           "acceptType": "Chỉ hỗ trợ định dạng .jpg, .jpeg, .png và .webp"
         },
         "upload": {
           "clickToUpload": "Nhấn để tải lên",
-          "dragAndDrop": "hoặc kéo thả",
-          "fileTypes": "PNG, JPG, JPEG, hoặc WEBP (TỐI ĐA 15MB)",
+          "dragAndDrop": "hoặc kéo thả tệp",
+          "fileTypes": "Định dạng PNG, JPG, JPEG, hoặc WEBP (Tối đa 15MB)",
           "removeImage": "Xóa ảnh",
           "confirmDelete": {
-            "title": "Bạn có chắc muốn xóa ảnh này?",
-            "description": "Khi xóa, ảnh sẽ không thể khôi phục.",
-            "confirm": "Đồng ý, xóa",
+            "title": "Bạn có chắc chắn muốn xóa ảnh này?",
+            "description": "Sau khi xóa, không thể khôi phục.",
+            "confirm": "Có, xóa",
             "cancel": "Hủy"
           }
         }
@@ -311,7 +315,7 @@
         "signOut": "Đăng xuất",
         "roles": {
           "ADMIN": "Quản trị viên",
-          "SUPER ADMIN": "Siêu quản trị viên"
+          "SUPER ADMIN": "Quản trị viên cấp cao"
         }
       },
       "info": {
@@ -339,7 +343,7 @@
           "update": "Cập nhật",
           "disable": "Vô hiệu hóa",
           "restore": "Khôi phục",
-          "markComplete": "Đánh dấu là hoàn thành",
+          "markComplete": "Đánh dấu hoàn thành",
           "reopen": "Mở lại"
         },
         "entity": {

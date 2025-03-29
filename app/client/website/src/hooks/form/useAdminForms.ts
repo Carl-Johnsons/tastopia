@@ -6,10 +6,8 @@ import { BinaryStatus } from "@/constants/status";
 import { getCreateAdminSchema, getUpdateAdminSchema } from "@/schemas/admin";
 import {
   CreateAdminFormFields,
-  CreateAdminSchema,
   ImageFieldType,
-  UpdateAdminFormFields,
-  UpdateAdminSchema
+  UpdateAdminFormFields
 } from "@/types/admin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
@@ -49,18 +47,8 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   const [admin, setAdmin] = useState(fetchedAmin);
 
   const defaultValues: UpdateAdminFormFields = useMemo(() => {
-    const defaultCreateValues = {
-      name: "Long",
-      gmail: "sdfsdfsd@gmail.com",
-      phone: "0987654321",
-      password: "asdojasodij@02asokdj",
-      gender: Gender.Male,
-      dateOfBirth: new Date(),
-      address: "Hanoi"
-    };
-
     if (formType === "create") {
-      return defaultCreateValues;
+      return {};
     }
 
     const images: ImageListType = [{ dataURL: admin?.avatarUrl ?? "" }];
@@ -69,11 +57,11 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       name: admin?.displayName,
       gmail: admin?.email,
       phone: admin?.phoneNumber,
-      dateOfBirth: admin?.dob ? new Date(admin?.dob) : new Date(),
+      dob: admin?.dob ? new Date(admin?.dob) : new Date(),
       gender: admin?.gender === Gender.Male ? Gender.Male : Gender.Female,
       address: admin?.address,
       status: admin?.isActive ? BinaryStatus.Active : BinaryStatus.Inactive,
-      image: images
+      avatarFile: images
     };
   }, [admin, formType]);
 

@@ -80,7 +80,7 @@ const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
               className='text-black_white'
               onClick={onClose}
             >
-              <Button className='size-8 rounded-full bg-gray-500 hover:opacity-80'>
+              <Button className='size-8 rounded-full bg-gray-400 opacity-50 hover:opacity-100 dark:bg-gray-700'>
                 <X className='text-black_white' />
               </Button>
             </DialogClose>
@@ -89,7 +89,7 @@ const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
         <AdminForm form={form} />
         <DialogFooter>
           <InteractiveButton
-            title={isCreate ? tTooltip("create") : "Update"}
+            title={isCreate ? tTooltip("create") : tTooltip("update")}
             icon={
               isCreate ? (
                 <Plus className='text-white_black' />

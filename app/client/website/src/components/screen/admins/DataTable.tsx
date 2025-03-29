@@ -15,6 +15,7 @@ import AdminDialog from "./Dialog";
 import { IAdminResponse } from "@/generated/interfaces/user.interface";
 import { useAppDispatch } from "@/store/hooks";
 import { createAdmin } from "@/slices/admin.slice";
+import useLocaleTable from "@/hooks/table/useLocaleTable";
 
 export default function Table() {
   const [limit, setLimit] = useState(10);
@@ -26,6 +27,7 @@ export default function Table() {
   const debouncedValue = useDebounce(keyword, 800);
   const { columns, columnFieldMap } = useAdminTableColumns();
   const dispatch = useAppDispatch();
+  const tableLocale = useLocaleTable();
 
   const {
     data: fetchedData,
@@ -136,7 +138,9 @@ export default function Table() {
         progressPending={isLoading || isFetching}
         progressComponent={<Loader />}
         noDataComponent={<NoRecord />}
+        pagination
         paginationServer
+        paginationComponentOptions={tableLocale}
         onChangeRowsPerPage={handleChangeRowPerPage}
         onChangePage={handleChangePage}
         paginationTotalRows={totalRow}

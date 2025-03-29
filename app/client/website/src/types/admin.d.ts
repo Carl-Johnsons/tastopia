@@ -33,4 +33,4 @@ export type CreateAdminFormFields = z.infer<typeof createAdminSchema>;
 const updateAdminSchema = getUpdateAdminSchema((key: string) => key);
 export type UpdateAdminSchema = typeof updateAdminSchema;
 export type UpdateAdminFormFields = z.infer<typeof updateAdminSchema>;
-export type ImageFieldType = Pick<CreateAdminFormFields, "image">["image"];
+export type ImageFieldType = Pick<CreateAdminFormFields, "avatarFile">["avatarFile"];

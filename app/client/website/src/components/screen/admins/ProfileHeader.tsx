@@ -1,22 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { SignOutButton } from "./Button";
+import { DisableAdminButton, RestoreAdminButton, SignOutButton } from "./Button";
 import { ItemStatusText } from "../report/common/StatusText";
 import { IAdminDetailResponse } from "@/generated/interfaces/user.interface";
 import { Roles } from "@/constants/role";
 import Avatar from "@/components/shared/common/Avatar";
+import { useSelectUserId } from "@/slices/user.slice";
 
 type Props = {
   admin: IAdminDetailResponse;
 };
 
 export default function ProfileHeader({ admin }: Props) {
-  const { avatarUrl, username } = admin;
+  const [isActive, setIsActive] = useState(admin.isActive);
+  const { avatarUrl, username, accountId } = admin;
   const role = Roles.ADMIN;
-  const [isActive] = useState(admin.isActive);
+
   const tRole = useTranslations("administerAdmins.detail.header.roles");
+  const tTooltip = useTranslations("administerAdmins.tooltip");
+
+  const userId = useSelectUserId();
+  const isCurrentUser = useMemo(
+    () => userId === accountId,
+    [userId, accountId]
+  );
 
   return (
     <div className='bg-white_black100 overflow-hidden rounded-xl border border-gray-200 shadow-sm dark:border-gray-600'>
@@ -44,7 +53,25 @@ export default function ProfileHeader({ admin }: Props) {
           </div>
         </div>
 
-        <SignOutButton />
+        {isCurrentUser ? (
+          <SignOutButton />
+        ) : isActive ? (
+          <DisableAdminButton
+            title={tTooltip("disable")}
+            targetId={accountId}
+            onSuccess={() => {
+              setIsActive(false);
+            }}
+          />
+        ) : (
+          <RestoreAdminButton
+            title={tTooltip("restore")}
+            targetId={accountId}
+            onSuccess={() => {
+              setIsActive(true);
+            }}
+          />
+        )}
       </div>
     </div>
   );

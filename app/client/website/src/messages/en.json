@@ -187,13 +187,17 @@
       "viewDetail": "View detail",
       "restore": "Restore",
       "disable": "Disable",
-      "create": "Create"
+      "create": "Create",
+      "update": "Update"
     },
     "notifications": {
       "restoreSuccess": "Restore admin successfully!",
       "disableSuccess": "Disable admin successfully!",
       "create": {
         "success": "Create new admin successfully!"
+      },
+      "update": {
+        "success": "Update admin successfully!"
       },
       "error": "Something went wrong!"
     },
@@ -252,7 +256,7 @@
       },
       "dateOfBirth": {
         "label": "Date of Birth",
-        "placeholder": "DD/MM/YYYY",
+        "placeholder": "Choose a date",
         "errors": {
           "required": "Date of birth is required",
           "invalid": "Invalid date of birth"

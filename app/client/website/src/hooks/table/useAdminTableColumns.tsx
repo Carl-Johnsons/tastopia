@@ -7,7 +7,6 @@ import {
 import { useAdminsContext } from "@/components/screen/admins/Provider";
 import { ItemStatusText } from "@/components/screen/report/common/StatusText";
 import { IAdminResponse } from "@/generated/interfaces/user.interface";
-import { useAppDispatch } from "@/store/hooks";
 import { format } from "date-fns";
 import { useTranslations } from "next-intl";
 import { useMemo } from "react";
@@ -33,12 +32,14 @@ export default function useAdminTableColumns() {
       {
         name: t("email"),
         selector: row => row.email as string,
-        sortable: true
+        sortable: true,
+        hide: 870
       },
       {
         name: t("phoneNumber"),
         selector: row => row.phoneNumber as string,
-        sortable: true
+        sortable: true,
+        hide: 1010
       },
       {
         name: t("dateOfBirth"),
@@ -76,7 +77,7 @@ export default function useAdminTableColumns() {
       {
         name: t("actions"),
         center: true,
-        width: "150px",
+        width: "180px",
         cell: ({ accountId, isActive }) => {
           return (
             <ActionButtons
