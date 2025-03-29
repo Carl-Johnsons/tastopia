@@ -48,7 +48,17 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
 
   const defaultValues: UpdateAdminFormFields = useMemo(() => {
     if (formType === "create") {
-      return {};
+      return {
+        name: undefined,
+        gmail: undefined,
+        phone: undefined,
+        dob: undefined,
+        gender: undefined,
+        address: undefined,
+        status: undefined,
+        avatarFile: undefined,
+        password: undefined
+      };
     }
 
     const images: ImageListType = [{ dataURL: admin?.avatarUrl ?? "" }];
