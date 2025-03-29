@@ -1,5 +1,4 @@
 using Contract.Extension;
-using Contract.Middleware;
 using Contract.Utilities;
 using Duende.IdentityServer;
 using Duende.IdentityServer.ResponseHandling;

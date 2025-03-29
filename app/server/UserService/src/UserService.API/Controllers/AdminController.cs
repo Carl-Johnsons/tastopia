@@ -171,7 +171,7 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("get-total-user")]
+    [HttpGet("statistic/get-total-user")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(int), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
