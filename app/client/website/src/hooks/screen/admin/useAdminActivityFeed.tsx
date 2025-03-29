@@ -155,7 +155,24 @@ export const useAdminActivityFeed = () => {
     }
   }, []);
 
-  const getBgColor = useCallback((type: ActivityType) => {
+  const getBgColor = useCallback((type: ActivityType, isDarker: boolean = false) => {
+    if (isDarker) {
+      switch (type) {
+        case ActivityType.CREATE:
+        case ActivityType.RESTORE:
+        case ActivityType.REOPEN:
+          return "bg-green-100 dark:bg-green-900 border-green-300";
+        case ActivityType.UPDATE:
+          return "bg-blue-100 dark:bg-blue-900 border-blue-300";
+        case ActivityType.DISABLE:
+          return "bg-red-100 dark:bg-red-900 border-red-300";
+        case ActivityType.MARK_COMPLETE:
+          return "bg-purple-100 dark:bg-purple-900 border-purple-300";
+        default:
+          return "bg-gray-100 dark:bg-gray-800 border-gray-300";
+      }
+    }
+
     switch (type) {
       case ActivityType.CREATE:
       case ActivityType.RESTORE:

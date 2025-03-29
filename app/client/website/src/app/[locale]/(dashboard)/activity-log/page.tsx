@@ -1,7 +1,9 @@
+import Table from "@/components/screen/activity-log/DataTable";
+
 export default function ActivityLog() {
   return (
-    <div className="flex size-full justify-center">
-      <div className="flex w-full flex-col gap-4">hi ActivityLog</div>
+    <div className='flex size-full flex-col justify-center gap-4'>
+      <Table />
     </div>
   );
 }
