@@ -69,16 +69,20 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
     address: z.string().nonempty({
       message: t("address.errors.required")
     }),
-    status: z
-      .string({
-        required_error: t("status.errors.required")
-      })
-      .refine(val => STATUS.includes(val), {
-        message: t("status.errors.invalid")
-      }),
     avatarFile: imageSchemma(t)
   });
 
 export const getUpdateAdminSchema = (t: (key: string) => string) => {
-  return getCreateAdminSchema(t).partial().omit({ password: true });
+  return getCreateAdminSchema(t)
+    .extend({
+      status: z
+        .string({
+          required_error: t("status.errors.required")
+        })
+        .refine(val => STATUS.includes(val), {
+          message: t("status.errors.invalid")
+        })
+    })
+    .partial()
+    .omit({ password: true });
 };
