@@ -13,14 +13,10 @@ public class ApplicationAccount : IdentityUser
 {
     [MaxLength(6)]
     public string? EmailOTP { get; set; } = null!;
-    [MaxLength(6)]
-    public string? UnlinkEmailOTP { get; set; } = null!;
     public DateTime? EmailOTPCreated { get; set; }
     public DateTime? EmailOTPExpiry { get; set; }
     [MaxLength(6)]
     public string? PhoneOTP { get; set; } = null!;
-    [MaxLength(6)]
-    public string? UnlinkPhoneOTP { get; set; } = null!;
     public DateTime? PhoneOTPCreated { get; set; }
     public DateTime? PhoneOTPExpiry { get; set; }
     [MaxLength(6)]

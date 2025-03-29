@@ -3,33 +3,34 @@ using IdentityService.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 namespace IdentityService.Application.Account.Commands;
 
-public record VerifyAccountCommand : IRequest<Result>
+public record VerifyUpdateIdentifierCommand : IRequest<Result>
 {
     public Guid AccountId { get; set; }
+    public string Identifier { get; set; } = null!;
     public string OTP { get; set; } = null!;
     public AccountMethod Method { get; set; }
 }
 
 
-public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand, Result>
+public class VerifyUpdateIdentifierCommandHandler : IRequestHandler<VerifyUpdateIdentifierCommand, Result>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
     private readonly IApplicationDbContext _context;
 
-    public VerifyAccountCommandHandler(UserManager<ApplicationAccount> userManager, IApplicationDbContext context)
+    public VerifyUpdateIdentifierCommandHandler(UserManager<ApplicationAccount> userManager, IApplicationDbContext context)
     {
         _userManager = userManager;
         _context = context;
     }
 
-    public async Task<Result> Handle(VerifyAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(VerifyUpdateIdentifierCommand request, CancellationToken cancellationToken)
     {
-        if (request.Method == AccountMethod.Email) return await VerifyEmail(request, cancellationToken);
-        if (request.Method == AccountMethod.Phone) return await VerifyPhone(request, cancellationToken);
+        if (request.Method == AccountMethod.Email) return await VerifyUpdateEmail(request, cancellationToken);
+        if (request.Method == AccountMethod.Phone) return await VerifyUpdatePhone(request, cancellationToken);
         return Result.Failure(AccountError.VerifyFailed, "Wrong account method");
     }
 
-    private async Task<Result> VerifyEmail(VerifyAccountCommand request, CancellationToken cancellationToken)
+    private async Task<Result> VerifyUpdateEmail(VerifyUpdateIdentifierCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.AccountId.ToString());
         if (user == null)
@@ -52,7 +53,7 @@ public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand,
         {
             return Result.Failure(AccountError.OTPExpired);
         }
-
+        user.Email = request.Identifier;
         user.EmailConfirmed = true;
         user.EmailOTP = null;
         user.EmailOTPCreated = null;
@@ -67,7 +68,7 @@ public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand,
 
         return Result.Success();
     }
-    private async Task<Result> VerifyPhone(VerifyAccountCommand request, CancellationToken cancellationToken)
+    private async Task<Result> VerifyUpdatePhone(VerifyUpdateIdentifierCommand request, CancellationToken cancellationToken)
     {
         var user = await _userManager.FindByIdAsync(request.AccountId.ToString());
         if (user == null)
@@ -89,7 +90,7 @@ public class VerifyAccountCommandHandler : IRequestHandler<VerifyAccountCommand,
         {
             return Result.Failure(AccountError.OTPExpired);
         }
-
+        user.PhoneNumber = request.Identifier;
         user.PhoneNumberConfirmed = true;
         user.PhoneOTP = null;
         user.PhoneOTPCreated = null;

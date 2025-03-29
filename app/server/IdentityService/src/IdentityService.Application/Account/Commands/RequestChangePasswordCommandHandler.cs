@@ -55,7 +55,7 @@ public class RequestChangePasswordCommandHandler : IRequestHandler<RequestChange
         {
             AccountId = Guid.Parse(account.Id),
             Identifier = request.Method == AccountMethod.Email ? account.Email! : account.PhoneNumber!,
-            Method = AccountMethod.Email,
+            Method = request.Method,
             OTP = OTP,
             OTPMethod = OTPMethod.ForgotPassword
         });

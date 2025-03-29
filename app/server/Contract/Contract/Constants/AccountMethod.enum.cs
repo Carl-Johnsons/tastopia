@@ -11,5 +11,6 @@ public enum AccountMethod
 public enum OTPMethod
 {
     Resend,
-    ForgotPassword
+    ForgotPassword,
+    UpdateIdentifier
 }

@@ -26,6 +26,9 @@ public class UserSendOTPConsumer : IConsumer<UserSendOTPEvent>
             case OTPMethod.ForgotPassword:
                 await ForgotPassword(context);
                 break;
+            case OTPMethod.UpdateIdentifier:
+                await UpdateIdentifier(context);
+                break;
             default:
                 break;
         }
@@ -72,6 +75,31 @@ public class UserSendOTPConsumer : IConsumer<UserSendOTPEvent>
                 await _sender.Send(new SendSMSCommand
                 {
                     Message = $"Your Tastopia account request to reset the password. Your OTP to verify reset password is {context.Message.OTP}",
+                    PhoneTo = context.Message.Identifier,
+                });
+                break;
+            default:
+                break;
+        }
+    }
+
+    public async Task UpdateIdentifier(ConsumeContext<UserSendOTPEvent> context)
+    {
+        switch (context.Message.Method)
+        {
+            case AccountMethod.Email:
+                await _sender.Send(new SendEmailCommand
+                {
+                    EmailTo = context.Message.Identifier,
+                    Subject = "Update email",
+                    Body = $"Your <b>Tastopia</b> account request to update the email. Your OTP to verify update email is <b>{context.Message.OTP}</b>",
+                    IsHTML = true,
+                });
+                break;
+            case AccountMethod.Phone:
+                await _sender.Send(new SendSMSCommand
+                {
+                    Message = $"Your Tastopia account request to update the email. Your OTP to verify update email is {context.Message.OTP}",
                     PhoneTo = context.Message.Identifier,
                 });
                 break;
