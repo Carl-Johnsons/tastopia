@@ -86,8 +86,8 @@ internal class MockupData
                 UpdatedAt = time
             };
 
-            var userResult = _userManager.FindByNameAsync(account.UserName).Result;
-            if (userResult == null)
+            var isUserExist = _userManager.Users.Any(a => a.Id == seedAccount.Id);
+            if (!isUserExist)
             {
                 var result = _userManager.CreateAsync(account, "Pass123$").Result;
                 if (!result.Succeeded)
@@ -123,8 +123,8 @@ internal class MockupData
                 UpdatedAt = time
             };
 
-            var userResult = _userManager.FindByNameAsync(account.UserName).Result;
-            if (userResult == null)
+            var isUserExist = _userManager.Users.Any(a => a.Id == seedWrongUser.Id);
+            if (!isUserExist)
             {
                 var result = _userManager.CreateAsync(account, "Pass123$").Result;
                 if (!result.Succeeded)
