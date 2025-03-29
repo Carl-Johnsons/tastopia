@@ -55,7 +55,6 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
         dob: undefined,
         gender: undefined,
         address: undefined,
-        status: undefined,
         avatarFile: undefined,
         password: undefined
       };

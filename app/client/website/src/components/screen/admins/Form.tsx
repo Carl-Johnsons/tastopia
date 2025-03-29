@@ -160,26 +160,28 @@ const AdminForm = ({ form }: Props) => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name='status'
-          render={({ field }) => (
-            <div className='w-[240px]'>
-              <FormSelect
-                field={field}
-                label={t("status.label")}
-                placeholder={t("status.placeholder")}
-                items={[
-                  { value: BinaryStatus.Active, label: t("status.options.active") },
-                  { value: BinaryStatus.Inactive, label: t("status.options.inactive") }
-                ]}
-                SelectItemChild={({ value }) => (
-                  <ItemStatusText isActive={value === BinaryStatus.Active} />
-                )}
-              />
-            </div>
-          )}
-        />
+        {isUpdate && (
+          <FormField
+            control={form.control}
+            name='status'
+            render={({ field }) => (
+              <div className='w-[240px]'>
+                <FormSelect
+                  field={field}
+                  label={t("status.label")}
+                  placeholder={t("status.placeholder")}
+                  items={[
+                    { value: BinaryStatus.Active, label: t("status.options.active") },
+                    { value: BinaryStatus.Inactive, label: t("status.options.inactive") }
+                  ]}
+                  SelectItemChild={({ value }) => (
+                    <ItemStatusText isActive={value === BinaryStatus.Active} />
+                  )}
+                />
+              </div>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}
