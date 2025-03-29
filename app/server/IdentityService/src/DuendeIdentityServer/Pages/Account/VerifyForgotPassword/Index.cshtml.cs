@@ -196,10 +196,10 @@ public class Index : PageModel
                 case "ChangePassword":
                     try
                     {
-                        if (Regex.IsMatch(Input.Password, "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{6,}$"))
-                        {
-                            ModelState.AddModelError("Input.Password", "Password must have length at least 6 and contain at least 1 uppercase, 1 lowercase, 1 number, 1 symbol");
-                        }
+                        // if (Regex.IsMatch(Input.Password, "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{6,}$"))
+                        // {
+                            // ModelState.AddModelError("Input.Password", "Password must have length at least 6 and contain at least 1 uppercase, 1 lowercase, 1 number, 1 symbol");
+                        // }
 
                         if (Input.Password != Input.RetypePassword)
                         {
