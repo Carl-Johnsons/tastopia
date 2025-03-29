@@ -8,7 +8,6 @@ import {
   IAdminDetailResponse,
   IPaginatedAdminListResponse
 } from "@/generated/interfaces/user.interface";
-import { ICreateAdminAccountDTO } from "@/generated/interfaces/identity.interface";
 
 export async function getAdmins(options?: PaginatedQueryParams) {
   const url = "/api/admin/user";

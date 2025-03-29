@@ -26,7 +26,6 @@ import SearchBar from "../users/SearchBar";
 import Image from "@/components/shared/common/Image";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
-import { useSelectUserId } from "@/slices/user.slice";
 import { useLocale } from "next-intl";
 
 const columns: TableColumn<IAdminRecipeResponse>[] = [

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useMemo } from "react";
+import React, { FC, useMemo, useState } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import {
   Form,
@@ -26,13 +26,13 @@ import { ItemStatusText } from "../report/common/StatusText";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "@/components/shared/icons";
 import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Image from "@/components/shared/common/Image";
 import { BinaryStatus } from "@/constants/status";
 import { ImageListType } from "react-images-uploading";
 import { useSelectAdmin } from "@/slices/admin.slice";
+import { Calendar } from "@/components/shared/common/Calendar";
 
 type Props = {
   form: ReturnType<typeof useForm<CreateAdminFormFields | UpdateAdminFormFields>>;
@@ -299,7 +299,7 @@ const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
           </FormControl>
         </PopoverTrigger>
         <PopoverContent
-          className='bg-white_black200 border-black_white w-auto border p-0'
+          className='bg-white_black200 border-black_white w-auto border'
           align='start'
         >
           <Calendar

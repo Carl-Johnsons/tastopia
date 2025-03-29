@@ -62,6 +62,8 @@ export default function Table() {
 
   const onSort = useCallback(
     (selectedColumn: TableColumn<IAdminResponse>, sortDirection: SortOrder) => {
+      if (!selectedColumn.name) return;
+
       const sortBy = columnFieldMap[selectedColumn.name as string];
       const sortOrder = sortDirection.toString().toUpperCase();
 
