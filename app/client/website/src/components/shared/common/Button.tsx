@@ -113,6 +113,7 @@ export const InteractiveButton = ({
     <Button
       disabled={disabled}
       onClick={onClick}
+      className={className}
       {...props}
     >
       {RenderedContent}

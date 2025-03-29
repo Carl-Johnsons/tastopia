@@ -95,6 +95,5 @@ export const getUpdateAdminSchema = (t: (key: string) => string) => {
           message: t("status.errors.invalid")
         })
     })
-    .partial()
     .omit({ password: true });
 };
