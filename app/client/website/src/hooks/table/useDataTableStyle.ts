@@ -45,6 +45,7 @@ export default function useDataTableStyles(): UseDataTableStylesResult {
       },
       headRow: {
         style: {
+          fontSize: "14px !important",
           backgroundColor: "#FE724C !important"
         }
       },

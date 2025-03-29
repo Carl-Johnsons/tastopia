@@ -59,7 +59,7 @@ const columns: TableColumn<IAdminRecipeResponse>[] = [
   {
     name: "Created Date",
     sortable: true,
-    width: "140px",
+    width: "160px",
     center: true,
     hide: 1476,
     cell: ({ createdAt }) => {
