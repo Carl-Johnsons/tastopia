@@ -157,6 +157,22 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
+    [HttpGet("current")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(AdminDetailResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetAdminDetail()
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new GetAdminDetailQuery
+        {
+            AccountId = Guid.Parse(subjectId!)
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [HttpGet("detail")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(AdminDetailResponse), 200)]
