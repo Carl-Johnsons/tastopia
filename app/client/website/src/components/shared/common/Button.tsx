@@ -112,6 +112,7 @@ export const InteractiveButton = ({
   ) : (
     <Button
       disabled={disabled}
+      onClick={onClick}
       {...props}
     >
       {RenderedContent}
