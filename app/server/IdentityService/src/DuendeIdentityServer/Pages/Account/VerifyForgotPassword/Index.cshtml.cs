@@ -82,7 +82,7 @@ public class Index : PageModel
         var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
 
         // the user clicked the "cancel" button
-        if (Input.Button != "Verify" && Input.Button != "ChangePassword")
+        if (Input.Button != "Verify" && Input.Button != "ChangePassword" && Input.Button != "Resend")
         {
             if (context != null)
             {
@@ -112,82 +112,128 @@ public class Index : PageModel
         }
         if (ModelState.IsValid)
         {
-            if (Input.Button == "Verify")
+            switch (Input.Button)
             {
-                try
-                {
-                    var result = await _sender.Send(new CheckForgotPasswordOTPQuery
+                case "Verify":
+                    try
                     {
-                        Identifier = Input.Identifier,
-                        OTP = Input.OTP,
-                        Method = IdentifierUtility.Check(Input.Identifier)
-                    });
+                        var result = await _sender.Send(new CheckForgotPasswordOTPQuery
+                        {
+                            Identifier = Input.Identifier,
+                            OTP = Input.OTP,
+                            Method = IdentifierUtility.Check(Input.Identifier)
+                        });
 
-                    result.ThrowIfFailure();
+                        result.ThrowIfFailure();
 
-                    View = new ViewModel
-                    {
-                        IsValidOTP = true
-                    };
-                    return Page();
-                }
-                catch (ResultException rex)
-                {
-                    if (rex != null)
-                    {
-                        ModelState.AddModelError(string.Empty, rex.Errors.ElementAt(0)?.Message ?? "Error! Please try again");
                         View = new ViewModel
                         {
                             IsValidOTP = true
                         };
                         return Page();
                     }
-                }
-                catch (Exception)
-                {
+                    catch (ResultException rex)
+                    {
+                        if (rex != null)
+                        {
+                            ModelState.AddModelError(string.Empty, rex.Errors.ElementAt(0)?.Message ?? "Error! Please try again");
+                            View = new ViewModel
+                            {
+                                IsValidOTP = true
+                            };
+                            return Page();
+                        }
+                    }
+                    catch (Exception)
+                    {
 
-                    throw;
-                }
+                        throw;
+                    }
+                    break;
+                case "Resend":
+                    try
+                    {
+                        var result = await _sender.Send(new RequestChangePasswordCommand
+                        {
+                            Identifier = Input.Identifier,
+                            Method = IdentifierUtility.Check(Input.Identifier)
+                        });
+
+                        result.ThrowIfFailure();
+
+                        View = new ViewModel
+                        {
+                            IsValidOTP = false
+                        };
+                        return Page();
+                    }
+                    catch (ResultException rex)
+                    {
+                        if (rex != null)
+                        {
+                            ModelState.AddModelError(string.Empty, rex.Errors.ElementAt(0)?.Message ?? "Error! Please try again");
+                            View = new ViewModel
+                            {
+                                IsValidOTP = false
+                            };
+                            return Page();
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                    break;
+                case "ChangePassword":
+                    try
+                    {
+                        var result = await _sender.Send(new ChangePasswordCommand
+                        {
+                            Identifier = Input.Identifier,
+                            OTP = Input.OTP,
+                            Method = IdentifierUtility.Check(Input.Identifier),
+                            Password = Input.Password
+                        });
+
+                        result.ThrowIfFailure();
+
+                        View = new ViewModel
+                        {
+                            IsValidOTP = true
+                        };
+                        string url = $"~/Account/ChangePasswordSuccess?returnUrl={Uri.EscapeDataString(Input.ReturnUrl!)}";
+
+                        return Redirect(url);
+                    }
+                    catch (ResultException rex)
+                    {
+                        if (rex != null)
+                        {
+                            ModelState.AddModelError(string.Empty, rex.Errors.ElementAt(0)?.Message ?? "Error! Please try again");
+                            View = new ViewModel
+                            {
+                                IsValidOTP = true
+                            };
+                            return Page();
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if (Input.Button == "Verify")
+            {
+
             }
             else if (Input.Button == "ChangePassword")
             {
-                try
-                {
-                    var result = await _sender.Send(new ChangePasswordCommand
-                    {
-                        Identifier = Input.Identifier,
-                        OTP = Input.OTP,
-                        Method = IdentifierUtility.Check(Input.Identifier),
-                        Password = Input.Password
-                    });
 
-                    result.ThrowIfFailure();
-
-                    View = new ViewModel
-                    {
-                        IsValidOTP = true
-                    };
-                    string url = $"~/Account/ChangePasswordSuccess?returnUrl={Uri.EscapeDataString(Input.ReturnUrl!)}";
-
-                    return Redirect(url);
-                }
-                catch (ResultException rex)
-                {
-                    if (rex != null)
-                    {
-                        ModelState.AddModelError(string.Empty, rex.Errors.ElementAt(0)?.Message ?? "Error! Please try again");
-                        View = new ViewModel
-                        {
-                            IsValidOTP = true
-                        };
-                        return Page();
-                    }
-                }
-                catch (Exception)
-                {
-
-                    throw;
-                }
             }
             ModelState.AddModelError(string.Empty, Options.NotFound);
         }
