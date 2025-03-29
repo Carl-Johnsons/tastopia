@@ -190,6 +190,23 @@ code {
   scrollbar-width: none;
 }
 
+.rdt_Pagination button[aria-disabled="false"] svg {
+  fill: black;
+}
+.dark .rdt_Pagination button[aria-disabled="false"] svg {
+  fill: white;
+}
+
+.rdt_Pagination button[aria-disabled="true"] svg,
+.rdt_Pagination button:disabled svg {
+  fill: #cccccc;
+}
+
+.dark .rdt_Pagination button[aria-disabled="true"] svg,
+.dark .rdt_Pagination button:disabled svg {
+  fill: #555555;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

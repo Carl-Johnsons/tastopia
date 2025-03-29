@@ -25,8 +25,7 @@ export default async function ProfileInfo({ user }: any) {
     { icon: "bio", label: t("fields.bio"), value: user.bio },
     { icon: "followers", label: t("fields.followers"), value: user.totalFollower },
     { icon: "following", label: t("fields.following"), value: user.totalFollowing },
-    { icon: "recipes", label: t("fields.recipes"), value: user.totalRecipe },
-    { icon: "time", label: t("fields.activeTime"), value: user.activeTime }
+    { icon: "recipes", label: t("fields.recipes"), value: user.totalRecipe }
   ];
 
   const getIcon = (type: string) => {
@@ -49,8 +48,6 @@ export default async function ProfileInfo({ user }: any) {
         return <FollowingIcon />;
       case "recipes":
         return <RecipesIcon />;
-      case "time":
-        return <TimeIcon />;
       default:
         return <InfoIcon />;
     }

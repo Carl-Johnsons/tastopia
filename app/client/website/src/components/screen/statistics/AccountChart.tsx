@@ -189,7 +189,6 @@ export function AccountChart({ chartData }: AccountChartProps) {
               stroke='var(--color-account)'
               stackId='a'
             />
-            <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
         </ChartContainer>
       </CardContent>

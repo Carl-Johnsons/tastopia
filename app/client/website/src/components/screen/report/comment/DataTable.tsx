@@ -78,7 +78,7 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
     name: "Created Date",
     sortable: true,
-    width: "140px",
+    width: "160px",
     center: true,
     hide: 1476,
     cell: ({ createdAt }) => {
@@ -92,7 +92,7 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
     name: "Status",
     sortable: true,
-    width: "100px",
+    width: "120px",
     center: true,
     selector: row => row.status,
     cell: ({ status }) => {
