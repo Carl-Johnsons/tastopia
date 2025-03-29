@@ -73,7 +73,6 @@ public class AdminGetUserDetailQueryHandler : IRequestHandler<AdminGetUserDetail
         result.AccountEmail = grpcResponse.Email;
         result.IsCurrentUser = currentAccountId == accountId;
         result.Role = user.IsAdmin ? "Admin" : "User";
-        result.ActiveTime = "24h30m";
 
         var settings = _context.Settings;
         var settingsDictionary = await settings.ToDictionaryAsync(s => s.Id, s => s);
