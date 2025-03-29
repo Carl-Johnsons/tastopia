@@ -156,6 +156,7 @@ public class Index : PageModel
                     {
                         IsValidOTP = false
                     };
+                    ModelState.Clear();
                     return Page();
                 case "Resend":
                     try
