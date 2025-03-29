@@ -83,7 +83,7 @@ public class Index : PageModel
         var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
 
         // the user clicked the "cancel" button
-        if (Input.Button != "Verify" && Input.Button != "ChangePassword" && Input.Button != "Resend")
+        if (Input.Button != "Verify" && Input.Button != "ChangePassword" && Input.Button != "Resend" && Input.Button != "ReturnVerify")
         {
             if (context != null)
             {
@@ -252,22 +252,27 @@ public class Index : PageModel
                 default:
                     break;
             }
-            if (Input.Button == "Verify")
-            {
-
-            }
-            else if (Input.Button == "ChangePassword")
-            {
-
-            }
             ModelState.AddModelError(string.Empty, Options.NotFound);
         }
 
         // something went wrong, show form with error
-        View = new ViewModel
+        switch (Input.Button)
         {
-            IsValidOTP = false
-        };
+            case "Verify":
+            case "Resend":
+            case "ReturnVerify":
+                View = new ViewModel
+                {
+                    IsValidOTP = false
+                };
+                break;
+            case "ChangePassword":
+                View = new ViewModel
+                {
+                    IsValidOTP = true
+                };
+                break;
+        }
         return Page();
     }
 }
