@@ -14,9 +14,9 @@ import { RecipeRanking } from "@/components/screen/statistics/RecipeRanking";
 import { getTagRanking } from "@/actions/tag.action";
 import { TagRanking } from "@/components/screen/statistics/TagRanking";
 import { AccountChart } from "@/components/screen/statistics/AccountChart";
+import SomethingWentWrong from "@/components/shared/common/Error";
 import { redirect } from "@/i18n/navigation";
 import { AxiosError } from "axios";
-import SomethingWentWrong from "@/components/shared/common/Error";
 
 export default async function System() {
   try {
@@ -54,8 +54,6 @@ export default async function System() {
       </div>
     );
   } catch (error) {
-    console.log(error);
-
     if (error instanceof AxiosError && error.status === 403) {
       const locale = await getLocale();
       redirect({

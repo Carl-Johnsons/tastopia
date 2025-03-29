@@ -1,17 +1,25 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { sidebarLinks } from "@/constants/nav";
+import { sidebarLinks, superAdminSidebarLinks } from "@/constants/nav";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useTranslations } from "next-intl";
+import { useSelectRole } from "@/slices/auth.slice";
+import { Roles } from "@/constants/role";
 
 export const NavContent = () => {
   const router = useRouter();
   const pathname = usePathname();
   const t = useTranslations("navbar");
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([]);
+  const role = useSelectRole();
+  const isSuperAdmin = useMemo(() => role === Roles.SUPER_ADMIN, [role]);
+  const links = useMemo(
+    () => (isSuperAdmin ? superAdminSidebarLinks : sidebarLinks),
+    [isSuperAdmin]
+  );
 
   useEffect(() => {
     const initialOpenDropdowns = sidebarLinks
@@ -39,7 +47,7 @@ export const NavContent = () => {
 
   return (
     <section className='flex h-full flex-col gap-6 pt-16'>
-      {sidebarLinks.map(link => {
+      {links.map(link => {
         const isActive = pathname === link.route || pathname.startsWith(link.route + "/");
         const isDropdownOpen = openDropdowns.includes(link.route);
 

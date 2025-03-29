@@ -178,7 +178,7 @@ export async function getUserDetailReports(
 }
 
 export async function getTotalUsers() {
-  const url = "/api/admin/user/get-total-user";
+  const url = "/api/admin/user/statistic/get-total-user";
   try {
     const { data } = await protectedAxiosInstance.get<number>(url);
     return data;
@@ -189,7 +189,7 @@ export async function getTotalUsers() {
 }
 
 export async function getAccountStatistic() {
-  const url = "/api/admin/account/get-account-statistic";
+  const url = "/api/admin/account/statistic/get-account-statistic";
   try {
     const { data } = await protectedAxiosInstance.get<StatisticDateItem[]>(url);
     return data;
