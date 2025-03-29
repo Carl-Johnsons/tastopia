@@ -8,6 +8,8 @@ import { getLocale } from "next-intl/server";
  * block after fetching api. The newly thrown error should be handled from upstream code.
  */
 export const withErrorProcessor = (error: unknown) => {
+  console.error("Error", error);
+
   if (error instanceof AxiosError) {
     if (!error.response || !error.response.data) throw error;
     const { code } = error.response?.data as IErrorResponseDTO;

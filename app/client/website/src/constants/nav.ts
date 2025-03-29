@@ -34,11 +34,6 @@ export const sidebarLinks: SidebarLink[] = [
         label: "administerReportsUser"
       }
     ]
-  },
-  {
-    imgURL: "/assets/icons/shield-minus.svg",
-    route: "/admins",
-    label: "administerAdmins"
   }
 ];
 
@@ -49,6 +44,11 @@ export const superAdminSidebarLinks: SidebarLink[] = [
     label: "statistics"
   },
   ...sidebarLinks,
+  {
+    imgURL: "/assets/icons/shield-minus.svg",
+    route: "/admins",
+    label: "administerAdmins"
+  },
   {
     imgURL: "/assets/icons/activity.svg",
     route: "/activity-log",

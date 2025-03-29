@@ -6,12 +6,12 @@ import Avatar from "../common/Avatar";
 import { useCallback } from "react";
 
 const Profile = () => {
-  const { avatarUrl, displayName, accountId } = useSelectUser();
+  const { avatarUrl, displayName } = useSelectUser();
   const router = useRouter();
 
   const handleClick = useCallback(() => {
-    router.push("/admins/" + accountId);
-  }, [accountId, router]);
+    router.push("/admins/me");
+  }, [router]);
 
   return (
     <Avatar

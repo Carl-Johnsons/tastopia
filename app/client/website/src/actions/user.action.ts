@@ -14,7 +14,7 @@ import {
 } from "@/generated/interfaces/user.interface";
 import { IInfiniteAdminUserReportListResponse } from "@/types/user";
 import { withErrorProcessor } from "@/utils/errorHanlder";
-import { StatisticDateItem, StatisticItem } from "@/types/statistic";
+import { StatisticDateItem } from "@/types/statistic";
 
 export async function getUserById(id: string) {
   try {
@@ -111,7 +111,7 @@ export async function getAdminUsers(
 
 export async function adminBanUser(accountId: string) {
   try {
-    const url = "/api/user/admin-ban-user";
+    const url = "/api/admin/user/ban-user";
     const { data } = await protectedAxiosInstance.post(url, {
       accountId
     });

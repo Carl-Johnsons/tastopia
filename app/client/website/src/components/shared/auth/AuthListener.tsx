@@ -35,7 +35,6 @@ const AuthListener = () => {
     const accessToken = session.accessToken as string;
     const idToken = session.idToken as string;
     const decodedToken = jwtDecode(accessToken) as any;
-    console.log(decodedToken);
 
     dispatch(saveAuthData({ accessToken, idToken, role: decodedToken.role as Roles }));
 
