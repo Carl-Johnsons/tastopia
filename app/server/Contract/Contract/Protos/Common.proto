@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package CommonProto;
+
+message GrpcSimpleReport {
+    string Id = 1;
+    string ReporterAccountId = 2;
+    repeated string Reasons = 3;
+    string AdditionalDetail = 4;
+    string Status = 5;
+    google.protobuf.Timestamp CreatedAt = 6;
+}
+
+message GrpcSimpleUser {
+    string AccountId = 1;
+    string AvtUrl = 2;
+    string DisplayName = 3;
+    string AccountUsername = 4;
+}

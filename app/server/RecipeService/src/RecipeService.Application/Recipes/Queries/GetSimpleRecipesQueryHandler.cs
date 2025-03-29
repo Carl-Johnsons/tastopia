@@ -48,6 +48,7 @@ public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuer
             VoteDiff = r.VoteDiff,
             NumberOfComment = r.NumberOfComment,
             Vote = Vote.None,
+            AuthorUsername = "",
             AuthorAvtUrl = "",
             AuthorDisplayName = "",
             CreatedAt = r.CreatedAt,
@@ -91,6 +92,7 @@ public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuer
                 AccountId = Guid.Parse(value.AccountId),
                 AvtUrl = value.AvtUrl,
                 DisplayName = value.DisplayName,
+                AccountUsername = value.AccountUsername,
             };
         }
 
@@ -103,6 +105,7 @@ public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuer
         {
             recipe.AuthorDisplayName = mapUsers[recipe.AuthorId].DisplayName;
             recipe.AuthorAvtUrl = mapUsers[recipe.AuthorId].AvtUrl;
+            recipe.AuthorUsername = mapUsers[recipe.AuthorId].AccountUsername;
         }
         return Result<List<SimpleRecipeResponse>?>.Success(recipes);
     }

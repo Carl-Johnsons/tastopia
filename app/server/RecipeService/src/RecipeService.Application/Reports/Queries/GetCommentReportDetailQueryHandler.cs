@@ -17,7 +17,6 @@ public record GetCommentReportDetailQuery : IRequest<Result<AdminReportCommentDe
     public Guid CommentId { get; init; }
 }
 
-
 public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentReportDetailQuery, Result<AdminReportCommentDetailResponse?>>
 {
     private readonly IApplicationDbContext _context;
@@ -81,6 +80,7 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
         }
 
         var accountIds = result.UserReportComments.Select(r => r.AccountId).ToList();
+        accountIds.Add(result.AuthorId);
         accountIds.Add(result.MatchComment.AccountId);
 
         var repeatedField = _mapper.Map<RepeatedField<string>>(accountIds);
@@ -89,11 +89,6 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
             AccountId = { repeatedField }
         }, cancellationToken: cancellationToken);
 
-        var grpcGetAccountDetail = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
-        {
-            AccountId = result.AuthorId.ToString()
-        });
-
         var reportDetailResponse = new AdminReportCommentDetailResponse
         {
             Comment = new CommentDetailResponse
@@ -101,6 +96,8 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
                 Id = result.MatchComment.Id,
                 AuthorId = result.MatchComment.AccountId,
                 AuthorUsername = mapUserGrpc.Users[result.MatchComment.AccountId.ToString()].AccountUsername,
+                AuthorAvatarURL = mapUserGrpc.Users[result.MatchComment.AccountId.ToString()].AvtUrl,
+                AuthorDisplayName = mapUserGrpc.Users[result.MatchComment.AccountId.ToString()].DisplayName,
                 Content = result.MatchComment.Content,
                 IsActive = result.MatchComment.IsActive,
                 CreatedAt = result.MatchComment.CreatedAt,
@@ -110,9 +107,12 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
             {
                 Id = result.Id,
                 AuthorId = result.AuthorId,
-                AuthorDisplayName = grpcGetAccountDetail.DisplayName,
-                AuthorUsername = grpcGetAccountDetail.AccountUsername,
+                AuthorAvatarURL = mapUserGrpc.Users[result.AuthorId.ToString()].AvtUrl,
+                AuthorDisplayName = mapUserGrpc.Users[result.AuthorId.ToString()].DisplayName,
+                AuthorUsername = mapUserGrpc.Users[result.AuthorId.ToString()].AccountUsername,
                 CreatedAt = result.CreatedAt,
+                Description = result.Description,
+                UpdatedAt = result.UpdatedAt,
                 Ingredients = string.Join(", ", result.Ingredients),
                 IsActive = result.IsActive,
                 RecipeImageUrl = result.ImageUrl,
@@ -124,6 +124,7 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
                 AdditionalDetail = urc.AdditionalDetails,
                 CreatedAt = result.CreatedAt,
                 ReporterAvtUrl = mapUserGrpc.Users[urc.AccountId.ToString()].AvtUrl,
+                ReporterDisplayName = mapUserGrpc.Users[urc.AccountId.ToString()].DisplayName,
                 ReporterUsername = mapUserGrpc.Users[urc.AccountId.ToString()].AccountUsername,
                 Status = urc.Status.ToString(),
                 Reasons = ReportReasonData.CommentReportReasons.Where(rrr => urc.ReasonCodes.Contains(rrr.Code))

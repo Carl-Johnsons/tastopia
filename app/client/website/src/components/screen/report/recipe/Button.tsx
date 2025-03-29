@@ -16,6 +16,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useDisableComment, useRestoreComment } from "@/api/comment";
+import { useInvalidateAdmin } from "@/hooks/query";
 
 export const ViewDetailButton = ({
   title,
@@ -40,7 +41,7 @@ export const ViewDetailButton = ({
     } finally {
       setIsLoading(false);
     }
-  }, [onSuccess, onFailure, targetId, router, url]);
+  }, [onSuccess, onFailure, router, url]);
 
   return (
     <Link href={url}>
@@ -67,6 +68,7 @@ export const ReopenReportButton = ({
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useReopenReport();
   const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleClick = useCallback(() => {
     mutate(
@@ -78,6 +80,7 @@ export const ReopenReportButton = ({
         onSuccess: async () => {
           toast.success("Report reopened successfully.");
           await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
+          invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
         onError: ({ message }) => {
@@ -86,7 +89,7 @@ export const ReopenReportButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
+  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
 
   return (
     <DataTableButton
@@ -111,12 +114,14 @@ export const RestoreRecipeButton = ({
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useRestoreRecipe();
   const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
       onSuccess: async () => {
         toast.success("Recipe restored successfully.");
         await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
+        invalidateCurrentAdminActivities();
         onSuccess && onSuccess();
       },
       onError: ({ message }) => {
@@ -124,7 +129,7 @@ export const RestoreRecipeButton = ({
         onFailure && onFailure();
       }
     });
-  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
+  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
 
   return (
     <InteractiveButton
@@ -149,6 +154,7 @@ export const MarkAsCompletedButton = ({
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useMarkReportAsCompleted();
   const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleClick = useCallback(async () => {
     mutate(
@@ -157,6 +163,7 @@ export const MarkAsCompletedButton = ({
         onSuccess: async () => {
           toast.success("Report marked as completed successfully.");
           await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
+          invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
         onError: ({ message }) => {
@@ -165,7 +172,7 @@ export const MarkAsCompletedButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
+  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
 
   return (
     <DataTableButton
@@ -190,12 +197,14 @@ export const DisableRecipeButton = ({
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useDisableRecipe();
   const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
       onSuccess: async () => {
         toast.success("Recipe disabled successfully.");
         await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
+        invalidateCurrentAdminActivities();
         onSuccess && onSuccess();
       },
       onError: ({ message }) => {
@@ -203,7 +212,7 @@ export const DisableRecipeButton = ({
         onFailure && onFailure();
       }
     });
-  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
+  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
 
   return (
     <InteractiveButton
@@ -226,6 +235,7 @@ export const SmallDisableCommentButton = ({
 }: CommentDataTableButtonProps) => {
   const { mutate, isPending } = useDisableComment();
   const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleClick = useCallback(async () => {
     mutate(
@@ -234,6 +244,7 @@ export const SmallDisableCommentButton = ({
         onSuccess: async () => {
           toast.success("Comment disabled successfully.");
           await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
+          invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
         onError: ({ message }) => {
@@ -242,7 +253,7 @@ export const SmallDisableCommentButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient]);
+  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
 
   return (
     <DataTableButton
@@ -251,7 +262,7 @@ export const SmallDisableCommentButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`ms-auto size-fit bg-transparent p-0 pb-1 shadow-none hover:bg-transparent ${className}`}
-      loaderClassName="text-black_white"
+      loaderClassName='text-black_white'
     />
   );
 };
@@ -269,6 +280,7 @@ export const SmallRestoreCommentButton = ({
 }: CommentDataTableButtonProps) => {
   const { mutate, isPending } = useRestoreComment();
   const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleClick = useCallback(async () => {
     mutate(
@@ -277,6 +289,7 @@ export const SmallRestoreCommentButton = ({
         onSuccess: async () => {
           toast.success("Comment restored successfully.");
           await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
+          invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
         onError: ({ message }) => {
@@ -285,7 +298,7 @@ export const SmallRestoreCommentButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient]);
+  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
 
   return (
     <DataTableButton
@@ -294,7 +307,7 @@ export const SmallRestoreCommentButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`ms-auto size-fit bg-transparent p-0 pb-1 shadow-none hover:bg-transparent ${className}`}
-      loaderClassName="text-black_white"
+      loaderClassName='text-black_white'
     />
   );
 };

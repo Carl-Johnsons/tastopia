@@ -166,10 +166,10 @@ const MobileNav = () => {
           className='flex items-center gap-2'
         >
           <Image
-            src='/assets/images/logo.png'
+            src='/assets/icons/logo.svg'
             alt='Tastopia Icon'
-            width={23}
-            height={23}
+            width={36}
+            height={36}
           ></Image>
           <p className='h2-bold text-black_white'>Tastopia</p>
         </Link>

@@ -1,4 +1,6 @@
-﻿namespace RecipeService.Domain.Responses;
+﻿using Contract.DTOs.UserDTO;
+
+namespace RecipeService.Domain.Responses;
 
 public class AdminReportCommentDetailResponse
 {
@@ -7,11 +9,21 @@ public class AdminReportCommentDetailResponse
     public List<ReportRecipeResponse> Reports { get; set; } = [];
 }
 
+public class AdminSingleReportCommentDetailResponse
+{
+    public SimpleUser Reporter { get; set; } = null!;
+    public CommentDetailResponse Comment { get; set; } = null!;
+    public AdminRecipeResponse Recipe { get; set; } = null!;
+    public SimpleReportResponse Report { get; set; } = null!;
+}
+
 public class CommentDetailResponse
 {
     public Guid Id { get; set; }
     public Guid AuthorId { get; set; }
     public string AuthorUsername { get; set; } = null!;
+    public string AuthorDisplayName { get; set; } = null!;
+    public string AuthorAvatarURL { get; set; } = null!;
     public string Content { get; set; } = null!;
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; }

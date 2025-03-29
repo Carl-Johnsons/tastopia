@@ -414,7 +414,7 @@ import {
 import {
     ActivityType,
     ActivityEntityType,
-    ActivityType
+    SortType
 } from ""../enums/common.enum"";
             ");
             }
