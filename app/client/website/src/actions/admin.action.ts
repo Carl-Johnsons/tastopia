@@ -8,7 +8,6 @@ import {
   IAdminDetailResponse,
   IPaginatedAdminListResponse
 } from "@/generated/interfaces/user.interface";
-import { ICreateAdminAccountDTO } from "@/generated/interfaces/identity.interface";
 
 export async function getAdmins(options?: PaginatedQueryParams) {
   const url = "/api/admin/user";
@@ -21,17 +20,21 @@ export async function getAdmins(options?: PaginatedQueryParams) {
     keyword = ""
   } = options || {};
 
+  const params = {
+    limit,
+    skip,
+    sortBy,
+    sortOrder,
+    lang,
+    keyword: encodeURIComponent(keyword)
+  };
+
   try {
     const { data } = await protectedAxiosInstance.get<IPaginatedAdminListResponse>(url, {
-      params: {
-        limit,
-        skip,
-        sortBy,
-        sortOrder,
-        lang,
-        keyword: encodeURIComponent(keyword)
-      }
+      params
     });
+
+    console.log("sending request with params:", params, "got response:", data);
 
     return data;
   } catch (error) {

@@ -90,7 +90,9 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
 
         Object.entries(data).forEach(([key, value]) => {
           if (key === "avatarFile" && !!value) {
-            console.log("image", value);
+            const url = (value as ImageListType)?.at(0)?.dataURL;
+            if (formType === "update" && url === admin?.avatarUrl) return;
+
             formData.append(key, (value as ImageFieldType)?.at(0)?.file as Blob);
           } else if (key === "dob" && value instanceof Date) {
             formData.append(key, value.toISOString());

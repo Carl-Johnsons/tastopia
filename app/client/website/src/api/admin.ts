@@ -23,6 +23,8 @@ export const useGetAdmins = ({
   lang,
   keyword
 }: PaginatedQueryParams) => {
+  console.log("params in useGetAdmins:", limit, skip, sortBy, sortOrder, lang, keyword);
+
   return useQuery({
     queryKey: ["admins", skip, sortBy, sortOrder, lang, keyword, limit],
     queryFn: () =>
