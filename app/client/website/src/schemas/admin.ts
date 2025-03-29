@@ -1,5 +1,4 @@
 import { Gender } from "@/constants/gender";
-import { ImageListType } from "react-images-uploading";
 import * as z from "zod";
 
 const MAX_FILE_SIZE = 15000000;
@@ -20,6 +19,7 @@ const imageSchemma = (t: (key: string) => string) =>
         .refine(image => IMAGE_TYPE.includes(image?.type), {
           message: t("image.errors.acceptType")
         })
+        .optional()
     }),
     {
       required_error: t("image.errors.required")
@@ -29,19 +29,25 @@ const imageSchemma = (t: (key: string) => string) =>
 export const getCreateAdminSchema = (t: (key: string) => string) =>
   z.object({
     name: z
-      .string()
+      .string({
+        required_error: t("name.errors.required")
+      })
       .nonempty({
         message: t("name.errors.required")
       })
       .max(50, t("name.errors.max")),
     gmail: z
-      .string()
+      .string({
+        required_error: t("gmail.errors.required")
+      })
       .nonempty({
         message: t("gmail.errors.required")
       })
       .email(t("gmail.errors.invalid")),
     phone: z
-      .string()
+      .string({
+        required_error: t("phone.errors.required")
+      })
       .nonempty({
         message: t("phone.errors.required")
       })
@@ -49,7 +55,9 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
         message: t("phone.errors.invalid")
       }),
     password: z
-      .string()
+      .string({
+        required_error: t("password.errors.required")
+      })
       .nonempty({
         message: t("password.errors.required")
       })

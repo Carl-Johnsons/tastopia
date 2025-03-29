@@ -20,21 +20,17 @@ export async function getAdmins(options?: PaginatedQueryParams) {
     keyword = ""
   } = options || {};
 
-  const params = {
-    limit,
-    skip,
-    sortBy,
-    sortOrder,
-    lang,
-    keyword: encodeURIComponent(keyword)
-  };
-
   try {
     const { data } = await protectedAxiosInstance.get<IPaginatedAdminListResponse>(url, {
-      params
+      params: {
+        limit,
+        skip,
+        sortBy,
+        sortOrder,
+        lang,
+        keyword: encodeURIComponent(keyword)
+      }
     });
-
-    console.log("sending request with params:", params, "got response:", data);
 
     return data;
   } catch (error) {

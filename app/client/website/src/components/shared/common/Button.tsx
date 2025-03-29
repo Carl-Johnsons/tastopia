@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -42,7 +42,7 @@ const buttonVariants = cva(
   }
 );
 
-export type InteractiveButtonProps = {
+export type InteractiveButtonProps = ButtonProps & {
   icon: ReactNode;
   isLoading?: boolean;
   loaderClassName?: string;
@@ -58,15 +58,17 @@ export const InteractiveButton = ({
   icon,
   isLoading,
   loaderClassName,
-  title,
-  onClick,
-  className,
   noTruncateText,
+  className,
+  onClick,
+  title,
   noText,
+  toolTip,
+  disabled,
   ...props
 }: InteractiveButtonProps) => {
   const { width } = useWindowDimensions();
-  const toolTip = useMemo(() => width < 768 || props.toolTip, [width, props.toolTip]);
+  const showToolTip = useMemo(() => width < 768 || toolTip, [width, toolTip]);
   const RenderedContent = useMemo(
     () => (
       <div className={`relative flex items-center gap-1.5`}>
@@ -85,14 +87,15 @@ export const InteractiveButton = ({
         )}
       </div>
     ),
-    [icon, isLoading, title, className, noTruncateText, noText, loaderClassName]
+    [icon, title, noText, isLoading, noTruncateText, loaderClassName]
   );
 
-  return toolTip ? (
+  return showToolTip ? (
     <TooltipProvider delayDuration={500}>
       <Tooltip>
         <TooltipTrigger
           onClick={onClick}
+          disabled={disabled}
           className={cn(
             buttonVariants({ variant: "default", size: "default", className })
           )}
@@ -108,8 +111,8 @@ export const InteractiveButton = ({
     </TooltipProvider>
   ) : (
     <Button
-      className={className}
-      onClick={onClick}
+      disabled={disabled}
+      {...props}
     >
       {RenderedContent}
     </Button>
