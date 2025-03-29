@@ -29,4 +29,18 @@ public class AdminController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    [HttpGet("all")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(PaginatedAdminActivityLogListResponse), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetAllAdminActivityLog([FromQuery] PaginatedDTO dto)
+    {
+        var result = await _sender.Send(new GetAllAdminActivityLogQuery
+        {
+            DTO = dto
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
 }
