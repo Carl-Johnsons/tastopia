@@ -16,62 +16,61 @@ const chartConfig = {
 export default function TotalOnlineUser() {
   const t = useTranslations("statistic.platformOverview");
   const signalR = useSignalR();
-  const chartData = [
-    { name: "safari", value: signalR?.onlineUserCount, fill: "var(--color-safari)" }
-  ];
+  const chartData =
+    (signalR?.onlineUserCount ?? 0) > 0
+      ? [{ name: "online", value: signalR?.onlineUserCount, fill: "var(--color-safari)" }]
+      : [{ name: "empty", value: 1, fill: "hsl(var(--muted))" }];
 
   return (
-    signalR?.onlineUserCount !== 0 && (
-      <div className='flex-center mx-auto flex-col'>
-        <h3 className='base-bold text-black_white'>
-          {t("totalOnlineUsers", { count: signalR?.onlineUserCount ?? 0 })}
-        </h3>
+    <div className='flex-center mx-auto flex-col'>
+      <h3 className='base-bold text-black_white'>
+        {t("totalOnlineUsers", { count: signalR?.onlineUserCount ?? 0 })}
+      </h3>
 
-        <ChartContainer
-          config={chartConfig}
-          className='aspect-square h-[250px]'
-        >
-          <PieChart>
-            <Pie
-              data={chartData}
-              dataKey='value'
-              nameKey='name'
-              innerRadius={60}
-              strokeWidth={5}
-            >
-              <Label
-                content={({ viewBox }) => {
-                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                    return (
-                      <text
+      <ChartContainer
+        config={chartConfig}
+        className='aspect-square h-[250px]'
+      >
+        <PieChart>
+          <Pie
+            data={chartData}
+            dataKey='value'
+            nameKey='name'
+            innerRadius={60}
+            strokeWidth={5}
+          >
+            <Label
+              content={({ viewBox }) => {
+                if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                  return (
+                    <text
+                      x={viewBox.cx}
+                      y={viewBox.cy}
+                      textAnchor='middle'
+                      dominantBaseline='middle'
+                    >
+                      <tspan
                         x={viewBox.cx}
                         y={viewBox.cy}
-                        textAnchor='middle'
-                        dominantBaseline='middle'
+                        className='fill-foreground text-3xl font-bold'
                       >
-                        <tspan
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          className='fill-foreground text-3xl font-bold'
-                        >
-                          {signalR?.onlineUserCount.toLocaleString()}
-                        </tspan>
-                        <tspan
-                          x={viewBox.cx}
-                          y={(viewBox.cy || 0) + 24}
-                          className='fill-muted-foreground'
-                        >
-                          {t("onlineUsers", { count: signalR?.onlineUserCount ?? 0 })}
-                        </tspan>
-                      </text>
-                    );
-                  }
-                }}
-              />
-            </Pie>
-          </PieChart>
-        </ChartContainer>
-      </div>
-    )
+                        {signalR?.onlineUserCount.toLocaleString()}
+                      </tspan>
+                      <tspan
+                        x={viewBox.cx}
+                        y={(viewBox.cy || 0) + 24}
+                        className='fill-muted-foreground'
+                      >
+                        {t("onlineUsers", { count: signalR?.onlineUserCount ?? 0 })}
+                      </tspan>
+                    </text>
+                  );
+                }
+              }}
+            />
+          </Pie>
+        </PieChart>
+      </ChartContainer>
+    </div>
   );
 }
