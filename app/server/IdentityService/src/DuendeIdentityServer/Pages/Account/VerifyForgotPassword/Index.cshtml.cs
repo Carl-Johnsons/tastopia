@@ -140,7 +140,7 @@ public class Index : PageModel
                             ModelState.AddModelError(string.Empty, rex.Errors.ElementAt(0)?.Message ?? "Error! Please try again");
                             View = new ViewModel
                             {
-                                IsValidOTP = true
+                                IsValidOTP = false
                             };
                             return Page();
                         }
