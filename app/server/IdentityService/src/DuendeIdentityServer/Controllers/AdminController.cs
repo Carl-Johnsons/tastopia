@@ -14,7 +14,7 @@ public class AdminController : BaseApiController
     {
     }
 
-    [HttpGet("get-account-statistic")]
+    [HttpGet("statistic/get-account-statistic")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<StatisticEntity>), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
