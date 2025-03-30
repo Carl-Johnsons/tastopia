@@ -23,7 +23,9 @@ export default async function Page({ params }: ParamsProps) {
           <ChevronRight className='text-black_white' />
           <span className='text-black_white'>{recipe.title}</span>
         </div>
-        <div className={`container grid gap-10 ${reports.length > 0 ? 'xl:grid-cols-[70%_30%] xl:gap-3' : ''}`}>
+        <div
+          className={`container grid gap-10 ${reports.length > 0 ? "xl:grid-cols-[70%_30%] xl:gap-3" : ""}`}
+        >
           {reports.length > 0 && (
             <ReportList
               reports={reports}

@@ -312,7 +312,8 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("get-recipe-statistic")]
+    // Statistic
+    [HttpGet("statistic/get-recipe-statistic")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<StatisticEntity>), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
@@ -325,7 +326,7 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("get-total-recipe")]
+    [HttpGet("statistic/get-total-recipe")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(int), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
@@ -338,7 +339,7 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("get-recipe-ranking-by-views")]
+    [HttpGet("statistic/get-recipe-ranking-by-views")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
@@ -351,7 +352,7 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("get-tag-ranking-by-popular")]
+    [HttpGet("statistic/get-tag-ranking-by-popular")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
@@ -362,31 +363,5 @@ public class AdminController : BaseApiController
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
-    }
-
-    [HttpPost("test-comment-detail")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> TestCommentDetail([FromBody] List<A> _a)
-    {
-        HashSet<string> set = new HashSet<string>();
-        foreach (var a in _a)
-        {
-            set.Add(a.Id1 + "~" + a.Id2);
-        }
-
-        var result = await _sender.Send(new GetCommentDetailQuery
-        {
-            RecipeAndCommentIdSet = set
-        });
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    public class A
-    {
-        public Guid Id1;
-        public Guid Id2;
     }
 }

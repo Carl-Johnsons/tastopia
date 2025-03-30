@@ -140,9 +140,7 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
             }, cancellationToken: cancellationToken);
         }
 
-
         // Get comment report dictionary
-
         GrpcMapCommentReports? grpcCommentReportMap = null;
         var commentReportIdList = paginatedQuery
             .ToList()

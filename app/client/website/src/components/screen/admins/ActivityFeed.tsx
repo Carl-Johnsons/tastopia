@@ -13,13 +13,14 @@ export type ActivityItemType = IAdminActivityLogResponse;
 type ActivityFeedProps = {
   accountId: string;
   isLoading?: boolean;
+  self?: boolean;
 };
 
-export default function ActivityFeed({ accountId }: ActivityFeedProps) {
+export default function ActivityFeed({ accountId, self }: ActivityFeedProps) {
   const t = useTranslations("administerAdmins.detail.activity");
   const lang = useLocale();
   const { data, isFetching, isLoading, hasNextPage, fetchNextPage } =
-    useGetAdminActivities(accountId, { lang });
+    useGetAdminActivities(accountId, { lang, self });
 
   console.log(data);
 

@@ -56,7 +56,7 @@ export async function updateTag(formData: FormData) {
 }
 
 export async function getTagRanking() {
-  const url = "/api/admin/recipe/get-tag-ranking-by-popular";
+  const url = "/api/admin/recipe/statistic/get-tag-ranking-by-popular";
   try {
     const { data } = await protectedAxiosInstance.get<StatisticItem[]>(url);
     return data;

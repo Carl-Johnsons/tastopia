@@ -3,10 +3,11 @@ import {
   getAdminActivies,
   getAdminById,
   getAdmins,
+  getCurrentAdminActivies,
+  getCurrentAdminDetail,
   restoreAdmin
 } from "@/actions/admin.action";
 import { IPaginatedAdminActivityLogListResponse } from "@/generated/interfaces/tracking.interface";
-import { IPaginatedAdminListResponse } from "@/types/admin";
 import { PaginatedQueryParams } from "@/types/common";
 import {
   InfiniteData,
@@ -15,7 +16,6 @@ import {
   useQuery
 } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Locale } from "next-intl";
 
 export const useGetAdmins = ({
   limit,
@@ -60,8 +60,10 @@ export const useRestoreAdmin = () => {
 
 export const useGetAdminActivities = (
   accountId: string,
-  { lang }: Pick<PaginatedQueryParams, "lang">
+  { lang, self }: Pick<PaginatedQueryParams, "lang"> & { self?: boolean }
 ) => {
+  const queryKey = self ? ["currentAdminActivities"] : ["adminActivities", accountId];
+
   return useInfiniteQuery<
     IPaginatedAdminActivityLogListResponse,
     AxiosError,
@@ -69,13 +71,20 @@ export const useGetAdminActivities = (
     string[],
     number | undefined
   >({
-    queryKey: ["adminActivities", accountId],
+    queryKey,
     initialPageParam: 0,
-    queryFn: ({ pageParam }) =>
-      getAdminActivies(accountId, {
+    queryFn: ({ pageParam }) => {
+      const params = {
         skip: pageParam,
         lang
-      }),
+      };
+
+      if (self) {
+        return getCurrentAdminActivies(params);
+      }
+
+      return getAdminActivies(accountId, params);
+    },
     getNextPageParam: (lastPage, allPages) => {
       const totalPage = lastPage.metadata?.totalPage;
       const currentPage = lastPage.metadata?.currentPage;

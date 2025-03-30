@@ -38,6 +38,7 @@ const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
   const tTooltip = useTranslations("administerAdmins.tooltip");
   const tForm = useTranslations("administerAdmins.form");
   const PADDING_Y = 50;
+  const isSubmitDisabled = useMemo(() => isSubmitting, [isSubmitting]);
 
   const isCreate = useMemo(() => formType === "create", [formType]);
 
@@ -99,6 +100,7 @@ const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
             }
             onClick={submitForm}
             isLoading={isSubmitting}
+            disabled={isSubmitDisabled}
             className='text-white_black rounded-full bg-primary hover:bg-secondary'
           />
         </DialogFooter>

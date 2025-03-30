@@ -5,8 +5,9 @@ import { useSession } from "next-auth/react";
 import { useAppDispatch } from "@/store/hooks";
 import { clearAuthData, saveAuthData } from "@/slices/auth.slice";
 import { clearUserData, saveUserData } from "@/slices/user.slice";
-import { clientAxiosInstance } from "@/constants/clientHost";
 import { useGetCurrentUser } from "@/api/user";
+import { jwtDecode } from "jwt-decode";
+import { Roles } from "@/constants/role";
 
 const AuthListener = () => {
   const { data: session } = useSession();
@@ -33,11 +34,13 @@ const AuthListener = () => {
     fetchUserDetails();
     const accessToken = session.accessToken as string;
     const idToken = session.idToken as string;
-    dispatch(saveAuthData({ accessToken, idToken }));
+    const decodedToken = jwtDecode(accessToken) as any;
+
+    dispatch(saveAuthData({ accessToken, idToken, role: decodedToken.role as Roles }));
 
     // clientAxiosInstance.post("/api/auth/cookie", {
-      // accessToken,
-      // idToken
+    // accessToken,
+    // idToken
     // });
   }, [session, dispatch, clearData, fetchUserDetails]);
 

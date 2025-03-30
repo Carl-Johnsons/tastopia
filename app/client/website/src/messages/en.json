@@ -179,8 +179,9 @@
       "email": "Email",
       "phoneNumber": "Phone Number",
       "dateOfBirth": "Date of Birth",
-      "status": "Status",
+      "createdDate": "Created date",
       "address": "Address",
+      "status": "Status",
       "actions": "Actions"
     },
     "tooltip": {
@@ -486,5 +487,16 @@
       "tagRankingDescription": "Top tags with the highest views",
       "viewCount": "View"
     }
+  },
+  "activityLog": {
+    "title": "Activity Log",
+    "columns": {
+      "username": "Username",
+      "command": "Command",
+      "entity": "Entity",
+      "description": "Description",
+      "createdDate": "Created Date"
+    },
+    "search": "Search by username, command, entity..."
   }
 }

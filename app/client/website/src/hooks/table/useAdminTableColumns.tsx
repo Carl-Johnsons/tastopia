@@ -56,6 +56,20 @@ export default function useAdminTableColumns() {
         }
       },
       {
+        name: t("createdDate"),
+        sortable: true,
+        width: "140px",
+        center: true,
+        hide: 1476,
+        cell: ({ createdAt }) => {
+          return (
+            <span className='text-ellipsis text-nowrap text-sm'>
+              {format(new Date(createdAt as string), "dd/MM/yyyy")}
+            </span>
+          );
+        }
+      },
+      {
         name: t("status"),
         sortable: true,
         cell: ({ isActive }) => {
@@ -98,6 +112,7 @@ export default function useAdminTableColumns() {
       [t("email")]: "email",
       [t("phoneNumber")]: "phoneNumber",
       [t("dateOfBirth")]: "dob",
+      [t("createdDate")]: "createdAt",
       [t("status")]: "isActive",
       [t("address")]: "address"
     }),

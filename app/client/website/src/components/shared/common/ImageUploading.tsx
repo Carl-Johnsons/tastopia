@@ -17,10 +17,11 @@ import {
 import { Button } from "@/components/ui/button";
 
 type UploadButtonProps = Pick<ExportInterface, "onImageUpload" | "dragProps">;
-type ImagePreviewProps = Pick<ExportInterface, "imageList" | "onImageRemoveAll"> & {
-  /** Custom image component for image preview. */
-  ImageComponent?: FC<Pick<ImageProps, "src" | "alt">>;
-};
+type ImagePreviewProps = Pick<ExportInterface, "imageList" | "onImageRemoveAll"> &
+  Pick<ImageUploadingPropsType, "dataURLKey"> & {
+    /** Custom image component for image preview. */
+    ImageComponent?: FC<Pick<ImageProps, "src" | "alt">>;
+  };
 type ErrorsProps = Pick<ExportInterface, "errors" | "imageList">;
 export type ImageUploadingProps = Omit<ImageUploadingPropsType, "maxNumber"> &
   Pick<ImagePreviewProps, "ImageComponent"> & {
@@ -41,12 +42,14 @@ export default function ImageUploading({
   ImagePreviewComponent,
   ErrorsComponent,
   ImageComponent,
+  dataURLKey,
   ...props
 }: ImageUploadingProps) {
   return (
     <BaseImageUploading
       acceptType={["jpg", "jpeg", "png", "webp"]}
       maxNumber={1}
+      dataURLKey={dataURLKey}
       {...props}
     >
       {({
@@ -78,12 +81,14 @@ export default function ImageUploading({
                 imageList={imageList}
                 onImageRemoveAll={onImageRemoveAll}
                 ImageComponent={ImageComponent}
+                dataURLKey={dataURLKey}
               />
             ) : (
               <ImagePreview
                 imageList={imageList}
                 onImageRemoveAll={onImageRemoveAll}
                 ImageComponent={ImageComponent}
+                dataURLKey={dataURLKey}
               />
             )}
           </div>
@@ -145,14 +150,16 @@ const UploadButton = ({ onImageUpload, dragProps }: UploadButtonProps) => {
 const ImagePreview = ({
   imageList,
   onImageRemoveAll,
-  ImageComponent
+  ImageComponent,
+  dataURLKey
 }: ImagePreviewProps) => {
   const t = useTranslations("administerAdmins.form.image.upload");
 
   return (
     <div className='flex-center w-full flex-col gap-4'>
       {imageList.map((image, index) => {
-        const src = image.dataURL ?? image.data_url ?? "";
+        const key = dataURLKey ?? "dataURL";
+        const src = image[key] ?? "";
 
         return (
           <div

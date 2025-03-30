@@ -55,7 +55,6 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
         dob: undefined,
         gender: undefined,
         address: undefined,
-        status: undefined,
         avatarFile: undefined,
         password: undefined
       };
@@ -77,6 +76,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const isUpdate = useMemo(() => formType === "update", [formType]);
   const form = useForm<CreateAdminFormFields | UpdateAdminFormFields>({
     resolver: zodResolver(schema),
     values: defaultValues
@@ -85,12 +85,16 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   const onSubmit = useCallback(
     async (data: CreateAdminFormFields | UpdateAdminFormFields) => {
       setIsSubmitting(true);
-      console.log("data", data);
 
       try {
         const formData = new FormData();
 
         Object.entries(data).forEach(([key, value]) => {
+          if (isUpdate) {
+            const isValueModified = !!(form.formState.dirtyFields as any)[key];
+            if (!isValueModified) return;
+          }
+
           if (key === "avatarFile" && !!value) {
             formData.append(key, (value as ImageFieldType)?.at(0)?.file as Blob);
           } else if (key === "dob" && value instanceof Date) {
@@ -100,6 +104,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
           }
         });
 
+        if (formData.values().toArray().length === 0) return;
         console.log(`sending ${formType} admin request with data:`, formData);
 
         if (formType === "create") {
@@ -128,6 +133,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       }
     },
     [
+      admin?.avatarUrl,
       formType,
       tNotification,
       invalidateCurrentAdminActivities,
@@ -145,7 +151,6 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   );
 
   useEffect(() => {
-    console.log("fetchedAmin", fetchedAmin);
     if (fetchedAmin) {
       setAdmin(fetchedAmin);
     }

@@ -54,6 +54,15 @@
 	<ItemGroup>
 		<Watch Include="**\*.cshtml;**\*.cshtml.cs" />
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <Watch Remove="Pages\Account\ChangePasswordSuccess\Index.cshtml" />
+	  <Watch Remove="Pages\Account\ChangePasswordSuccess\Index.cshtml.cs" />
+	  <Watch Remove="Pages\Account\VerifyForgotPassword\Index.cshtml" />
+	  <Watch Remove="Pages\Account\VerifyForgotPassword\Index.cshtml.cs" />
+	  <Watch Remove="Pages\Account\ForgotPassword\Index.cshtml" />
+	  <Watch Remove="Pages\Account\ForgotPassword\Index.cshtml.cs" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\IdentityService.Application\IdentityService.Application.csproj" />

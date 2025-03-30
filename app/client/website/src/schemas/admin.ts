@@ -12,11 +12,12 @@ const imageSchemma = (t: (key: string) => string) =>
     z.object({
       dataURL: z.string().optional(),
       file: z
-        .object({
-          size: z.number().max(MAX_FILE_SIZE, t("image.errors.maxSize")),
-          type: z.string().refine(type => IMAGE_TYPE.includes(type), {
-            message: t("image.errors.acceptType")
-          })
+        .any()
+        .refine(image => image?.size <= MAX_FILE_SIZE, {
+          message: t("image.errors.maxSize")
+        })
+        .refine(image => IMAGE_TYPE.includes(image?.type), {
+          message: t("image.errors.acceptType")
         })
         .optional()
     }),
@@ -28,19 +29,25 @@ const imageSchemma = (t: (key: string) => string) =>
 export const getCreateAdminSchema = (t: (key: string) => string) =>
   z.object({
     name: z
-      .string()
+      .string({
+        required_error: t("name.errors.required")
+      })
       .nonempty({
         message: t("name.errors.required")
       })
       .max(50, t("name.errors.max")),
     gmail: z
-      .string()
+      .string({
+        required_error: t("gmail.errors.required")
+      })
       .nonempty({
         message: t("gmail.errors.required")
       })
       .email(t("gmail.errors.invalid")),
     phone: z
-      .string()
+      .string({
+        required_error: t("phone.errors.required")
+      })
       .nonempty({
         message: t("phone.errors.required")
       })
@@ -48,16 +55,17 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
         message: t("phone.errors.invalid")
       }),
     password: z
-      .string()
+      .string({
+        required_error: t("password.errors.required")
+      })
       .nonempty({
         message: t("password.errors.required")
       })
       .min(6, t("password.errors.min"))
       .max(50, t("password.errors.max")),
     gender: z
-      .string()
-      .nonempty({
-        message: t("gender.errors.required")
+      .string({
+        required_error: t("gender.errors.required")
       })
       .refine(val => GENDER.includes(val), {
         message: t("gender.errors.invalid")
@@ -66,19 +74,26 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
       required_error: t("dateOfBirth.errors.required"),
       invalid_type_error: t("dateOfBirth.errors.invalid")
     }),
-    address: z.string().nonempty({
-      message: t("address.errors.required")
-    }),
-    status: z
+    address: z
       .string({
-        required_error: t("status.errors.required")
+        required_error: t("address.errors.required")
       })
-      .refine(val => STATUS.includes(val), {
-        message: t("status.errors.invalid")
+      .nonempty({
+        message: t("address.errors.required")
       }),
     avatarFile: imageSchemma(t)
   });
 
 export const getUpdateAdminSchema = (t: (key: string) => string) => {
-  return getCreateAdminSchema(t).partial().omit({ password: true });
+  return getCreateAdminSchema(t)
+    .extend({
+      status: z
+        .string({
+          required_error: t("status.errors.required")
+        })
+        .refine(val => STATUS.includes(val), {
+          message: t("status.errors.invalid")
+        })
+    })
+    .omit({ password: true });
 };

@@ -1,18 +1,16 @@
 ﻿using Contract.Constants;
-using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.ComponentModel.DataAnnotations;
-using System.Threading.Tasks;
 
 namespace TrackingService.Domain.Responses;
 
 public class AdminActivityLogResponse
 {
+
     public Guid AccountId { get; set; }
     [JsonConverter(typeof(StringEnumConverter))]
     public ActivityType ActivityType { get; set; }
+    public string? AccountUsername { get; set; } = null!;
     public Guid EntityId { get; set; }
     [JsonConverter(typeof(StringEnumConverter))]
     public ActivityEntityType EntityType { get; set; }
