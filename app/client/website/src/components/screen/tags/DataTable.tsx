@@ -120,7 +120,7 @@ const DataTable = () => {
               </Button>
             </DialogTrigger>
             <DialogContent
-              className='bg-white_black200 overflow-y-scroll sm:max-w-[525px]'
+              className='bg-white_black200 max-h-[90vh] overflow-y-scroll sm:max-w-[525px]'
               onPointerDownOutside={e => e.preventDefault()}
               style={{ maxHeight: height - 2 * PADDING_Y }}
             >
@@ -141,7 +141,7 @@ const DataTable = () => {
             onOpenChange={setOpenUpdateDialog}
           >
             <DialogContent
-              className='bg-white_black200 sm:max-w-[525px]'
+              className='bg-white_black200 max-h-[90vh] overflow-y-scroll sm:max-w-[525px]'
               onPointerDownOutside={e => e.preventDefault()}
             >
               <DialogHeader>
