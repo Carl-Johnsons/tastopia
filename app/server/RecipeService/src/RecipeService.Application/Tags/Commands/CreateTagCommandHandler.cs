@@ -1,4 +1,5 @@
-﻿using Contract.Event.UploadEvent;
+﻿using Contract.Event.TrackingEvent;
+using Contract.Event.UploadEvent;
 using Contract.Utilities;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
@@ -8,15 +9,14 @@ using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using UploadFileProto;
-using UserProto;
 namespace RecipeService.Application.Tags.Commands;
 public class CreateTagCommand : IRequest<Result<Tag?>>
 {
-    public Guid AccountId { get; set; }
     public string Code { get; set; } = null!;
     public string Value { get; set; } = null!;
     public string Category { get; set; } = null!;
     public IFormFile TagImage { get; set; } = null!;
+    public Guid CurrentAccountId { get; set; }
 
 }
 public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<Tag?>>
@@ -25,38 +25,21 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
     private readonly ILogger<CreateTagCommandHandler> _logger;
-    private readonly GrpcUser.GrpcUserClient _grpcUserClient;
     private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
-    public CreateTagCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, ILogger<CreateTagCommandHandler> logger, GrpcUser.GrpcUserClient grpcUserClient, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient)
+    public CreateTagCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, ILogger<CreateTagCommandHandler> logger, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _serviceBus = serviceBus;
         _logger = logger;
-        _grpcUserClient = grpcUserClient;
         _grpcUploadFileClient = grpcUploadFileClient;
     }
+
     public async Task<Result<Tag?>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
     {
         var rollbackUrl = new List<string>();
         try
         {
-            var accountId = request.AccountId;
-            if (accountId == Guid.Empty)
-            {
-                return Result<Tag?>.Failure(TagError.NullParameter, "AccountId is null.");
-            }
-
-            var adminResponse = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
-            {
-                AccountId = accountId.ToString(),
-            }, cancellationToken: cancellationToken);
-
-            if (adminResponse == null || !adminResponse.IsAdmin)
-            {
-                return Result<Tag?>.Failure(TagError.PermissionDeny);
-            }
-
             var existTag = await _context.Tags.Where(t => t.Code == request.Code).SingleOrDefaultAsync();
             if (existTag != null)
             {
@@ -78,7 +61,6 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
 
             var tag = new Tag
             {
-                Id = Guid.NewGuid(),
                 Code = request.Code,
                 Value = request.Value,
                 Status = TagStatus.Active,
@@ -90,9 +72,17 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
 
             _context.Tags.Add(tag);
             await _unitOfWork.SaveChangeAsync();
+            await _serviceBus.Publish(new AddActivityLogEvent
+            {
+                AccountId = request.CurrentAccountId,
+                ActivityType = Contract.Constants.ActivityType.CREATE,
+                EntityId = tag.Id,
+                EntityType = Contract.Constants.ActivityEntityType.TAG,
+            });
             return Result<Tag?>.Success(tag);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             await RollBackImageGrpc(rollbackUrl);
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<Tag?>.Failure(TagError.AddTagFail, ex.Message);
@@ -123,7 +113,7 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
             return null;
         }
         result = uploadResponse.Files[0].Url;
-        
+
         if (string.IsNullOrEmpty(result))
         {
             return null;

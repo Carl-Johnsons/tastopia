@@ -1,14 +1,12 @@
 {
   "Routes": [
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "identity-api",
-          "Port": 80
-        }
-      ],
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "https",
       "DownstreamPathTemplate": "/connect/userinfo",
-      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -20,14 +18,12 @@
       "SwaggerKey": "identity"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "identity-api",
-          "Port": 80
-        }
-      ],
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "https",
       "DownstreamPathTemplate": "/connect/token",
-      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "POST"
       ],
@@ -35,30 +31,67 @@
       "SwaggerKey": "identity"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "identity-api",
-          "Port": 80
-        }
-      ],
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "https",
       "DownstreamPathTemplate": "/api/account/register/{everything}",
-      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
-        "GET",
         "POST"
       ],
       "UpstreamPathTemplate": "/api/account/register/{everything}",
+
       "SwaggerKey": "identity"
     },
     {
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "identity-api",
-          "Port": 80
-        }
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "https",
+      "DownstreamPathTemplate": "/api/account/find-account/{everything}",
+      "UpstreamHttpMethod": [
+        "POST"
       ],
+      "UpstreamPathTemplate": "/api/account/find-account/{everything}",
+      "SwaggerKey": "identity"
+    },
+    {
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "https",
+      "DownstreamPathTemplate": "/api/account/forgot-password/{everything}",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/account/forgot-password/{everything}",
+      "SwaggerKey": "identity"
+    },
+
+    {
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "https",
+      "DownstreamPathTemplate": "/api/account/change-password/{everything}",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/account/change-password/{everything}",
+      "SwaggerKey": "identity"
+    },
+
+    {
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "https",
       "DownstreamPathTemplate": "/api/account/{everything}",
-      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"

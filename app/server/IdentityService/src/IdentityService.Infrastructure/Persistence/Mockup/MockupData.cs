@@ -1,4 +1,5 @@
-﻿using IdentityService.Infrastructure.Persistence.Mockup.Data;
+﻿using Contract.Utilities;
+using IdentityService.Infrastructure.Persistence.Mockup.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -7,7 +8,7 @@ namespace IdentityService.Infrastructure.Persistence.Mockup;
 
 internal class MockupData
 {
-    private readonly string SeedDataPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.Parent?.FullName!, "seeds") ?? "";
+    private readonly string SeedDataPath = EnvUtility.IsProduction() ? "seeds" : Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.Parent?.FullName!, "seeds") ?? "";
     private UserManager<ApplicationAccount> _userManager;
     private RoleManager<IdentityRole> _roleManager;
     private readonly ApplicationDbContext _context;
@@ -64,6 +65,13 @@ internal class MockupData
 
         foreach (var seedAccount in seedAccounts)
         {
+            if (!Enum.IsDefined(typeof(Contract.Constants.Roles.Code), seedAccount.RoleCode))
+            {
+                _logger.LogError($"Malicious seed account data with role {seedAccount.RoleCode}");
+                continue;
+            }
+
+            var time = GetRandomDateTime().ToUniversalTime();
             var account = new ApplicationAccount
             {
                 Id = seedAccount.Id,
@@ -74,19 +82,19 @@ internal class MockupData
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = time,
+                UpdatedAt = time
             };
 
-            var userResult = _userManager.FindByNameAsync(account.UserName).Result;
-            if (userResult == null)
+            var isUserExist = _userManager.Users.Any(a => a.Id == seedAccount.Id);
+            if (!isUserExist)
             {
                 var result = _userManager.CreateAsync(account, "Pass123$").Result;
                 if (!result.Succeeded)
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
-                await _userManager.AddToRoleAsync(account, seedAccount.RoleCode);
+                await _userManager.AddToRoleAsync(account, seedAccount.RoleCode.ToUpper());
 
                 _logger.LogInformation($"{account.UserName} created");
             }
@@ -94,6 +102,13 @@ internal class MockupData
 
         foreach (var seedWrongUser in seedWrongUsers)
         {
+            if (!Enum.IsDefined(typeof(Contract.Constants.Roles.Code), seedWrongUser.RoleCode))
+            {
+                _logger.LogError($"Malicious seed account data with role {seedWrongUser.RoleCode}");
+                continue;
+            }
+
+            var time = GetRandomDateTime().ToUniversalTime();
             var account = new ApplicationAccount
             {
                 Id = seedWrongUser.Id,
@@ -104,23 +119,34 @@ internal class MockupData
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
                 IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                CreatedAt = time,
+                UpdatedAt = time
             };
 
-            var userResult = _userManager.FindByNameAsync(account.UserName).Result;
-            if (userResult == null)
+            var isUserExist = _userManager.Users.Any(a => a.Id == seedWrongUser.Id);
+            if (!isUserExist)
             {
                 var result = _userManager.CreateAsync(account, "Pass123$").Result;
                 if (!result.Succeeded)
                 {
                     throw new Exception(result.Errors.First().Description);
                 }
+
                 await _userManager.AddToRoleAsync(account, seedWrongUser.RoleCode);
 
                 _logger.LogInformation($"{account.UserName} created");
             }
         }
+    }
+
+    //random datetime from today to last 365 days
+    private DateTime GetRandomDateTime()
+    {
+        Random random = new Random();
+        DateTime today = DateTime.Today;
+        int daysRange = 365;
+        int randomDays = random.Next(0, daysRange + 1);
+        return today.AddDays(-randomDays);
     }
 
     private class SeedAccount

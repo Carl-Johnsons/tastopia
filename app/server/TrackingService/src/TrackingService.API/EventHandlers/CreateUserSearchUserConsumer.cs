@@ -5,7 +5,7 @@ using TrackingService.Application.UserSearchUsers.Commands;
 namespace TrackingService.API.EventHandlers;
 
 [QueueName(RabbitMQConstant.QUEUE.NAME.CREATE_USER_SEARCH_USER,
-exchangeName: RabbitMQConstant.EXCHANGE.NAME.CREATE_USER_SEARCH_USER)]
+    exchangeName: RabbitMQConstant.EXCHANGE.NAME.CREATE_USER_SEARCH_USER)]
 public class CreateUserSearchUserConsumer : IConsumer<CreateUserSearchUserEvent>
 {
     private readonly ISender _sender;

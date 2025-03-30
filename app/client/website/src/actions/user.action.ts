@@ -8,10 +8,13 @@ import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 import { stringify } from "@/utils/debug";
 import {
   IAdminGetUserDetailResponse,
+  IGetUserDetailsResponse,
   IPaginatedAdminGetUserListResponse,
   IPaginatedAdminUserReportListResponse
 } from "@/generated/interfaces/user.interface";
 import { IInfiniteAdminUserReportListResponse } from "@/types/user";
+import { withErrorProcessor } from "@/utils/errorHanlder";
+import { StatisticDateItem } from "@/types/statistic";
 
 export async function getUserById(id: string) {
   try {
@@ -75,19 +78,15 @@ export const useUpdateSettings = async (data: UpdateSettingParams) => {
 
 export type GetUserDetailsResponse = UserState;
 
-export const getUserDetails = async () => {
+export const getCurrentUserDetails = async () => {
   const url = "/api/user/get-current-user-details";
 
   try {
-    const { data } = await protectedAxiosInstance.get(url);
+    const { data } = await protectedAxiosInstance.get<IGetUserDetailsResponse>(url);
     return data as GetUserDetailsResponse;
   } catch (error) {
-    if (error instanceof AxiosError) {
-      const data = error.response?.data as IErrorResponseDTO;
-      throw new Error(data.message ? data.message : error.message);
-    }
-
-    throw new Error("An error has occurred.");
+    withErrorProcessor(error);
+    throw error;
   }
 };
 
@@ -112,7 +111,7 @@ export async function getAdminUsers(
 
 export async function adminBanUser(accountId: string) {
   try {
-    const url = "/api/user/admin-ban-user";
+    const url = "/api/admin/user/ban-user";
     const { data } = await protectedAxiosInstance.post(url, {
       accountId
     });
@@ -172,6 +171,28 @@ export async function getUserDetailReports(
     });
 
     return data as IInfiniteAdminUserReportListResponse;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getTotalUsers() {
+  const url = "/api/admin/user/statistic/get-total-user";
+  try {
+    const { data } = await protectedAxiosInstance.get<number>(url);
+    return data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getAccountStatistic() {
+  const url = "/api/admin/account/statistic/get-account-statistic";
+  try {
+    const { data } = await protectedAxiosInstance.get<StatisticDateItem[]>(url);
+    return data;
   } catch (error) {
     console.log(error);
     throw error;

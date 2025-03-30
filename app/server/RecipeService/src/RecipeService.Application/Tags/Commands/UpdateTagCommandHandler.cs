@@ -1,4 +1,6 @@
-﻿using Contract.Event.UploadEvent;
+﻿using Contract.Constants;
+using Contract.Event.TrackingEvent;
+using Contract.Event.UploadEvent;
 using Contract.Utilities;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
@@ -8,19 +10,18 @@ using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using UploadFileProto;
-using UserProto;
 
 namespace RecipeService.Application.Tags.Commands;
 
 public class UpdateTagCommand : IRequest<Result<Tag?>>
 {
-    public Guid AccountId { get; set; }
     public Guid TagId { get; set; }
     public string Code { get; set; } = null!;
     public string Value { get; set; } = null!;
     public string Category { get; set; } = null!;
-    public string Status { get; set; } = null!; 
+    public string Status { get; set; } = null!;
     public IFormFile? TagImage { get; set; }
+    public Guid CurrentAccountId { get; set; }
 
 }
 public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<Tag?>>
@@ -29,15 +30,14 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
     private readonly ILogger<UpdateTagCommandHandler> _logger;
-    private readonly GrpcUser.GrpcUserClient _grpcUserClient;
     private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
-    public UpdateTagCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, ILogger<UpdateTagCommandHandler> logger, GrpcUser.GrpcUserClient grpcUserClient, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient)
+
+    public UpdateTagCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, ILogger<UpdateTagCommandHandler> logger, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _serviceBus = serviceBus;
         _logger = logger;
-        _grpcUserClient = grpcUserClient;
         _grpcUploadFileClient = grpcUploadFileClient;
     }
     public async Task<Result<Tag?>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
@@ -45,21 +45,11 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
         var rollbackUrl = new List<string>();
         try
         {
-            var accountId = request.AccountId;
+            ActivityType activityType = ActivityType.UPDATE;
             var tagId = request.TagId;
-            if (accountId == Guid.Empty || tagId == Guid.Empty)
+            if (tagId == Guid.Empty)
             {
-                return Result<Tag?>.Failure(TagError.NullParameter, "AccountId or TagId is null.");
-            }
-
-            var adminResponse = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest
-            {
-                AccountId = accountId.ToString(),
-            }, cancellationToken: cancellationToken);
-
-            if (adminResponse == null || !adminResponse.IsAdmin)
-            {
-                return Result<Tag?>.Failure(TagError.PermissionDeny);
+                return Result<Tag?>.Failure(TagError.NullParameter, "TagId is null.");
             }
 
             var tag = _context.Tags.SingleOrDefault(t => t.Id == tagId);
@@ -85,6 +75,13 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
                 rollbackUrl.Add(result);
             }
 
+            var requestStatus = Enum.Parse<TagStatus>(request.Status);
+
+            if (tag.Status != requestStatus)
+            {
+                activityType = requestStatus == TagStatus.Inactive ? ActivityType.DISABLE : ActivityType.RESTORE;
+            }
+
             tag.Code = request.Code;
             tag.Value = request.Value;
             tag.UpdatedAt = DateTime.UtcNow;
@@ -93,10 +90,17 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
             tag.ImageUrl = tagImageUrl;
             _context.Tags.Update(tag);
             await _unitOfWork.SaveChangeAsync();
+            await _serviceBus.Publish(new AddActivityLogEvent
+            {
+                AccountId = request.CurrentAccountId,
+                ActivityType = activityType,
+                EntityId = tag.Id,
+                EntityType = ActivityEntityType.TAG,
+            });
             return Result<Tag?>.Success(tag);
-
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             await RollBackImageGrpc(rollbackUrl);
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<Tag?>.Failure(TagError.UpdateTagFail, ex.Message);

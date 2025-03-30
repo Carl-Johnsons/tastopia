@@ -1,0 +1,16 @@
+﻿@page
+@model DuendeIdentityServer.Pages.Account.ChangePasswordSuccess.Index
+@{
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+<head>
+    <meta charset="utf-8" />
+    <title>Password Changed</title>
+    <meta http-equiv="refresh" content="2;url=/Account/Login?returnUrl=@returnUrl" />
+</head>
+<link rel="stylesheet" href="~/css/login.css" />
+
+<div class="h-100 logged-out-page d-flex flex-column justify-content-center align-items-center">
+    <h1>Password changed success!</h1>
+    <h1>Redirect to login page ...</h1>
+</div>

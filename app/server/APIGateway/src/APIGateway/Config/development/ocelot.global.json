@@ -6,12 +6,8 @@
       "Port": 8500,
       "Type": "Consul"
     },
-    "QoSOptions": {
-      "TimeoutValue": 5000,
-      "ExceptionsAllowedBeforeBreaking": 2
-    },
     "LoadBalancerOptions": {
-      "Type": "RoundRobin" // Alternate between ports if one fails
+      "Type": "RoundRobin"
     }
   }
 }

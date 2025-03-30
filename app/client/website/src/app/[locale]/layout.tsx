@@ -4,7 +4,6 @@ import React from "react";
 
 import "./globals.css";
 import "../../styles/prism.css";
-import "animate.css";
 import Providers from "@/components/provider/Providers";
 import AuthListener from "@/components/shared/auth/AuthListener";
 import Protected from "@/components/shared/auth/Protected";

@@ -17,7 +17,18 @@ public class ReportRecipeResponse
 {
     public Guid Id { get; set; }
     public string ReporterUsername { get; set; } = null!;
+    public string ReporterDisplayName { get; set; } = null!;
     public string ReporterAvtUrl { get; set; } = null!;
+    public List<string> Reasons { get; set; } = [];
+    public string? AdditionalDetail { get; set; }
+    public string Status { get; set; } = null!;
+    public DateTime CreatedAt { get; set; }
+}
+
+public class SimpleReportResponse
+{
+    public Guid Id { get; set; }
+    public Guid ReporterAccountId { get; set; }
     public List<string> Reasons { get; set; } = [];
     public string? AdditionalDetail { get; set; }
     public string Status { get; set; } = null!;

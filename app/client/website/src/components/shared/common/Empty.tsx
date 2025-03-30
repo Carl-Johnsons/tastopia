@@ -2,11 +2,14 @@ import { useTranslations } from "next-intl";
 import React from "react";
 
 export const Empty = ({
-  title = useTranslations("component")("empty.title"),
-  description = useTranslations("component")("empty.description"),
+  title = "",
+  description = "",
   icon = "list",
   actionButton = null
 }) => {
+  const t = useTranslations("component");
+  title = title || t("empty.title");
+  description = description || t("empty.description");
   const renderIcon = () => {
     switch (icon) {
       case "activity":

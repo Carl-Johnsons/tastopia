@@ -13,9 +13,11 @@ import { ReportStatus } from "@/constants/reports";
 import { ChevronRight } from "lucide-react";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import { useTranslations } from "next-intl";
+import useLocaleTable from "@/hooks/table/useLocaleTable";
 
 const DataTable = () => {
   const t = useTranslations("administerReportUsers");
+  const tableLocale = useLocaleTable();
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [sortBy, setSortBy] = useState("");
@@ -135,6 +137,7 @@ const DataTable = () => {
         onSort={handleSort}
         progressComponent={<Loader />}
         noDataComponent={<NoRecord />}
+        paginationComponentOptions={tableLocale}
       />
     </>
   );

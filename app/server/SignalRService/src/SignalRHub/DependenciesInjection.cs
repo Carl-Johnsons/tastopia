@@ -6,6 +6,8 @@ using Serilog;
 using SignalRHub.Extensions;
 using SignalRHub.Filters;
 using SignalRHub.Hubs;
+using SignalRHub.Interfaces;
+using SignalRHub.Services;
 
 namespace SignalRHub;
 
@@ -25,6 +27,8 @@ public static class DependenciesInjection
 
         var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
 
+        services.AddSingleton<IMemoryTracker, MemoryTracker>();
+
         services.AddHttpContextAccessor();
 
         services.AddCustomAuthentication(HUB_ENDPOINT);
@@ -34,10 +38,10 @@ public static class DependenciesInjection
             //Global filter
             options.AddFilter<GlobalLoggingFilter>();
         })
-            .AddNewtonsoftJsonProtocol(options =>
-            {
-                options.PayloadSerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            });
+        .AddNewtonsoftJsonProtocol(options =>
+        {
+            options.PayloadSerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        });
 
         services.AddCors(options =>
         {

@@ -121,15 +121,20 @@ internal static class HostingExtensions
         return builder.Build();
     }
 
-    public static WebApplication ConfigurePipeline(this WebApplication app)
+    public static async Task<WebApplication> ConfigurePipelineAsync(this WebApplication app)
     {
+        app.Use(async (context, next) =>
+        {
+            // Add your custom CSP header, allowing images from res.cloudinary.com.
+            context.Response.Headers.Append("Content-Security-Policy",
+                                "default-src 'self'; img-src 'self' https://res.cloudinary.com;");
+
+            await next();
+        });
+
+
         app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
         app.UseSwaggerServices();
-
-        if (EnvUtility.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
@@ -160,6 +165,8 @@ internal static class HostingExtensions
             endpoints.MapDefaultControllerRoute()
                 .RequireAuthorization();
         });
+
+        app.UseSignalRServiceAsync();
 
         return app;
     }

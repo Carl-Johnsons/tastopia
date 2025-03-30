@@ -6,6 +6,7 @@ package AccountProto;
 
 service GrpcAccount {
     rpc GetAccountDetail (GrpcAccountIdRequest) returns (GrpcAccountDTO);
+    rpc GetAdminAccountDetail (GrpcAccountIdListRequest) returns (GrpcListAdminAccountsDTO);
     rpc UpdateAccount (GrpcUpdateAccountRequest) returns (GrpcEmpty);
     rpc GetSimpleAccounts (GrpcAccountIdListRequest) returns (GrpcListSimpleAccountsDTO);
     rpc SearchAccount(GrpcSearchAccountRequest) returns (GrpcListAccountIds);
@@ -42,13 +43,29 @@ message GrpcAccountDTO {
     bool IsEmailLinked = 9;
 }
 
+message GrpcAdminAccountDTO {
+    bool IsActive = 1;
+    string UserName = 2;
+    string Email = 3;
+    string PhoneNumber = 4;
+    google.protobuf.Timestamp CreatedAt = 5; // DateTime <=> Timestamp
+    google.protobuf.Timestamp UpdatedAt = 6; // DateTime <=> Timestamp
+    bool IsGoogleLinked = 7;
+    bool IsPhoneNumberLinked = 8;
+    bool IsEmailLinked = 9;
+}
+
 message GrpcSimpleAccountDTO {
     string Email = 3;
     string PhoneNumber = 4;
 }
 
-message GrpcListSimpleAccountsDTO{
+message GrpcListSimpleAccountsDTO {
     map<string, GrpcSimpleAccountDTO> Accounts = 1; // Dictionary <=> MapField
+}
+
+message GrpcListAdminAccountsDTO {
+    map<string, GrpcAdminAccountDTO> Accounts = 1; // Dictionary <=> MapField
 }
 
 message GrpcListAccountIds{

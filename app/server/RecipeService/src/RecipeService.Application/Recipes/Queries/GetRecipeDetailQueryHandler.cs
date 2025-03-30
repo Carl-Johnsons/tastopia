@@ -20,16 +20,19 @@ public class GetRecipeDetailQuery : IRequest<Result<RecipeDetailsResponse?>>
 public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery, Result<RecipeDetailsResponse?>>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
     public GetRecipeDetailQueryHandler(IApplicationDbContext context,
                         GrpcUser.GrpcUserClient grpcUserClient,
-                        IServiceBus serviceBus)
+                        IServiceBus serviceBus,
+                        IUnitOfWork unitOfWork)
     {
         _context = context;
         _grpcUserClient = grpcUserClient;
         _serviceBus = serviceBus;
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailQuery request, CancellationToken cancellationToken)
@@ -49,6 +52,11 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
         {
             return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound);
         }
+
+        recipe.TotalView += 1;
+        _context.Recipes.Update(recipe);
+        await _unitOfWork.SaveChangeAsync();
+
         recipe.Steps = recipe.Steps.OrderBy(s => s.OrdinalNumber).ToList();
 
         var grpcResponse = await _grpcUserClient.GetUserDetailAsync(new GrpcAccountIdRequest

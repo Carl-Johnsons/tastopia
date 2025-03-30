@@ -39,9 +39,6 @@ export const AuthSlice = createSlice({
   },
 });
 
-export const useSelectAccessTokena = () =>
-  useAppSelector((state) => state.auth.accessToken);
-
 export const useSelectAccessToken = () =>
   useAppSelector((state) => state.auth.accessToken);
 

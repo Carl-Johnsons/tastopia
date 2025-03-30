@@ -34,7 +34,7 @@ public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuer
         var accountId = request.AccountId;
         var recipeIds = request.RecipeIds;
 
-        if(accountId == Guid.Empty || recipeIds == null || recipeIds.Count == 0)
+        if (accountId == Guid.Empty || recipeIds == null || recipeIds.Count == 0)
         {
             return Result<List<SimpleRecipeResponse>?>.Failure(RecipeError.NotFound, "AccountId and RecipeIds cannot be null or empty.");
         }
@@ -48,8 +48,11 @@ public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuer
             VoteDiff = r.VoteDiff,
             NumberOfComment = r.NumberOfComment,
             Vote = Vote.None,
+            AuthorUsername = "",
             AuthorAvtUrl = "",
-            AuthorDisplayName = ""
+            AuthorDisplayName = "",
+            CreatedAt = r.CreatedAt,
+            UpdatedAt = r.UpdatedAt
         }).ToListAsync();
 
         if (recipes == null || recipes.Count == 0)
@@ -89,6 +92,7 @@ public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuer
                 AccountId = Guid.Parse(value.AccountId),
                 AvtUrl = value.AvtUrl,
                 DisplayName = value.DisplayName,
+                AccountUsername = value.AccountUsername,
             };
         }
 
@@ -101,6 +105,7 @@ public class GetSimpleRecipesQueryHandler : IRequestHandler<GetSimpleRecipesQuer
         {
             recipe.AuthorDisplayName = mapUsers[recipe.AuthorId].DisplayName;
             recipe.AuthorAvtUrl = mapUsers[recipe.AuthorId].AvtUrl;
+            recipe.AuthorUsername = mapUsers[recipe.AuthorId].AccountUsername;
         }
         return Result<List<SimpleRecipeResponse>?>.Success(recipes);
     }

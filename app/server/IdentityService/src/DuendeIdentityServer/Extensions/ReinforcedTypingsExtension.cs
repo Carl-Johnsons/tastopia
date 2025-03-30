@@ -22,6 +22,10 @@ public static class ReinforcedTypingsExtension
 
         // DTO and Entities
         builder.ExportAsInterfaces([
+            typeof(StatisticEntity),
+            typeof(HourStatisticEntity),
+            typeof(DateStatisticEntity),
+            typeof(MonthStatisticEntity),
             typeof(AccountIdentifierDTO),
             typeof(RegisterAccountDTO),
             typeof(VerifyAccountDTO),
@@ -30,7 +34,11 @@ public static class ReinforcedTypingsExtension
             typeof(Permission),
             typeof(RoleGroupPermission),
             typeof(CheckForgotPasswordDTO),
-            typeof(ChangePasswordDTO)
+            typeof(ChangePasswordDTO),
+            typeof(CreateAdminAccountDTO),
+            typeof(UpdateAdminAccountDTO),
+            typeof(VerifyUpdateIdentifierDTO),
+            typeof(UpdateCurrentAdminAccountDTO)
         ], config =>
         {
             config.FlattenHierarchy()

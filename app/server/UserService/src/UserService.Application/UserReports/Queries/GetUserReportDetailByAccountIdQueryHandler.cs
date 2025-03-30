@@ -1,16 +1,13 @@
 ﻿using Contract.Constants;
 using Contract.Utilities;
 using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
 using UserService.Domain.Errors;
 using UserService.Domain.Responses;
-
 namespace UserService.Application.UserReports.Queries;
 public record GetUserReportDetailByAccountIdQuery : IRequest<Result<PaginatedAdminUserReportDetailListResponse?>>
 {
     public string Lang { get; init; } = "en";
     public Guid AccountId { get; init; }
-    public Guid CurrentAccountId { get; init; }
     public int? Skip { get; init; }
 }
 
@@ -29,28 +26,15 @@ public class GetUserReportDetailByAccountIdQueryHandler : IRequestHandler<GetUse
     {
         var normalizedLangue = LanguageUtility.ToIso6391(request.Lang);
         var accountId = request.AccountId;
-        var currentAccountId = request.CurrentAccountId;
         var skip = request.Skip;
-        if (accountId == Guid.Empty || currentAccountId == Guid.Empty || skip == null)
+        if (accountId == Guid.Empty || skip == null)
         {
-            return Result<PaginatedAdminUserReportDetailListResponse?>.Failure(UserReportError.NullParameter, "AccountId, CurrentAccountId or Skip is null");
+            return Result<PaginatedAdminUserReportDetailListResponse?>.Failure(UserReportError.NullParameter, "AccountId or Skip is null");
         }
 
-        var users = await _context.Users
-            .Where(user => user.AccountId == currentAccountId || user.AccountId == accountId)
-            .ToListAsync();
+        var user = await _context.Users
+            .FirstOrDefaultAsync(user => user.AccountId == accountId);
 
-        var currentUser = users.FirstOrDefault(u => u.AccountId == currentAccountId);
-        if (currentUser == null)
-        {
-            return Result<PaginatedAdminUserReportDetailListResponse?>.Failure(UserError.NotFound, "Not found current user.");
-        }
-        if (!currentUser.IsAdmin)
-        {
-            return Result<PaginatedAdminUserReportDetailListResponse?>.Failure(UserError.PermissionDenied);
-        }
-
-        var user = users.FirstOrDefault(u => u.AccountId == accountId);
         if (user == null)
         {
             return Result<PaginatedAdminUserReportDetailListResponse?>.Failure(UserError.NotFound, "Not found user.");

@@ -1,0 +1,53 @@
+@startuml Sequence
+title "Set view notification"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n NotificationService" as NotificationService
+database MongoDB
+
+User -> MobileUI ++: 1. User click the notification
+MobileUI -> ApiGateway ++: 2. Request set view notification
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> NotificationService ++: 4. Forward request
+
+NotificationService -> MongoDB++: 5. Query data
+NotificationService <-- MongoDB--: 6. Return response
+
+alt Notification not found
+  ApiGateway <-- NotificationService: 7A.1. Return NotFound error
+  MobileUI <-- ApiGateway: 7A.2. Forward response
+  User <-- MobileUI: 7A.3. Display error message
+else
+  NotificationService -> MongoDB++: 8. Query data
+  NotificationService <-- MongoDB--: 9. Return response
+  alt Recipient not found
+    ApiGateway <-- NotificationService: 10A.1. Return NotFound error
+    MobileUI <-- ApiGateway: 10A.2. Forward response
+    User <-- MobileUI: 10A.3. Display error message
+  else
+    NotificationService -> MongoDB++: 11. Update view status
+    NotificationService <-- MongoDB--: 12. Return response
+    ApiGateway <-- NotificationService--: 13. Return success
+    MobileUI <-- ApiGateway--: 14. Forward response
+    User <-- MobileUI--: 15. Display notification list
+  end
+end
+
+@enduml

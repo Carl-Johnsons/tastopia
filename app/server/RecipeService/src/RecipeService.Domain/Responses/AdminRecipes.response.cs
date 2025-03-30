@@ -1,27 +1,28 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using Contract.DTOs.UserDTO;
+using Newtonsoft.Json;
 
 namespace RecipeService.Domain.Responses;
 
 public class AdminRecipeResponse
 {
-    [Required]
     [JsonProperty("id")]
     public Guid Id { get; set; }
-    [Required]
     public Guid AuthorId { get; set; }
-    [Required]
     public string Title { get; set; } = null!;
-    [Required]
+    public string Description { get; set; } = null!;
     public string Ingredients { get; set; } = null!;
-    [Required]
+    public string AuthorAvatarURL { get; set; } = null!;
     public string AuthorDisplayName { get; set; } = null!;
-    [Required]
     public string AuthorUsername { get; set; } = null!;
-    [Required]
     public bool IsActive { get; set; }
-    [Required]
     public string RecipeImageUrl { get; set; } = null!;
-    [Required]
     public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+}
+
+public class AdminSingleRecipeCommentDetailResponse
+{
+    public SimpleUser Reporter { get; set; } = null!;
+    public AdminRecipeResponse Recipe { get; set; } = null!;
+    public SimpleReportResponse Report { get; set; } = null!;
 }

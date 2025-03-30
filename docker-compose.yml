@@ -1,0 +1,318 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl/certs/server-cert.crt:/etc/ssl/certs/server-cert.crt
+      - ./ssl/private-key/server.key:/etc/ssl/private/server.key
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - identity-api
+      - api-gateway
+
+  postgres:
+    image: postgres:17.0-alpine
+    container_name: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    ports:
+      # PostgreSQL uses the default port 5432
+      - "${DB_PORT}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    restart: always
+    networks:
+      - back-end
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  mongo:
+    image: mongo
+    ports:
+      # MongoDB uses the default port 27017
+      - "${MONGODB_PORT}:27017"
+    restart: always
+    container_name: mongo
+    volumes:
+      - ./data/mongodb:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    networks:
+      - back-end
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "-u",
+          "${MONGO_INITDB_ROOT_USERNAME}",
+          "-p",
+          "${MONGO_INITDB_ROOT_PASSWORD}",
+          "--authenticationDatabase",
+          "admin",
+          "--quiet",
+          "--eval",
+          "db.runCommand('ping').ok",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  rabbitmq:
+    # login guest:guest
+    image: rabbitmq:4.0.2-management
+    hostname: "rabbitmq"
+    container_name: service-bus
+    restart: always
+    labels:
+      NAME: "rabbitmq"
+    ports:
+      - "${RABBITMQ_PORT}:5672"
+      - "${RABBITMQ_MANAGEMENT_PORT}:15672"
+    networks:
+      - back-end
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+      RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS: true
+    volumes:
+      - "./data/mq:/var/lib/rabbitmq"
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q ping"]
+      interval: 10s
+      timeout: 10s
+      start_period: 10s
+      retries: 5
+
+  consul:
+    image: hashicorp/consul
+    container_name: consul
+    ports:
+      # Consul uses the default port 8500
+      - "${CONSUL_PORT}:8500"
+    networks:
+      - front-end
+      - back-end
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # For using host.docker.internal in linux
+
+  redis:
+    image: redis:8.0-M02-alpine
+    container_name: redis
+    networks:
+      - back-end
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/api-gateway/Dockerfile.${DOCKERFILE_API_GATEWAY_ENV:-prod}
+    container_name: apigateway
+    ports:
+      - "${API_GATEWAY_PORT}:80"
+      - "${API_GATEWAY_HTTPS_PORT}:443"
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/APIGateway/.env.production
+    depends_on:
+      - identity-api
+    develop:
+      watch:
+        - path: ./app/server/APIGateway/src
+          action: sync
+          target: /src
+          ignore:
+            - Contract/
+
+  identity-api:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/identity-api/Dockerfile.${DOCKERFILE_IDENTITY_ENV:-prod}
+    container_name: identity-service
+    volumes:
+      - ./data/nuget:/src/nuget
+    ports:
+      - "${IDENTITY_SERVICE_PORT}:80"
+      - "${IDENTITY_SERVICE_HTTPS_PORT}:443"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/IdentityService/.env.production
+    develop:
+      watch:
+        - path: ./app/server/IdentityService/src
+          action: sync
+          target: /src
+          ignore:
+            - Contract/
+
+  recipe-api:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/recipe-api/Dockerfile.${DOCKERFILE_RECIPE_ENV:-prod}
+    container_name: recipe-service
+    volumes:
+      - ./data/nuget:/src/nuget
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/RecipeService/.env.production
+    develop:
+      watch:
+        - path: ./app/server/RecipeService/src
+          action: sync
+          target: /src
+          ignore:
+            - Contract/
+
+  user-api:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/user-api/Dockerfile.${DOCKERFILE_USER_ENV:-prod}
+    container_name: user-service
+    volumes:
+      - ./data/nuget:/src/nuget
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/UserService/.env.production
+    develop:
+      watch:
+        - path: ./app/server/UserService/src
+          action: sync
+          target: /src
+          ignore:
+            - Contract/
+
+  notification-api:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/notification-api/Dockerfile.${DOCKERFILE_NOTIFICATION_ENV:-prod}
+    container_name: notification-service
+    volumes:
+      - ./data/nuget:/src/nuget
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/NotificationService/.env.production
+    develop:
+      watch:
+        - path: ./app/server/NotificationService/src
+          action: sync
+          target: /src
+          ignore:
+            - Contract/
+
+  upload-api:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/upload-api/Dockerfile.${DOCKERFILE_UPLOAD_ENV:-prod}
+    container_name: upload-service
+    volumes:
+      - ./data/nuget:/src/nuget
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/UploadFileService/.env.production
+    develop:
+      watch:
+        - path: ./app/server/UploadFileService/src
+          action: sync
+          target: /src
+          ignore:
+            - Contract/
+
+  tracking-api:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/tracking-api/Dockerfile.${DOCKERFILE_UPLOAD_ENV:-prod}
+    container_name: tracking-service
+    volumes:
+      - ./data/nuget:/src/nuget
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/TrackingService/.env.production
+    develop:
+      watch:
+        - path: ./app/server/TrackingService/src
+          action: sync
+          target: /src
+          ignore:
+            - Contract/
+
+  email-worker:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/email-worker/Dockerfile
+    container_name: email-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/NotificationService/.env.production
+
+  recipe-worker:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/recipe-worker/Dockerfile
+    container_name: recipe-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/RecipeService/.env.production
+
+networks:
+  back-end:
+  front-end:

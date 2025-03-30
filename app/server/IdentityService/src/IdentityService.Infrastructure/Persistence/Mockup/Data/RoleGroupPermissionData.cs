@@ -2,7 +2,7 @@
 
 public static class RoleGroupPermissionData
 {
-    public static string[] ROLES_DATA = ["ADMIN", "SUPER ADMIN", "USER", "PREMIUM USER", "GUEST"];
+    public static string[] ROLES_DATA = Enum.GetNames(typeof(Contract.Constants.Roles.Code));
 
     public static Group[] GROUPS_DATA = [
             new(){
@@ -13,11 +13,11 @@ public static class RoleGroupPermissionData
                 Code="ADMINISTER RECIPES",
                 Name="Administer recipes"
             },
-            new(){ 
+            new(){
                 Code="ADMINISTER TAGS",
                 Name="Administer tags"
             },
-            new(){ 
+            new(){
                 Code="ADMINISTER USERS",
                 Name="Administer users"
             },

@@ -16,7 +16,7 @@ public static class ConsulExtension
         var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
 
         var serviceHost = DotNetEnv.Env.GetString("SERVICE_HOST", "Not Found");
-        var servicePort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
+        var servicePort = IsSecure ? DotNetEnv.Env.GetInt("HTTPS_PORT", 0) : DotNetEnv.Env.GetInt("PORT", 0);
 
         var random = new Random();
         var number = random.Next(1000000000, 2000000000);
@@ -33,7 +33,7 @@ public static class ConsulExtension
             Name = serviceName,
             Address = serviceHost,
             EnableTagOverride = true,
-            Tags = ["secure=true"],
+            Tags = IsSecure ? ["secure=true"] : [],
             Port = servicePort,
             Check = new AgentServiceCheck
             {

@@ -16,7 +16,7 @@ internal class MockupData
     private readonly ApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<MockupData> _logger;
-    private readonly string SeedDataPath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.Parent?.FullName!, "seeds") ?? "";
+    private readonly string SeedDataPath = EnvUtility.IsProduction() ? "seeds" : Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.Parent?.FullName!, "seeds") ?? "";
     public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<MockupData> logger)
     {
         _context = context;
@@ -34,6 +34,9 @@ internal class MockupData
         _logger.LogInformation(SeedDataPath);
         EnvUtility.LoadEnvFile();
         var db = DotNetEnv.Env.GetString("DB", "Not found").Trim();
+
+        Console.WriteLine($"{EnvUtility.GetMongoDBWithoutAdminConnectionString()}/{db}?authSource=admin");
+
         var client = new MongoClient($"{EnvUtility.GetMongoDBWithoutAdminConnectionString()}/{db}?authSource=admin");  // Create MongoDB client
 
         var databaseList = await client.ListDatabasesAsync();
@@ -166,7 +169,7 @@ internal class MockupData
             }
 
             var pendingTags = _context.Tags.Where(t => t.Status == TagStatus.Pending).ToList();
-            foreach(var pendingTag in pendingTags)
+            foreach (var pendingTag in pendingTags)
             {
                 var randomRecipe = await _context.Recipes
                 .OrderBy(r => Guid.NewGuid())
@@ -210,7 +213,7 @@ internal class MockupData
     {
         var steps = CreateSteps(seedRecipe.Steps);
         var recipeId = GenerateUniqueRecipeId();
-
+        var time = GetRandomDateTime().ToUniversalTime();
         var recipe = new Recipe
         {
             Id = recipeId,
@@ -222,8 +225,9 @@ internal class MockupData
             Ingredients = seedRecipe.Ingredients,
             Steps = steps,
             IsActive = true,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            CreatedAt = time,
+            UpdatedAt = time,
+            TotalView = GetRandomNumber(5, 1000),
         };
 
         // Set author, comments and votes
@@ -395,6 +399,21 @@ internal class MockupData
             });
         }
         return steps;
+    }
+    //random datetime from today to last 365 days
+    private DateTime GetRandomDateTime()
+    {
+        Random random = new Random();
+        DateTime today = DateTime.Today;
+        int daysRange = 365;
+        int randomDays = random.Next(0, daysRange + 1); 
+        return today.AddDays(-randomDays);
+    }
+
+    private int GetRandomNumber(int min, int max)
+    {
+        Random random = new Random();
+        return random.Next(min, max + 1);
     }
 
 

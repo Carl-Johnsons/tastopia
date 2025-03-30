@@ -411,7 +411,7 @@ chat-sql-data
 data
 
 # ignore the ocelot.json build version
-/src/APIGateway/ocelot.json
+/src/**/ocelot.json
 # Keep all file in Config folder
 !/src/APIGateway/Config/*
 .env*

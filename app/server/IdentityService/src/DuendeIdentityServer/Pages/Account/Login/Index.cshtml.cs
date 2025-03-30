@@ -7,11 +7,13 @@ using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
-using DuendeIdentityServer.Pages.Account.Register;
+using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Net;
 
 namespace DuendeIdentityServer.Pages.Account.Login;
@@ -108,18 +110,40 @@ public class Index : PageModel
 
         if (ModelState.IsValid)
         {
-            var user = await _userManager.FindByNameAsync(Input.Username!);
+            ApplicationAccount? user = null;
+            var method = IdentifierUtility.Check(Input.Username!);
+            Console.WriteLine("METHOD");
+            Console.WriteLine(method.ToString());
+            Console.WriteLine(JsonConvert.SerializeObject(Input, Formatting.Indented));
+            switch (method)
+            {
+                case AccountMethod.Phone:
+                    user = await _userManager.Users.SingleOrDefaultAsync(a => a.PhoneNumber == Input.Username);
+                    break;
+                case AccountMethod.Email:
+                    user = await _userManager.FindByEmailAsync(Input.Username!);
+                    break;
+                case AccountMethod.Username:
+                    user = await _userManager.FindByNameAsync(Input.Username!);
+                    break;
+                default:
+                    ModelState.AddModelError("InvalidMethod", Options.InvalidCredentialsMethod);
+                    await BuildModelAsync(Input.ReturnUrl);
+                    return Page();
+            }
 
             if (user == null)
             {
-                ModelState.AddModelError("InvalidCredential", RegisterOptions.InvalidCredentialsErrorMessage);
+                Console.WriteLine("Not found user");
+                ModelState.AddModelError("InvalidCredential", Options.InvalidCredentialsErrorMessage);
                 await BuildModelAsync(Input.ReturnUrl);
                 return Page();
             }
 
-            if (!user!.IsActive)
+            if (!user.IsActive)
             {
-                ModelState.AddModelError("Disabled", RegisterOptions.AccountDisabledErrorMessage);
+                Console.WriteLine("user not active");
+                ModelState.AddModelError("Disabled", Options.AccountDisabledErrorMessage);
                 // account disabled, show form with error
                 await BuildModelAsync(Input.ReturnUrl);
                 return Page();
@@ -134,12 +158,13 @@ public class Index : PageModel
 
             if (!isAllowed)
             {
-                ModelState.AddModelError("InvalidCredential", RegisterOptions.InvalidCredentialsErrorMessage);
+                Console.WriteLine("Not allowed");
+                ModelState.AddModelError("InvalidCredential", Options.InvalidCredentialsErrorMessage);
                 await BuildModelAsync(Input.ReturnUrl);
                 return Page();
             }
 
-            var result = await _signInManager.PasswordSignInAsync(Input.Username!, Input.Password!, Input.RememberLogin, lockoutOnFailure: true);
+            var result = await _signInManager.PasswordSignInAsync(user.UserName!, Input.Password!, Input.RememberLogin, lockoutOnFailure: true);
             if (result.Succeeded)
             {
                 await _events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
@@ -181,7 +206,7 @@ public class Index : PageModel
                 const string error = "invalid credentials";
                 await _events.RaiseAsync(new UserLoginFailureEvent(Input.Username, error, clientId: context?.Client.ClientId));
                 Telemetry.Metrics.UserLoginFailure(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider, error);
-                ModelState.AddModelError(string.Empty, RegisterOptions.InvalidCredentialsErrorMessage);
+                ModelState.AddModelError(string.Empty, Options.InvalidCredentialsErrorMessage);
             }
         }
 
@@ -251,8 +276,8 @@ public class Index : PageModel
 
         View = new ViewModel
         {
-            AllowRememberLogin = RegisterOptions.AllowRememberLogin,
-            EnableLocalLogin = allowLocal && RegisterOptions.AllowLocalLogin,
+            AllowRememberLogin = Options.AllowRememberLogin,
+            EnableLocalLogin = allowLocal && Options.AllowLocalLogin,
             ExternalProviders = providers.ToArray()
         };
     }

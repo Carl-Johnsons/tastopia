@@ -17,12 +17,11 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
 {
     private readonly UserManager<ApplicationAccount> _userManager;
     private readonly IApplicationDbContext _context;
-    private readonly IServiceBus _serviceBus;
 
-    public UnlinkAccountCommandHandler(UserManager<ApplicationAccount> userManager, IServiceBus serviceBus, IApplicationDbContext context)
+    public UnlinkAccountCommandHandler(UserManager<ApplicationAccount> userManager,
+                                       IApplicationDbContext context)
     {
         _userManager = userManager;
-        _serviceBus = serviceBus;
         _context = context;
     }
 
@@ -34,8 +33,6 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
                 return await UnlinkEmail(request, cancellationToken);
             case AccountMethod.Phone:
                 return await UnlinkPhone(request, cancellationToken);
-            case AccountMethod.Google:
-                return await UnlinkGoogle(request, cancellationToken);
             default:
                 return Result.Failure(AccountError.UnlinkAccountFailed, "Wrong account method");
         }
@@ -54,19 +51,17 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
             return Result.Failure(AccountError.EmailNotConfirmed);
         }
 
-        var OTP = OTPUtility.GenerateNumericOTP();
-
-        account.UnlinkEmailOTP = OTP;
-        account.EmailOTPCreated = DateTime.UtcNow;
-        account.EmailOTPExpiry = DateTime.UtcNow.AddMinutes(5);
-
-        await _serviceBus.Publish(new UnlinkAccountEvent
+        if (!account.PhoneNumberConfirmed)
         {
-            AccountId = request.Id,
-            Identifier = request.Identifier,
-            Method = AccountMethod.Email,
-            OTP = OTP
-        });
+            return Result.Failure(AccountError.PhoneNotConfirmed);
+        }
+
+        account.EmailConfirmed = false;
+        account.Email = null;
+        account.EmailOTPCreated = null;
+        account.EmailOTPExpiry = null;
+        account.RequestOTPCount = 0;
+        var updateResult = await _userManager.UpdateAsync(account);
 
         return Result.Success();
     }
@@ -84,56 +79,16 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
             return Result.Failure(AccountError.PhoneNotConfirmed);
         }
 
-        var OTP = OTPUtility.GenerateNumericOTP();
-
-        account.UnlinkPhoneOTP = OTP;
-        account.PhoneOTPCreated = DateTime.UtcNow;
-        account.PhoneOTPExpiry = DateTime.UtcNow.AddMinutes(5);
-
-        await _serviceBus.Publish(new UnlinkAccountEvent
-        {
-            AccountId = request.Id,
-            Identifier = request.Identifier,
-            Method = AccountMethod.Phone,
-            OTP = OTP
-        });
-
-        return Result.Success();
-    }
-    public async Task<Result> UnlinkGoogle(LinkAccountCommand request, CancellationToken cancellationToken)
-    {
-        var externalAccount = await _context.UserLogins
-                                    .SingleOrDefaultAsync(ul => ul.LoginProvider == request.Method.ToString()
-                                                        && ul.UserId == request.Id.ToString());
-        if (externalAccount == null)
-        {
-            return Result.Failure(AccountError.NotFound, $"Not found {request.Method.ToString()} account link with this account");
-        }
-
-        var account = await _userManager.Users.SingleOrDefaultAsync(a => a.Id == request.Id.ToString());
-        if (account == null)
-        {
-            return Result.Failure(AccountError.NotFound);
-        }
-
         if (!account.EmailConfirmed)
         {
             return Result.Failure(AccountError.EmailNotConfirmed);
         }
 
-        var OTP = OTPUtility.GenerateNumericOTP();
-
-        account.UnlinkEmailOTP = OTP;
-        account.EmailOTPCreated = DateTime.UtcNow;
-        account.EmailOTPExpiry = DateTime.UtcNow.AddMinutes(5);
-
-        await _serviceBus.Publish(new UnlinkAccountEvent
-        {
-            AccountId = request.Id,
-            Identifier = request.Identifier,
-            Method = AccountMethod.Google,
-            OTP = OTP
-        });
+        account.PhoneNumber = null;
+        account.PhoneNumberConfirmed = false;
+        account.PhoneOTPCreated = null;
+        account.PhoneOTPExpiry = null;
+        var updateResult = await _userManager.UpdateAsync(account);
 
         return Result.Success();
     }

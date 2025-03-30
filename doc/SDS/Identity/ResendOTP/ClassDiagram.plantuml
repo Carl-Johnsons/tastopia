@@ -28,8 +28,7 @@ class BaseApiController {
 }
 
 class AccountController {
-    +ResendEmailOTP(): async Task<IActionResult>
-    +ResendPhoneOTP(): async Task<IActionResult>
+    +ResendOTP(string method): async Task<IActionResult>
 }
 
 class ResendOTPCommand {

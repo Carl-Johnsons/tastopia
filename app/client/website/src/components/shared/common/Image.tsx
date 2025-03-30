@@ -1,11 +1,16 @@
 "use client";
 
-import BaseImage, { ImageProps } from "next/image";
+import BaseImage, { ImageProps as BaseImageProps } from "next/image";
 import { ImageOff } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function Image({ width, height, onError, ...props }: ImageProps) {
+export type ImageProps = BaseImageProps & {
+  wrapperClassName?: string;
+  skeletonClassName?: string;
+};
+
+export default function Image({ width, height, onError, wrapperClassName, skeletonClassName, ...props }: ImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -19,10 +24,10 @@ export default function Image({ width, height, onError, ...props }: ImageProps) 
     );
 
   return (
-    <div className='relative size-full'>
+    <div className={`relative size-full ${wrapperClassName}`}>
       {isLoading && (
         <Skeleton
-          className='absolute inset-0'
+          className={`absolute inset-0 ${skeletonClassName}`}
           style={{ width, height }}
         />
       )}

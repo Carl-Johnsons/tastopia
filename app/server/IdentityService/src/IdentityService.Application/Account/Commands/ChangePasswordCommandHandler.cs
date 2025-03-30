@@ -28,7 +28,7 @@ public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordComman
         switch (request.Method)
         {
             case AccountMethod.Email:
-                account = await _userManager.Users.SingleOrDefaultAsync(a => a.Email == request.Identifier);
+                account = await _userManager.Users.SingleOrDefaultAsync(a => (a.Email ?? "").ToLower() == request.Identifier.ToLower());
                 break;
             case AccountMethod.Phone:
                 account = await _userManager.Users.SingleOrDefaultAsync(a => a.PhoneNumber == request.Identifier);
@@ -53,8 +53,12 @@ public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordComman
         }
 
         account.PasswordHash = _userManager.PasswordHasher.HashPassword(account, request.Password);
+        account.ForgotPasswordOTP = null;
+        account.ForgotPasswordExpiry = null;
+        account.ForgotPasswordCreated = null;
         var res = await _userManager.UpdateAsync(account);
-        if (!res.Succeeded) {
+        if (!res.Succeeded)
+        {
             return Result.Failure(AccountError.ResetPasswordFailed);
         }
 

@@ -46,6 +46,7 @@ public static class CustomAuthenticationExtension
                     ValidateAudience = false,
                     ValidateIssuer = false,
                     ValidateLifetime = true,
+                    RoleClaimType = "role",
                     ClockSkew = TimeSpan.Zero
                 };
                 // For development only

@@ -29,7 +29,7 @@ NC='\033[0m' # No Color
 NC_OCT='\o033[0m' # No Color
 
 # Define the Docker Compose file name
-DOCKER_COMPOSE_FILE="docker-compose.yaml"
+DOCKER_COMPOSE_FILE="docker-compose.yml"
 
 # Dispose dangline entity in docker
 prune_docker(){
@@ -132,7 +132,7 @@ do
       # Rebuild the selected service
       SELECTED_SERVICE=$(echo "$SERVICES" | sed -n "${INDEX}p")
       echo -e "${LIGHT_BLUE}Rebuilding service: ${LIGHT_CYAN}$SELECTED_SERVICE${NC}"
-      $SUDO_PREFIX docker compose -f "$DOCKER_COMPOSE_FILE" up --force-recreate --no-deps -d --build "$SELECTED_SERVICE" 2>&1 | colorize_output
+      $SUDO_PREFIX docker compose up --force-recreate --no-deps -d --build "$SELECTED_SERVICE" 2>&1 | colorize_output
       echo -e "Service ${LIGHT_BLUE}$SELECTED_SERVICE${NC} has been rebuilt."
 
       read -p "Press Enter to continue..."

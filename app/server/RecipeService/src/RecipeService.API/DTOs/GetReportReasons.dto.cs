@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Contract.ValidationAttributes;
+using Newtonsoft.Json;
 using RecipeService.API.ValidationAttributes;
 using System.ComponentModel.DataAnnotations;
 namespace RecipeService.API.DTOs;

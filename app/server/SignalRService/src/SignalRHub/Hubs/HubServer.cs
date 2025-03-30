@@ -5,6 +5,9 @@ using Serilog;
 using SignalRHub.DTOs;
 using Contract.Interfaces;
 using Contract.DTOs.SignalRDTO;
+using SignalRHub.Interfaces;
+using Contract.Constants;
+using SignalRHub.Constants;
 
 namespace SignalRHub.Hubs;
 
@@ -15,11 +18,14 @@ public class HubServer : Hub<IHubClient>
     private readonly IHttpContextAccessor _httpContextAccessor;
     // rabbitmq
     private readonly IServiceBus _bus;
+    private readonly IMemoryTracker _memoryTracker;
     public HubServer(IHttpContextAccessor httpContextAccessor,
-                     IServiceBus bus)
+                     IServiceBus bus,
+                     IMemoryTracker memoryTracker)
     {
         _httpContextAccessor = httpContextAccessor;
         _bus = bus;
+        _memoryTracker = memoryTracker;
     }
 
     // The url would be like "https://yourhubURL:port?userId=abc&access_token=abc"
@@ -32,12 +38,18 @@ public class HubServer : Hub<IHubClient>
             if (string.IsNullOrEmpty(userId))
             {
                 var RequestUrl = Context.GetHttpContext()?.Request.GetDisplayUrl() ?? "Unknown";
-                Log.Information($"Service with url {RequestUrl} has connected to signalR sucessfully!");
+                Log.Information($"Service with url {RequestUrl} has connected to signalR successfully!");
             }
             else
             {
-                Log.Information($"user with id {userId} has connected to signalR sucessfully!");
+                Log.Information($"user with id {userId} has connected to signalR successfully!");
                 await ConnectWithUserIdAsync(Guid.Parse(userId));
+                if(Context.User != null && Context.User.IsInRole(Roles.Code.USER.ToString()))
+                {
+                    _memoryTracker.UserConnected(userId);
+                    Log.Information($"Trigger event in client: number:"+_memoryTracker.OnlineUserNumber);
+                    await Clients.Group(ROLE_BASED_GROUP.ADMIN).ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
+                }
             }
         }
         catch (Exception ex)
@@ -54,6 +66,12 @@ public class HubServer : Hub<IHubClient>
         {
             Log.Information($"Connection {Context.ConnectionId} disconnected and removed from UserConnectionMap.");
             await Clients.All.Disconnected(userDisconnectedId);
+            if(Context.User != null && Context.User.IsInRole(Roles.Code.USER.ToString()))
+            {
+                _memoryTracker.UserDisconnected(userDisconnectedId.ToString());
+                Log.Information($"Trigger event in client: number:" + _memoryTracker.OnlineUserNumber);
+                await Clients.Group(ROLE_BASED_GROUP.ADMIN).ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
+            }
         }
         else
         {
@@ -112,10 +130,10 @@ public class HubServer : Hub<IHubClient>
         Log.Information(userId + " Connected");
 
         // Admin user
-        if (Context.User != null && Context.User.IsInRole("Admin"))
+        if (Context.User != null && (Context.User.IsInRole(Roles.Code.SUPER_ADMIN.ToString()) || Context.User.IsInRole(Roles.Code.ADMIN.ToString())))
         {
-            Log.Information("Add admin to group admin");
-            await Groups.AddToGroupAsync(Context.ConnectionId, "Admin");
+            Log.Information("Add admin to group Admin");
+            await Groups.AddToGroupAsync(Context.ConnectionId, ROLE_BASED_GROUP.ADMIN);
             return;
         }
 

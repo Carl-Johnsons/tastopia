@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
         services.AddScoped<MockupData>();
         services.AddCommonInfrastructureServices("DuendeIdentityServer");
+        services.AddSignalRService();
 
         using (var serviceProvider = services.BuildServiceProvider())
         {

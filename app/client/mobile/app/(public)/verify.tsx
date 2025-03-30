@@ -16,18 +16,34 @@ import BackButton from "@/components/BackButton";
 import { getIdentifierType } from "@/utils/checker";
 import { saveUserData } from "@/slices/user.slice";
 import { saveSettingData } from "@/slices/setting.slice";
+import { useState, useEffect } from "react";
 
 const Verify = () => {
   const isAndroid = Platform.OS === "android";
   const dispatch = useAppDispatch();
   const identifier = selectVerifyIdentifier() as string;
   const type = getIdentifierType(identifier) as IDENTIFIER_TYPE;
+  const [countdown, setCountdown] = useState(0);
 
   const { mutateAsync: verify, isLoading: isVerifyLoading } = useVerify();
   const { mutateAsync: resendVerifyCode, isLoading: isResendVerifyCodeLoading } =
     useResendVerifyCode();
   const getUserDetails = useGetUserDetails();
   const getUserSettings = useGetUserSettings();
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (countdown > 0) {
+      interval = setInterval(() => {
+        setCountdown(prevCountdown => prevCountdown - 1);
+      }, 1000);
+    } else if (interval) {
+      clearInterval(interval);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [countdown]);
 
   const fetchUserData = async () => {
     const { data: user } = await getUserDetails.refetch();
@@ -64,12 +80,15 @@ const Verify = () => {
     });
   };
 
-  const resendCode = () => {
+  const handleResendCode = () => {
+    if (countdown > 0) return;
+
     resendVerifyCode(
       { type },
       {
         onSuccess: () => {
           Alert.alert("Success", "New OTP is sent.");
+          setCountdown(30);
         },
         onError: () => {
           Alert.alert("Error", "Resend verification code failed.");
@@ -104,9 +123,17 @@ const Verify = () => {
           className='mt-[5vh]'
         />
 
-        <Pressable onPress={resendCode}>
+        <Pressable
+          onPress={handleResendCode}
+          disabled={countdown > 0}
+        >
           <Text className='text-black_white text-center text-lg'>
-            I don’t recevie a code! <Text className='text-primary'>Please resend</Text>
+            I don't receive a code!{" "}
+            {countdown > 0 ? (
+              <Text className='text-gray-500'>Please wait {countdown}s</Text>
+            ) : (
+              <Text className='text-primary'>Please resend</Text>
+            )}
           </Text>
         </Pressable>
       </View>

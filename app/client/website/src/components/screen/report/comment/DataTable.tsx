@@ -28,6 +28,8 @@ import { useGetCommentReports } from "@/api/comment";
 import { IAdminReportCommentResponse } from "@/generated/interfaces/recipe.interface";
 import ReportStatusText from "../common/StatusText";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
+import useLocaleTable from "@/hooks/table/useLocaleTable";
+import { useLocale } from "next-intl";
 
 const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
@@ -41,7 +43,7 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
     name: "Content",
     sortable: true,
     minWidth: "200px",
-    cell: ({ commentContent }) => <span className='py-1'>{commentContent}</span>
+    cell: ({ commentContent }) => <span className='py-2'>{commentContent}</span>
   },
   {
     name: "Recipe Image",
@@ -77,7 +79,7 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
     name: "Created Date",
     sortable: true,
-    width: "140px",
+    width: "160px",
     center: true,
     hide: 1476,
     cell: ({ createdAt }) => {
@@ -91,8 +93,9 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
     name: "Status",
     sortable: true,
-    width: "100px",
+    width: "120px",
     center: true,
+    hide: 500,
     selector: row => row.status,
     cell: ({ status }) => {
       return (
@@ -170,7 +173,7 @@ export default function Table() {
   const [skip, setSkip] = useState(0);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("DESC");
-  const [lang, setLang] = useState("en");
+  const lang = useLocale();
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
 
@@ -194,6 +197,7 @@ export default function Table() {
   );
   const [reports, setReports] = useState<IAdminReportCommentResponse[]>([]);
   const { tableStyles } = useDataTableStyles();
+  const tableLocale = useLocaleTable();
 
   const handleChangeRowPerPage = useCallback((numOfRows: number) => {
     setLimit(numOfRows);
@@ -284,6 +288,7 @@ export default function Table() {
           paginationTotalRows={totalRow}
           sortServer
           onSort={onSort}
+          paginationComponentOptions={tableLocale}
         />
       </DataTableProvider>
     </>

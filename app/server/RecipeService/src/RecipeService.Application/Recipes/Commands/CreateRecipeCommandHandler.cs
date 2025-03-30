@@ -15,10 +15,7 @@ using RecipeService.Domain.Errors;
 using System.ComponentModel.DataAnnotations;
 using UploadFileProto;
 using UserProto;
-
-
 namespace RecipeService.Application.Recipes.Commands;
-
 public record CreateRecipeCommand : IRequest<Result<Recipe?>>
 {
     public Guid AuthorId { get; set; }
@@ -39,7 +36,6 @@ public record CreateRecipeCommand : IRequest<Result<Recipe?>>
 
     public List<string>? TagValues { get; set; }
 }
-
 public class StepDTO
 {
     [Required]
@@ -50,7 +46,6 @@ public class StepDTO
     public string Content { get; init; } = null!;
     public List<IFormFile>? Images { get; init; } = null!;
 }
-
 public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, Result<Recipe?>>
 {
     private readonly IApplicationDbContext _context;
@@ -58,23 +53,21 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
     private readonly IServiceBus _serviceBus;
     private readonly GrpcUploadFile.GrpcUploadFileClient _grpcUploadFileClient;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
-
     private readonly ILogger<CreateRecipeCommandHandler> _logger;
 
-
-    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, ILogger<CreateRecipeCommandHandler> logger, GrpcUser.GrpcUserClient grpcUserClient)
+    public CreateRecipeCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, GrpcUser.GrpcUserClient grpcUserClient, ILogger<CreateRecipeCommandHandler> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _serviceBus = serviceBus;
         _grpcUploadFileClient = grpcUploadFileClient;
-        _logger = logger;
         _grpcUserClient = grpcUserClient;
+        _logger = logger;
     }
 
     public async Task<Result<Recipe?>> Handle(CreateRecipeCommand request, CancellationToken cancellationToken)
     {
-        List<string>? rollbaclUrls = null;
+        List<string>? rollbackUrls = null;
         try
         {
             var steps = request.Steps;
@@ -90,7 +83,7 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
                 return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
             }
 
-            rollbaclUrls = response.Files.Select(f => f.Url).ToList();
+            rollbackUrls = response.Files.Select(f => f.Url).ToList();
 
             var recipe = new Recipe();
 
@@ -175,11 +168,9 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
         catch (Exception ex)
         {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
-            await RollBackImageGrpc(rollbaclUrls);
+            await RollBackImageGrpc(rollbackUrls);
         }
-
         return Result<Recipe?>.Failure(RecipeError.AddRecipeFail);
-
     }
 
     public async Task RollBackImage(List<FileDTO>? files)

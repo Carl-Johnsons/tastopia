@@ -31,11 +31,8 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminGetRecipes([FromQuery] PaginatedDTO paginatedDTO)
     {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new AdminGetRecipesQuery
         {
-            AccountId = Guid.Parse(subjectId!),
             paginatedDTO = paginatedDTO,
         });
         result.ThrowIfFailure();
@@ -80,10 +77,14 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminMarkReportComplete([FromBody] ReportDTO dto)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new MarkReportCompleteCommand
         {
             ReportId = dto.ReportId,
-            ReportType = dto.ReportType
+            ReportType = dto.ReportType,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -96,10 +97,14 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminReopenReport([FromBody] ReportDTO dto)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new ReopenReportCommand
         {
             ReportId = dto.ReportId,
-            ReportType = dto.ReportType
+            ReportType = dto.ReportType,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -112,9 +117,13 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminDisableRecipe([FromQuery] EntityIdDTO dto)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new DisableRecipeCommand
         {
-            Id = dto.Id
+            Id = dto.Id,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -127,9 +136,12 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminRestoreRecipe([FromQuery] EntityIdDTO dto)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new RestoreRecipeCommand
         {
-            Id = dto.Id
+            Id = dto.Id,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -175,10 +187,14 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminDisableComment([FromQuery] Guid recipeId, [FromQuery] Guid commentId)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new DisableCommentCommand
         {
             CommentId = commentId,
-            RecipeId = recipeId
+            RecipeId = recipeId,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -191,10 +207,14 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminRestoreComment([FromQuery] Guid recipeId, [FromQuery] Guid commentId)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new RestoreCommentCommand
         {
             CommentId = commentId,
-            RecipeId = recipeId
+            RecipeId = recipeId,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
 
         result.ThrowIfFailure();
@@ -211,7 +231,6 @@ public class AdminController : BaseApiController
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new AdminGetUserActivityQuery
         {
-            CurrentAccountId = Guid.Parse(subjectId!),
             AccountId = adminGetUserActivityDTO.AccountId,
             Skip = adminGetUserActivityDTO.Skip,
             Language = adminGetUserActivityDTO.Language,
@@ -227,11 +246,8 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminGetTag([FromQuery] PaginatedDTO paginatedDTO)
     {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new AdminGetTagsQuery
         {
-            AccountId = Guid.Parse(subjectId!),
             PaginatedDTO = paginatedDTO
         });
         result.ThrowIfFailure();
@@ -246,13 +262,14 @@ public class AdminController : BaseApiController
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new CreateTagCommand
         {
-            AccountId = Guid.Parse(subjectId!),
             Code = createTagDTO.Code,
             Value = createTagDTO.Value,
             Category = createTagDTO.Category,
-            TagImage = createTagDTO.TagImage
+            TagImage = createTagDTO.TagImage,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -266,15 +283,16 @@ public class AdminController : BaseApiController
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new UpdateTagCommand
         {
-            AccountId = Guid.Parse(subjectId!),
             TagId = updateTagDTO.TagId,
             Code = updateTagDTO.Code,
             Value = updateTagDTO.Value,
             Category = updateTagDTO.Category,
             Status = updateTagDTO.Status,
-            TagImage = updateTagDTO.TagImage
+            TagImage = updateTagDTO.TagImage,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -286,12 +304,62 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> GetTagDetail([FromBody] AdminGetTagDetailDTO adminGetTagDetailDTO)
     {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new GetTagDetailQuery
         {
-            AccountId = Guid.Parse(subjectId!),
             TagId = adminGetTagDetailDTO.TagId
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    // Statistic
+    [HttpGet("statistic/get-recipe-statistic")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<StatisticEntity>), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetRecipeStatistic()
+    {
+        var result = await _sender.Send(new AdminGetNumberOfRecipesStatisticQuery
+        {
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpGet("statistic/get-total-recipe")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(int), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetTotalRecipe()
+    {
+        var result = await _sender.Send(new AdminGetTotalRecipeNumberQuery
+        {
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpGet("statistic/get-recipe-ranking-by-views")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetRecipeRankingByView()
+    {
+        var result = await _sender.Send(new AdminGetRankingRecipesStatisticQuery
+        {
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    [HttpGet("statistic/get-tag-ranking-by-popular")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> GetTagRankingByPopular()
+    {
+        var result = await _sender.Send(new AdminGetRankingTagsStatisticQuery
+        {
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

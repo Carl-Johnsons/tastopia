@@ -3,3 +3,4 @@ public class PaginatedSimpleUserListResponse : BasePaginatedResponse<SimpleUserR
 public class PaginatedAdminGetUserListResponse : BasePaginatedResponse<AdminGetUserResponse, NumberedPaginatedMetadata>;
 public class PaginatedAdminUserReportListResponse : BasePaginatedResponse<AdminUserReportResponse, NumberedPaginatedMetadata>;
 public class PaginatedAdminUserReportDetailListResponse : BasePaginatedResponse<AdminUserReportDetailResponse, AdvancePaginatedMetadata>;
+public class PaginatedAdminListResponse : BasePaginatedResponse<AdminResponse, NumberedPaginatedMetadata>;
