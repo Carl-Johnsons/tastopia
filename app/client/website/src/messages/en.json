@@ -260,7 +260,9 @@
         "placeholder": "Choose a date",
         "errors": {
           "required": "Date of birth is required",
-          "invalid": "Invalid date of birth"
+          "invalid": "Invalid date of birth",
+          "min": "Date of birth must be after 01/01/1900",
+          "max": "Date of birth must be in the past"
         }
       },
       "address": {

@@ -265,7 +265,9 @@
         "placeholder": "Chọn ngày sinh",
         "errors": {
           "required": "Vui lòng nhập ngày sinh",
-          "invalid": "Ngày sinh không hợp lệ"
+          "invalid": "Ngày sinh không hợp lệ",
+          "min": "Ngày sinh phải sau ngày 01/01/1900",
+          "max": "Ngày sinh phải ở trong quá khứ"
         }
       },
       "address": {
