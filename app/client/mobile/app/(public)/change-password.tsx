@@ -9,7 +9,7 @@ import {
 import { getIdentifierType } from "@/utils/checker";
 import { ICheckForgotPasswordDTO } from "@/generated/interfaces/identity.interface";
 import { IErrorResponseDTO } from "@/api/tracking";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BackButton from "@/components/BackButton";
 import CircleBg from "@/components/CircleBg";
 import VerifyForgotPasswordForm from "@/components/screen/forgot/VerifyForgotPassword";
@@ -23,6 +23,7 @@ const ChangePassword = () => {
   const identifier = params.identifier as string;
   const router = useRouter();
 
+  const [countdown, setCountdown] = useState(0);
   const [successOTP, setSuccessOTP] = useState<string>();
 
   const { mutateAsync: checkOTP, isLoading: isCheckOTPLoading } =
@@ -74,6 +75,8 @@ const ChangePassword = () => {
   };
 
   const resendCode = () => {
+    if (countdown > 0) return;
+
     requestChangePasswordAsync(
       {
         data: {
@@ -84,6 +87,7 @@ const ChangePassword = () => {
       {
         onSuccess: () => {
           Alert.alert("Resend successfully!");
+          setCountdown(30);
         },
         onError: error => {
           const errorResponse = error.response?.data as IErrorResponseDTO;
@@ -92,6 +96,20 @@ const ChangePassword = () => {
       }
     );
   };
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (countdown > 0) {
+      interval = setInterval(() => {
+        setCountdown(prevCountdown => prevCountdown - 1);
+      }, 1000);
+    } else if (interval) {
+      clearInterval(interval);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [countdown]);
 
   return (
     <View className='bg-white_black200 relative h-full'>
@@ -127,8 +145,12 @@ const ChangePassword = () => {
 
             <Pressable onPress={resendCode}>
               <Text className='text-black_white text-center text-lg'>
-                I don’t receive a code!{" "}
-                <Text className='text-primary'>Please resend</Text>
+                I don't receive a code!{" "}
+                {countdown > 0 ? (
+                  <Text className='text-gray-500'>Please wait {countdown}s</Text>
+                ) : (
+                  <Text className='text-primary'>Please resend</Text>
+                )}
               </Text>
             </Pressable>
           </>
