@@ -11,6 +11,7 @@ public class SimpleRecipeResponse
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
     public string AuthorDisplayName { get; set; } = null!;
+    public string AuthorUsername { get; set; } = null!;
     public string AuthorAvtUrl { get; set; } = null!;
     public int VoteDiff { get; set; }
     public int NumberOfComment { get; set; } = 0;

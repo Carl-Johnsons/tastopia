@@ -26,15 +26,16 @@ export default function useDataTableStyles(): UseDataTableStylesResult {
         style: {
           backgroundColor: primary,
           color: white.DEFAULT,
-          fontWeight: "bold",
-          paddingLeft: "30px"
+          // fontWeight: "bold",
+          fontSize: "16px",
+          // paddingLeft: "24px"
         }
       },
       rows: {
         style: {
           backgroundColor: "white",
           color: black.DEFAULT,
-          paddingLeft: "10px"
+          // paddingLeft: "10px"
         },
         stripedStyle: {
           backgroundColor: "rgba(247, 195, 193, 0.15)"
@@ -45,6 +46,7 @@ export default function useDataTableStyles(): UseDataTableStylesResult {
       },
       headRow: {
         style: {
+          fontSize: "14px !important",
           backgroundColor: "#FE724C !important"
         }
       },

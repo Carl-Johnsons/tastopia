@@ -4,7 +4,7 @@ import {
   CLIENT_BASE_URL,
   DUENDE_IDS6_ID,
   DUENDE_IDS6_ISSUER,
-  SCOPE,
+  SCOPE
 } from "./constants/api";
 import { v4 as uuidv4 } from "uuid";
 
@@ -16,15 +16,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       issuer: `${DUENDE_IDS6_ISSUER}`,
       wellKnown: `${DUENDE_IDS6_ISSUER}/.well-known/openid-configuration`,
       token: {
-        url: `${DUENDE_IDS6_ISSUER}/connect/token`,
+        url: `${DUENDE_IDS6_ISSUER}/connect/token`
       },
       authorization: {
         url: `${DUENDE_IDS6_ISSUER}/connect/authorize`,
         params: {
           scope: SCOPE,
           nonce: uuidv4(),
-          redirect_uri: `${CLIENT_BASE_URL}/api/auth/callback/duende-identity-server6`,
-        },
+          redirect_uri: `${CLIENT_BASE_URL}/api/auth/callback/duende-identity-server6`
+        }
       },
       checks: ["pkce", "nonce"],
       profile(profile) {
@@ -32,10 +32,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return {
           id: profile.sub,
           name: profile.name,
-          email: profile.email,
+          email: profile.email
         };
-      },
-    }),
+      }
+    })
   ],
   callbacks: {
     async jwt({ token, user, account }) {
@@ -51,7 +51,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.idToken = token.idToken as string;
 
       return session;
-    },
+    }
   },
+  pages: {
+    error: "/en/",
+    signIn: "/en/",
+    signOut: "/en/"
+  }
 });
-

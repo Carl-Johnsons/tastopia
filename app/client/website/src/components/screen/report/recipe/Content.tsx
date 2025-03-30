@@ -1,6 +1,6 @@
 import { ClockIcon } from "lucide-react";
 import { IStep } from "../../../../../../mobile/generated/interfaces/recipe.interface";
-import Image from "next/image";
+import Image from "@/components/shared/common/Image";
 
 type IngredientProps = {
   ingredient: string[];
@@ -75,6 +75,7 @@ const Instruction = ({ steps, cookTime = "Not specified" }: InstructionProps) =>
                   key={index + url}
                   src={url}
                   alt={`Instrunciton image ${index + 1}`}
+                  fill
                   className='h-[160px] w-[260] rounded-lg'
                 />
               ))}

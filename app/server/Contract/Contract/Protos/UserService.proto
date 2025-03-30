@@ -2,6 +2,7 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
+import "Protos/Common.proto";
 
 package UserProto;
 
@@ -14,6 +15,9 @@ service GrpcUser {
     rpc CreateUser(GrpcCreateUserRequest) returns (GrpcEmpty);
     rpc GetUserFollowing(GrpcAccountIdRequest) returns (GrpcListAccountIds);
     rpc GetUserFollower(GrpcAccountIdRequest) returns (GrpcListAccountIds);
+    rpc GetSimpleUserReport(GrpcGetUserReportRequest) returns (GrpcSimpleUserReport);
+    rpc CreateAdminUser(GrpcCreateAdminRequest) returns (GrpcEmpty);
+    rpc UpdateAdminUser(GrpcUpdateAdminRequest) returns (GrpcEmpty);
 }
 
 message GrpcEmpty {}
@@ -28,6 +32,32 @@ message GrpcGetUserSettingRequest {
 
 message GrpcGetSimpleUsersRequest {
     repeated string AccountId = 1; // HashSet<Guid> represented as repeated strings
+}
+
+message GrpcCreateAdminRequest {
+    string AccountId = 1;
+    string AccountUsername = 2;
+    string DisplayName = 3;
+    string Gender = 4;
+    google.protobuf.Timestamp Dob = 5;
+    string Address = 6;
+    string AvatarURL = 7;
+}
+
+message GrpcUpdateAdminRequest {
+    string AccountId = 1;
+    string AccountUsername = 2;
+    string DisplayName = 3;
+    string Gender = 4;
+    google.protobuf.Timestamp Dob = 5;
+    string Address = 6;
+    string AvatarURL = 7;
+    bool IsDoBUpdated = 8;
+}
+
+message GrpcGetUserReportRequest {
+    string Lang = 1; // 'en' or 'vi'
+    repeated string ReportIds = 2;
 }
 
 message GrpcCreateUserRequest {
@@ -46,14 +76,7 @@ message GrpcListAccountIds{
 }
 
 message GrpcGetSimpleUsersDTO {
-    map<string, GrpcSimpleUser> Users = 1; // Dictionary <=> MapField
-}
-
-message GrpcSimpleUser {
-    string AccountId = 1;
-    string AvtUrl = 2;
-    string DisplayName = 3;
-    string AccountUsername = 4;
+    map<string, CommonProto.GrpcSimpleUser> Users = 1; // Dictionary <=> MapField
 }
 
 message GrpcUserDetailDTO {
@@ -89,4 +112,23 @@ message GrpcSetting {
     string SettingValue = 3;
     string SettingType = 4;
     string DefaultValue = 5;
+}
+
+message GrpcSimpleUserReport {
+    map<string, GrpcUserReport> Reports = 2; // Dictionary <=> MapField
+}
+
+message GrpcUserReport {
+    CommonProto.GrpcSimpleUser Reporter = 1;
+    CommonProto.GrpcSimpleUser User = 2;
+    CommonProto.GrpcSimpleReport Report = 3;
+}
+
+message GrpcSimpleReport {
+    string Id = 1;
+    string ReporterAccountId = 2;
+    repeated string Reasons = 3;
+    string AdditionalDetail = 4;
+    string Status = 5;
+    google.protobuf.Timestamp CreatedAt = 6;
 }

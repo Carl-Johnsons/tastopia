@@ -10,9 +10,8 @@ import {
 } from "@/components/shared/icons";
 import { ActivityType } from "@/constants/activities";
 import Empty from "@/components/shared/common/Empty";
-import { useLocale, useTranslations } from "next-intl";
-import { formatDistanceToNow } from "date-fns";
-import { enUS, vi } from "date-fns/locale";
+import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 type ActivityFeedProps = {
   activities: ActivityItem[];
@@ -20,7 +19,6 @@ type ActivityFeedProps = {
 };
 
 export default function ActivityFeed({ activities }: ActivityFeedProps) {
-  const currentLanguage = useLocale();
   const t = useTranslations("userDetail.activity");
 
   const getActivityIcon = (type: ActivityItem["type"]) => {
@@ -156,11 +154,23 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
                 </div>
 
                 <div className='mt-4 rounded-lg border border-gray-200 p-4'>
-                  <div className='text-black_white text-lg font-medium'>
-                    {activity.recipeTitle}
-                  </div>
-                  <div className='mt-1 text-sm text-gray-500'>
-                    @{activity.recipeAuthorUsername} · {activity.recipeTimeAgo}
+                  <div className='flex flex-col'>
+                    <Link
+                      className='text-black_white text-lg font-medium'
+                      href={`/recipes/${activity.recipeId}`}
+                      replace
+                    >
+                      {activity.recipeTitle}
+                    </Link>
+                    <div className='mt-1 text-sm text-gray-500'>
+                      <Link
+                        href={`/users/${activity.recipeAuthorId}`}
+                        replace
+                      >
+                        @{activity.recipeAuthorUsername}
+                      </Link>
+                      <span> · {activity.recipeTimeAgo}</span>
+                    </div>
                   </div>
 
                   <div className='mt-3 overflow-hidden rounded-lg'>

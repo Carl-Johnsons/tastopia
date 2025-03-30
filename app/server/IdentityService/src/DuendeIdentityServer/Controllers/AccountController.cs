@@ -214,4 +214,53 @@ public class AccountController : BaseApiController
         result.ThrowIfFailure();
         return Ok(result.Value);
     }
+
+    [AllowAnonymous]
+    [HttpPost("request-update-identifier/{method}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> RequestUpdateIdentifier([FromRoute] string method, AccountIdentifierDTO dto)
+    {
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+
+        var command = new RequestUpdateIdentifierCommand
+        {
+            Id = Guid.Parse(userId!),
+            Identifier = dto.Identifier,
+            Method = accountMethod
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return Ok();
+    }
+
+    [AllowAnonymous]
+    [HttpPost("verify-update-identifier/{method}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> VerifyUpdateIdentifier([FromRoute] string method, VerifyUpdateIdentifierDTO dto)
+    {
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+
+        var command = new VerifyUpdateIdentifierCommand
+        {
+            AccountId = Guid.Parse(userId!),
+            OTP = dto.OTP,
+            Identifier = dto.Identifier,
+            Method = accountMethod
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return Ok();
+    }
 }

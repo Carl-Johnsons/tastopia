@@ -37,7 +37,7 @@ export async function getCommentReports(options?: PaginatedQueryParams) {
 
     return data;
   } catch (error) {
-    console.log(error);
+    withErrorProcessor(error);
     throw error;
   }
 }
@@ -48,7 +48,7 @@ export async function getCommentReportById({
   options
 }: GetCommentReportDetailParams) {
   const url = "/api/admin/recipe/comment/reports";
-  const { lang = "en" } = options || {};
+  const { lang } = options || {};
 
   try {
     const { data } = await protectedAxiosInstance.get<IAdminReportCommentDetailResponse>(
@@ -64,7 +64,7 @@ export async function getCommentReportById({
 
     return data;
   } catch (error) {
-    console.log(error);
+    withErrorProcessor(error);
     throw error;
   }
 }
@@ -76,6 +76,7 @@ export const markReportAsCompleted = async ({ reportId, reportType }: IReportDTO
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };
 
@@ -86,6 +87,7 @@ export const reopenReport = async ({ reportId, reportType }: IReportDTO) => {
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };
 
@@ -98,6 +100,7 @@ export const disableComment = async ({ recipeId, commentId }: ChangeCommentState
     });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };
 
@@ -110,5 +113,6 @@ export const restoreComment = async ({ recipeId, commentId }: ChangeCommentState
     });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };

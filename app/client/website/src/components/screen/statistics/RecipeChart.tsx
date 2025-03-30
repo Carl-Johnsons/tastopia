@@ -189,7 +189,6 @@ export function RecipeChart({ chartData }: RecipeChartProps) {
               stroke='var(--color-recipe)'
               stackId='a'
             />
-            <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
         </ChartContainer>
       </CardContent>

@@ -1,7 +1,9 @@
-export default function Admins() {
+import Table from "@/components/screen/admins/DataTable";
+
+export default async function Recipe() {
   return (
-    <div className="flex size-full justify-center">
-      <div className="flex w-full flex-col gap-4">hi admins</div>
+    <div className='flex size-full flex-col justify-center gap-4'>
+      <Table />
     </div>
   );
 }

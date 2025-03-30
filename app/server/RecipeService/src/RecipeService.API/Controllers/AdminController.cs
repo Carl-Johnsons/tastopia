@@ -2,7 +2,6 @@
 using Contract.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
 using RecipeService.API.DTOs;
 using RecipeService.Application.Activities;
 using RecipeService.Application.Recipes.Queries;
@@ -13,7 +12,6 @@ using RecipeService.Application.Tags.Queries;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
-using static RecipeService.Application.Recipes.Queries.AdminGetNumberOfRecipesStatisticQueryHandler;
 
 namespace RecipeService.API.Controllers;
 [Route("api/admin/recipe")]
@@ -262,12 +260,16 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> CreateTag([FromForm] CreateTagDTO createTagDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new CreateTagCommand
         {
             Code = createTagDTO.Code,
             Value = createTagDTO.Value,
             Category = createTagDTO.Category,
-            TagImage = createTagDTO.TagImage
+            TagImage = createTagDTO.TagImage,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -279,6 +281,9 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> UpdateTag([FromForm] UpdateTagDTO updateTagDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new UpdateTagCommand
         {
             TagId = updateTagDTO.TagId,
@@ -286,7 +291,8 @@ public class AdminController : BaseApiController
             Value = updateTagDTO.Value,
             Category = updateTagDTO.Category,
             Status = updateTagDTO.Status,
-            TagImage = updateTagDTO.TagImage
+            TagImage = updateTagDTO.TagImage,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -306,7 +312,8 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("get-recipe-statistic")]
+    // Statistic
+    [HttpGet("statistic/get-recipe-statistic")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<StatisticEntity>), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
@@ -319,7 +326,7 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("get-total-recipe")]
+    [HttpGet("statistic/get-total-recipe")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(int), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
@@ -332,7 +339,7 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("get-recipe-ranking-by-views")]
+    [HttpGet("statistic/get-recipe-ranking-by-views")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
@@ -345,7 +352,7 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("get-tag-ranking-by-popular")]
+    [HttpGet("statistic/get-tag-ranking-by-popular")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]

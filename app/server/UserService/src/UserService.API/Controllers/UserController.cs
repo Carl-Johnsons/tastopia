@@ -197,7 +197,6 @@ public class UserController : BaseApiController
         return Ok(result.Value);
     }
 
-
     [HttpPost("create-user-search-user")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(string), 200)]
@@ -211,60 +210,6 @@ public class UserController : BaseApiController
         {
             AccountId = Guid.Parse(subjectId!),
             Keyword = createUserSearchUserDTO.Keyword
-        });
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    [HttpPost("admin-get-user-detail")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(AdminGetUserDetailResponse), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetUserDetail([FromBody] GetUserDetailByAccountIdDTO getUserDetailByAccountIdDTO)
-    {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-
-        var result = await _sender.Send(new AdminGetUserDetailQuery
-        {
-            CurrentAccountId = Guid.Parse(subjectId!),
-            AccountId = getUserDetailByAccountIdDTO.AccountId,
-        });
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    [HttpGet("admin-get-users")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedAdminGetUserListResponse), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetUsers([FromQuery] PaginatedDTO paginatedDTO)
-    {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-
-        var result = await _sender.Send(new AdminGetUsersQuery
-        {
-            AccountId = Guid.Parse(subjectId!),
-            PaginatedDTO = paginatedDTO
-        });
-        result.ThrowIfFailure();
-        return Ok(result.Value);
-    }
-
-    [HttpPost("admin-ban-user")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(AdminBanUserResponse), 200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminBanUser([FromBody] AdminBanUserDTO adminBanUserDTO)
-    {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-
-        var result = await _sender.Send(new AdminBanUserCommand
-        {
-            CurrentAccountId = Guid.Parse(subjectId!),
-            AccountId = adminBanUserDTO.AccountId,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

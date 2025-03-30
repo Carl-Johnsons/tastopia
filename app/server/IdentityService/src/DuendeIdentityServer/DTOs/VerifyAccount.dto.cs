@@ -1,6 +1,4 @@
-﻿using IdentityService.Domain.Constants;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace DuendeIdentityServer.DTOs;
@@ -10,9 +8,13 @@ public class VerifyAccountDTO
     [Required]
     [JsonProperty("OTP")]
     public string OTP { get; set; } = null!;
-
+}
+public class VerifyUpdateIdentifierDTO
+{
     [Required]
-    [JsonProperty("verifyMethod")]
-    [JsonConverter(typeof(StringEnumConverter))]
-    public VerifyAccountMethod VerifyMethod { get; set; } = VerifyAccountMethod.Verify;
+    [JsonProperty("OTP")]
+    public string OTP { get; set; } = null!;
+    [Required]
+    [JsonProperty("identifier")]
+    public string Identifier { get; set; } = null!;
 }

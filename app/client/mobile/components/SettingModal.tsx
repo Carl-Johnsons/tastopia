@@ -40,7 +40,13 @@ import { useDispatch } from "react-redux";
 import Animated from "react-native-reanimated";
 import Protected from "./Protected";
 import { ROLE, selectRole } from "@/slices/auth.slice";
-import { UpdateSettingParams, useUpdateSetting, useUpdateUser } from "@/api/user";
+import {
+  IDENTIFIER_TYPE,
+  UpdateSettingParams,
+  useUnlink,
+  useUpdateSetting,
+  useUpdateUser
+} from "@/api/user";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -57,6 +63,7 @@ import { router } from "expo-router";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 import { useQueryClient } from "react-query";
 import { IUpdateUserDTO } from "@/generated/interfaces/user.interface";
+import { Feather } from "@expo/vector-icons";
 
 type SettingModalProps = {
   ref: RefObject<BottomSheetMethods>;
@@ -316,6 +323,7 @@ const AccountSetting = () => {
   const { accountPhoneNumber, accountEmail } = selectUser();
   const isLinkedGoogle = false;
   const { mutateAsync: updateUser } = useUpdateUser();
+  const { mutateAsync: unlink } = useUnlink();
 
   const updateUserInfo = async (key: string, data: IUpdateUserDTO) => {
     switch (key) {
@@ -339,31 +347,48 @@ const AccountSetting = () => {
     title,
     value,
     ticked,
-    onPress
+    onPressUnlink,
+    onPressUpdate
   }: {
     title: string;
     value?: string | null;
     ticked?: boolean;
-    onPress?: () => void;
+    onPressUnlink?: () => void;
+    onPressUpdate?: () => void;
   }) => {
     return (
-      <Button
-        className={`flex-row items-center justify-between gap-3 px-4 py-6`}
-        onPress={onPress}
-      >
+      <View className={`flex-row items-center justify-between gap-3 px-4 py-6`}>
         <Text className='text-black_white'>{title}</Text>
         <View className='flex-row items-center gap-2'>
           <Text className='text-black_white'>{value ? value : ""}</Text>
           {ticked || value ? (
-            <CheckCircleIcon
-              width={20}
-              height={20}
-            />
+            <View className='flex-row gap-3'>
+              <Button
+                className='rounded-full bg-primary/25'
+                onPress={onPressUpdate}
+              >
+                <Feather
+                  name='edit-2'
+                  size={24}
+                  color='black'
+                />
+              </Button>
+              <Button
+                className='rounded-full bg-primary/25'
+                onPress={onPressUnlink}
+              >
+                <Feather
+                  name='trash-2'
+                  size={24}
+                  color='black'
+                />
+              </Button>
+            </View>
           ) : (
             <View className='aspect-square w-[20px] rounded-full border border-gray-400' />
           )}
         </View>
-      </Button>
+      </View>
     );
   };
 
@@ -372,14 +397,34 @@ const AccountSetting = () => {
       <Item
         title={t("email")}
         value={accountEmail}
+        onPressUnlink={() => {
+          if (!accountEmail) {
+            return;
+          }
+
+          unlink({
+            type: IDENTIFIER_TYPE.EMAIL,
+            data: {
+              identifier: accountEmail
+            }
+          });
+        }}
       />
       <Item
         title={t("phone")}
         value={accountPhoneNumber}
-      />
-      <Item
-        title={t("google")}
-        ticked={isLinkedGoogle}
+        onPressUnlink={() => {
+          if (!accountPhoneNumber) {
+            return;
+          }
+
+          unlink({
+            type: IDENTIFIER_TYPE.PHONE_NUMBER,
+            data: {
+              identifier: accountPhoneNumber
+            }
+          });
+        }}
       />
     </>
   );

@@ -29,6 +29,7 @@ import { IAdminReportCommentResponse } from "@/generated/interfaces/recipe.inter
 import ReportStatusText from "../common/StatusText";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
+import { useLocale } from "next-intl";
 
 const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
@@ -78,7 +79,7 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
     name: "Created Date",
     sortable: true,
-    width: "140px",
+    width: "160px",
     center: true,
     hide: 1476,
     cell: ({ createdAt }) => {
@@ -92,7 +93,7 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
     name: "Status",
     sortable: true,
-    width: "100px",
+    width: "120px",
     center: true,
     selector: row => row.status,
     cell: ({ status }) => {
@@ -171,7 +172,7 @@ export default function Table() {
   const [skip, setSkip] = useState(0);
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("DESC");
-  const [lang, setLang] = useState("en");
+  const lang = useLocale();
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
 

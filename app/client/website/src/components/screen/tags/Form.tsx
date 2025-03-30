@@ -41,6 +41,7 @@ import { Plus } from "lucide-react";
 import { createTag, updateTag } from "@/actions/tag.action";
 import { useTags } from "./TagsContext";
 import { useTranslations } from "next-intl";
+import { useInvalidateAdmin } from "@/hooks/query";
 
 type FormProps = {
   type: string;
@@ -55,6 +56,7 @@ const TagForm = ({ type }: FormProps) => {
     getTagToUpdate
   } = useTags();
   const t = useTranslations("administerTags");
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const tag = getTagToUpdate();
   const isUpdate = type === FORM_TYPE.UPDATE;
@@ -99,6 +101,7 @@ const TagForm = ({ type }: FormProps) => {
       formData.append("category", values.category);
 
       if (isImageModified || !isUpdate) {
+        console.log("image", image);
         formData.append("tagImage", image[0].file);
       }
 
@@ -116,6 +119,8 @@ const TagForm = ({ type }: FormProps) => {
         setOpenCreateDialog(false);
         toast.success(t("notifications.createSuccess"));
       }
+
+      invalidateCurrentAdminActivities();
     } catch (error) {
       console.error(error);
       toast.error(t("notifications.error"));

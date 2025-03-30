@@ -27,6 +27,16 @@ public static class ReinforcedTypingsExtension
             typeof(PaginatedAdminActivityLogListResponse),
             typeof(RecipeAdminActivityLogResponse),
             typeof(RecipeLogResponse),
+            typeof(CommentAdminActivityLogResponse),
+            typeof(CommentLogResponse),
+            typeof(UserAdminActivityLogResponse),
+            typeof(UserLogResponse),
+            typeof(UserReportAdminActivityLogResponse),
+            typeof(ReportLogResponse),
+            typeof(CommentReportAdminActivityLogResponse),
+            typeof(RecipeReportAdminActivityLogResponse),
+            typeof(TagAdminActivityLogResponse),
+            typeof(TagLogResponse),
         ], config =>
         {
             config.FlattenHierarchy()

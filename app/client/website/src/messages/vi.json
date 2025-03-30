@@ -105,6 +105,43 @@
       "error": "Đã xảy ra lỗi. Vui lòng thử lại."
     }
   },
+  "administerReportRecipes": {
+    "title": "Quản lý báo cáo",
+    "subtitle": "Công thức",
+    "search": "Tìm kiếm bằng tên người dùng, tên hiển thị, gmail...",
+    "columns": {
+      "recipeName": "Tên công thức",
+      "recipeOwner": "Người tạo",
+      "recipeImage": "Hình ảnh",
+      "reporter": "Người báo cáo",
+      "reportReason": "Lý do báo cáo",
+      "createdDate": "Ngày tạo",
+      "status": "Trạng thái",
+      "action": "Hành động"
+    },
+    "actions": {
+      "detail": "Chi tiết",
+      "disable": "Vô hiệu hóa",
+      "restore": "Khôi phục"
+    },
+    "tooltip": {
+      "viewDetail": "Xem chi tiết",
+      "disableRecipe": "Vô hiệu hóa công thức",
+      "restoreRecipe": "Khôi phục công thức",
+      "markAsCompleted": "Đánh dấu hoàn tất",
+      "restoreReport": "Khôi phục báo cáo"
+    },
+    "notifications": {
+      "restoreRecipeSuccess": "Khôi phục công thức thành công!",
+      "disableRecipeSuccess": "Vô hiệu hóa công thức thành công!",
+      "restoreReportSuccess": "Khôi phục báo cáo thành công!",
+      "completeReportSuccess": "Đánh dấu báo cáo hoàn thành!",
+      "error": "Đã xảy ra lỗi!"
+    },
+    "detail": {
+      "loadMore": "Xem thêm"
+    }
+  },
   "administerReportUsers": {
     "title": "Quản lý báo cáo",
     "subtitle": "Người dùng",
@@ -136,6 +173,192 @@
       "restoreReportSuccess": "Khôi phục báo cáo thành công!",
       "completeReportSuccess": "Đánh dấu báo cáo hoàn thành!",
       "error": "Đã xảy ra lỗi!"
+    }
+  },
+  "administerAdmins": {
+    "title": "Quản lý quản trị viên",
+    "search": "Tìm kiếm theo tên người dùng, họ tên, Gmail, ...",
+    "columns": {
+      "username": "Tên đăng nhập",
+      "displayName": "Tên hiển thị",
+      "email": "Email",
+      "phoneNumber": "Số điện thoại",
+      "dateOfBirth": "Ngày sinh",
+      "createdDate": "Ngày tạo",
+      "address": "Địa chỉ",
+      "status": "Trạng thái",
+      "actions": "Hành động"
+    },
+    "tooltip": {
+      "viewDetail": "Xem chi tiết",
+      "restore": "Khôi phục",
+      "disable": "Vô hiệu hóa",
+      "create": "Tạo mới",
+      "update": "Cập nhật"
+    },
+    "notifications": {
+      "restoreSuccess": "Khôi phục quản trị viên thành công!",
+      "disableSuccess": "Vô hiệu hóa quản trị viên thành công!",
+      "create": {
+        "success": "Tạo quản trị viên mới thành công!"
+      },
+      "update": {
+        "success": "Cập nhật quản trị viên thành công!"
+      },
+      "error": "Đã xảy ra lỗi!"
+    },
+    "form": {
+      "createAdmin": "Tạo Quản trị viên mới",
+      "updateAdmin": "Cập nhật Quản trị viên",
+      "accountId": {
+        "errors": {
+          "required": "Vui lòng nhập mã tài khoản"
+        }
+      },
+      "name": {
+        "label": "Họ tên",
+        "placeholder": "Ví dụ: Nguyễn Văn A",
+        "errors": {
+          "required": "Vui lòng nhập họ tên",
+          "max": "Họ tên không được quá 50 ký tự"
+        }
+      },
+      "gmail": {
+        "label": "Gmail",
+        "placeholder": "Ví dụ: nguyenvana@gmail.com",
+        "errors": {
+          "required": "Vui lòng nhập Gmail",
+          "invalid": "Địa chỉ Gmail không hợp lệ"
+        }
+      },
+      "phone": {
+        "label": "Số điện thoại",
+        "placeholder": "Ví dụ: 0364295940",
+        "errors": {
+          "required": "Vui lòng nhập số điện thoại",
+          "invalid": "Số điện thoại không hợp lệ"
+        }
+      },
+      "password": {
+        "label": "Mật khẩu",
+        "placeholder": "Ví dụ: MatKhau@123",
+        "errors": {
+          "required": "Vui lòng nhập mật khẩu",
+          "min": "Mật khẩu phải có ít nhất 6 ký tự",
+          "max": "Mật khẩu không được quá 50 ký tự"
+        }
+      },
+      "gender": {
+        "label": "Giới tính",
+        "placeholder": "Chọn giới tính",
+        "options": {
+          "male": "Nam",
+          "female": "Nữ"
+        },
+        "errors": {
+          "required": "Vui lòng chọn giới tính",
+          "invalid": "Giới tính không hợp lệ"
+        }
+      },
+      "dateOfBirth": {
+        "label": "Ngày sinh",
+        "placeholder": "Chọn ngày sinh",
+        "errors": {
+          "required": "Vui lòng nhập ngày sinh",
+          "invalid": "Ngày sinh không hợp lệ",
+          "min": "Ngày sinh phải sau ngày 01/01/1900",
+          "max": "Ngày sinh phải ở trong quá khứ"
+        }
+      },
+      "address": {
+        "label": "Địa chỉ",
+        "placeholder": "Ví dụ: TP. Hồ Chí Minh",
+        "errors": {
+          "required": "Vui lòng nhập địa chỉ",
+          "max": "Địa chỉ không được quá 255 ký tự"
+        }
+      },
+      "status": {
+        "label": "Trạng thái",
+        "placeholder": "Chọn trạng thái",
+        "options": {
+          "active": "Hoạt động",
+          "inactive": "Ngừng hoạt động"
+        },
+        "errors": {
+          "required": "Vui lòng chọn trạng thái",
+          "invalid": "Trạng thái không hợp lệ"
+        }
+      },
+      "image": {
+        "label": "Hình ảnh",
+        "required": "Vui lòng chọn hình ảnh",
+        "errors": {
+          "required": "Vui lòng chọn ảnh đại diện",
+          "maxSize": "Kích thước tệp vượt quá giới hạn cho phép (15MB)",
+          "maxNumber": "Chỉ được chọn 1 ảnh",
+          "acceptType": "Chỉ hỗ trợ định dạng .jpg, .jpeg, .png và .webp"
+        },
+        "upload": {
+          "clickToUpload": "Nhấn để tải lên",
+          "dragAndDrop": "hoặc kéo thả tệp",
+          "fileTypes": "Định dạng PNG, JPG, JPEG, hoặc WEBP (Tối đa 15MB)",
+          "removeImage": "Xóa ảnh",
+          "confirmDelete": {
+            "title": "Bạn có chắc chắn muốn xóa ảnh này?",
+            "description": "Sau khi xóa, không thể khôi phục.",
+            "confirm": "Có, xóa",
+            "cancel": "Hủy"
+          }
+        }
+      }
+    },
+    "detail": {
+      "header": {
+        "signOut": "Đăng xuất",
+        "roles": {
+          "ADMIN": "Quản trị viên",
+          "SUPER ADMIN": "Quản trị viên cấp cao"
+        }
+      },
+      "info": {
+        "title": "Thông tin hồ sơ",
+        "fields": {
+          "username": "Tên người dùng",
+          "displayName": "Tên hiển thị",
+          "email": "Email",
+          "phoneNumber": "Số điện thoại",
+          "dob": "Ngày sinh",
+          "address": "Địa chỉ",
+          "gender": "Giới tính",
+          "genders": {
+            "male": "Nam",
+            "female": "Nữ"
+          }
+        }
+      },
+      "activity": {
+        "title": "Hoạt động gần đây",
+        "ago": "trước",
+        "loadMore": "Xem thêm",
+        "types": {
+          "create": "Tạo",
+          "update": "Cập nhật",
+          "disable": "Vô hiệu hóa",
+          "restore": "Khôi phục",
+          "markComplete": "Đánh dấu hoàn thành",
+          "reopen": "Mở lại"
+        },
+        "entity": {
+          "recipe": "Công thức",
+          "comment": "Bình luận",
+          "user": "Người dùng",
+          "tag": "Thẻ",
+          "reportUser": "Báo cáo người dùng",
+          "reportRecipe": "Báo cáo công thức",
+          "reportComment": "Báo cáo bình luận"
+        }
+      }
     }
   },
   "administerTags": {

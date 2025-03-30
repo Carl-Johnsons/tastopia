@@ -196,6 +196,34 @@ export const useResendVerifyCode = () => {
   });
 };
 
+export const useUnlink = () => {
+  return useMutation<
+    ResendVerifyCode,
+    Error,
+    { type: IDENTIFIER_TYPE; data: IAccountIdentifierDTO }
+  >({
+    mutationKey: ["resendVerifyCode"],
+    mutationFn: async ({ type, data }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/unlink/${ENDPOINT_TYPE}`;
+
+      try {
+        const { data: response } = await protectedAxiosInstance.post(url, data);
+        return response;
+      } catch (error) {
+        console.debug("unlink", stringify(error));
+
+        if (error instanceof AxiosError) {
+          const data = error.response?.data as IErrorResponseDTO;
+          throw new Error(data.message);
+        }
+
+        throw new Error("An error has occurred.");
+      }
+    }
+  });
+};
+
 export const useFindAccount = () => {
   return useMutation<
     ISimpleUserResponse,

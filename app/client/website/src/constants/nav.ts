@@ -2,11 +2,6 @@ import { SidebarLink } from "@/types/link";
 
 export const sidebarLinks: SidebarLink[] = [
   {
-    imgURL: "/assets/icons/chart-dots-2.svg",
-    route: "/statistics",
-    label: "statistics"
-  },
-  {
     imgURL: "/assets/icons/grill.svg",
     route: "/recipes",
     label: "administerRecipes"
@@ -39,7 +34,16 @@ export const sidebarLinks: SidebarLink[] = [
         label: "administerReportsUser"
       }
     ]
+  }
+];
+
+export const superAdminSidebarLinks: SidebarLink[] = [
+  {
+    imgURL: "/assets/icons/chart-dots-2.svg",
+    route: "/statistics",
+    label: "statistics"
   },
+  ...sidebarLinks,
   {
     imgURL: "/assets/icons/shield-minus.svg",
     route: "/admins",

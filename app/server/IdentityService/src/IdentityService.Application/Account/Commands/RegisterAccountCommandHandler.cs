@@ -108,7 +108,12 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
         var OTP = OTPUtility.GenerateNumericOTP();
 
         // Generate unique username
-        var username = GenerateUsername(request.FullName);
+        var usernameSet = _userManager.Users.Select(a => a.UserName).ToHashSet();
+        string username = GenerateUsername(request.FullName);
+        do
+        {
+            username = GenerateUsername(request.FullName);
+        } while (usernameSet.Contains(username));
 
         var acc = new ApplicationAccount
         {
@@ -124,6 +129,14 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
         {
             return Result<TokenResponse>.Failure(AccountError.CreateAccountFailed);
         }
+
+        await _grpcUserClient.CreateUserAsync(new GrpcCreateUserRequest
+        {
+            AccountId = acc.Id,
+            AccountUsername = username,
+            FullName = request.FullName,
+            Avatar = "",
+        });
 
         await _serviceBus.Publish(new UserRegisterEvent
         {

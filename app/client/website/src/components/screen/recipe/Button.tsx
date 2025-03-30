@@ -3,6 +3,7 @@
 import { useDisableRecipe, useRestoreRecipe } from "@/api/recipe";
 import InteractiveButton, { DataTableButton } from "@/components/shared/common/Button";
 import { BanIcon } from "@/components/shared/icons";
+import { useInvalidateAdmin } from "@/hooks/query";
 import { Link, useRouter } from "@/i18n/navigation";
 import { DataTableButtonProps } from "@/types/report";
 import { useQueryClient } from "@tanstack/react-query";
@@ -61,12 +62,14 @@ export const RestoreRecipeButton = ({
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useRestoreRecipe();
   const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
       onSuccess: async () => {
         toast.success("Recipe restored successfully.");
         await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
+        invalidateCurrentAdminActivities();
         onSuccess && onSuccess();
       },
       onError: ({ message }) => {
@@ -74,7 +77,14 @@ export const RestoreRecipeButton = ({
         onFailure && onFailure();
       }
     });
-  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <InteractiveButton
@@ -101,12 +111,14 @@ export const DisableRecipeButton = ({
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useDisableRecipe();
   const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
       onSuccess: async () => {
         toast.success("Recipe disabled successfully.");
         await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
+        invalidateCurrentAdminActivities();
         onSuccess && onSuccess();
       },
       onError: ({ message }) => {
@@ -114,7 +126,14 @@ export const DisableRecipeButton = ({
         onFailure && onFailure();
       }
     });
-  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <InteractiveButton

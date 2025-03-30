@@ -115,14 +115,6 @@ namespace IdentityService.Infrastructure.Persistence.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("UnlinkEmailOTP")
-                        .HasMaxLength(6)
-                        .HasColumnType("character varying(6)");
-
-                    b.Property<string>("UnlinkPhoneOTP")
-                        .HasMaxLength(6)
-                        .HasColumnType("character varying(6)");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 

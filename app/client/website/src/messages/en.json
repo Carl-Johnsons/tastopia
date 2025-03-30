@@ -105,6 +105,38 @@
       "error": "An error occurred. Please try again."
     }
   },
+  "administerReportRecipes": {
+    "title": "Administer Reports",
+    "subtitle": "Recipe",
+    "search": "Search by username, name, gmail,...",
+    "columns": {
+      "recipeName": "Recipe name",
+      "recipeOwner": "Recipe owner",
+      "recipeImage": "Image",
+      "reporter": "Reporter",
+      "reportReason": "Report reason",
+      "createdDate": "Created date",
+      "status": "Status",
+      "action": "Actions"
+    },
+    "tooltip": {
+      "viewDetail": "Report detail",
+      "disableRecipe": "Disable recipe",
+      "restoreRecipe": "Restore recipe",
+      "markAsCompleted": "Mark report as completed",
+      "restoreReport": "Restore report"
+    },
+    "notifications": {
+      "restoreRecipeSuccess": "Restore recipe successfully!",
+      "disableRecipeSuccess": "Disable recipe successfully!",
+      "restoreReportSuccess": "Restore report successfully!",
+      "completeReportSuccess": "Mark report as completed successfully!",
+      "error": "Something went wrong!"
+    },
+    "detail": {
+      "loadMore": "Load more"
+    }
+  },
   "administerReportUsers": {
     "title": "Administer Reports",
     "subtitle": "User",
@@ -127,15 +159,201 @@
       "reportDetail": "Report detail",
       "disableUser": "Disable user",
       "restoreUser": "Restore user",
-      "markAsComplete": "Mark report as complete",
+      "markAsComplete": "Mark report as completed",
       "restoreReport": "Restore report"
     },
     "notifications": {
       "restoreUserSuccess": "Restore user successfully!",
       "disableUserSuccess": "Disable user successfully!",
       "restoreReportSuccess": "Restore report successfully!",
-      "completeReportSuccess": "Mark report as complete successfully!",
+      "completeReportSuccess": "Mark report as completed successfully!",
       "error": "Something went wrong!"
+    }
+  },
+  "administerAdmins": {
+    "title": "Administer Admins",
+    "search": "Search by username, name ,gmail, ...",
+    "columns": {
+      "username": "Username",
+      "displayName": "Display Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "dateOfBirth": "Date of Birth",
+      "createdDate": "Created date",
+      "address": "Address",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "tooltip": {
+      "viewDetail": "View detail",
+      "restore": "Restore",
+      "disable": "Disable",
+      "create": "Create",
+      "update": "Update"
+    },
+    "notifications": {
+      "restoreSuccess": "Restore admin successfully!",
+      "disableSuccess": "Disable admin successfully!",
+      "create": {
+        "success": "Create new admin successfully!"
+      },
+      "update": {
+        "success": "Update admin successfully!"
+      },
+      "error": "Something went wrong!"
+    },
+    "form": {
+      "createAdmin": "Create New Admin",
+      "updateAdmin": "Update Admin",
+      "accountId": {
+        "errors": {
+          "required": "Account's ID is required"
+        }
+      },
+      "name": {
+        "label": "Name",
+        "placeholder": "Ex. John Doe",
+        "errors": {
+          "required": "Name is required",
+          "max": "Name must be less than 50 characters"
+        }
+      },
+      "gmail": {
+        "label": "Gmail",
+        "placeholder": "Ex. johndoe@gmail.com",
+        "errors": {
+          "required": "Gmail is required",
+          "invalid": "Invalid gmail address"
+        }
+      },
+      "phone": {
+        "label": "Phone",
+        "placeholder": "Ex. 0364295940",
+        "errors": {
+          "required": "Phone number is required",
+          "invalid": "Invalid phone number"
+        }
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Ex. TastopiaPassword@123",
+        "errors": {
+          "required": "Password is required",
+          "min": "Password must be at least 6 characters",
+          "max": "Password must be less than 50 characters"
+        }
+      },
+      "gender": {
+        "label": "Gender",
+        "placeholder": "Select gender",
+        "options": {
+          "male": "Male",
+          "female": "Female"
+        },
+        "errors": {
+          "required": "Gender is required",
+          "invalid": "Invalid gender"
+        }
+      },
+      "dateOfBirth": {
+        "label": "Date of Birth",
+        "placeholder": "Choose a date",
+        "errors": {
+          "required": "Date of birth is required",
+          "invalid": "Invalid date of birth",
+          "min": "Date of birth must be after 01/01/1900",
+          "max": "Date of birth must be in the past"
+        }
+      },
+      "address": {
+        "label": "Address",
+        "placeholder": "Ex. Can Tho",
+        "errors": {
+          "required": "Address is required",
+          "max": "Address must be less than 255 characters"
+        }
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Select a status",
+        "options": {
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "errors": {
+          "required": "Status is required",
+          "invalid": "Invalid status"
+        }
+      },
+      "image": {
+        "label": "Image",
+        "required": "Image is required",
+        "errors": {
+          "required": "Avatar is required",
+          "maxSize": "Selected file size exceeds the maximum allowed (15MB)",
+          "maxNumber": "Number of selected images exceed 1",
+          "acceptType": "Only .jpg, .jpeg, .png and .webp formats are supported"
+        },
+        "upload": {
+          "clickToUpload": "Click to upload",
+          "dragAndDrop": "or drag and drop",
+          "fileTypes": "PNG, JPG, JPEG, or WEBP (MAX 15MB)",
+          "removeImage": "Remove image",
+          "confirmDelete": {
+            "title": "Are you sure you want to delete this image?",
+            "description": "Once deleted, it cannot be undone.",
+            "confirm": "Yes, delete",
+            "cancel": "Cancel"
+          }
+        }
+      }
+    },
+    "detail": {
+      "header": {
+        "signOut": "Sign out",
+        "roles": {
+          "ADMIN": "Admin",
+          "SUPER ADMIN": "Super Admin"
+        }
+      },
+      "info": {
+        "title": "Profile Information",
+        "fields": {
+          "username": "Username",
+          "displayName": "Display name",
+          "email": "Email",
+          "phoneNumber": "Phone Number",
+          "dob": "Date of Birth",
+          "address": "Address",
+          "gender": "Gender",
+          "genders": {
+            "male": "Male",
+            "female": "Female"
+          }
+        }
+      },
+      "activity": {
+        "title": "Latest Activity",
+        "ago": "ago",
+        "loadMore": "Load more",
+        "types": {
+          "create": "Create",
+          "update": "Update",
+          "disable": "Disable",
+          "restore": "Restore",
+          "markComplete": "Mark as completed",
+          "reopen": "Reopen"
+        },
+        "entity": {
+          "recipe": "Recipe",
+          "comment": "Comment",
+          "user": "User",
+          "tag": "Tag",
+          "reportUser": "User Report",
+          "reportRecipe": "Recipe Report",
+          "reportComment": "Comment Report"
+        }
+      }
     }
   },
   "administerTags": {
@@ -271,5 +489,16 @@
       "tagRankingDescription": "Top tags with the highest views",
       "viewCount": "View"
     }
+  },
+  "activityLog": {
+    "title": "Activity Log",
+    "columns": {
+      "username": "Username",
+      "command": "Command",
+      "entity": "Entity",
+      "description": "Description",
+      "createdDate": "Created Date"
+    },
+    "search": "Search by username, command, entity..."
   }
 }
