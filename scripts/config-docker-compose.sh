@@ -13,8 +13,6 @@ CERT_PATH="$HOME/.aspnet/https"
 
 # Generate a temporary Docker Compose override file
 cat > docker-compose.override.yml <<EOL
-version: '3.8'
-
 services:
   api-gateway:
     volumes:
