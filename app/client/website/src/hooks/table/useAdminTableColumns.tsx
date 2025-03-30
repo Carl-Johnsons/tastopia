@@ -42,20 +42,20 @@ export default function useAdminTableColumns() {
         width: "160px",
         hide: 1010
       },
-      {
-        name: t("dateOfBirth"),
-        sortable: true,
-        width: "160px",
-        center: true,
-        hide: 1476,
-        cell: ({ dob }) => {
-          return (
-            <span className='text-ellipsis text-nowrap text-sm'>
-              {dob ? format(new Date(dob as string), "dd/MM/yyyy") : "-"}
-            </span>
-          );
-        }
-      },
+      // {
+      //   name: t("dateOfBirth"),
+      //   sortable: true,
+      //   width: "160px",
+      //   center: true,
+      //   hide: 1476,
+      //   cell: ({ dob }) => {
+      //     return (
+      //       <span className='text-ellipsis text-nowrap text-sm'>
+      //         {dob ? format(new Date(dob as string), "dd/MM/yyyy") : "-"}
+      //       </span>
+      //     );
+      //   }
+      // },
       {
         name: t("createdDate"),
         sortable: true,

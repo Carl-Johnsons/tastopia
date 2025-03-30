@@ -27,14 +27,14 @@ export default function useDataTableStyles(): UseDataTableStylesResult {
           backgroundColor: primary,
           color: white.DEFAULT,
           // fontWeight: "bold",
-          fontSize: "16px",
+          fontSize: "14px"
           // paddingLeft: "24px"
         }
       },
       rows: {
         style: {
           backgroundColor: "white",
-          color: black.DEFAULT,
+          color: black.DEFAULT
           // paddingLeft: "10px"
         },
         stripedStyle: {
