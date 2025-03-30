@@ -8,6 +8,6 @@ public static class Options
     public static readonly bool AllowLocalLogin = true;
     public static readonly bool AllowRememberLogin = true;
     public static readonly TimeSpan RememberMeLoginDuration = TimeSpan.FromDays(30);
-    public static readonly string NotFound = "No account associate with this identifier";
+    public static readonly string OTPRequired = "OTP field is required";
     public static readonly string AccountDisabledErrorMessage = "Your account has been disabled";
 }

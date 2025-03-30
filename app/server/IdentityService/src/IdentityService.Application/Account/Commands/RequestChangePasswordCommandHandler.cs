@@ -31,7 +31,7 @@ public class RequestChangePasswordCommandHandler : IRequestHandler<RequestChange
         switch (request.Method)
         {
             case AccountMethod.Email:
-                account = await _userManager.FindByEmailAsync(request.Identifier);
+                account = await _userManager.Users.SingleOrDefaultAsync(a => (a.Email ?? "").ToLower() == request.Identifier.ToLower());
                 break;
             case AccountMethod.Phone:
                 account = await _userManager.Users.SingleOrDefaultAsync(a => a.PhoneNumber == request.Identifier);

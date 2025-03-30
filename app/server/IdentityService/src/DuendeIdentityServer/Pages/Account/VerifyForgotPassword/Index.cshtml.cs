@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using System.Net;
-using System.Text.RegularExpressions;
 using UserProto;
 
 namespace DuendeIdentityServer.Pages.Account.VerifyForgotPassword;
@@ -77,39 +76,10 @@ public class Index : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        Console.WriteLine(JsonConvert.SerializeObject(Input, Formatting.Indented));
-        Console.WriteLine(JsonConvert.SerializeObject(View, Formatting.Indented));
-        // check if we are in the context of an authorization request
-        var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
-
         // the user clicked the "cancel" button
-        if (Input.Button != "Verify" && Input.Button != "ChangePassword" && Input.Button != "Resend" && Input.Button != "ReturnVerify")
+        if (Input.Button == "Cancel")
         {
-            if (context != null)
-            {
-                // This "can't happen", because if the ReturnUrl was null, then the context would be null
-                ArgumentNullException.ThrowIfNull(Input.ReturnUrl, nameof(Input.ReturnUrl));
-
-                // if the user cancels, send a result back into IdentityServer as if they 
-                // denied the consent (even if this client does not require consent).
-                // this will send back an access denied OIDC error response to the client.
-                await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
-
-                // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
-                if (context.IsNativeClient())
-                {
-                    // The client is native, so this change in how to
-                    // return the response is for better UX for the end user.
-                    return this.LoadingPage(Input.ReturnUrl);
-                }
-
-                return Redirect(Input.ReturnUrl ?? "~/");
-            }
-            else
-            {
-                // since we don't have a valid context, then we just go back to the home page
-                return Redirect("~/");
-            }
+            return await DenyAuthorization(Input.ReturnUrl);
         }
         if (ModelState.IsValid)
         {
@@ -118,6 +88,16 @@ public class Index : PageModel
                 case "Verify":
                     try
                     {
+                        if (string.IsNullOrEmpty(Input.OTP))
+                        {
+                            View = new ViewModel
+                            {
+                                IsValidOTP = false
+                            };
+                            ModelState.AddModelError("Input.OTP", Options.OTPRequired);
+                            return Page();
+                        }
+
                         var result = await _sender.Send(new CheckForgotPasswordOTPQuery
                         {
                             Identifier = Input.Identifier,
@@ -151,13 +131,6 @@ public class Index : PageModel
                         throw;
                     }
                     break;
-                case "ReturnVerify":
-                    View = new ViewModel
-                    {
-                        IsValidOTP = false
-                    };
-                    ModelState.Clear();
-                    return Page();
                 case "Resend":
                     try
                     {
@@ -198,7 +171,7 @@ public class Index : PageModel
                     {
                         // if (Regex.IsMatch(Input.Password, "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{6,}$"))
                         // {
-                            // ModelState.AddModelError("Input.Password", "Password must have length at least 6 and contain at least 1 uppercase, 1 lowercase, 1 number, 1 symbol");
+                        // ModelState.AddModelError("Input.Password", "Password must have length at least 6 and contain at least 1 uppercase, 1 lowercase, 1 number, 1 symbol");
                         // }
 
                         if (Input.Password != Input.RetypePassword)
@@ -217,7 +190,7 @@ public class Index : PageModel
                         var result = await _sender.Send(new ChangePasswordCommand
                         {
                             Identifier = Input.Identifier,
-                            OTP = Input.OTP,
+                            OTP = Input.OTP!,
                             Method = IdentifierUtility.Check(Input.Identifier),
                             Password = Input.Password
                         });
@@ -253,7 +226,6 @@ public class Index : PageModel
                 default:
                     break;
             }
-            ModelState.AddModelError(string.Empty, Options.NotFound);
         }
 
         // something went wrong, show form with error
@@ -261,12 +233,17 @@ public class Index : PageModel
         {
             case "Verify":
             case "Resend":
-            case "ReturnVerify":
                 View = new ViewModel
                 {
                     IsValidOTP = false
                 };
                 break;
+            case "ReturnVerify":
+                return RedirectToPage(new
+                {
+                    returnUrl = Input.ReturnUrl,
+                    identifier = Input.Identifier
+                });
             case "ChangePassword":
                 View = new ViewModel
                 {
@@ -275,5 +252,36 @@ public class Index : PageModel
                 break;
         }
         return Page();
+    }
+
+    private async Task<IActionResult> DenyAuthorization(string? returnUrl)
+    {
+        // check if we are in the context of an authorization request
+        var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+        if (context != null)
+        {
+            // This "can't happen", because if the ReturnUrl was null, then the context would be null
+            ArgumentNullException.ThrowIfNull(returnUrl, nameof(returnUrl));
+
+            // if the user cancels, send a result back into IdentityServer as if they 
+            // denied the consent (even if this client does not require consent).
+            // this will send back an access denied OIDC error response to the client.
+            await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
+
+            // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
+            if (context.IsNativeClient())
+            {
+                // The client is native, so this change in how to
+                // return the response is for better UX for the end user.
+                return this.LoadingPage(returnUrl);
+            }
+
+            return Redirect(returnUrl ?? "~/");
+        }
+        else
+        {
+            // since we don't have a valid context, then we just go back to the home page
+            return Redirect("~/");
+        }
     }
 }

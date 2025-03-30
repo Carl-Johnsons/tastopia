@@ -123,6 +123,16 @@ internal static class HostingExtensions
 
     public static async Task<WebApplication> ConfigurePipelineAsync(this WebApplication app)
     {
+        app.Use(async (context, next) =>
+        {
+            // Add your custom CSP header, allowing images from res.cloudinary.com.
+            context.Response.Headers.Append("Content-Security-Policy",
+                                "default-src 'self'; img-src 'self' https://res.cloudinary.com;");
+
+            await next();
+        });
+
+
         app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
         app.UseSwaggerServices();
 

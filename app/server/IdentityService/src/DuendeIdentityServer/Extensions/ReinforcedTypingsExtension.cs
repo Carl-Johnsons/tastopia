@@ -37,7 +37,8 @@ public static class ReinforcedTypingsExtension
             typeof(ChangePasswordDTO),
             typeof(CreateAdminAccountDTO),
             typeof(UpdateAdminAccountDTO),
-            typeof(VerifyUpdateIdentifierDTO)
+            typeof(VerifyUpdateIdentifierDTO),
+            typeof(UpdateCurrentAdminAccountDTO)
         ], config =>
         {
             config.FlattenHierarchy()

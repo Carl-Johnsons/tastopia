@@ -1,50 +1,61 @@
 ﻿.btn-google {
-  border-radius: 24px;
-  background-color: white;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 30px;
-  padding-right: 30px;
+    border-radius: 24px;
+    background-color: white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
 }
 
 .hr-with-text {
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
-.hr-with-text hr {
-  border: 0;
-  border-top: 1px solid #ccc;
-  width: 100%;
-  margin: 0;
-}
+    .hr-with-text hr {
+        border: 0;
+        border-top: 1px solid #ccc;
+        width: 100%;
+        margin: 0;
+    }
 
 .hr-text {
-  position: relative;
-  padding: 0 10px;
-  background-color: white;
-  font-weight: bold;
+    position: relative;
+    padding: 0 10px;
+    background-color: white;
+    font-weight: bold;
 }
 
 .card {
-  max-width: 70vw;
-  min-width: 300px;
+    max-width: 70vw;
+    min-width: 300px;
 }
 
 .small {
-  font-size: 1rem;
+    font-size: 1rem;
 }
 
 h1:has(.small) {
-  line-height: 1.9rem;
+    line-height: 1.9rem;
 }
 
 @media only screen and (min-width: 768px) {
-  .card {
-    min-width: 35vw;
-    max-width: 35vw;
-  }
+    .card {
+        min-width: 35vw;
+        max-width: 35vw;
+    }
+}
+
+.avatar {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.back-icon {
+    width: 30px;
+    height: 30px;
 }
