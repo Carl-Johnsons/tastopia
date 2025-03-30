@@ -6,11 +6,13 @@ export interface AdminState {
   isFormOpen: boolean;
   formType: "create" | "update";
   targetId?: string;
+  isFormLoading: boolean;
 }
 
 const initialState: AdminState = {
   isFormOpen: false,
-  formType: "create"
+  formType: "create",
+  isFormLoading: false
 };
 
 export const AdminSlice = createSlice({

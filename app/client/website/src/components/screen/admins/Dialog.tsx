@@ -20,6 +20,9 @@ import { closeForm, saveAdminData, useSelectAdmin } from "@/slices/admin.slice";
 import { useCallback, useMemo } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { LoadingIcon } from "@/components/shared/icons";
+import Loader from "@/components/ui/Loader";
 
 type Props = DialogProps & {
   buttonClassName?: string;
@@ -28,7 +31,7 @@ type Props = DialogProps & {
 };
 
 const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
-  const { formType, targetId, isFormOpen } = useSelectAdmin();
+  const { formType, targetId, isFormOpen, isFormLoading } = useSelectAdmin();
   const { height } = useWindowDimensions();
   const { form, submitForm, isSubmitting } = useAdminForm({
     formType,
@@ -87,7 +90,13 @@ const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
             </DialogClose>
           </div>
         </DialogHeader>
-        <AdminForm form={form} />
+        {isFormLoading ? (
+          <div className='h-[75vh] w-full pt-20'>
+            <Loader />
+          </div>
+        ) : (
+          <AdminForm form={form} />
+        )}
         <DialogFooter>
           <InteractiveButton
             title={isCreate ? tTooltip("create") : tTooltip("update")}

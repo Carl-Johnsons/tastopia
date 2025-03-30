@@ -22,8 +22,6 @@ export default function ActivityFeed({ accountId, self }: ActivityFeedProps) {
   const { data, isFetching, isLoading, hasNextPage, fetchNextPage } =
     useGetAdminActivities(accountId, { lang, self });
 
-  console.log(data);
-
   return (
     <div className='bg-white_black100 rounded-xl border border-gray-200 p-6 shadow-sm dark:border-gray-600'>
       <h2 className='h3-semibold text-black_white mb-6'>{t("title")}</h2>

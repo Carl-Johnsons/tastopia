@@ -50,7 +50,7 @@ export default function useAdminTableColumns() {
         cell: ({ dob }) => {
           return (
             <span className='text-ellipsis text-nowrap text-sm'>
-              {format(new Date(dob as string), "dd/MM/yyyy")}
+              {dob ? format(new Date(dob as string), "dd/MM/yyyy") : "-"}
             </span>
           );
         }
