@@ -60,7 +60,9 @@ public class Index : PageModel
     {
         if (!string.IsNullOrEmpty(Input.Identifier))
         {
-            var acc = await _userManager.Users.SingleOrDefaultAsync(a => a.Email == Input.Identifier || a.PhoneNumber == Input.Identifier);
+            var normalizedIdentifier = Input.Identifier.ToLower();
+
+            var acc = await _userManager.Users.SingleOrDefaultAsync(a => (a.Email ?? "").ToLower() == normalizedIdentifier || a.PhoneNumber == normalizedIdentifier);
 
             if (acc == null)
             {
@@ -143,6 +145,11 @@ public class Index : PageModel
                 case "Recover":
                     try
                     {
+                        if (string.IsNullOrEmpty(Input.Identifier))
+                        {
+                            ModelState.AddModelError("Input.Identifier", Options.IdentifierRequired);
+                            return Page();
+                        }
                         var method = IdentifierUtility.Check(Input.Identifier);
 
                         var result = await _sender.Send(new RequestChangePasswordCommand

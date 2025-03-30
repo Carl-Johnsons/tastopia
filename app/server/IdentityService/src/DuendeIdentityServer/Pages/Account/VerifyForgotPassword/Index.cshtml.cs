@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 using System.Net;
-using System.Text.RegularExpressions;
 using UserProto;
 
 namespace DuendeIdentityServer.Pages.Account.VerifyForgotPassword;
@@ -118,6 +117,16 @@ public class Index : PageModel
                 case "Verify":
                     try
                     {
+                        if (string.IsNullOrEmpty(Input.OTP))
+                        {
+                            View = new ViewModel
+                            {
+                                IsValidOTP = false
+                            };
+                            ModelState.AddModelError("Input.OTP", Options.OTPRequired);
+                            return Page();
+                        }
+
                         var result = await _sender.Send(new CheckForgotPasswordOTPQuery
                         {
                             Identifier = Input.Identifier,
@@ -151,13 +160,6 @@ public class Index : PageModel
                         throw;
                     }
                     break;
-                case "ReturnVerify":
-                    View = new ViewModel
-                    {
-                        IsValidOTP = false
-                    };
-                    ModelState.Clear();
-                    return Page();
                 case "Resend":
                     try
                     {
@@ -198,7 +200,7 @@ public class Index : PageModel
                     {
                         // if (Regex.IsMatch(Input.Password, "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{6,}$"))
                         // {
-                            // ModelState.AddModelError("Input.Password", "Password must have length at least 6 and contain at least 1 uppercase, 1 lowercase, 1 number, 1 symbol");
+                        // ModelState.AddModelError("Input.Password", "Password must have length at least 6 and contain at least 1 uppercase, 1 lowercase, 1 number, 1 symbol");
                         // }
 
                         if (Input.Password != Input.RetypePassword)
@@ -253,7 +255,6 @@ public class Index : PageModel
                 default:
                     break;
             }
-            ModelState.AddModelError(string.Empty, Options.NotFound);
         }
 
         // something went wrong, show form with error
@@ -261,12 +262,17 @@ public class Index : PageModel
         {
             case "Verify":
             case "Resend":
-            case "ReturnVerify":
                 View = new ViewModel
                 {
                     IsValidOTP = false
                 };
                 break;
+            case "ReturnVerify":
+                return RedirectToPage(new
+                {
+                    returnUrl = Input.ReturnUrl,
+                    identifier = Input.Identifier
+                });
             case "ChangePassword":
                 View = new ViewModel
                 {
