@@ -14,8 +14,7 @@ class BaseApiController {
 }
 
 class AccountController {
-    +VerifyEmail(VerifyAccountDTO dto): async Task<IActionResult>
-    +VerifyPhone(VerifyAccountDTO dto): async Task<IActionResult>
+    +VerifyAccount(string method, VerifyAccountDTO dto): async Task<IActionResult>
 }
 
 class VerifyAccountCommand {

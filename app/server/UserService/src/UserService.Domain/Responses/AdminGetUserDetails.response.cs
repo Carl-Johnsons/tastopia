@@ -18,7 +18,6 @@ public class AdminGetUserDetailResponse
     public string AccountUsername { get; set; } = null!;
     public string Role { get; set; } = null!;
     public bool IsCurrentUser { get; set; } = false;
-
     public List<UserSetting> Settings { get; set; } = []; 
     //Account
     public string? AccountEmail { get; set; }
