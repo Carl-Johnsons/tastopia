@@ -41,7 +41,7 @@ const columns: TableColumn<IAdminRecipeResponse>[] = [
     sortable: true,
     wrap: true,
     grow: 3,
-    cell: ({ ingredients }) => <span className='py-1'>{ingredients}</span>
+    cell: ({ ingredients }) => <span className='py-2'>{ingredients}</span>
   },
   {
     name: "Username",
@@ -73,6 +73,7 @@ const columns: TableColumn<IAdminRecipeResponse>[] = [
     name: "Status",
     sortable: true,
     center: true,
+    hide: 520,
     cell: ({ isActive }) => {
       return (
         <ItemStatusText

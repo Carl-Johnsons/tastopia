@@ -43,7 +43,7 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
     name: "Content",
     sortable: true,
     minWidth: "200px",
-    cell: ({ commentContent }) => <span className='py-1'>{commentContent}</span>
+    cell: ({ commentContent }) => <span className='py-2'>{commentContent}</span>
   },
   {
     name: "Recipe Image",
@@ -95,6 +95,7 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
     sortable: true,
     width: "120px",
     center: true,
+    hide: 500,
     selector: row => row.status,
     cell: ({ status }) => {
       return (

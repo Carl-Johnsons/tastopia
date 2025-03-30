@@ -41,16 +41,22 @@ export const ItemStatusText = ({
   const t = useTranslations("component.status");
 
   return (
-    <div className='flex-center flex min-w-fit gap-2'>
+    <div className='flex-center flex min-w-max gap-2'>
       {isActive ? (
         <>
           <div className='size-2.5 rounded-full bg-green-500' />
-          <span className={`font-medium text-black_white ${coloring && "text-green-500"}`}>{t("active")}</span>
+          <span
+            className={`text-black_white font-medium ${coloring && "text-green-500"}`}
+          >
+            {t("active")}
+          </span>
         </>
       ) : (
         <>
           <div className='size-2.5 rounded-full bg-red' />
-          <span className={`font-medium text-black_white ${coloring && "text-red"}`}>{t("inactive")}</span>
+          <span className={`text-black_white font-medium ${coloring && "text-red"}`}>
+            {t("inactive")}
+          </span>
         </>
       )}
     </div>

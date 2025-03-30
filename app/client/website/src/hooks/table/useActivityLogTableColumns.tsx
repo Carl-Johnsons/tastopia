@@ -15,7 +15,7 @@ export default function useActivityLogTableColumns() {
         name: t("username"),
         selector: row => row.accountUsername ?? "",
         sortable: true,
-        maxWidth: "200px"
+        width: "165px"
       },
       {
         name: t("command"),
@@ -38,12 +38,13 @@ export default function useActivityLogTableColumns() {
         name: t("entity"),
         selector: row => getEntityTitle(row.entityType),
         sortable: true,
+        width: "140px"
       },
       {
         name: t("description"),
         sortable: true,
         grow: 2,
-        hide: 934,
+        hide: 974,
         cell: ({ entityType, activityType }) => {
           const description = `${getActivityTitle(activityType)} ${getEntityTitle(entityType).toLowerCase()}`;
 
@@ -59,7 +60,7 @@ export default function useActivityLogTableColumns() {
         sortable: true,
         width: "200px",
         center: true,
-        hide: 1476,
+        hide: 1160,
         cell: ({ createdAt }) => {
           return (
             <span className='text-ellipsis text-nowrap text-sm'>
