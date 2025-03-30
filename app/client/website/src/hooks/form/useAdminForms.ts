@@ -128,6 +128,11 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
           await updateAdmin(formData);
           toast.success(tNotification("update.success"));
           await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
+
+          const isSelf = currentUserId === targetId;
+          if (isSelf) {
+            await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
+          }
         }
 
         dispatch(closeForm());

@@ -21,7 +21,7 @@ export default function useAdminTableColumns() {
         name: t("username"),
         selector: row => row.userName,
         sortable: true,
-        maxWidth: "200px"
+        width: "160px"
       },
       {
         name: t("displayName"),
@@ -39,12 +39,13 @@ export default function useAdminTableColumns() {
         name: t("phoneNumber"),
         selector: row => row.phoneNumber as string,
         sortable: true,
+        width: "160px",
         hide: 1010
       },
       {
         name: t("dateOfBirth"),
         sortable: true,
-        width: "140px",
+        width: "160px",
         center: true,
         hide: 1476,
         cell: ({ dob }) => {
@@ -58,7 +59,7 @@ export default function useAdminTableColumns() {
       {
         name: t("createdDate"),
         sortable: true,
-        width: "140px",
+        width: "160px",
         center: true,
         hide: 1476,
         cell: ({ createdAt }) => {
@@ -72,6 +73,7 @@ export default function useAdminTableColumns() {
       {
         name: t("status"),
         sortable: true,
+        hide: 510,
         cell: ({ isActive }) => {
           return (
             <ItemStatusText

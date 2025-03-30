@@ -15,7 +15,8 @@ export const reportColumns = (t: any) => [
   {
     name: t("columns.username"),
     selector: (report: IAdminUserReportResponse) => report?.reportedUsername,
-    sortable: true
+    sortable: true,
+    width: "160px"
   },
   {
     name: t("columns.name"),

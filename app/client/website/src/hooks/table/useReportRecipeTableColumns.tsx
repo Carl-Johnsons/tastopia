@@ -86,6 +86,8 @@ export default function useReportRecipeTableColumns() {
       name: t("status"),
       sortable: true,
       center: true,
+      width: "130px",
+      hide: 500,
       selector: row => row.status,
       cell: ({ status }) => {
         return (
