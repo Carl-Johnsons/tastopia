@@ -3,9 +3,11 @@ using Contract.DTOs.UserDTO;
 using Google.Protobuf.Collections;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using UserProto;
 using UserService.Application.Settings.Queries;
+using UserService.Application.UserReports.Queries;
 using UserService.Application.Users.Commands;
 using UserService.Application.Users.Queries;
 using UserService.Domain.Entities;
@@ -53,10 +55,10 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         }).ToDictionary(u => u.AccountId);
 
 
-        var mapField = new MapField<string, GrpcSimpleUser>();
+        var mapField = new MapField<string, CommonProto.GrpcSimpleUser>();
         foreach (var (key, value) in mapUser)
         {
-            mapField[key.ToString()] = new GrpcSimpleUser
+            mapField[key.ToString()] = new CommonProto.GrpcSimpleUser
             {
                 AccountId = value.AccountId.ToString(),
                 AvtUrl = value.AvtUrl,
@@ -227,7 +229,6 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
 
 
     }
-
     public override async Task<GrpcListAccountIds> GetUserFollowing(GrpcAccountIdRequest request, ServerCallContext context)
     {
         if (string.IsNullOrEmpty(request.AccountId))
@@ -250,4 +251,102 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         return result;
     }
 
+    public override async Task<GrpcSimpleUserReport> GetSimpleUserReport(GrpcGetUserReportRequest request, ServerCallContext context)
+    {
+        var hashSet = request.ReportIds.Select(Guid.Parse).ToHashSet();
+
+        var result = await _sender.Send(new GetUserReportQueryByHashSet
+        {
+            Lang = request.Lang,
+            ReportIds = hashSet
+        });
+
+        result.ThrowIfFailure();
+
+
+        var mapField = new MapField<string, GrpcUserReport>();
+        foreach (var (k, v) in result.Value!)
+        {
+            RepeatedField<string> reasonRepeatedField = [.. v.Report.Reasons];
+
+            mapField.Add(k.ToString(), new GrpcUserReport
+            {
+                Report = new CommonProto.GrpcSimpleReport
+                {
+                    Id = v.Report.Id.ToString(),
+                    AdditionalDetail = v.Report.AdditionalDetail,
+                    CreatedAt = v.Report.CreatedAt.ToTimestamp(),
+                    Reasons = { reasonRepeatedField },
+                    ReporterAccountId = v.Report.ReporterAccountId.ToString(),
+                    Status = v.Report.Status
+                },
+                User = new CommonProto.GrpcSimpleUser
+                {
+                    AccountId = v.User.AccountId.ToString(),
+                    AccountUsername = v.User.AccountUsername,
+                    AvtUrl = v.User.AvtUrl,
+                    DisplayName = v.User.DisplayName
+                },
+                Reporter = new CommonProto.GrpcSimpleUser
+                {
+                    AccountId = v.Reporter.AccountId.ToString(),
+                    AccountUsername = v.Reporter.AccountUsername,
+                    AvtUrl = v.Reporter.AvtUrl,
+                    DisplayName = v.Reporter.DisplayName
+                }
+            });
+        }
+
+        return new GrpcSimpleUserReport
+        {
+            Reports = { mapField }
+        };
+    }
+
+    public override async Task<GrpcEmpty> CreateAdminUser(GrpcCreateAdminRequest request, ServerCallContext context)
+    {
+        var result = await _sender.Send(new CreateUserCommand
+        {
+            User = new User
+            {
+                AccountId = Guid.Parse(request.AccountId),
+                AccountUsername = request.AccountUsername,
+                Address = request.Address,
+                AvatarUrl = request.AvatarURL,
+                DisplayName = request.DisplayName,
+                Dob = request.Dob.ToDateTime(),
+                Gender = request.Gender,
+                IsAdmin = true,
+                IsAccountActive = true,
+                Bio = "",
+                BackgroundUrl = "",
+                TotalFollower = 0,
+                TotalFollowing = 0,
+                TotalRecipe = 0
+            }
+        });
+
+        result.ThrowIfFailure();
+
+        return new GrpcEmpty();
+    }
+
+    public override async Task<GrpcEmpty> UpdateAdminUser(GrpcUpdateAdminRequest request, ServerCallContext context)
+    {
+        var result = await _sender.Send(new UpdateGprcUserCommand
+        {
+            AccountId = Guid.Parse(request.AccountId),
+            Username = request.AccountUsername,
+            Address = request.Address,
+            AvatarUrl = request.AvatarURL,
+            DisplayName = request.DisplayName,
+            Dob = request.Dob.ToDateTime(),
+            Gender = request.Gender,
+            IsDobUpdate = request.IsDoBUpdated
+        });
+
+        result.ThrowIfFailure();
+
+        return new GrpcEmpty();
+    }
 }

@@ -15,10 +15,12 @@ export default function SearchBar({ onChange, isLoading, placeholder }: Props) {
     <div
       className={`flex-center relative w-full max-w-lg items-center gap-2 rounded-2xl border-[1.5px] bg-primary/15 px-4 py-3 ${isFocused ? "border-primary bg-transparent" : "border-transparent"}`}
     >
+    <div className="pb-1">
       <Search
         className='text-primary'
         size={20}
       />
+    </div>
       <input
         ref={ref}
         type='text'

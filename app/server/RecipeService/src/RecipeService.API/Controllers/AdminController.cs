@@ -2,7 +2,6 @@
 using Contract.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
 using RecipeService.API.DTOs;
 using RecipeService.Application.Activities;
 using RecipeService.Application.Recipes.Queries;
@@ -13,7 +12,6 @@ using RecipeService.Application.Tags.Queries;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
-using static RecipeService.Application.Recipes.Queries.AdminGetNumberOfRecipesStatisticQueryHandler;
 
 namespace RecipeService.API.Controllers;
 [Route("api/admin/recipe")]
@@ -262,12 +260,16 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> CreateTag([FromForm] CreateTagDTO createTagDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new CreateTagCommand
         {
             Code = createTagDTO.Code,
             Value = createTagDTO.Value,
             Category = createTagDTO.Category,
-            TagImage = createTagDTO.TagImage
+            TagImage = createTagDTO.TagImage,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -279,6 +281,9 @@ public class AdminController : BaseApiController
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> UpdateTag([FromForm] UpdateTagDTO updateTagDTO)
     {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
         var result = await _sender.Send(new UpdateTagCommand
         {
             TagId = updateTagDTO.TagId,
@@ -286,7 +291,8 @@ public class AdminController : BaseApiController
             Value = updateTagDTO.Value,
             Category = updateTagDTO.Category,
             Status = updateTagDTO.Status,
-            TagImage = updateTagDTO.TagImage
+            TagImage = updateTagDTO.TagImage,
+            CurrentAccountId = Guid.Parse(subjectId!)
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -356,5 +362,31 @@ public class AdminController : BaseApiController
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
+    }
+
+    [HttpPost("test-comment-detail")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> TestCommentDetail([FromBody] List<A> _a)
+    {
+        HashSet<string> set = new HashSet<string>();
+        foreach (var a in _a)
+        {
+            set.Add(a.Id1 + "~" + a.Id2);
+        }
+
+        var result = await _sender.Send(new GetCommentDetailQuery
+        {
+            RecipeAndCommentIdSet = set
+        });
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
+    public class A
+    {
+        public Guid Id1;
+        public Guid Id2;
     }
 }

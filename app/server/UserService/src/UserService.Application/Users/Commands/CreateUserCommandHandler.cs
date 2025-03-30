@@ -25,11 +25,17 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Resul
     {
         var user = _context.Users.FirstOrDefault(us => us.AccountId == request.User.AccountId);
 
-        if(user != null) {
+        if (user != null)
+        {
             return Result<User?>.Failure(UserError.AlreadyExistUser);
         }
+        if (request.User.Gender != null && !Enum.IsDefined(typeof(GenderType), request.User.Gender))
+        {
+            return Result<User?>.Failure(UserError.NullParameters, "Gender must be MALE or FEMALE");
+        }
 
-        user = new User {
+        user = new User
+        {
             AccountId = request.User.AccountId,
             AvatarUrl = request.User.AvatarUrl,
             BackgroundUrl = request.User.BackgroundUrl,

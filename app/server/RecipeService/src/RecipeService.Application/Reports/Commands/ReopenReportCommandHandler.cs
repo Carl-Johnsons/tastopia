@@ -57,7 +57,7 @@ public class ReopenReportCommandHandler : IRequestHandler<ReopenReportCommand, R
                 await _serviceBus.Publish(new AddActivityLogEvent
                 {
                     AccountId = request.CurrentAccountId,
-                    ActivityType = ActivityType.MARK_COMPLETE,
+                    ActivityType = ActivityType.REOPEN,
                     EntityId = report.Id,
                     EntityType = ActivityEntityType.REPORT_RECIPE
                 });
@@ -67,7 +67,7 @@ public class ReopenReportCommandHandler : IRequestHandler<ReopenReportCommand, R
                 await _serviceBus.Publish(new AddActivityLogEvent
                 {
                     AccountId = request.CurrentAccountId,
-                    ActivityType = ActivityType.MARK_COMPLETE,
+                    ActivityType = ActivityType.REOPEN,
                     EntityId = report.Id,
                     EntityType = ActivityEntityType.REPORT_COMMENT
                 });

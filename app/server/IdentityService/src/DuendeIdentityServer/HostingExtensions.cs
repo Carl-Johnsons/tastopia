@@ -1,4 +1,5 @@
 using Contract.Extension;
+using Contract.Middleware;
 using Contract.Utilities;
 using Duende.IdentityServer;
 using Duende.IdentityServer.ResponseHandling;
@@ -125,11 +126,6 @@ internal static class HostingExtensions
     {
         app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
         app.UseSwaggerServices();
-
-        if (EnvUtility.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });

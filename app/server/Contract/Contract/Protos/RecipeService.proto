@@ -1,14 +1,19 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "Protos/Common.proto";
+
 package RecipeProto;
 
 service GrpcRecipe {
     rpc GetAllTags(GrpcEmpty) returns (GrpcListTagDTO);
+    rpc GetTags(GrpcGetTagsRequest) returns (GrpcMapTagResponse);
     rpc GetRecipeDetails(GrpcRecipeIdRequest) returns (GrpcRecipeDetailsDTO);
     rpc GetSimpleRecipes(GrpcGetSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
     rpc GetSimpleComments(GrpcGetSimpleCommentRequest) returns (GrpcMapSimpleComments);
     rpc SearchSimpleRecipes(GrpcSearchSimpleRecipeRequest) returns (GrpcMapSimpleRecipes);
+    rpc GetCommentReports(GrpcGetCommentReportRequest) returns (GrpcMapCommentReports);
+    rpc GetRecipeReports(GrpcGetRecipeReportRequest) returns (GrpcMapRecipeReports);
 }
 ////////////////////////// COMMON
 message GrpcEmpty {}
@@ -23,12 +28,21 @@ message GrpcGetSimpleRecipeRequest {
 }
 
 message GrpcGetSimpleCommentRequest {
-    repeated GrpcRecipeIdsAndCommentIds Ids = 1; 
+    repeated string Ids = 1; // Key syntax is recipeId~commentId
 }
 
-message GrpcRecipeIdsAndCommentIds {
-    string RecipeId = 1;
-    string CommentId = 2;
+message GrpcGetCommentReportRequest {
+    repeated string Ids = 1;
+    string Lang = 2;
+}
+
+message GrpcGetRecipeReportRequest {
+    repeated string Ids = 1;
+    string Lang = 2;
+}
+
+message GrpcGetTagsRequest {
+    repeated string Ids = 1;
 }
 
 message GrpcSearchSimpleRecipeRequest {
@@ -65,6 +79,10 @@ message GrpcCommentDTO {
     string Content = 2;
     string AccountId = 3;
     bool IsActive = 4;
+}
+
+message GrpcMapTagResponse {
+    map<string, GrpcTagDTO> Tags = 1;
 }
 
 message GrpcListTagDTO{
@@ -108,20 +126,43 @@ message GrpcSimpleRecipe {
     string Description = 5;
     int32 VoteDiff = 6;
     int32 NumberOfComment = 7;
-    string AuthorDisplayName = 8;
-    string AuthorAvtUrl = 9;
-    string Vote = 10;
-    google.protobuf.Timestamp CreatedAt = 11;
-    google.protobuf.Timestamp UpdatedAt = 12;
+    string AuthorUsername = 8;
+    string AuthorDisplayName = 9;
+    string AuthorAvtUrl = 10;
+    string Vote = 11;
+    google.protobuf.Timestamp CreatedAt = 12;
+    google.protobuf.Timestamp UpdatedAt = 13;
 }
 
 message GrpcSimpleComment {
     string Id = 1;
     string AuthorId = 2;
     string AuthorUsername = 3;
-    string AuthorAvatarURL = 4;
-    string Content = 5;
-    string IsActive = 6;
-    google.protobuf.Timestamp CreatedAt = 7;
-    google.protobuf.Timestamp UpdatedAt = 8;
+    string AuthorDisplayName = 4;
+    string AuthorAvatarURL = 5;
+    string Content = 6;
+    bool IsActive = 7;
+    google.protobuf.Timestamp CreatedAt = 8;
+    google.protobuf.Timestamp UpdatedAt = 9;
+}
+
+message GrpcCommentReportResponse {
+    CommonProto.GrpcSimpleUser Reporter = 1;
+    GrpcSimpleRecipe Recipe = 2;
+    GrpcSimpleComment Comment = 3;
+    CommonProto.GrpcSimpleReport Report = 4;
+}
+
+message GrpcRecipeReportResponse {
+    CommonProto.GrpcSimpleUser Reporter = 1;
+    GrpcSimpleRecipe Recipe = 2;
+    CommonProto.GrpcSimpleReport Report = 3;
+}
+
+message GrpcMapCommentReports {
+    map<string, GrpcCommentReportResponse> CommentReports = 1;
+}
+
+message GrpcMapRecipeReports {
+    map<string, GrpcRecipeReportResponse> RecipeReports = 1;
 }

@@ -16,14 +16,15 @@ public class AdminController : BaseApiController
 
     [HttpGet()]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(PaginatedUserViewRecipeDetailListResponse), 200)]
+    [ProducesResponseType(typeof(PaginatedAdminActivityLogListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> GetUserViewRecipeDetailHistory([FromQuery] PaginatedDTO dto, [FromQuery] Guid accountId)
+    public async Task<IActionResult> GetAdminActivityLog([FromQuery] PaginatedDTO dto, [FromQuery] Guid accountId, [FromQuery] string? lang)
     {
         var result = await _sender.Send(new GetAdminActivityLogQuery
         {
             AccountId = accountId,
             DTO = dto,
+            Lang = lang ?? "en"
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

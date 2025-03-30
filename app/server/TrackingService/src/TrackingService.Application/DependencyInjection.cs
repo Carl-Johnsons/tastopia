@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RecipeProto;
 using System.Reflection;
 using TrackingService.Application.Configs;
+using UserProto;
 
 
 namespace TrackingService.Application;
@@ -34,6 +35,9 @@ public static class DependencyInjection
             options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_RECIPE", "Not Found"));
         });
 
-     
+        services.AddGrpcClient<GrpcUser.GrpcUserClient>(options =>
+        {
+            options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_USER", "Not Found"));
+        });
     }
 }

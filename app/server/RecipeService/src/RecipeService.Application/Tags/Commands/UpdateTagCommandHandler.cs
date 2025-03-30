@@ -1,4 +1,6 @@
-﻿using Contract.Event.UploadEvent;
+﻿using Contract.Constants;
+using Contract.Event.TrackingEvent;
+using Contract.Event.UploadEvent;
 using Contract.Utilities;
 using Google.Protobuf.Collections;
 using Microsoft.AspNetCore.Http;
@@ -17,8 +19,9 @@ public class UpdateTagCommand : IRequest<Result<Tag?>>
     public string Code { get; set; } = null!;
     public string Value { get; set; } = null!;
     public string Category { get; set; } = null!;
-    public string Status { get; set; } = null!; 
+    public string Status { get; set; } = null!;
     public IFormFile? TagImage { get; set; }
+    public Guid CurrentAccountId { get; set; }
 
 }
 public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<Tag?>>
@@ -42,6 +45,7 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
         var rollbackUrl = new List<string>();
         try
         {
+            ActivityType activityType = ActivityType.UPDATE;
             var tagId = request.TagId;
             if (tagId == Guid.Empty)
             {
@@ -71,6 +75,13 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
                 rollbackUrl.Add(result);
             }
 
+            var requestStatus = Enum.Parse<TagStatus>(request.Status);
+
+            if (tag.Status != requestStatus)
+            {
+                activityType = requestStatus == TagStatus.Inactive ? ActivityType.DISABLE : ActivityType.RESTORE;
+            }
+
             tag.Code = request.Code;
             tag.Value = request.Value;
             tag.UpdatedAt = DateTime.UtcNow;
@@ -79,10 +90,17 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
             tag.ImageUrl = tagImageUrl;
             _context.Tags.Update(tag);
             await _unitOfWork.SaveChangeAsync();
+            await _serviceBus.Publish(new AddActivityLogEvent
+            {
+                AccountId = request.CurrentAccountId,
+                ActivityType = activityType,
+                EntityId = tag.Id,
+                EntityType = ActivityEntityType.TAG,
+            });
             return Result<Tag?>.Success(tag);
-
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             await RollBackImageGrpc(rollbackUrl);
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<Tag?>.Failure(TagError.UpdateTagFail, ex.Message);

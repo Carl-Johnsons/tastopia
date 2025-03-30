@@ -41,7 +41,7 @@ export async function getRecipes(options?: PaginatedQueryParams) {
 
     return data;
   } catch (error) {
-    console.log(error);
+    withErrorProcessor(error);
     throw error;
   }
 }
@@ -72,7 +72,7 @@ export async function getRecipeReports(options?: PaginatedQueryParams) {
 
     return data;
   } catch (error) {
-    console.log(error);
+    withErrorProcessor(error);
     throw error;
   }
 }
@@ -104,7 +104,7 @@ export async function getRecipeReportById({
 
     return data;
   } catch (error) {
-    console.log(error);
+    withErrorProcessor(error);
     throw error;
   }
 }
@@ -126,7 +126,7 @@ export async function getRecipeComments({ recipeId, options }: GetRecipeComments
 
     return data;
   } catch (error) {
-    console.log(error);
+    withErrorProcessor(error);
     throw error;
   }
 }
@@ -138,6 +138,7 @@ export const markReportAsCompleted = async ({ reportId, reportType }: IReportDTO
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };
 
@@ -148,6 +149,7 @@ export const reopenReport = async ({ reportId, reportType }: IReportDTO) => {
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };
 
@@ -158,6 +160,7 @@ export const disableRecipe = async (id: string) => {
     await protectedAxiosInstance.delete<undefined>(url, { params: { id } });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };
 
@@ -168,6 +171,7 @@ export const restoreRecipe = async (id: string) => {
     await protectedAxiosInstance.put<undefined>(url, undefined, { params: { id } });
   } catch (error) {
     withErrorProcessor(error);
+    throw error;
   }
 };
 

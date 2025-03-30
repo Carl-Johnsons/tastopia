@@ -19,7 +19,9 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
     private readonly IApplicationDbContext _context;
     private readonly IServiceBus _serviceBus;
 
-    public UnlinkAccountCommandHandler(UserManager<ApplicationAccount> userManager, IServiceBus serviceBus, IApplicationDbContext context)
+    public UnlinkAccountCommandHandler(UserManager<ApplicationAccount> userManager,
+                                       IServiceBus serviceBus,
+                                       IApplicationDbContext context)
     {
         _userManager = userManager;
         _serviceBus = serviceBus;
