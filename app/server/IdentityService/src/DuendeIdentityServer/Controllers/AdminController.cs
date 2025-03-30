@@ -75,4 +75,31 @@ public class AdminController : BaseApiController
         result.ThrowIfFailure();
         return NoContent();
     }
+
+    [HttpPatch("current")]
+    [Produces("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> UpdateCurrentAdmin([FromForm] UpdateAdminAccountDTO dto)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new UpdateAdminAccountCommand
+        {
+            CurrentAccountId = Guid.Parse(subjectId!),
+            Address = dto.Address,
+            AvatarFile = dto.AvatarFile,
+            Username = dto.Username,
+            Gender = dto.Gender,
+            Dob = dto.Dob,
+            Gmail = dto.Gmail,
+            Name = dto.Name,
+            AccountId = Guid.Parse(subjectId!),
+            Phone = dto.Phone,
+        });
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+
 }
