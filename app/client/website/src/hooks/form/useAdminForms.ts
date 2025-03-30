@@ -19,8 +19,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSelectUserId } from "@/slices/user.slice";
 import { useGetAdminById } from "@/api/admin";
 import { useAppDispatch } from "@/store/hooks";
-import { closeForm } from "@/slices/admin.slice";
+import { closeForm, saveAdminData } from "@/slices/admin.slice";
 import { ImageListType } from "react-images-uploading";
+import { parse } from "date-fns";
 
 type FormType = "create" | "update";
 
@@ -43,8 +44,18 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   }, [formType, tForm]);
 
   const currentUserId = useSelectUserId();
-  const { data: fetchedAmin } = useGetAdminById(targetId ?? (currentUserId as string));
+  const { data: fetchedAmin, isLoading } = useGetAdminById(
+    targetId ?? (currentUserId as string)
+  );
   const [admin, setAdmin] = useState(fetchedAmin);
+
+  useEffect(() => {
+    if (isLoading || !fetchedAmin) {
+      dispatch(saveAdminData({ isFormLoading: true }));
+    } else {
+      dispatch(saveAdminData({ isFormLoading: false }));
+    }
+  }, [isLoading, fetchedAmin, dispatch]);
 
   const defaultValues: UpdateAdminFormFields = useMemo(() => {
     if (formType === "create") {
@@ -66,8 +77,8 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       name: admin?.displayName,
       gmail: admin?.email,
       phone: admin?.phoneNumber,
-      dob: admin?.dob ? new Date(admin?.dob) : new Date(),
-      gender: admin?.gender === Gender.Male ? Gender.Male : Gender.Female,
+      dob: admin?.dob ? new Date(admin?.dob) : undefined,
+      gender: admin?.gender ? (admin?.gender as Gender) : undefined,
       address: admin?.address,
       status: admin?.isActive ? BinaryStatus.Active : BinaryStatus.Inactive,
       avatarFile: images
@@ -97,8 +108,9 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
 
           if (key === "avatarFile" && !!value) {
             formData.append(key, (value as ImageFieldType)?.at(0)?.file as Blob);
-          } else if (key === "dob" && value instanceof Date) {
-            formData.append(key, value.toISOString());
+          } else if (key === "dob") {
+            const parsedDate = parse(value as string, "dd/MM/yyyy", new Date());
+            formData.append(key, parsedDate.toISOString());
           } else if (value !== undefined) {
             formData.append(key, value as string);
           }
@@ -133,7 +145,8 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       }
     },
     [
-      admin?.avatarUrl,
+      form.formState.dirtyFields,
+      isUpdate,
       formType,
       tNotification,
       invalidateCurrentAdminActivities,

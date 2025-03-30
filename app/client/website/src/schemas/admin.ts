@@ -1,8 +1,10 @@
 import { Gender } from "@/constants/gender";
+import { isValid, parse } from "date-fns";
 import * as z from "zod";
 
 const MAX_FILE_SIZE = 15000000;
 const PHONE_REGEX = /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/;
+const DATE_REGEX = /\d{1,2}\/\d{1,2}\/\d\d\d\d/;
 const GENDER: Array<string> = [Gender.Male, Gender.Female];
 const STATUS: Array<string> = ["Active", "Inactive"];
 const IMAGE_TYPE = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
@@ -64,16 +66,44 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
       .min(6, t("password.errors.min"))
       .max(50, t("password.errors.max")),
     gender: z
-      .string({
-        required_error: t("gender.errors.required")
-      })
+      .string()
       .refine(val => GENDER.includes(val), {
         message: t("gender.errors.invalid")
-      }),
-    dob: z.date({
-      required_error: t("dateOfBirth.errors.required"),
-      invalid_type_error: t("dateOfBirth.errors.invalid")
-    }),
+      })
+      .optional(),
+    dob: z
+      .string()
+      .regex(DATE_REGEX, {
+        message: t("dateOfBirth.errors.invalid")
+      })
+      .refine(
+        val => {
+          const parsedDate = parse(val, "dd/MM/yyyy", new Date());
+          return isValid(parsedDate);
+        },
+        {
+          message: t("dateOfBirth.errors.invalid")
+        }
+      )
+      .refine(
+        val => {
+          const parsedDate = parse(val, "dd/MM/yyyy", new Date());
+          return parsedDate >= new Date("1900-01-01");
+        },
+        {
+          message: t("dateOfBirth.errors.min")
+        }
+      )
+      .refine(
+        val => {
+          const parsedDate = parse(val, "dd/MM/yyyy", new Date());
+          return parsedDate <= new Date();
+        },
+        {
+          message: t("dateOfBirth.errors.max")
+        }
+      )
+      .optional(),
     address: z
       .string({
         required_error: t("address.errors.required")

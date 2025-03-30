@@ -38,7 +38,6 @@ export default function useActivityLogTableColumns() {
         name: t("entity"),
         selector: row => getEntityTitle(row.entityType),
         sortable: true,
-        center: true,
       },
       {
         name: t("description"),
@@ -70,7 +69,7 @@ export default function useActivityLogTableColumns() {
         }
       }
     ],
-    [t, getActivityTitle, getEntityTitle]
+    [t, getActivityTitle, getEntityTitle, getBgColor]
   );
 
   const columnFieldMap: Record<string, keyof IAdminActivityLogResponse> = useMemo(

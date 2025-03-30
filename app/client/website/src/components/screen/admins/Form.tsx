@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import {
   Form,
@@ -25,7 +25,7 @@ import { Gender } from "@/constants/gender";
 import { ItemStatusText } from "../report/common/StatusText";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "@/components/shared/icons";
-import { format } from "date-fns";
+import { format, isValid, parse } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Image from "@/components/shared/common/Image";
@@ -241,7 +241,7 @@ const FormSelect = ({
         defaultValue={value as string}
       >
         <FormControl>
-          <SelectTrigger className='bg-white_black200 text-black_white'>
+          <SelectTrigger className='bg-white_black200 light-border text-black_white'>
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
         </FormControl>
@@ -272,46 +272,120 @@ const FormSelect = ({
 
 const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
   const { value, onChange } = field;
+  console.log("value", value);
+
+  const defaultDate = useMemo(
+    () => (!isValid(value) ? undefined : (value as Date)),
+    [value]
+  );
+  const defaultInputValue = useMemo(() => {
+    if (!defaultDate) return "";
+    return format(defaultDate, "dd/MM/yyyy");
+  }, [defaultDate]);
+
+  const [date, setDate] = useState<Date | undefined>(defaultDate);
+  const [inputValue, setInputValue] = useState<string>(defaultInputValue);
+  const [month, setMonth] = useState(date);
+
+  useEffect(() => {
+    setDate(defaultDate);
+    setInputValue(defaultInputValue);
+  }, [defaultDate]);
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+
+      if (!value) {
+        setInputValue("");
+        setDate(undefined);
+        onChange(undefined);
+        return;
+      }
+
+      setInputValue(value);
+      onChange(value);
+      const parsedDate = parse(value, "dd/MM/yyyy", new Date());
+
+      if (isValid(parsedDate)) {
+        setDate(parsedDate);
+        setMonth(parsedDate);
+      } else {
+        setDate(undefined);
+      }
+    },
+    [onChange]
+  );
+
+  const handleDayPickerSelect = useCallback(
+    (date: Date | undefined) => {
+      if (!date) {
+        setInputValue("");
+        setDate(undefined);
+        onChange(undefined);
+      } else {
+        const formattedDate = format(date, "dd/MM/yyyy");
+
+        setDate(date);
+        setMonth(date);
+        onChange(formattedDate);
+        setInputValue(formattedDate);
+      }
+    },
+    [onChange]
+  );
 
   return (
     <FormItem className='flex w-full flex-col'>
       <FormLabel className='paragraph-semibold text-black_white'>
         {label} <Askterisk />
       </FormLabel>
-      <Popover modal>
-        <PopoverTrigger asChild>
-          <FormControl>
-            <Button
-              variant={"outline"}
-              className={cn("bg-white_black200 pl-0", !value && "text-muted-foreground")}
-            >
-              <div className='text-black_white flex w-full items-center gap-2 px-3'>
-                <CalendarIcon className='size-4 text-primary' />
-                <span className='block pt-1'>
-                  {value ? (
-                    format(value as Date, "MM/dd/yyyy")
-                  ) : (
-                    <span className='text-muted-foreground'>{placeholder}</span>
-                  )}
-                </span>
-              </div>
-            </Button>
-          </FormControl>
-        </PopoverTrigger>
-        <PopoverContent
-          className='bg-white_black200 border-black_white w-auto border'
-          align='start'
-        >
-          <Calendar
-            mode='single'
-            selected={value as Date}
-            onSelect={onChange}
-            disabled={(date: Date) => date > new Date() || date < new Date("1900-01-01")}
-            className='text-black_white'
-            initialFocus
+
+      <div className='flex gap-2'>
+        <FormControl className='w-[90%]'>
+          <Input
+            value={inputValue}
+            onChange={handleInputChange}
+            className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
+            placeholder={placeholder}
           />
-        </PopoverContent>
-      </Popover>
+        </FormControl>
+        <Popover modal>
+          <PopoverTrigger asChild>
+            <FormControl>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "bg-white_black200 pl-0",
+                  !value && "text-muted-foreground",
+                  "light-border w-fit p-0"
+                )}
+              >
+                <div className='text-black_white flex items-center gap-2 px-3'>
+                  <CalendarIcon className='size-4 text-primary' />
+                </div>
+              </Button>
+            </FormControl>
+          </PopoverTrigger>
+          <PopoverContent
+            className='bg-white_black200 border-black_white w-auto border'
+            align='start'
+          >
+            <Calendar
+              mode='single'
+              selected={date}
+              onSelect={handleDayPickerSelect}
+              month={month}
+              onMonthChange={setMonth}
+              disabled={(date: Date) =>
+                date > new Date() || date < new Date("1900-01-01")
+              }
+              className='text-black_white'
+              autoFocus
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
       <FormMessage className='text-red-600' />
     </FormItem>
   );
