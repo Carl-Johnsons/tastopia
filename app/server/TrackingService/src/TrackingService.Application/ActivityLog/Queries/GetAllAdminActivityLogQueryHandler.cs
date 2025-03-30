@@ -41,6 +41,20 @@ public class GetAllAdminActivityLogQueryHandler : IRequestHandler<GetAllAdminAct
         var accountIds = query.Select(aal => aal.AccountId).ToList();
         var repeatedField = _mapper.Map<RepeatedField<string>>(accountIds);
 
+        if (accountIds == null || accountIds.Count == 0)
+        {
+            return Result<PaginatedAdminActivityLogListResponse>.Success(new PaginatedAdminActivityLogListResponse
+            {
+                PaginatedData = [],
+                Metadata = new NumberedPaginatedMetadata
+                {
+                    CurrentPage = (request.DTO.Skip ?? 0) + 1,
+                    TotalPage = 0,
+                    TotalRow = 0
+                }
+            });
+        }
+
         var mapGrpcUser = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
         {
             AccountId = { repeatedField }
