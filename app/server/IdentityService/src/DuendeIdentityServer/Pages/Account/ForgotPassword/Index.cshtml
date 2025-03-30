@@ -12,13 +12,18 @@
     <div class="col ps-0 vh-100 d-flex justify-content-center align-items-center">
         <div class="card bg-white shadow">
             <div class="card-body d-flex flex-column justify-content-center">
-                <div class="logo">
-                    <image src="/img/logo.svg" class="object-fit-cover" />
-                </div>
-                <h1 class="mt-4 mb-4">Recover your<br /><span class="title">Tastopia account</span></h1>
                 @if (Model?.View?.User == null)
                 {
                     <form asp-page="/Account/ForgotPassword/Index" method="GET">
+                        <div class=" d-flex justify-content-between">
+                            <button class="btn rounded-circle shadow" name="Input.Button" value="Cancel">
+                                <img class="back-icon" src="/img/back.png" />
+                            </button>
+                            <div class="logo">
+                                <image src="/img/logo.svg" class="object-fit-cover" />
+                            </div>
+                        </div>
+                        <h1 class="mt-4 mb-4">Recover your<br /><span class="title">Tastopia account</span></h1>
                         <input type="hidden" asp-for="Input.ReturnUrl" />
 
                         <div class="form-group form-floating">
@@ -53,6 +58,15 @@
                 else
                 {
                     <form asp-page="/Account/ForgotPassword/Index" method="POST">
+                        <div class=" d-flex justify-content-between">
+                            <button class="btn rounded-circle shadow" name="Input.Button" value="Cancel">
+                                <img class="back-icon" src="/img/back.png" />
+                            </button>
+                            <div class="logo">
+                                <image src="/img/logo.svg" class="object-fit-cover" />
+                            </div>
+                        </div>
+                        <h1 class="mt-4 mb-4">Recover your<br /><span class="title">Tastopia account</span></h1>
                         <input type="hidden" asp-for="Input.ReturnUrl" />
                         <input type="hidden" asp-for="Input.Identifier" />
                         <div class="d-flex flex-column justify-content-between align-items-center">
