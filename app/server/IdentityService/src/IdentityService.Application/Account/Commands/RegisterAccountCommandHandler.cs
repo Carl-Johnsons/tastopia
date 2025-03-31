@@ -74,6 +74,7 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
         {
             return Result<TokenResponse>.Failure(AccountError.CreateAccountFailed);
         }
+        await _userManager.AddToRoleAsync(acc, Roles.Code.USER.ToString());
 
         await _grpcUserClient.CreateUserAsync(new GrpcCreateUserRequest
         {
@@ -129,6 +130,8 @@ public class RegisterAccountCommandHandler : IRequestHandler<RegisterAccountComm
         {
             return Result<TokenResponse>.Failure(AccountError.CreateAccountFailed);
         }
+
+        await _userManager.AddToRoleAsync(acc, Roles.Code.USER.ToString());
 
         await _grpcUserClient.CreateUserAsync(new GrpcCreateUserRequest
         {
