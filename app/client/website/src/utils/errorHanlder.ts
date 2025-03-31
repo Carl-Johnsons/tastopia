@@ -11,7 +11,7 @@ export const withErrorProcessor = (error: unknown) => {
   console.error("Error", error);
 
   if (error instanceof AxiosError) {
-    if (!error.response || !error.response.data) throw error;
+    if (!error.response || !error.response.data || !error.response.data.code) throw error;
     const { code } = error.response?.data as IErrorResponseDTO;
     throw new Error(code);
   }

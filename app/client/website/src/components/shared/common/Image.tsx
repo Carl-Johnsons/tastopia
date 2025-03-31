@@ -2,7 +2,7 @@
 
 import BaseImage, { ImageProps as BaseImageProps } from "next/image";
 import { ImageOff } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export type ImageProps = BaseImageProps & {
@@ -10,9 +10,20 @@ export type ImageProps = BaseImageProps & {
   skeletonClassName?: string;
 };
 
-export default function Image({ width, height, onError, wrapperClassName, skeletonClassName, ...props }: ImageProps) {
+function Image({
+  width,
+  height,
+  onError,
+  wrapperClassName,
+  skeletonClassName,
+  ...props
+}: ImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+
+  const onLoadEnd = useCallback(() => {
+    setIsLoading(false);
+  }, []);
 
   if (hasError)
     return (
@@ -36,7 +47,7 @@ export default function Image({ width, height, onError, wrapperClassName, skelet
         width={width}
         height={height}
         quality={100}
-        onLoad={() => setIsLoading(false)}
+        onLoad={onLoadEnd}
         onError={err => {
           setHasError(true);
           onError && onError(err);
@@ -80,3 +91,5 @@ const FallbackComponent = ({ fill, ...props }: FallbackComponentProps) => {
     </div>
   );
 };
+
+export default Image;

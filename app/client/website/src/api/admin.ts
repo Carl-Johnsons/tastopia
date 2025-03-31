@@ -39,10 +39,17 @@ export const useGetAdmins = ({
   });
 };
 
-export const useGetAdminById = (id: string) => {
+export const useGetAdminById = (id: string, self?: boolean) => {
   return useQuery({
-    queryKey: ["admin", id],
-    queryFn: () => getAdminById(id)
+    queryKey: self ? ["currentAdmin"] : ["admin", id],
+    queryFn: () => (self ? getCurrentAdminDetail() : getAdminById(id))
+  });
+};
+
+export const useGetCurrentAdminDetail = () => {
+  return useQuery({
+    queryKey: ["currentAdmin"],
+    queryFn: getCurrentAdminDetail
   });
 };
 

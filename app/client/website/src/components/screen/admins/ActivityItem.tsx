@@ -13,10 +13,15 @@ import Avatar from "@/components/shared/common/Avatar";
 
 type ActivityItemProps = {
   activity: ActivityItemType;
+  self?: boolean;
 };
 
-export const ActivityItem = ({ activity }: ActivityItemProps) => {
-  const { data: admin, isFetching, isLoading } = useGetAdminById(activity.accountId);
+export const ActivityItem = ({ activity, self }: ActivityItemProps) => {
+  const {
+    data: admin,
+    isFetching,
+    isLoading
+  } = useGetAdminById(activity.accountId, self);
   const { createdAt, activityType, entityType } = activity;
   const t = useTranslations("administerAdmins.detail.activity");
 
@@ -43,7 +48,10 @@ export const ActivityItem = ({ activity }: ActivityItemProps) => {
 
   return (
     <div className='flex gap-4'>
-      <Avatar src={avatarUrl} alt={username}/>
+      <Avatar
+        src={avatarUrl}
+        alt={username}
+      />
       <div className='flex w-full flex-col gap-2'>
         <div className='flex flex-wrap items-center gap-4'>
           <h3 className='base-semibold text-black_white'>{username}</h3>
