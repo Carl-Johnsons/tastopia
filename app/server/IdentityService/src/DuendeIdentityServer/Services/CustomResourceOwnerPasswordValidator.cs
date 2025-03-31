@@ -1,4 +1,5 @@
-﻿using Duende.IdentityServer.Models;
+﻿using Contract.Constants;
+using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Validation;
 using Microsoft.AspNetCore.Identity;
 using static IdentityModel.OidcConstants;
@@ -37,7 +38,12 @@ public class CustomResourceOwnerPasswordValidator : IResourceOwnerPasswordValida
             context.Result = new GrantValidationResult(TokenRequestErrors.InvalidGrant, "Invalid credentials");
             return;
         }
-
+        var roles = await _userManager.GetRolesAsync(user);
+        if (roles[0] != Roles.Code.USER.ToString())
+        {
+            context.Result = new GrantValidationResult(TokenRequestErrors.UnauthorizedClient, "Permission Denied");
+            return;
+        }
 
         var result = await _signInManager.PasswordSignInAsync(user, context.Password, isPersistent: true, lockoutOnFailure: true);
 
@@ -47,6 +53,11 @@ public class CustomResourceOwnerPasswordValidator : IResourceOwnerPasswordValida
             return;
         }
 
+        if (user.IsFirstTimeLogin)
+        {
+            user.IsFirstTimeLogin = false;
+            await _userManager.UpdateAsync(user);
+        }
         var claims = await _userManager.GetClaimsAsync(user);
         context.Result = new GrantValidationResult(
                 subject: user.Id.ToString(),
