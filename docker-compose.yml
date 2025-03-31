@@ -6,12 +6,19 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./ssl/certs/server-cert.crt:/etc/ssl/certs/server-cert.crt
       - ./ssl/private-key/server.key:/etc/ssl/private/server.key
+      - ./ssl/certs/self-root-ca.crt:/etc/ssl/certs/root-ca.crt
     ports:
       - "80:80"
       - "443:443"
+      - "7000:7000"
+      - "7001:7001"
+      - "3000:3000"
     depends_on:
       - identity-api
       - api-gateway
+    networks:
+      - internal
+      - public
 
   postgres:
     image: postgres:17.0-alpine
@@ -26,7 +33,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     restart: always
     networks:
-      - back-end
+      - internal
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} || exit 1"]
       interval: 10s
@@ -47,7 +54,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     networks:
-      - back-end
+      - internal
     healthcheck:
       test:
         [
@@ -80,7 +87,7 @@ services:
       - "${RABBITMQ_PORT}:5672"
       - "${RABBITMQ_MANAGEMENT_PORT}:15672"
     networks:
-      - back-end
+      - internal
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
@@ -102,8 +109,8 @@ services:
       # Consul uses the default port 8500
       - "${CONSUL_PORT}:8500"
     networks:
-      - front-end
-      - back-end
+      - public
+      - internal
     extra_hosts:
       - "host.docker.internal:host-gateway" # For using host.docker.internal in linux
 
@@ -111,18 +118,16 @@ services:
     image: redis:8.0-M02-alpine
     container_name: redis
     networks:
-      - back-end
+      - internal
 
   api-gateway:
     build:
       context: .
       dockerfile: ./dockerfiles/api-gateway/Dockerfile.${DOCKERFILE_API_GATEWAY_ENV:-prod}
     container_name: apigateway
-    ports:
-      - "${API_GATEWAY_PORT}:80"
-      - "${API_GATEWAY_HTTPS_PORT}:443"
     networks:
-      - back-end
+      - public
+      - internal
     env_file:
       - .env.production
       - ./app/server/APIGateway/.env.production
@@ -143,16 +148,14 @@ services:
     container_name: identity-service
     volumes:
       - ./data/nuget:/src/nuget
-    ports:
-      - "${IDENTITY_SERVICE_PORT}:80"
-      - "${IDENTITY_SERVICE_HTTPS_PORT}:443"
     depends_on:
       postgres:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
-      - back-end
+      - public
+      - internal
     env_file:
       - .env.production
       - ./app/server/IdentityService/.env.production
@@ -177,7 +180,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - back-end
+      - internal
     env_file:
       - .env.production
       - ./app/server/RecipeService/.env.production
@@ -202,7 +205,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - back-end
+      - internal
     env_file:
       - .env.production
       - ./app/server/UserService/.env.production
@@ -227,7 +230,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - back-end
+      - internal
     env_file:
       - .env.production
       - ./app/server/NotificationService/.env.production
@@ -250,7 +253,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - back-end
+      - internal
     env_file:
       - .env.production
       - ./app/server/UploadFileService/.env.production
@@ -273,7 +276,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - back-end
+      - internal
     env_file:
       - .env.production
       - ./app/server/TrackingService/.env.production
@@ -294,7 +297,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - back-end
+      - internal
     env_file:
       - .env.production
       - ./app/server/NotificationService/.env.production
@@ -308,11 +311,22 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - back-end
+      - internal
     env_file:
       - .env.production
       - ./app/server/RecipeService/.env.production
 
+  website:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/website/Dockerfile.prod
+    container_name: website-dashboard
+    networks:
+      - public
+    env_file:
+      - .env.production
+      - ./app/client/website/.env.production
+
 networks:
-  back-end:
-  front-end:
+  internal:
+  public:

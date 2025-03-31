@@ -3,6 +3,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // update image remote later
+  output: 'standalone',
   reactStrictMode: true,
   images: {
     remotePatterns: [
