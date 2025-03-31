@@ -1,7 +1,15 @@
 "use client";
 
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { ControllerRenderProps, useForm } from "react-hook-form";
+import React, {
+  FC,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState
+} from "react";
+import { ControllerRenderProps } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -20,7 +28,6 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
-import { CreateAdminFormFields, UpdateAdminFormFields } from "@/types/admin";
 import { Gender } from "@/constants/gender";
 import { ItemStatusText } from "../report/common/StatusText";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -33,17 +40,14 @@ import { BinaryStatus } from "@/constants/status";
 import { ImageListType } from "react-images-uploading";
 import { useSelectAdmin } from "@/slices/admin.slice";
 import { Calendar } from "@/components/shared/common/Calendar";
-
-type Props = {
-  form: ReturnType<typeof useForm<CreateAdminFormFields | UpdateAdminFormFields>>;
-  /** Whether the form is for updating the current user. */
-  isSelf?: boolean;
-};
+import { useAdminForm } from "@/hooks/form";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type FormInputProps = {
-  field: ControllerRenderProps<CreateAdminFormFields>;
+  field: ControllerRenderProps<any>;
   label: string;
   placeholder?: string;
+  isLoading: boolean;
 };
 
 type SelectItemData = {
@@ -60,10 +64,37 @@ type FormSelectProps = FormInputProps & {
 type FormDatePickerProps = FormInputProps;
 type FormImageUploadProps = Omit<FormInputProps, "placeholder">;
 
-const AdminForm = ({ form, isSelf }: Props) => {
-  const { formType: type } = useSelectAdmin();
+export type AdminFormRef = {
+  submitForm: () => void;
+  isSubmitting: boolean;
+  isSubmitDisabled: boolean;
+};
+
+const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
+  const { formType: type, targetId, isSelf, isFormLoading } = useSelectAdmin();
+  const { form, isSubmitting, submitForm } = useAdminForm({
+    formType: type,
+    targetId
+  });
+
   const t = useTranslations("administerAdmins.form");
   const isUpdate = useMemo(() => type === "update", [type]);
+
+  const { isDirty, isValid } = form.formState;
+  const isSubmitDisabled = useMemo(
+    () => isSubmitting || !isDirty || !isValid,
+    [isSubmitting, isDirty, isValid]
+  );
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      submitForm,
+      isSubmitting,
+      isSubmitDisabled
+    }),
+    [submitForm, isSubmitting, isSubmitDisabled]
+  );
 
   return (
     <Form {...form}>
@@ -76,10 +107,10 @@ const AdminForm = ({ form, isSelf }: Props) => {
               field={field}
               label={t("name.label")}
               placeholder={t("name.placeholder")}
+              isLoading={isFormLoading}
             />
           )}
         />
-
         <FormField
           control={form.control}
           name='gmail'
@@ -88,10 +119,10 @@ const AdminForm = ({ form, isSelf }: Props) => {
               field={field}
               label={t("gmail.label")}
               placeholder={t("gmail.placeholder")}
+              isLoading={isFormLoading}
             />
           )}
         />
-
         <FormField
           control={form.control}
           name='phone'
@@ -100,24 +131,22 @@ const AdminForm = ({ form, isSelf }: Props) => {
               label={t("phone.label")}
               placeholder={t("phone.placeholder")}
               field={field}
+              isLoading={isFormLoading}
             />
           )}
         />
-
-        {!isUpdate && (
-          <FormField
-            control={form.control}
-            name='password'
-            render={({ field }) => (
-              <FormInput
-                field={field}
-                label={t("password.label")}
-                placeholder={t("password.placeholder")}
-              />
-            )}
-          />
-        )}
-
+        <FormField
+          control={form.control}
+          name='password'
+          render={({ field }) => (
+            <FormInput
+              field={field}
+              label={t("password.label")}
+              placeholder={t("password.placeholder")}
+              isLoading={isFormLoading}
+            />
+          )}
+        />
         <FormField
           control={form.control}
           name='address'
@@ -126,10 +155,10 @@ const AdminForm = ({ form, isSelf }: Props) => {
               field={field}
               label={t("address.label")}
               placeholder={t("address.placeholder")}
+              isLoading={isFormLoading}
             />
           )}
         />
-
         <FormField
           control={form.control}
           name='gender'
@@ -139,6 +168,7 @@ const AdminForm = ({ form, isSelf }: Props) => {
                 field={field}
                 label={t("gender.label")}
                 placeholder={t("gender.placeholder")}
+                isLoading={isFormLoading}
                 items={[
                   { value: Gender.Male, label: t("gender.options.male") },
                   { value: Gender.Female, label: t("gender.options.female") }
@@ -147,7 +177,6 @@ const AdminForm = ({ form, isSelf }: Props) => {
             </div>
           )}
         />
-
         <FormField
           control={form.control}
           name='dob'
@@ -157,11 +186,11 @@ const AdminForm = ({ form, isSelf }: Props) => {
                 field={field}
                 label={t("dateOfBirth.label")}
                 placeholder={t("dateOfBirth.placeholder")}
+                isLoading={isFormLoading}
               />
             </div>
           )}
         />
-
         {isUpdate && !isSelf && (
           <FormField
             control={form.control}
@@ -172,9 +201,13 @@ const AdminForm = ({ form, isSelf }: Props) => {
                   field={field}
                   label={t("status.label")}
                   placeholder={t("status.placeholder")}
+                  isLoading={isFormLoading}
                   items={[
                     { value: BinaryStatus.Active, label: t("status.options.active") },
-                    { value: BinaryStatus.Inactive, label: t("status.options.inactive") }
+                    {
+                      value: BinaryStatus.Inactive,
+                      label: t("status.options.inactive")
+                    }
                   ]}
                   SelectItemChild={({ value }) => (
                     <ItemStatusText isActive={value === BinaryStatus.Active} />
@@ -184,7 +217,6 @@ const AdminForm = ({ form, isSelf }: Props) => {
             )}
           />
         )}
-
         <FormField
           control={form.control}
           name='avatarFile'
@@ -192,32 +224,44 @@ const AdminForm = ({ form, isSelf }: Props) => {
             <FormImageUpload
               field={field}
               label={t("image.label")}
+              isLoading={isFormLoading}
             />
           )}
         />
       </form>
     </Form>
   );
-};
+});
+
+AdminForm.displayName = "AdminForm";
 
 const Askterisk = () => <span className='text-red-600'>*</span>;
 
-const FormInput = ({ field, label, placeholder }: FormInputProps) => {
+const FormInput = ({ field, label, placeholder, isLoading }: FormInputProps) => {
   const { value, ...fields } = field;
 
   return (
     <FormItem className='flex w-full flex-col'>
-      <FormLabel className='paragraph-semibold text-black_white'>
-        {label} <Askterisk />
-      </FormLabel>
-      <FormControl>
-        <Input
-          value={value as string}
-          className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
-          placeholder={placeholder}
-          {...fields}
-        />
-      </FormControl>
+      {isLoading ? (
+        <>
+          <Skeleton className='h-4 w-20' />
+          <Skeleton className='h-8 w-full' />
+        </>
+      ) : (
+        <>
+          <FormLabel className='paragraph-semibold text-black_white'>
+            {label} <Askterisk />
+          </FormLabel>
+          <FormControl>
+            <Input
+              value={value as string}
+              className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
+              placeholder={placeholder}
+              {...fields}
+            />
+          </FormControl>
+        </>
+      )}
       <FormMessage className='text-red-600' />
     </FormItem>
   );
@@ -228,51 +272,71 @@ const FormSelect = ({
   label,
   placeholder,
   items,
-  SelectItemChild
+  SelectItemChild,
+  isLoading
 }: FormSelectProps) => {
   const { onChange, value } = field;
 
+  useEffect(() => {
+    if (field.name != "gender") {
+      return;
+    }
+
+    console.log("gender value", value)
+  }, [value]);
+
   return (
     <FormItem className='relative'>
-      <FormLabel className='paragraph-semibold text-black_white'>
-        {label} <span className='text-red-600'>*</span>
-      </FormLabel>
+      {isLoading ? (
+        <>
+          <SkeletonControl className='h-4 w-20' />
+          <SkeletonControl className='h-8 w-60' />
+        </>
+      ) : (
+        <>
+          <FormLabel className='paragraph-semibold text-black_white'>
+            {label} <span className='text-red-600'>*</span>
+          </FormLabel>
 
-      <Select
-        onValueChange={onChange}
-        defaultValue={value as string}
-      >
-        <FormControl>
-          <SelectTrigger className='bg-white_black200 light-border text-black_white'>
-            <SelectValue placeholder={placeholder} />
-          </SelectTrigger>
-        </FormControl>
+          <Select value={value} onValueChange={onChange}>
+            <FormControl>
+              <SelectTrigger className='bg-white_black200 light-border text-black_white'>
+                <SelectValue placeholder={placeholder} />
+              </SelectTrigger>
+            </FormControl>
 
-        <SelectContent className='bg-white_black100 text-black_white'>
-          {items.map(({ value, label }, index) => (
-            <SelectItem
-              key={index}
-              value={value}
-            >
-              {SelectItemChild ? (
-                <SelectItemChild
-                  label={label}
+            <SelectContent className='bg-white_black100 text-black_white'>
+              {items.map(({ value, label }, index) => (
+                <SelectItem
+                  key={index}
                   value={value}
-                />
-              ) : (
-                label
-              )}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+                >
+                  {SelectItemChild ? (
+                    <SelectItemChild
+                      label={label}
+                      value={value}
+                    />
+                  ) : (
+                    label
+                  )}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </>
+      )}
 
       <FormMessage className='text-red-600' />
     </FormItem>
   );
 };
 
-const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
+const FormDatePicker = ({
+  field,
+  label,
+  placeholder,
+  isLoading
+}: FormDatePickerProps) => {
   const { value, onChange } = field;
   const parsedDate = useMemo(
     () => value && parse(value, "dd/MM/yyyy", new Date()),
@@ -288,9 +352,9 @@ const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
       const value = e.target.value;
 
       if (!value) {
-        setInputValue("");
         setDate(undefined);
-        onChange(undefined);
+        setInputValue("");
+        onChange("");
         return;
       }
 
@@ -311,9 +375,9 @@ const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
   const handleDayPickerSelect = useCallback(
     (date: Date | undefined) => {
       if (!date) {
-        setInputValue("");
         setDate(undefined);
-        onChange(undefined);
+        setInputValue("");
+        onChange("");
       } else {
         const formattedDate = format(date, "dd/MM/yyyy");
 
@@ -328,91 +392,121 @@ const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
 
   return (
     <FormItem className='flex w-full flex-col'>
-      <FormLabel className='paragraph-semibold text-black_white'>
-        {label} <Askterisk />
-      </FormLabel>
+      {isLoading ? (
+        <Skeleton className='h-4 w-20' />
+      ) : (
+        <FormLabel className='paragraph-semibold text-black_white'>
+          {label} <Askterisk />
+        </FormLabel>
+      )}
 
       <div className='flex gap-2'>
-        <FormControl className='w-[90%]'>
-          <Input
-            value={inputValue}
-            onChange={handleInputChange}
-            className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
-            placeholder={placeholder}
-          />
-        </FormControl>
-        <Popover modal>
-          <PopoverTrigger asChild>
-            <FormControl>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "bg-white_black200 pl-0",
-                  !value && "text-muted-foreground",
-                  "light-border w-fit p-0"
-                )}
-              >
-                <div className='text-black_white flex items-center gap-2 px-3'>
-                  <CalendarIcon className='size-4 text-primary' />
-                </div>
-              </Button>
+        {isLoading ? (
+          <>
+            <SkeletonControl className='h-8 w-48' />
+            <SkeletonControl className='size-9' />
+          </>
+        ) : (
+          <>
+            <FormControl className='w-[90%]'>
+              <Input
+                value={inputValue}
+                onChange={handleInputChange}
+                className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
+                placeholder={placeholder}
+              />
             </FormControl>
-          </PopoverTrigger>
-          <PopoverContent
-            className='bg-white_black200 border-black_white w-auto border'
-            align='start'
-          >
-            <Calendar
-              mode='single'
-              selected={date}
-              onSelect={handleDayPickerSelect}
-              month={month}
-              onMonthChange={setMonth}
-              disabled={(date: Date) =>
-                date > new Date() || date < new Date("1900-01-01")
-              }
-              className='text-black_white'
-              autoFocus
-            />
-          </PopoverContent>
-        </Popover>
+
+            <Popover modal>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "bg-white_black200 pl-0",
+                      !value && "text-muted-foreground",
+                      "light-border w-fit p-0"
+                    )}
+                  >
+                    <div className='text-black_white flex items-center gap-2 px-3'>
+                      <CalendarIcon className='size-4 text-primary' />
+                    </div>
+                  </Button>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent
+                className='bg-white_black200 border-black_white w-auto border'
+                align='start'
+              >
+                <Calendar
+                  mode='single'
+                  selected={date}
+                  onSelect={handleDayPickerSelect}
+                  month={month}
+                  onMonthChange={setMonth}
+                  disabled={(date: Date) =>
+                    date > new Date() || date < new Date("1900-01-01")
+                  }
+                  className='text-black_white'
+                  autoFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </>
+        )}
       </div>
       <FormMessage className='text-red-600' />
     </FormItem>
   );
 };
 
-const FormImageUpload = ({ label, field }: FormImageUploadProps) => {
+const FormImageUpload = ({ label, field, isLoading }: FormImageUploadProps) => {
   const { value, onChange } = field;
 
   return (
     <FormItem className='relative flex w-full flex-col'>
-      <FormLabel className='paragraph-semibold text-black_white'>
-        {label} <Askterisk />
-      </FormLabel>
-      <FormControl className='mt-3.5'>
-        <ImageUploading
-          multiple={false}
-          value={value as ImageListType}
-          onChange={onChange}
-          maxFileSize={15242880}
-          acceptType={["jpg", "jpeg", "png", "webp"]}
-          ImageComponent={({ src, alt }) => (
-            <Image
-              src={src}
-              alt={alt}
-              className='h-[200px] rounded-full'
-              width={200}
-              height={200}
-              wrapperClassName='flex-center'
-              skeletonClassName='rounded-full inset-auto'
+      {isLoading ? (
+        <>
+          <SkeletonControl className='h-4 w-20' />
+          <div className='flex-center'>
+            <SkeletonControl className='size-[200px] rounded-full' />
+          </div>
+        </>
+      ) : (
+        <>
+          <FormLabel className='paragraph-semibold text-black_white'>
+            {label} <Askterisk />
+          </FormLabel>
+          <FormControl className='mt-3.5'>
+            <ImageUploading
+              multiple={false}
+              value={value as ImageListType}
+              onChange={onChange}
+              maxFileSize={15242880}
+              acceptType={["jpg", "jpeg", "png", "webp"]}
+              ImageComponent={({ src, alt }) => (
+                <Image
+                  src={src}
+                  alt={alt}
+                  className='h-[200px] rounded-full'
+                  width={200}
+                  height={200}
+                  wrapperClassName='flex-center'
+                  skeletonClassName='rounded-full inset-auto'
+                />
+              )}
             />
-          )}
-        />
-      </FormControl>
+          </FormControl>
+        </>
+      )}
+
       <FormMessage className='text-red-600' />
     </FormItem>
   );
+};
+
+const SkeletonControl = ({ className }: { className?: string }) => {
+  return <Skeleton className={`h-8 w-full ${className}`} />;
 };
 
 export default AdminForm;

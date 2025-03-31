@@ -14,7 +14,7 @@ import { useLocale, useTranslations } from "next-intl";
 import AdminDialog from "./Dialog";
 import { IAdminResponse } from "@/generated/interfaces/user.interface";
 import { useAppDispatch } from "@/store/hooks";
-import { createAdmin } from "@/slices/admin.slice";
+import { createAdmin, saveAdminData, useSelectAdmin } from "@/slices/admin.slice";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
 
 export default function Table() {

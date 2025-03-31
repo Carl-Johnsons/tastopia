@@ -36,7 +36,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
-  const { isSelf } = useSelectAdmin();
+  const { isSelf, isFormOpen, isFormLoading } = useSelectAdmin();
 
   const schema = useMemo(() => {
     return formType === "create"
@@ -45,31 +45,14 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   }, [formType, tForm]);
 
   const currentUserId = useSelectUserId();
-  const { data: fetchedAmin, isLoading } = useGetAdminById(
+  const { data: fetchedAdmin, isLoading } = useGetAdminById(
     targetId ?? (currentUserId as string)
   );
-  const [admin, setAdmin] = useState(fetchedAmin);
+  const [admin, setAdmin] = useState(fetchedAdmin);
 
-  useEffect(() => {
-    if (isLoading || !fetchedAmin) {
-      dispatch(saveAdminData({ isFormLoading: true }));
-    } else {
-      dispatch(saveAdminData({ isFormLoading: false }));
-    }
-  }, [isLoading, fetchedAmin, dispatch]);
-
-  const defaultValues: Partial<CreateAdminFormFields> = useMemo(() => {
+  const defaultValues: Partial<CreateAdminFormFields> | undefined = useMemo(() => {
     if (formType === "create") {
-      return {
-        name: undefined,
-        gmail: undefined,
-        phone: undefined,
-        dob: undefined,
-        gender: undefined,
-        address: undefined,
-        avatarFile: undefined,
-        password: undefined
-      };
+      return undefined;
     }
 
     const images: ImageListType = [{ dataURL: admin?.avatarUrl ?? "" }];
@@ -77,7 +60,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       ? format(new Date(admin?.dob), "dd/MM/yyyy")
       : undefined;
 
-    return {
+    const valuenew = {
       name: admin?.displayName,
       gmail: admin?.email,
       phone: admin?.phoneNumber,
@@ -87,6 +70,10 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       status: admin?.isActive ? BinaryStatus.Active : BinaryStatus.Inactive,
       avatarFile: images
     };
+
+    console.debug("data passed to form", valuenew);
+
+    return valuenew;
   }, [admin, formType]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -121,6 +108,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
         });
 
         if (formData.values().toArray().length === 0) return;
+        console.debug("submitForm for", formType, "with values", formData);
 
         if (formType === "create") {
           await createAdmin(formData);
@@ -130,13 +118,12 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
 
           await updateAdmin(formData);
           toast.success(tNotification("update.success"));
-          await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
 
-          if (isSelf) {
-            await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
-          }
+          if (isSelf) await queryClient.invalidateQueries({ queryKey: ["currentAdmin"] });
+          await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
         }
 
+        await queryClient.invalidateQueries({ queryKey: ["admins"] });
         dispatch(closeForm());
         invalidateCurrentAdminActivities();
       } catch (error) {
@@ -159,7 +146,8 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       invalidateCurrentAdminActivities,
       targetId,
       queryClient,
-      dispatch
+      dispatch,
+      isSelf
     ]
   );
 
@@ -171,10 +159,18 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   );
 
   useEffect(() => {
-    if (fetchedAmin) {
-      setAdmin(fetchedAmin);
+    if (isLoading && !fetchedAdmin) {
+      dispatch(saveAdminData({ isFormLoading: true }));
+    } else {
+      dispatch(saveAdminData({ isFormLoading: false }));
     }
-  }, [fetchedAmin]);
+  }, [isLoading, fetchedAdmin, dispatch]);
+
+  useEffect(() => {
+    if (fetchedAdmin) {
+      setAdmin(fetchedAdmin);
+    }
+  }, [fetchedAdmin]);
 
   return { submitForm, form, isSubmitting };
 };
