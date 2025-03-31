@@ -104,7 +104,7 @@ public class AccountController : BaseApiController
     [HttpPost("unlink/{method}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> UnlinkAccount([FromRoute] string method, AccountIdentifierDTO dto)
+    public async Task<IActionResult> UnlinkAccount([FromRoute] string method)
     {
         if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
         {
@@ -114,7 +114,6 @@ public class AccountController : BaseApiController
         var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
         var command = new UnlinkAccountCommand
         {
-            Identifier = dto.Identifier,
             Method = accountMethod,
             Id = Guid.Parse(userId!)
         };

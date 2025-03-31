@@ -1,6 +1,5 @@
 ﻿using Contract.Constants;
 using IdentityService.Domain.Interfaces;
-using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +8,6 @@ namespace IdentityService.Application.Account.Commands;
 public record UnlinkAccountCommand : IRequest<Result>
 {
     public Guid Id { get; set; }
-    public string Identifier { get; set; } = null!;
     public AccountMethod Method { get; set; }
 }
 
