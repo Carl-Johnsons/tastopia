@@ -6,6 +6,7 @@ export interface AdminState {
   isFormOpen: boolean;
   formType: "create" | "update";
   targetId?: string;
+  /** Whether the form's data is being fetched. */
   isFormLoading: boolean;
   /** Whether the form is for updating the current user. */
   isSelf?: boolean;
@@ -14,7 +15,7 @@ export interface AdminState {
 const initialState: AdminState = {
   isFormOpen: false,
   formType: "create",
-  isFormLoading: false
+  isFormLoading: false,
 };
 
 export const AdminSlice = createSlice({

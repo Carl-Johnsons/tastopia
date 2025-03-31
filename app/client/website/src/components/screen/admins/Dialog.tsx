@@ -14,13 +14,11 @@ import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { DialogProps } from "@radix-ui/react-dialog";
 import { Edit, Plus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import AdminForm from "./Form";
-import { useAdminForm } from "@/hooks/form";
+import AdminForm, { AdminFormRef } from "./Form";
 import { closeForm, saveAdminData, useSelectAdmin } from "@/slices/admin.slice";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
-import Loader from "@/components/ui/Loader";
 
 type Props = DialogProps & {
   buttonClassName?: string;
@@ -35,19 +33,14 @@ const AdminDialog = ({
   hideTriggerButton,
   ...props
 }: Props) => {
-  const { formType, targetId, isFormOpen, isFormLoading, isSelf } = useSelectAdmin();
+  const { formType, isFormOpen } = useSelectAdmin();
+  const ref = useRef<AdminFormRef>(null);
   const { height } = useWindowDimensions();
-  const { form, submitForm, isSubmitting } = useAdminForm({
-    formType,
-    targetId
-  });
   const dispatch = useAppDispatch();
   const tTooltip = useTranslations("administerAdmins.tooltip");
   const tForm = useTranslations("administerAdmins.form");
   const PADDING_Y = 50;
-  const isSubmitDisabled = useMemo(() => isSubmitting, [isSubmitting]);
   const isCreate = useMemo(() => formType === "create", [formType]);
-
   const onClose = useCallback(() => {
     dispatch(closeForm());
   }, [dispatch]);
@@ -58,6 +51,9 @@ const AdminDialog = ({
     },
     [dispatch]
   );
+
+  const isSubmitting = useMemo(() => ref.current?.isSubmitting ?? false, [ref]);
+  const isSubmitDisabled = useMemo(() => ref.current?.isSubmitDisabled ?? false, [ref]);
 
   return (
     <Dialog
@@ -95,13 +91,7 @@ const AdminDialog = ({
             </DialogClose>
           </div>
         </DialogHeader>
-        {isFormLoading ? (
-          <div className='h-[75vh] w-full pt-20'>
-            <Loader />
-          </div>
-        ) : (
-          <AdminForm form={form} isSelf={isSelf} />
-        )}
+        <AdminForm ref={ref} />
         <DialogFooter>
           <InteractiveButton
             title={isCreate ? tTooltip("create") : tTooltip("update")}
@@ -112,7 +102,7 @@ const AdminDialog = ({
                 <Edit className='text-white_black' />
               )
             }
-            onClick={submitForm}
+            onClick={() => ref.current?.submitForm()}
             isLoading={isSubmitting}
             disabled={isSubmitDisabled}
             className='text-white_black rounded-full bg-primary hover:bg-secondary'
