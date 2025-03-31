@@ -39,7 +39,7 @@ public class CustomResourceOwnerPasswordValidator : IResourceOwnerPasswordValida
             return;
         }
         var roles = await _userManager.GetRolesAsync(user);
-        if (roles[0] != Roles.Code.USER.ToString())
+        if (roles != null && roles[0] != Roles.Code.USER.ToString())
         {
             context.Result = new GrantValidationResult(TokenRequestErrors.UnauthorizedClient, "Permission Denied");
             return;
