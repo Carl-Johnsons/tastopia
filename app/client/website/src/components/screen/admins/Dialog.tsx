@@ -20,18 +20,22 @@ import { closeForm, saveAdminData, useSelectAdmin } from "@/slices/admin.slice";
 import { useCallback, useMemo } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { LoadingIcon } from "@/components/shared/icons";
 import Loader from "@/components/ui/Loader";
 
 type Props = DialogProps & {
   buttonClassName?: string;
   /** Callback that is triggered when the Dialog button is clicked. */
   onClick?: () => void;
+  hideTriggerButton?: boolean;
 };
 
-const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
-  const { formType, targetId, isFormOpen, isFormLoading } = useSelectAdmin();
+const AdminDialog = ({
+  buttonClassName,
+  onClick,
+  hideTriggerButton,
+  ...props
+}: Props) => {
+  const { formType, targetId, isFormOpen, isFormLoading, isSelf } = useSelectAdmin();
   const { height } = useWindowDimensions();
   const { form, submitForm, isSubmitting } = useAdminForm({
     formType,
@@ -42,7 +46,6 @@ const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
   const tForm = useTranslations("administerAdmins.form");
   const PADDING_Y = 50;
   const isSubmitDisabled = useMemo(() => isSubmitting, [isSubmitting]);
-
   const isCreate = useMemo(() => formType === "create", [formType]);
 
   const onClose = useCallback(() => {
@@ -62,14 +65,16 @@ const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
       open={isFormOpen}
       onOpenChange={setOpen}
     >
-      <DialogTrigger asChild>
-        <InteractiveButton
-          onClick={onClick}
-          title={tTooltip("create")}
-          icon={<Plus className='text-white_black' />}
-          className={buttonClassName}
-        />
-      </DialogTrigger>
+      {!hideTriggerButton && (
+        <DialogTrigger asChild>
+          <InteractiveButton
+            onClick={onClick}
+            title={tTooltip("create")}
+            icon={<Plus className='text-white_black' />}
+            className={buttonClassName}
+          />
+        </DialogTrigger>
+      )}
       <DialogContent
         className='bg-white_black200 overflow-y-scroll sm:max-w-[525px] [&>button]:hidden'
         style={{ maxHeight: height - 2 * PADDING_Y }}
@@ -95,7 +100,7 @@ const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
             <Loader />
           </div>
         ) : (
-          <AdminForm form={form} />
+          <AdminForm form={form} isSelf={isSelf} />
         )}
         <DialogFooter>
           <InteractiveButton

@@ -36,6 +36,8 @@ import { Calendar } from "@/components/shared/common/Calendar";
 
 type Props = {
   form: ReturnType<typeof useForm<CreateAdminFormFields | UpdateAdminFormFields>>;
+  /** Whether the form is for updating the current user. */
+  isSelf?: boolean;
 };
 
 type FormInputProps = {
@@ -58,7 +60,7 @@ type FormSelectProps = FormInputProps & {
 type FormDatePickerProps = FormInputProps;
 type FormImageUploadProps = Omit<FormInputProps, "placeholder">;
 
-const AdminForm = ({ form }: Props) => {
+const AdminForm = ({ form, isSelf }: Props) => {
   const { formType: type } = useSelectAdmin();
   const t = useTranslations("administerAdmins.form");
   const isUpdate = useMemo(() => type === "update", [type]);
@@ -160,7 +162,7 @@ const AdminForm = ({ form }: Props) => {
           )}
         />
 
-        {isUpdate && (
+        {isUpdate && !isSelf && (
           <FormField
             control={form.control}
             name='status'
@@ -272,25 +274,14 @@ const FormSelect = ({
 
 const FormDatePicker = ({ field, label, placeholder }: FormDatePickerProps) => {
   const { value, onChange } = field;
-  console.log("value", value);
-
-  const defaultDate = useMemo(
-    () => (!isValid(value) ? undefined : (value as Date)),
+  const parsedDate = useMemo(
+    () => value && parse(value, "dd/MM/yyyy", new Date()),
     [value]
   );
-  const defaultInputValue = useMemo(() => {
-    if (!defaultDate) return "";
-    return format(defaultDate, "dd/MM/yyyy");
-  }, [defaultDate]);
 
-  const [date, setDate] = useState<Date | undefined>(defaultDate);
-  const [inputValue, setInputValue] = useState<string>(defaultInputValue);
+  const [date, setDate] = useState<Date | undefined>(value && parsedDate);
+  const [inputValue, setInputValue] = useState<string>(value ?? "");
   const [month, setMonth] = useState(date);
-
-  useEffect(() => {
-    setDate(defaultDate);
-    setInputValue(defaultInputValue);
-  }, [defaultDate]);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

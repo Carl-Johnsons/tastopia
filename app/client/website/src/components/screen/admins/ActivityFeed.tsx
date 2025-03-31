@@ -38,6 +38,7 @@ export default function ActivityFeed({ accountId, self }: ActivityFeedProps) {
               <ActivityItem
                 key={activity.entityId + index}
                 activity={activity}
+                self={self}
               />
             );
           });

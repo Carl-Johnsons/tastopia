@@ -19,9 +19,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSelectUserId } from "@/slices/user.slice";
 import { useGetAdminById } from "@/api/admin";
 import { useAppDispatch } from "@/store/hooks";
-import { closeForm, saveAdminData } from "@/slices/admin.slice";
+import { closeForm, saveAdminData, useSelectAdmin } from "@/slices/admin.slice";
 import { ImageListType } from "react-images-uploading";
-import { parse } from "date-fns";
+import { format, parse } from "date-fns";
 
 type FormType = "create" | "update";
 
@@ -36,6 +36,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
+  const { isSelf } = useSelectAdmin();
 
   const schema = useMemo(() => {
     return formType === "create"
@@ -57,7 +58,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
     }
   }, [isLoading, fetchedAmin, dispatch]);
 
-  const defaultValues: UpdateAdminFormFields = useMemo(() => {
+  const defaultValues: Partial<CreateAdminFormFields> = useMemo(() => {
     if (formType === "create") {
       return {
         name: undefined,
@@ -72,12 +73,15 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
     }
 
     const images: ImageListType = [{ dataURL: admin?.avatarUrl ?? "" }];
+    const parsedDate = admin?.dob
+      ? format(new Date(admin?.dob), "dd/MM/yyyy")
+      : undefined;
 
     return {
       name: admin?.displayName,
       gmail: admin?.email,
       phone: admin?.phoneNumber,
-      dob: admin?.dob ? new Date(admin?.dob) : undefined,
+      dob: parsedDate,
       gender: admin?.gender ? (admin?.gender as Gender) : undefined,
       address: admin?.address,
       status: admin?.isActive ? BinaryStatus.Active : BinaryStatus.Inactive,
@@ -89,8 +93,8 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
 
   const isUpdate = useMemo(() => formType === "update", [formType]);
   const form = useForm<CreateAdminFormFields | UpdateAdminFormFields>({
-    resolver: zodResolver(schema),
-    values: defaultValues
+    resolver: zodResolver(schema as any),
+    values: defaultValues as any
   });
 
   const onSubmit = useCallback(
@@ -117,7 +121,6 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
         });
 
         if (formData.values().toArray().length === 0) return;
-        console.log(`sending ${formType} admin request with data:`, formData);
 
         if (formType === "create") {
           await createAdmin(formData);
@@ -129,7 +132,6 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
           toast.success(tNotification("update.success"));
           await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
 
-          const isSelf = currentUserId === targetId;
           if (isSelf) {
             await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
           }

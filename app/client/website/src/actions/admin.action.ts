@@ -60,7 +60,7 @@ export async function getCurrentAdminDetail() {
   const url = "/api/admin/user/current";
 
   try {
-    const { data } = await protectedAxiosInstance.get<IAdminDetailResponse>(url, {});
+    const { data } = await protectedAxiosInstance.get<IAdminDetailResponse>(url);
     return data;
   } catch (error) {
     withErrorProcessor(error);
@@ -98,8 +98,8 @@ export async function createAdmin(formData: FormData) {
   }
 }
 
-export async function updateAdmin(formData: FormData) {
-  const url = "/api/admin/account";
+export async function updateAdmin(formData: FormData, isSelf?: boolean) {
+  const url = isSelf ? "/api/admin/account/current" : "/api/admin/account";
 
   try {
     await protectedAxiosInstance.patch<undefined>(url, formData, {

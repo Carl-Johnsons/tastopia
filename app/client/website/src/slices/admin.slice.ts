@@ -7,6 +7,8 @@ export interface AdminState {
   formType: "create" | "update";
   targetId?: string;
   isFormLoading: boolean;
+  /** Whether the form is for updating the current user. */
+  isSelf?: boolean;
 }
 
 const initialState: AdminState = {
@@ -28,11 +30,17 @@ export const AdminSlice = createSlice({
         formType: "create"
       });
     },
-    updateAdmin: (state, { payload }: PayloadAction<Pick<AdminState, "targetId">>) => {
+    updateAdmin: (
+      state,
+      { payload }: PayloadAction<Pick<AdminState, "targetId" | "isSelf">>
+    ) => {
+      const { targetId, isSelf } = payload;
+
       Object.assign(state, {
         isFormOpen: true,
         formType: "update",
-        targetId: payload.targetId
+        targetId,
+        isSelf
       });
     },
     closeForm: state => {
