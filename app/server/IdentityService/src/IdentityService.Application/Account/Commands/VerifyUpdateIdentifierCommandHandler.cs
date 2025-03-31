@@ -38,11 +38,6 @@ public class VerifyUpdateIdentifierCommandHandler : IRequestHandler<VerifyUpdate
             return Result.Failure(AccountError.NotFound);
         }
 
-        if (user.EmailConfirmed)
-        {
-            return Result.Failure(AccountError.EmailAlreadyConfirmed);
-        }
-
         if (user.EmailOTP != request.OTP)
         {
             return Result.Failure(AccountError.InvalidOTP);
@@ -74,11 +69,6 @@ public class VerifyUpdateIdentifierCommandHandler : IRequestHandler<VerifyUpdate
         if (user == null)
         {
             return Result.Failure(AccountError.NotFound);
-        }
-
-        if (user.PhoneNumberConfirmed)
-        {
-            return Result.Failure(AccountError.PhoneAlreadyConfirmed);
         }
 
         if (user.PhoneOTP != request.OTP)
