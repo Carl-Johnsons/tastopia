@@ -11,7 +11,7 @@ public record UnlinkAccountCommand : IRequest<Result>
     public AccountMethod Method { get; set; }
 }
 
-public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, Result>
+public class UnlinkAccountCommandHandler : IRequestHandler<UnlinkAccountCommand, Result>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
     private readonly IApplicationDbContext _context;
@@ -23,7 +23,7 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
         _context = context;
     }
 
-    public async Task<Result> Handle(LinkAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UnlinkAccountCommand request, CancellationToken cancellationToken)
     {
         switch (request.Method)
         {
@@ -36,7 +36,7 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
         }
     }
 
-    public async Task<Result> UnlinkEmail(LinkAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Result> UnlinkEmail(UnlinkAccountCommand request, CancellationToken cancellationToken)
     {
         var account = await _userManager.Users.SingleOrDefaultAsync(a => a.Id == request.Id.ToString());
         if (account == null)
@@ -64,7 +64,7 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
         return Result.Success();
     }
 
-    public async Task<Result> UnlinkPhone(LinkAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Result> UnlinkPhone(UnlinkAccountCommand request, CancellationToken cancellationToken)
     {
         var account = await _userManager.Users.SingleOrDefaultAsync(a => a.Id == request.Id.ToString());
         if (account == null)
