@@ -44,14 +44,9 @@ public class UnlinkAccountCommandHandler : IRequestHandler<UnlinkAccountCommand,
             return Result.Failure(AccountError.NotFound);
         }
 
-        if (!account.EmailConfirmed)
+        if (account.Email == null || account.PhoneNumber == null)
         {
-            return Result.Failure(AccountError.EmailNotConfirmed);
-        }
-
-        if (!account.PhoneNumberConfirmed)
-        {
-            return Result.Failure(AccountError.PhoneNotConfirmed);
+            return Result.Failure(AccountError.OnlyExistOneIdentifier);
         }
 
         account.EmailConfirmed = false;
@@ -72,14 +67,9 @@ public class UnlinkAccountCommandHandler : IRequestHandler<UnlinkAccountCommand,
             return Result.Failure(AccountError.NotFound);
         }
 
-        if (!account.PhoneNumberConfirmed)
+        if (account.Email == null || account.PhoneNumber == null)
         {
-            return Result.Failure(AccountError.PhoneNotConfirmed);
-        }
-
-        if (!account.EmailConfirmed)
-        {
-            return Result.Failure(AccountError.EmailNotConfirmed);
+            return Result.Failure(AccountError.OnlyExistOneIdentifier);
         }
 
         account.PhoneNumber = null;

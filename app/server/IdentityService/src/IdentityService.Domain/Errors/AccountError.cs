@@ -85,6 +85,10 @@ public class AccountError
         new("AccountError.ResetPasswordFailed",
             StatusCode: (int)HttpStatusCode.BadRequest,
             Message: "Reset Password failed");
+    public static Error OnlyExistOneIdentifier =>
+        new("AccountError.OnlyExistOneIdentifier",
+            StatusCode: (int)HttpStatusCode.BadRequest,
+            Message: "Only exist one identifier! Abort current operation.");
     public static Error NullParameter =>
         new("AccountError.NullParameter",
             StatusCode: (int)HttpStatusCode.InternalServerError,
