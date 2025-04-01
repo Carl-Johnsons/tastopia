@@ -214,7 +214,6 @@ public class AccountController : BaseApiController
         return Ok(result.Value);
     }
 
-    [AllowAnonymous]
     [HttpPost("request-update-identifier/{method}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
@@ -238,7 +237,30 @@ public class AccountController : BaseApiController
         return Ok();
     }
 
-    [AllowAnonymous]
+    [HttpPost("check-update-identifier/{method}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    public async Task<IActionResult> CheckUpdateIdentifier([FromRoute] string method, VerifyUpdateIdentifierDTO dto)
+    {
+        if (!Enum.TryParse(method, ignoreCase: true, out AccountMethod accountMethod))
+        {
+            return BadRequest("Invalid account method");
+        }
+        var userId = _httpContextAccessor.HttpContext?.User.GetSubjectId();
+
+        var command = new CheckUpdateIdentifierOTPQuery
+        {
+            Identifier = dto.Identifier,
+            Method = accountMethod,
+            OTP = dto.OTP,
+            AccountId = Guid.Parse(userId!)
+        };
+
+        var result = await _sender.Send(command);
+        result.ThrowIfFailure();
+        return Ok();
+    }
+
     [HttpPost("verify-update-identifier/{method}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
