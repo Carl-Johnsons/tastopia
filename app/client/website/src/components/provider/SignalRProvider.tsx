@@ -1,5 +1,5 @@
 "use client";
-import { API_GATEWAY_HOST } from "@/constants/api";
+import { API_URI } from "@/constants/api";
 import {
   HubConnection,
   HubConnectionBuilder,
@@ -34,7 +34,7 @@ interface Props {
 const SignalRHubContext = createContext<SignalRHubContextType | null>(null);
 
 const SignalRHubProvider = ({ children }: Props) => {
-  const hubUrl = `http://localhost:5004/tastopia-hub`;
+  const hubUrl = `${API_URI}/tastopia-hub`;
   const [waitingToReconnect, setWaitingToReconnect] = useState(true);
   const accessToken = useSelectAccessToken();
   const user = useSelectUser();
