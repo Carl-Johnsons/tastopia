@@ -4,7 +4,28 @@
     "title": "Account",
     "email": "Email",
     "phone": "Phone",
-    "google": "Google"
+    "google": "Google",
+    "updateAlert": {
+      "title": "Confirm your request",
+      "description": "Do you want to update your information?",
+      "cancel": "Cancel",
+      "update": "Update",
+      "error": {
+        "title": "Error",
+        "description": "An error has occurred. Please try again later."
+      }
+    },
+    "unlinkAlert": {
+      "title": "Confirm your request",
+      "emailDescription": "Do you want to unlink this email?",
+      "phoneDescription": "Do you want to unlink this phone number?",
+      "cancel": "Cancel",
+      "unlink": "Unlink",
+      "success": {
+        "title": "Success",
+        "description": "Your information has been updated successfully"
+      }
+    }
   },
   "language": {
     "title": "Language",

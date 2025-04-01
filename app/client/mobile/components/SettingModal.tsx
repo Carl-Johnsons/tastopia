@@ -7,6 +7,7 @@ import {
   SetStateAction,
   forwardRef,
   useCallback,
+  useMemo,
   useState
 } from "react";
 import { SvgProps } from "react-native-svg";
@@ -39,13 +40,14 @@ import {
 import { useDispatch } from "react-redux";
 import Animated from "react-native-reanimated";
 import Protected from "./Protected";
-import { ROLE, selectRole } from "@/slices/auth.slice";
+import { ROLE, saveAuthData, selectRole } from "@/slices/auth.slice";
 import {
   IDENTIFIER_TYPE,
+  ModifyIdentifierParams,
   UpdateSettingParams,
+  useRequestUpdateIdentifier,
   useUnlink,
-  useUpdateSetting,
-  useUpdateUser
+  useUpdateSetting
 } from "@/api/user";
 import {
   BottomSheetBackdrop,
@@ -59,11 +61,13 @@ import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { useTranslation } from "react-i18next";
 import { useColorScheme } from "nativewind";
 import useColorizer from "@/hooks/useColorizer";
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 import { useQueryClient } from "react-query";
-import { IUpdateUserDTO } from "@/generated/interfaces/user.interface";
 import { Feather } from "@expo/vector-icons";
+import { useAppDispatch } from "@/store/hooks";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
+import useSyncUser from "@/hooks/user/useSyncUser";
 
 type SettingModalProps = {
   ref: RefObject<BottomSheetMethods>;
@@ -320,42 +324,100 @@ const Main = ({
 
 const AccountSetting = () => {
   const { t } = useTranslation("settingModal", { keyPrefix: "account" });
+  const { t: tA } = useTranslation("settingModal", { keyPrefix: "account.updateAlert" });
+  const { t: tUnlink } = useTranslation("settingModal", {
+    keyPrefix: "account.unlinkAlert"
+  });
   const { accountPhoneNumber, accountEmail } = selectUser();
-  const isLinkedGoogle = false;
-  const { mutateAsync: updateUser } = useUpdateUser();
-  const { mutateAsync: unlink } = useUnlink();
+  const isHaveBothIdentifier = useMemo(
+    () => !!accountEmail && !!accountPhoneNumber,
+    [accountEmail, accountPhoneNumber]
+  );
 
-  const updateUserInfo = async (key: string, data: IUpdateUserDTO) => {
-    switch (key) {
-      case "":
-    }
+  const { mutateAsync: unlinkIdentifier } = useUnlink();
+  const { mutateAsync: requestUpdateIdentifier } = useRequestUpdateIdentifier();
 
-    //TODO: update user info
-    //TODO: save info into state
+  const { dismiss } = useBottomSheetModal();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
 
-    await updateUser(data, {
-      onSuccess: () => {
-        Alert.alert("Update successfully.");
-      },
-      onError: () => {
-        Alert.alert("An error has occured.");
+  const { handleError } = useErrorHandler();
+  const { fetch: fetchUser } = useSyncUser();
+
+  const unlink = useCallback(
+    async ({ data, type }: ModifyIdentifierParams) => {
+      Alert.alert(
+        tUnlink("title"),
+        type === IDENTIFIER_TYPE.EMAIL
+          ? tUnlink("emailDescription")
+          : tUnlink("phoneDescription"),
+        [
+          { text: tUnlink("cancel"), style: "cancel" },
+          {
+            text: tUnlink("unlink"),
+            onPress: async () => {
+              unlinkIdentifier(
+                { type, data },
+                {
+                  onSuccess: () => {
+                    Alert.alert(tUnlink("success.title"), tUnlink("success.description"));
+                    fetchUser();
+                  },
+                  onError: err => handleError(err)
+                }
+              );
+            }
+          }
+        ]
+      );
+    },
+    [fetchUser, handleError]
+  );
+
+  const updateUserInfo = useCallback(async ({ data, type }: ModifyIdentifierParams) => {
+    Alert.alert(tA("title"), tA("description"), [
+      { text: tA("cancel"), style: "cancel" },
+      {
+        text: tA("update"),
+        onPress: async () => {
+          await requestUpdateIdentifier(
+            { type, data },
+            {
+              onError: err => handleError(err)
+            }
+          );
+
+          dispatch(
+            saveAuthData({
+              modifyIdentifierData: { type, data },
+              resetModifyIdentifierForm: true
+            })
+          );
+          dismiss();
+          router.push("/(protected)/verify-identifier");
+        }
       }
-    });
-  };
+    ]);
+  }, []);
 
   const Item = ({
     title,
     value,
     ticked,
     onPressUnlink,
-    onPressUpdate
+    onPressUpdate,
+    isShowTrash
   }: {
     title: string;
     value?: string | null;
     ticked?: boolean;
+    isShowTrash?: boolean;
     onPressUnlink?: () => void;
     onPressUpdate?: () => void;
   }) => {
+    const { c } = useColorizer();
+    const { black, white } = colors;
+
     return (
       <View className={`flex-row items-center justify-between gap-3 px-4 py-6`}>
         <Text className='text-black_white'>{title}</Text>
@@ -363,26 +425,35 @@ const AccountSetting = () => {
           <Text className='text-black_white'>{value ? value : ""}</Text>
           {ticked || value ? (
             <View className='flex-row gap-3'>
-              <Button
-                className='rounded-full bg-primary/25'
-                onPress={onPressUpdate}
-              >
-                <Feather
-                  name='edit-2'
-                  size={24}
-                  color='black'
-                />
-              </Button>
-              <Button
-                className='rounded-full bg-primary/25'
-                onPress={onPressUnlink}
-              >
-                <Feather
-                  name='trash-2'
-                  size={24}
-                  color='black'
-                />
-              </Button>
+              {value && (
+                <>
+                  <Button
+                    className='rounded-full bg-primary p-1'
+                    onPress={() => {
+                      onPressUpdate?.();
+                      console.log("goto update page");
+                    }}
+                  >
+                    <Feather
+                      name='edit-2'
+                      size={14}
+                      color={c(white.DEFAULT, black.DEFAULT)}
+                    />
+                  </Button>
+                  {isShowTrash && (
+                    <Button
+                      className='rounded-full bg-primary p-1'
+                      onPress={onPressUnlink}
+                    >
+                      <Feather
+                        name='trash-2'
+                        size={14}
+                        color={c(white.DEFAULT, black.DEFAULT)}
+                      />
+                    </Button>
+                  )}
+                </>
+              )}
             </View>
           ) : (
             <View className='aspect-square w-[20px] rounded-full border border-gray-400' />
@@ -397,34 +468,54 @@ const AccountSetting = () => {
       <Item
         title={t("email")}
         value={accountEmail}
-        onPressUnlink={() => {
-          if (!accountEmail) {
-            return;
-          }
-
-          unlink({
-            type: IDENTIFIER_TYPE.EMAIL,
-            data: {
-              identifier: accountEmail
-            }
-          });
-        }}
+        onPressUnlink={
+          !!accountEmail
+            ? () => {
+                unlink({
+                  type: IDENTIFIER_TYPE.EMAIL,
+                  data: {
+                    identifier: accountEmail
+                  }
+                });
+              }
+            : undefined
+        }
+        onPressUpdate={
+          !!accountEmail
+            ? () => {
+                updateUserInfo({
+                  type: IDENTIFIER_TYPE.EMAIL,
+                  data: { identifier: accountEmail }
+                });
+              }
+            : undefined
+        }
       />
       <Item
         title={t("phone")}
         value={accountPhoneNumber}
-        onPressUnlink={() => {
-          if (!accountPhoneNumber) {
-            return;
-          }
-
-          unlink({
-            type: IDENTIFIER_TYPE.PHONE_NUMBER,
-            data: {
-              identifier: accountPhoneNumber
-            }
-          });
-        }}
+        onPressUnlink={
+          !!accountPhoneNumber
+            ? () => {
+                unlink({
+                  type: IDENTIFIER_TYPE.PHONE_NUMBER,
+                  data: {
+                    identifier: accountPhoneNumber
+                  }
+                });
+              }
+            : undefined
+        }
+        onPressUpdate={
+          !!accountPhoneNumber
+            ? () => {
+                updateUserInfo({
+                  type: IDENTIFIER_TYPE.PHONE_NUMBER,
+                  data: { identifier: accountPhoneNumber }
+                });
+              }
+            : undefined
+        }
       />
     </>
   );

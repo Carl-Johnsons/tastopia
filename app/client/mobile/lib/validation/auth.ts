@@ -1,3 +1,4 @@
+import { IDENTIFIER_TYPE } from "@/api/user";
 import { lazy, object, ref, string } from "yup";
 
 export const passwordSchema = string()
@@ -72,3 +73,25 @@ export const registerSchema = object({
 export const verifySchema = object({
   OTP: string().length(6, "Please complete the OTP.")
 });
+
+export const getVerifyIdentifierUpdateSchema = (type: IDENTIFIER_TYPE) =>
+  object({
+    OTP: string().length(6, "Please complete the OTP."),
+    identifier: lazy(value => {
+      const identifierType = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone number";
+
+      if (typeof value !== "string") {
+        return string().required(`Please enter ${identifierType}.`);
+      }
+
+      switch (type) {
+        case IDENTIFIER_TYPE.EMAIL:
+          return string().email("Please enter a valid email address.");
+        case IDENTIFIER_TYPE.PHONE_NUMBER:
+          return string().matches(
+            /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/,
+            "Please enter a valid phone number."
+          );
+      }
+    })
+  });

@@ -36,6 +36,8 @@ import notificationEn from "../locales/en/notification.json";
 import notificationVi from "../locales/vi/notification.json";
 import captureEn from "../locales/en/capture.json";
 import captureVi from "../locales/vi/capture.json";
+import verifyUpdateIdentifierEn from "../locales/en/auth/verifyUpdateIdentifier.json";
+import verifyUpdateIdentifierVi from "../locales/vi/auth/verifyUpdateIdentifier.json";
 
 export default {
   communityEn,
@@ -75,5 +77,7 @@ export default {
   notificationEn,
   notificationVi,
   captureEn,
-  captureVi
+  captureVi,
+  verifyUpdateIdentifierEn,
+  verifyUpdateIdentifierVi
 };

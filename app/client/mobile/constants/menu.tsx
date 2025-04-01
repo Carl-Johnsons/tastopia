@@ -11,7 +11,8 @@ import {
   MENU_PATH,
   NOTIFICATION_PATH,
   SEARCH_PATH,
-  USER_PATH
+  USER_PATH,
+  VERIFY_IDENTIFIER_PATH
 } from "@/constants/paths";
 import useColorizer from "@/hooks/useColorizer";
 import { colors } from "./colors";
@@ -264,6 +265,26 @@ export const menuList: Menu[] = [
         ),
         code: "USER",
         translateCode: "user",
+        hidden: true
+      },
+      {
+        path: VERIFY_IDENTIFIER_PATH,
+        icon: ({ color, focused }) => (
+          <TabIcon
+            icon={
+              <Feather
+                name='menu'
+                size={24}
+                color={color}
+              />
+            }
+            color={color}
+            translateCode='user'
+            focused={focused}
+          />
+        ),
+        code: "VEIRIFY_IDENTIFIER",
+        translateCode: "verifyIdentifier",
         hidden: true
       }
     ]

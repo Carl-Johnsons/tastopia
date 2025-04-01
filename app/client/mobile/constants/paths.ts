@@ -4,4 +4,5 @@ export const MAIN_PATH = "index",
   CAPTURE_PATH = "capture",
   NOTIFICATION_PATH = "notification",
   MENU_PATH = "menu",
-  USER_PATH = "user";
+  USER_PATH = "user",
+  VERIFY_IDENTIFIER_PATH = "verify-identifier";

@@ -1,5 +1,13 @@
 import { useRef, useState } from "react";
-import { ActivityIndicator, Alert, Text, TextInput, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  NativeSyntheticEvent,
+  Text,
+  TextInput,
+  TextInputKeyPressEventData,
+  View
+} from "react-native";
 import { AuthFormProps } from "../login/LoginForm";
 import {
   useAnimatedStyle,
@@ -71,18 +79,19 @@ export const VerifyForm = (props: VerifyFormProps) => {
       formValues.map((currentChar, idx) => (idx === index ? firstChar : currentChar))
     );
 
-    if (value?.length === 0 && index > 0) {
-      inputRefs[index - 1].current?.focus();
-    } else if (value.length > 0 && index < inputRefs.length - 1) {
+    if (value.length > 0 && index < inputRefs.length - 1) {
       inputRefs[index + 1].current?.focus();
     }
   };
 
-  const resolvePos = (key: string, index: number) => {
-    //if (key === "Backspace") {
-    //console.log("Delete/Backspace key pressed");
-    // Additional logic for handling backspace
-    //}
+  const handleKeyPress = (
+    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
+    index: number
+  ) => {
+    if (index === 0) return;
+    if (e.nativeEvent.key === "Backspace") {
+      inputRefs[index - 1].current?.focus();
+    }
   };
 
   return (
@@ -96,7 +105,7 @@ export const VerifyForm = (props: VerifyFormProps) => {
             className={`aspect-square w-[53px] shrink grow border-gray-300 text-center text-primary focus:border-primary`}
             value={formValues[index]}
             onChangeText={value => handleTextChange(value, index)}
-            onKeyPress={({ nativeEvent }) => resolvePos(nativeEvent.key, index)}
+            onKeyPress={e => handleKeyPress(e, index)}
             autoFocus={index === 0}
             cursorColor={primary}
           />

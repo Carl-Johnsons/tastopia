@@ -26,6 +26,12 @@ import {
   IErrorResponseDTO
 } from "@/generated/interfaces/common.interface";
 import { ForgotPasswordFormFields } from "@/components/screen/forgot/ForgotPasswordForm";
+import {
+  LoginResponse,
+  ResendVerifyCode,
+  SignUpResponse,
+  VerifyResponse
+} from "@/types/api/auth";
 
 export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {
@@ -148,6 +154,15 @@ export const useRegister = () => {
 
 export type VerifyParams = { OTP: string; type: IDENTIFIER_TYPE };
 
+export type ModifyIdentifierParams = {
+  type: IDENTIFIER_TYPE;
+  data: IAccountIdentifierDTO;
+};
+export type VerifyUpdateIdentifierParams = {
+  type: IDENTIFIER_TYPE;
+  data: IAccountIdentifierDTO & { OTP: string };
+};
+
 export const useVerify = () => {
   return useMutation<VerifyResponse, Error, VerifyParams>({
     mutationKey: ["verify"],
@@ -197,29 +212,45 @@ export const useResendVerifyCode = () => {
 };
 
 export const useUnlink = () => {
-  return useMutation<
-    ResendVerifyCode,
-    Error,
-    { type: IDENTIFIER_TYPE; data: IAccountIdentifierDTO }
-  >({
-    mutationKey: ["resendVerifyCode"],
+  return useMutation<void, Error, ModifyIdentifierParams>({
+    mutationKey: ["unlink"],
     mutationFn: async ({ type, data }) => {
       const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
       const url = `/api/account/unlink/${ENDPOINT_TYPE}`;
+      await protectedAxiosInstance.post(url, data);
+    }
+  });
+};
 
-      try {
-        const { data: response } = await protectedAxiosInstance.post(url, data);
-        return response;
-      } catch (error) {
-        console.debug("unlink", stringify(error));
+export const useRequestUpdateIdentifier = () => {
+  return useMutation<void, AxiosError, ModifyIdentifierParams>({
+    mutationKey: ["requestUpdateIdentifier"],
+    mutationFn: async ({ type, data }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/request-update-identifier/${ENDPOINT_TYPE}`;
+      await protectedAxiosInstance.post(url, data);
+    }
+  });
+};
 
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message);
-        }
+export const useVerifyUpdateIdentifierOTP = () => {
+  return useMutation<void, AxiosError, VerifyUpdateIdentifierParams>({
+    mutationKey: ["verifyUpdateIdentifierOTP"],
+    mutationFn: async ({ type, data }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/check-update-identifier/${ENDPOINT_TYPE}`;
+      await protectedAxiosInstance.post<undefined>(url, data);
+    }
+  });
+};
 
-        throw new Error("An error has occurred.");
-      }
+export const useUpdateIdentifier = () => {
+  return useMutation<void, AxiosError, VerifyUpdateIdentifierParams>({
+    mutationKey: ["verifyUpdateIdentifier"],
+    mutationFn: async ({ type, data }) => {
+      const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
+      const url = `/api/account/verify-update-identifier/${ENDPOINT_TYPE}`;
+      await protectedAxiosInstance.post(url, data);
     }
   });
 };
