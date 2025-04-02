@@ -1,0 +1,50 @@
+@startuml Sequence
+title "Admin mark report complete"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor Admin
+boundary WebsiteUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n RecipeService" as RecipeService
+database MongoDB
+
+Admin -> WebsiteUI ++: 1. Click on mark complete button in \n recipe or comment report screen
+WebsiteUI -> ApiGateway ++: 2. Admin mark report complete
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+alt Current user is not admin
+    WebsiteUI <-- ApiGateway: 4A. Return error message
+    Admin <-- WebsiteUI: 4A.1. Display error message
+else Current user is admin
+    alt Report is already mark complete
+        WebsiteUI <-- ApiGateway: 4B. Return error message
+        Admin <-- WebsiteUI: 4B.1. Display error message
+    else Report is not mark complete
+        ApiGateway -> RecipeService ++: 5. Forward request
+        RecipeService -> MongoDB++: 6. Update data
+        RecipeService <-- MongoDB--: 7. Return response
+        ApiGateway <-- RecipeService: 8. Return report
+        WebsiteUI <-- ApiGateway--: 9. Forward response
+        Admin <-- WebsiteUI--: 10. Display marked report complete success message
+        RecipeService -> Rabbitmq: 11. Publish "AddActivityLogEvent" message 
+        deactivate RecipeService
+        activate Rabbitmq
+        ref over Rabbitmq: 12. AddActivityLogConsumers
+        Rabbitmq -[hidden]> 
+        destroy Rabbitmq
+    end alt
+end alt
+@enduml
