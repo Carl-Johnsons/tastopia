@@ -1,0 +1,77 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +BanAdmin([FromBody] AdminBanUserDTO adminBanUserDTO): async Task<IActionResult>
+}
+
+class BanAdminCommand {
+    +AccountId : Guid
+    +CurrentAccountId : Guid
+}
+
+class BanAdminCommandHandler {
+    - _context : IApplicationDbContext
+    - _serviceBus: IServiceBus 
+    - _unitOfWork: IUnitOfWork 
+    + Handle(request: BanAdminCommand, cancellationToken: CancellationToken) : Task<Result<AdminBanUserResponse?>>
+}
+
+class AdminBanUserDTO {
+    +AccountId : Guid
+}
+
+class AdminBanUserResponse {
+    + AdminId : Guid
+    + UserId : Guid
+    + IsRestored : bool
+    + User : User
+}
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" AdminBanUserDTO
+AdminController "1"--"1" AdminBanUserCommand
+
+BanAdminCommand --|> "IRequest<TResponse>"
+
+BanAdminCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+BanAdminCommandHandler "1" o--"1" BanAdminCommand
+BanAdminCommandHandler "1" o--"1" IApplicationDbContext
+BanAdminCommandHandler "1" o--"1" IServiceBus
+BanAdminCommandHandler "1" o--"1" IUnitOfWork
+BanAdminCommandHandler "1" o--"1" Result
+BanAdminCommandHandler "1" --"1..*" AdminBanUserResponse
+BanAdminCommandHandler "1" --"1..*" AddActivityLogEvent
+BanAdminCommandHandler "1" --"1..*" UserError
+
+Error "1" --"1" UserError
+
+@enduml
