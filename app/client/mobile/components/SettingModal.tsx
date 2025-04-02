@@ -42,6 +42,7 @@ import Animated from "react-native-reanimated";
 import Protected from "./Protected";
 import { ROLE, saveAuthData, selectRole } from "@/slices/auth.slice";
 import {
+  AddIdentifierParams,
   IDENTIFIER_TYPE,
   ModifyIdentifierParams,
   UpdateSettingParams,
@@ -328,6 +329,9 @@ const AccountSetting = () => {
   const { t: tUnlink } = useTranslation("settingModal", {
     keyPrefix: "account.unlinkAlert"
   });
+  const { t: tLink } = useTranslation("settingModal", {
+    keyPrefix: "account.linkAlert"
+  });
   const { accountPhoneNumber, accountEmail } = selectUser();
   const isHaveBothIdentifier = useMemo(
     () => !!accountEmail && !!accountPhoneNumber,
@@ -343,6 +347,31 @@ const AccountSetting = () => {
 
   const { handleError } = useErrorHandler();
   const { fetch: fetchUser } = useSyncUser();
+
+  const link = useCallback(async ({ type }: AddIdentifierParams) => {
+    Alert.alert(
+      tLink("title"),
+      type === IDENTIFIER_TYPE.EMAIL
+        ? tLink("emailDescription")
+        : tLink("phoneDescription"),
+      [
+        { text: tLink("cancel"), style: "cancel" },
+        {
+          text: tLink("link"),
+          onPress: () => {
+            dispatch(
+              saveAuthData({
+                addIdentifierData: { type },
+                resetAddIdentifierForm: true
+              })
+            );
+            dismiss();
+            router.push("/(protected)/add-identifier");
+          }
+        }
+      ]
+    );
+  }, []);
 
   const unlink = useCallback(
     async ({ data, type }: ModifyIdentifierParams) => {
@@ -403,17 +432,17 @@ const AccountSetting = () => {
   const Item = ({
     title,
     value,
-    ticked,
     onPressUnlink,
     onPressUpdate,
+    onPressLink,
     isShowTrash
   }: {
     title: string;
     value?: string | null;
-    ticked?: boolean;
     isShowTrash?: boolean;
     onPressUnlink?: () => void;
     onPressUpdate?: () => void;
+    onPressLink?: () => void;
   }) => {
     const { c } = useColorizer();
     const { black, white } = colors;
@@ -423,7 +452,7 @@ const AccountSetting = () => {
         <Text className='text-black_white'>{title}</Text>
         <View className='flex-row items-center gap-2'>
           <Text className='text-black_white'>{value ? value : ""}</Text>
-          {ticked || value ? (
+          {value ? (
             <View className='flex-row gap-3'>
               {value && (
                 <>
@@ -456,7 +485,16 @@ const AccountSetting = () => {
               )}
             </View>
           ) : (
-            <View className='aspect-square w-[20px] rounded-full border border-gray-400' />
+            <Button
+              onPress={onPressLink}
+              className='flex-center aspect-square w-[20px] rounded-full border border-gray-400'
+            >
+              <Feather
+                name='plus'
+                size={14}
+                color={colors.primary}
+              />
+            </Button>
           )}
         </View>
       </View>
@@ -468,6 +506,12 @@ const AccountSetting = () => {
       <Item
         title={t("email")}
         value={accountEmail}
+        isShowTrash={isHaveBothIdentifier}
+        onPressLink={() => {
+          link({
+            type: IDENTIFIER_TYPE.EMAIL
+          });
+        }}
         onPressUnlink={
           !!accountEmail
             ? () => {
@@ -494,6 +538,12 @@ const AccountSetting = () => {
       <Item
         title={t("phone")}
         value={accountPhoneNumber}
+        isShowTrash={isHaveBothIdentifier}
+        onPressLink={() => {
+          link({
+            type: IDENTIFIER_TYPE.PHONE_NUMBER
+          });
+        }}
         onPressUnlink={
           !!accountPhoneNumber
             ? () => {

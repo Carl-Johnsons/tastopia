@@ -5,4 +5,5 @@ export const MAIN_PATH = "index",
   NOTIFICATION_PATH = "notification",
   MENU_PATH = "menu",
   USER_PATH = "user",
-  VERIFY_IDENTIFIER_PATH = "verify-identifier";
+  VERIFY_IDENTIFIER_PATH = "verify-identifier",
+  ADD_IDENTIFIER_PATH = "add-identifier";

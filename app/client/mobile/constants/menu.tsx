@@ -5,6 +5,7 @@ import { ReactElement, ReactNode } from "react";
 import { View, Text, TouchableHighlight } from "react-native";
 import { Feather, Ionicons, Octicons } from "@expo/vector-icons";
 import {
+  ADD_IDENTIFIER_PATH,
   CAPTURE_PATH,
   COMMUNITY_PATH,
   MAIN_PATH,
@@ -285,6 +286,26 @@ export const menuList: Menu[] = [
         ),
         code: "VEIRIFY_IDENTIFIER",
         translateCode: "verifyIdentifier",
+        hidden: true
+      },
+      {
+        path: ADD_IDENTIFIER_PATH,
+        icon: ({ color, focused }) => (
+          <TabIcon
+            icon={
+              <Feather
+                name='menu'
+                size={24}
+                color={color}
+              />
+            }
+            color={color}
+            translateCode='user'
+            focused={focused}
+          />
+        ),
+        code: "ADD_IDENTIFIER_PATH",
+        translateCode: "addIdentifier",
         hidden: true
       }
     ]

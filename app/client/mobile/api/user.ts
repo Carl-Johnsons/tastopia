@@ -158,6 +158,9 @@ export type ModifyIdentifierParams = {
   type: IDENTIFIER_TYPE;
   data: IAccountIdentifierDTO;
 };
+
+export type AddIdentifierParams = Pick<ModifyIdentifierParams, "type">;
+
 export type VerifyUpdateIdentifierParams = {
   type: IDENTIFIER_TYPE;
   data: IAccountIdentifierDTO & { OTP: string };

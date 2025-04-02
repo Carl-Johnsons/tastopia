@@ -20,7 +20,3 @@ type VerifyResponse = VerifyResponseSuccess | VerifyResponseError;
 
 type ResendVerifyCodeResponseSuccess = 0;
 type ResendVerifyCode = ResendVerifyCodeResponseSuccess | ErrorResponseDTO;
-
-export const verifyIdentifierUpdateSchema = getVerifyIdentifierUpdateSchema(IDENTIFIER_TYPE.EMAIL);
-export type VerifyIdentifierUpdateFormFields = InferType<typeof verifyIdentifierUpdateSchema>;
-export type VerifyIdentifierUpdateSchema = typeof verifyIdentifierUpdateSchema; 

@@ -1,32 +1,20 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  BackHandler,
-  NativeSyntheticEvent,
-  Pressable,
-  Text,
-  TextInput,
-  TextInputKeyPressEventData,
-  TextInputProps,
-  View
-} from "react-native";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, BackHandler, Pressable, Text, View } from "react-native";
 import { CustomInput } from "../login/LoginForm";
-import Input from "../../Input";
 import Button from "../../Button";
 import {
+  AddIdentifierParams,
   IDENTIFIER_TYPE,
-  ModifyIdentifierParams,
   useRequestUpdateIdentifier,
   useUpdateIdentifier,
   useVerifyUpdateIdentifierOTP
 } from "@/api/user";
 import {
   saveAuthData,
-  selectModifyIdentifierData,
+  selectAddIdentifierData,
   selectResetModifyIdentifierForm
 } from "@/slices/auth.slice";
-import { colors } from "@/constants/colors";
-import { Controller, UseFormReturn, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useBounce } from "@/hooks";
 import Animated, {
@@ -39,43 +27,25 @@ import { useAppDispatch } from "@/store/hooks";
 import BackButton from "@/components/BackButton";
 import { useRouter } from "expo-router";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import useSyncUser from "@/hooks/user/useSyncUser";
 import { useTranslation } from "react-i18next";
 import useVerifyIdentifierSchema from "@/hooks/form/auth/useVerifyIdentifierSchema";
+import {
+  Step,
+  StepProps as UpdateIdentifierStepProps,
+  VerifyUpdateIdentifierFormProps,
+  UpdateIdentifierFormFields,
+  OtpInput
+} from "./VerifyUpdateIdentifierForm";
+import useSyncUser from "@/hooks/user/useSyncUser";
 
-export type VerifyUpdateIdentifierFormProps = {
-  className?: string;
-};
+type AddIdentifierFormProps = VerifyUpdateIdentifierFormProps;
+type StepProps = Omit<
+  UpdateIdentifierStepProps<UpdateIdentifierFormFields>,
+  "identifier"
+>;
 
-export type VerifyFormFields = Array<string>;
-
-export type StepProps<T extends {}> = Pick<
-  UseFormReturn<T>,
-  "control" | "trigger" | "watch"
-> & {
-  errors: Pick<UseFormReturn<T>, "formState">["formState"]["errors"];
-  goToNextStep: () => void;
-  goToPrevStep: () => void;
-  type: IDENTIFIER_TYPE;
-  identifier: string;
-};
-
-export type Step<T> = {
-  fields: Array<keyof T>;
-};
-
-export type UpdateIdentifierFormFields = {
-  OTP?: string | undefined;
-  identifier: string;
-};
-
-export const VerifyUpdateIdentifierForm = ({
-  className
-}: VerifyUpdateIdentifierFormProps) => {
-  const {
-    type,
-    data: { identifier }
-  } = selectModifyIdentifierData() as ModifyIdentifierParams;
+export const AddIdentifierForm = ({ className }: AddIdentifierFormProps) => {
+  const { type } = selectAddIdentifierData() as AddIdentifierParams;
   const { schema } = useVerifyIdentifierSchema(type);
 
   const {
@@ -94,11 +64,11 @@ export const VerifyUpdateIdentifierForm = ({
   const deltaStep = useMemo(() => currentStep - prevStep, [currentStep]);
 
   const steps: Step<UpdateIdentifierFormFields>[] = useMemo(
-    () => [{ fields: ["OTP"] }, { fields: ["identifier"] }, { fields: [] }],
+    () => [{ fields: ["identifier"] }, { fields: ["OTP"] }, { fields: [] }],
     []
   );
 
-  const Steps = useMemo(() => [VerifyOtp, UpdateIdentifer, Success], []);
+  const Steps = useMemo(() => [AddIdentifier, VerifyOtp, Success], []);
 
   const goToNextStep = useCallback(() => {
     if (currentStep === steps.length) {
@@ -170,10 +140,9 @@ export const VerifyUpdateIdentifierForm = ({
           >
             <Step
               type={type}
-              identifier={identifier}
               control={control}
-              trigger={trigger}
               errors={errors}
+              trigger={trigger}
               goToNextStep={goToNextStep}
               goToPrevStep={goToPrevStep}
               watch={watch}
@@ -185,22 +154,117 @@ export const VerifyUpdateIdentifierForm = ({
   );
 };
 
+const AddIdentifier = ({
+  control,
+  trigger,
+  errors,
+  goToNextStep,
+  type,
+  watch
+}: StepProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const identifier = watch("identifier");
+  const isButtonDisabled = useMemo(() => !identifier, [identifier]);
+
+  const { mutateAsync: requestUpdate } = useRequestUpdateIdentifier();
+
+  const { animate, animatedStyles } = useBounce();
+  const { handleError } = useErrorHandler();
+  const { t } = useTranslation("verifyUpdateIdentifier", { keyPrefix: "update" });
+
+  const submit = async () => {
+    await trigger("identifier", { shouldFocus: true });
+    if (errors.identifier) return;
+
+    setIsLoading(true);
+
+    await requestUpdate(
+      {
+        type,
+        data: {
+          identifier: identifier as string
+        }
+      },
+      {
+        onSuccess: async () => goToNextStep(),
+        onError: error => handleError(error),
+        onSettled: () => setIsLoading(false)
+      }
+    );
+  };
+
+  return (
+    <View className='gap-14'>
+      <View>
+        <Text className='text-black_white font-sans font-semibold text-4xl'>
+          {t("title")}
+        </Text>
+        <Text className='font-sans text-lg text-gray-300'>
+          {`${t("description")} `}
+          {type === IDENTIFIER_TYPE.EMAIL ? t("email") : t("phone")}
+        </Text>
+      </View>
+      <View className='gap-3'>
+        <Controller
+          name='identifier'
+          control={control}
+          render={({ field: { onChange, value, onBlur } }) => (
+            <CustomInput
+              inputMode={type === IDENTIFIER_TYPE.EMAIL ? "email" : "tel"}
+              value={value}
+              onBlur={onBlur}
+              onChangeText={value => {
+                onChange(value);
+                if (errors.identifier) trigger("identifier");
+              }}
+            />
+          )}
+        />
+        {errors.identifier ? (
+          <Text className='font-sans text-red-400'>{errors.identifier.message}</Text>
+        ) : null}
+      </View>
+
+      <Button
+        onPress={() => {
+          animate();
+          submit();
+        }}
+        style={[animatedStyles]}
+        className='h-20 justify-center rounded-full bg-primary p-3 text-white'
+        isLoading={isLoading}
+        spinner={
+          <ActivityIndicator
+            className='text-white'
+            animating={isLoading}
+          />
+        }
+        disabled={isButtonDisabled}
+      >
+        <Text className='text-center text-xl text-white'>{t("update")}</Text>
+      </Button>
+    </View>
+  );
+};
+
 export const VerifyOtp = ({
   type,
-  identifier,
   control,
   trigger,
   errors,
   goToNextStep,
   watch
-}: StepProps<UpdateIdentifierFormFields>) => {
+}: StepProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [countdown, setCountdown] = useState(0);
 
   const { mutateAsync: resendOtp } = useRequestUpdateIdentifier();
   const { mutateAsync: verifyOtp } = useVerifyUpdateIdentifierOTP();
+  const { mutateAsync: updateIdentifier } = useUpdateIdentifier();
 
   const OTP = watch("OTP");
+  const identifier = watch("identifier");
   const isButtonDisabled = useMemo(() => !OTP, [OTP]);
 
   const { animate, animatedStyles } = useBounce();
@@ -240,14 +304,22 @@ export const VerifyOtp = ({
     if (errors.OTP || !OTP) return;
 
     setIsLoading(true);
-    verifyOtp(
-      { type, data: { identifier, OTP } },
-      {
-        onSuccess: () => goToNextStep(),
-        onError: error => handleError(error),
-        onSettled: () => setIsLoading(false)
+
+    const params = { type, data: { identifier, OTP } };
+
+    await verifyOtp(params, {
+      onSuccess: async () => {
+        await updateIdentifier(params, {
+          onSuccess: () => goToNextStep(),
+          onError: error => handleError(error),
+          onSettled: () => setIsLoading(false)
+        });
+      },
+      onError: error => {
+        handleError(error);
+        setIsLoading(false);
       }
-    );
+    });
   };
 
   return (
@@ -318,112 +390,18 @@ export const VerifyOtp = ({
   );
 };
 
-const UpdateIdentifer = ({
-  control,
-  trigger,
-  errors,
-  goToNextStep,
-  type,
-  watch
-}: StepProps<UpdateIdentifierFormFields>) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const OTP = watch("OTP");
-  const identifier = watch("identifier");
-  const isButtonDisabled = useMemo(() => !OTP || !identifier, [OTP, identifier]);
-
-  const { mutateAsync: updateInfo } = useUpdateIdentifier();
-  const { fetch: fetchUser } = useSyncUser();
-
-  const { animate, animatedStyles } = useBounce();
-  const { handleError } = useErrorHandler();
-  const { t } = useTranslation("verifyUpdateIdentifier", { keyPrefix: "update" });
-
-  const submit = async () => {
-    await trigger("identifier", { shouldFocus: true });
-    if (errors.identifier) return;
-
-    setIsLoading(true);
-
-    await updateInfo(
-      {
-        type,
-        data: {
-          OTP: OTP as string,
-          identifier: identifier as string
-        }
-      },
-      {
-        onSuccess: async () => {
-          await fetchUser();
-          goToNextStep();
-        },
-        onError: error => handleError(error),
-        onSettled: () => setIsLoading(false)
-      }
-    );
-  };
-
-  return (
-    <View className='gap-14'>
-      <View>
-        <Text className='text-black_white font-sans font-semibold text-4xl'>
-          {t("title")}
-        </Text>
-        <Text className='font-sans text-lg text-gray-300'>
-          {`${t("description")} `}
-          {type === IDENTIFIER_TYPE.EMAIL ? t("email") : t("phone")}
-        </Text>
-      </View>
-      <View className='gap-3'>
-        <Controller
-          name='identifier'
-          control={control}
-          render={({ field: { onChange, value, onBlur } }) => (
-            <CustomInput
-              inputMode={type === IDENTIFIER_TYPE.EMAIL ? "email" : "tel"}
-              value={value}
-              onBlur={onBlur}
-              onChangeText={value => {
-                onChange(value);
-                if (errors.identifier) trigger("identifier");
-              }}
-            />
-          )}
-        />
-        {errors.identifier ? (
-          <Text className='font-sans text-red-400'>{errors.identifier.message}</Text>
-        ) : null}
-      </View>
-
-      <Button
-        onPress={() => {
-          animate();
-          submit();
-        }}
-        style={[animatedStyles]}
-        className='h-20 justify-center rounded-full bg-primary p-3 text-white'
-        isLoading={isLoading}
-        spinner={
-          <ActivityIndicator
-            className='text-white'
-            animating={isLoading}
-          />
-        }
-        disabled={isButtonDisabled}
-      >
-        <Text className='text-center text-xl text-white'>{t("update")}</Text>
-      </Button>
-    </View>
-  );
-};
-
-const Success = (_: Partial<StepProps<UpdateIdentifierFormFields>>) => {
+const Success = (_: StepProps) => {
   const [count, setCount] = useState(5);
+
+  const { fetch: fetchUser } = useSyncUser();
 
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { t } = useTranslation("verifyUpdateIdentifier", { keyPrefix: "success" });
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     if (count === 0) {
@@ -453,77 +431,4 @@ const Success = (_: Partial<StepProps<UpdateIdentifierFormFields>>) => {
   );
 };
 
-export const OtpInput = ({
-  onChangeText,
-  className,
-  ...props
-}: Pick<
-  TextInputProps,
-  | "onChangeText"
-  | "onBlur"
-  | "placeholder"
-  | "defaultValue"
-  | "className"
-  | "secureTextEntry"
->) => {
-  const inputRefs = Array.from({ length: 6 }, () => useRef<TextInput>(null));
-  const { primary } = colors;
-  const [formValues, setFormValues] = useState<VerifyFormFields>([
-    "",
-    "",
-    "",
-    "",
-    "",
-    ""
-  ]);
-
-  useEffect(() => {
-    onChangeText?.(formValues.join(""));
-  }, [formValues]);
-
-  const handleTextChange = (value: string, index: number) => {
-    const firstChar = value.charAt(0).toUpperCase();
-
-    setFormValues(
-      formValues.map((currentChar, idx) => (idx === index ? firstChar : currentChar))
-    );
-
-    if (value.length > 0 && index < inputRefs.length - 1) {
-      inputRefs[index + 1].current?.focus();
-    }
-  };
-
-  const handleKeyPress = (
-    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
-    index: number
-  ) => {
-    console.log("index", index, "key", e.nativeEvent.key);
-
-    if (index === 0) return;
-    if (e.nativeEvent.key === "Backspace") {
-      inputRefs[index - 1].current?.focus();
-    }
-  };
-
-  return (
-    <View className={`flex flex-row gap-2 ${className}`}>
-      {inputRefs.map((ref, index) => (
-        <Input
-          value={formValues[index]}
-          onChangeText={value => handleTextChange(value, index)}
-          onKeyPress={e => handleKeyPress(e, index)}
-          inputMode='numeric'
-          key={index}
-          ref={ref}
-          autoCapitalize='characters'
-          className={`aspect-square w-[53px] shrink grow border-gray-300 text-center text-primary focus:border-primary`}
-          autoFocus={index === 0}
-          cursorColor={primary}
-          {...props}
-        />
-      ))}
-    </View>
-  );
-};
-
-export default VerifyUpdateIdentifierForm;
+export default AddIdentifierForm;

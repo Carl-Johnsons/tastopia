@@ -1,4 +1,4 @@
-import { ModifyIdentifierParams } from "@/api/user";
+import { AddIdentifierParams, ModifyIdentifierParams } from "@/api/user";
 import { useAppSelector } from "@/store/hooks";
 import { createSlice } from "@reduxjs/toolkit";
 import { PURGE } from "redux-persist";
@@ -16,7 +16,9 @@ export interface AuthState {
   isVerifyingAccount: boolean;
   verifyIdentifier: string | null;
   modifyIdentifierData: ModifyIdentifierParams | null;
+  addIdentifierData: AddIdentifierParams | null;
   resetModifyIdentifierForm: boolean;
+  resetAddIdentifierForm: boolean;
 }
 
 export type SaveAuthDataAction = {
@@ -31,7 +33,9 @@ const initialState: AuthState = {
   isVerifyingAccount: false,
   verifyIdentifier: null,
   modifyIdentifierData: null,
-  resetModifyIdentifierForm: false
+  addIdentifierData: null,
+  resetModifyIdentifierForm: false,
+  resetAddIdentifierForm: false
 };
 
 export const selectAccessToken = () => useAppSelector(state => state.auth.accessToken);
@@ -43,6 +47,7 @@ export const selectVerifyIdentifier = () =>
   useAppSelector(state => state.auth.verifyIdentifier);
 export const selectModifyIdentifierData = () =>
   useAppSelector(state => state.auth.modifyIdentifierData);
+export const selectAddIdentifierData = () => useAppSelector(state => state.auth.addIdentifierData);
 export const selectResetModifyIdentifierForm = () =>
   useAppSelector(state => state.auth.resetModifyIdentifierForm);
 
