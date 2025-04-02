@@ -66,6 +66,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationAccount>, IAppl
                        .HasDefaultValueSql("False")
                        .HasSentinel(false);
 
+                    e.Property(a => a.IsFirstTimeLogin)
+                        .HasDefaultValueSql("True")
+                        .HasSentinel(false);
+
                     ApplyUtcConversionForDateTimeNullable(e, a => a.EmailOTPCreated);
                     ApplyUtcConversionForDateTimeNullable(e, a => a.EmailOTPExpiry);
                     ApplyUtcConversionForDateTimeNullable(e, a => a.PhoneOTPCreated);

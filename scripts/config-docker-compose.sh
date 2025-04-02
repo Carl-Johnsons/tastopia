@@ -18,10 +18,14 @@ services:
     volumes:
       - ./ssl/certs/gateway.crt:/etc/ssl/certs/server-cert.crt
       - ./ssl/private-key/gateway.key:/etc/ssl/private/private-key.pem
+      - ./ssl/certs/server-cert.crt:/etc/ssl/certs/public-server-cert.crt
+      - ./ssl/private-key/server.key:/etc/ssl/private/private-server-key.pem
   identity-api:
     volumes:
       - ./ssl/certs/identity.crt:/etc/ssl/certs/server-cert.crt
       - ./ssl/private-key/identity.key:/etc/ssl/private/private-key.pem
+      - ./ssl/certs/server-cert.crt:/etc/ssl/certs/public-server-cert.crt
+      - ./ssl/private-key/server.key:/etc/ssl/private/private-server-key.pem
   recipe-api:
     volumes:
       - ./ssl/certs/recipe.crt:/etc/ssl/certs/server-cert.crt

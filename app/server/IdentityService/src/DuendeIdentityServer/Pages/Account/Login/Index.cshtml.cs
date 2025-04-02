@@ -112,9 +112,6 @@ public class Index : PageModel
         {
             ApplicationAccount? user = null;
             var method = IdentifierUtility.Check(Input.Username!);
-            Console.WriteLine("METHOD");
-            Console.WriteLine(method.ToString());
-            Console.WriteLine(JsonConvert.SerializeObject(Input, Formatting.Indented));
             switch (method)
             {
                 case AccountMethod.Phone:
@@ -168,7 +165,14 @@ public class Index : PageModel
             if (result.Succeeded)
             {
                 await _events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
+
                 Telemetry.Metrics.UserLogin(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider);
+
+                if (user.IsFirstTimeLogin)
+                {
+                    user.IsFirstTimeLogin = false;
+                    await _userManager.UpdateAsync(user);
+                }
 
                 if (context != null)
                 {
