@@ -112,7 +112,8 @@ export const CustomInput = ({
   value,
   placeholder,
   className,
-  secureTextEntry
+  secureTextEntry,
+  inputMode
 }: Pick<
   TextInputProps,
   | "onChangeText"
@@ -122,6 +123,7 @@ export const CustomInput = ({
   | "defaultValue"
   | "className"
   | "secureTextEntry"
+  | "inputMode"
 >) => {
   const { gray, primary } = colors;
 
@@ -136,6 +138,7 @@ export const CustomInput = ({
       placeholderTextColor={gray[300]}
       secureTextEntry={secureTextEntry}
       cursorColor={primary}
+      inputMode={inputMode}
     />
   );
 };

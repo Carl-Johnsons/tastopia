@@ -20,7 +20,8 @@ const resources = {
     loginWithGoogle: locales.loginWithGoogleEn,
     report: locales.reportEn,
     notification: locales.notificationEn,
-    capture: locales.captureEn
+    capture: locales.captureEn,
+    verifyUpdateIdentifier: locales.verifyUpdateIdentifierEn
   },
   vi: {
     navbar: locales.navbarVi,
@@ -41,7 +42,8 @@ const resources = {
     loginWithGoogle: locales.loginWithGoogleVi,
     report: locales.reportVi,
     notification: locales.notificationVi,
-    capture: locales.captureVi
+    capture: locales.captureVi,
+    verifyUpdateIdentifier: locales.verifyUpdateIdentifierVi
   }
 };
 

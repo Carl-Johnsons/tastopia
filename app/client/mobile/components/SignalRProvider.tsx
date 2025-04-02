@@ -41,7 +41,7 @@ const SignalRHubProvider = ({ children }: Props) => {
         setWaitingToReconnect(false);
         console.log("signalR connected");
       })
-      .catch(err => console.error(err));
+      .catch(err => console.log(err));
   }, [subscribeAllEvents]);
 
   const stopConnection = useCallback(async () => {
