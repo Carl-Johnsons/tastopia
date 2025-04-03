@@ -45,7 +45,7 @@ public class CreateUserSearchRecipeCommandHandler : IRequestHandler<CreateUserSe
 
             var keytemp = keyword.ToLower();
 
-            var view = await _context.UserSearchRecipes.Where(v => v.Keyword.ToLower() == keytemp).FirstOrDefaultAsync();
+            var view = await _context.UserSearchRecipes.Where(v => v.Keyword.ToLower() == keytemp && v.AccountId == accountId).FirstOrDefaultAsync();
 
             if (view != null)
             {
