@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation, useQuery } from "react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
 import { protectedAxiosInstance } from "@/constants/host";
 import { SearchRecipeResponse } from "@/types/recipe";
 
@@ -26,7 +26,6 @@ const useSearchUsers = (keyword: string) => {
 };
 
 const useSearchRecipes = (keyword: string, tagCodes: string[]) => {
-  console.log("tag code", tagCodes);
   const finalTagCodes =
     tagCodes.length > 0 ? tagCodes.map(tagCode => tagCode.toUpperCase()) : ["ALL"];
 
@@ -114,6 +113,7 @@ const useSearchUserHistory = () => {
 };
 
 const createUserSearchRecipeKeyword = () => {
+  const queryClient = useQueryClient();
   return useMutation<string, Error, { keyword: string }>({
     mutationFn: async ({ keyword }) => {
       const { data } = await protectedAxiosInstance.post(
@@ -122,12 +122,15 @@ const createUserSearchRecipeKeyword = () => {
           keyword: keyword
         }
       );
+
+      await queryClient.invalidateQueries({ queryKey: ["recipeSearchHistory"] });
       return data;
     }
   });
 };
 
 const createUserSearchUserKeyword = () => {
+  const queryClient = useQueryClient();
   return useMutation<string, Error, { keyword: string }>({
     mutationFn: async ({ keyword }) => {
       const { data } = await protectedAxiosInstance.post(
@@ -136,6 +139,8 @@ const createUserSearchUserKeyword = () => {
           keyword: keyword
         }
       );
+
+      await queryClient.invalidateQueries({ queryKey: ["userSearchHistory"] });
       return data;
     }
   });
