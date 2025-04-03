@@ -52,12 +52,7 @@ const useSearchRecipes = (keyword: string, tagCodes: string[]) => {
   });
 };
 
-const useSearchTags = (
-  keyword: string,
-  tagCodes: string[],
-  category: string,
-  language: string
-) => {
+const useSearchTags = (keyword: string, tagCodes: string[], category: string) => {
   const finalTagCodes = tagCodes.length > 0 ? tagCodes : ["ALL"];
   return useInfiniteQuery<SearchTagResponse>({
     queryKey: ["searchTags", keyword],
@@ -69,7 +64,6 @@ const useSearchTags = (
           keyword,
           tagCodes: finalTagCodes,
           category,
-          language,
           skip: pageParam.toString()
         }
       );

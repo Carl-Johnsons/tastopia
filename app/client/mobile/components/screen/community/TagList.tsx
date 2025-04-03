@@ -64,7 +64,7 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
     isLoading: isSearching,
     refetch,
     fetchNextPage
-  } = useSearchTags(debouncedValue, ["ALL"], "Ingredient", currentLanguage);
+  } = useSearchTags(debouncedValue, ["ALL"], "Ingredient");
 
   const isDoneSearching =
     searchValue !== "" &&
@@ -210,7 +210,7 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
                 <View className={`mb-4 w-[48%] ${index % 2 === 0 ? "mr-[4%]" : ""}`}>
                   <Tag
                     code={item.code}
-                    value={item.value[currentLanguage]}
+                    value={item[currentLanguage]}
                     imageUrl={item.imageUrl}
                     selectedTags={selectedTags}
                     setSelectedTags={setSelectedTags}

@@ -68,7 +68,7 @@ const SearchFilter = () => {
     isLoading: isSearching,
     refetch,
     fetchNextPage
-  } = useSearchTags(debouncedValue, ["ALL"], "Ingredient", currentLanguage);
+  } = useSearchTags(debouncedValue, ["ALL"], "Ingredient");
 
   const isDoneSearching =
     searchValue !== "" &&
@@ -258,7 +258,7 @@ const SearchFilter = () => {
                   <View className={`mb-4 w-[48%] ${index % 2 === 0 ? "mr-[4%]" : ""}`}>
                     <Ingredient
                       code={item.code}
-                      value={item.value[currentLanguage]}
+                      value={item[currentLanguage]}
                       imageUrl={item.imageUrl}
                       setSelectedTags={setSelectedTags}
                     />
