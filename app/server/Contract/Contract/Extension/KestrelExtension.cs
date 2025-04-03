@@ -46,18 +46,6 @@ public static class KestrelExtension
                     // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
                     listenOption.UseHttps(certificate);
                 });
-
-                if (publicHttpsPort != 0)
-                {
-                    certificate = X509Certificate2.CreateFromPemFile("/etc/ssl/certs/public-server-cert.crt", "/etc/ssl/private/private-server-key.pem");
-                    options.ListenAnyIP(publicHttpsPort, listenOption =>
-                    {
-                        listenOption.Protocols = HttpProtocols.Http1AndHttp2;
-                        // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
-                        listenOption.UseHttps(certificate);
-                    });
-                }
-
             }
         });
 

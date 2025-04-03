@@ -1,4 +1,4 @@
-import { API_GATEWAY_HOST } from "@/constants/host";
+import { API_URI } from "@/constants/host";
 import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { selectUserId } from "@/slices/user.slice";
@@ -20,7 +20,7 @@ interface Props {
 const SignalRHubContext = createContext<SignalRHubContextType | null>(null);
 
 const SignalRHubProvider = ({ children }: Props) => {
-  const hubUrl = transformPlatformURI(`http://${API_GATEWAY_HOST}:5004/tastopia-hub`);
+  const hubUrl = transformPlatformURI(`${API_URI}/tastopia-hub`);
   const [waitingToReconnect, setWaitingToReconnect] = useState(true);
   const currentUserId = selectUserId();
   const accessToken = selectAccessToken();

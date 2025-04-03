@@ -9,48 +9,50 @@ else
     echo ".env file not found."
 fi
 
-CERT_PATH="$HOME/.aspnet/https"
+CERT_PATH="./ssl/certs"
+KEY_PATH="./ssl/private-key"
+CONTAINER_CERT_PATH="/etc/ssl/certs/server-cert.crt"
+CONTAINER_KEY_PATH="/etc/ssl/private/private-key.pem"
 
 # Generate a temporary Docker Compose override file
 cat > docker-compose.override.yml <<EOL
 services:
   api-gateway:
     volumes:
-      - ./ssl/certs/gateway.crt:/etc/ssl/certs/server-cert.crt
-      - ./ssl/private-key/gateway.key:/etc/ssl/private/private-key.pem
+      - $CERT_PATH/gateway.crt:$CONTAINER_CERT_PATH
+      - $KEY_PATH/gateway.key:$CONTAINER_KEY_PATH
   identity-api:
     volumes:
-      - ./ssl/certs/identity.crt:/etc/ssl/certs/server-cert.crt
-      - ./ssl/private-key/identity.key:/etc/ssl/private/private-key.pem
+      - $CERT_PATH/identity.crt:$CONTAINER_CERT_PATH
+      - $KEY_PATH/identity.key:$CONTAINER_KEY_PATH
   recipe-api:
     volumes:
-      - ./ssl/certs/recipe.crt:/etc/ssl/certs/server-cert.crt
-      - ./ssl/private-key/recipe.key:/etc/ssl/private/private-key.pem
+      - $CERT_PATH/recipe.crt:$CONTAINER_CERT_PATH
+      - $KEY_PATH/recipe.key:$CONTAINER_KEY_PATH
   user-api:
     volumes:
-      - ./ssl/certs/user.crt:/etc/ssl/certs/server-cert.crt
-      - ./ssl/private-key/user.key:/etc/ssl/private/private-key.pem
+      - $CERT_PATH/user.crt:$CONTAINER_CERT_PATH
+      - $KEY_PATH/user.key:$CONTAINER_KEY_PATH
   notification-api:
     volumes:
-      - ./ssl/certs/notification.crt:/etc/ssl/certs/server-cert.crt
-      - ./ssl/private-key/notification.key:/etc/ssl/private/private-key.pem
+      - $CERT_PATH/notification.crt:$CONTAINER_CERT_PATH
+      - $KEY_PATH/notification.key:$CONTAINER_KEY_PATH
   upload-api:
     volumes:
-      - ./ssl/certs/upload.crt:/etc/ssl/certs/server-cert.crt
-      - ./ssl/private-key/upload.key:/etc/ssl/private/private-key.pem
+      - $CERT_PATH/upload.crt:$CONTAINER_CERT_PATH
+      - $KEY_PATH/upload.key:$CONTAINER_KEY_PATH
   tracking-api:
     volumes:
-      - ./ssl/certs/tracking.crt:/etc/ssl/certs/server-cert.crt
-      - ./ssl/private-key/tracking.key:/etc/ssl/private/private-key.pem
+      - $CERT_PATH/tracking.crt:$CONTAINER_CERT_PATH
+      - $KEY_PATH/tracking.key:$CONTAINER_KEY_PATH
   signalr:
     volumes:
-      - ./ssl/certs/signalr.crt:/etc/ssl/certs/server-cert.crt
-      - ./ssl/private-key/signalr.key:/etc/ssl/private/private-key.pem
-      - ./ssl/certs/server-cert.crt:/etc/ssl/certs/public-server-cert.crt
-      - ./ssl/private-key/server.key:/etc/ssl/private/private-server-key.pem
+      - $CERT_PATH/signalr.crt:$CONTAINER_CERT_PATH
+      - $KEY_PATH/signalr.key:$CONTAINER_KEY_PATH
   recipe-worker:
     volumes:
-      - ${CERT_PATH}:/.aspnet/https
+      - $CERT_PATH/recipe-worker.crt:$CONTAINER_CERT_PATH
+      - $KEY_PATH/recipe-worker.key:$CONTAINER_KEY_PATH
 EOL
 
 printf "${SUCCESS}Generated docker-compose.override.yml with certificate path: ${INFO}${CERT_PATH}${NC}\n"

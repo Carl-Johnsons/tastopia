@@ -12,7 +12,8 @@ const API_GATEWAY_SCHEME = process.env.EXPO_PUBLIC_API_GATEWAY_SCHEME;
 const API_GATEWAY_HOST =
   process.env.EXPO_PUBLIC_API_GATEWAY_HOST ?? expoConfig?.hostUri?.split(":")[0];
 const API_GATEWAY_PORT = process.env.EXPO_PUBLIC_API_GATEWAY_PORT;
-
+const IDENTITY_DISCOVERY_URL =
+  process.env.EXPO_PUBLIC_IDENTITY_DISCOVERY_URL ?? `http://${API_GATEWAY_HOST}:5001`;
 const API_URI = transformPlatformURI(
   `${API_GATEWAY_SCHEME}://${API_GATEWAY_HOST}:${API_GATEWAY_PORT}`
 );
@@ -86,6 +87,7 @@ export {
   API_GATEWAY_SCHEME,
   API_GATEWAY_HOST,
   API_URI,
+  IDENTITY_DISCOVERY_URL,
   axiosInstance,
   protectedAxiosInstance
 };

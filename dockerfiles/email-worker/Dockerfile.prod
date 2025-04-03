@@ -4,28 +4,33 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-COPY ["./app/server/RecipeService/src/RecipeWorker/RecipeWorker.csproj", "RecipeWorker/"]
+COPY ["./app/server/NotificationService/src/EmailWorker/EmailWorker.csproj", "EmailWorker/"]
 COPY ["./app/server/Contract/Contract/Published", "Contract/"]
 
 # Building the services
-WORKDIR "/src/RecipeWorker"
+WORKDIR "/src/EmailWorker"
 RUN dotnet restore --packages "../nuget" --verbosity normal
-COPY ["./app/server/RecipeService/src/RecipeWorker","/src/RecipeWorker"]
+COPY ["./app/server/NotificationService/src/EmailWorker","/src/EmailWorker"]
 RUN dotnet build --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/build  --verbosity normal
 
 FROM build AS publish
 # Have to add work dir, because dotnet publish will scan entire fs, make the docker hang with NAT network
-WORKDIR "/src/RecipeWorker"
+WORKDIR "/src/EmailWorker"
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "RecipeWorker.dll"]
+
+USER root
+COPY ["./data/Auth.Store", "/app/Auth.Store"]
+RUN chown app -R /app/Auth.Store
+
+USER app
+ENTRYPOINT ["dotnet", "EmailWorker.dll"]
