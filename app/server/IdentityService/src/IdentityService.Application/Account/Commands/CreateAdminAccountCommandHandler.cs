@@ -18,7 +18,6 @@ public record CreateAdminAccountCommand : IRequest<Result>
     public string Name { get; set; } = null!;
     public string Gmail { get; set; } = null!;
     public string Phone { get; set; } = null!;
-    public string Password { get; set; } = null!;
     public string Gender { get; set; } = null!;
     public DateTime Dob { get; set; }
     public string Address { get; set; } = null!;
@@ -75,7 +74,9 @@ public class CreateAdminAccountCommandHandler : IRequestHandler<CreateAdminAccou
             UpdatedAt = DateTime.UtcNow
         };
 
-        var result = await _userManager.CreateAsync(acc, request.Password);
+        var generatePassword = GeneratePassword(8);
+
+        var result = await _userManager.CreateAsync(acc, generatePassword);
         await _userManager.AddToRoleAsync(acc, Roles.Code.ADMIN.ToString());
 
         if (!result.Succeeded)
@@ -116,6 +117,15 @@ public class CreateAdminAccountCommandHandler : IRequestHandler<CreateAdminAccou
             EntityType = ActivityEntityType.USER,
         });
 
+        await _serviceBus.Publish(new UserSendOTPEvent
+        {
+            AccountId = Guid.Parse(acc.Id),
+            Identifier = acc.Email,
+            Method = AccountMethod.Email,
+            OTP = generatePassword,
+            OTPMethod = OTPMethod.AdminAccountCreated
+        });
+
         return Result.Success();
     }
 
@@ -134,5 +144,31 @@ public class CreateAdminAccountCommandHandler : IRequestHandler<CreateAdminAccou
         var randomNumber = random.Next(1000, 9999);
 
         return $"{baseUsername}{randomNumber}";
+    }
+
+    private string GeneratePassword(int length)
+    {
+        if (length < 6)
+            throw new ArgumentException("Password length must be at least 6 characters.");
+
+        Random random = new Random();
+        const string upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const string lower = "abcdefghijklmnopqrstuvwxyz";
+        const string digits = "0123456789";
+        const string special = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+        const string allChars = upper + lower + digits + special;
+
+        char[] password = new char[length];
+        password[0] = upper[random.Next(upper.Length)];
+        password[1] = lower[random.Next(lower.Length)];
+        password[2] = digits[random.Next(digits.Length)];
+        password[3] = special[random.Next(special.Length)];
+
+        for (int i = 4; i < length; i++)
+        {
+            password[i] = allChars[random.Next(allChars.Length)];
+        }
+
+        return new string(password.OrderBy(_ => random.Next()).ToArray());
     }
 }

@@ -29,6 +29,9 @@ public class UserSendOTPConsumer : IConsumer<UserSendOTPEvent>
             case OTPMethod.UpdateIdentifier:
                 await UpdateIdentifier(context);
                 break;
+            case OTPMethod.AdminAccountCreated:
+                await AdminAccountCreated(context);
+                break;
             default:
                 break;
         }
@@ -101,6 +104,28 @@ public class UserSendOTPConsumer : IConsumer<UserSendOTPEvent>
                 {
                     Message = $"Your Tastopia account request to update the email. Your OTP to verify update email is {context.Message.OTP}",
                     PhoneTo = context.Message.Identifier,
+                });
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    /*
+     * OTP now is password to login admin account
+     */
+    public async Task AdminAccountCreated(ConsumeContext<UserSendOTPEvent> context)
+    {
+        switch (context.Message.Method)
+        {
+            case AccountMethod.Email:
+                await _sender.Send(new SendEmailCommand
+                {
+                    EmailTo = context.Message.Identifier,
+                    Subject = "Tastopia admin account created",
+                    Body = $"Your <b>Tastopia</b> admin has been created. Your password to login your account is <b>{context.Message.OTP}</b>",
+                    IsHTML = true,
                 });
                 break;
             default:

@@ -64,7 +64,6 @@ public class AccountError
         new("AccountError.LinkAccountFailed",
             StatusCode: (int)HttpStatusCode.InternalServerError,
             Message: "Link Account Failed");
-
     public static Error UnlinkAccountFailed =>
         new("AccountError.UnlinkAccountFailed",
             StatusCode: (int)HttpStatusCode.InternalServerError,
@@ -93,4 +92,8 @@ public class AccountError
         new("AccountError.NullParameter",
             StatusCode: (int)HttpStatusCode.InternalServerError,
             Message: "Null Parameter");
+    public static Error ChangePasswordFirstTimeLoginFailed =>
+        new("AccountError.ChangePasswordFirstTimeLoginFailed",
+            StatusCode: (int)HttpStatusCode.InternalServerError,
+            Message: "Change password failed! Please try again");
 }
