@@ -19,7 +19,11 @@ import {
 } from "@/api/search";
 import { router } from "expo-router";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import { removeTagValue, selectSearchTagCodes, selectSearchTagValues, selectSearchTags } from "@/slices/searchRecipe.slice";
+import {
+  removeTagValue,
+  selectSearchTagCodes,
+  selectSearchTags
+} from "@/slices/searchRecipe.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useTranslation } from "react-i18next";
 import useColorizer from "@/hooks/useColorizer";
@@ -59,7 +63,7 @@ const ResultSection = memo(
     const { t } = useTranslation("search");
 
     return (
-      <View className='mt-6 mb-[50px]'>
+      <View className='mb-[70px] mt-6'>
         <FlatList
           data={searchResults}
           keyExtractor={item => item.id}
@@ -120,7 +124,6 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const { t } = useTranslation("search");
   const dispatch = useAppDispatch();
   const tagCodes = useAppSelector(selectSearchTagCodes);
-  const tagValues = useAppSelector(selectSearchTagValues);
 
   const selectedTagsStore = useAppSelector(selectSearchTags);
 
@@ -144,7 +147,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
     isLoading: isSearching,
     refetch,
     fetchNextPage
-  } = useSearchRecipes(debouncedValue, tagCodes, tagValues);
+  } = useSearchRecipes(debouncedValue, tagCodes);
 
   const isDoneSearching =
     ((searchValue !== "" && debouncedValue !== "") || tagCodes.length > 0) &&
@@ -197,7 +200,9 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   };
 
   const handleSelectSearchResult = () => {
-    createSearchHistory({ keyword: searchValue });
+    if (searchValue) {
+      createSearchHistory({ keyword: searchValue });
+    }
   };
 
   useEffect(() => {
@@ -207,16 +212,6 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
       refetch();
     }
   }, [data, tagCodes]);
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (searchValue !== "" || tagCodes.length > 0) {
-  //       refetch();
-  //     }
-
-  //     return () => {};
-  //   }, [])
-  // );
 
   const handleRemoveTag = useCallback((code: string) => {
     dispatch(removeTagValue(code));
@@ -296,30 +291,33 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
         </View>
       </View>
       {/* History section */}
-      {!isLoadingSearchRecipeHistory && searchRecipeHistoryData && searchValue === "" && (
-        <FlatList
-          data={searchRecipeHistoryData.value.slice(0, 10)}
-          keyExtractor={_item => uuid.v4()}
-          scrollEnabled={false}
-          showsVerticalScrollIndicator={false}
-          style={{
-            marginTop: 20,
-            marginLeft: 10
-          }}
-          contentContainerStyle={{
-            gap: 10
-          }}
-          renderItem={item => {
-            return (
-              <SearchHistory
-                type='recipe'
-                item={item.item}
-                handleSelectHistory={handleSelectSearchHistory}
-              />
-            );
-          }}
-        />
-      )}
+      {!isLoadingSearchRecipeHistory &&
+        searchRecipeHistoryData?.value &&
+        searchRecipeHistoryData?.value.length > 0 &&
+        searchValue === "" && (
+          <FlatList
+            data={searchRecipeHistoryData.value.slice(0, 10)}
+            keyExtractor={_item => uuid.v4()}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+            style={{
+              marginTop: 20,
+              marginLeft: 10
+            }}
+            contentContainerStyle={{
+              gap: 10
+            }}
+            renderItem={item => {
+              return (
+                <SearchHistory
+                  type='recipe'
+                  item={item.item}
+                  handleSelectHistory={handleSelectSearchHistory}
+                />
+              );
+            }}
+          />
+        )}
 
       {/* Result section */}
       {(searchValue !== "" || tagCodes.length > 0) && (
