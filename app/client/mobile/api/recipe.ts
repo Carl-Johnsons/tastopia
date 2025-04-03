@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation, useQuery } from "react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
 import { protectedAxiosInstance } from "@/constants/host";
 import {
   BookMarkRecipeResponse,
@@ -82,6 +82,8 @@ const useCommentsByAuthorId = (accountId: string) => {
 };
 
 const useRecipeDetail = (recipeId: string) => {
+  const queryClient = useQueryClient();
+
   return useQuery<RecipeDetailResponse>({
     queryKey: ["recipe", recipeId],
     queryFn: async () => {
@@ -93,7 +95,11 @@ const useRecipeDetail = (recipeId: string) => {
       );
       return data;
     },
-    enabled: !!recipeId
+    enabled: !!recipeId,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["getRecipeViewingHistory"] });
+      await queryClient.invalidateQueries({ queryKey: ["searchRecipeViewingHistory"] });
+    }
   });
 };
 
