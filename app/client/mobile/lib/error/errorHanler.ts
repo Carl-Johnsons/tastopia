@@ -7,18 +7,8 @@ import { Alert } from "react-native";
  */
 export const handleError = (error: any, t: (key: string) => string) => {
   if (!error.response || !error.response.data) throw error;
-
-  console.log("1");
-  console.log("error.response.data", error.response.data.code);
   const data = error.response.data as IErrorResponseDTO;
-  console.log("data", data);
-  console.log("2");
-
   const { code } = data;
-  console.log("3");
-  console.log("code", code);
-  console.log("4");
   Alert.alert(t("alertTitle"), t(code));
-  console.log("5");
   return;
 };
