@@ -1,7 +1,4 @@
-﻿using Contract.Interfaces;
-using Microsoft.IdentityModel.Tokens;
-using Serilog;
-using Polly;
+﻿using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace SignalRHub.Extensions;
@@ -10,44 +7,38 @@ public static class CustomAuthenticationExtension
 {
     public static IServiceCollection AddCustomAuthentication(this IServiceCollection services, string hubEndPoint)
     {
-        var retryPolicy = Polly.Policy.Handle<Exception>()
-                .WaitAndRetryAsync(
-                retryCount: 100,
-                sleepDurationProvider: attempt => TimeSpan.FromSeconds(attempt),
-                onRetry: (exception, timeSpan, retryCount, context) =>
-                {
-                    // Log the retry attempt
-                    Log.Warning($"Retry {retryCount} encountered an error: {exception.Message}. Waiting {timeSpan} before next retry.");
-                });
-
-        services.AddAuthentication("Bearer")
+        services.AddAuthentication(option =>
+        {
+            option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
             .AddJwtBearer("Bearer", options =>
             {
-                var serviceProvider = services.BuildServiceProvider();
-                var consulRegistryService = serviceProvider.GetRequiredService<IConsulRegistryService>();
-                var identityUri = retryPolicy.ExecuteAsync(() =>
-                {
-                    var uri = consulRegistryService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not found"));
-                    return uri == null ? throw new Exception("Identity service URI not found.") : Task.FromResult(uri);
-                }).GetAwaiter().GetResult();
-
-                Log.Information("Connect to Identity Provider: " + identityUri!.ToString());
-
                 options.RequireHttpsMetadata = false;
-                options.Authority = identityUri!.ToString();
                 // Clear default Microsoft's JWT claim mapping
                 // Ref: https://stackoverflow.com/questions/70766577/asp-net-core-jwt-token-is-transformed-after-authentication
                 options.MapInboundClaims = false;
+                options.SaveToken = true;
 
-                options.TokenValidationParameters.ValidTypes = ["at+jwt"];
-
+                // Completely disable token validations
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateAudience = false,
                     ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateIssuerSigningKey = false,
+                    RequireSignedTokens = false,
                     ValidateLifetime = true,
-                    RoleClaimType = "role",
-                    ClockSkew = TimeSpan.Zero
+                    RequireExpirationTime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    /*  
+                     *  Return JwtSecurityToken(token) will cause this error
+                     *  
+                     *  Microsoft.IdentityModel.Tokens.SecurityTokenInvalidSignatureException: IDX10506: Signature validation failed.
+                     *  The user defined 'Delegate' specified on TokenValidationParameters did not return a 'Microsoft.IdentityModel.JsonWebTokens.JsonWebToken',
+                     *  but returned a 'System.IdentityModel.Tokens.Jwt.JwtSecurityToken' when validating token: '[PII of type 'Microsoft.IdentityModel.JsonWebTokens.
+                     *  JsonWebToken' is hidden. For more details, see https://aka.ms/IdentityModel/PII.]'
+                    */
+                    SignatureValidator = (token, parameters) => new Microsoft.IdentityModel.JsonWebTokens.JsonWebToken(token)
                 };
                 // For development only
                 options.IncludeErrorDetails = true;

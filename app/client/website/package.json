@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "sh -c \"export NODE_TLS_REJECT_UNAUTHORIZED=0 && npx env-cmd -f .env next dev\"",
-    "start": "sh -c \"export NODE_TLS_REJECT_UNAUTHORIZED=0 && next start\"",
+    "dev": "next dev",
+    "start": "next start",
     "build": "next build",
     "lint": "next lint",
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""

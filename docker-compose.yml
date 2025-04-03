@@ -12,14 +12,12 @@ services:
       - "443:443"
       - "7000:7000"
       - "7001:7001"
-      - "7004:7004"
-      - "3000:3000"
     depends_on:
       - identity-api
       - api-gateway
     networks:
-      - internal
-      - public
+      - back-end
+      - front-end
 
   postgres:
     image: postgres:17.0-alpine
@@ -34,7 +32,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     restart: always
     networks:
-      - internal
+      - back-end
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} || exit 1"]
       interval: 10s
@@ -55,7 +53,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     networks:
-      - internal
+      - back-end
     healthcheck:
       test:
         [
@@ -88,7 +86,7 @@ services:
       - "${RABBITMQ_PORT}:5672"
       - "${RABBITMQ_MANAGEMENT_PORT}:15672"
     networks:
-      - internal
+      - back-end
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
@@ -110,21 +108,15 @@ services:
       # Consul uses the default port 8500
       - "${CONSUL_PORT}:8500"
     networks:
-      - public
-      - internal
+      - front-end
+      - back-end
     extra_hosts:
-      - "host.docker.internal:host-gateway" # For using host.docker.internal in linux
+      - "host.docker.back-end:host-gateway" # For using host.docker.back-end in linux
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8500/v1/status/leader || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-
-  redis:
-    image: redis:8.0-M02-alpine
-    container_name: redis
-    networks:
-      - internal
 
   api-gateway:
     build:
@@ -132,8 +124,7 @@ services:
       dockerfile: ./dockerfiles/api-gateway/Dockerfile.${DOCKERFILE_API_GATEWAY_ENV:-prod}
     container_name: apigateway
     networks:
-      - public
-      - internal
+      - back-end
     env_file:
       - .env.production
       - ./app/server/APIGateway/.env.production
@@ -155,6 +146,8 @@ services:
     volumes:
       - ./data/nuget:/src/nuget
     depends_on:
+      signalr:
+        condition: service_healthy
       postgres:
         condition: service_healthy
       consul:
@@ -162,8 +155,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - public
-      - internal
+      - back-end
     env_file:
       - .env.production
       - ./app/server/IdentityService/.env.production
@@ -183,6 +175,8 @@ services:
     volumes:
       - ./data/nuget:/src/nuget
     depends_on:
+      signalr:
+        condition: service_healthy
       mongo:
         condition: service_healthy
       consul:
@@ -190,7 +184,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - internal
+      - back-end
     env_file:
       - .env.production
       - ./app/server/RecipeService/.env.production
@@ -217,7 +211,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - internal
+      - back-end
     env_file:
       - .env.production
       - ./app/server/UserService/.env.production
@@ -237,6 +231,8 @@ services:
     volumes:
       - ./data/nuget:/src/nuget
     depends_on:
+      signalr:
+        condition: service_healthy
       mongo:
         condition: service_healthy
       consul:
@@ -244,7 +240,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - internal
+      - back-end
     env_file:
       - .env.production
       - ./app/server/NotificationService/.env.production
@@ -269,7 +265,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - internal
+      - back-end
     env_file:
       - .env.production
       - ./app/server/UploadFileService/.env.production
@@ -296,7 +292,7 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - internal
+      - back-end
     env_file:
       - .env.production
       - ./app/server/TrackingService/.env.production
@@ -308,34 +304,7 @@ services:
           ignore:
             - Contract/
 
-  email-worker:
-    build:
-      context: .
-      dockerfile: ./dockerfiles/email-worker/Dockerfile
-    container_name: email-worker
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    networks:
-      - internal
-    env_file:
-      - .env.production
-      - ./app/server/NotificationService/.env.production
-
-  recipe-worker:
-    build:
-      context: .
-      dockerfile: ./dockerfiles/recipe-worker/Dockerfile
-    container_name: recipe-worker
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    networks:
-      - internal
-    env_file:
-      - .env.production
-      - ./app/server/RecipeService/.env.production
-
+  # Python service 
   ingredient-predict-api:
     build:
       context: .
@@ -345,11 +314,12 @@ services:
       consul:
         condition: service_healthy
     networks:
-      - internal
+      - back-end
     env_file:
       - .env.production
       - ./app/server/IngredientPredictService/.env.production
 
+  # Real-time communication 
   signalr:
     build:
       context: .
@@ -361,23 +331,86 @@ services:
       consul:
         condition: service_healthy
     networks:
-      - public
-      - internal
+      - back-end
     env_file:
       - .env.production
       - ./app/server/SignalRService/.env.production
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
+  # Website dashboard
   website:
     build:
       context: .
       dockerfile: ./dockerfiles/website/Dockerfile.prod
     container_name: website-dashboard
     networks:
-      - public
+      - front-end
     env_file:
       - .env.production
       - ./app/client/website/.env.production
 
+  # Worker services
+  email-worker:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/email-worker/Dockerfile.prod
+    container_name: email-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/NotificationService/.env.production
+
+  sms-worker:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/sms-worker/Dockerfile.prod
+    container_name: sms-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/NotificationService/.env.production
+
+  push-notification-worker:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/push-notification-worker/Dockerfile.prod
+    container_name: push-notification-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/NotificationService/.env.production
+
+  recipe-worker:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/recipe-worker/Dockerfile.prod
+    container_name: recipe-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/RecipeService/.env.production
+
 networks:
-  internal:
-  public:
+  back-end:
+  front-end:
