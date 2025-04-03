@@ -91,6 +91,7 @@ export default function HistoryList({ keyword }: HistoryListProps) {
       <FlatList
         data={history}
         className='h-full'
+        contentContainerClassName="pb-[40px]"
         onEndReached={() => fetchNextPage()}
         onEndReachedThreshold={0.1}
         ItemSeparatorComponent={() => <View className='w-[20px]' />}
