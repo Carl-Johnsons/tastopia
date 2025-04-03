@@ -1,4 +1,4 @@
-﻿
+﻿using Contract.Constants;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -132,6 +132,8 @@ public class LoginWithGoogleCommandHandler : IRequestHandler<LoginWithGoogleComm
             // Link the identity provider to the user
             identityResult = await _userManager.AddLoginAsync(account, new UserLoginInfo(provider, providerUserId, provider));
             if (!identityResult.Succeeded) throw new InvalidOperationException(identityResult.Errors.First().Description);
+
+            await _userManager.AddToRoleAsync(account, Roles.Code.USER.ToString());
 
             // Add user to user service
             await _grpcUserClient.CreateUserAsync(new GrpcCreateUserRequest

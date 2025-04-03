@@ -71,6 +71,11 @@ namespace IdentityService.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValueSql("True");
 
+                    b.Property<bool>("IsFirstTimeLogin")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValueSql("True");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
 

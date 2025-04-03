@@ -5,6 +5,26 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
+      "DownstreamPathTemplate": "/api/admin/recipe/statistic{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "UpstreamPathTemplate": "/api/admin/recipe/statistic{everything}",
+      "SwaggerKey": "recipe",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN"
+      }
+    },
+    {
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/admin/recipe/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
@@ -15,8 +35,12 @@
       ],
       "UpstreamPathTemplate": "/api/admin/recipe/{everything}",
       "SwaggerKey": "recipe",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
       "RouteClaimsRequirement": {
-        "role": "SUPER_ADMIN"
+        "role": "SUPER_ADMIN,ADMIN"
       }
     },
     {

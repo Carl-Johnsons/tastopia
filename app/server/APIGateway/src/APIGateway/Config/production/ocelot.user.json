@@ -5,6 +5,87 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
+      "DownstreamPathTemplate": "/api/admin/user/statistic/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/admin/user/statistic/{everything}",
+      "SwaggerKey": "user",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN"
+      }
+    },
+    {
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/admin/user/toggle-admin-active",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/admin/user/toggle-admin-active",
+      "SwaggerKey": "user",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN"
+      }
+    },
+    {
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/admin/user",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "UpstreamPathTemplate": "/api/admin/user",
+      "SwaggerKey": "user",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN"
+      }
+    },
+    {
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/admin/user/detail",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "UpstreamPathTemplate": "/api/admin/user/detail",
+      "SwaggerKey": "user",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN"
+      }
+    },
+    {
+      "ServiceName": "user-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/admin/user/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
@@ -15,8 +96,12 @@
       ],
       "UpstreamPathTemplate": "/api/admin/user/{everything}",
       "SwaggerKey": "user",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
       "RouteClaimsRequirement": {
-        "role": "SUPER_ADMIN"
+        "role": "SUPER_ADMIN , ADMIN"
       }
     },
     {

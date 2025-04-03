@@ -40,10 +40,11 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
         var rollbackUrl = new List<string>();
         try
         {
+            request.Code = request.Code.ToUpper().Replace(" ", "_");
             var existTag = await _context.Tags.Where(t => t.Code == request.Code).SingleOrDefaultAsync();
             if (existTag != null)
             {
-                return Result<Tag?>.Failure(TagError.AddTagFail, $"Tag code : {request.Code} is already exist");
+                return Result<Tag?>.Failure(TagError.AlreadyExist, $"Tag code : {request.Code} is already exist");
             }
             if (request.TagImage == null)
             {
