@@ -3,6 +3,7 @@
 import { protectedAxiosInstance } from "@/constants/host";
 import { StatisticItem } from "@/types/statistic";
 import { IPaginatedTagResponse, Tag } from "@/types/tag";
+import { getLocale } from "next-intl/server";
 
 export async function getTags(
   skip = 0,
@@ -56,9 +57,12 @@ export async function updateTag(formData: FormData) {
 }
 
 export async function getTagRanking() {
+  const language = await getLocale();
   const url = "/api/admin/recipe/statistic/get-tag-ranking-by-popular";
   try {
-    const { data } = await protectedAxiosInstance.get<StatisticItem[]>(url);
+    const { data } = await protectedAxiosInstance.post<StatisticItem[]>(url, {
+      language
+    });
     return data;
   } catch (error) {
     console.log(error);
