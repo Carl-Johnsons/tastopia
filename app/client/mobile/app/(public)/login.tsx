@@ -21,6 +21,9 @@ import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
 import useSyncSetting from "@/hooks/user/useSyncSetting";
 import useSyncUser from "@/hooks/user/useSyncUser";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { isAxiosError } from "axios";
+import { Alert } from "react-native";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -31,7 +34,8 @@ const Login = () => {
 
   const { fetch: fetchSettings } = useSyncSetting();
   const { fetch: fetchUser } = useSyncUser();
-  const { handleError } = useErrorHandler();
+
+  const { t } = useTranslation("error");
 
   const onSubmit = async (data: LoginFormFields) => {
     setIsSubmitting(true);
@@ -51,7 +55,17 @@ const Login = () => {
         const route = "/(protected)";
         router.navigate(route);
       },
-      onError: error => handleError(error),
+      onError: error => {
+        if (!isAxiosError(error)) {
+          console.log("Error login", error);
+          Alert.alert(t("alertTitle"), t("General"));
+          return;
+        } 
+
+        if (error.response?.status >= 400) {
+          Alert.alert(t("alertTitle"), t("Identity.InvalidCredential"));
+        }
+      },
       onSettled: () => {
         setIsSubmitting(false);
       }
