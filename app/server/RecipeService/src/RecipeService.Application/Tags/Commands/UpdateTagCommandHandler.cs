@@ -46,6 +46,7 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
         try
         {
             ActivityType activityType = ActivityType.UPDATE;
+            request.Code = request.Code.ToUpper().Replace(" ", "_");
             var tagId = request.TagId;
             if (tagId == Guid.Empty)
             {
@@ -61,7 +62,7 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
             var existTag = await _context.Tags.Where(t => t.Id != request.TagId && t.Code == request.Code).SingleOrDefaultAsync();
             if (existTag != null)
             {
-                return Result<Tag?>.Failure(TagError.AddTagFail, $"Tag code : {request.Code} is already exist");
+                return Result<Tag?>.Failure(TagError.AlreadyExist, $"Tag code : {request.Code} is already exist");
             }
             var tagImageUrl = tag.ImageUrl;
             if (request.TagImage != null)
