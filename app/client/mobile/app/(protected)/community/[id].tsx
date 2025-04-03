@@ -42,6 +42,7 @@ import SimilarRecipe from "@/components/screen/community/SimilarRecipe";
 import Loading from "@/components/common/Loading";
 import SettingComment from "@/components/common/SettingComment";
 import PreviewImage from "@/components/common/PreviewImage";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 const RecipeDetail = () => {
   const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
@@ -62,6 +63,7 @@ const RecipeDetail = () => {
   const LOAD_MORE_TIMES = 5;
 
   const router = useRouter();
+  const { handleError } = useErrorHandler();
   const { t } = useTranslation("recipeDetail");
   const { id } = useLocalSearchParams<{ id: string }>();
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
@@ -128,10 +130,7 @@ const RecipeDetail = () => {
               };
             });
           },
-          onError: error => {
-            console.log("Bookmark error", JSON.stringify(error, null, 2));
-            Alert.alert("Error", error.message);
-          }
+          onError: error => handleError(error)
         }
       );
     }

@@ -4,7 +4,6 @@ import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { InferType } from "yup";
 import { CLIENT_ID, SCOPE } from "@/constants/api";
 import { AxiosError } from "axios";
-import { stringify } from "@/utils/debug";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { UserState } from "@/slices/user.slice";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
@@ -32,6 +31,7 @@ import {
   SignUpResponse,
   VerifyResponse
 } from "@/types/api/auth";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export type LoginParams = InferType<typeof loginSchema>;
 export enum IDENTIFIER_TYPE {
@@ -62,6 +62,7 @@ export const useLogin = () => {
 
 export const useGetUserSettings = () => {
   const accessToken = selectAccessToken();
+  const { handleError } = useErrorHandler();
 
   return useQuery<GetUserSettingsResponse, Error>({
     queryKey: "getUserSettings",
@@ -69,18 +70,10 @@ export const useGetUserSettings = () => {
     queryFn: async () => {
       const url = "/api/setting";
 
-      try {
-        const { data } = await protectedAxiosInstance.get(url);
-        return data;
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message);
-        }
-
-        throw new Error("An error has occurred.");
-      }
-    }
+      const { data } = await protectedAxiosInstance.get(url);
+      return data;
+    },
+    onError: error => handleError(error)
   });
 };
 
@@ -88,27 +81,17 @@ export type GetUserDetailsResponse = UserState;
 
 export const useGetUserDetails = () => {
   const accessToken = selectAccessToken();
+  const { handleError } = useErrorHandler();
 
   return useQuery<GetUserDetailsResponse, Error>({
     queryKey: "getUserDetails",
     enabled: !!accessToken,
     queryFn: async () => {
       const url = "/api/user/get-current-user-details";
-
-      try {
-        const { data } = await protectedAxiosInstance.get(url);
-        return data;
-      } catch (error) {
-        console.debug("useGetUserDetails", stringify(error));
-
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message);
-        }
-
-        throw new Error("An error has occurred.");
-      }
-    }
+      const { data } = await protectedAxiosInstance.get(url);
+      return data;
+    },
+    onError: error => handleError(error)
   });
 };
 
@@ -125,19 +108,8 @@ export const useRegister = () => {
       const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
       const url = `/api/account/register/${ENDPOINT_TYPE}`;
 
-      try {
-        const { data: response } = await axiosInstance.post<SignUpResponse>(url, data);
-        return response;
-      } catch (error) {
-        console.debug("useRegister", stringify(error));
-
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message);
-        }
-
-        throw new Error("An error has occurred.");
-      }
+      const { data: response } = await axiosInstance.post<SignUpResponse>(url, data);
+      return response;
     }
   });
 };
@@ -164,19 +136,8 @@ export const useVerify = () => {
       const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
       const url = `/api/account/verify/${ENDPOINT_TYPE}`;
 
-      try {
-        const { data } = await protectedAxiosInstance.post(url, { OTP });
-        return data;
-      } catch (error) {
-        console.debug("useVerify", stringify(error));
-
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message);
-        }
-
-        throw new Error("An error has occurred.");
-      }
+      const { data } = await protectedAxiosInstance.post(url, { OTP });
+      return data;
     }
   });
 };
@@ -188,19 +149,8 @@ export const useResendVerifyCode = () => {
       const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
       const url = `/api/account/resend/${ENDPOINT_TYPE}`;
 
-      try {
-        const { data } = await protectedAxiosInstance.post(url);
-        return data;
-      } catch (error) {
-        console.debug("resendVerifyCode", stringify(error));
-
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message);
-        }
-
-        throw new Error("An error has occurred.");
-      }
+      const { data } = await protectedAxiosInstance.post(url);
+      return data;
     }
   });
 };
@@ -347,20 +297,11 @@ export const useUpdateSetting = () => {
     mutationFn: async data => {
       const url = "/api/setting";
 
-      try {
-        const { data: response } =
-          await protectedAxiosInstance.put<UpdateSettingResponse>(url, data);
-        return response;
-      } catch (error) {
-        console.debug("useUpdateSetting", stringify(error));
-
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message);
-        }
-
-        throw new Error("An error has occurred.");
-      }
+      const { data: response } = await protectedAxiosInstance.put<UpdateSettingResponse>(
+        url,
+        data
+      );
+      return response;
     }
   });
 };
@@ -381,26 +322,15 @@ export const useUpdateUser = () => {
         }
       });
 
-      try {
-        const { data: response } = await protectedAxiosInstance.patch<UpdateUserResponse>(
-          url,
-          body,
-          {
-            headers: { "Content-Type": "multipart/form-data" }
-          }
-        );
-
-        return response;
-      } catch (error) {
-        console.debug("useUpdateUser", stringify(error));
-
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message);
+      const { data: response } = await protectedAxiosInstance.patch<UpdateUserResponse>(
+        url,
+        body,
+        {
+          headers: { "Content-Type": "multipart/form-data" }
         }
+      );
 
-        throw new Error("An error has occurred.");
-      }
+      return response;
     }
   });
 };
@@ -423,6 +353,8 @@ export const useFollowUnfollowUser = () => {
 };
 
 export const useGetUserByAccountId = (accountId: string) => {
+  const { handleError } = useErrorHandler();
+
   return useQuery<IGetUserDetailsResponse>({
     queryKey: ["user", accountId],
     queryFn: async () => {
@@ -434,11 +366,14 @@ export const useGetUserByAccountId = (accountId: string) => {
       );
       return data;
     },
-    enabled: !!accountId
+    enabled: !!accountId,
+    onError: error => handleError(error)
   });
 };
 
 export const useReportUserReason = (language: string) => {
+  const { handleError } = useErrorHandler();
+
   return useQuery<ReportRecipeCommentReasonResponse>({
     queryKey: ["reportUserReason", language],
     queryFn: async () => {
@@ -451,7 +386,8 @@ export const useReportUserReason = (language: string) => {
         );
       return data;
     },
-    enabled: !!language
+    enabled: !!language,
+    onError: error => handleError(error)
   });
 };
 
@@ -475,29 +411,22 @@ type IGetUserFollowersResponse = {
 
 export const useGetUserFollowers = (keyword: string) => {
   const accessToken = selectAccessToken();
+  const { handleError } = useErrorHandler();
 
   return useInfiniteQuery<IGetUserFollowersResponse, Error>({
     queryKey: ["getUserFollowers", keyword],
     enabled: !!accessToken,
     queryFn: async ({ pageParam = 0 }) => {
-      try {
-        const { data } = await protectedAxiosInstance.post<IGetUserFollowersResponse>(
-          "/api/user/get-user-follower",
-          {
-            skip: pageParam,
-            keyword
-          }
-        );
-        return data;
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message || "An error has occurred.");
+      const { data } = await protectedAxiosInstance.post<IGetUserFollowersResponse>(
+        "/api/user/get-user-follower",
+        {
+          skip: pageParam,
+          keyword
         }
-
-        throw new Error("An error has occurred.");
-      }
+      );
+      return data;
     },
+    onError: error => handleError(error),
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage.metadata?.hasNextPage) return undefined;
       return allPages.length;
@@ -507,29 +436,22 @@ export const useGetUserFollowers = (keyword: string) => {
 
 export const useGetUserFollowings = (keyword: string = "") => {
   const accessToken = selectAccessToken();
+  const { handleError } = useErrorHandler();
 
   return useInfiniteQuery<IGetUserFollowersResponse, Error>({
     queryKey: ["getUserFollowings", keyword],
     enabled: !!accessToken,
     queryFn: async ({ pageParam = 0 }) => {
-      try {
-        const { data } = await protectedAxiosInstance.post<IGetUserFollowersResponse>(
-          "/api/user/get-user-following",
-          {
-            skip: pageParam,
-            keyword
-          }
-        );
-        return data;
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message || "An error has occurred.");
+      const { data } = await protectedAxiosInstance.post<IGetUserFollowersResponse>(
+        "/api/user/get-user-following",
+        {
+          skip: pageParam,
+          keyword
         }
-
-        throw new Error("An error has occurred.");
-      }
+      );
+      return data;
     },
+    onError: error => handleError(error),
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage.metadata?.hasNextPage) return undefined;
       return allPages.length;

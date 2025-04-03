@@ -7,6 +7,7 @@ import { ROLE } from "@/slices/auth.slice";
 import Unauthorize from "@/components/common/Unauthorize";
 import { useQueryClient } from "react-query";
 import { View, Text, Image, TouchableWithoutFeedback, Alert } from "react-native";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 const DeletedRecipeItem = ({
   id,
@@ -30,6 +31,7 @@ const DeletedRecipeItem = ({
   const router = useRouter();
   const { t } = useTranslation("menu");
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
   const { mutateAsync: restoreOwnRecipe, isLoading: isDeletingOwnRecipe } =
     useRestoreOwnRecipe();
 
@@ -41,9 +43,7 @@ const DeletedRecipeItem = ({
           queryClient.invalidateQueries({ queryKey: "deletedRecipes" });
           Alert.alert(t("restoreSuccessfully"));
         },
-        onError: error => {
-          Alert.alert(t("restoreFailed"));
-        }
+        onError: error => handleError(error)
       }
     );
   };

@@ -4,6 +4,7 @@ import ImageChangingSection from "@/components/screen/updateProfile/ImageChangin
 import UpdateProfileForm from "@/components/screen/updateProfile/UpadteProfileForm";
 import UpdateProfileProvider from "@/components/screen/updateProfile/UpdateProfileProvider";
 import { IUpdateUserDTO } from "@/generated/interfaces/user.interface";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 import useSyncUser from "@/hooks/user/useSyncUser";
 import { saveUpdateProfileData } from "@/slices/menu/profile/updateProfileForm.slice";
 import { selectUserId } from "@/slices/user.slice";
@@ -21,6 +22,7 @@ export default function UpdateProfile() {
   const dispatch = useAppDispatch();
   const userId = selectUserId();
 
+  const { handleError } = useErrorHandler();
   const [triggerSubmit, setTriggerSubmit] = useState<() => void>();
   const [onChangeGenderValue, setOnChangeGenderValue] =
     useState<(newValue: string) => void>();
@@ -55,10 +57,7 @@ export default function UpdateProfile() {
         goToProfile();
         Alert.alert("Success", "Update profile successfully.");
       },
-      onError: error => {
-        console.debug("Error updateProfile", stringify(error));
-        Alert.alert("Error", "An error has occured. Please try again later.");
-      },
+      onError: error => handleError(error),
       onSettled: () => {
         dispatch(saveUpdateProfileData({ isLoading: false }));
       }

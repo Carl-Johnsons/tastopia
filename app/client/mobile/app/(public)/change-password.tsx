@@ -16,6 +16,7 @@ import VerifyForgotPasswordForm from "@/components/screen/forgot/VerifyForgotPas
 import ChangePasswordForm, {
   ChangePasswordFormFields
 } from "@/components/screen/forgot/ChangePasswordForm";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 const ChangePassword = () => {
   const isAndroid = Platform.OS === "android";
@@ -32,6 +33,8 @@ const ChangePassword = () => {
     useChangePassword();
   const { mutateAsync: requestChangePasswordAsync } = useRequestChangePassword();
 
+  const { handleError } = useErrorHandler();
+
   const onSubmit = async (data: ICheckForgotPasswordDTO) => {
     checkOTP(
       {
@@ -43,9 +46,8 @@ const ChangePassword = () => {
           setSuccessOTP(data.otp);
         },
         onError: error => {
-          const errorResponse = error.response?.data as IErrorResponseDTO;
           setSuccessOTP(undefined);
-          Alert.alert("Error while trying to verify", errorResponse.message ?? "");
+          handleError(error);
         }
       }
     );
@@ -66,10 +68,7 @@ const ChangePassword = () => {
           Alert.alert("Success", "Change password successfully");
           router.push("/login");
         },
-        onError: error => {
-          const errorResponse = error.response?.data as IErrorResponseDTO;
-          Alert.alert("Error while trying to verify", errorResponse.message ?? "");
-        }
+        onError: error => handleError(error)
       }
     );
   };
@@ -89,10 +88,7 @@ const ChangePassword = () => {
           Alert.alert("Resend successfully!");
           setCountdown(30);
         },
-        onError: error => {
-          const errorResponse = error.response?.data as IErrorResponseDTO;
-          Alert.alert("Error while trying to resend", errorResponse.message ?? "");
-        }
+        onError: error => handleError(error)
       }
     );
   };

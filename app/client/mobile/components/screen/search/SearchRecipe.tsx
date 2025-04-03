@@ -19,7 +19,12 @@ import {
 } from "@/api/search";
 import { router } from "expo-router";
 import { filterUniqueItems } from "@/utils/dataFilter";
-import { removeTagValue, selectSearchTagCodes, selectSearchTagValues, selectSearchTags } from "@/slices/searchRecipe.slice";
+import {
+  removeTagValue,
+  selectSearchTagCodes,
+  selectSearchTagValues,
+  selectSearchTags
+} from "@/slices/searchRecipe.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useTranslation } from "react-i18next";
 import useColorizer from "@/hooks/useColorizer";
@@ -32,6 +37,7 @@ import { globalStyles } from "@/components/common/GlobalStyles";
 import useDebounce from "@/hooks/useDebounce";
 import SelectedTag from "./SelectedTag";
 import { Filter } from "@/components/common/SVG";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 type SearchUserProps = {
   onFocus: boolean;
@@ -59,7 +65,7 @@ const ResultSection = memo(
     const { t } = useTranslation("search");
 
     return (
-      <View className='mt-6 mb-[50px]'>
+      <View className='mb-[50px] mt-6'>
         <FlatList
           data={searchResults}
           keyExtractor={item => item.id}
@@ -114,10 +120,11 @@ const ResultSection = memo(
 );
 
 const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
-  const { c } = useColorizer();
   const { black, white } = colors;
-
+  const { c } = useColorizer();
   const { t } = useTranslation("search");
+  const { handleError } = useErrorHandler();
+
   const dispatch = useAppDispatch();
   const tagCodes = useAppSelector(selectSearchTagCodes);
   const tagValues = useAppSelector(selectSearchTagValues);
@@ -197,7 +204,12 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   };
 
   const handleSelectSearchResult = () => {
-    createSearchHistory({ keyword: searchValue });
+    createSearchHistory(
+      { keyword: searchValue },
+      {
+        onError: error => handleError(error)
+      }
+    );
   };
 
   useEffect(() => {

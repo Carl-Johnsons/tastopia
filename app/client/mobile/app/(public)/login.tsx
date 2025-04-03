@@ -20,7 +20,6 @@ import useBounce from "@/hooks/animation/useBounce";
 import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
 import useSyncSetting from "@/hooks/user/useSyncSetting";
 import useSyncUser from "@/hooks/user/useSyncUser";
-import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { isAxiosError } from "axios";
 import { Alert } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -62,7 +61,9 @@ const Login = () => {
           return;
         }
 
-        if (error.response?.status >= 400) {
+        const status = error?.response?.status;
+
+        if (status && status >= 400) {
           Alert.alert(t("alertTitle"), t("Identity.InvalidCredential"));
         }
       },

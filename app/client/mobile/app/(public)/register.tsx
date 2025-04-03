@@ -26,16 +26,21 @@ import { getIdentifierType } from "@/utils/checker";
 import useSyncSetting from "@/hooks/user/useSyncSetting";
 import useSyncUser from "@/hooks/user/useSyncUser";
 import { IRegisterAccountDTO } from "@/generated/interfaces/identity.interface";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 const Register = () => {
-  const { loginWithGoogle } = useLoginWithGoogle();
-  const dispatch = useDispatch();
   const isVerifyingAccount = selectIsVerifyingAccount();
   const verifyIdentifier = selectVerifyIdentifier();
   const currentRouteName = usePathname();
+
   const { mutateAsync: register, isLoading: isSubmitting } = useRegister();
+
   const { upload: uploadSettings } = useSyncSetting();
   const { fetch: fetchUser } = useSyncUser();
+
+  const dispatch = useDispatch();
+  const { loginWithGoogle } = useLoginWithGoogle();
+  const { handleError } = useErrorHandler();
 
   useEffect(() => {
     if (isVerifyingAccount && currentRouteName === "/register") {
@@ -77,9 +82,7 @@ const Register = () => {
           const route = "/verify";
           router.push(route);
         },
-        onError: error => {
-          Alert.alert("Error", error.message);
-        }
+        onError: error => handleError(error)
       }
     );
   };

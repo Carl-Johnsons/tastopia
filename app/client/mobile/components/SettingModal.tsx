@@ -227,6 +227,7 @@ const Main = ({
   const darkMode = selectDarkModeSetting();
   const languague = selectLanguageSetting();
   const { toggleColorScheme } = useColorScheme();
+  const { handleError } = useErrorHandler();
 
   const setDarkMode: Dispatch<SetStateAction<boolean>> = async value => {
     const oldValue = JSON.stringify(darkMode) as SETTING_VALUE.BOOLEAN;
@@ -254,14 +255,14 @@ const Main = ({
     await updateSetting(
       { ...data },
       {
-        onError: () => {
+        onError: error => {
           dispatch(
             saveSettingData({
               [SETTING_KEY.DARK_MODE]: oldValue
             })
           );
 
-          Alert.alert("Error", "An error has occurred. Please try again later.");
+          handleError(error);
         }
       }
     );
@@ -562,6 +563,7 @@ const LanguageSetting = () => {
   const { mutateAsync: updateSetting } = useUpdateSetting();
   const languague = selectLanguageSetting();
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   const setLanguage = async (value: SETTING_VALUE.LANGUAGE) => {
     const oldValue = JSON.stringify(value) as SETTING_VALUE.LANGUAGE;
@@ -594,16 +596,15 @@ const LanguageSetting = () => {
           );
 
           await queryClient.invalidateQueries({ queryKey: ["getNotification"] });
-          console.log("Invalidated notification");
         },
-        onError: () => {
+        onError: (error) => {
           dispatch(
             saveSettingData({
               [SETTING_KEY.LANGUAGE]: oldValue
             })
           );
 
-          Alert.alert("Error", "An error has occurred. Please try again later.");
+          handleError(error);
         }
       }
     );
@@ -641,6 +642,8 @@ const NotificationSetting = () => {
   const { t } = useTranslation("settingModal", { keyPrefix: "notification" });
   const dispatch = useDispatch();
   const { mutateAsync: updateSetting } = useUpdateSetting();
+  const {handleError} = useErrorHandler();
+
   const notificationComment = selectNotificationCommentSetting();
   const notificationVote = selectNotificationVoteSetting();
   const notificationFollow = selectNotificationFollowSetting();
@@ -681,14 +684,14 @@ const NotificationSetting = () => {
     await updateSetting(
       { ...data },
       {
-        onError: () => {
+        onError: (error) => {
           dispatch(
             saveSettingData({
               [key]: oldValue
             })
           );
 
-          Alert.alert("Error", "An error has occurred. Please try again later.");
+          handleError(error);
         }
       }
     );
