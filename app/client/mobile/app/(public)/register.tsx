@@ -101,12 +101,14 @@ const Register = () => {
           onSubmit={onSubmit}
           isLoading={isSubmitting}
         />
-        <Pressable onPress={navigateToSignInScreen}>
-          <Text className='text-center font-medium text-lg text-gray-300'>
-            Already have an account?{" "}
-            <Text className='font-medium text-primary'>Login</Text>
-          </Text>
-        </Pressable>
+        <View className='flex-center'>
+          <Pressable onPress={navigateToSignInScreen}>
+            <Text className='text-center font-medium text-lg text-gray-300'>
+              Already have an account?{" "}
+              <Text className='font-medium text-primary'>Login</Text>
+            </Text>
+          </Pressable>
+        </View>
 
         <View className='flex-row items-center justify-center gap-5'>
           <View className='h-[1px] grow bg-gray-300' />
@@ -116,7 +118,7 @@ const Register = () => {
           <View className='h-[1px] grow bg-gray-300' />
         </View>
 
-        <View className='flex items-center'>
+        <View className='flex-center'>
           <GoogleButton
             onPress={loginWithGoogle}
             className='rounded-full border border-gray-300 p-3.5'

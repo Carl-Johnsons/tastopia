@@ -68,7 +68,6 @@ const Login = () => {
       >
         <BackButton
           onPress={router.back}
-          style={animatedStyles}
           className='bg-white_black200 w-[38px] rounded-xl border border-black px-4 py-3.5 dark:border-white'
         />
         <Text className='text-black_white font-sans font-semibold text-4xl'>Login</Text>
@@ -76,12 +75,14 @@ const Login = () => {
           onSubmit={onSubmit}
           isLoading={isSubmitting}
         />
-        <Pressable onPress={navigateToSignUpScreen}>
-          <Text className='text-center font-medium text-lg text-gray-300'>
-            Don’t have an account?{" "}
-            <Text className='font-medium text-primary'>Sign Up</Text>
-          </Text>
-        </Pressable>
+        <View className='flex-center'>
+          <Pressable onPress={navigateToSignUpScreen}>
+            <Text className='text-center font-medium text-lg text-gray-300'>
+              Don’t have an account?{" "}
+              <Text className='font-medium text-primary'>Sign Up</Text>
+            </Text>
+          </Pressable>
+        </View>
 
         <View className='flex-row items-center justify-center gap-5'>
           <View className='h-[1px] grow bg-gray-300' />

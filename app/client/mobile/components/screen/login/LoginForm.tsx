@@ -78,11 +78,13 @@ export const LoginForm = (props: LoginFormProps) => {
           <Text className='font-sans text-red-400'>{errors.password.message}</Text>
         ) : null}
       </View>
-      <Pressable onPress={onNavigateToForgot}>
-        <Text className='text-center font-medium text-lg text-primary'>
-          Forgot password?
-        </Text>
-      </Pressable>
+      <View className='flex-center'>
+        <Pressable onPress={onNavigateToForgot}>
+          <Text className='text-center font-medium text-lg text-primary'>
+            Forgot password?
+          </Text>
+        </Pressable>
+      </View>
       <Button
         onPress={() => {
           animate();
