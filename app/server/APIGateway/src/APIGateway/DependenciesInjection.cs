@@ -45,7 +45,6 @@ public static class DependenciesInjection
         });
 
         // Configure service
-
         services.AddOcelot()
                 .AddDelegatingHandler<SecretHeaderHandler>(global: true)
                 .AddConsul();
@@ -76,11 +75,11 @@ public static class DependenciesInjection
 
         app.UseRouting();
         app.UseCustomHealthCheck();
-
         app.UseCors("AllowAnyOriginPolicy");
 
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseWebSockets();
 
 #pragma warning disable ASP0014 // Suggest using top level route registrations
         app.UseEndpoints(e =>

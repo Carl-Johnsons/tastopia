@@ -5,13 +5,14 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamPathTemplate": "/tastopia-hub{everything}",
-      "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/tastopia-hub/{everything}",
+      "DownstreamScheme": "ws",
       "UpstreamHttpMethod": [
         "OPTION",
-        "POST"
+        "POST",
+        "GET"
       ],
-      "UpstreamPathTemplate": "/tastopia-hub{everything}",
+      "UpstreamPathTemplate": "/tastopia-hub/{everything}",
       "SwaggerKey": "signalr"
     }
   ]
