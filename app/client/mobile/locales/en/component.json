@@ -10,7 +10,6 @@
   "emptyFollower": "You has no follower.",
   "emptyFollowing": "You are not following anyone.",
   "emptyFollowingSearch": "No following found!",
-  "uploadImage": "Upload image",
   "imageNotExist": "Uploaded image does not exist.",
   "imageExceedSize": "Image size must lower than 10MB.",
   "notfound": "Oops something went wrong! \n We couldn't find what you're looking for.",
@@ -52,5 +51,13 @@
     "confirmDeleteUserDescription": "Are you sure?",
     "ok": "Ok",
     "cancel": "Cancel"
+  },
+  "uploadImage": {
+    "title": "Upload image",
+    "permissionDeniedTitle": "Permission Denied",
+    "permissionDeniedMessage": "You need to grant permission to access the media library to upload images.",
+    "fileSizeExceededTitle": "File Size Exceeded",
+    "fileSizeExceededMessage": "{{count}} image(s) exceeded the 15MB limit and were not added.",
+    "okButton": "OK"
   }
 }

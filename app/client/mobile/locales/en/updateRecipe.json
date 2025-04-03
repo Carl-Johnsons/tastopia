@@ -23,12 +23,28 @@
   },
   "validation": {
     "title": "Please enter recipe title",
+    "title.maxLength": "Title cannot exceed 50 characters",
     "description": "Please enter recipe description",
+    "description.maxLength": "Description cannot exceed 500 characters",
     "serves": "Please enter recipe serves",
     "cookTime": "Please enter recipe cook time",
     "image": "Please upload recipe image",
     "step": "Please enter cooking step",
-    "ingredient": "Please enter ingredient"
+    "ingredient": "Please enter ingredient",
+    "ingredientRequired": "Recipe must have at least one ingredient",
+    "ingredients": {
+      "min": "Recipe must have at least one ingredient",
+      "max": "Recipe cannot have more than 50 ingredients",
+      "itemRequired": "Please enter an ingredient"
+    },
+    "steps": {
+      "min": "Recipe must have at least one step",
+      "max": "Recipe cannot have more than 15 steps",
+      "content": {
+        "required": "Please enter cooking step description",
+        "maxLength": "Step description cannot exceed 500 characters"
+      }
+    }
   },
   "removeIngredientAlert": {
     "title": "Remove ingredient",

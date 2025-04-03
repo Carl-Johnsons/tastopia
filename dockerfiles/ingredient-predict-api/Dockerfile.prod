@@ -1,0 +1,22 @@
+FROM python:3.11-slim
+ARG BASE_PROJECT_PATH=app/server/IngredientPredictService
+WORKDIR /app
+
+COPY $BASE_PROJECT_PATH/requirements.txt .
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libgomp1 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    libjpeg-dev \
+    zlib1g-dev \
+    && pip install --no-cache-dir -r requirements.txt \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY $BASE_PROJECT_PATH .
+
+CMD ["python", "main.py"]

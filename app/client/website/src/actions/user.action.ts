@@ -98,7 +98,7 @@ export async function getAdminUsers(
   limit = 6
 ) {
   try {
-    const url = `/api/admin/user/get-users?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&keyword=${encodeURIComponent(keyword)}`;
+    const url = `/api/admin/user/get-users?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&keyword=${encodeURIComponent(keyword.trim())}`;
 
     const { data } = await protectedAxiosInstance.get(url);
 
@@ -146,7 +146,7 @@ export async function getUserReports(
   language = "en"
 ) {
   try {
-    const url = `/api/admin/user/get-user-reports?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&language=${language}&keyword=${encodeURIComponent(keyword)}`;
+    const url = `/api/admin/user/get-user-reports?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&language=${language}&keyword=${encodeURIComponent(keyword.trim())}`;
 
     const { data } = await protectedAxiosInstance.get(url);
 

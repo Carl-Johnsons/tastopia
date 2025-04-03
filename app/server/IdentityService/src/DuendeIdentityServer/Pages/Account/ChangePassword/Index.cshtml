@@ -1,0 +1,65 @@
+﻿@page
+@model DuendeIdentityServer.Pages.Account.ChangePassword.Index
+@{
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+<link rel="stylesheet" href="~/css/login.css" />
+
+<div class="row login-page justify-content-center align-items-center">
+    <div class="col d-none d-md-block vh-100">
+        <image src="/img/auth-figure.png" class="h-100 w-100 object-fit-cover" />
+    </div>
+    <div class="col ps-0 vh-100 d-flex justify-content-center align-items-center">
+        <div class="card bg-white shadow">
+            <div class="card-body d-flex flex-column justify-content-center">
+                <form asp-page="/Account/ChangePassword/Index" method="POST">
+                    <div class=" d-flex justify-content-between">
+                        <button class="btn rounded-circle shadow" name="Input.Button" value="Cancel">
+                            <img class="back-icon" src="/img/back.png" />
+                        </button>
+                        <div class="logo">
+                            <image src="/img/logo.svg" class="object-fit-cover" />
+                        </div>
+                    </div>
+                    <h1 class="mt-4 mb-4">Please enter<br /><span class="title small">your new password</span></h1>
+                    <input type="hidden" asp-for="Input.ReturnUrl" />
+                    <input type="hidden" asp-for="Input.Identifier" />
+                    <div class="form-group form-floating">
+                        <input autofocus type="password" class="form-control shadow-sm" id="floatingInput" placeholder="Password" asp-for="Input.Password" autofocus>
+                        <span asp-validation-for="Input.Password" class="mt-2 text-danger d-block"></span>
+                    </div>
+                    <div class="form-group form-floating">
+                        <input type="password" class="form-control shadow-sm" id="floatingInput" placeholder="Retype password" asp-for="Input.RetypePassword" autofocus>
+                        <span asp-validation-for="Input.RetypePassword" class="mt-2 text-danger d-block"></span>
+                    </div>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="mb-3">
+                            @foreach (var entry in ViewData.ModelState)
+                            {
+                                // Skip errors related to "Input.Prop"
+                                if (entry.Key == "Input.Password" || entry.Key == "Input.RetypePassword")
+                                {
+                                    continue;
+                                }
+
+                                foreach (var error in entry.Value.Errors)
+                                {
+                                    <span class="text-danger">@error.ErrorMessage</span>
+                                }
+                            }
+                        </div>
+                    }
+
+                    <div class="row">
+                        <div class="col d-flex justify-content-center">
+                            <button class="btn btn-primary w-75 shadow" name="Input.Button" value="ChangePassword">Change Password</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

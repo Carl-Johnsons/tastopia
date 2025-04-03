@@ -143,8 +143,18 @@ const UpdateRecipe = () => {
       return;
     }
 
+    if (formData?.ingredients?.length && formData?.ingredients?.length > 50) {
+      Alert.alert(t("validation.ingredients.max"));
+      return;
+    }
+
     if (!isInputStep) {
       Alert.alert(t("validation.step"));
+      return;
+    }
+
+    if (formData?.steps?.length && formData?.steps?.length > 15) {
+      Alert.alert(t("validation.steps.max"));
       return;
     }
 

@@ -4,7 +4,7 @@ services:
     container_name: nginx
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl/certs/server-cert.crt:/etc/ssl/certs/server-cert.crt
+      - ./ssl/certs/chain-server-cert.crt:/etc/ssl/certs/server-cert.crt
       - ./ssl/private-key/server.key:/etc/ssl/private/server.key
       - ./ssl/certs/self-root-ca.crt:/etc/ssl/certs/root-ca.crt
     ports:
@@ -12,6 +12,7 @@ services:
       - "443:443"
       - "7000:7000"
       - "7001:7001"
+      - "7004:7004"
       - "3000:3000"
     depends_on:
       - identity-api
@@ -113,6 +114,11 @@ services:
       - internal
     extra_hosts:
       - "host.docker.internal:host-gateway" # For using host.docker.internal in linux
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8500/v1/status/leader || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   redis:
     image: redis:8.0-M02-alpine
@@ -151,6 +157,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      consul:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -175,7 +183,9 @@ services:
     volumes:
       - ./data/nuget:/src/nuget
     depends_on:
-      postgres:
+      mongo:
+        condition: service_healthy
+      consul:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -202,6 +212,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      consul:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -225,7 +237,9 @@ services:
     volumes:
       - ./data/nuget:/src/nuget
     depends_on:
-      postgres:
+      mongo:
+        condition: service_healthy
+      consul:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -250,6 +264,8 @@ services:
     volumes:
       - ./data/nuget:/src/nuget
     depends_on:
+      consul:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -273,6 +289,10 @@ services:
     volumes:
       - ./data/nuget:/src/nuget
     depends_on:
+      mongo:
+        condition: service_healthy
+      consul:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -315,6 +335,37 @@ services:
     env_file:
       - .env.production
       - ./app/server/RecipeService/.env.production
+
+  ingredient-predict-api:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/ingredient-predict-api/Dockerfile.prod
+    container_name: ingredient-predict-service
+    depends_on:
+      consul:
+        condition: service_healthy
+    networks:
+      - internal
+    env_file:
+      - .env.production
+      - ./app/server/IngredientPredictService/.env.production
+
+  signalr:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/signalr/Dockerfile.prod
+    container_name: signalr-service
+    volumes:
+      - ./data/nuget:/src/nuget
+    depends_on:
+      consul:
+        condition: service_healthy
+    networks:
+      - public
+      - internal
+    env_file:
+      - .env.production
+      - ./app/server/SignalRService/.env.production
 
   website:
     build:
