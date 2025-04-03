@@ -19,9 +19,6 @@ public class GetTagsQuery : IRequest<Result<PaginatedTagListResponse?>>
 
     [Required]
     public string Category { get; init; } = null!;
-
-    [Required]
-    public string Lang { get; init; } = null!;
 }
 
 public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<PaginatedTagListResponse?>>
@@ -41,9 +38,8 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
         var keyword = request.Keyword;
         var category = request.Category;
         var skip = request.Skip;
-        var lang = request.Lang;
 
-        if (skip == null || tagCodes == null || category == null || lang == null)
+        if (skip == null || tagCodes == null || category == null)
         {
             return Result<PaginatedTagListResponse?>.Failure(TagError.NullParameter);
         }
@@ -76,7 +72,17 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
             Limit = TAG_CONSTANTS.TAG_LIMIT
         });
 
-        var tagList = await tagsQuery.ToListAsync();
+        var tagList = await tagsQuery.Select(t => new TagResponse
+        {
+            Id = t.Id,
+            Category = t.Category.ToString(),
+            Code = t.Code,
+            ImageUrl = t.ImageUrl,
+            Status = t.Status.ToString(),
+            CreatedAt = t.CreatedAt,
+            En = t.Value.En,
+            Vi = t.Value.Vi
+        }).ToListAsync();
 
         if (tagList == null || !tagList.Any())
         {

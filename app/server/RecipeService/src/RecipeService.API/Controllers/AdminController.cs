@@ -9,7 +9,6 @@ using RecipeService.Application.Reports.Commands;
 using RecipeService.Application.Reports.Queries;
 using RecipeService.Application.Tags.Commands;
 using RecipeService.Application.Tags.Queries;
-using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -240,16 +239,15 @@ public class AdminController : BaseApiController
     }
 
     //Tag
-    [HttpPost("get-tags")]
+    [HttpGet("get-tags")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedAdminTagListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetTag([FromQuery] PaginatedDTO paginatedDTO, [FromBody] AdminGetTagDTO adminGetTagDTO)
+    public async Task<IActionResult> AdminGetTag([FromQuery] PaginatedDTO paginatedDTO)
     {
         var result = await _sender.Send(new AdminGetTagsQuery
         {
             PaginatedDTO = paginatedDTO,
-            Lang = adminGetTagDTO.Language
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -257,7 +255,7 @@ public class AdminController : BaseApiController
 
     [HttpPost("create-tag")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(TagResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> CreateTag([FromForm] CreateTagDTO createTagDTO)
     {
@@ -279,7 +277,7 @@ public class AdminController : BaseApiController
 
     [HttpPost("update-tag")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(TagResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> UpdateTag([FromForm] UpdateTagDTO updateTagDTO)
     {
@@ -303,7 +301,7 @@ public class AdminController : BaseApiController
 
     [HttpPost("tag-detail")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(TagResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> GetTagDetail([FromBody] AdminGetTagDetailDTO adminGetTagDetailDTO)
     {
