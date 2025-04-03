@@ -43,6 +43,9 @@ export default function Header() {
       <Button
         onPress={handleSubmit}
         isLoading={isLoading}
+        style={{
+          width: 42
+        }}
         spinner={
           <ActivityIndicator
             animating={isLoading}
