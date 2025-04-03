@@ -109,7 +109,8 @@ async def predict(file: UploadFile = File(...)):
                 "name": {
                     'en': names[result.names[cls]][0],
                     'vi': names[result.names[cls]][1]
-                }
+                },
+                "code": '_'.join(names[result.names[cls]][0].split(' ')).upper(),
             })
 
     results = box_model(image, verbose=False)
