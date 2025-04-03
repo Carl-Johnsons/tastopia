@@ -99,6 +99,7 @@ export const VerifyForm = (props: VerifyFormProps) => {
       <View className='flex-row justify-center gap-3.5'>
         {inputRefs.map((ref, index) => (
           <Input
+            inputMode="tel"
             key={index}
             ref={ref}
             autoCapitalize='characters'
