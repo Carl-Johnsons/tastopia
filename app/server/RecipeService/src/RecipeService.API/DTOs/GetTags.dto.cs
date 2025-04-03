@@ -21,9 +21,4 @@ public class GetTagsDTO
     [JsonProperty("category")]
     [CategoryValidation]
     public string Category { get; set; } = null!;
-
-    [Required]
-    [JsonProperty("language")]
-    [LanguageValidation]
-    public string Language { get; set; } = null!;
 }

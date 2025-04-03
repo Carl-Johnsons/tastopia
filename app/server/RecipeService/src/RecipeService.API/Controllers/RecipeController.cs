@@ -187,7 +187,6 @@ public class RecipeController : BaseApiController
             TagCodes = getTagsDTO.TagCodes,
             Keyword = getTagsDTO.Keyword,
             Category = getTagsDTO.Category,
-            Lang = getTagsDTO.Language
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

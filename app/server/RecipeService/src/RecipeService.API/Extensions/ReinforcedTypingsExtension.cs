@@ -60,6 +60,8 @@ public static class ReinforcedTypingsExtension
             typeof(PaginatedAdminReportRecipeListResponse),
             typeof(PaginatedRecipeCommentListResponse),
             typeof(PaginatedUserActivityListResponse),
+            typeof(PaginatedTagListResponse),
+            typeof(TagResponse),
             typeof(Recipe),
             typeof(RecipeCommentResponse),
             typeof(RecipeTag),
