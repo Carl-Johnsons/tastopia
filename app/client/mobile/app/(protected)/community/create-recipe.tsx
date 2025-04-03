@@ -98,12 +98,22 @@ const CreateRecipe = () => {
     }
 
     if (!isInputIngredient) {
-      Alert.alert(t("validation.ingredient"));
+      Alert.alert(t("validation.ingredients.itemRequired"));
+      return;
+    }
+
+    if (formData?.ingredients?.length && formData?.ingredients?.length > 50) {
+      Alert.alert(t("validation.ingredients.max"));
       return;
     }
 
     if (!isInputStep) {
       Alert.alert(t("validation.step"));
+      return;
+    }
+
+    if (formData?.steps?.length && formData?.steps?.length > 15) {
+      Alert.alert(t("validation.steps.max"));
       return;
     }
 
@@ -120,9 +130,11 @@ const CreateRecipe = () => {
       name: image.name,
       type: image.type || "image/jpeg"
     } as unknown as Blob);
+
     formData.ingredients?.forEach((ingredient, index) => {
       data.append(`ingredients[${index}]`, ingredient.value);
     });
+
     formData.steps?.forEach((step, index) => {
       console.log("step", step);
       data.append(`steps[${index}].ordinalNumber`, String(index + 1));
