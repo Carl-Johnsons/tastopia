@@ -406,7 +406,7 @@ const Success = (_: StepProps) => {
   useEffect(() => {
     if (count === 0) {
       router.replace("/");
-      dispatch(saveAuthData({ resetModifyIdentifierForm: true }));
+      dispatch(saveAuthData({ resetAddIdentifierForm: true }));
     }
 
     const interval = setInterval(() => {
@@ -422,7 +422,9 @@ const Success = (_: StepProps) => {
         <Text className='text-black_white font-sans font-semibold text-4xl'>
           {t("title")}
         </Text>
-        <Text className='font-sans text-lg text-green-700'>{t("description")}</Text>
+        <Text className='dark:text-grenn-400 font-sans text-lg text-green-700'>
+          {t("description")}
+        </Text>
       </View>
       <Text className='text-black_white font-sans text-lg'>
         {`${t("redirect")} `} <Text className='text-primary'>{count}s</Text>
