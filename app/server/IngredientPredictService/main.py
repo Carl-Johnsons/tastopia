@@ -32,6 +32,10 @@ service_port = int(os.getenv("PORT"))
 mongo_client = pymongo.MongoClient(envUtil.get_mongodb_connection_string())
 print(mongo_client.list_database_names())
 recipe_db = mongo_client["RecipeDB"]
+tag_collection = recipe_db["Tag"]
+
+for x in tag_collection.find():
+  print(x)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
