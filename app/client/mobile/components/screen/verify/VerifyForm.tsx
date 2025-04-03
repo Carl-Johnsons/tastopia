@@ -73,6 +73,11 @@ export const VerifyForm = (props: VerifyFormProps) => {
   };
 
   const handleTextChange = (value: string, index: number) => {
+    if (value.length === 2 && index < inputRefs.length - 1) {
+      handleTextChange(value.slice(1), index + 1);
+      return;
+    }
+
     const firstChar = value.charAt(0).toUpperCase();
 
     setFormValues(
@@ -99,6 +104,7 @@ export const VerifyForm = (props: VerifyFormProps) => {
       <View className='flex-row justify-center gap-3.5'>
         {inputRefs.map((ref, index) => (
           <Input
+            inputMode='tel'
             key={index}
             ref={ref}
             autoCapitalize='characters'

@@ -45,8 +45,8 @@ import {
   AddIdentifierParams,
   IDENTIFIER_TYPE,
   ModifyIdentifierParams,
+  UnlinkIdentifierParams,
   UpdateSettingParams,
-  useRequestUpdateIdentifier,
   useUnlink,
   useUpdateSetting
 } from "@/api/user";
@@ -339,7 +339,6 @@ const AccountSetting = () => {
   );
 
   const { mutateAsync: unlinkIdentifier } = useUnlink();
-  const { mutateAsync: requestUpdateIdentifier } = useRequestUpdateIdentifier();
 
   const { dismiss } = useBottomSheetModal();
   const router = useRouter();
@@ -374,7 +373,7 @@ const AccountSetting = () => {
   }, []);
 
   const unlink = useCallback(
-    async ({ data, type }: ModifyIdentifierParams) => {
+    async ({ type }: UnlinkIdentifierParams) => {
       Alert.alert(
         tUnlink("title"),
         type === IDENTIFIER_TYPE.EMAIL
@@ -386,7 +385,7 @@ const AccountSetting = () => {
             text: tUnlink("unlink"),
             onPress: async () => {
               unlinkIdentifier(
-                { type, data },
+                { type },
                 {
                   onSuccess: () => {
                     Alert.alert(tUnlink("success.title"), tUnlink("success.description"));
@@ -403,22 +402,15 @@ const AccountSetting = () => {
     [fetchUser, handleError]
   );
 
-  const updateUserInfo = useCallback(async ({ data, type }: ModifyIdentifierParams) => {
+  const updateUserInfo = useCallback(async ({ type }: ModifyIdentifierParams) => {
     Alert.alert(tA("title"), tA("description"), [
       { text: tA("cancel"), style: "cancel" },
       {
         text: tA("update"),
         onPress: async () => {
-          await requestUpdateIdentifier(
-            { type, data },
-            {
-              onError: err => handleError(err)
-            }
-          );
-
           dispatch(
             saveAuthData({
-              modifyIdentifierData: { type, data },
+              modifyIdentifierData: { type },
               resetModifyIdentifierForm: true
             })
           );
@@ -516,10 +508,7 @@ const AccountSetting = () => {
           !!accountEmail
             ? () => {
                 unlink({
-                  type: IDENTIFIER_TYPE.EMAIL,
-                  data: {
-                    identifier: accountEmail
-                  }
+                  type: IDENTIFIER_TYPE.EMAIL
                 });
               }
             : undefined
@@ -528,8 +517,7 @@ const AccountSetting = () => {
           !!accountEmail
             ? () => {
                 updateUserInfo({
-                  type: IDENTIFIER_TYPE.EMAIL,
-                  data: { identifier: accountEmail }
+                  type: IDENTIFIER_TYPE.EMAIL
                 });
               }
             : undefined
@@ -548,10 +536,7 @@ const AccountSetting = () => {
           !!accountPhoneNumber
             ? () => {
                 unlink({
-                  type: IDENTIFIER_TYPE.PHONE_NUMBER,
-                  data: {
-                    identifier: accountPhoneNumber
-                  }
+                  type: IDENTIFIER_TYPE.PHONE_NUMBER
                 });
               }
             : undefined
@@ -560,8 +545,7 @@ const AccountSetting = () => {
           !!accountPhoneNumber
             ? () => {
                 updateUserInfo({
-                  type: IDENTIFIER_TYPE.PHONE_NUMBER,
-                  data: { identifier: accountPhoneNumber }
+                  type: IDENTIFIER_TYPE.PHONE_NUMBER
                 });
               }
             : undefined
