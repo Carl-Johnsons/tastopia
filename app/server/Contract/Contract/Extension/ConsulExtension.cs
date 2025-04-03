@@ -9,8 +9,7 @@ namespace Contract.Extension;
 
 public static class ConsulExtension
 {
-    private static bool IsSecure = true;
-    public static WebApplication UseConsulServiceDiscovery(this WebApplication app, string serviceName)
+    public static WebApplication UseConsulServiceDiscovery(this WebApplication app, string serviceName, bool IsSecure = true)
     {
         var consulClient = app.Services.GetRequiredService<IConsulClient>();
         var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();

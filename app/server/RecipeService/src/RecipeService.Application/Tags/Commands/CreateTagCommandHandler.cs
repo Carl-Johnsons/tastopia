@@ -13,7 +13,8 @@ namespace RecipeService.Application.Tags.Commands;
 public class CreateTagCommand : IRequest<Result<Tag?>>
 {
     public string Code { get; set; } = null!;
-    public string Value { get; set; } = null!;
+    public string En { get; set; } = null!;
+    public string Vi { get; set; } = null!;
     public string Category { get; set; } = null!;
     public IFormFile TagImage { get; set; } = null!;
     public Guid CurrentAccountId { get; set; }
@@ -63,7 +64,7 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
             var tag = new Tag
             {
                 Code = request.Code,
-                Value = request.Value,
+                Value = new TagValue { En = request.En, Vi = request.Vi},
                 Status = TagStatus.Active,
                 Category = Enum.Parse<TagCategory>(request.Category),
                 CreatedAt = DateTime.UtcNow,

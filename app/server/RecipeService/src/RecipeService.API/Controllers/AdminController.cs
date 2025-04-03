@@ -240,15 +240,16 @@ public class AdminController : BaseApiController
     }
 
     //Tag
-    [HttpGet("get-tags")]
+    [HttpPost("get-tags")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedAdminTagListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetTag([FromQuery] PaginatedDTO paginatedDTO)
+    public async Task<IActionResult> AdminGetTag([FromQuery] PaginatedDTO paginatedDTO, [FromBody] AdminGetTagDTO adminGetTagDTO)
     {
         var result = await _sender.Send(new AdminGetTagsQuery
         {
-            PaginatedDTO = paginatedDTO
+            PaginatedDTO = paginatedDTO,
+            Lang = adminGetTagDTO.Language
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -266,7 +267,8 @@ public class AdminController : BaseApiController
         var result = await _sender.Send(new CreateTagCommand
         {
             Code = createTagDTO.Code,
-            Value = createTagDTO.Value,
+            En = createTagDTO.En,
+            Vi = createTagDTO.Vi,
             Category = createTagDTO.Category,
             TagImage = createTagDTO.TagImage,
             CurrentAccountId = Guid.Parse(subjectId!)
@@ -288,7 +290,8 @@ public class AdminController : BaseApiController
         {
             TagId = updateTagDTO.TagId,
             Code = updateTagDTO.Code,
-            Value = updateTagDTO.Value,
+            En = updateTagDTO.En,
+            Vi = updateTagDTO.Vi,
             Category = updateTagDTO.Category,
             Status = updateTagDTO.Status,
             TagImage = updateTagDTO.TagImage,
@@ -352,14 +355,15 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("statistic/get-tag-ranking-by-popular")]
+    [HttpPost("statistic/get-tag-ranking-by-popular")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> GetTagRankingByPopular()
+    public async Task<IActionResult> GetTagRankingByPopular([FromBody] AdminGetTagDTO adminGetTagDTO)
     {
         var result = await _sender.Send(new AdminGetRankingTagsStatisticQuery
         {
+            Lang = adminGetTagDTO.Language
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

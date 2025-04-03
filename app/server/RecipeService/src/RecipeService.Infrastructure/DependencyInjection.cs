@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using RecipeService.Infrastructure.Persistence;
 using RecipeService.Infrastructure.Persistence.Mockup;
 using Contract.Extension;
+using RecipeService.Domain.Entities;
 
 namespace RecipeService.Infrastructure;
 

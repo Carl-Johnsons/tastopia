@@ -137,18 +137,6 @@ const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
         />
         <FormField
           control={form.control}
-          name='password'
-          render={({ field }) => (
-            <FormInput
-              field={field}
-              label={t("password.label")}
-              placeholder={t("password.placeholder")}
-              isLoading={isFormLoading}
-            />
-          )}
-        />
-        <FormField
-          control={form.control}
           name='address'
           render={({ field }) => (
             <FormInput
@@ -278,7 +266,7 @@ const FormSelect = ({
   const { onChange, value } = field;
 
   useEffect(() => {
-    if (field.name != "gender") {
+    if (field.name !== "gender") {
       return;
     }
 

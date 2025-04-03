@@ -29,7 +29,16 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
         var result = new GrpcListTagDTO();
         foreach (var t in response.Value)
         {
-            result.Tags.Add(_mapper.Map<GrpcTagDTO>(t));
+            result.Tags.Add(new GrpcTagDTO
+            {
+                Id = t.Id.ToString(),
+                Code = t.Code,
+                Category = t.Category.ToString(),
+                En = t.Value.En ?? "",
+                Vi = t.Value.Vi ?? "",
+                ImageUrl = t.ImageUrl,
+                Status = t.Status.ToString()
+            });
         }
         _logger.LogInformation("Grpc GetAllTags successfully!");
         return result;
@@ -347,7 +356,8 @@ public class GrpcRecipeService : GrpcRecipe.GrpcRecipeBase
                 Code = v.Code,
                 ImageUrl = v.ImageUrl,
                 Status = v.Status.ToString(),
-                Value = v.Value,
+                En = v.Value.En ?? "",
+                Vi = v.Value.Vi ?? "",
             });
         }
 
