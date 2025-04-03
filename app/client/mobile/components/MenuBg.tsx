@@ -1,19 +1,32 @@
+import { Leaf1Icon, Leaf2Icon, Leaf3Icon } from "@/constants/icons";
 import { View } from "react-native";
-import {
-  G,
-  Path,
-  Svg
-} from "react-native-svg";
+import { G, Path, Svg } from "react-native-svg";
 import { ViewProps } from "react-native-svg/lib/typescript/fabric/utils";
 
 const MenuBg = (props: ViewProps) => {
   return (
     <View
       {...props}
-      className={`flex flex-row justify-between ${props.className}`}
+      className={`relative flex w-full flex-row ${props.className}`}
+      style={{
+        paddingRight: 60
+      }}
     >
-      <SvgCircle1 />
-      <SvgCircle2 />
+      <View className='absolute'>
+        <Leaf1Icon />
+      </View>
+      <View
+        className='absolute z-[1]'
+        style={{
+          left: 100,
+          zIndex: -1
+        }}
+      >
+        <Leaf2Icon />
+      </View>
+      <View className='absolute right-0'>
+        <Leaf3Icon />
+      </View>
     </View>
   );
 };
@@ -40,7 +53,7 @@ const SvgCircle1 = () => (
 
 const SvgCircle2 = () => (
   <Svg
-    className="shadow-2xl"
+    className='shadow-2xl'
     width='251'
     height='244'
     viewBox='0 0 251 244'
