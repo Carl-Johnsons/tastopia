@@ -99,7 +99,7 @@ internal class MockupData
                 tags.Add(new Tag
                 {
                     Code = seedTag.Code,
-                    Value = seedTag.Value,
+                    Value = new TagValue { En = seedTag.En, Vi = seedTag.Vi},
                     Category = Enum.Parse<TagCategory>(seedTag.Category),
                     ImageUrl = seedTag.ImageUrl,
                     Status = TagStatus.Active
@@ -118,7 +118,7 @@ internal class MockupData
                 {
                     Id = Guid.NewGuid(),
                     Code = "",
-                    Value = seedTag.Value,
+                    Value = new TagValue { En = seedTag.En, Vi = seedTag.Vi },
                     Category = Enum.Parse<TagCategory>(seedTag.Category),
                     ImageUrl = "",
                     Status = TagStatus.Pending
@@ -453,7 +453,8 @@ internal class MockupData
 
     private class SeedTag
     {
-        public string Value { get; set; } = null!;
+        public string En { get; set; } = null!;
+        public string Vi { get; set; } = null!;
         public string Code { get; set; } = null!;
         public string Category { get; set; } = null!;
         public string ImageUrl { get; set; } = null!;
