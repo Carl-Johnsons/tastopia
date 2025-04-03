@@ -4,6 +4,7 @@ from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect
 from PIL import Image, ImageOps
 from ultralytics import YOLO
 import httpx
+import pymongo
 import io
 import logging
 import logging.config
@@ -27,6 +28,10 @@ envUtil.load_env()
 
 service_host = os.getenv("SERVICE_HOST")
 service_port = int(os.getenv("PORT"))
+
+mongo_client = pymongo.MongoClient(envUtil.get_mongodb_connection_string())
+print(mongo_client.list_database_names())
+recipe_db = mongo_client["RecipeDB"]
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
