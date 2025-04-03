@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   ScrollView,
   RefreshControl,
-  Alert,
   KeyboardAvoidingView,
   Platform,
   FlatList,

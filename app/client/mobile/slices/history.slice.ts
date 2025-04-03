@@ -4,6 +4,8 @@ import { PURGE } from "redux-persist";
 
 export type HistoryState = {
   isLoading: boolean;
+  currentRecipeId: string;
+  currentAuthorId: string;
 };
 
 export type SaveHistoryDataAction = {
@@ -12,7 +14,9 @@ export type SaveHistoryDataAction = {
 };
 
 const initialState: HistoryState = {
-  isLoading: false
+  isLoading: false,
+  currentRecipeId: "",
+  currentAuthorId: "",
 };
 
 export const selectHistory = () => useAppSelector(state => state.history);

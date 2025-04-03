@@ -597,7 +597,7 @@ const LanguageSetting = () => {
 
           await queryClient.invalidateQueries({ queryKey: ["getNotification"] });
         },
-        onError: (error) => {
+        onError: error => {
           dispatch(
             saveSettingData({
               [SETTING_KEY.LANGUAGE]: oldValue
@@ -642,7 +642,7 @@ const NotificationSetting = () => {
   const { t } = useTranslation("settingModal", { keyPrefix: "notification" });
   const dispatch = useDispatch();
   const { mutateAsync: updateSetting } = useUpdateSetting();
-  const {handleError} = useErrorHandler();
+  const { handleError } = useErrorHandler();
 
   const notificationComment = selectNotificationCommentSetting();
   const notificationVote = selectNotificationVoteSetting();
@@ -684,7 +684,7 @@ const NotificationSetting = () => {
     await updateSetting(
       { ...data },
       {
-        onError: (error) => {
+        onError: error => {
           dispatch(
             saveSettingData({
               [key]: oldValue

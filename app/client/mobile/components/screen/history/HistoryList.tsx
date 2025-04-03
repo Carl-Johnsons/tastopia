@@ -3,17 +3,16 @@ import {
   useSearchRecipeViewingHistory
 } from "@/api/tracking";
 import Recipe from "@/components/common/Recipe";
-import SettingRecipe from "@/components/common/SettingRecipe";
 import { colors } from "@/constants/colors";
-import BottomSheet from "@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet";
 import { useFocusEffect } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { ActivityIndicator, RefreshControl, View } from "react-native";
 import Empty from "../community/Empty";
 import { useAppDispatch } from "@/store/hooks";
 import { saveHistoryData } from "@/slices/history.slice";
 import useHydrateData from "@/hooks/useHydrateData";
+import { useHistoryContext } from "./HistoryProvider";
 
 type HistoryListProps = {
   keyword: string;
@@ -34,9 +33,22 @@ export default function HistoryList({ keyword }: HistoryListProps) {
 
   useFocusEffect(fetchData);
 
-  const bottomSheetRef = useRef<BottomSheet>(null);
-  const [currentRecipeId, setCurrentRecipeId] = useState("");
-  const [currentAuthorId, setCurrentAuthorId] = useState("");
+  const { bottomSheetRef } = useHistoryContext();
+  const dispatch = useAppDispatch();
+
+  const setCurrentRecipeId = useCallback(
+    (id: string) => {
+      dispatch(saveHistoryData({ currentRecipeId: id }));
+    },
+    [dispatch]
+  );
+
+  const setCurrentAuthorId = useCallback(
+    (id: string) => {
+      dispatch(saveHistoryData({ currentAuthorId: id }));
+    },
+    [dispatch]
+  );
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<IRecipeViewingHistoryResponse>) => {
@@ -59,7 +71,6 @@ export default function HistoryList({ keyword }: HistoryListProps) {
     [history, bottomSheetRef]
   );
 
-  const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(saveHistoryData({ isLoading }));
   }, [isLoading]);
@@ -97,11 +108,6 @@ export default function HistoryList({ keyword }: HistoryListProps) {
             onRefresh={refetch}
           />
         }
-      />
-      <SettingRecipe
-        id={currentRecipeId}
-        authorId={currentAuthorId}
-        ref={bottomSheetRef}
       />
     </>
   );
