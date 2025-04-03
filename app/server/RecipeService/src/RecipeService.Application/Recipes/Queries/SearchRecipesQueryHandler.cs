@@ -84,7 +84,6 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
                 );
             }
         }
-        keyword = null;
         if (!string.IsNullOrEmpty(keyword))
         {
             var searchUserResponse = await _grpcUserClient.SearchUserAsync(new GrpcSearchUserRequest
