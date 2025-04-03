@@ -21,7 +21,8 @@ const resources = {
     report: locales.reportEn,
     notification: locales.notificationEn,
     capture: locales.captureEn,
-    verifyUpdateIdentifier: locales.verifyUpdateIdentifierEn
+    verifyUpdateIdentifier: locales.verifyUpdateIdentifierEn,
+    history: locales.historyEn
   },
   vi: {
     navbar: locales.navbarVi,
@@ -43,7 +44,8 @@ const resources = {
     report: locales.reportVi,
     notification: locales.notificationVi,
     capture: locales.captureVi,
-    verifyUpdateIdentifier: locales.verifyUpdateIdentifierVi
+    verifyUpdateIdentifier: locales.verifyUpdateIdentifierVi,
+    history: locales.historyVi
   }
 };
 
