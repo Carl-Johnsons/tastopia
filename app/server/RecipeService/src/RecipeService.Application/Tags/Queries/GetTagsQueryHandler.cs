@@ -19,6 +19,9 @@ public class GetTagsQuery : IRequest<Result<PaginatedTagListResponse?>>
 
     [Required]
     public string Category { get; init; } = null!;
+
+    [Required]
+    public string Lang { get; init; } = null!;
 }
 
 public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<PaginatedTagListResponse?>>
@@ -38,14 +41,14 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
         var keyword = request.Keyword;
         var category = request.Category;
         var skip = request.Skip;
+        var lang = request.Lang;
 
-        if (skip == null || tagCodes == null || category == null)
+        if (skip == null || tagCodes == null || category == null || lang == null)
         {
-            return Result<PaginatedTagListResponse?>.Failure(TagError.NotFound);
+            return Result<PaginatedTagListResponse?>.Failure(TagError.NullParameter);
         }
 
         tagCodes.RemoveAll(string.IsNullOrEmpty);
-
 
         var tagsQuery = _context.Tags.Where(t => t.Status == TagStatus.Active).OrderByDescending(t => t.CreatedAt).AsQueryable();
 
@@ -61,7 +64,8 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
 
         if (!string.IsNullOrEmpty(keyword))
         {
-            tagsQuery = tagsQuery.Where(t => t.Value.ToLower().Contains(keyword.ToLower()));
+            keyword = keyword.ToLower();
+            tagsQuery = tagsQuery.Where(t => t.Value.En.ToLower().Contains(keyword) || t.Value.Vi.ToLower().Contains(keyword));
         }
 
         var totalPage = (await tagsQuery.CountAsync() + TAG_CONSTANTS.TAG_LIMIT - 1) / TAG_CONSTANTS.TAG_LIMIT;

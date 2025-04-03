@@ -1,0 +1,18 @@
+{
+  "Routes": [
+    {
+      "ServiceName": "signalr-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/tastopia-hub{everything}",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "OPTION",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/tastopia-hub{everything}",
+      "SwaggerKey": "signalr"
+    }
+  ]
+}

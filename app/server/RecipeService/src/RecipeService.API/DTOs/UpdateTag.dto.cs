@@ -13,9 +13,13 @@ public class UpdateTagDTO
     [MaxLength(50)]
     public string Code { get; set; } = null!;
     [Required]
-    [JsonProperty("value")]
+    [JsonProperty("en")]
     [MaxLength(50)]
-    public string Value { get; set; } = null!;
+    public string En { get; set; } = null!;
+    [Required]
+    [JsonProperty("vi")]
+    [MaxLength(50)]
+    public string Vi { get; set; } = null!;
     [Required]
     [JsonProperty("status")]
     [TagStatusValidation]

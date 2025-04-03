@@ -1,8 +1,11 @@
-﻿using MongoDB.Driver;
+﻿using Contract.Constants;
+using MongoDB.Driver;
 using RecipeService.Domain.Entities;
+using RecipeService.Domain.Errors;
 namespace RecipeService.Application.Recipes.Queries;
 public class AdminGetRankingTagsStatisticQuery : IRequest<Result<List<RankingStatisticEntity>?>>
 {
+    public string Lang { get; set; } = null!;
 }
 public class AdminGetRankingTagsStatisticQueryHandler : IRequestHandler<AdminGetRankingTagsStatisticQuery, Result<List<RankingStatisticEntity>?>>
 {
@@ -18,6 +21,11 @@ public class AdminGetRankingTagsStatisticQueryHandler : IRequestHandler<AdminGet
         var alpha = 1.0;
         var beta = 1.0;
         var limit = TAG_CONSTANTS.TAG_RANKING_LIMIT;
+
+        if (string.IsNullOrEmpty(request.Lang))
+        {
+            return Result<List<RankingStatisticEntity>?>.Failure(TagError.NullParameter, "Language is null.");
+        }
 
         var db = _context.GetDatabase();
 
@@ -59,7 +67,7 @@ public class AdminGetRankingTagsStatisticQueryHandler : IRequestHandler<AdminGet
                 tag => tag.Id,
                 (rt, tag) => new RankingStatisticEntity
                 {
-                    Title = tag.Value,
+                    Title = request.Lang == LanguageValidation.En ? tag.Value.En : tag.Value.Vi,
                     Number = (int)(alpha * rt.TotalView + beta * rt.RecipeCount)
                 })
             .OrderByDescending(t => t.Number)

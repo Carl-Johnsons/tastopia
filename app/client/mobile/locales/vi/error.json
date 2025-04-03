@@ -1,5 +1,6 @@
 {
   "alertTitle": "Lỗi",
+  "Identity.InvalidCredential": "Sai thông tin định danh hoặc mật khẩu",
   "AccountError.NotFound": "Không tìm thấy tài khoản",
   "AccountError.EmailNotFound": "Không tìm thấy email",
   "AccountError.PhoneNotFound": "Không tìm thấy số điện thoại",
@@ -38,6 +39,10 @@
   "TagError.AddTagFail": "Thêm thẻ thất bại",
   "TagError.DeleteTagFail": "Xóa thẻ thất bại",
   "TagError.UpdateTagFail": "Cập nhật thẻ thất bại",
+  "TagError.NullParameter": "Tham số bị thiếu hoặc null",
+  "TagError.PermissionDeny": "Không có quyền truy cập",
+  "TagError.AlreadyInactive": "Thẻ đã bị vô hiệu hóa",
+  "TagError.AlreadyExist": "Thẻ đã tồn tại",
   "SettingError.NotFound": "Không tìm thấy cài đặt",
   "SettingError.InvalidSettingKey": "Khóa cài đặt không hợp lệ",
   "SettingError.InvalidSettingValue": "Giá trị cài đặt không hợp lệ",
@@ -46,5 +51,6 @@
   "UserError.NullParameters": "Tham số rỗng",
   "UserError.FollowFail": "Theo dõi người dùng thất bại",
   "UserError.PermissionDenied": "Quyền bị từ chối",
-  "UserError.UpdateUserFail": "Cập nhật người dùng thất bại"
+  "UserError.UpdateUserFail": "Cập nhật người dùng thất bại",
+  "General": "Đã xảy ra lỗi, vui lòng thử lại sau"
 }

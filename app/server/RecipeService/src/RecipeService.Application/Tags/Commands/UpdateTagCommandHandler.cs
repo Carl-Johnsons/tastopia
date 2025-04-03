@@ -17,7 +17,8 @@ public class UpdateTagCommand : IRequest<Result<Tag?>>
 {
     public Guid TagId { get; set; }
     public string Code { get; set; } = null!;
-    public string Value { get; set; } = null!;
+    public string En { get; set; } = null!;
+    public string Vi { get; set; } = null!;
     public string Category { get; set; } = null!;
     public string Status { get; set; } = null!;
     public IFormFile? TagImage { get; set; }
@@ -84,7 +85,7 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
             }
 
             tag.Code = request.Code;
-            tag.Value = request.Value;
+            tag.Value = new TagValue { En = request.En, Vi = request.Vi};
             tag.UpdatedAt = DateTime.UtcNow;
             tag.Status = Enum.Parse<TagStatus>(request.Status);
             tag.Category = Enum.Parse<TagCategory>(request.Category);

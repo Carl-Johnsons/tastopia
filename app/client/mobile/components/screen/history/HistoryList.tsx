@@ -56,7 +56,7 @@ export default function HistoryList({ keyword }: HistoryListProps) {
         </View>
       );
     },
-    [history?.length]
+    [history, bottomSheetRef]
   );
 
   const dispatch = useAppDispatch();

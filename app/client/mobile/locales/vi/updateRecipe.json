@@ -23,12 +23,34 @@
   },
   "validation": {
     "title": "Vui lòng nhập tiêu đề công thức",
+    "title.maxLength": "Tiêu đề không được vượt quá 50 ký tự",
     "description": "Vui lòng nhập mô tả công thức",
-    "serves": "Vui lòng nhập số khẩu phần ăn",
+    "description.maxLength": "Mô tả không được vượt quá 500 ký tự",
     "cookTime": "Vui lòng nhập thời gian nấu",
     "image": "Vui tải lên ảnh món ăn",
     "step": "Vui lòng nhập bước nấu ăn",
-    "ingredient": "Vui lòng nhập nguyên liệu"
+    "stepRequired": "Công thức phải có ít nhất một bước nấu ăn",
+    "ingredient": "Vui lòng nhập nguyên liệu",
+    "ingredientRequired": "Công thức phải có ít nhất một nguyên liệu",
+    "serves": {
+      "required": "Vui lòng nhập số khẩu phần ăn",
+      "typeError": "Số khẩu phần ăn phải là một số",
+      "positive": "Số khẩu phần ăn phải là một số dương",
+      "integer": "Số khẩu phần ăn phải là một số nguyên"
+    },
+    "ingredients": {
+      "min": "Công thức phải có ít nhất một nguyên liệu",
+      "max": "Công thức không được có quá 50 nguyên liệu",
+      "itemRequired": "Vui lòng nhập nguyên liệu"
+    },
+    "steps": {
+      "min": "Công thức phải có ít nhất một bước làm",
+      "max": "Công thức không được có quá 15 bước làm",
+      "content": {
+        "required": "Vui lòng nhập mô tả bước làm",
+        "maxLength": "Mô tả bước làm không được vượt quá 500 ký tự"
+      }
+    }
   },
   "removeIngredientAlert": {
     "title": "Xoá nguyên liệu",

@@ -12,7 +12,7 @@ export async function getTags(
   limit = 6
 ) {
   try {
-    const url = `/api/admin/recipe/get-tags?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&Keyword=${encodeURIComponent(keyword)}`;
+    const url = `/api/admin/recipe/get-tags?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&Keyword=${encodeURIComponent(keyword.trim())}`;
 
     const { data } = await protectedAxiosInstance.get(url);
 

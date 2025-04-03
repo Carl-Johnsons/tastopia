@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Contract.Constants;
 using Contract.DTOs;
 using Microsoft.EntityFrameworkCore;
 using RecipeService.Domain.Entities;
@@ -8,6 +9,7 @@ namespace RecipeService.Application.Tags.Queries;
 
 public class AdminGetTagsQuery: IRequest<Result<PaginatedAdminTagListResponse?>>
 {
+    public string Lang { get; set; } = null!;
     public PaginatedDTO PaginatedDTO { get; set; } = null!;
 }
 
@@ -27,9 +29,9 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
     {
         var paginatedDto = request.PaginatedDTO;
 
-        if(paginatedDto.Skip == null)
+        if(paginatedDto.Skip == null || request.Lang == null)
         {
-            return Result<PaginatedAdminTagListResponse?>.Failure(TagError.NullParameter, "AccountId or Skip is null.");
+            return Result<PaginatedAdminTagListResponse?>.Failure(TagError.NullParameter, "Language or Skip is null.");
         }
 
         var tagsQuery = _context.Tags.AsQueryable();
@@ -37,7 +39,7 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
         if (!string.IsNullOrEmpty(paginatedDto.Keyword))
         {
             var keyword = paginatedDto.Keyword;
-            tagsQuery = tagsQuery.Where(t => t.Value.ToLower().Contains(keyword.ToLower()));
+            tagsQuery = tagsQuery.Where(t => t.Value.En.ToLower().Contains(keyword.ToLower()) || t.Value.Vi.ToLower().Contains(keyword.ToLower()));
         }
         var totalRow = await tagsQuery.CountAsync();
 
@@ -76,7 +78,7 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
         {
             Id = t.Id,
             Code = t.Code,
-            Value = t.Value,
+            Value = request.Lang == LanguageValidation.En ? t.Value.En : t.Value.Vi,
             Category = t.Category.ToString(),
             Status = t.Status.ToString(),
             ImageUrl = t.ImageUrl,

@@ -107,8 +107,8 @@ const UpdateImage = ({
       const { granted } = await requestPermission();
       if (!granted) {
         Alert.alert(
-          "Permission Denied",
-          "You need to grant permission to access the media library to upload images."
+          t("uploadImage.permissionDeniedTitle"),
+          t("uploadImage.permissionDeniedMessage")
         );
         return;
       }
@@ -123,7 +123,28 @@ const UpdateImage = ({
     });
 
     if (!result.canceled && result.assets) {
-      const files = result.assets.map(asset => {
+      const MAX_SIZE = 15 * 1024 * 1024;
+
+      const validAssets = [];
+      const oversizedAssets = [];
+
+      for (const asset of result.assets) {
+        if (asset.fileSize && asset.fileSize <= MAX_SIZE) {
+          validAssets.push(asset);
+        } else {
+          oversizedAssets.push(asset.fileName || "Unnamed image");
+        }
+      }
+
+      if (oversizedAssets.length > 0) {
+        Alert.alert(
+          t("uploadImage.fileSizeExceededTitle"),
+          t("uploadImage.fileSizeExceededMessage", { count: oversizedAssets.length }),
+          [{ text: t("uploadImage.okButton") }]
+        );
+      }
+
+      const files = validAssets.map(asset => {
         const fileName =
           asset.fileName ||
           asset.uri.substring(asset.uri.lastIndexOf("/") + 1, asset.uri.length);
@@ -141,11 +162,13 @@ const UpdateImage = ({
         };
       });
 
-      const newFileObjects = [...(fileObjects || []), ...files];
-      setStartUploadImage(true);
-      setFileObjects(newFileObjects);
-      onAddImage(newFileObjects.map(file => file.file as ImageFileType));
-      setImageCount(prev => prev + files.length);
+      if (files.length > 0) {
+        const newFileObjects = [...(fileObjects || []), ...files];
+        setStartUploadImage(true);
+        setFileObjects(newFileObjects);
+        onAddImage(newFileObjects.map(file => file.file as ImageFileType));
+        setImageCount(prev => prev + files.length);
+      }
     }
   };
 
@@ -291,7 +314,9 @@ const UpdateImage = ({
                   size={24}
                   color={isDarkMode ? globalStyles.color.dark : globalStyles.color.light}
                 />
-                <Text className='text-white_black body-semibold'>{t("uploadImage")}</Text>
+                <Text className='text-white_black body-semibold'>
+                  {t("uploadImage.title")}
+                </Text>
               </View>
             </TouchableHighlight>
           )}

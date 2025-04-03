@@ -51,21 +51,11 @@ export const useLogin = () => {
         password: inputs.password
       }).toString();
 
-      try {
-        const { data } = await axiosInstance.post<LoginResponse>("/connect/token", body, {
-          headers: { "Content-Type": "application/x-www-form-urlencoded" }
-        });
+      const { data } = await axiosInstance.post<LoginResponse>("/connect/token", body, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
 
-        return data;
-      } catch (error) {
-        console.debug("useLogin", stringify(error));
-
-        if (error instanceof AxiosError && error.status === 400) {
-          throw new Error("Wrong email, phone number or password.");
-        }
-
-        throw new Error("An error has occurred.");
-      }
+      return data;
     }
   });
 };
@@ -154,17 +144,18 @@ export const useRegister = () => {
 
 export type VerifyParams = { OTP: string; type: IDENTIFIER_TYPE };
 
-export type ModifyIdentifierParams = {
+export type RequestUpdateIdentifierParams = {
   type: IDENTIFIER_TYPE;
   data: IAccountIdentifierDTO;
 };
-
-export type AddIdentifierParams = Pick<ModifyIdentifierParams, "type">;
 
 export type VerifyUpdateIdentifierParams = {
   type: IDENTIFIER_TYPE;
   data: IAccountIdentifierDTO & { OTP: string };
 };
+
+export type AddIdentifierParams = Pick<VerifyUpdateIdentifierParams, "type">;
+export type ModifyIdentifierParams = Pick<VerifyUpdateIdentifierParams, "type">;
 
 export const useVerify = () => {
   return useMutation<VerifyResponse, Error, VerifyParams>({
@@ -214,19 +205,23 @@ export const useResendVerifyCode = () => {
   });
 };
 
+export type UnlinkIdentifierParams = {
+  type: IDENTIFIER_TYPE;
+};
+
 export const useUnlink = () => {
-  return useMutation<void, Error, ModifyIdentifierParams>({
+  return useMutation<void, Error, UnlinkIdentifierParams>({
     mutationKey: ["unlink"],
-    mutationFn: async ({ type, data }) => {
+    mutationFn: async ({ type }) => {
       const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
       const url = `/api/account/unlink/${ENDPOINT_TYPE}`;
-      await protectedAxiosInstance.post(url, data);
+      await protectedAxiosInstance.post(url);
     }
   });
 };
 
 export const useRequestUpdateIdentifier = () => {
-  return useMutation<void, AxiosError, ModifyIdentifierParams>({
+  return useMutation<void, AxiosError, RequestUpdateIdentifierParams>({
     mutationKey: ["requestUpdateIdentifier"],
     mutationFn: async ({ type, data }) => {
       const ENDPOINT_TYPE = type === IDENTIFIER_TYPE.EMAIL ? "email" : "phone";
