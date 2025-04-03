@@ -21,3 +21,11 @@ class EnvUtility:
     
     def is_production(self):
        return os.getenv("PYTHON_ENV") == "production"
+    
+    def get_mongodb_connection_string(self):
+       host = os.getenv("MONGODB_HOST")
+       port = os.getenv("MONGODB_PORT")
+       user = os.getenv("MONGO_INITDB_ROOT_USERNAME")
+       pwd = os.getenv("MONGO_INITDB_ROOT_PASSWORD")
+
+       return f"mongodb://{user}:{pwd}@{host}:{port}?authSource=admin"

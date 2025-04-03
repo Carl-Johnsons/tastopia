@@ -57,7 +57,6 @@ export type StepProps<T extends {}> = Pick<
   goToNextStep: () => void;
   goToPrevStep: () => void;
   type: IDENTIFIER_TYPE;
-  identifier: string;
 };
 
 export type Step<T> = {
@@ -72,10 +71,7 @@ export type UpdateIdentifierFormFields = {
 export const VerifyUpdateIdentifierForm = ({
   className
 }: VerifyUpdateIdentifierFormProps) => {
-  const {
-    type,
-    data: { identifier }
-  } = selectModifyIdentifierData() as ModifyIdentifierParams;
+  const { type } = selectModifyIdentifierData() as ModifyIdentifierParams;
   const { schema } = useVerifyIdentifierSchema(type);
 
   const {
@@ -94,11 +90,11 @@ export const VerifyUpdateIdentifierForm = ({
   const deltaStep = useMemo(() => currentStep - prevStep, [currentStep]);
 
   const steps: Step<UpdateIdentifierFormFields>[] = useMemo(
-    () => [{ fields: ["OTP"] }, { fields: ["identifier"] }, { fields: [] }],
+    () => [{ fields: ["identifier"] }, { fields: ["OTP"] }, { fields: [] }],
     []
   );
 
-  const Steps = useMemo(() => [VerifyOtp, UpdateIdentifer, Success], []);
+  const Steps = useMemo(() => [UpdateIdentifer, VerifyOtp, Success], []);
 
   const goToNextStep = useCallback(() => {
     if (currentStep === steps.length) {
@@ -170,7 +166,6 @@ export const VerifyUpdateIdentifierForm = ({
           >
             <Step
               type={type}
-              identifier={identifier}
               control={control}
               trigger={trigger}
               errors={errors}
@@ -187,7 +182,6 @@ export const VerifyUpdateIdentifierForm = ({
 
 export const VerifyOtp = ({
   type,
-  identifier,
   control,
   trigger,
   errors,
@@ -199,8 +193,10 @@ export const VerifyOtp = ({
 
   const { mutateAsync: resendOtp } = useRequestUpdateIdentifier();
   const { mutateAsync: verifyOtp } = useVerifyUpdateIdentifierOTP();
+  const { mutateAsync: updateIdentifier } = useUpdateIdentifier();
 
   const OTP = watch("OTP");
+  const identifier = watch("identifier");
   const isButtonDisabled = useMemo(() => !OTP, [OTP]);
 
   const { animate, animatedStyles } = useBounce();
@@ -208,19 +204,11 @@ export const VerifyOtp = ({
   const { t } = useTranslation("verifyUpdateIdentifier", { keyPrefix: "otp" });
 
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
+    const interval = setInterval(() => {
+      setCountdown(prevCount => prevCount - 1);
+    }, 1000);
 
-    if (countdown > 0) {
-      interval = setInterval(() => {
-        setCountdown(prevCountdown => prevCountdown - 1);
-      }, 1000);
-    } else if (interval) {
-      clearInterval(interval);
-    }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [countdown]);
 
   const handleResendOtp = () => {
@@ -240,14 +228,22 @@ export const VerifyOtp = ({
     if (errors.OTP || !OTP) return;
 
     setIsLoading(true);
-    verifyOtp(
-      { type, data: { identifier, OTP } },
-      {
-        onSuccess: () => goToNextStep(),
-        onError: error => handleError(error),
-        onSettled: () => setIsLoading(false)
+
+    const params = { type, data: { identifier, OTP } };
+
+    await verifyOtp(params, {
+      onSuccess: async () => {
+        await updateIdentifier(params, {
+          onSuccess: () => goToNextStep(),
+          onError: error => handleError(error),
+          onSettled: () => setIsLoading(false)
+        });
+      },
+      onError: error => {
+        handleError(error);
+        setIsLoading(false);
       }
-    );
+    });
   };
 
   return (
@@ -328,12 +324,10 @@ const UpdateIdentifer = ({
 }: StepProps<UpdateIdentifierFormFields>) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const OTP = watch("OTP");
   const identifier = watch("identifier");
-  const isButtonDisabled = useMemo(() => !OTP || !identifier, [OTP, identifier]);
+  const isButtonDisabled = useMemo(() => !identifier, [identifier]);
 
-  const { mutateAsync: updateInfo } = useUpdateIdentifier();
-  const { fetch: fetchUser } = useSyncUser();
+  const { mutateAsync: requestUpdate } = useRequestUpdateIdentifier();
 
   const { animate, animatedStyles } = useBounce();
   const { handleError } = useErrorHandler();
@@ -345,19 +339,15 @@ const UpdateIdentifer = ({
 
     setIsLoading(true);
 
-    await updateInfo(
+    await requestUpdate(
       {
         type,
         data: {
-          OTP: OTP as string,
           identifier: identifier as string
         }
       },
       {
-        onSuccess: async () => {
-          await fetchUser();
-          goToNextStep();
-        },
+        onSuccess: async () => goToNextStep(),
         onError: error => handleError(error),
         onSettled: () => setIsLoading(false)
       }
@@ -421,9 +411,15 @@ const UpdateIdentifer = ({
 const Success = (_: Partial<StepProps<UpdateIdentifierFormFields>>) => {
   const [count, setCount] = useState(5);
 
+  const { fetch: fetchUser } = useSyncUser();
+
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { t } = useTranslation("verifyUpdateIdentifier", { keyPrefix: "success" });
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   useEffect(() => {
     if (count === 0) {
@@ -444,7 +440,9 @@ const Success = (_: Partial<StepProps<UpdateIdentifierFormFields>>) => {
         <Text className='text-black_white font-sans font-semibold text-4xl'>
           {t("title")}
         </Text>
-        <Text className='font-sans text-lg text-green-700'>{t("description")}</Text>
+        <Text className='font-sans text-lg text-green-700 dark:text-green-400'>
+          {t("description")}
+        </Text>
       </View>
       <Text className='text-black_white font-sans text-lg'>
         {`${t("redirect")} `} <Text className='text-primary'>{count}s</Text>
@@ -482,6 +480,11 @@ export const OtpInput = ({
   }, [formValues]);
 
   const handleTextChange = (value: string, index: number) => {
+    if (value.length === 2 && index < inputRefs.length - 1) {
+      handleTextChange(value.slice(1), index + 1);
+      return;
+    }
+
     const firstChar = value.charAt(0).toUpperCase();
 
     setFormValues(
@@ -497,8 +500,6 @@ export const OtpInput = ({
     e: NativeSyntheticEvent<TextInputKeyPressEventData>,
     index: number
   ) => {
-    console.log("index", index, "key", e.nativeEvent.key);
-
     if (index === 0) return;
     if (e.nativeEvent.key === "Backspace") {
       inputRefs[index - 1].current?.focus();

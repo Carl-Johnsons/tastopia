@@ -87,3 +87,7 @@ venv/
 
 # VS Code
 .vscode/
+.env*
+.flaskenv*
+!.env.project
+!.env.vault

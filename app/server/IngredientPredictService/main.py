@@ -4,6 +4,7 @@ from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect
 from PIL import Image, ImageOps
 from ultralytics import YOLO
 import httpx
+import pymongo
 import io
 import logging
 import logging.config
@@ -27,6 +28,14 @@ envUtil.load_env()
 
 service_host = os.getenv("SERVICE_HOST")
 service_port = int(os.getenv("PORT"))
+
+mongo_client = pymongo.MongoClient(envUtil.get_mongodb_connection_string())
+print(mongo_client.list_database_names())
+recipe_db = mongo_client["RecipeDB"]
+tag_collection = recipe_db["Tag"]
+
+for x in tag_collection.find():
+  print(x)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -100,7 +109,8 @@ async def predict(file: UploadFile = File(...)):
                 "name": {
                     'en': names[result.names[cls]][0],
                     'vi': names[result.names[cls]][1]
-                }
+                },
+                "code": '_'.join(names[result.names[cls]][0].split(' ')).upper(),
             })
 
     results = box_model(image, verbose=False)

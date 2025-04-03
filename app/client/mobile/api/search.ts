@@ -25,12 +25,10 @@ const useSearchUsers = (keyword: string) => {
   });
 };
 
-const useSearchRecipes = (keyword: string, tagCodes: string[], values?: string[]) => {
-  const finalTagCodes = tagCodes.length > 0 ? tagCodes : ["ALL"];
-
-  if (values) {
-    keyword = keyword.concat(values.join(" "));
-  }
+const useSearchRecipes = (keyword: string, tagCodes: string[]) => {
+  console.log("tag code", tagCodes);
+  const finalTagCodes =
+    tagCodes.length > 0 ? tagCodes.map(tagCode => tagCode.toUpperCase()) : ["ALL"];
 
   return useInfiniteQuery<SearchRecipeResponse>({
     queryKey: ["searchRecipes", keyword],
@@ -40,7 +38,7 @@ const useSearchRecipes = (keyword: string, tagCodes: string[], values?: string[]
         "/api/recipe/search-recipe",
         {
           keyword,
-          tagCodes: [],
+          tagCodes: finalTagCodes,
           skip: pageParam.toString()
         }
       );
@@ -55,7 +53,12 @@ const useSearchRecipes = (keyword: string, tagCodes: string[], values?: string[]
   });
 };
 
-const useSearchTags = (keyword: string, tagCodes: string[], category: string) => {
+const useSearchTags = (
+  keyword: string,
+  tagCodes: string[],
+  category: string,
+  language: string
+) => {
   const finalTagCodes = tagCodes.length > 0 ? tagCodes : ["ALL"];
   return useInfiniteQuery<SearchTagResponse>({
     queryKey: ["searchTags", keyword],
@@ -67,6 +70,7 @@ const useSearchTags = (keyword: string, tagCodes: string[], category: string) =>
           keyword,
           tagCodes: finalTagCodes,
           category,
+          language,
           skip: pageParam.toString()
         }
       );
