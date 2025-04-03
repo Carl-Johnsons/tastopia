@@ -75,7 +75,7 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
             if (tagValues != null && tagValues.Count != 0)
             {
                 recipesQuery = recipesQuery.Where(r => 
-                  recipeContainTagIds.Contains(r.Id) ||
+                  recipeContainTagIds.Contains(r.Id) &&
                   tagValues.Any(tag =>
                     r.Title.ToLower().Contains(tag.ToLower()) ||
                     r.Description.ToLower().Contains(tag.ToLower()) ||
