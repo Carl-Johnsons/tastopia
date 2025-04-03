@@ -51,21 +51,11 @@ export const useLogin = () => {
         password: inputs.password
       }).toString();
 
-      try {
-        const { data } = await axiosInstance.post<LoginResponse>("/connect/token", body, {
-          headers: { "Content-Type": "application/x-www-form-urlencoded" }
-        });
+      const { data } = await axiosInstance.post<LoginResponse>("/connect/token", body, {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      });
 
-        return data;
-      } catch (error) {
-        console.debug("useLogin", stringify(error));
-
-        if (error instanceof AxiosError && error.status === 400) {
-          throw new Error("Wrong email, phone number or password.");
-        }
-
-        throw new Error("An error has occurred.");
-      }
+      return data;
     }
   });
 };

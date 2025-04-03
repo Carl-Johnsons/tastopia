@@ -14,6 +14,7 @@ import useBounce from "@/hooks/animation/useBounce";
 import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
 import useSyncSetting from "@/hooks/user/useSyncSetting";
 import useSyncUser from "@/hooks/user/useSyncUser";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 const Login = () => {
   const isAndroid = Platform.OS === "android";
@@ -22,8 +23,10 @@ const Login = () => {
   const { loginWithGoogle } = useLoginWithGoogle();
   const { animate, animatedStyles } = useBounce();
   const loginMutation = useLogin();
+
   const { fetch: fetchSettings } = useSyncSetting();
   const { fetch: fetchUser } = useSyncUser();
+  const { handleError } = useErrorHandler();
 
   const onSubmit = async (data: LoginFormFields) => {
     setIsSubmitting(true);
@@ -43,10 +46,7 @@ const Login = () => {
         const route = "/(protected)";
         router.navigate(route);
       },
-      onError: error => {
-        console.log("Error", stringify(error));
-        Alert.alert("Error", "An error has occured. Please try again later.");
-      },
+      onError: error => handleError(error),
       onSettled: () => {
         setIsSubmitting(false);
       }
