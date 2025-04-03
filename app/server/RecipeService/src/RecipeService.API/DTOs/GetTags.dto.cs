@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Contract.ValidationAttributes;
+using Newtonsoft.Json;
 using RecipeService.API.ValidationAttributes;
 using System.ComponentModel.DataAnnotations;
 
@@ -20,5 +21,4 @@ public class GetTagsDTO
     [JsonProperty("category")]
     [CategoryValidation]
     public string Category { get; set; } = null!;
-
 }

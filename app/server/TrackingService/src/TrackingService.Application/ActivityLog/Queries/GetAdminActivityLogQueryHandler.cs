@@ -524,7 +524,7 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                              Category = grpcTag.Category,
                                              ImageUrl = grpcTag.ImageUrl,
                                              Status = grpcTag.Status,
-                                             Value = grpcTag.Value,
+                                             Value = normalizedLanguage == LanguageValidation.En ? grpcTag.En : grpcTag.Vi,
                                          };
                                          mapEntity.Tag = tag;
                                          return mapEntity;

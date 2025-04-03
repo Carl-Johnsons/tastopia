@@ -6,7 +6,8 @@ type SelectedTag = {
 
 type TagType = {
   id: string;
-  value: string;
+  en: string;
+  vi: string;
   code: string;
   category: number;
   status: string;

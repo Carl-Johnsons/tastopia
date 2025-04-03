@@ -22,12 +22,13 @@ import { Plus } from "lucide-react";
 import TagForm from "./Form";
 import { FORM_TYPE } from "@/constants/form";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 
 const DataTable = () => {
   const t = useTranslations("administerTags");
+  const currentLanguage = useLocale();
   const [skip, setSkip] = useState(0);
   const [limit, setLimit] = useState(10);
   const [sortBy, setSortBy] = useState("");
@@ -39,7 +40,8 @@ const DataTable = () => {
 
   const columnFieldMap: Record<string, keyof Tag> = {
     [t("columns.code")]: "code",
-    [t("columns.value")]: "value",
+    [t("columns.value")]: "en",
+    [t("columns.value")]: "vi",
     [t("columns.category")]: "category",
     [t("columns.createDate")]: "createdAt",
     [t("columns.image")]: "imageUrl",
@@ -160,7 +162,7 @@ const DataTable = () => {
 
       <ReactDataTable
         data={tags}
-        columns={tagsColumns(t)}
+        columns={tagsColumns(t, currentLanguage)}
         customStyles={tableStyles}
         striped
         highlightOnHover

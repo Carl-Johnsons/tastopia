@@ -8,18 +8,20 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
+using RecipeService.Domain.Responses;
 using UploadFileProto;
 namespace RecipeService.Application.Tags.Commands;
-public class CreateTagCommand : IRequest<Result<Tag?>>
+public class CreateTagCommand : IRequest<Result<TagResponse?>>
 {
     public string Code { get; set; } = null!;
-    public string Value { get; set; } = null!;
+    public string En { get; set; } = null!;
+    public string Vi { get; set; } = null!;
     public string Category { get; set; } = null!;
     public IFormFile TagImage { get; set; } = null!;
     public Guid CurrentAccountId { get; set; }
 
 }
-public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<Tag?>>
+public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<TagResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
@@ -35,7 +37,7 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
         _grpcUploadFileClient = grpcUploadFileClient;
     }
 
-    public async Task<Result<Tag?>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
+    public async Task<Result<TagResponse?>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
     {
         var rollbackUrl = new List<string>();
         try
@@ -44,18 +46,18 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
             var existTag = await _context.Tags.Where(t => t.Code == request.Code).SingleOrDefaultAsync();
             if (existTag != null)
             {
-                return Result<Tag?>.Failure(TagError.AlreadyExist, $"Tag code : {request.Code} is already exist");
+                return Result<TagResponse?>.Failure(TagError.AlreadyExist, $"Tag code : {request.Code} is already exist");
             }
             if (request.TagImage == null)
             {
-                return Result<Tag?>.Failure(TagError.AddTagFail, "Tag image is null.");
+                return Result<TagResponse?>.Failure(TagError.AddTagFail, "Tag image is null.");
             }
 
             var tagImageUrl = await CreateTagImage(request.TagImage);
 
             if (string.IsNullOrEmpty(tagImageUrl))
             {
-                return Result<Tag?>.Failure(TagError.AddTagFail, "Upload tag image fail.");
+                return Result<TagResponse?>.Failure(TagError.AddTagFail, "Upload tag image fail.");
             }
 
             rollbackUrl.Add(tagImageUrl);
@@ -63,7 +65,7 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
             var tag = new Tag
             {
                 Code = request.Code,
-                Value = request.Value,
+                Value = new TagValue { En = request.En, Vi = request.Vi},
                 Status = TagStatus.Active,
                 Category = Enum.Parse<TagCategory>(request.Category),
                 CreatedAt = DateTime.UtcNow,
@@ -80,13 +82,23 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
                 EntityId = tag.Id,
                 EntityType = Contract.Constants.ActivityEntityType.TAG,
             });
-            return Result<Tag?>.Success(tag);
+            return Result<TagResponse?>.Success(new TagResponse
+            {
+                Id = tag.Id,
+                Category = tag.Category.ToString(),
+                Code = tag.Code,
+                Vi = tag.Value.Vi,
+                En = tag.Value.En,
+                CreatedAt = tag.CreatedAt,
+                ImageUrl = tag.ImageUrl,
+                Status = tag.Status.ToString()
+            });
         }
         catch (Exception ex)
         {
             await RollBackImageGrpc(rollbackUrl);
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
-            return Result<Tag?>.Failure(TagError.AddTagFail, ex.Message);
+            return Result<TagResponse?>.Failure(TagError.AddTagFail, ex.Message);
         }
     }
 
