@@ -9,10 +9,12 @@ class EnvUtility:
         # load the global env
         if(self.is_development()):
           load_dotenv("../../../.env")
+          load_dotenv(".env")
         else:
           load_dotenv("../../../.env.production")
+          load_dotenv(".env.production")
+
         # load the current env again to override the global env
-        load_dotenv()
 
     def is_development(self):
        return os.getenv("PYTHON_ENV", "development") == "development"
