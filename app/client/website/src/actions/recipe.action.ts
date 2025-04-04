@@ -34,7 +34,7 @@ export async function getRecipes(options?: PaginatedQueryParams) {
           sortBy,
           sortOrder,
           lang,
-          keyword: encodeURIComponent(keyword)
+          keyword: keyword.trim()
         }
       }
     );
@@ -66,7 +66,7 @@ export async function getRecipeReports(options?: PaginatedQueryParams) {
           sortBy,
           sortOrder,
           lang,
-          keyword: encodeURIComponent(keyword)
+          keyword: keyword.trim()
         }
       });
 
