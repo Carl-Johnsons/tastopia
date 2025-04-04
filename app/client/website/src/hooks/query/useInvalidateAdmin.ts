@@ -8,10 +8,8 @@ export const useInvalidateAdmin = () => {
   const queryClient = useQueryClient();
   const userId = useSelectUserId();
 
-  const invalidateCurrentAdminActivities = useCallback(() => {
-    () => {
-      queryClient.invalidateQueries({ queryKey: ["adminActivities", userId] });
-    };
+  const invalidateCurrentAdminActivities = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: ["adminActivities", userId] });
   }, [queryClient, userId]);
 
   return { invalidateCurrentAdminActivities };
