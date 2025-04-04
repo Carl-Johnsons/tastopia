@@ -160,7 +160,11 @@ const Community = () => {
           handleCreateRecipe
         })}
         renderItem={renderItem}
-        ListEmptyComponent={() => <Empty />}
+        ListEmptyComponent={() => (
+          <View className='h-[70%]'>
+            <Empty />
+          </View>
+        )}
       />
 
       <SettingRecipe

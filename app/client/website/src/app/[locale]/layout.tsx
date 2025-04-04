@@ -101,7 +101,22 @@ const sofiaPro = localFont({
 
 export const metadata: Metadata = {
   title: "Tastopia",
-  description: "About Tastopia"
+  description: "About Tastopia",
+  icons: {
+    icon: "/assets/favicon.ico"
+  },
+  other: {
+    "og:url": "https://tastopia.social:3000/",
+    "og:type": "website",
+    "og:title": "Tastopia",
+    "og:image":
+      "https://res.cloudinary.com/zuong/image/upload/v1743763092/favicon_grrhm0.png",
+    "twitter:url": "https://tastopia.social:3000/",
+    "twitter:type": "website",
+    "twitter:title": "Tastopia",
+    "twitter:image":
+      "https://res.cloudinary.com/zuong/image/upload/v1743763092/favicon_grrhm0.png"
+  }
 };
 
 export default async function RootLayout({
