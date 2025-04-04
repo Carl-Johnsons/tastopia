@@ -1,0 +1,70 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminDisableComment([FromQuery] Guid recipeId, [FromQuery] Guid commentId): async Task<IActionResult>
+}
+
+class DisableCommentCommand {
+    +CurrentAccountId : Guid
+    +CommentId : Guid
+    +RecipeId : Guid
+}
+
+class DisableCommentCommandHandler {
+    - _context : IApplicationDbContext
+    - _serviceBus: IServiceBus 
+    - _unitOfWork: IUnitOfWork 
+    + Handle(request: DisableCommentCommand, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class CommentError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyActive: Error
+    {static} +AddCommentFail: Error
+    {static} +UpdateCommentFail: Error
+    {static} +DeleteCommentFail: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" DisableCommentCommand
+
+DisableCommentCommand --|> "IRequest<TResponse>"
+
+DisableCommentCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+DisableCommentCommandHandler "1" o--"1" DisableCommentCommand
+DisableCommentCommandHandler "1" o--"1" IApplicationDbContext
+DisableCommentCommandHandler "1" o--"1" IServiceBus
+DisableCommentCommandHandler "1" o--"1" IUnitOfWork
+DisableCommentCommandHandler "1" o--"1" Result
+DisableCommentCommandHandler "1" --"1..*" AddActivityLogEvent
+DisableCommentCommandHandler "1" --"1..*" CommentError
+
+Error "1" --"1" CommentError
+
+@enduml

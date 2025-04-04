@@ -1,0 +1,105 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +UpdateTag([FromBody] FromForm updateTagDTO): async Task<IActionResult>
+}
+
+class UpdateTagCommand {
+    +CurrentAccountId : Guid
+    +TagId : Guid
+    +Code : string
+    +En : string
+    +Vi : string
+    +Category : string
+    +Status : string
+    +TagImage : string
+}
+
+class UpdateTagCommandHandler {
+    - _context : IApplicationDbContext
+    - _serviceBus: IServiceBus 
+    - _unitOfWork: IUnitOfWork 
+    -_grpcUploadFileClient: GrpcUploadFileClient
+    + Handle(request: UpdateTagCommand, cancellationToken: CancellationToken) : Task<Result<TagResponse?>>
+}
+
+class UpdateTagDTO {
+    +TagId : Guid
+    +Code : string
+    +En : string
+    +Vi : string
+    +Category : string
+    +Status : string
+    +TagImage : IFormFile
+}
+
+class TagResponse {
+    +Id : Guid
+    +Code : string
+    +En : string
+    +Vi : string
+    +Category : string
+    +Status : string
+    +ImageUrl : string
+    +CreatedAt : DateTime
+}
+
+class TagError {
+    {static} +NotFound: Error
+    {static} +AddTagFail: Error
+    {static} +DeleteTagFail: Error
+    {static} +UpdateTagFail: Error
+    {static} +NullParameter: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyExist: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+    class DeleteMultipleFileEvent #LightSalmon;line:white;text:white
+    class GrpcUploadMultipleImageRequest #LightSalmon;line:white;text:white
+    class GrpcUploadFileClient #LightSalmon;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" UpdateTagDTO
+AdminController "1"--"1" UpdateTagCommand
+
+UpdateTagCommand --|> "IRequest<TResponse>"
+
+UpdateTagCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateTagCommandHandler "1" o--"1" UpdateTagCommand
+UpdateTagCommandHandler "1" o--"1" IApplicationDbContext
+UpdateTagCommandHandler "1" o--"1" IServiceBus
+UpdateTagCommandHandler "1" o--"1" IUnitOfWork
+UpdateTagCommandHandler "1" o--"1" GrpcUploadFileClient
+UpdateTagCommandHandler "1" o--"1" Result
+UpdateTagCommandHandler "1" --"1..*" TagResponse
+UpdateTagCommandHandler "1" --"1..*" AddActivityLogEvent
+UpdateTagCommandHandler "1" --"1..*" GrpcUploadMultipleImageRequest
+UpdateTagCommandHandler "1" --"1..*" DeleteMultipleFileEvent
+UpdateTagCommandHandler "1" --"1..*" TagError
+
+Error "1" --"1" TagError
+
+@enduml

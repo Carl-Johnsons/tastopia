@@ -66,18 +66,19 @@ class UserBookmarkRecipe extends BaseMongoDBAuditableEntity {
     +RecipeId: Guid
 }
 
-class UserReportRecipe extends BaseMongoDBAuditableEntity {
+class CommonReportEntity extends BaseMongoDBAuditableEntity {
     +AccountId: Guid
-    +RecipeId: Guid
-    +Reason: string
+    +Entity: Guid
+    +ReasonCodes: List<string>
+    +AdditionalDetails: string
     +Status: enum
 }
 
-class UserReportComment extends BaseMongoDBAuditableEntity {
-    +AccountId: Guid
-    +CommentId: Guid
-    +Reason: string
-    +Status: enum
+class UserReportRecipe extends CommonReportEntity {
+}
+
+class UserReportComment extends CommonReportEntity {
+    +RecipeId: Guid
 }
 
 class UserRecipeBin extends BaseMongoDBAuditableEntity {

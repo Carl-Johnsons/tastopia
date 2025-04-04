@@ -1,0 +1,100 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminGetTag([FromQuery] PaginatedDTO paginatedDTO): async Task<IActionResult>
+}
+
+class AdminGetTagsQuery {
+    +PaginatedDTO : PaginatedDTO
+}
+
+class AdminGetTagsQueryHandler {
+    - _context : IApplicationDbContext
+    - _paginateDataUtility: IPaginateDataUtility<AdminTagResponse, AdvancePaginatedMetadata> 
+    + Handle(request: AdminGetTagsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminTagListResponse?>>
+}
+
+class PaginatedAdminTagListResponse
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    + PaginatedData: IEnumerable<Type>
+    + Metadata: MetadataType
+}
+
+PaginatedAdminTagListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+
+class CommonPaginatedMetadata {
+    + TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    + HasNextPage: bool
+}
+
+class PaginatedDTO {
+    + Skip : int
+    + SortOrder : SortType
+    + SortBy : string
+    + Keyword : string
+    + Limit : int
+}
+
+class AdminTagResponse{
+    +TagId : Guid
+    +Code : string
+    +En : string
+    +Vi : string
+    +Category : string
+    +Status : string
+    +ImageUrl : string
+    +CreatedAt : DateTime
+}
+
+class TagError {
+    {static} +NotFound: Error
+    {static} +AddTagFail: Error
+    {static} +DeleteTagFail: Error
+    {static} +UpdateTagFail: Error
+    {static} +NullParameter: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyExist: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" PaginatedDTO
+AdminController "1"--"1" AdminGetTagsQuery
+
+AdminGetTagsQuery --|> "IRequest<TResponse>"
+
+AdminGetTagsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminGetTagsQueryHandler "1" o--"1" AdminGetTagsQuery
+AdminGetTagsQueryHandler "1" o--"1" IApplicationDbContext
+AdminGetTagsQueryHandler "1" o--"1" IPaginateDataUtility
+AdminGetTagsQueryHandler "1" o--"1" Result
+AdminGetTagsQueryHandler "1" --"1..*" PaginatedAdminTagListResponse
+AdminGetTagsQueryHandler "1" --"1..*" AdvancePaginatedMetadata
+AdminGetTagsQueryHandler "1" --"1..*" AdminTagResponse
+AdminGetTagsQueryHandler "1" --"1..*" TagError
+
+Error "1" --"1" TagError
+
+@enduml

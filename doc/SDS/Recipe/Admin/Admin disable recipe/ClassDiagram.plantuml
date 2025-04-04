@@ -1,0 +1,76 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminDisableRecipe([FromQuery] EntityIdDTO dto): async Task<IActionResult>
+}
+
+class DisableRecipeCommand {
+    +CurrentAccountId : Guid
+    +Id : Guid
+}
+
+class DisableRecipeCommandHandler {
+    - _context : IApplicationDbContext
+    - _serviceBus: IServiceBus 
+    - _unitOfWork: IUnitOfWork 
+    + Handle(request: DisableRecipeCommand, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class EntityIdDTO {
+    +Id : Guid
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+    {static} +AlreadyExist: Error
+    {static} +VoteFail: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyActive: Error
+    {static} +AddRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" EntityIdDTO
+AdminController "1"--"1" DisableRecipeCommand
+
+DisableRecipeCommand --|> "IRequest<TResponse>"
+
+DisableRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+DisableRecipeCommandHandler "1" o--"1" DisableRecipeCommand
+DisableRecipeCommandHandler "1" o--"1" IApplicationDbContext
+DisableRecipeCommandHandler "1" o--"1" IServiceBus
+DisableRecipeCommandHandler "1" o--"1" IUnitOfWork
+DisableRecipeCommandHandler "1" o--"1" Result
+DisableRecipeCommandHandler "1" --"1..*" AddActivityLogEvent
+DisableRecipeCommandHandler "1" --"1..*" RecipeError
+
+Error "1" --"1" RecipeError
+
+@enduml

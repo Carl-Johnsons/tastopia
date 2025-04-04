@@ -1,0 +1,117 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminGetRecipes([FromQuery] PaginatedDTO paginatedDTO): async Task<IActionResult>
+}
+
+class AdminGetRecipesQuery {
+    +PaginatedDTO : PaginatedDTO
+}
+
+class AdminGetRecipesQueryHandler {
+    - _context : IApplicationDbContext
+    - _grpcUserClient: GrpcUserClient 
+    - _paginateDataUtility: IPaginateDataUtility<AdminRecipeResponse, NumberedPaginatedMetadata> 
+    + Handle(request: AdminGetRecipesQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminRecipeListResponse?>>
+}
+
+class PaginatedAdminRecipeListResponse
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    + PaginatedData: IEnumerable<Type>
+    + Metadata: MetadataType
+}
+
+PaginatedAdminRecipeListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+
+class CommonPaginatedMetadata {
+    + TotalPage: int
+}
+
+class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
+    + CurrentPage: int
+    + TotalRow: int
+}
+
+class PaginatedDTO {
+    + Skip : int
+    + SortOrder : SortType
+    + SortBy : string
+    + Keyword : string
+    + Limit : int
+}
+
+class AdminRecipeResponse{
+    + Id : Guid
+    + AuthorId : Guid
+    + Title : string
+    + Description : string
+    + Ingredients : string
+    + AuthorAvatarURL : string
+    + AuthorDisplayName : string
+    + AuthorUsername : string
+    + IsActive : bool
+    + RecipeImageUrl : string
+    + CreatedAt : DateTime
+    + UpdatedAt : DateTime
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+    {static} +AlreadyExist: Error
+    {static} +VoteFail: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyActive: Error
+    {static} +AddRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+' =========== Microservice class ===========
+together {
+    class GrpcSearchUserRequest #DarkBlue;line:white;text:white
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+AdminController --|> BaseApiController
+AdminController "1"--"1" PaginatedDTO
+AdminController "1"--"1" AdminGetRecipesQuery
+
+AdminGetRecipesQuery --|> "IRequest<TResponse>"
+
+AdminGetRecipesQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminGetRecipesQueryHandler "1" o--"1" AdminGetRecipesQuery
+AdminGetRecipesQueryHandler "1" o--"1" IApplicationDbContext
+AdminGetRecipesQueryHandler "1" o--"1" IPaginateDataUtility
+AdminGetRecipesQueryHandler "1" o--"1" Result
+AdminGetRecipesQueryHandler "1" o--"1" GrpcSearchUserRequest
+AdminGetRecipesQueryHandler "1" o--"1" GrpcGetSimpleUsersRequest
+AdminGetRecipesQueryHandler "1" o--"1" GrpcUserClient
+AdminGetRecipesQueryHandler "1" --"1..*" PaginatedAdminRecipeListResponse
+AdminGetRecipesQueryHandler "1" --"1..*" NumberedPaginatedMetadata
+AdminGetRecipesQueryHandler "1" --"1..*" AdminRecipeResponse
+AdminGetRecipesQueryHandler "1" --"1..*" RecipeError
+
+Error "1" --"1" RecipeError
+
+@enduml
