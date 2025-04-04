@@ -42,6 +42,7 @@ import { useSelectAdmin } from "@/slices/admin.slice";
 import { Calendar } from "@/components/shared/common/Calendar";
 import { useAdminForm } from "@/hooks/form";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MAX_IMAGE_SIZE } from "@/constants/validation";
 
 type FormInputProps = {
   field: ControllerRenderProps<any>;
@@ -470,7 +471,7 @@ const FormImageUpload = ({ label, field, isLoading }: FormImageUploadProps) => {
               multiple={false}
               value={value as ImageListType}
               onChange={onChange}
-              maxFileSize={15242880}
+              maxFileSize={MAX_IMAGE_SIZE}
               acceptType={["jpg", "jpeg", "png", "webp"]}
               ImageComponent={({ src, alt }) => (
                 <Image

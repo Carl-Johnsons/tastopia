@@ -42,6 +42,7 @@ import { createTag, updateTag } from "@/actions/tag.action";
 import { useTags } from "./TagsContext";
 import { useTranslations } from "next-intl";
 import { useInvalidateAdmin } from "@/hooks/query";
+import { MAX_IMAGE_SIZE } from "@/constants/validation";
 
 type FormProps = {
   type: string;
@@ -286,7 +287,7 @@ const TagForm = ({ type }: FormProps) => {
               onChange={handleUploadImage}
               maxNumber={1}
               dataURLKey='data_url'
-              maxFileSize={15242880}
+              maxFileSize={MAX_IMAGE_SIZE}
               acceptType={["jpg", "jpeg", "png", "webp"]}
             >
               {({

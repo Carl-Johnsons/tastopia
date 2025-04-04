@@ -1,8 +1,8 @@
 import { Gender } from "@/constants/gender";
+import { MAX_IMAGE_SIZE } from "@/constants/validation";
 import { isValid, parse } from "date-fns";
 import * as z from "zod";
 
-const MAX_FILE_SIZE = 15000000;
 const PHONE_REGEX = /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/;
 const DATE_REGEX = /\d{1,2}\/\d{1,2}\/\d\d\d\d/;
 const GENDER: Array<string> = [Gender.Male, Gender.Female];
@@ -15,7 +15,7 @@ const imageSchemma = (t: (key: string) => string) =>
       dataURL: z.string().optional(),
       file: z
         .any()
-        .refine(image => image?.size <= MAX_FILE_SIZE, {
+        .refine(image => image?.size <= MAX_IMAGE_SIZE, {
           message: t("image.errors.maxSize")
         })
         .refine(image => IMAGE_TYPE.includes(image?.type), {
