@@ -21,7 +21,6 @@ export async function getCommentReports(options?: PaginatedQueryParams) {
     lang = "vi",
     keyword = ""
   } = options || {};
-
   try {
     const { data } =
       await protectedAxiosInstance.get<IPaginatedAdminReportCommentListResponse>(url, {
@@ -31,7 +30,7 @@ export async function getCommentReports(options?: PaginatedQueryParams) {
           sortBy,
           sortOrder,
           lang,
-          keyword: encodeURIComponent(keyword)
+          keyword: keyword.trim()
         }
       });
 

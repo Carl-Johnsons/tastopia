@@ -28,7 +28,7 @@ export async function getAdmins(options?: PaginatedQueryParams) {
         sortBy,
         sortOrder,
         lang,
-        keyword: encodeURIComponent(keyword)
+        keyword: keyword.trim()
       }
     });
 
