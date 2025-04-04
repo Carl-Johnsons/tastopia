@@ -8,7 +8,6 @@ using Contract.DTOs.SignalRDTO;
 using SignalRHub.Interfaces;
 using Contract.Constants;
 using SignalRHub.Constants;
-using Newtonsoft.Json;
 
 namespace SignalRHub.Hubs;
 
@@ -45,11 +44,16 @@ public class HubServer : Hub<IHubClient>
             {
                 Log.Information($"user with id {userId} has connected to signalR successfully!");
                 await ConnectWithUserIdAsync(Guid.Parse(userId));
-                if (Context.User != null && Context.User.IsInRole(Roles.Code.USER.ToString()))
+                if (Context.User != null)
                 {
-                    _memoryTracker.UserConnected(userId);
-                    Log.Information($"Trigger event in client: number:" + _memoryTracker.OnlineUserNumber);
-                    await Clients.Group(ROLE_BASED_GROUP.ADMIN).ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
+                    var roleType = Context.User.Claims.FirstOrDefault(c => c.Type == "role");
+                    if (roleType != null && roleType.Value == Roles.Code.USER.ToString())
+                    {
+                        _memoryTracker.UserConnected(userId);
+                        Log.Information($"Trigger event in client: number:" + _memoryTracker.OnlineUserNumber);
+                        await Clients.Group(ROLE_BASED_GROUP.ADMIN).ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
+                    }
+
                 }
             }
         }
@@ -67,11 +71,15 @@ public class HubServer : Hub<IHubClient>
         {
             Log.Information($"Connection {Context.ConnectionId} disconnected and removed from UserConnectionMap.");
             await Clients.All.Disconnected(userDisconnectedId);
-            if (Context.User != null && Context.User.IsInRole(Roles.Code.USER.ToString()))
+            if (Context.User != null)
             {
-                _memoryTracker.UserDisconnected(userDisconnectedId.ToString());
-                Log.Information($"Trigger event in client: number:" + _memoryTracker.OnlineUserNumber);
-                await Clients.Group(ROLE_BASED_GROUP.ADMIN).ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
+                var roleType = Context.User.Claims.FirstOrDefault(c => c.Type == "role");
+                if (roleType != null && roleType.Value == Roles.Code.USER.ToString())
+                {
+                    _memoryTracker.UserDisconnected(userDisconnectedId.ToString());
+                    Log.Information($"Trigger event in client: number:" + _memoryTracker.OnlineUserNumber);
+                    await Clients.Group(ROLE_BASED_GROUP.ADMIN).ReceiveOnlineUserNumber(_memoryTracker.OnlineUserNumber);
+                }
             }
         }
         else
