@@ -17,7 +17,20 @@
     "description": "Enter your new",
     "email": "email",
     "phone": "phone number",
-    "update": "Update"
+    "update": "Update",
+    "pleaseEnter": "Please enter your",
+    "form": {
+      "errors": {
+        "email": {
+          "required": "Please enter your email",
+          "invalid": "Please enter a valid email"
+        },
+        "phone": {
+          "required": "Please enter your phone number",
+          "invalid": "Please enter a valid phone number"
+        }
+      }
+    }
   },
   "success": {
     "title": "Success",

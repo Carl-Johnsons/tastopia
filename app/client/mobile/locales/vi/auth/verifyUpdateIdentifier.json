@@ -1,10 +1,10 @@
 {
   "otp": {
     "title": "Mã Xác Minh",
-    "description": "Vui lòng nhập mã xác minh được gửi đến",
+    "description": "Vui lòng nhập mã xác minh được gửi tới",
     "dontReceiveCode": "Tôi không nhận được mã!",
     "promptResend": "Vui lòng gửi lại",
-    "pleaseWaitFor": "Vui lòng đợi",
+    "pleaseWaitFor": "Vui lòng chờ",
     "confirm": "Xác nhận",
     "form": {
       "errors": {
@@ -15,13 +15,27 @@
   "update": {
     "title": "Cập Nhật Thông Tin",
     "description": "Nhập",
-    "email": "email mới",
-    "phone": "số điện thoại mới",
-    "update": "Cập nhật"
+    "email": "email mới của bạn",
+    "phone": "số điện thoại mới của bạn",
+    "update": "Cập nhật",
+    "pleaseEnter": "Vui lòng nhập",
+    "form": {
+      "errors": {
+        "email": {
+          "required": "Vui lòng nhập email",
+          "invalid": "Vui lòng nhập email hợp lệ"
+        },
+        "phone": {
+          "required": "Vui lòng nhập số điện thoại",
+          "invalid": "Vui lòng nhập số điện thoại hợp lệ"
+        }
+      }
+    }
   },
   "success": {
     "title": "Thành Công",
     "description": "Thông tin của bạn đã được cập nhật thành công",
-    "redirect": "Đang chuyển hướng về trang chính sau"
+    "redirect": "Chuyển hướng về trang chính sau"
   }
 }
+
