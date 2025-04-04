@@ -1,15 +1,10 @@
-using Contract.Interfaces;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Stores;
 using IdentityService.Application.Account.Commands;
 using IdentityService.Application.Account.Queries;
 using IdentityService.Infrastructure.Utilities;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Newtonsoft.Json;
 using System.Net;
 using UserProto;
 
@@ -19,15 +14,8 @@ namespace DuendeIdentityServer.Pages.Account.VerifyForgotPassword;
 [AllowAnonymous]
 public class Index : PageModel
 {
-    private readonly UserManager<ApplicationAccount> _userManager;
-    private readonly SignInManager<ApplicationAccount> _signInManager;
     private readonly IIdentityServerInteractionService _interaction;
-    private readonly IEventService _events;
-    private readonly IAuthenticationSchemeProvider _schemeProvider;
-    private readonly IIdentityProviderStore _identityProviderStore;
-    private readonly IServiceBus _serviceBus;
     private readonly ISender _sender;
-    private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
     public ViewModel View { get; set; } = default!;
 
@@ -36,24 +24,10 @@ public class Index : PageModel
 
     public Index(
         IIdentityServerInteractionService interaction,
-        IAuthenticationSchemeProvider schemeProvider,
-        IIdentityProviderStore identityProviderStore,
-        IEventService events,
-        UserManager<ApplicationAccount> userManager,
-        SignInManager<ApplicationAccount> signInManager,
-        IServiceBus serviceBus,
-        ISender sender,
-        GrpcUser.GrpcUserClient grpcUserClient)
+        ISender sender)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
         _interaction = interaction;
-        _schemeProvider = schemeProvider;
-        _identityProviderStore = identityProviderStore;
-        _events = events;
-        _serviceBus = serviceBus;
         _sender = sender;
-        _grpcUserClient = grpcUserClient;
     }
 
     public async Task<IActionResult> OnGet(string returnUrl, string identifier)

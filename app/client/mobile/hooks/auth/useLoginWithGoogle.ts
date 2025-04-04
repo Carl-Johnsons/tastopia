@@ -5,7 +5,7 @@ import {
   useAuthRequest,
   useAutoDiscovery
 } from "expo-auth-session";
-import { API_GATEWAY_HOST } from "@/constants/host";
+import { IDENTITY_DISCOVERY_URL } from "@/constants/host";
 import { maybeCompleteAuthSession } from "expo-web-browser";
 import { transformPlatformURI } from "@/utils/functions";
 import { useState } from "react";
@@ -31,7 +31,7 @@ interface UseLoginWithGoogleResult {
  * @param initialValue The initial image data object
  */
 export const useLoginWithGoogle = (): UseLoginWithGoogleResult => {
-  const discoveryUrl = transformPlatformURI(`http://${API_GATEWAY_HOST}:5001`);
+  const discoveryUrl = transformPlatformURI(IDENTITY_DISCOVERY_URL);
   const discovery = useAutoDiscovery(discoveryUrl);
   const { t: te } = useTranslation("loginWithGoogle", { keyPrefix: "error" });
   const { t: ti } = useTranslation("loginWithGoogle", { keyPrefix: "info" });

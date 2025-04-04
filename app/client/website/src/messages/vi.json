@@ -382,9 +382,13 @@
         "label": "Mã",
         "placeholder": "Nhập mã thẻ"
       },
-      "value": {
-        "label": "Tên nguyên liệu",
-        "placeholder": "Nhập tên nguyên liệu"
+      "valueEn": {
+        "label": "Tên nguyên liệu tiếng Anh",
+        "placeholder": "Nhập tên nguyên liệu tiếng Anh"
+      },
+      "valueVi": {
+        "label": "Tên nguyên liệu tiếng Việt",
+        "placeholder": "Nhập tên nguyên liệu tiếng Việt"
       },
       "category": {
         "label": "Danh mục",
@@ -424,6 +428,17 @@
             "cancel": "Hủy"
           }
         }
+      },
+      "errors": {
+        "codeRequired": "Mã là bắt buộc",
+        "codeMaxLength": "Mã phải có 50 ký tự hoặc ít hơn",
+        "nameRequired": "Tên nguyên liệu là bắt buộc",
+        "nameMaxLength": "Tên nguyên liệu phải có 50 ký tự hoặc ít hơn",
+        "categoryRequired": "Danh mục là bắt buộc",
+        "categoryMaxLength": "Danh mục phải có 20 ký tự hoặc ít hơn",
+        "categoryInvalid": "Danh mục không hợp lệ. Phải là một trong: {categories}",
+        "statusRequired": "Trạng thái là bắt buộc",
+        "statusInvalid": "Trạng thái không hợp lệ. Phải là một trong: {statuses}"
       },
       "creating": "Đang tạo...",
       "updating": "Đang cập nhật...",

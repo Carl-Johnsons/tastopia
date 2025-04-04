@@ -13,6 +13,7 @@ import ForgotPasswordForm, {
   ForgotPasswordFormFields
 } from "@/components/screen/forgot/ForgotPasswordForm";
 import useBounce from "@/hooks/animation/useBounce";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 const ForgotPassword = () => {
   const isAndroid = Platform.OS === "android";
@@ -25,6 +26,8 @@ const ForgotPassword = () => {
   const [identifier, setIdentifier] = useState<string>();
   const [simpleUser, setSimpleUser] = useState<ISimpleUserResponse>();
   const [isNotFound, setIsNotFound] = useState<boolean>(false);
+
+  const { handleError } = useErrorHandler();
 
   const onSubmit = async (data: ForgotPasswordFormFields) => {
     setIsSubmitting(true);
@@ -40,13 +43,12 @@ const ForgotPassword = () => {
           setIsNotFound(false);
         },
         onError: error => {
+          handleError(error);
+
           if (error.status === 404) {
             setSimpleUser(undefined);
             setIdentifier(undefined);
             setIsNotFound(true);
-          } else {
-            console.log("Error", stringify(error));
-            Alert.alert("Error", "An error has occured. Please try again later.");
           }
         },
         onSettled: () => {
@@ -76,9 +78,7 @@ const ForgotPassword = () => {
             }
           });
         },
-        onError: error => {
-          Alert.alert(error.message);
-        }
+        onError: error => handleError(error)
       }
     );
   }, [identifier]);

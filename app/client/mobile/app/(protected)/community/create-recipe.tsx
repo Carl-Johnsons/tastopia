@@ -35,6 +35,7 @@ import DraggableFlatList, {
 import CreateDraggableStep from "@/components/screen/community/CreateDraggableStep";
 import CreateFormHeader from "@/components/screen/community/CreateFormHeader";
 import { useRecipesFeed } from "@/api/recipe";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 const CreateRecipe = () => {
   const { c } = useColorizer();
@@ -45,6 +46,7 @@ const CreateRecipe = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [images, setImages] = useState<ImageFileType[]>([]);
   const [selectedTags, setSelectedTags] = useState<SelectedTag[]>([]);
+  const { handleError } = useErrorHandler();
 
   const formCreateRecipe = useForm<FormCreateRecipeType>({
     resolver: yupResolver(createRecipeSchema),
@@ -98,12 +100,22 @@ const CreateRecipe = () => {
     }
 
     if (!isInputIngredient) {
-      Alert.alert(t("validation.ingredient"));
+      Alert.alert(t("validation.ingredients.itemRequired"));
+      return;
+    }
+
+    if (formData?.ingredients?.length && formData?.ingredients?.length > 50) {
+      Alert.alert(t("validation.ingredients.max"));
       return;
     }
 
     if (!isInputStep) {
       Alert.alert(t("validation.step"));
+      return;
+    }
+
+    if (formData?.steps?.length && formData?.steps?.length > 15) {
+      Alert.alert(t("validation.steps.max"));
       return;
     }
 
@@ -120,9 +132,11 @@ const CreateRecipe = () => {
       name: image.name,
       type: image.type || "image/jpeg"
     } as unknown as Blob);
+
     formData.ingredients?.forEach((ingredient, index) => {
       data.append(`ingredients[${index}]`, ingredient.value);
     });
+
     formData.steps?.forEach((step, index) => {
       console.log("step", step);
       data.append(`steps[${index}].ordinalNumber`, String(index + 1));
@@ -155,8 +169,9 @@ const CreateRecipe = () => {
       refetch();
       router.back();
     } catch (error) {
-      Alert.alert(t("formTitle.createError"));
-      console.error("Error submitting recipe:", error);
+      handleError(error),
+        // Alert.alert(t("formTitle.createError"));
+        console.error("Error submitting recipe:", error);
     } finally {
       setIsLoading(false);
     }

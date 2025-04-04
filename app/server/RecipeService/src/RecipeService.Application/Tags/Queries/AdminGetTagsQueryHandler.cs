@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Contract.DTOs;
 using Microsoft.EntityFrameworkCore;
-using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 namespace RecipeService.Application.Tags.Queries;
@@ -14,9 +13,9 @@ public class AdminGetTagsQuery: IRequest<Result<PaginatedAdminTagListResponse?>>
 public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Result<PaginatedAdminTagListResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IPaginateDataUtility<Tag, AdvancePaginatedMetadata> _paginateDataUtility;
+    private readonly IPaginateDataUtility<AdminTagResponse, AdvancePaginatedMetadata> _paginateDataUtility;
     private readonly IMapper _mapper;
-    public AdminGetTagsQueryHandler(IApplicationDbContext context, IPaginateDataUtility<Tag, AdvancePaginatedMetadata> paginateDataUtility, IMapper mapper)
+    public AdminGetTagsQueryHandler(IApplicationDbContext context, IPaginateDataUtility<AdminTagResponse, AdvancePaginatedMetadata> paginateDataUtility, IMapper mapper)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;
@@ -29,15 +28,25 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
 
         if(paginatedDto.Skip == null)
         {
-            return Result<PaginatedAdminTagListResponse?>.Failure(TagError.NullParameter, "AccountId or Skip is null.");
+            return Result<PaginatedAdminTagListResponse?>.Failure(TagError.NullParameter, "Skip is null.");
         }
 
-        var tagsQuery = _context.Tags.AsQueryable();
+        var tagsQuery = _context.Tags.Select(t => new AdminTagResponse
+        {
+            Id = t.Id,
+            Category = t.Category.ToString(),
+            Code = t.Code,
+            CreatedAt = t.CreatedAt,
+            En = t.Value.En,
+            Vi = t.Value.Vi,
+            ImageUrl = t.ImageUrl,
+            Status = t.Status.ToString(),
+        }).AsQueryable();
 
         if (!string.IsNullOrEmpty(paginatedDto.Keyword))
         {
-            var keyword = paginatedDto.Keyword;
-            tagsQuery = tagsQuery.Where(t => t.Value.ToLower().Contains(keyword.ToLower()));
+            var keyword = paginatedDto.Keyword.ToLower();
+            tagsQuery = tagsQuery.Where(t => t.En.ToLower().Contains(keyword) || t.Vi.ToLower().Contains(keyword));
         }
         var totalRow = await tagsQuery.CountAsync();
 
@@ -72,19 +81,10 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
             });
 
         }
-        var result = tagList.Select(t => new AdminTagResponse
-        {
-            Id = t.Id,
-            Code = t.Code,
-            Value = t.Value,
-            Category = t.Category.ToString(),
-            Status = t.Status.ToString(),
-            ImageUrl = t.ImageUrl,
-            CreatedAt = t.CreatedAt
-        }).ToList();
+
         var paginatedResponse = new PaginatedAdminTagListResponse
         {
-            PaginatedData = result,
+            PaginatedData = tagList,
             Metadata = new NumberedPaginatedMetadata
             {
                 TotalPage = totalPage,

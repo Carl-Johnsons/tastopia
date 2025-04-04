@@ -377,9 +377,13 @@
         "label": "Code",
         "placeholder": "Enter tag code"
       },
-      "value": {
-        "label": "Ingredient name",
-        "placeholder": "Enter ingredient name"
+      "valueEn": {
+        "label": "Ingredient name in English",
+        "placeholder": "Enter ingredient name in English"
+      },
+      "valueVi": {
+        "label": "Ingredient name in Vietnamese",
+        "placeholder": "Enter ingredient name in Vietnamese"
       },
       "category": {
         "label": "Category",
@@ -419,6 +423,17 @@
             "cancel": "Cancel"
           }
         }
+      },
+      "errors": {
+        "codeRequired": "Code is required",
+        "codeMaxLength": "Code must be 50 characters or less",
+        "nameRequired": "Ingredient name is required",
+        "nameMaxLength": "Ingredient name must be 50 characters or less",
+        "categoryRequired": "Category is required",
+        "categoryMaxLength": "Category must be 20 characters or less",
+        "categoryInvalid": "Invalid category. Must be one of: {categories}",
+        "statusRequired": "Status is required",
+        "statusInvalid": "Invalid status. Must be one of: {statuses}"
       },
       "creating": "Creating...",
       "updating": "Updating...",

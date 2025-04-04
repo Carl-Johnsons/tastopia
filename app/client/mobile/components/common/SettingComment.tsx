@@ -31,6 +31,7 @@ import { ArrowBackIcon, CheckCircleIcon } from "@/constants/icons";
 import i18n from "@/i18n/i18next";
 import { REPORT_TYPE } from "@/constants/settings";
 import Loading from "./Loading";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 type Props = {
   id: string;
@@ -52,6 +53,7 @@ type SettingState = Settings;
 const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
   const { c } = useColorizer();
   const { black, white } = colors;
+  const { handleError } = useErrorHandler();
   const { t } = useTranslation("component", { keyPrefix: "settingComment" });
   const queryClient = useQueryClient();
   const [currentSetting, setCurrentSetting] = useState<SettingState>(Settings.INITIAL);
@@ -107,9 +109,7 @@ const SettingComment = forwardRef<BottomSheet, Props>((props, ref) => {
                   closeModal();
                   Alert.alert(t("deleteCommentSuccessfully"));
                 },
-                onError: error => {
-                  Alert.alert(t("deleteCommentFail"));
-                }
+                onError: error => handleError(error)
               }
             );
           }
@@ -270,6 +270,7 @@ const ReportSetting = ({
   const { c } = useColorizer();
   const { black, white, primary, gray } = colors;
   const { t } = useTranslation("report");
+  const { handleError } = useErrorHandler();
   const currentLanguage = i18n.languages[0];
   const [report, setReport] = useState<Report>({
     reasonCodes: new Set(),
@@ -309,9 +310,7 @@ const ReportSetting = ({
             Alert.alert(t("reportSuccessfully"));
             closeModal();
           },
-          onError: async _error => {
-            Alert.alert(t("reportFail"));
-          }
+          onError: error => handleError(error)
         }
       );
     }
@@ -422,6 +421,7 @@ const UpdateSetting = ({
   const { c } = useColorizer();
   const { black, white, primary, gray } = colors;
   const { t } = useTranslation("report", { keyPrefix: "update" });
+  const { handleError } = useErrorHandler();
   const [content, setContent] = useState(defaultContent);
   const queryClient = useQueryClient();
   const { mutateAsync: updateMutate, isLoading: isUpdating } = useUpdateComment();
@@ -458,9 +458,7 @@ const UpdateSetting = ({
             }
             closeModal();
           },
-          onError: async _error => {
-            Alert.alert(t("updateFail"));
-          }
+          onError: error => handleError(error)
         }
       );
     }

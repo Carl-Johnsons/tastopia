@@ -7,10 +7,12 @@ import { TouchableOpacity, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import HistoryList from "./HistoryList";
 import { selectHistoryIsLoading } from "@/slices/history.slice";
+import { useTranslation } from "react-i18next";
 
 export default function Content() {
   const [searchValue, setSearchValue] = useState<string>("");
   const isLoading = selectHistoryIsLoading();
+  const { t } = useTranslation("history");
 
   return (
     <View className='h-full gap-3 px-4 pb-[100px]'>
@@ -18,6 +20,7 @@ export default function Content() {
         searchValue={searchValue}
         setSearchValue={setSearchValue}
         isSearching={isLoading}
+        placeholder={t("placeholder")}
       />
       <HistoryList keyword={searchValue} />
     </View>

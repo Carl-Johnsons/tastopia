@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 import Empty from "../community/Empty";
 import i18n from "@/i18n/i18next";
 import useHydrateData from "@/hooks/useHydrateData";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 export default function NotificationList() {
   const { data, isLoading, refetch, fetchNextPage } = useGetNotification();
@@ -93,12 +94,10 @@ export const Notification = ({
   const { message, imageUrl, jsonData, code, isViewed, id, createdAt } = item;
   const currentRouteName = usePathname();
   const { t } = useTranslation("component");
-  const isOddItem = useMemo(() => {
-    return index % 2 === 0;
-  }, [index]);
   const { primary } = colors;
   const { mutateAsync: setViewedNotification } = useSetViewedNotification();
   const queryClient = useQueryClient();
+  const { handleError } = useErrorHandler();
 
   const handlePress = useCallback(async () => {
     if (!jsonData) return;
@@ -112,7 +111,8 @@ export const Notification = ({
         {
           onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: "getNotification" });
-          }
+          },
+          onError: error => handleError(error)
         }
       );
     }

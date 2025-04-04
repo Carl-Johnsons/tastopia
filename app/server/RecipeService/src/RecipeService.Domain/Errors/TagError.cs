@@ -33,5 +33,9 @@ public class TagError
             new("TagError.AlreadyInactive",
             Message: "Tag already inactive",
             StatusCode: (int)HttpStatusCode.BadRequest);
+    public static Error AlreadyExist =>
+            new("TagError.AlreadyExist",
+            Message: "Tag already exist",
+            StatusCode: (int)HttpStatusCode.BadRequest);
 
 }

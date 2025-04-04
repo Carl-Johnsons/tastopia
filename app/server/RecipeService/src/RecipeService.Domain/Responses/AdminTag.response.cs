@@ -10,8 +10,11 @@ public class AdminTagResponse
     [JsonProperty("code")]
     public string Code { get; set; } = null!;
     [Required]
-    [JsonProperty("value")]
-    public string Value { get; set; } = null!;
+    [JsonProperty("en")]
+    public string En { get; set; } = null!;
+    [Required]
+    [JsonProperty("vi")]
+    public string Vi { get; set; } = null!;
     [Required]
     [JsonProperty("category")]
     public string Category { get; set; } = null!;

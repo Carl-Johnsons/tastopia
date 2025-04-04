@@ -6,6 +6,7 @@ import { UseMutateAsyncFunction } from "react-query";
 import { useNavigation, useRouter } from "expo-router";
 import { View, Image, TouchableWithoutFeedback } from "react-native";
 import Button from "@/components/Button";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 type Props = {
   device: CameraDevice;
@@ -47,6 +48,7 @@ const CameraView = ({
   const navigation = useNavigation();
   const router = useRouter();
 
+  const { handleError } = useErrorHandler();
   const { pickImage } = useImagePicking({
     imageCount: 1,
     allowsMultipleSelection: false
@@ -71,7 +73,12 @@ const CameraView = ({
       ...photo,
       uri: image.previewPath
     });
-    const predictResponse = await predictAsync({ file: image.file as unknown as Blob });
+    const predictResponse = await predictAsync(
+      { file: image.file as unknown as Blob },
+      {
+        onError: error => handleError(error)
+      }
+    );
     setPrediction(predictResponse);
   };
 
@@ -98,7 +105,12 @@ const CameraView = ({
         name: "file"
       };
 
-      const predictResponse = await predictAsync({ file: file as unknown as Blob });
+      const predictResponse = await predictAsync(
+        { file: file as unknown as Blob },
+        {
+          onError: error => handleError(error)
+        }
+      );
       setPrediction(predictResponse);
     } catch (error) {
       console.log("Error capturing image:", error);

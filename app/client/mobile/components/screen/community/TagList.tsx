@@ -28,6 +28,8 @@ import {
   View
 } from "react-native";
 import Tag from "./Tag";
+import { selectLanguageSetting } from "@/slices/setting.slice";
+import { SETTING_VALUE } from "@/constants/settings";
 
 type TagListProps = {
   selectedTags: SelectedTag[];
@@ -36,6 +38,8 @@ type TagListProps = {
 
 const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
   const { t } = useTranslation("search");
+  const language = selectLanguageSetting();
+  const currentLanguage = language === SETTING_VALUE.LANGUAGE.VIETNAMESE ? "vi" : "en";
 
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchResults, setSearchResults] = useState<TagType[]>();
@@ -206,7 +210,7 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
                 <View className={`mb-4 w-[48%] ${index % 2 === 0 ? "mr-[4%]" : ""}`}>
                   <Tag
                     code={item.code}
-                    value={item.value}
+                    value={item[currentLanguage]}
                     imageUrl={item.imageUrl}
                     selectedTags={selectedTags}
                     setSelectedTags={setSelectedTags}

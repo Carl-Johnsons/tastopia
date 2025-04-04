@@ -8,6 +8,7 @@ import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import { VoteType } from "@/constants/recipe";
 import { useVoteRecipe } from "@/api/recipe";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 type VoteProps = {
   vote: VoteType;
@@ -21,6 +22,7 @@ const Vote = ({ vote, voteDiff, recipeId }: VoteProps) => {
   const [upvoted, setUpvoted] = useState(vote === VoteType.UPVOTE);
   const [downvoted, setDownvoted] = useState(vote === VoteType.DOWNVOTE);
   const { black, white, primary } = colors;
+  const { handleError } = useErrorHandler();
   const { c } = useColorizer();
 
   const upvoteBounceValue = useRef(new Animated.Value(1)).current;
@@ -47,10 +49,7 @@ const Vote = ({ vote, voteDiff, recipeId }: VoteProps) => {
             }
             setVotes(newVotes);
           },
-          onError: error => {
-            console.log("Vote error", JSON.stringify(error, null, 2));
-            Alert.alert("Error", error.message);
-          }
+          onError: error => handleError(error)
         }
       );
     }
@@ -77,10 +76,7 @@ const Vote = ({ vote, voteDiff, recipeId }: VoteProps) => {
             }
             setVotes(newVotes);
           },
-          onError: error => {
-            console.log("Vote error", JSON.stringify(error, null, 2));
-            Alert.alert("Error", error.message);
-          }
+          onError: error => handleError(error)
         }
       );
     }

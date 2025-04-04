@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useMutation, useQuery } from "react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "react-query";
 import { protectedAxiosInstance } from "@/constants/host";
 import { SearchRecipeResponse } from "@/types/recipe";
 
@@ -25,12 +25,9 @@ const useSearchUsers = (keyword: string) => {
   });
 };
 
-const useSearchRecipes = (keyword: string, tagCodes: string[], values?: string[]) => {
-  const finalTagCodes = tagCodes.length > 0 ? tagCodes : ["ALL"];
-
-  if (values) {
-    keyword = keyword.concat(values.join(" "));
-  }
+const useSearchRecipes = (keyword: string, tagCodes: string[]) => {
+  const finalTagCodes =
+    tagCodes.length > 0 ? tagCodes.map(tagCode => tagCode.toUpperCase()) : ["ALL"];
 
   return useInfiniteQuery<SearchRecipeResponse>({
     queryKey: ["searchRecipes", keyword],
@@ -40,7 +37,7 @@ const useSearchRecipes = (keyword: string, tagCodes: string[], values?: string[]
         "/api/recipe/search-recipe",
         {
           keyword,
-          tagCodes: [],
+          tagCodes: finalTagCodes,
           skip: pageParam.toString()
         }
       );
@@ -110,6 +107,7 @@ const useSearchUserHistory = () => {
 };
 
 const createUserSearchRecipeKeyword = () => {
+  const queryClient = useQueryClient();
   return useMutation<string, Error, { keyword: string }>({
     mutationFn: async ({ keyword }) => {
       const { data } = await protectedAxiosInstance.post(
@@ -118,12 +116,15 @@ const createUserSearchRecipeKeyword = () => {
           keyword: keyword
         }
       );
+
+      await queryClient.invalidateQueries({ queryKey: ["recipeSearchHistory"] });
       return data;
     }
   });
 };
 
 const createUserSearchUserKeyword = () => {
+  const queryClient = useQueryClient();
   return useMutation<string, Error, { keyword: string }>({
     mutationFn: async ({ keyword }) => {
       const { data } = await protectedAxiosInstance.post(
@@ -132,6 +133,8 @@ const createUserSearchUserKeyword = () => {
           keyword: keyword
         }
       );
+
+      await queryClient.invalidateQueries({ queryKey: ["userSearchHistory"] });
       return data;
     }
   });

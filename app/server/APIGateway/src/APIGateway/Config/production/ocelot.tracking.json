@@ -5,6 +5,48 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
+      "DownstreamPathTemplate": "/api/admin/tracking/current",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/admin/tracking/current",
+      "SwaggerKey": "tracking",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN , ADMIN"
+      }
+    },
+    {
+      "ServiceName": "tracking-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/admin/tracking/{everything}",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/admin/tracking/{everything}",
+      "SwaggerKey": "tracking",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "RouteClaimsRequirement": {
+        "role": "SUPER_ADMIN"
+      }
+    },
+    {
+      "ServiceName": "tracking-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/tracking/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [

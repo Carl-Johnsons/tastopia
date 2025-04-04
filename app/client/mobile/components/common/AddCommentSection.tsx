@@ -1,5 +1,4 @@
-import { Link, router } from "expo-router";
-import { Text, View, Image, ActivityIndicator, Alert } from "react-native";
+import { View, Image, ActivityIndicator, Alert } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 import Input from "../Input";
 import { useCallback, useState } from "react";
@@ -8,6 +7,7 @@ import { globalStyles } from "./GlobalStyles";
 import { useCreateComment } from "@/api/comment";
 import { useTranslation } from "react-i18next";
 import { selectUser } from "@/slices/user.slice";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 type AddCommentSectionProps = {
   recipeId: string;
@@ -19,6 +19,7 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
   const [comment, setComment] = useState("");
   const { mutate: createComment, isLoading } = useCreateComment();
   const { avatarUrl } = selectUser();
+  const { handleError } = useErrorHandler();
 
   const handleOnSubmit = useCallback(() => {
     if (!comment.trim()) return;
@@ -37,10 +38,7 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
           setParentState(data);
           setComment("");
         },
-        onError: error => {
-          console.error("Failed to post comment:", error);
-          Alert.alert("Fail to create comment");
-        }
+        onError: error => handleError(error)
       }
     );
   }, [comment, recipeId, createComment, setParentState]);

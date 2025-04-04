@@ -91,11 +91,12 @@ message GrpcListTagDTO{
 
 message GrpcTagDTO{
     string Id = 1;
-    string Value = 2;
-    string Code = 3;
-    string Category = 4;
-    string Status = 5;
-    string ImageUrl = 6;
+    string En = 2;
+    string Vi = 3;
+    string Code = 4;
+    string Category = 5;
+    string Status = 6;
+    string ImageUrl = 7;
 }
 
 message GrpcRecipeVoteDTO{

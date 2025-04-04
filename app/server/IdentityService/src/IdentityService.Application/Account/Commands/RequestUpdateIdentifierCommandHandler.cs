@@ -49,11 +49,6 @@ public class RequestUpdateIdentifierCommandHandler : IRequestHandler<RequestUpda
             return Result.Failure(AccountError.NotFound);
         }
 
-        if (!account.EmailConfirmed)
-        {
-            return Result.Failure(AccountError.EmailNotConfirmed);
-        }
-
         var OTP = OTPUtility.GenerateNumericOTP();
 
         account.EmailOTP = OTP;
@@ -78,11 +73,6 @@ public class RequestUpdateIdentifierCommandHandler : IRequestHandler<RequestUpda
         if (account == null)
         {
             return Result.Failure(AccountError.NotFound);
-        }
-
-        if (!account.PhoneNumberConfirmed)
-        {
-            return Result.Failure(AccountError.PhoneNotConfirmed);
         }
 
         var OTP = OTPUtility.GenerateNumericOTP();

@@ -87,7 +87,7 @@ const Welcome = () => {
         <View className='relative h-full px-3.5'>
           <Button
             onPress={browseAsGuest}
-            className={`absolute right-[26px] ${isAndroid ? "top-[2%]" : "top-[6%]"} rounded-full bg-white_black200 px-4 py-3`}
+            className={`absolute right-[26px] ${isAndroid ? "top-[2%]" : "top-[6%]"} bg-white_black200 rounded-full px-4 py-3`}
           >
             <Text className='font-sans text-primary'>Skip</Text>
           </Button>
@@ -129,7 +129,7 @@ const Welcome = () => {
                 onPress={() => {
                   loginWithGoogle();
                 }}
-                className='rounded-full border dark:border-0 border-gray-300 bg-white_black200 p-3'
+                className='bg-white_black200 rounded-full border border-gray-300 p-3 dark:border-0'
               />
             </View>
 

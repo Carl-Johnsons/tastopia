@@ -20,6 +20,8 @@ import Recipe from "@/components/common/Recipe";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import Empty from "../community/Empty";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { RecipeType } from "@/types/recipe";
+import LoadingFullScreen from "@/components/common/LoadingFullScreen";
 
 type RecipesTabProps = {
   accountId: string;
@@ -36,8 +38,15 @@ const RecipesTab = ({
 }: RecipesTabProps) => {
   const [recipes, setRecipes] = useState<RecipeType[]>([]);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
-    useRecipesFeedByAuthorId(accountId);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+    isLoading
+  } = useRecipesFeedByAuthorId(accountId);
 
   const onRefresh = () => {
     refetch();
@@ -75,6 +84,10 @@ const RecipesTab = ({
     }
   }, [data]);
 
+  if (isLoading || isRefetching) {
+    return <LoadingFullScreen />;
+  }
+
   return (
     <TabView.Item
       style={{
@@ -109,9 +122,7 @@ const RecipesTab = ({
           onEndReachedThreshold={0.1}
           renderItem={renderItem}
           ListEmptyComponent={() => (
-            <View style={{ flex: 1, marginTop: 50 }}>
-              <Empty type='emptyRecipe' />
-            </View>
+            <View style={{ flex: 1, marginTop: 50 }}>{<Empty type='emptyRecipe' />}</View>
           )}
           contentContainerStyle={{
             paddingBottom: Platform.select({ ios: 240 })

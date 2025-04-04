@@ -15,6 +15,7 @@ public static class KestrelExtension
 
         var httpPort = DotNetEnv.Env.GetInt("PORT", 0);
         var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
+        var publicHttpsPort = DotNetEnv.Env.GetInt("PUBLIC_HTTPS_PORT", 0);
 
         builder.WebHost.ConfigureKestrel(options =>
         {
@@ -45,7 +46,6 @@ public static class KestrelExtension
                     // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
                     listenOption.UseHttps(certificate);
                 });
-
             }
         });
 

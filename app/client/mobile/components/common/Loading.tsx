@@ -1,5 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import { ActivityIndicator, View } from "react-native";
 import { globalStyles } from "./GlobalStyles";
 
 const Loading = () => {
@@ -14,5 +13,3 @@ const Loading = () => {
 };
 
 export default Loading;
-
-const styles = StyleSheet.create({});

@@ -8,20 +8,9 @@ EnvUtility.LoadEnvFile();
 
 var builder = Host.CreateDefaultBuilder(args)
     .ConfigureSerilog()
-    .ConfigureWebHostDefaults(webBuilder =>
-    {
-        webBuilder.ConfigureKestrel();
-        webBuilder.ConfigureServices(services =>
-        {
-            services.AddWorkerServices();
-        });
-        webBuilder.Configure(app =>
-        {
-            app.UseRouting();
-        });
-    })
     .ConfigureServices((context, services) =>
     {
+        services.AddWorkerServices();
         services.AddHostedService<Worker>();
     });
 
