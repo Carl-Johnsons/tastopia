@@ -112,7 +112,7 @@ services:
       - front-end
       - back-end
     extra_hosts:
-      - "host.docker.back-end:host-gateway" # For using host.docker.back-end in linux
+      - "host.docker.internal:host-gateway" # For using host.docker.internal in linux
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8500/v1/status/leader || exit 1"]
       interval: 30s
