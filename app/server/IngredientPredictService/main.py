@@ -121,4 +121,4 @@ async def predict(file: UploadFile = File(...)):
 async def root():
     return {"message": "YOLO FastAPI is running!"}
 
-uvicorn.run(app, host="0.0.0.0", port=5009,log_config=log_config)
+uvicorn.run(app, host="0.0.0.0", port=service_port,log_config=log_config)

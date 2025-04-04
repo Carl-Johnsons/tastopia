@@ -1,6 +1,7 @@
 FROM python:3.11-slim
 ARG BASE_PROJECT_PATH=app/server/IngredientPredictService
 WORKDIR /app
+EXPOSE 80
 
 COPY $BASE_PROJECT_PATH/requirements.txt .
 
