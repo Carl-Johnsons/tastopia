@@ -6,8 +6,6 @@ class EnvUtility:
       pass
 
     def load_env(self):
-        # load the PYTHON_ENV
-        load_dotenv()
         # load the global env
         if(self.is_development()):
           load_dotenv("../../../.env")
@@ -17,10 +15,10 @@ class EnvUtility:
         load_dotenv()
 
     def is_development(self):
-       return os.getenv("PYTHON_ENV") == "development"
+       return os.getenv("PYTHON_ENV", "development") == "development"
     
     def is_production(self):
-       return os.getenv("PYTHON_ENV") == "production"
+       return os.getenv("PYTHON_ENV", "development") == "production"
     
     def get_mongodb_connection_string(self):
        host = os.getenv("MONGODB_HOST")
