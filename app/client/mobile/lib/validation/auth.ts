@@ -1,4 +1,5 @@
 import { IDENTIFIER_TYPE } from "@/api/user";
+import { EMAIL_REGEX, PHONE_NUMBER_REGEX } from "@/constants/regex";
 import { lazy, object, ref, string } from "yup";
 
 export const passwordSchema = string()
@@ -16,16 +17,13 @@ export const loginSchema = object({
 
 export const forgotPasswordSchema = object({
   identifier: lazy(value => {
-    const emailRegex = /[a-zA-Z@]/;
-    const phoneNumberRegex = /^\d+$/;
-
     if (typeof value !== "string") {
       return string().required("Please enter email or phone number.");
     }
 
-    if (emailRegex.test(value)) {
+    if (EMAIL_REGEX.test(value)) {
       return string().email("Please enter a valid email address.");
-    } else if (phoneNumberRegex.test(value)) {
+    } else if (PHONE_NUMBER_REGEX.test(value)) {
       return string().matches(
         /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/,
         "Please enter a valid phone number."
@@ -46,16 +44,13 @@ export const changePasswordSchema = object({
 export const registerSchema = object({
   fullName: string().required("Please enter your full name."),
   identifier: lazy(value => {
-    const emailRegex = /[a-zA-Z@]/;
-    const phoneNumberRegex = /^\d+$/;
-
     if (typeof value !== "string") {
       return string().required("Please enter email or phone number.");
     }
 
-    if (emailRegex.test(value)) {
+    if (EMAIL_REGEX.test(value)) {
       return string().email("Please enter a valid email address.");
-    } else if (phoneNumberRegex.test(value)) {
+    } else if (PHONE_NUMBER_REGEX.test(value)) {
       return string().matches(
         /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/,
         "Please enter a valid phone number."
