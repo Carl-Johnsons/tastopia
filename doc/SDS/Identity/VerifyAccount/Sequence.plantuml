@@ -15,7 +15,7 @@ participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
 database Postgresql
 
-User -> MobileUI ++: 1. Touch the verify\n account button
+User -> MobileUI ++: 1. After user click the verify\n account button
 MobileUI -> ApiGateway ++: 2. Request verify account
 
 activate IdentityService
@@ -24,19 +24,19 @@ ApiGateway -[hidden]-> IdentityService
 deactivate IdentityService
 
 ApiGateway -> IdentityService ++: 4. Forward request
-IdentityService -> Postgresql ++: 5. Get user data
-IdentityService <-- Postgresql --: 6. return response
+IdentityService -> Postgresql ++: 5. Get account data
+IdentityService <-- Postgresql --: 6. Return response
 
 alt if user's OTP is invalid
-    ApiGateway <-- IdentityService: 7A.1. return resend OTP fail
-    MobileUI <-- ApiGateway: 7A.2. forward response
-    User <-- MobileUI: 7A.3. display error
+    ApiGateway <-- IdentityService: 7A.1. Return invalid otp error
+    MobileUI <-- ApiGateway: 7A.2. Forward response
+    User <-- MobileUI: 7A.3. Display error alert
 else
-    IdentityService -> Postgresql ++: 8. update Account status
-    IdentityService <-- Postgresql --: 9. return response
-    ApiGateway <-- IdentityService --: 10. return success status code
+    IdentityService -> Postgresql ++: 8. Update account status
+    IdentityService <-- Postgresql --: 9. Return response
+    ApiGateway <-- IdentityService --: 10. Return success status code
     MobileUI <-- ApiGateway --: 11. Forward response
-    User <-- MobileUI --: 12. Display alert\n resend OTP successfully
+    User <-- MobileUI --: 12. Display alert\n verify account successfully
 end
 
 @enduml

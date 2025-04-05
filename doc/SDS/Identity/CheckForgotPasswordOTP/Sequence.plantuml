@@ -28,27 +28,25 @@ IdentityService -> Postgresql ++: 5. Get account data
 IdentityService <-- Postgresql --: 6. Return response
 
 alt if account is null
-    ApiGateway <-- IdentityService: 7A.1. Return not found error
-    MobileUI <-- ApiGateway: 7A.2. Forward response
-    User <-- MobileUI: 7A.3. Display error
+  ApiGateway <-- IdentityService: 7A.1. Return not found error
+  MobileUI <-- ApiGateway: 7A.2. Forward response
+  User <-- MobileUI: 7A.3. Display error
 else
-    alt if the forgot password's OTP is invalid
-      ApiGateway <-- IdentityService: 7B.1. Return OTP invalid error
-      MobileUI <-- ApiGateway: 7B.2. Forward response
-      User <-- MobileUI: 7B.3. Display error
+  alt if the forgot password's OTP is invalid
+    ApiGateway <-- IdentityService: 7B.1. Return OTP invalid error
+    MobileUI <-- ApiGateway: 7B.2. Forward response
+    User <-- MobileUI: 7B.3. Display error
+  else
+    alt if the forgot password's OTP is expired
+      ApiGateway <-- IdentityService: 7C.1. Return OTP expired error
+      MobileUI <-- ApiGateway: 7C.2. Forward response
+      User <-- MobileUI: 7C.3. Display error
     else
-      alt if the forgot password's OTP is expired
-        ApiGateway <-- IdentityService: 7C.1. Return OTP invalid error
-        MobileUI <-- ApiGateway: 7C.2. Forward response
-        User <-- MobileUI: 7C.3. Display error
-      else
-        IdentityService -> Postgresql ++: 8. Update Account status
-        IdentityService <-- Postgresql --: 9. Return response
-        ApiGateway <-- IdentityService --: 10. Return success status code
-        MobileUI <-- ApiGateway --: 11. Forward response
-        User <-- MobileUI --: 12. Display alert\n resend OTP successfully
-      end
+      ApiGateway <-- IdentityService --: 10. Return success status code
+      MobileUI <-- ApiGateway --: 11. Forward response
+      User <-- MobileUI --: 12. Redirect user to change password screen
     end
+  end
 end
 
 @enduml

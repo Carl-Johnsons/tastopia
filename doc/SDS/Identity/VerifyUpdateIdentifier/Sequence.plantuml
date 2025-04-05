@@ -1,5 +1,5 @@
 @startuml Sequence
-title "Check update identifier's OTP diagram"
+title "Verify update identifier diagram"
 
 <style>
   sequenceDiagram {
@@ -15,8 +15,8 @@ participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
 database Postgresql
 
-User -> MobileUI ++: 1. Client click the verify button\n in update identifier screen
-MobileUI -> ApiGateway ++: 2. Request check update identifier's OTP
+User -> MobileUI ++: 1. User click the button verify\n in verify update identifier screen
+MobileUI -> ApiGateway ++: 2. Request verify update identifier
 
 activate IdentityService
 ref over ApiGateway, IdentityService: 3. Verify Access Token
@@ -32,21 +32,24 @@ alt if account is null
   MobileUI <-- ApiGateway: 7A.2. Forward response
   User <-- MobileUI: 7A.3. Display error alert
 else
-  alt if the update identifier's OTP is invalid
-    ApiGateway <-- IdentityService: 7B.1. Return OTP invalid error
+  alt if user's OTP is invalid
+    ApiGateway <-- IdentityService: 7B.1. Return invalid otp error
     MobileUI <-- ApiGateway: 7B.2. Forward response
     User <-- MobileUI: 7B.3. Display error alert
   else
-    alt if the update identifier's OTP is expired
-      ApiGateway <-- IdentityService: 7C.1. Return OTP expired error
+    alt if user's OTP is expired
+      ApiGateway <-- IdentityService: 7C.1. Return otp expired error
       MobileUI <-- ApiGateway: 7C.2. Forward response
-      User <-- MobileUI: 7C.3. Display error alert
+      User <-- MobileUI: 7C.3. Display error
     else
+      IdentityService -> Postgresql ++: 8. Update account identifier
+      IdentityService <-- Postgresql --: 9. Return response
       ApiGateway <-- IdentityService --: 10. Return success status code
       MobileUI <-- ApiGateway --: 11. Forward response
-      User <-- MobileUI --: 12. Display alert update identifier successfully
+      User <-- MobileUI --: 12. Display alert\n update identifier successfully
     end
   end
 end
+
 
 @enduml
