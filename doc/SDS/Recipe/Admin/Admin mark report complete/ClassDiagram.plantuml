@@ -1,0 +1,74 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminMarkReportComplete([FromBody] ReportDTO dto): async Task<IActionResult>
+}
+
+class MarkReportCompleteCommand {
+    +CurrentAccountId : Guid
+    +ReportId : Guid
+    +ReportType : enum
+}
+
+class MarkReportCompleteCommandHandler {
+    - _context : IApplicationDbContext
+    - _serviceBus: IServiceBus 
+    - _unitOfWork: IUnitOfWork 
+    + Handle(request: MarkReportCompleteCommand, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class ReportDTO {
+    +ReportId : Guid
+    +ReportType : enum
+}
+
+class ReportError{
+    {static} +NotFound: Error
+    {static} +AlreadyMarkComplete: Error
+    {static} +AlreadyPending: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" ReportDTO
+AdminController "1"--"1" MarkReportCompleteCommand
+
+MarkReportCompleteCommand --|> "IRequest<TResponse>"
+
+MarkReportCompleteCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+MarkReportCompleteCommandHandler "1" o--"1" MarkReportCompleteCommand
+MarkReportCompleteCommandHandler "1" o--"1" IApplicationDbContext
+MarkReportCompleteCommandHandler "1" o--"1" IServiceBus
+MarkReportCompleteCommandHandler "1" o--"1" IUnitOfWork
+MarkReportCompleteCommandHandler "1" o--"1" Result
+MarkReportCompleteCommandHandler "1" --"1..*" CommonReportEntity
+MarkReportCompleteCommandHandler "1" --"1..*" UserReportRecipe
+MarkReportCompleteCommandHandler "1" --"1..*" UserReportComment
+MarkReportCompleteCommandHandler "1" --"1..*" AddActivityLogEvent
+MarkReportCompleteCommandHandler "1" --"1..*" ReportError
+
+Error "1" --"1" ReportError
+
+@enduml

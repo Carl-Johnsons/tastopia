@@ -1,0 +1,55 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +GetRecipeStatistic(): async Task<IActionResult>
+}
+
+class AdminGetNumberOfRecipesStatisticQuery {
+}
+
+class AdminGetNumberOfRecipesStatisticQueryHandler {
+    - _context : IApplicationDbContext
+    + Handle(request: AdminGetNumberOfRecipesStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<StatisticEntity>?>>
+}
+
+class DateStatisticEntity extends StatisticEntity {
+    +Date : string
+}
+
+class StatisticEntity{
+    +Number : int
+}
+
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" AdminGetNumberOfRecipesStatisticQuery
+
+AdminGetNumberOfRecipesStatisticQuery --|> "IRequest<TResponse>"
+
+AdminGetNumberOfRecipesStatisticQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminGetNumberOfRecipesStatisticQueryHandler "1" o--"1" AdminGetNumberOfRecipesStatisticQuery
+AdminGetNumberOfRecipesStatisticQueryHandler "1" o--"1" IApplicationDbContext
+AdminGetNumberOfRecipesStatisticQueryHandler "1" o--"1" Result
+AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1..*" Recipe
+AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1..*" DateStatisticEntity
+
+@enduml

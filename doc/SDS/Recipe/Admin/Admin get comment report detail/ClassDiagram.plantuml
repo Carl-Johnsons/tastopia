@@ -1,0 +1,77 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminGetCommentReports([FromQuery] string? lang, [FromQuery] Guid recipeId, [FromQuery] Guid commentId): async Task<IActionResult>
+}
+
+class GetCommentReportDetailQuery {
+    +Lang : string
+    +RecipeId : Guid
+    +CommentId : Guid
+}
+
+class GetCommentReportDetailQueryHandler {
+    - _context : IApplicationDbContext
+    - _grpcUserClient: GrpcUserClient 
+    + Handle(request: GetCommentReportDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminReportCommentDetailResponse?>>
+}
+
+class AdminReportCommentDetailResponse{
+    +CommentDetailResponse : Comment
+    +AdminRecipeResponse : Recipe
+    +Report : List<ReportRecipeResponse>
+}
+
+class ReportRecipeResponse{
+    +Id : Guid
+    +ReporterUsername : string
+    +ReporterDisplayName : string
+    +ReporterAvtUrl : string
+    +Reasons : List<string>
+    +AdditionalDetail : string
+    +Status : string
+    +CreatedAt : DateTime
+}
+
+AdminReportCommentDetailResponse *--"1.." ReportRecipeResponse
+AdminReportCommentDetailResponse "1"--"1" Recipe
+AdminReportCommentDetailResponse "1"--"1" Comment
+
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+' =========== Microservice class ===========
+together {
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+AdminController --|> BaseApiController
+AdminController "1"--"1" GetCommentReportDetailQuery
+
+GetCommentReportDetailQuery --|> "IRequest<TResponse>"
+
+GetCommentReportDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetCommentReportDetailQueryHandler "1" o--"1" GetCommentReportDetailQuery
+GetCommentReportDetailQueryHandler "1" o--"1" IApplicationDbContext
+GetCommentReportDetailQueryHandler "1" o--"1" Result
+GetCommentReportDetailQueryHandler "1" o--"1" GrpcGetSimpleUsersRequest
+GetCommentReportDetailQueryHandler "1" o--"1" GrpcUserClient
+GetCommentReportDetailQueryHandler "1" --"1..*" AdminReportCommentDetailResponse
+
+@enduml

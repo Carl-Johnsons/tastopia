@@ -1,0 +1,63 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +GetTagRankingByPopular([FromBody] AdminGetTagDTO adminGetTagDTO): async Task<IActionResult>
+}
+
+class AdminGetRankingTagsStatisticQuery {
+    +Lang : string
+}
+
+class AdminGetRankingTagsStatisticQueryHandler {
+    - _context : IApplicationDbContext
+    + Handle(request: AdminGetRankingTagsStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<RankingStatisticEntity>?>>
+}
+
+class AdminGetTagDTO {
+    +Language : string
+}
+
+class RankingStatisticEntity extends StatisticEntity {
+    +Title : string
+}
+
+class StatisticEntity{
+    +Number : int
+}
+
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" AdminGetTagDTO
+AdminController "1"--"1" AdminGetRankingTagsStatisticQuery
+
+AdminGetRankingTagsStatisticQueryHandler --|> "IRequest<TResponse>"
+
+AdminGetRankingTagsStatisticQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminGetRankingTagsStatisticQueryHandler "1" o--"1" AdminGetRankingTagsStatisticQuery
+AdminGetRankingTagsStatisticQueryHandler "1" o--"1" IApplicationDbContext
+AdminGetRankingTagsStatisticQueryHandler "1" o--"1" Result
+AdminGetRankingTagsStatisticQueryHandler "1" --"1..*" Recipe
+AdminGetRankingTagsStatisticQueryHandler "1" --"1..*" Tag
+AdminGetRankingTagsStatisticQueryHandler "1" --"1..*" RecipeTag
+AdminGetRankingTagsStatisticQueryHandler "1" --"1..*" RankingStatisticEntity
+
+@enduml

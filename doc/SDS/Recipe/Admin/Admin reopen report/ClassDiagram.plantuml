@@ -1,0 +1,74 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminReopenReport([FromBody] ReportDTO dto): async Task<IActionResult>
+}
+
+class ReopenReportCommand {
+    +CurrentAccountId : Guid
+    +ReportId : Guid
+    +ReportType : enum
+}
+
+class ReopenReportCommandHandler {
+    - _context : IApplicationDbContext
+    - _serviceBus: IServiceBus 
+    - _unitOfWork: IUnitOfWork 
+    + Handle(request: ReopenReportCommand, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class ReportDTO {
+    +ReportId : Guid
+    +ReportType : enum
+}
+
+class ReportError{
+    {static} +NotFound: Error
+    {static} +AlreadyMarkComplete: Error
+    {static} +AlreadyPending: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" ReportDTO
+AdminController "1"--"1" ReopenReportCommand
+
+ReopenReportCommand --|> "IRequest<TResponse>"
+
+ReopenReportCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+ReopenReportCommandHandler "1" o--"1" ReopenReportCommand
+ReopenReportCommandHandler "1" o--"1" IApplicationDbContext
+ReopenReportCommandHandler "1" o--"1" IServiceBus
+ReopenReportCommandHandler "1" o--"1" IUnitOfWork
+ReopenReportCommandHandler "1" o--"1" Result
+ReopenReportCommandHandler "1" --"1..*" CommonReportEntity
+ReopenReportCommandHandler "1" --"1..*" UserReportRecipe
+ReopenReportCommandHandler "1" --"1..*" UserReportComment
+ReopenReportCommandHandler "1" --"1..*" AddActivityLogEvent
+ReopenReportCommandHandler "1" --"1..*" ReportError
+
+Error "1" --"1" ReportError
+
+@enduml

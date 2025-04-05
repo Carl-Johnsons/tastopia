@@ -1,0 +1,103 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminGetCommentReports([FromQuery] string lang, [FromQuery] PaginatedDTO paginatedDTO): async Task<IActionResult>
+}
+
+class GetCommentReportsQuery {
+    +Lang : string
+    +PaginatedDTO : PaginatedDTO
+}
+
+class GetCommentReportsQueryHandler {
+    - _context : IApplicationDbContext
+    - _grpcUserClient: GrpcUserClient 
+    - _paginateDataUtility: IPaginateDataUtility<AdminReportCommentResponse, NumberedPaginatedMetadata> 
+    + Handle(request: GetCommentReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminReportCommentListResponse?>>
+}
+
+class PaginatedAdminReportCommentListResponse
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    + PaginatedData: IEnumerable<Type>
+    + Metadata: MetadataType
+}
+
+PaginatedAdminReportCommentListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+
+class CommonPaginatedMetadata {
+    + TotalPage: int
+}
+
+class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
+    + CurrentPage: int
+    + TotalRow: int
+}
+
+class PaginatedDTO {
+    + Skip : int
+    + SortOrder : SortType
+    + SortBy : string
+    + Keyword : string
+    + Limit : int
+}
+
+class AdminReportCommentResponse{
+    +ReportId : Guid
+    +CommentId : Guid
+    +RecipeId : Guid
+    +CommentOwnerUsername : string
+    +CommentContent : string
+    +RecipeTitle : string
+    +RecipeImageURL : string
+    +ReporterUsername : string
+    +ReportReason : string
+    +CreatedAt : DateTime
+    +Status : string
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+' =========== Microservice class ===========
+together {
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcSearchUserRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+AdminController --|> BaseApiController
+AdminController "1"--"1" PaginatedDTO
+AdminController "1"--"1" GetCommentReportsQuery
+
+GetCommentReportsQuery --|> "IRequest<TResponse>"
+
+GetCommentReportsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetCommentReportsQueryHandler "1" o--"1" GetCommentReportsQuery
+GetCommentReportsQueryHandler "1" o--"1" IApplicationDbContext
+GetCommentReportsQueryHandler "1" o--"1" IPaginateDataUtility
+GetCommentReportsQueryHandler "1" o--"1" Result
+GetCommentReportsQueryHandler "1" o--"1" GrpcSearchUserRequest
+GetCommentReportsQueryHandler "1" o--"1" GrpcGetSimpleUsersRequest
+GetCommentReportsQueryHandler "1" o--"1" GrpcUserClient
+GetCommentReportsQueryHandler "1" --"1..*" PaginatedAdminReportCommentListResponse
+GetCommentReportsQueryHandler "1" --"1..*" NumberedPaginatedMetadata
+GetCommentReportsQueryHandler "1" --"1..*" AdminReportCommentResponse
+
+
+@enduml

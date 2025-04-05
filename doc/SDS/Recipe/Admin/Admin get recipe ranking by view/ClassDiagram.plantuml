@@ -1,0 +1,55 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +GetRecipeRankingByView(): async Task<IActionResult>
+}
+
+class AdminGetRankingRecipesStatisticQuery {
+}
+
+class AdminGetRankingRecipesStatisticQueryHandler {
+    - _context : IApplicationDbContext
+    + Handle(request: AdminGetRankingRecipesStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<RankingStatisticEntity>?>>
+}
+
+class RankingStatisticEntity extends StatisticEntity {
+    +Title : string
+}
+
+class StatisticEntity{
+    +Number : int
+}
+
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" AdminGetRankingRecipesStatisticQuery
+
+AdminGetRankingRecipesStatisticQuery --|> "IRequest<TResponse>"
+
+AdminGetRankingRecipesStatisticQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminGetRankingRecipesStatisticQueryHandler "1" o--"1" AdminGetRankingRecipesStatisticQuery
+AdminGetRankingRecipesStatisticQueryHandler "1" o--"1" IApplicationDbContext
+AdminGetRankingRecipesStatisticQueryHandler "1" o--"1" Result
+AdminGetRankingRecipesStatisticQueryHandler "1" --"1..*" Recipe
+AdminGetRankingRecipesStatisticQueryHandler "1" --"1..*" RankingStatisticEntity
+
+@enduml
