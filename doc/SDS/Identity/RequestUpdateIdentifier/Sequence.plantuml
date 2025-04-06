@@ -59,7 +59,7 @@ else
     ApiGateway <-- IdentityService: 12A.4. Return success status code
     deactivate Gmail
     destroy Gmail
-  else 
+  else if user identifier is phone number
     NotificationService -> Rabbitmq: 13. Consume event and publish \n "SendSMSEvent" message <<Async>>
     deactivate NotificationService
     activate Rabbitmq

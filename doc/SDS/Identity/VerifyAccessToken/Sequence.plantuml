@@ -23,6 +23,6 @@ alt if the token is invalid
     ApiGateway <-- IdentityService: 2A. Validate token failed
     ref over ApiGateway: 2A.1. Login
 else if the token is valid
-    ApiGateway <-- IdentityService: 2. Validate success
+    ApiGateway <-- IdentityService: 3. Validate success
 end
 @enduml

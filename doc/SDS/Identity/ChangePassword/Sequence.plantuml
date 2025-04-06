@@ -1,5 +1,5 @@
 @startuml Sequence
-title "Check forgot password's OTP diagram"
+title "Change password diagram"
 
 <style>
   sequenceDiagram {
@@ -15,8 +15,8 @@ participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
 database Postgresql
 
-User -> MobileUI ++: 1. User click the verify button\n in forgot password screen
-MobileUI -> ApiGateway ++: 2. Request check forgot password's OTP
+User -> MobileUI ++: 1. Client click change password button
+MobileUI -> ApiGateway ++: 2. Request change account password
 
 ApiGateway -> IdentityService ++: 3. Forward request
 IdentityService -> Postgresql ++: 4. Get account data
@@ -37,9 +37,11 @@ else
       MobileUI <-- ApiGateway: 6C.2. Forward response
       User <-- MobileUI: 6C.3. Display error
     else
-      ApiGateway <-- IdentityService --: 7. Return success status code
-      MobileUI <-- ApiGateway --: 8. Forward response
-      User <-- MobileUI --: 9. Redirect user to change password screen
+      IdentityService -> Postgresql ++: 7. Update account's password
+      IdentityService <-- Postgresql --: 8. Return response
+      ApiGateway <-- IdentityService --: 9. Return success status code
+      MobileUI <-- ApiGateway --: 10. Forward response
+      User <-- MobileUI --: 11. Redirect user to login page to\n login their account with new password
     end
   end
 end

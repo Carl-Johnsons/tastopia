@@ -15,7 +15,7 @@ participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
 database Postgresql
 
-User -> MobileUI ++: 1. Client click the verify button\n in update identifier screen
+User -> MobileUI ++: 1. User click the verify button\n in update identifier screen
 MobileUI -> ApiGateway ++: 2. Request check update identifier's OTP
 
 activate IdentityService
@@ -42,9 +42,9 @@ else
       MobileUI <-- ApiGateway: 7C.2. Forward response
       User <-- MobileUI: 7C.3. Display error alert
     else
-      ApiGateway <-- IdentityService --: 10. Return success status code
-      MobileUI <-- ApiGateway --: 11. Forward response
-      User <-- MobileUI --: 12. Display alert update identifier successfully
+      ApiGateway <-- IdentityService --: 8. Return success status code
+      MobileUI <-- ApiGateway --: 9. Forward response
+      User <-- MobileUI --: 10. Display alert update identifier successfully
     end
   end
 end

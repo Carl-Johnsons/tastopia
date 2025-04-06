@@ -34,49 +34,49 @@ IdentityService -> Postgresql++: 5. Get account data
 IdentityService <-- Postgresql--: 6. Return response
 
 alt if account is null
-    ApiGateway <-- IdentityService: 7A.1. Return not found error
-    MobileUI <-- ApiGateway: 7A.2. Forward response
-    User <-- MobileUI: 7A.3. Display error alert
+  ApiGateway <-- IdentityService: 7A.1. Return not found error
+  MobileUI <-- ApiGateway: 7A.2. Forward response
+  User <-- MobileUI: 7A.3. Display error alert
 else
-    IdentityService -> Postgresql++: 8. Update account data
-    IdentityService <-- Postgresql--: 9. Return response
-    IdentityService -> Rabbitmq: 10. Publish "UserResendOTPEvent"\n message <<Async>>
-    activate Rabbitmq
-    Rabbitmq --> NotificationService: 11. Deliver "UserResendOTPEvent"\n message
-    deactivate Rabbitmq
-    activate NotificationService
+  IdentityService -> Postgresql++: 8. Update account data
+  IdentityService <-- Postgresql--: 9. Return response
+  IdentityService -> Rabbitmq: 10. Publish "UserResendOTPEvent"\n message <<Async>>
+  activate Rabbitmq
+  Rabbitmq --> NotificationService: 11. Deliver "UserResendOTPEvent"\n message
+  deactivate Rabbitmq
+  activate NotificationService
 
-    alt if user identifier is email
-      NotificationService -> Rabbitmq: 12A.1. Consume event and publish \n "SendEmailEvent" message <<Async>>
-      deactivate NotificationService
-      activate Rabbitmq
-      Rabbitmq --> EmailWorker: 12A.2. Deliver "SendEmailEvent"\n message
-      deactivate Rabbitmq
-      activate EmailWorker
-      EmailWorker -> Gmail: 12A.3. Send OTP email\n to specified email
-      deactivate EmailWorker
-      activate Gmail
-    
-      ApiGateway <-- IdentityService: 12A.4. Return success status code
-      deactivate Gmail
-      destroy Gmail
-    else 
-      NotificationService -> Rabbitmq: 13. Consume event and publish \n "SendSMSEvent" message <<Async>>
-      deactivate NotificationService
-      activate Rabbitmq
-      Rabbitmq --> SMSWorker: 14. Deliver "SendSMSEvent"\n message
-      deactivate Rabbitmq
-      activate SMSWorker
-      SMSWorker -> SpeedSMS: 15. Send OTP \n to specified phone number
-      deactivate SMSWorker
-      activate SpeedSMS
-    
-      ApiGateway <-- IdentityService--: 16. Return success status code
-      deactivate SpeedSMS
-      destroy SpeedSMS
-    end
-    MobileUI <-- ApiGateway--: 17. Forward response
-    User <-- MobileUI--: 18. Display alert\n resend OTP successfully
+  alt if user identifier is email
+    NotificationService -> Rabbitmq: 12A.1. Consume event and publish \n "SendEmailEvent" message <<Async>>
+    deactivate NotificationService
+    activate Rabbitmq
+    Rabbitmq --> EmailWorker: 12A.2. Deliver "SendEmailEvent"\n message
+    deactivate Rabbitmq
+    activate EmailWorker
+    EmailWorker -> Gmail: 12A.3. Send OTP email\n to specified email
+    deactivate EmailWorker
+    activate Gmail
+  
+    ApiGateway <-- IdentityService: 12A.4. Return success status code
+    deactivate Gmail
+    destroy Gmail
+  else if user identifier is phone number
+    NotificationService -> Rabbitmq: 13. Consume event and publish \n "SendSMSEvent" message <<Async>>
+    deactivate NotificationService
+    activate Rabbitmq
+    Rabbitmq --> SMSWorker: 14. Deliver "SendSMSEvent"\n message
+    deactivate Rabbitmq
+    activate SMSWorker
+    SMSWorker -> SpeedSMS: 15. Send OTP \n to specified phone number
+    deactivate SMSWorker
+    activate SpeedSMS
+  
+    ApiGateway <-- IdentityService--: 16. Return success status code
+    deactivate SpeedSMS
+    destroy SpeedSMS
+  end
+  MobileUI <-- ApiGateway--: 17. Forward response
+  User <-- MobileUI--: 18. Display alert\n resend OTP successfully
 end
 
 @enduml
