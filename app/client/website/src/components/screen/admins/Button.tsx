@@ -168,7 +168,7 @@ export const SignOutButton = ({ className }: Pick<DataTableButtonProps, "classNa
       title={t("signOut")}
       icon={<SignOutIcon className='text-white_black' />}
       onClick={handleClick}
-      className={`bg-blue-400 hover:bg-blue-500 ${className}`}
+      className={`bg-red-500 hover:bg-red-600 ${className}`}
     />
   );
 };

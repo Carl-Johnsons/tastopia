@@ -79,10 +79,3 @@ export const useGetUserDetailReports = (accountId: string, language?: string) =>
     }
   });
 };
-
-export const useGetCurrentUser = () => {
-  return useQuery({
-    queryKey: ["currentUser"],
-    queryFn: () => getCurrentUserDetails()
-  });
-};

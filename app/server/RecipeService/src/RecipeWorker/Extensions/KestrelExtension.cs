@@ -18,17 +18,17 @@ public static class KestrelExtension
 
         builder.ConfigureKestrel(options =>
         {
-            options.ListenAnyIP(httpPort, listenOption =>
-            {
-                listenOption.Protocols = HttpProtocols.Http1;
-            });
 
             if (EnvUtility.IsDevelopment())
             {
+                options.ListenAnyIP(int.Parse("1" + httpPort), listenOption =>
+                {
+                    listenOption.Protocols = HttpProtocols.Http1;
+                });
                 var certPath = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Path");
                 var certPassword = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Password");
 
-                options.ListenAnyIP(httpsPort, listenOption =>
+                options.ListenAnyIP(int.Parse("1" + httpsPort), listenOption =>
                 {
                     listenOption.Protocols = HttpProtocols.Http1AndHttp2;
                     // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
@@ -38,6 +38,11 @@ public static class KestrelExtension
             }
             else
             {
+                options.ListenAnyIP(httpPort, listenOption =>
+                {
+                    listenOption.Protocols = HttpProtocols.Http1;
+                });
+
                 var certificate = X509Certificate2.CreateFromPemFile("/etc/ssl/certs/server-cert.crt", "/etc/ssl/private/private-key.pem");
                 options.ListenAnyIP(httpsPort, listenOption =>
                 {

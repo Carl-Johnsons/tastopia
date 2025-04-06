@@ -1,6 +1,7 @@
 FROM python:3.11-slim
 ARG BASE_PROJECT_PATH=app/server/IngredientPredictService
 WORKDIR /app
+EXPOSE 80
 
 COPY $BASE_PROJECT_PATH/requirements.txt .
 
@@ -18,5 +19,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY $BASE_PROJECT_PATH .
-
+ENV PYTHON_ENV=production
 CMD ["python", "main.py"]
