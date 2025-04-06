@@ -1,0 +1,21 @@
+@startuml Sequence
+title "Add Activity Log Event diagram"
+
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+participant "<<coordinator>>\nRabbitmq" as Rabbitmq
+participant "<<service>>\nTrackingService" as TrackingService
+database MongoDB
+
+Rabbitmq -> TrackingService++: 1. Deliver "AddActivityLogEvent" message
+TrackingService -> MongoDB++: 2. Consume and insert activity log data <<Async>>
+TrackingService <-- MongoDB--: 3. Return response
+destroy TrackingService
+
+@enduml
