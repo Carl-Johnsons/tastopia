@@ -15,13 +15,14 @@ title "Verify access token sequence diagram"
 participant "<<cordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\nIdentity service" as IdentityService
 
-ApiGateway -> IdentityService: 1. validate token
+ApiGateway -> IdentityService: 1. Request to validate token
 activate ApiGateway
 activate IdentityService
+
 alt if the token is invalid
-    ApiGateway <-- IdentityService: 2A. validate token failed
+    ApiGateway <-- IdentityService: 2A. Validate token failed
     ref over ApiGateway: 2A.1. Login
 else if the token is valid
-    ApiGateway <-- IdentityService: 2. validate success
+    ApiGateway <-- IdentityService: 2. Validate success
 end
 @enduml
