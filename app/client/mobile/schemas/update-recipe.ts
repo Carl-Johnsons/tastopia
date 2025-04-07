@@ -44,7 +44,7 @@ const schema = yup.object().shape({
       })
     )
     .default([]),
-  tags: yup.array().of(yup.string().required()).nullable()
+  tags: yup.array().of(yup.string().required())
 });
 
 type ImageFileType = yup.InferType<typeof imageFileSchema>;
