@@ -48,9 +48,9 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
             ucVoteRecipe . noteVoteRecipe
         ucBrowseRecipes <.. ucReportRecipe : <<extend>>
         ucBrowseRecipes <.. ucViewRecipeDetail : <<extend>>
-            ucViewRecipeDetail <.. ucCmtRecipe : <<extend>>
+            ucViewRecipeDetail <... ucCmtRecipe : <<extend>>
                 ucCmtRecipe . noteCmtRecipe
-            ucViewRecipeDetail <.. ucReportComment : <<extend>>
+            ucViewRecipeDetail <... ucReportComment : <<extend>>
             ucViewRecipeDetail <.. ucGuidedCCM : <<extend>>
         ucBrowseRecipes <.. ucBookmarkRecipe : <<extend>>
             ucBookmarkRecipe . noteBookmarkRecipe
