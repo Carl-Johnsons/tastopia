@@ -10,32 +10,34 @@ actor "Cloudinary" as cl
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-2: Login" as ucLogin
-    usecase "UC-8: Logout" as ucLogout
-    usecase "UC-9: Manage settings" as ucManageSetting
-    usecase "UC-10: Manage profile" as ucManageProfile
+    usecase "UC-8 Report users" as ucReportUser
+    usecase "UC-9 Logout" as ucLogout
+    usecase "UC-10: Manage settings" as ucManageSetting
+    usecase "UC-11: Manage profile" as ucManageProfile
 
     usecase "UC-5: Search" as ucSearch
     usecase "UC-6: Browse recipes" as ucBrowseRecipes
-    usecase "UC-11: Vote recipes" as ucVoteRecipe
-    usecase "UC-12: Comment recipes" as ucCmtRecipe
-    usecase "UC-13: Report recipes" as ucReportRecipe
-    usecase "UC-14: Bookmark recipes" as ucBookmarkRecipe
-    usecase "UC-15: View recipe detail" as ucViewRecipeDetail
-    usecase "UC-16: Use guided cooking mode" as ucGuidedCCM
+    usecase "UC-12: Vote recipes" as ucVoteRecipe
+    usecase "UC-13: Comment recipes" as ucCmtRecipe
+    usecase "UC-14: Report comments" as ucReportComment
+    usecase "UC-15: Report recipes" as ucReportRecipe
+    usecase "UC-16: Bookmark recipes" as ucBookmarkRecipe
+    usecase "UC-17: View recipe detail" as ucViewRecipeDetail
+    usecase "UC-18: Use guided cooking mode" as ucGuidedCCM
     usecase "UC-7: View other users' profiles" as ucViewUSProfile
 
-    usecase "UC-17: View menu" as ucViewMenu
-    usecase "UC-18: Manage own recipe" as ucManageRecipe
-    usecase "UC-19: View recent recipes" as ucViewRecentRecipes
+    usecase "UC-19: View menu" as ucViewMenu
+    usecase "UC-20: Manage own recipes" as ucManageRecipe
+    usecase "UC-21: View recent recipes" as ucViewRecentRecipes
 
-    usecase "UC-20: View notifications" as ucViewNotif
-    usecase "UC-21: View followers and followings" as ucViewFollow
+    usecase "UC-22: View notifications" as ucViewNotif
+    usecase "UC-23: View followers and followings" as ucViewFollow
 
-    note "Create/Read/\nEdit/Delete" as noteManageRecipe
+    note "Create/Read/\nUpdate/Delete" as noteManageRecipe
     note "Read/Update" as noteManageProfile
-    note "Create/Read/\nEdit/Delete" as noteVoteRecipe
-    note "Create/Read/\nEdit/Delete" as noteCmtRecipe
-    note "Create/Read/\nEdit/Delete" as noteBookmarkRecipe
+    note "Create/Read/\nUpdate/Delete" as noteVoteRecipe
+    note "Create/Read/\nUpdate/Delete" as noteCmtRecipe
+    note "Create/Read/\nUpdate/Delete" as noteBookmarkRecipe
     note "{Follow/Unfollow}" as noteViewUSProfile
 
     user --> ucSearch
@@ -47,11 +49,13 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
         ucBrowseRecipes <.. ucViewRecipeDetail : <<extend>>
             ucViewRecipeDetail <.. ucCmtRecipe : <<extend>>
                 ucCmtRecipe . noteCmtRecipe
+            ucViewRecipeDetail <.. ucReportComment : <<extend>>
             ucViewRecipeDetail <.. ucGuidedCCM : <<extend>>
         ucBrowseRecipes <.. ucBookmarkRecipe : <<extend>>
             ucBookmarkRecipe . noteBookmarkRecipe
         ucBrowseRecipes <.. ucViewUSProfile : <<extend>>
             ucViewUSProfile . noteViewUSProfile
+            ucViewUSProfile <.. ucReportUser : <<extend>>
 
     user --> ucViewMenu
         ucViewMenu <.. ucManageProfile : <<extend>>
@@ -75,8 +79,8 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     ucViewNotif .....>ucLogin : <<include>>
 
 
-    usecase "UC-22: Command by voice \n in cooking mode" as ucCommandVoiceCCM
-    usecase "UC-23: Recognize ingredients \n by capturing image" as ucRecognizeIngre
+    usecase "UC-24: Command by voice \n in cooking mode" as ucCommandVoiceCCM
+    usecase "UC-25: Recognize ingredients \n by capturing image" as ucRecognizeIngre
 
 
     user --> ucRecognizeIngre
