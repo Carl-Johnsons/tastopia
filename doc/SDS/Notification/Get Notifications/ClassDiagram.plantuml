@@ -1,0 +1,54 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class NotificationController {
+    +GetNotifications(skip: int, lang: string): async Task<IActionResult>
+}
+
+class GetNotificationsQuery {
+    +AccountId: Guid
+    +Language: string
+    +Skip: int
+}
+
+class GetNotificationsQueryHandler {
+    -_context: IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient
+    -_mapper: IMapper
+    -_paginateDataUtility: IPaginateDataUtility<Notification, AdvancePaginatedMetadata>
+    +GetNotificationsQueryHandler(context: IApplicationDbContext, grpcUserClient: GrpcUserClient, mapper: IMapper, paginateDataUtility: IPaginateDataUtility<Notification, AdvancePaginatedMetadata>)
+    +Handle(request: GetNotificationsQuery, cancellationToken: CancellationToken): async Task<Result<PaginatedNotificationListResponse>>
+}
+
+class NotificationErrors {
+    {static} +NotFound: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+NotificationController --|> BaseApiController
+NotificationController "1"--"1" GetNotificationsQuery
+GetNotificationsQuery --|> "IRequest<TResponse>"
+
+GetNotificationsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetNotificationsQueryHandler "1" o--"1" GetNotificationsQuery
+GetNotificationsQueryHandler "1" o--"1" NotificationErrors
+GetNotificationsQueryHandler "1" o--"1" Result
+
+Error "1" --"1..*" NotificationErrors
+
+@enduml

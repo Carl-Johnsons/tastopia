@@ -1,0 +1,67 @@
+@startuml NotificationDbContext
+
+interface IMongoDbContext extends IDisposable {
+    +Instance : DbContext
+    +GetDatabase() : IMongoDatabase
+}
+' ========= Entity class =========
+class BaseMongoDBEntity {
+    +Id : Guid
+}
+
+class BaseMongoDBAuditableEntity extends BaseMongoDBEntity {
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+}
+
+class AccountExpoPushToken extends BaseMongoDBAuditableEntity {
+    +AccountId: Guid
+    +ExpoPushToken: string
+    +DeviceType: DeviceType
+}
+
+class AccountExpoPushToken extends BaseMongoDBAuditableEntity {
+    +AccountId: Guid
+    +ExpoPushToken: string
+    +DeviceType: DeviceType
+}
+
+interface IApplicationDbContext extends IMongoDbContext {
+    +Notifications: DbSet<Notification>
+    +NotificationTemplates: DbSet<NotificationTemplate>
+    +AccountExpoPushTokens: DbSet<AccountExpoPushToken>
+}
+class ApplicationDbContext extends DbContext implements IApplicationDbContext {
+    +Notifications: DbSet<Notification>
+    +NotificationTemplates: DbSet<NotificationTemplate>
+    +AccountExpoPushTokens: DbSet<AccountExpoPushToken>
+    +Instance : DbContext
+    +ApplicationDbContext()
+    +ApplicationDbContext(options : DbContextOptions<ApplicationDbContext>)
+    +OnConfiguring(optionsBuilder : DbContextOptionsBuilder) : void
+    +OnModelCreating(modelBuilder : ModelBuilder) : void
+    +GetDatabase() : IMongoDatabase
+}
+
+enum DeviceType {
+    ANDROID
+    IOS
+}
+
+' ========= Library class =========
+interface IDisposable #black;line:white;text:white
+class "DbSet<T>" #black;line:white;text:white
+class DbContext #black;line:white;text:white
+
+IMongoDbContext o-- DbContext
+
+AccountExpoPushToken "1" o-- "1" DeviceType
+
+ApplicationDbContext o-- "DbSet<T>"
+
+' =========== Style ==============
+ApplicationDbContext o-[hidden]down- "DbSet<T>"
+
+BaseMongoDBAuditableEntity -[hidden]right- BaseMongoDBEntity 
+
+@enduml
