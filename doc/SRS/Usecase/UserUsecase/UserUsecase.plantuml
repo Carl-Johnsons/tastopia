@@ -5,10 +5,7 @@ skinparam linetype polyline
 skinparam defaultFontSize 12
 left to right direction
 actor "User" as user
-actor "Premium User" as pUser
 actor "Gmail" as gmail
-actor "Google Play Billing" as gpb
-actor "App Store Payment" as asp
 actor "Cloudinary" as cl
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
@@ -30,17 +27,15 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-17: View menu" as ucViewMenu
     usecase "UC-18: Manage own recipe" as ucManageRecipe
     usecase "UC-19: View recent recipes" as ucViewRecentRecipes
-    usecase "UC-20: Upgrade to premium" as ucUpgradeToPremium
 
-    usecase "UC-21: View notifications" as ucViewNotif
-    usecase "UC-22: View followers and followings" as ucViewFollow
+    usecase "UC-20: View notifications" as ucViewNotif
+    usecase "UC-21: View followers and followings" as ucViewFollow
 
     note "Create/Read/\nEdit/Delete" as noteManageRecipe
     note "Read/Update" as noteManageProfile
     note "Create/Read/\nEdit/Delete" as noteVoteRecipe
     note "Create/Read/\nEdit/Delete" as noteCmtRecipe
     note "Create/Read/\nEdit/Delete" as noteBookmarkRecipe
-    note "{Only available for User}" as noteUpgradeToPremium
     note "{Follow/Unfollow}" as noteViewUSProfile
 
     user --> ucSearch
@@ -66,15 +61,11 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
                 ucManageRecipe . noteManageRecipe
         ucViewMenu <.. ucManageSetting : <<extend>>
         ucViewMenu <.. ucViewRecentRecipes : <<extend>>
-        ucViewMenu <.. ucUpgradeToPremium : <<extend>>
-            ucUpgradeToPremium . noteUpgradeToPremium
         ucViewMenu <.. ucLogout : <<extend>>
 
     user --> ucViewNotif
     
     gmail -up-> ucLogin
-    gpb --up---> ucUpgradeToPremium 
-    asp --up---> ucUpgradeToPremium
     cl --up--> ucManageProfile
     cl --up--> ucManageRecipe
 
@@ -84,21 +75,13 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     ucViewNotif .....>ucLogin : <<include>>
 
 
-    usecase "UC-23: Command by voice \n in cooking mode" as ucCommandVoiceCCM
-    usecase "UC-24: Recognize ingredients \n by capturing image" as ucRecognizeIngre
-    usecase "UC-25: Manage subscription plan" as ucMngSubcriptPlan
-    
-
-    note "{Only available for Premium User}" as noteMngSubcriptPlan
-    note "{Only available for Premium User}" as noteCommandVoiceCCM
+    usecase "UC-22: Command by voice \n in cooking mode" as ucCommandVoiceCCM
+    usecase "UC-23: Recognize ingredients \n by capturing image" as ucRecognizeIngre
 
 
-    pUser -|> user
-    pUser --> ucRecognizeIngre
+    user --> ucRecognizeIngre
     ucGuidedCCM <.. ucCommandVoiceCCM : <<extend>>
         ucCommandVoiceCCM . noteCommandVoiceCCM
-    ucViewMenu <.. ucMngSubcriptPlan : <<extend>>
-        ucMngSubcriptPlan . noteMngSubcriptPlan
 
     ucRecognizeIngre .....> ucLogin : <<include>>
 
