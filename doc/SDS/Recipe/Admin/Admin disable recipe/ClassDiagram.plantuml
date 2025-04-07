@@ -17,7 +17,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminDisableRecipe([FromQuery] EntityIdDTO dto): async Task<IActionResult>
+    +AdminDisableRecipe(dto : EntityIdDTO): async Task<IActionResult>
 }
 
 class DisableRecipeCommand {

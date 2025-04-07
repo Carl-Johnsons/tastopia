@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class RecipeController {
-    +GetRecipeFeedByAccountId([FromBody] GetRecipeFeedsByAuthorIdDTO getRecipeFeedsByAuthorIdDTO): async Task<IActionResult>
+    +GetRecipeFeedByAccountId(getRecipeFeedsByAuthorIdDTO : GetRecipeFeedsByAuthorIdDTO): async Task<IActionResult>
 }
 
 class GetRecipeFeedsByAuthorIdQuery {

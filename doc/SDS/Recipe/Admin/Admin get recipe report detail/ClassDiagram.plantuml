@@ -14,7 +14,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminGetRecipeReportDetail([FromQuery] string? lang, [FromQuery] Guid recipeId): async Task<IActionResult>
+    +AdminGetRecipeReportDetail(lang : string?, recipeId : Guid): async Task<IActionResult>
 }
 
 class GetRecipeReportDetailQuery {

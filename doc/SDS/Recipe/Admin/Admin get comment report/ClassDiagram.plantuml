@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminGetCommentReports([FromQuery] string lang, [FromQuery] PaginatedDTO paginatedDTO): async Task<IActionResult>
+    +AdminGetCommentReports(lang : string, paginatedDTO : PaginatedDTO): async Task<IActionResult>
 }
 
 class GetCommentReportsQuery {

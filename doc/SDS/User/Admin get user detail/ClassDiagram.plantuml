@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminGetUserDetail([FromBody] GetUserDetailByAccountIdDTO getUserDetailByAccountIdDTO): async Task<IActionResult>
+    +AdminGetUserDetail(getUserDetailByAccountIdDTO : GetUserDetailByAccountIdDTO): async Task<IActionResult>
 }
 
 class AdminGetUserDetailQuery {

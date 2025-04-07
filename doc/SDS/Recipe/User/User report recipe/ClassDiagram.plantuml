@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class RecipeController {
-    +UserReportRecipe([FromBody] UserReportRecipeDTO userReportRecipeDTO): async Task<IActionResult>
+    +UserReportRecipe(userReportRecipeDTO : UserReportRecipeDTO): async Task<IActionResult>
 }
 
 class UserReportRecipeCommand {

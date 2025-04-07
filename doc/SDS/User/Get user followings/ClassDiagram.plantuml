@@ -16,7 +16,7 @@ together {
     }
 
     class UserController {
-        +GetUserFollowing(GetUserFollowingsDTO getUserFollowingsDTO): async Task<IActionResult>
+        +GetUserFollowing(getUserFollowingsDTO : GetUserFollowingsDTO): async Task<IActionResult>
     }
 
     class GetUserFollowingsQuery {

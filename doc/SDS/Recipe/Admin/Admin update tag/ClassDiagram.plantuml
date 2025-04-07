@@ -17,7 +17,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +UpdateTag([FromBody] FromForm updateTagDTO): async Task<IActionResult>
+    +UpdateTag(updateTagDTO : UpdateTagDTO): async Task<IActionResult>
 }
 
 class UpdateTagCommand {

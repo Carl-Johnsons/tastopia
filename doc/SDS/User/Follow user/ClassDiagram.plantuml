@@ -16,7 +16,7 @@ class BaseApiController {
 }
 
 class UserController {
-    +FollowUser([FromBody] FollowUserDTO followUserDTO): async Task<IActionResult>
+    +FollowUser(followUserDTO : FollowUserDTO): async Task<IActionResult>
 }
 
 class FollowUserCommand {

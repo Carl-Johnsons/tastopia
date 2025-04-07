@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +GetTagRankingByPopular([FromBody] AdminGetTagDTO adminGetTagDTO): async Task<IActionResult>
+    +GetTagRankingByPopular(adminGetTagDTO : AdminGetTagDTO): async Task<IActionResult>
 }
 
 class AdminGetRankingTagsStatisticQuery {

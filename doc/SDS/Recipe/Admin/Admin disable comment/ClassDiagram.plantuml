@@ -17,7 +17,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminDisableComment([FromQuery] Guid recipeId, [FromQuery] Guid commentId): async Task<IActionResult>
+    +AdminDisableComment(recipeId : Guid, commentId : Guid): async Task<IActionResult>
 }
 
 class DisableCommentCommand {

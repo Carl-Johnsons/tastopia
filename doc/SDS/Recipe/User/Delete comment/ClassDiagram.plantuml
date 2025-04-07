@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class RecipeController {
-    +DeleteComment([FromBody] DeleteCommentDTO deleteCommentDTO): async Task<IActionResult>
+    +DeleteComment(deleteCommentDTO : DeleteCommentDTO): async Task<IActionResult>
 }
 
 class DeleteCommentCommand {

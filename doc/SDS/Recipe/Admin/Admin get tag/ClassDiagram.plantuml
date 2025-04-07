@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminGetTag([FromQuery] PaginatedDTO paginatedDTO): async Task<IActionResult>
+    +AdminGetTag(paginatedDTO : PaginatedDTO): async Task<IActionResult>
 }
 
 class AdminGetTagsQuery {

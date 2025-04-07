@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +GetAdminDetail([FromQuery] Guid id): async Task<IActionResult>
+    +GetAdminDetail(id : Guid): async Task<IActionResult>
 }
 
 class GetAdminDetailQuery {

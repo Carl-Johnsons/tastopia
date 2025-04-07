@@ -17,7 +17,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminRestoreComment([FromQuery] Guid recipeId, [FromQuery] Guid commentId): async Task<IActionResult>
+    +AdminRestoreComment(recipeId : Guid, commentId : Guid): async Task<IActionResult>
 }
 
 class RestoreCommentCommand {

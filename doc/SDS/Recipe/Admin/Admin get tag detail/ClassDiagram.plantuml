@@ -14,7 +14,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +GetTagDetail([FromBody] AdminGetTagDetailDTO adminGetTagDetailDTO): async Task<IActionResult>
+    +GetTagDetail(adminGetTagDetailDTO : AdminGetTagDetailDTO): async Task<IActionResult>
 }
 
 class GetTagDetailQuery {

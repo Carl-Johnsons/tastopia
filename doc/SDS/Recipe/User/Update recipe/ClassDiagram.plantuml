@@ -16,7 +16,7 @@ class BaseApiController {
 
 class RecipeController {
     -_mapper: IMapper
-    +UpdateRecipe([FromForm] UpdateRecipeDTO updateRecipeDTO): async Task<IActionResult>
+    +UpdateRecipe(updateRecipeDTO : UpdateRecipeDTO): async Task<IActionResult>
 }
 
 class UpdateRecipeCommand {

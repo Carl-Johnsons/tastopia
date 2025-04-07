@@ -17,7 +17,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +BanAdmin([FromBody] AdminBanUserDTO adminBanUserDTO): async Task<IActionResult>
+    +BanAdmin(adminBanUserDTO : AdminBanUserDTO): async Task<IActionResult>
 }
 
 class BanAdminCommand {
