@@ -15,6 +15,7 @@ boundary WebsiteUI
 participant "<<cordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n RecipeService" as RecipeService
+participant "<<coordinator>>\nRabbitmq" as Rabbitmq
 database MongoDB
 
 Admin -> WebsiteUI ++: 1. Click on reopen button in \n recipe or comment report screen
@@ -39,12 +40,13 @@ else Current user is admin
         ApiGateway <-- RecipeService: 8. Return report
         WebsiteUI <-- ApiGateway--: 9. Forward response
         Admin <-- WebsiteUI--: 10. Display reopen report success message
-        RecipeService -> Rabbitmq: 11. Publish "AddActivityLogEvent" message 
-        deactivate RecipeService
+        RecipeService -> Rabbitmq: 11. Publish "AddActivityLogCommand" event <<Async>>
         activate Rabbitmq
-        ref over Rabbitmq: 12. AddActivityLogConsumers
-        Rabbitmq -[hidden]> 
+        ref over Rabbitmq: 12. Add activity log event
+        RecipeService -[hidden]-> Rabbitmq
+        deactivate Rabbitmq
         destroy Rabbitmq
+        deactivate RecipeService
     end alt
 end alt
 @enduml

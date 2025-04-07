@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminGetUsers([FromQuery] PaginatedDTO paginatedDTO): async Task<IActionResult>
+    +AdminGetUsers(paginatedDTO : PaginatedDTO): async Task<IActionResult>
 }
 
 class AdminGetUsersQuery {

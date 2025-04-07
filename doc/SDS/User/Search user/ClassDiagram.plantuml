@@ -16,7 +16,7 @@ together {
     }
 
     class UserController {
-        +SearchUser(SearchUserDTO searchUser): async Task<IActionResult>
+        +SearchUser(searchUser : SearchUserDTO): async Task<IActionResult>
     }
 
     class SearchUsersCommand {

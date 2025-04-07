@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class RecipeController {
-    +RestoreOwnRecipe([FromBody] RestoreOwnRecipeDTO restoreOwnRecipeDTO): async Task<IActionResult>
+    +RestoreOwnRecipe(restoreOwnRecipeDTO RestoreOwnRecipeDTO): async Task<IActionResult>
 }
 
 class RestoreOwnRecipeCommand {

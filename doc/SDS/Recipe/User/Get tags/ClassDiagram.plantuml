@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class RecipeController {
-    +GetTag([FromBody] GetTagsDTO getTagsDTO): async Task<IActionResult>
+    +GetTag(getTagsDTO : GetTagsDTO): async Task<IActionResult>
 }
 
 class GetTagsQuery {

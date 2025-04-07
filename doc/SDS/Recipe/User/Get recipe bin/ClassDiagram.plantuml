@@ -14,7 +14,7 @@ class BaseApiController {
 }
 
 class RecipeController {
-    +GetRecipeBins([FromBody] GetUserRecipeBinsDTO getUserRecipeBinsDTO): async Task<IActionResult>
+    +GetRecipeBins(getUserRecipeBinsDTO : GetUserRecipeBinsDTO): async Task<IActionResult>
 }
 
 class GetUserRecipeBinsQuery {

@@ -16,7 +16,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminReopenReport([FromBody] ReportDTO dto): async Task<IActionResult>
+    +AdminReopenReport(dto : ReportDTO): async Task<IActionResult>
 }
 
 class ReopenReportCommand {

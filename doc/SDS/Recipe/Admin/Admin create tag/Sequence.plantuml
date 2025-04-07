@@ -16,6 +16,7 @@ participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UploadFileService" as UploadFileService
 participant "<<service>>\n Cloudinary" as Cloudinary
+participant "<<coordinator>>\nRabbitmq" as Rabbitmq
 database MongoDB
 
 Admin -> WebsiteUI++: 1. Fill the create tag form and \n click Create button
@@ -60,9 +61,15 @@ else Current user is admin
             WebsiteUI <-- ApiGateway: 12A.6. Forward response
             Admin <-- WebsiteUI: 12A.7. Display add tag fail error.
         else Add tag to database success
-            ApiGateway <-- RecipeService: 13. Return add tag success message
-            WebsiteUI <-- ApiGateway: 14. Forward response
-            Admin <-- WebsiteUI: 15. Display add tag success message
+            RecipeService -> Rabbitmq: 13. Publish "AddActivityLogCommand" event <<Async>>
+            activate Rabbitmq
+            ref over Rabbitmq: 14. Add activity log event
+            RecipeService -[hidden]-> Rabbitmq
+            deactivate Rabbitmq
+            destroy Rabbitmq
+            ApiGateway <-- RecipeService: 15. Return add tag success message
+            WebsiteUI <-- ApiGateway: 16. Forward response
+            Admin <-- WebsiteUI: 17. Display add tag success message
         end alt 
     end alt 
 end alt

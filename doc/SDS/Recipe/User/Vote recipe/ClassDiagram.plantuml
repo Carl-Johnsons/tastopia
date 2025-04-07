@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class RecipeController {
-    +VoteRecipe([FromBody] VoteRecipeDTO voteRecipeDTO): async Task<IActionResult>
+    +VoteRecipe(voteRecipeDTO : VoteRecipeDTO): async Task<IActionResult>
 }
 
 class VoteRecipeCommand {

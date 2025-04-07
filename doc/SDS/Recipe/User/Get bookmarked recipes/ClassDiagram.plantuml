@@ -14,7 +14,7 @@ class BaseApiController {
 }
 
 class RecipeController {
-    +GetRecipeBookmarks([FromBody] GetRecipeBookmarkDTO getRecipeBookmarkDTO): async Task<IActionResult>
+    +GetRecipeBookmarks(getRecipeBookmarkDTO : GetRecipeBookmarkDTO): async Task<IActionResult>
 }
 
 class GetRecipeBookmarksQuery {

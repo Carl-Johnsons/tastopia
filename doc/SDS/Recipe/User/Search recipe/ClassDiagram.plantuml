@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class RecipeController {
-    +SearchRecipe([FromBody] SearchRecipesDTO searchRecipesDTO): async Task<IActionResult>
+    +SearchRecipe(searchRecipesDTO : SearchRecipesDTO): async Task<IActionResult>
 }
 
 class SearchRecipesQuery {

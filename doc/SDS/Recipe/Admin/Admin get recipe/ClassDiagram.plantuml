@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminGetRecipes([FromQuery] PaginatedDTO paginatedDTO): async Task<IActionResult>
+    +AdminGetRecipes(paginatedDTO : PaginatedDTO): async Task<IActionResult>
 }
 
 class AdminGetRecipesQuery {

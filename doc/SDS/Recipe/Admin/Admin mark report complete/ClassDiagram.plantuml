@@ -16,7 +16,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminMarkReportComplete([FromBody] ReportDTO dto): async Task<IActionResult>
+    +AdminMarkReportComplete(dto : ReportDTO): async Task<IActionResult>
 }
 
 class MarkReportCompleteCommand {

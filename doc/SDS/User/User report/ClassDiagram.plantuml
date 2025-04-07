@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class UserController {
-    +UserReportUser([FromBody] UserReportUserDTO userReportUserDTO): async Task<IActionResult>
+    +UserReportUser(userReportUserDTO : UserReportUserDTO): async Task<IActionResult>
 }
 
 class UserReportUserCommand {

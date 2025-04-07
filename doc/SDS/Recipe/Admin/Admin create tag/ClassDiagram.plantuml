@@ -17,7 +17,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +CreateTag([FromForm] CreateTagDTO createTagDTO): async Task<IActionResult>
+    +CreateTag(createTagDTO: CreateTagDTO): async Task<IActionResult>
 }
 
 class CreateTagCommand {

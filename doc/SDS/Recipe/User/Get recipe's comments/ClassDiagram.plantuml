@@ -14,7 +14,7 @@ class BaseApiController {
 }
 
 class RecipeController {
-    +GetRecipeComments([FromBody] GetRecipeCommentsDTO getRecipeCommentsDTO): async Task<IActionResult>
+    +GetRecipeComments(getRecipeCommentsDTO : GetRecipeCommentsDTO): async Task<IActionResult>
 }
 
 class GetRecipeCommentsQuery {

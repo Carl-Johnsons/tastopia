@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminGetUserActivities([FromBody] AdminGetUserActivityDTO adminGetUserActivityDTO): async Task<IActionResult>
+    +AdminGetUserActivities(adminGetUserActivityDTO : AdminGetUserActivityDTO): async Task<IActionResult>
 }
 
 class AdminGetUserActivityQuery {
