@@ -1,4 +1,3 @@
-
 @startuml ClassDiagram
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 !include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
@@ -8,18 +7,13 @@ skinparam nodesep 20
 skinparam ranksep 20
 hide circle
 
-remove IApplicationDbContext
-remove ApplicationDbContext
-remove Permission
-remove Group
-remove RoleGroupPermission
 remove IDisposable
 remove DbSet<T>
 remove IdentityUserLogin<T>
-remove IdentityRole
 remove DbContext
 remove IDbContext
-remove BaseEntity
+remove IApplicationDbContext
+remove ApplicationDbContext
 remove IdentityDbContext<ApplicationAccount>
 
 class BaseApiController {
@@ -28,7 +22,7 @@ class BaseApiController {
 }
 
 class AccountController {
-    +ResendOTP(string method): async Task<IActionResult>
+    +ResendOTP(method: string): async Task<IActionResult>
 }
 
 class ResendOTPCommand {
@@ -39,17 +33,18 @@ class ResendOTPCommand {
 class ResendOTPCommandHandler {
     -_userManager: UserManager<ApplicationAccount> 
     -_serviceBus: IServiceBus 
-    +ResendOTPCommandHandler(UserManager<ApplicationAccount> userManager, IServiceBus serviceBus)
-    +Handle(ResendOTPCommand request, CancellationToken cancellationToken): Task<Result> 
-    {static} +ResendEmailOTP(ResendOTPCommand request, CancellationToken cancellationToken): Task<Result>
-    {static} +ResendPhoneOTP(ResendOTPCommand request, CancellationToken cancellationToken): Task<Result>
+    +ResendOTPCommandHandler(userManager: UserManager<ApplicationAccount>, serviceBus: IServiceBus)
+    +Handle(request: ResendOTPCommand, cancellationToken: CancellationToken): Task<Result> 
+    -ResendEmailOTP(request: ResendOTPCommand, cancellationToken: CancellationToken): Task<Result>
+    -ResendPhoneOTP(request: ResendOTPCommand, cancellationToken: CancellationToken): Task<Result>
 }
 
 class AccountError {
     {static} +NotFound: Error
+    {static} +InvalidAccountMethod: Error
     {static} +EmailNotFound: Error
-    {static} +CreateAccountFailed: Error
     {static} +PhoneNotFound: Error
+    {static} +ResendOTPFailed: Error
 }
 
 class OTPUtility {
@@ -63,11 +58,6 @@ enum AccountMethod {
     Email
     Username
     Google
-}
-
-enum VerifyAccountMethod {
-    Verify,
-    Unlink
 }
 
 class UserResendOTPEvent{
@@ -88,7 +78,6 @@ class "UserManager<TUser>" #black;line:white;text:white
 AccountController --|> BaseApiController
 AccountController "1"--"1" ResendOTPCommand
 ResendOTPCommand "1" o--"1" AccountMethod
-ResendOTPCommand "1"--"1" VerifyAccountMethod
 ResendOTPCommand --|> "IRequest<TResponse>"
 
 ResendOTPCommandHandler --|> "IRequestHandler<TRequest, TResponse>"

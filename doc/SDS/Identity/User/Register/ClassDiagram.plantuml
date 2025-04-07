@@ -28,7 +28,7 @@ class BaseApiController {
 }
 
 class AccountController {
-    +RegisterAccount(string method, RegisterAccountDTO dto): async Task<IActionResult>
+    +RegisterAccount(method: string, dto: RegisterAccountDTO): async Task<IActionResult>
 }
 
 class RegisterAccountCommand {
@@ -42,12 +42,13 @@ class RegisterAccountCommandHandler {
     -_userManager: UserManager<ApplicationAccount>
     -_grpcUserClient: GrpcUserClient
     -_serviceBus: IServiceBus
-    -_consulRegistryService: IConsulRegistryService 
-    +Handle(RegisterAccountCommand request, CancellationToken cancellationToken): async Task<Result<TokenResponse?>>
-    -RegisterByEmail(RegisterAccountCommand request, CancellationToken cancellationToken): async Task<Result<TokenResponse?>>
-    -RegisterByPhone(RegisterAccountCommand request, CancellationToken cancellationToken): async Task<Result<TokenResponse?>>
-    -GenerateUsername(string fullName): string
-    -RequestTokenAsync(string username, string password): async Task<TokenResponse>
+    -_consulRegistryService: IConsulRegistryService
+    +RegisterAccountCommandHandler(userManager: UserManager<ApplicationAccount>, serviceBus: IServiceBus, grpcUserClient: GrpcUserClient, consulRegistryService: IConsulRegistryService)
+    +Handle(request: RegisterAccountCommand, cancellationToken: CancellationToken): async Task<Result<TokenResponse?>>
+    -RegisterByEmail(request: RegisterAccountCommand, cancellationToken: CancellationToken): async Task<Result<TokenResponse?>>
+    -RegisterByPhone(request: RegisterAccountCommand, cancellationToken: CancellationToken): async Task<Result<TokenResponse?>>
+    -GenerateUsername(fullName: string): string
+    -RequestTokenAsync(username: string, password: string): async Task<TokenResponse>
 }
 
 class AccountError {

@@ -22,15 +22,25 @@ remove IdentityDbContext<ApplicationAccount>
 
 class GrpcAccountService #DarkViolet;line:White;text:White extends GrpcAccountBase {
     -_sender: ISender
-    -_mapper: IMapper
-    -_logger: ILogger<GrpcAccountService>
-    +GrpcAccountService(ISender sender, IMapper mapper, ILogger<GrpcAccountService> logger)
-    +GetAccountDetail(GrpcAccountIdRequest request, ServerCallContext context): async Task<GrpcAccountDTO>
-    +UpdateAccount(GrpcUpdateAccountRequest request, ServerCallContext context): async Task<GrpcEmpty>
+    +GrpcAccountService(sender: ISender)
+    +GetAccountDetail(request: GrpcAccountIdRequest, context: ServerCallContext): async Task<GrpcAccountDTO>
+    +UpdateAccount(request: GrpcUpdateAccountRequest, context: ServerCallContext): async Task<GrpcEmpty>
+    +GetSimpleAccounts(request: GrpcAccountIdListRequest, context: ServerCallContext): async Task<GrpcListSimpleAccountsDTO>
+    +SearchAccount(request: GrpcSearchAccountRequest, context: ServerCallContext): async Task<GrpcListAccountIds>
+    +GetAdminAccountDetail(request: GrpcSearchAccountRequest, context: ServerCallContext): async Task<GrpcListAdminAccountsDTO>
 }
 
 class GrpcAccountIdRequest #DarkViolet;line:White;text:White
 class GrpcUpdateAccountRequest #DarkViolet;line:White;text:White
+class GrpcAccountIdListRequest #DarkViolet;line:White;text:White
+class GrpcSearchAccountRequest #DarkViolet;line:White;text:White
+class GrpcSearchAccountRequest #DarkViolet;line:White;text:White
+
+class GrpcAccountDTO #DarkViolet;line:White;text:White
+class GrpcEmpty #DarkViolet;line:White;text:White
+class GrpcListSimpleAccountsDTO #DarkViolet;line:White;text:White
+class GrpcListAccountIds #DarkViolet;line:White;text:White
+class GrpcListAdminAccountsDTO #DarkViolet;line:White;text:White
 
 class GetAccountDetailQuery implements "IRequest<TResponse>" {
     +Ids: HashSet<Guid>
@@ -38,8 +48,8 @@ class GetAccountDetailQuery implements "IRequest<TResponse>" {
 
 class GetAccountDetailQueryHandler {
     -_userManager: UserManager<ApplicationAccount>
-    +GetAccountDetailQueryHandler(UserManager<ApplicationAccount> userManager)
-    +Handle(GetAccountDetailQuery request, CancellationToken cancellationToken): async Task<Result<List<ApplicationAccount>?>>
+    +GetAccountDetailQueryHandler(userManager: UserManager<ApplicationAccount>)
+    +Handle(request: GetAccountDetailQuery, cancellationToken: CancellationToken): async Task<Result<List<ApplicationAccount>?>>
 }
 
 class UpdateAccountCommand implements "IRequest<TResponse>" {
@@ -49,8 +59,28 @@ class UpdateAccountCommand implements "IRequest<TResponse>" {
 
 class UpdateAccountCommandHandler {
     -_userManager: UserManager<ApplicationAccount>
-    +UpdateAccountCommandHandler(UserManager<ApplicationAccount> userManager)    
-    +Handle(UpdateAccountCommand request, CancellationToken cancellationToken): async Task<Result>
+    +UpdateAccountCommandHandler(userManager: UserManager<ApplicationAccount>)    
+    +Handle(request: UpdateAccountCommand, cancellationToken: CancellationToken): async Task<Result>
+}
+
+class SearchSimpleAccountQuery implements "IRequest<TResponse>" {
+    +Keyword: string
+}
+
+class SearchSimpleAccountQueryHandler {
+    -_userManager: UserManager<ApplicationAccount>
+    +SearchSimpleAccountQueryHandler(userManager: UserManager<ApplicationAccount>)
+    +Handle(request: SearchSimpleAccountQuery, cancellationToken: CancellationToken): async Task<Result<List<string>>>
+}
+
+class GetAdminAccountDetailQuery implements "IRequest<TResponse>" {
+    +Ids: HashSet<Guid>
+}
+
+class GetAdminAccountDetailQueryHandler {
+    -_userManager: UserManager<ApplicationAccount>
+    +GetAdminAccountDetailQueryHandler(userManager: UserManager<ApplicationAccount>)
+    +Handle(request: GetAdminAccountDetailQuery, cancellationToken: CancellationToken): async Task<Result<List<ApplicationAccount>>>
 }
 
 class AccountError {
@@ -70,7 +100,17 @@ interface "IRequestHandler<TRequest, TResponse>" #Black;line:White;text:White
 GrpcAccountService "1" o-- "1" GrpcAccountIdRequest
 GrpcAccountService "1" o-- "1" GrpcUpdateAccountRequest
 GrpcAccountService "1" o-- "1" ServerCallContext
+GrpcAccountService "1" o-- "1" GrpcAccountIdListRequest
+GrpcAccountService "1" o-- "1" GrpcSearchAccountRequest
+
+GrpcAccountService "1" o-- "1" GrpcAccountDTO
+GrpcAccountService "1" o-- "1" GrpcEmpty
+GrpcAccountService "1" o-- "1" GrpcListSimpleAccountsDTO
+GrpcAccountService "1" o-- "1" GrpcListAccountIds
+GrpcAccountService "1" o-- "1" GrpcListAdminAccountsDTO
+
 GrpcAccountService "1" o-- "1" GetAccountDetailQuery
+GrpcAccountService "1" o-- "1" SearchSimpleAccountQuery
 
 GetAccountDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 GetAccountDetailQueryHandler "1" o-- "1" GetAccountDetailQuery
@@ -82,4 +122,17 @@ UpdateAccountCommandHandler "1" o-- "1" UpdateAccountCommand
 UpdateAccountCommandHandler "1" o-- "1" AccountError
 UpdateAccountCommandHandler "1" o-- "1" "UserManager<TUser>"
 UpdateAccountCommandHandler "1" o-- "1" ApplicationAccount
+
+SearchSimpleAccountQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+SearchSimpleAccountQueryHandler "1" o-- "1" SearchSimpleAccountQuery
+SearchSimpleAccountQueryHandler "1" o-- "1" AccountError
+SearchSimpleAccountQueryHandler "1" o-- "1" "UserManager<TUser>"
+SearchSimpleAccountQueryHandler "1" o-- "1" ApplicationAccount
+
+GetAdminAccountDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetAdminAccountDetailQueryHandler "1" o-- "1" AccountError
+GetAdminAccountDetailQueryHandler "1" o-- "1" GetAdminAccountDetailQuery
+GetAdminAccountDetailQueryHandler "1" o-- "1" "UserManager<TUser>"
+GetAdminAccountDetailQueryHandler "1" o-- "1..*" ApplicationAccount
+
 @enduml

@@ -1,0 +1,166 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+!include doc/SDS/CommonClassDiagram/FileUtility.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AccountController {
+    +CreateAdmin(dto: CreateAdminAccountDTO): async Task<IActionResult>
+}
+
+class CreateAdminAccountCommand {
+    +CurrentAccountId: Guid
+    +Name: string
+    +Gmail: string
+    +Phone: string
+    +Gender: string
+    +Dob: DateTime
+    +Address: string
+    +AvatarFile: IFormFile
+}
+
+class CreateAdminAccountCommandHandler {
+    -_userManager: UserManager<ApplicationAccount>
+    -_grpcUserClient: GrpcUserClient
+    -_grpcUploadFileClient: GrpcUploadFileClient
+    -_serviceBus: IServiceBus
+    +CreateAdminAccountCommandHandler(userManager: UserManager<ApplicationAccount>, grpcUserClient: GrpcUserClient, grpcUploadFileClient: GrpcUploadFileClient, serviceBus: IServiceBus)
+    +Handle(request: CreateAdminAccountCommand, cancellationToken: CancellationToken): async Task<Result>
+}
+
+class AccountError {
+    {static} +NotFound: Error
+    {static} +InvalidAccountMethod: Error
+    {static} +InvalidOTP: Error
+    {static} +OTPExpired: Error
+    {static} +ResetPasswordFailed: Error
+}
+
+class CreateAdminAccountDTO {
+    +Name: string
+    +Gmail: string
+    +Phone: string
+    +Gender: string
+    +Dob: DateTime
+    +Address: string
+    +AvatarFile: IFormFile
+}
+
+class AddActivityLogEvent {
+    +AccountId: Guid
+    +ActivityType: ActivityType
+    +EntityId: Guid
+    +EntityType: ActivityEntityType
+    +SecondaryEntityId: Guid
+    +SecondaryEntityType: ActivityEntityType
+}
+
+enum ActivityType
+{
+    CREATE
+    UPDATE
+    DISABLE
+    RESTORE
+    MARK_COMPLETE
+    REOPEN
+}
+
+enum ActivityEntityType{
+    RECIPE
+    COMMENT
+    TAG
+    USER
+    REPORT_RECIPE
+    REPORT_COMMENT
+    REPORT_USER
+}
+
+class UserSendOTPEvent {
+    +AccountId: Guid
+    +Identifier: string
+    +OTP: string
+    +Method: AccountMethod
+    +OTPMethod: OTPMethod
+}
+
+enum AccountMethod {
+    Phone
+    Email
+    Username
+    Google
+}
+
+enum OTPMethod
+{
+    Resend
+    ForgotPassword
+    UpdateIdentifier
+    AdminAccountCreated
+}
+
+!include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml 
+remove IDisposable
+remove DbSet<T>
+remove IdentityUserLogin<T>
+remove IDbContext
+remove DbContext
+remove IApplicationDbContext
+remove ApplicationDbContext
+remove IdentityDbContext<ApplicationAccount>
+
+' =========== Microservice class ===========
+together {
+    class GrpcUploadMultipleImageRequest #LightSalmon;line:white;text:white
+    class GrpcUploadFileClient #LightSalmon;line:white;text:white
+}
+
+together {
+    class GrpcCreateAdminRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+class "UserManager<TUser>" #black;line:white;text:white
+' =========== Library class ===========
+
+AccountController --|> BaseApiController
+AccountController "1"--"1" CreateAdminAccountCommand
+AccountController "1"--"1" CreateAdminAccountDTO
+CreateAdminAccountCommand --|> "IRequest<TResponse>"
+
+CreateAdminAccountCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+CreateAdminAccountCommandHandler "1" o--"1" CreateAdminAccountCommand
+CreateAdminAccountCommandHandler "1" o---"1" ApplicationAccount
+CreateAdminAccountCommandHandler "1" o--"1" AccountError
+CreateAdminAccountCommandHandler "1" o--"1" Result
+CreateAdminAccountCommandHandler "1" o--"1" "UserManager<TUser>"
+CreateAdminAccountCommandHandler "1" o--"1" IServiceBus
+CreateAdminAccountCommandHandler "1" o--"1" GrpcUploadMultipleImageRequest
+CreateAdminAccountCommandHandler "1" o--"1" GrpcUploadFileClient
+CreateAdminAccountCommandHandler "1" o--"1" GrpcCreateAdminRequest
+CreateAdminAccountCommandHandler "1" o--"1" GrpcUserClient
+CreateAdminAccountCommandHandler "1" o--"1" FileUtility
+CreateAdminAccountCommandHandler "1" o--"1" GrpcFileStreamDTO
+CreateAdminAccountCommandHandler "1" o--"1" AddActivityLogEvent
+CreateAdminAccountCommandHandler "1" o--"1" UserSendOTPEvent
+
+Error "1" --"1..*" AccountError
+
+AddActivityLogEvent "1" o--"1" ActivityType
+AddActivityLogEvent "1" o--"1" ActivityEntityType
+
+UserSendOTPEvent "1" o--"1" AccountMethod
+UserSendOTPEvent "1" o--"1" OTPMethod
+
+@enduml
