@@ -10,6 +10,7 @@ actor "Cloudinary" as cl
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-2: Login" as ucLogin
+    usecase "UC-4: Forgot password" as ucForgotPassword
     usecase "UC-8 Report users" as ucReportUser
     usecase "UC-9 Logout" as ucLogout
     usecase "UC-10: Manage settings" as ucManageSetting
@@ -77,6 +78,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     ucBrowseRecipes .....> ucLogin : <<include>>
     ucViewMenu .....> ucLogin : <<include>>
     ucViewNotif .....>ucLogin : <<include>>
+    ucLogin <.. ucForgotPassword : <<extend>>
 
 
     usecase "UC-24: Command by voice \n in cooking mode" as ucCommandVoiceCCM
