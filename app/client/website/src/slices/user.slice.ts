@@ -1,15 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { useAppSelector } from "@/store/hooks";
-import { IGetUserDetailsResponse } from "@/generated/interfaces/user.interface";
+import { IAdminDetailResponse } from "@/generated/interfaces/user.interface";
 
-export type UserState = Partial<IGetUserDetailsResponse>;
+export type UserState = Partial<IAdminDetailResponse>;
 
 const initialState: UserState = {};
 
 export const useSelectUser = () => useAppSelector(state => state.user);
 export const useSelectUserId = () => useAppSelector(state => state.user.accountId);
 export const useSelectIsActiveUser = () =>
-  useAppSelector(state => state.user.accountId && state.user.isAccountActive);
+  useAppSelector(state => state.user.accountId && state.user.isActive);
 
 export const userSlice = createSlice({
   name: "user",

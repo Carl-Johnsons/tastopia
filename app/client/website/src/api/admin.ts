@@ -49,7 +49,7 @@ export const useGetAdminById = (id: string, self?: boolean) => {
 export const useGetCurrentAdminDetail = () => {
   return useQuery({
     queryKey: ["currentAdmin"],
-    queryFn: getCurrentAdminDetail
+    queryFn: () => getCurrentAdminDetail()
   });
 };
 

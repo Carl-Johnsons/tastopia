@@ -167,7 +167,7 @@ const MobileNav = () => {
       </SheetTrigger>
       <SheetContent
         side={"left"}
-        className='bg-white_black100 flex flex-col border-none'
+        className='bg-white_black100 flex flex-col border-none [&>button]:hidden'
       >
         <Link
           href={"/"}

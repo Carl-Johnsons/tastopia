@@ -26,7 +26,7 @@ export async function getActivityLogs(options?: PaginatedQueryParams) {
           sortBy,
           sortOrder,
           lang,
-          keyword: encodeURIComponent(keyword)
+          keyword: keyword.trim()
         }
       }
     );

@@ -76,20 +76,6 @@ export const useUpdateSettings = async (data: UpdateSettingParams) => {
   }
 };
 
-export type GetUserDetailsResponse = UserState;
-
-export const getCurrentUserDetails = async () => {
-  const url = "/api/user/get-current-user-details";
-
-  try {
-    const { data } = await protectedAxiosInstance.get<IGetUserDetailsResponse>(url);
-    return data as GetUserDetailsResponse;
-  } catch (error) {
-    withErrorProcessor(error);
-    throw error;
-  }
-};
-
 export async function getAdminUsers(
   skip = 0,
   sortBy = "",
