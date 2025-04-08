@@ -34,10 +34,10 @@ clip_model, preprocess = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-V
 tokenizer = get_tokenizer('ViT-H-14')
 
 # Load CLIP features
-features = np.load('clip_feature/features.npy')
+features = np.load('clip_feature/features_f.npy')
 features = features.reshape(features.shape[0], features.shape[2])
 features.shape
-filename_index = np.load('clip_feature/features_index.npy')
+filename_index = np.load('clip_feature/features_index_f.npy')
 # Faiss init
 index = faiss.IndexFlatL2(features.shape[1])
 index.add(features)
@@ -101,8 +101,8 @@ async def lifespan(app: FastAPI):
         else:
             logging.error("Deregistration failed:", response.text)
 
-app = FastAPI(lifespan=lifespan, redirect_slashes=False)
-# app = FastAPI(redirect_slashes=False)
+# app = FastAPI(lifespan=lifespan, redirect_slashes=False)
+app = FastAPI(redirect_slashes=False)
 
 names = dict()
 for i in open("name_edited.txt", encoding='utf-8').read().splitlines():
@@ -117,7 +117,7 @@ def cal_mix_1(a, b):
     for i in a:
         scores[i] = 0
     for i, val in enumerate(a):
-        scores[val] += 1 / (i + 1)
+        scores[val] += 1 / (i + 0.5)
         # scores[val] += 1
 
     for key in scores.keys():
@@ -132,7 +132,11 @@ def cal_mix_1(a, b):
     
     indexs = [i for i in scores.keys()]
     probs = [scores[i] for i in scores.keys()]
-    return indexs, probs
+
+    sorted_pairs = sorted(zip(indexs, probs), key=lambda x: x[1], reverse=True)
+    indexs, probs = zip(*sorted_pairs)
+
+    return list(indexs), list(probs)
 
 def get_raw_convnext_predict(image):
     image_size = (224, 224)
@@ -175,7 +179,7 @@ async def predict(file: UploadFile = File(...)):
     # Apply exif metadata if exist
     image = ImageOps.exif_transpose(image)
 
-    clip_pred_raw = get_raw_clip_predict(image)
+    clip_pred_raw = get_raw_clip_predict(image, 50)
     convnext_pred_raw = get_raw_convnext_predict(image)
     indexs, probs = cal_mix_1(clip_pred_raw[0], convnext_pred_raw[0])
 
@@ -194,31 +198,6 @@ async def predict(file: UploadFile = File(...)):
 
     results = box_model(image, verbose=False)
     return {"classifications": classifications, "boxes": results[0].boxes.xyxyn.tolist()}
-
-@app.post("/api/ingredient-predict")
-async def predict(file: UploadFile = File(...)):
-    image = Image.open(io.BytesIO(await file.read()))
-    # Apply exif metadata if exist
-    image = ImageOps.exif_transpose(image)
-
-    results = model(image, verbose=False)
-
-    classifications = []
-    for result in results:
-        for cls, conf in zip(result.probs.top5, result.probs.top5conf):
-            classifications.append({
-                "class": result.names[cls],
-                "confidence": float(conf),
-                "name": {
-                    'en': names[result.names[cls]][0],
-                    'vi': names[result.names[cls]][1]
-                },
-                "code": '_'.join(names[result.names[cls]][0].split(' ')).upper(),
-            })
-
-    results = box_model(image, verbose=False)
-    return {"classifications": classifications, "boxes": results[0].boxes.xyxyn.tolist()}
-
 
 @app.get("/")
 async def root():
