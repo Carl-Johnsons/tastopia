@@ -50,10 +50,7 @@ const AddComment = () => {
         className='h-full w-full flex-col px-3'
         style={{ backgroundColor }}
       >
-        <View
-          style={{ marginTop: StatusBar.currentHeight }}
-          className='h-[60px] flex-row items-center justify-between px-3'
-        >
+        <View className='h-[60px] flex-row items-center justify-between px-3'>
           <Text
             style={{ color: c(black.DEFAULT, white.DEFAULT) }}
             onPress={() => (text.length > 0 ? setIsClosing(true) : router.back())}

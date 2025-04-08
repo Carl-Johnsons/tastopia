@@ -242,10 +242,7 @@ const CreateRecipe = () => {
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <View
-            style={{ marginTop: StatusBar.currentHeight }}
-            className='flex-between mb-4 h-[60px] flex-row border-b-[0.6px] border-gray-400 px-6'
-          >
+          <View className='flex-between mb-4 h-[60px] flex-row border-b-[0.6px] border-gray-400 px-6'>
             <TouchableWithoutFeedback onPress={handleCancel}>
               <View>
                 <AntDesign

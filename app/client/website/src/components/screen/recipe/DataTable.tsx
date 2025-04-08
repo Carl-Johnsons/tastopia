@@ -257,7 +257,7 @@ export default function Table() {
           isLoading={isLoading || isFetching}
         />
         <div className='flex gap-2 self-start'>
-          <span className='text-gray-500'>Administer Recipes</span>
+          <span className='text-black_white'>Administer Recipes</span>
         </div>
       </div>
 

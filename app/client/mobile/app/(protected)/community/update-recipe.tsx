@@ -36,11 +36,15 @@ import { useQueryClient } from "react-query";
 import UpdateIngredient from "@/components/screen/community/UpdateIngredient";
 import { FormUpdateRecipeType, schema } from "@/schemas/update-recipe";
 import Loading from "@/components/common/Loading";
+import { selectLanguageSetting } from "@/slices/setting.slice";
+import { SETTING_VALUE } from "@/constants/settings";
 
 const UpdateRecipe = () => {
   const queryClient = useQueryClient();
   const { id, authorId } = useLocalSearchParams<{ id: string; authorId: string }>();
   const isCreatedByCurrentUser = useIsOwner(authorId);
+  const language = selectLanguageSetting();
+  const currentLanguage = language === SETTING_VALUE.LANGUAGE.VIETNAMESE ? "vi" : "en";
 
   if (!isCreatedByCurrentUser) {
     return (
@@ -318,7 +322,7 @@ const UpdateRecipe = () => {
         return {
           id: tag.id,
           code: tag.code,
-          value: tag.value
+          value: currentLanguage === "vi" ? tag.vi : tag.en
         };
       }) || []
     );
@@ -338,10 +342,7 @@ const UpdateRecipe = () => {
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
-          <View
-            style={{ marginTop: StatusBar.currentHeight }}
-            className='flex-between mb-4 h-[60px] flex-row border-b-[0.6px] border-gray-400 px-6'
-          >
+          <View className='flex-between mb-4 h-[60px] flex-row border-b-[0.6px] border-gray-400 px-6'>
             <TouchableWithoutFeedback onPress={handleCancel}>
               <View>
                 <AntDesign
