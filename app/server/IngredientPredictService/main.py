@@ -101,8 +101,8 @@ async def lifespan(app: FastAPI):
         else:
             logging.error("Deregistration failed:", response.text)
 
-# app = FastAPI(lifespan=lifespan, redirect_slashes=False)
-app = FastAPI(redirect_slashes=False)
+app = FastAPI(lifespan=lifespan, redirect_slashes=False)
+# app = FastAPI(redirect_slashes=False)
 
 names = dict()
 for i in open("name_edited.txt", encoding='utf-8').read().splitlines():
