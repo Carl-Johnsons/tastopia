@@ -5,12 +5,10 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamPathTemplate": "/api/ingredient-predict/",
+      "DownstreamPathTemplate": "/api/ingredient-predict-v2/",
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "POST"
-      ],
-      "UpstreamPathTemplate": "/api/ingredient-predict",
+      "UpstreamHttpMethod": ["POST"],
+      "UpstreamPathTemplate": "/api/ingredient-predict-v2",
       "SwaggerKey": "ingredient-predict"
     },
     {
@@ -18,13 +16,10 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamPathTemplate": "/api/ingredient-predict/{everything}",
+      "DownstreamPathTemplate": "/api/ingredient-predict-v2/{everything}",
       "DownstreamScheme": "http",
-      "UpstreamHttpMethod": [
-        "GET",
-        "POST"
-      ],
-      "UpstreamPathTemplate": "/api/ingredient-predict/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST"],
+      "UpstreamPathTemplate": "/api/ingredient-predict-v2/{everything}",
       "SwaggerKey": "user"
     }
   ]

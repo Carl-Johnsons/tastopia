@@ -11,7 +11,7 @@ const useIngredientPredictMutation = () => {
       const formData = new FormData();
       formData.append("file", file as unknown as Blob);
 
-      const url = "/api/ingredient-predict";
+      const url = "/api/ingredient-predict-v2";
       const { data } = await protectedAxiosInstance.request({
         url: url,
         method: "POST",
