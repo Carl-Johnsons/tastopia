@@ -61,7 +61,7 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
 
         if (tagCodes != null && tagCodes.Any() && !tagCodes.Contains("ALL"))
         {
-            var tagData = _context.Tags.Where(t => tagCodes.Contains(t.Code)).ToList();
+            var tagData = _context.Tags.Where(t => t.Status == TagStatus.Active && tagCodes.Any(tc => tc == t.Code)).ToList();
             var tagIds = tagData.Select(t => t.Id).ToList();
             var tagValues = tagData.Select(t => t.Value).ToList();
 
@@ -72,20 +72,20 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
                            .Select(g => g.Key)
                            .ToHashSet() ?? new HashSet<Guid>();
 
-            if (tagValues != null && tagValues.Count != 0)
-            {
-                recipesQuery = recipesQuery.Where(r =>
-                  recipeContainTagIds.Contains(r.Id) &&
-                  tagValues.Any(tag =>
-                    r.Title.ToLower().Contains(tag.En.ToLower()) ||
-                    r.Title.ToLower().Contains(tag.Vi.ToLower()) ||
-                    r.Description.ToLower().Contains(tag.En.ToLower()) ||
-                    r.Description.ToLower().Contains(tag.Vi.ToLower()) ||
-                    r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.En.ToLower())) ||
-                    r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.Vi.ToLower()))
-                  )
-                );
-            }
+            recipesQuery = recipesQuery.Where(r =>
+                recipeContainTagIds.Contains(r.Id) &&
+                tagValues.Any(tag =>
+                r.Title.ToLower().Contains(tag.En.ToLower()) ||
+                r.Title.ToLower().Contains(tag.Vi.ToLower()) ||
+                r.Description.ToLower().Contains(tag.En.ToLower()) ||
+                r.Description.ToLower().Contains(tag.Vi.ToLower()) ||
+                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.En.ToLower())) ||
+                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.Vi.ToLower()))
+                )
+            );
+            
+
+
         }
         if (!string.IsNullOrEmpty(keyword))
         {
