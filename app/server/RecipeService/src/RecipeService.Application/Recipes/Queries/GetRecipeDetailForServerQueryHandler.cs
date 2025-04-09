@@ -90,8 +90,7 @@ public class GetRecipeDetailForServerQueryHandler : IRequestHandler<GetRecipeDet
             AuthorAvtUrl = grpcResponse.AvatarUrl,
             AuthorDisplayName = grpcResponse.DisplayName,
             AuthorNumberOfFollower = grpcResponse.TotalFollower ?? 0,
-            similarRecipes = similarRecipes,
-            Tags = tagQuery.ToList()
+            similarRecipes = similarRecipes
         };
         return Result<RecipeDetailsResponse?>.Success(result);
     }

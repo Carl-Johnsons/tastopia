@@ -57,5 +57,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: "/en/",
     signIn: "/en/",
     signOut: "/en/"
-  }
+  },
+  cookies: {
+    sessionToken: {
+      name: `next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        // Set an expiration date (the cookie won’t clear when the browser closes)
+        maxAge: 30 * 24 * 60 * 60, // 30 days
+      },
+    },
+  },
 });

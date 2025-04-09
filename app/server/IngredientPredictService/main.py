@@ -12,6 +12,13 @@ import os
 import random
 import uvicorn
 import yaml
+import tensorflow as tf
+import numpy as np
+from open_clip import create_model_from_pretrained, get_tokenizer
+import torch
+import cv2
+import faiss
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 with open("log_config.yaml", "r") as f:
     log_config = yaml.safe_load(f.read())
@@ -20,8 +27,20 @@ logging.addLevelName(logging.INFO, "Information")
 logging.addLevelName(logging.WARNING, "Warning")
 
 # Load the YOLO model
-model = YOLO("./model/best_filtered.pt")
+# model = YOLO("./model/best_filtered.pt")
+convnext_model = tf.keras.models.load_model('model/convnext_224_f.model.keras')
 box_model = YOLO('./model/bestv13.pt')
+clip_model, preprocess = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-ViT-H-14')
+tokenizer = get_tokenizer('ViT-H-14')
+
+# Load CLIP features
+features = np.load('clip_feature/features_f.npy')
+features = features.reshape(features.shape[0], features.shape[2])
+features.shape
+filename_index = np.load('clip_feature/features_index_f.npy')
+# Faiss init
+index = faiss.IndexFlatL2(features.shape[1])
+index.add(features)
 
 envUtil = EnvUtility()
 envUtil.load_env()
@@ -29,13 +48,13 @@ envUtil.load_env()
 service_host = os.getenv("SERVICE_HOST")
 service_port = int(os.getenv("PORT"))
 
-mongo_client = pymongo.MongoClient(envUtil.get_mongodb_connection_string())
-print(mongo_client.list_database_names())
-recipe_db = mongo_client["RecipeDB"]
-tag_collection = recipe_db["Tag"]
+# mongo_client = pymongo.MongoClient(envUtil.get_mongodb_connection_string())
+# print(mongo_client.list_database_names())
+# recipe_db = mongo_client["RecipeDB"]
+# tag_collection = recipe_db["Tag"]
 
-for x in tag_collection.find():
-  print(x)
+# for x in tag_collection.find():
+#   print(x)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -83,6 +102,7 @@ async def lifespan(app: FastAPI):
             logging.error("Deregistration failed:", response.text)
 
 app = FastAPI(lifespan=lifespan, redirect_slashes=False)
+# app = FastAPI(redirect_slashes=False)
 
 names = dict()
 for i in open("name_edited.txt", encoding='utf-8').read().splitlines():
@@ -92,30 +112,92 @@ for i in open("name_edited.txt", encoding='utf-8').read().splitlines():
 async def health():
     return {"status": "ok"}
 
-@app.post("/api/ingredient-predict")
+def cal_mix_1(a, b):
+    scores = dict()
+    for i in a:
+        scores[i] = 0
+    for i, val in enumerate(a):
+        scores[val] += 1 / (i + 0.5)
+        # scores[val] += 1
+
+    for key in scores.keys():
+        scores[key] *= b[key]
+
+    ans = a[0]
+    score = scores[a[0]]
+    for key in scores.keys():
+        if scores[key] > score:
+            score = scores[key]
+            ans = key
+    
+    indexs = [i for i in scores.keys()]
+    probs = [scores[i] for i in scores.keys()]
+
+    sorted_pairs = sorted(zip(indexs, probs), key=lambda x: x[1], reverse=True)
+    indexs, probs = zip(*sorted_pairs)
+
+    return list(indexs), list(probs)
+
+def get_raw_convnext_predict(image):
+    image_size = (224, 224)
+    # image = Image.open('test_images/z6471002443892_1f49bc4e11465aebdcde6beee10b2a7d.jpg').convert("RGB")
+    image_np = np.array(image)
+    image_np = cv2.resize(image_np, image_size, interpolation=cv2.INTER_AREA)
+    image_nps = np.expand_dims(image_np, axis=0)
+    results = convnext_model.predict(image_nps)
+    return results.tolist()
+
+def chose_res_clip(a):
+    scores = dict()
+    for i in a:
+        scores[i] = 0
+    for i, val in enumerate(a):
+        scores[val] += 1 / (i + 1)
+    ans = a[0]
+    score = scores[a[0]]
+    for key in scores.keys():
+        if scores[key] > score:
+            score = scores[key]
+            ans = key
+    
+    return ans
+
+def get_raw_clip_predict(image, no_sample=12):
+    image = preprocess(image).unsqueeze(0)
+    image_features = clip_model.encode_image(image).cpu().detach().numpy()
+
+    clip_pred_raw = []
+    D, I = index.search(np.array(image_features), no_sample)
+    pred_class = [int(filename_index[i].split('/')[1]) - 1 for i in I[0]]
+    clip_pred_raw.append(pred_class)
+    return clip_pred_raw
+
+@app.post("/api/ingredient-predict-v2")
 async def predict(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
+    image = image.convert("RGB")
     # Apply exif metadata if exist
     image = ImageOps.exif_transpose(image)
 
-    results = model(image, verbose=False)
+    clip_pred_raw = get_raw_clip_predict(image, 50)
+    convnext_pred_raw = get_raw_convnext_predict(image)
+    indexs, probs = cal_mix_1(clip_pred_raw[0], convnext_pred_raw[0])
 
     classifications = []
-    for result in results:
-        for cls, conf in zip(result.probs.top5, result.probs.top5conf):
-            classifications.append({
-                "class": result.names[cls],
-                "confidence": float(conf),
-                "name": {
-                    'en': names[result.names[cls]][0],
-                    'vi': names[result.names[cls]][1]
-                },
-                "code": '_'.join(names[result.names[cls]][0].split(' ')).upper(),
-            })
+    for class_index, conf in zip(indexs[:5], probs[:5]):
+        class_label = str(class_index + 1).zfill(3)
+        classifications.append({
+            "class": class_label,
+            "confidence": float(conf),
+            "name": {
+                'en': names[class_label][0],
+                'vi': names[class_label][1]
+            },
+            "code": '_'.join(names[class_label][0].split(' ')).upper(),
+        })
 
     results = box_model(image, verbose=False)
     return {"classifications": classifications, "boxes": results[0].boxes.xyxyn.tolist()}
-
 
 @app.get("/")
 async def root():
