@@ -148,7 +148,7 @@ export const UserCard = ({
 };
 
 export const TagCard = ({ tag }: { tag: ITagLogResponse }) => {
-  const { id, value, code, category, status, imageUrl } = tag;
+  const { value, code, category, status, imageUrl } = tag;
 
   return (
     <div className='mt-4 rounded-lg border border-gray-200 p-4'>
@@ -164,9 +164,7 @@ export const TagCard = ({ tag }: { tag: ITagLogResponse }) => {
         </div>
 
         <div className='flex flex-col'>
-          <Link href={`/tags/${id}`}>
-            <div className='text-black_white text-lg font-medium'>#{value}</div>
-          </Link>
+          <div className='text-black_white text-lg font-medium'>#{value}</div>
 
           <div className='flex items-center gap-2 text-sm text-gray-500'>
             <span>{category}</span>
