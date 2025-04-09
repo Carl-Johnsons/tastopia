@@ -1,0 +1,40 @@
+{
+  "otp": {
+    "title": "Verivication Code",
+    "description": "Please enter the verification code sent to",
+    "dontReceiveCode": "I don't receive a code!",
+    "promptResend": "Please resend",
+    "pleaseWaitFor": "Please wait for",
+    "confirm": "Confirm",
+    "form": {
+      "errors": {
+        "length": "Please complete the OTP"
+      }
+    }
+  },
+  "update": {
+    "title": "Update Information",
+    "description": "Enter your new",
+    "email": "email",
+    "phone": "phone number",
+    "update": "Update",
+    "pleaseEnter": "Please enter your",
+    "form": {
+      "errors": {
+        "email": {
+          "required": "Please enter your email",
+          "invalid": "Please enter a valid email"
+        },
+        "phone": {
+          "required": "Please enter your phone number",
+          "invalid": "Please enter a valid phone number"
+        }
+      }
+    }
+  },
+  "success": {
+    "title": "Success",
+    "description": "Your information has been updated successfully",
+    "redirect": "Redirecting to the main page after"
+  }
+}

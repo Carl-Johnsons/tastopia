@@ -43,7 +43,7 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
             key={item.value}
           >
             <View
-              className={`flex-center flex-row gap-2 rounded-full border-2 border-primary px-1 py-1 ${isSelected ? "bg-primary" : "bg-white_black"}`}
+              className={`flex-center flex-row gap-2 rounded-full border-2 border-primary px-2 py-1 pr-4 ${isSelected ? "bg-primary" : "bg-white_black"}`}
             >
               <View className={`rounded-full p-[0.5px] ${isSelected ? "bg-white" : ""}`}>
                 <Image

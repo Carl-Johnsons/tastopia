@@ -27,3 +27,4 @@ gen_cert_for_service upload upload-api
 gen_cert_for_service tracking tracking-api
 gen_cert_for_service ingredient-predict ingredient-predict-api
 gen_cert_for_service signalr signalr-hub
+gen_cert_for_service recipe-worker recipe-worker

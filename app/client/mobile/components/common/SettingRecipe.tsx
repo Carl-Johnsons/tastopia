@@ -38,6 +38,7 @@ import i18n from "@/i18n/i18next";
 import { REPORT_TYPE } from "@/constants/settings";
 import Loading from "./Loading";
 import { RecipeResponse } from "@/types/recipe";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 type Props = {
   id: string;
@@ -58,6 +59,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
   const { c } = useColorizer();
   const { black, white } = colors;
   const { t } = useTranslation("component");
+  const { handleError } = useErrorHandler();
   const { refetch } = useRecipesFeed("All");
   const [currentSetting, setCurrentSetting] = useState<SettingState>(Settings.INITIAL);
   const isCreatedByCurrentUser = useIsOwner(props.authorId);
@@ -109,9 +111,7 @@ const SettingRecipe = forwardRef<BottomSheet, Props>((props, ref) => {
                     refetch();
                     closeModal();
                   },
-                  onError: error => {
-                    Alert.alert(t("settingRecipe.deleteRecipeFail"));
-                  }
+                  onError: error => handleError(error)
                 }
               );
             }
@@ -254,6 +254,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
   const { c } = useColorizer();
   const { black, white, primary, gray } = colors;
   const { t } = useTranslation("report");
+  const { handleError } = useErrorHandler();
   const currentLanguage = i18n.languages[0];
   const [report, setReport] = useState<Report>({
     reasonCodes: new Set(),
@@ -292,9 +293,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
             Alert.alert(t("reportSuccessfully"));
             closeModal();
           },
-          onError: async error => {
-            Alert.alert(t("reportFail"));
-          }
+          onError: error => handleError(error),
         }
       );
     }

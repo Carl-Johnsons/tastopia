@@ -14,37 +14,33 @@ import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { DialogProps } from "@radix-ui/react-dialog";
 import { Edit, Plus, X } from "lucide-react";
 import { useTranslations } from "next-intl";
-import AdminForm from "./Form";
-import { useAdminForm } from "@/hooks/form";
+import AdminForm, { AdminFormRef } from "./Form";
 import { closeForm, saveAdminData, useSelectAdmin } from "@/slices/admin.slice";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { useAppDispatch } from "@/store/hooks";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { LoadingIcon } from "@/components/shared/icons";
-import Loader from "@/components/ui/Loader";
 
 type Props = DialogProps & {
   buttonClassName?: string;
   /** Callback that is triggered when the Dialog button is clicked. */
   onClick?: () => void;
+  hideTriggerButton?: boolean;
 };
 
-const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
-  const { formType, targetId, isFormOpen, isFormLoading } = useSelectAdmin();
+const AdminDialog = ({
+  buttonClassName,
+  onClick,
+  hideTriggerButton,
+  ...props
+}: Props) => {
+  const { formType, isFormOpen } = useSelectAdmin();
+  const ref = useRef<AdminFormRef>(null);
   const { height } = useWindowDimensions();
-  const { form, submitForm, isSubmitting } = useAdminForm({
-    formType,
-    targetId
-  });
   const dispatch = useAppDispatch();
   const tTooltip = useTranslations("administerAdmins.tooltip");
   const tForm = useTranslations("administerAdmins.form");
   const PADDING_Y = 50;
-  const isSubmitDisabled = useMemo(() => isSubmitting, [isSubmitting]);
-
   const isCreate = useMemo(() => formType === "create", [formType]);
-
   const onClose = useCallback(() => {
     dispatch(closeForm());
   }, [dispatch]);
@@ -56,20 +52,25 @@ const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
     [dispatch]
   );
 
+  const isSubmitting = useMemo(() => ref.current?.isSubmitting ?? false, [ref]);
+  const isSubmitDisabled = useMemo(() => ref.current?.isSubmitDisabled ?? false, [ref]);
+
   return (
     <Dialog
       {...props}
       open={isFormOpen}
       onOpenChange={setOpen}
     >
-      <DialogTrigger asChild>
-        <InteractiveButton
-          onClick={onClick}
-          title={tTooltip("create")}
-          icon={<Plus className='text-white_black' />}
-          className={buttonClassName}
-        />
-      </DialogTrigger>
+      {!hideTriggerButton && (
+        <DialogTrigger asChild>
+          <InteractiveButton
+            onClick={onClick}
+            title={tTooltip("create")}
+            icon={<Plus className='text-white_black' />}
+            className={buttonClassName}
+          />
+        </DialogTrigger>
+      )}
       <DialogContent
         className='bg-white_black200 overflow-y-scroll sm:max-w-[525px] [&>button]:hidden'
         style={{ maxHeight: height - 2 * PADDING_Y }}
@@ -90,13 +91,7 @@ const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
             </DialogClose>
           </div>
         </DialogHeader>
-        {isFormLoading ? (
-          <div className='h-[75vh] w-full pt-20'>
-            <Loader />
-          </div>
-        ) : (
-          <AdminForm form={form} />
-        )}
+        <AdminForm ref={ref} />
         <DialogFooter>
           <InteractiveButton
             title={isCreate ? tTooltip("create") : tTooltip("update")}
@@ -107,7 +102,7 @@ const AdminDialog = ({ buttonClassName, onClick, ...props }: Props) => {
                 <Edit className='text-white_black' />
               )
             }
-            onClick={submitForm}
+            onClick={() => ref.current?.submitForm()}
             isLoading={isSubmitting}
             disabled={isSubmitDisabled}
             className='text-white_black rounded-full bg-primary hover:bg-secondary'

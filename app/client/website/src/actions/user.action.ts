@@ -76,20 +76,6 @@ export const useUpdateSettings = async (data: UpdateSettingParams) => {
   }
 };
 
-export type GetUserDetailsResponse = UserState;
-
-export const getCurrentUserDetails = async () => {
-  const url = "/api/user/get-current-user-details";
-
-  try {
-    const { data } = await protectedAxiosInstance.get<IGetUserDetailsResponse>(url);
-    return data as GetUserDetailsResponse;
-  } catch (error) {
-    withErrorProcessor(error);
-    throw error;
-  }
-};
-
 export async function getAdminUsers(
   skip = 0,
   sortBy = "",
@@ -98,7 +84,7 @@ export async function getAdminUsers(
   limit = 6
 ) {
   try {
-    const url = `/api/admin/user/get-users?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&keyword=${encodeURIComponent(keyword)}`;
+    const url = `/api/admin/user/get-users?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&keyword=${encodeURIComponent(keyword.trim())}`;
 
     const { data } = await protectedAxiosInstance.get(url);
 
@@ -146,7 +132,7 @@ export async function getUserReports(
   language = "en"
 ) {
   try {
-    const url = `/api/admin/user/get-user-reports?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&language=${language}&keyword=${encodeURIComponent(keyword)}`;
+    const url = `/api/admin/user/get-user-reports?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&language=${language}&keyword=${encodeURIComponent(keyword.trim())}`;
 
     const { data } = await protectedAxiosInstance.get(url);
 

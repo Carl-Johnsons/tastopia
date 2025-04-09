@@ -8,12 +8,15 @@ import {
   restoreAdmin
 } from "@/actions/admin.action";
 import { IPaginatedAdminActivityLogListResponse } from "@/generated/interfaces/tracking.interface";
+import { IAdminDetailResponse } from "@/generated/interfaces/user.interface";
 import { PaginatedQueryParams } from "@/types/common";
 import {
   InfiniteData,
+  QueryKey,
   useInfiniteQuery,
   useMutation,
-  useQuery
+  useQuery,
+  UseQueryOptions
 } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
@@ -39,10 +42,28 @@ export const useGetAdmins = ({
   });
 };
 
-export const useGetAdminById = (id: string) => {
+export const useGetAdminById = (id: string, self?: boolean) => {
   return useQuery({
-    queryKey: ["admin", id],
-    queryFn: () => getAdminById(id)
+    queryKey: self ? ["currentAdmin"] : ["admin", id],
+    queryFn: () => (self ? getCurrentAdminDetail() : getAdminById(id))
+  });
+};
+
+export const useGetCurrentAdminDetail = (
+  queryOptions: Omit<
+    UseQueryOptions<
+      IAdminDetailResponse | null,
+      unknown,
+      IAdminDetailResponse | null,
+      QueryKey
+    >,
+    "queryKey" | "queryFn" | "initialData"
+  > = {}
+) => {
+  return useQuery({
+    ...queryOptions,
+    queryKey: ["currentAdmin"],
+    queryFn: () => getCurrentAdminDetail()
   });
 };
 

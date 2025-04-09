@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import { CLIENT_ID, SCOPE } from "@/constants/api";
 import { stringify } from "@/utils/debug";
 import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
+import { LoginResponse } from "@/types/api/auth";
 
 export const refreshAccessToken = async (refreshToken: string) => {
   const body = new URLSearchParams({
@@ -20,13 +21,11 @@ export const refreshAccessToken = async (refreshToken: string) => {
 
     return data;
   } catch (error) {
-    console.debug("refreshAccessToken", stringify(error));
+    console.log("Error refreshing access token", error);
 
     if (error instanceof AxiosError) {
       const data = error.response?.data as IErrorResponseDTO;
-      throw new Error(data.message);
+      console.log(data.message);
     }
-
-    throw new Error("An error has occurred.");
   }
 };

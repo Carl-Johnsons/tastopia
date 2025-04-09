@@ -24,7 +24,7 @@ public class ApplicationAccount : IdentityUser
     public DateTime? ForgotPasswordCreated { get; set; }
     public DateTime? ForgotPasswordExpiry { get; set; }
     public int RequestOTPCount { get; set; } = 0;
-
+    public bool IsFirstTimeLogin { get; set; }
     [Required]
     public bool IsActive { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

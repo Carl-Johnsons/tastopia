@@ -1,8 +1,8 @@
 import { protectedAxiosInstance } from "@/constants/host";
 import { VoteType } from "@/constants/recipe";
 import { IAdvancePaginatedMetadata } from "@/generated/interfaces/common.interface";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { selectAccessToken } from "@/slices/auth.slice";
-import { AxiosError } from "axios";
 import { useInfiniteQuery } from "react-query";
 
 export interface IPaginatedRecipeViewingHistoryValue {
@@ -45,33 +45,24 @@ export interface IUseGetRecipeViewingHistoryParams {
 
 export const useGetRecipeViewingHistory = () => {
   const accessToken = selectAccessToken();
+  const { handleError } = useErrorHandler();
 
   return useInfiniteQuery<IPaginatedRecipeViewingHistoryValue, Error>({
     queryKey: "getRecipeViewingHistory",
     enabled: !!accessToken,
     queryFn: async ({ pageParam = 0 }) => {
-      try {
-        const { data } =
-          await protectedAxiosInstance.get<IPaginatedRecipeViewingHistoryResponse>(
-            "/api/tracking/get-user-view-recipe-detail-history",
-            {
-              params: {
-                skip: pageParam
-              }
+      const { data } =
+        await protectedAxiosInstance.get<IPaginatedRecipeViewingHistoryResponse>(
+          "/api/tracking/get-user-view-recipe-detail-history",
+          {
+            params: {
+              skip: pageParam
             }
-          );
-        return data.value;
-      } catch (error) {
-        const DEFAULT_ERROR_MESSAGE = "An error has occurred.";
-
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message || DEFAULT_ERROR_MESSAGE);
-        }
-
-        throw new Error(DEFAULT_ERROR_MESSAGE);
-      }
+          }
+        );
+      return data.value;
     },
+    onError: error => handleError(error),
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage.metadata.hasNextPage) {
         return undefined;
@@ -84,32 +75,23 @@ export const useGetRecipeViewingHistory = () => {
 
 export const useSearchRecipeViewingHistory = (keyword?: string) => {
   const accessToken = selectAccessToken();
+  const { handleError } = useErrorHandler();
 
   return useInfiniteQuery<IPaginatedRecipeViewingHistoryValue, Error>({
     queryKey: ["searchRecipeViewingHistory", keyword],
     enabled: !!accessToken && !!keyword && keyword?.length > 0,
     queryFn: async ({ pageParam = 0 }) => {
-      try {
-        const { data } =
-          await protectedAxiosInstance.post<IPaginatedRecipeViewingHistoryResponse>(
-            "/api/tracking/search-user-view-recipe-detail-history",
-            {
-              skip: pageParam,
-              keyword
-            }
-          );
-        return data.value;
-      } catch (error) {
-        const DEFAULT_ERROR_MESSAGE = "An error has occurred.";
-
-        if (error instanceof AxiosError) {
-          const data = error.response?.data as IErrorResponseDTO;
-          throw new Error(data.message || DEFAULT_ERROR_MESSAGE);
-        }
-
-        throw new Error(DEFAULT_ERROR_MESSAGE);
-      }
+      const { data } =
+        await protectedAxiosInstance.post<IPaginatedRecipeViewingHistoryResponse>(
+          "/api/tracking/search-user-view-recipe-detail-history",
+          {
+            skip: pageParam,
+            keyword
+          }
+        );
+      return data.value;
     },
+    onError: error => handleError(error),
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage.metadata.hasNextPage) {
         return undefined;

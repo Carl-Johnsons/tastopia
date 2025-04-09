@@ -31,6 +31,7 @@ import i18n from "@/i18n/i18next";
 import Loading from "./Loading";
 import { useReportUser, useReportUserReason } from "@/api/user";
 import { RecipeResponse } from "@/types/recipe";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 type Props = {
   id: string;
@@ -176,6 +177,7 @@ const ReportSetting = ({ accountId, changeSetting, closeModal }: ReportSettingPr
   const { c } = useColorizer();
   const { black, white, primary, gray } = colors;
   const { t } = useTranslation("report");
+  const { handleError } = useErrorHandler();
   const currentLanguage = i18n.languages[0];
   const [report, setReport] = useState<Report>({
     reasonCodes: new Set(),
@@ -211,9 +213,7 @@ const ReportSetting = ({ accountId, changeSetting, closeModal }: ReportSettingPr
             Alert.alert(t("reportSuccessfully"));
             closeModal();
           },
-          onError: async error => {
-            Alert.alert(t("reportFail"));
-          }
+          onError: async error => handleError(error)
         }
       );
     }

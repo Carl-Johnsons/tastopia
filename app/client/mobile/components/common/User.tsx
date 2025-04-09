@@ -6,6 +6,7 @@ import { useFollowUnfollowUser } from "@/api/user";
 import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 import { selectIsActiveUser } from "@/slices/user.slice";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 type UserProps = {
   id: string;
@@ -29,6 +30,7 @@ const User = ({
   handleSelectSearchResult
 }: UserProps) => {
   const { t } = useTranslation("search");
+  const { handleError } = useErrorHandler();
   const isActiveUser = selectIsActiveUser();
 
   const [followed, setIsFollowed] = useState<boolean>(isFollowing);
@@ -43,10 +45,7 @@ const User = ({
             invalidateSearch && invalidateSearch();
             setIsFollowed(data.isFollowing);
           },
-          onError: async error => {
-            console.log("Follow unfollow error", JSON.stringify(error, null, 2));
-            Alert.alert(t("followUnfollowError"));
-          }
+          onError: async error => handleError(error)
         }
       );
     }

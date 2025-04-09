@@ -1,3 +1,4 @@
+import { AddIdentifierParams, ModifyIdentifierParams } from "@/api/user";
 import { useAppSelector } from "@/store/hooks";
 import { createSlice } from "@reduxjs/toolkit";
 import { PURGE } from "redux-persist";
@@ -14,6 +15,10 @@ export interface AuthState {
   role: ROLE | null;
   isVerifyingAccount: boolean;
   verifyIdentifier: string | null;
+  modifyIdentifierData: ModifyIdentifierParams | null;
+  addIdentifierData: AddIdentifierParams | null;
+  resetModifyIdentifierForm: boolean;
+  resetAddIdentifierForm: boolean;
 }
 
 export type SaveAuthDataAction = {
@@ -26,7 +31,11 @@ const initialState: AuthState = {
   refreshToken: null,
   role: null,
   isVerifyingAccount: false,
-  verifyIdentifier: null
+  verifyIdentifier: null,
+  modifyIdentifierData: null,
+  addIdentifierData: null,
+  resetModifyIdentifierForm: false,
+  resetAddIdentifierForm: false
 };
 
 export const selectAccessToken = () => useAppSelector(state => state.auth.accessToken);
@@ -36,6 +45,11 @@ export const selectIsVerifyingAccount = () =>
   useAppSelector(state => state.auth.isVerifyingAccount);
 export const selectVerifyIdentifier = () =>
   useAppSelector(state => state.auth.verifyIdentifier);
+export const selectModifyIdentifierData = () =>
+  useAppSelector(state => state.auth.modifyIdentifierData);
+export const selectAddIdentifierData = () => useAppSelector(state => state.auth.addIdentifierData);
+export const selectResetModifyIdentifierForm = () =>
+  useAppSelector(state => state.auth.resetModifyIdentifierForm);
 
 export const AuthSlice = createSlice({
   name: "auth",
@@ -43,7 +57,7 @@ export const AuthSlice = createSlice({
   reducers: {
     saveAuthData: (state, action: SaveAuthDataAction) => {
       Object.assign(state, action.payload);
-    },
+    }
   },
   extraReducers: builder => {
     builder.addCase(PURGE, () => {

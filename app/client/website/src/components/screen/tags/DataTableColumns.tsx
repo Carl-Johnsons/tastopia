@@ -7,7 +7,7 @@ import Image from "@/components/shared/common/Image";
 import { useTags } from "./TagsContext";
 import { useTranslations } from "next-intl";
 
-export const tagsColumns = (t: any) => [
+export const tagsColumns = (t: any, currentLanguage: string) => [
   {
     name: t("columns.code"),
     selector: (tag: Tag) => tag?.code,
@@ -15,7 +15,7 @@ export const tagsColumns = (t: any) => [
   },
   {
     name: t("columns.value"),
-    selector: (tag: Tag) => tag?.value,
+    selector: (tag: Tag) => (currentLanguage === "vi" ? tag.vi : tag.en),
     sortable: true,
     hide: 1460
   },

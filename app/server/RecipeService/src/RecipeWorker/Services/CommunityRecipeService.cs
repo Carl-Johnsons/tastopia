@@ -54,6 +54,7 @@ public class CommunityRecipeService : IRecipeService
                 _logger.LogError("Cannot get text abusive percent.");
                 throw new Exception("Cannot get text abusive percent.");
             }
+            result = result.Replace("%", "");
             var percent = float.Parse(result);
             _logger.LogInformation("==================================================================");
             _logger.LogInformation("Offensive percent: "+ result);
@@ -93,21 +94,27 @@ public class CommunityRecipeService : IRecipeService
             _logger.LogError("Tags not found");
             throw new Exception("Tags not found");
         }
-        var tags = new Dictionary<string, GrpcTagDTO>();
+        var tagEns = new Dictionary<string, GrpcTagDTO>();
+        var tagVis = new Dictionary<string, GrpcTagDTO>();
         var tagRequesteds = new Dictionary<string, GrpcTagDTO>();
         foreach (var t in response.Tags)
         {
-            if (t.Status.ToString() == "Active") tags[t.Value.ToLower()] = t;
-            if (t.Status.ToString() != "Requested") tagRequesteds[t.Value.ToLower()] = t;
+            if (t.Status.ToString() == "Active") tagEns[t.En.ToLower()] = t;
+            if (t.Status.ToString() == "Active") tagVis[t.Vi.ToLower()] = t;
+            if (t.Status.ToString() != "Requested") tagRequesteds[t.En.ToLower()] = t;
         }
         List<string> additionTagValues = new List<string>();
 
         foreach (var value in tagValues)
         {
             var v = value.ToLower();
-            if (tags.ContainsKey(v))
+            if (tagEns.ContainsKey(v))
             {
-                listRecipeTagCodes.Add(tags[v].Code);
+                listRecipeTagCodes.Add(tagEns[v].Code);
+            }
+            else if (tagVis.ContainsKey(v))
+            {
+                listRecipeTagCodes.Add(tagVis[v].Code);
             }
             else if (tagRequesteds.ContainsKey(v))
             {

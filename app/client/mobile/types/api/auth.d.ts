@@ -1,3 +1,7 @@
+import { IDENTIFIER_TYPE } from "@/api/user";
+import { getVerifyIdentifierUpdateSchema } from "@/lib/validation/auth";
+import { InferType } from "yup";
+
 type LoginResponse = {
   access_token: string;
   refresh_token: string;
@@ -16,4 +20,3 @@ type VerifyResponse = VerifyResponseSuccess | VerifyResponseError;
 
 type ResendVerifyCodeResponseSuccess = 0;
 type ResendVerifyCode = ResendVerifyCodeResponseSuccess | ErrorResponseDTO;
-

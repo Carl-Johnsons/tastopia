@@ -10,6 +10,9 @@ using static UserProto.GrpcUser;
 using UserProto;
 using AutoMapper;
 using Newtonsoft.Json;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace RecipeService.Application.Recipes.Queries;
 
 public class SearchRecipesQuery : IRequest<Result<PaginatedSearchRecipeListResponse?>>
@@ -58,26 +61,32 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
 
         if (tagCodes != null && tagCodes.Any() && !tagCodes.Contains("ALL"))
         {
-            var tagData = _context.Tags.Where(t => tagCodes.Contains(t.Code)).Select(t => new { t.Id, t.Value }).ToList();
+            var tagData = _context.Tags.Where(t => t.Status == TagStatus.Active && tagCodes.Any(tc => tc == t.Code)).ToList();
             var tagIds = tagData.Select(t => t.Id).ToList();
             var tagValues = tagData.Select(t => t.Value).ToList();
 
-            var recipeContainTagIds = _context.RecipeTags
-               .Where(rt => tagIds.Contains(rt.TagId))
-               .Select(rt => rt.RecipeId)
-               .ToHashSet() ?? new HashSet<Guid>();
+            var recipeContainTagIds = _context.GetDatabase().GetCollection<RecipeTag>(nameof(RecipeTag)).AsQueryable().AsQueryable()
+                           .Where(rt => tagIds.Contains(rt.TagId))
+                           .GroupBy(rt => rt.RecipeId)
+                           .Where(g => g.Select(rt => rt.TagId).Distinct().Count() == tagIds.Count())
+                           .Select(g => g.Key)
+                           .ToHashSet() ?? new HashSet<Guid>();
 
-            if(tagValues != null && tagValues.Count != 0)
-            {
-                recipesQuery = recipesQuery.Where(r => tagValues.Any(tag =>
-                  r.Title.ToLower().Contains(tag.ToLower()) ||
-                  r.Description.ToLower().Contains(tag.ToLower()) ||
-                  r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.ToLower())) ||
-                  recipeContainTagIds.Contains(r.Id)
-            ));
-            }
+            recipesQuery = recipesQuery.Where(r =>
+                recipeContainTagIds.Contains(r.Id) &&
+                tagValues.Any(tag =>
+                r.Title.ToLower().Contains(tag.En.ToLower()) ||
+                r.Title.ToLower().Contains(tag.Vi.ToLower()) ||
+                r.Description.ToLower().Contains(tag.En.ToLower()) ||
+                r.Description.ToLower().Contains(tag.Vi.ToLower()) ||
+                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.En.ToLower())) ||
+                r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.Vi.ToLower()))
+                )
+            );
+            
+
+
         }
-
         if (!string.IsNullOrEmpty(keyword))
         {
             var searchUserResponse = await _grpcUserClient.SearchUserAsync(new GrpcSearchUserRequest

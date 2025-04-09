@@ -4,14 +4,20 @@ services:
     container_name: nginx
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl/certs/server-cert.crt:/etc/ssl/certs/server-cert.crt
+      - ./ssl/certs/chain-server-cert.crt:/etc/ssl/certs/server-cert.crt
       - ./ssl/private-key/server.key:/etc/ssl/private/server.key
+      - ./ssl/certs/self-root-ca.crt:/etc/ssl/certs/root-ca.crt
     ports:
       - "80:80"
       - "443:443"
+      - "7000:7000"
+      - "7001:7001"
     depends_on:
       - identity-api
       - api-gateway
+    networks:
+      - back-end
+      - front-end
 
   postgres:
     image: postgres:17.0-alpine
@@ -106,21 +112,17 @@ services:
       - back-end
     extra_hosts:
       - "host.docker.internal:host-gateway" # For using host.docker.internal in linux
-
-  redis:
-    image: redis:8.0-M02-alpine
-    container_name: redis
-    networks:
-      - back-end
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8500/v1/status/leader || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   api-gateway:
     build:
       context: .
       dockerfile: ./dockerfiles/api-gateway/Dockerfile.${DOCKERFILE_API_GATEWAY_ENV:-prod}
     container_name: apigateway
-    ports:
-      - "${API_GATEWAY_PORT}:80"
-      - "${API_GATEWAY_HTTPS_PORT}:443"
     networks:
       - back-end
     env_file:
@@ -143,11 +145,12 @@ services:
     container_name: identity-service
     volumes:
       - ./data/nuget:/src/nuget
-    ports:
-      - "${IDENTITY_SERVICE_PORT}:80"
-      - "${IDENTITY_SERVICE_HTTPS_PORT}:443"
     depends_on:
+      signalr:
+        condition: service_healthy
       postgres:
+        condition: service_healthy
+      consul:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -172,7 +175,11 @@ services:
     volumes:
       - ./data/nuget:/src/nuget
     depends_on:
-      postgres:
+      signalr:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      consul:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -199,6 +206,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      consul:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -222,7 +231,11 @@ services:
     volumes:
       - ./data/nuget:/src/nuget
     depends_on:
-      postgres:
+      signalr:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      consul:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -247,6 +260,8 @@ services:
     volumes:
       - ./data/nuget:/src/nuget
     depends_on:
+      consul:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -270,6 +285,10 @@ services:
     volumes:
       - ./data/nuget:/src/nuget
     depends_on:
+      mongo:
+        condition: service_healthy
+      consul:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
@@ -285,11 +304,90 @@ services:
           ignore:
             - Contract/
 
+  # Python service 
+  ingredient-predict-api:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/ingredient-predict-api/Dockerfile.prod
+    container_name: ingredient-predict-service
+    depends_on:
+      consul:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/IngredientPredictService/.env.production
+
+  # Real-time communication 
+  signalr:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/signalr/Dockerfile.prod
+    container_name: signalr-service
+    volumes:
+      - ./data/nuget:/src/nuget
+    depends_on:
+      consul:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/SignalRService/.env.production
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  # Website dashboard
+  website:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/website/Dockerfile.prod
+    container_name: website-dashboard
+    networks:
+      - front-end
+    env_file:
+      - .env.production
+      - ./app/client/website/.env.production
+
+  # Worker services
   email-worker:
     build:
       context: .
-      dockerfile: ./dockerfiles/email-worker/Dockerfile
+      dockerfile: ./dockerfiles/email-worker/Dockerfile.prod
     container_name: email-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/NotificationService/.env.production
+
+  sms-worker:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/sms-worker/Dockerfile.prod
+    container_name: sms-worker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - back-end
+    env_file:
+      - .env.production
+      - ./app/server/NotificationService/.env.production
+
+  push-notification-worker:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/push-notification-worker/Dockerfile.prod
+    container_name: push-notification-worker
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -302,7 +400,7 @@ services:
   recipe-worker:
     build:
       context: .
-      dockerfile: ./dockerfiles/recipe-worker/Dockerfile
+      dockerfile: ./dockerfiles/recipe-worker/Dockerfile.prod
     container_name: recipe-worker
     depends_on:
       rabbitmq:

@@ -1,0 +1,34 @@
+#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+
+COPY ["./app/server/RecipeService/src/RecipeWorker/RecipeWorker.csproj", "RecipeWorker/"]
+COPY ["./app/server/Contract/Contract/Published", "Contract/"]
+
+# Building the services
+WORKDIR "/src/RecipeWorker"
+RUN dotnet restore --packages "../nuget" --verbosity normal
+COPY ["./app/server/RecipeService/src/RecipeWorker","/src/RecipeWorker"]
+RUN dotnet build --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/build  --verbosity normal
+
+FROM build AS publish
+# Have to add work dir, because dotnet publish will scan entire fs, make the docker hang with NAT network
+WORKDIR "/src/RecipeWorker"
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish --packages "../nuget" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+
+COPY ./ssl/certs/self-root-ca.crt /usr/local/share/ca-certificates/ca.crt
+RUN update-ca-certificates
+
+ENTRYPOINT ["dotnet", "RecipeWorker.dll"]

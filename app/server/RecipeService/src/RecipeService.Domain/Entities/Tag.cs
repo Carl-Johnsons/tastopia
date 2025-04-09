@@ -12,7 +12,7 @@ namespace RecipeService.Domain.Entities;
 public class Tag : BaseMongoDBAuditableEntity
 {
     [Required]
-    public string Value { get; set; } = null!;
+    public TagValue Value { get; set; } = null!;
 
     [Required]
     public string Code { get; set; } = null!;
@@ -32,4 +32,9 @@ public class Tag : BaseMongoDBAuditableEntity
 
     public virtual List<RecipeTag> RecipeTags { get; set; } = new();
 
+}
+public class TagValue
+{
+    public string En { get; set; } = null!;
+    public string Vi { get; set; } = null!;
 }

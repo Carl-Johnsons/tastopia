@@ -17,10 +17,10 @@ import { getIdentifierType } from "@/utils/checker";
 import { saveUserData } from "@/slices/user.slice";
 import { saveSettingData } from "@/slices/setting.slice";
 import { useState, useEffect } from "react";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 
 const Verify = () => {
   const isAndroid = Platform.OS === "android";
-  const dispatch = useAppDispatch();
   const identifier = selectVerifyIdentifier() as string;
   const type = getIdentifierType(identifier) as IDENTIFIER_TYPE;
   const [countdown, setCountdown] = useState(0);
@@ -28,8 +28,12 @@ const Verify = () => {
   const { mutateAsync: verify, isLoading: isVerifyLoading } = useVerify();
   const { mutateAsync: resendVerifyCode, isLoading: isResendVerifyCodeLoading } =
     useResendVerifyCode();
+
   const getUserDetails = useGetUserDetails();
   const getUserSettings = useGetUserSettings();
+
+  const dispatch = useAppDispatch();
+  const { handleError } = useErrorHandler();
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
@@ -73,10 +77,7 @@ const Verify = () => {
         const route = "/(protected)";
         router.navigate(route);
       },
-      onError: error => {
-        console.log("Verify error", JSON.stringify(error, null, 2));
-        Alert.alert("Error", error.message);
-      }
+      onError: error => handleError(error)
     });
   };
 
@@ -90,9 +91,7 @@ const Verify = () => {
           Alert.alert("Success", "New OTP is sent.");
           setCountdown(30);
         },
-        onError: () => {
-          Alert.alert("Error", "Resend verification code failed.");
-        }
+        onError: error => handleError(error)
       }
     );
   };

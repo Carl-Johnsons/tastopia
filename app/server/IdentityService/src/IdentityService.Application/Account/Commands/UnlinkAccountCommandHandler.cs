@@ -1,6 +1,5 @@
 ﻿using Contract.Constants;
 using IdentityService.Domain.Interfaces;
-using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,11 +8,10 @@ namespace IdentityService.Application.Account.Commands;
 public record UnlinkAccountCommand : IRequest<Result>
 {
     public Guid Id { get; set; }
-    public string Identifier { get; set; } = null!;
     public AccountMethod Method { get; set; }
 }
 
-public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, Result>
+public class UnlinkAccountCommandHandler : IRequestHandler<UnlinkAccountCommand, Result>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
     private readonly IApplicationDbContext _context;
@@ -25,7 +23,7 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
         _context = context;
     }
 
-    public async Task<Result> Handle(LinkAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UnlinkAccountCommand request, CancellationToken cancellationToken)
     {
         switch (request.Method)
         {
@@ -38,7 +36,7 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
         }
     }
 
-    public async Task<Result> UnlinkEmail(LinkAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Result> UnlinkEmail(UnlinkAccountCommand request, CancellationToken cancellationToken)
     {
         var account = await _userManager.Users.SingleOrDefaultAsync(a => a.Id == request.Id.ToString());
         if (account == null)
@@ -46,14 +44,9 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
             return Result.Failure(AccountError.NotFound);
         }
 
-        if (!account.EmailConfirmed)
+        if (account.Email == null || account.PhoneNumber == null)
         {
-            return Result.Failure(AccountError.EmailNotConfirmed);
-        }
-
-        if (!account.PhoneNumberConfirmed)
-        {
-            return Result.Failure(AccountError.PhoneNotConfirmed);
+            return Result.Failure(AccountError.OnlyExistOneIdentifier);
         }
 
         account.EmailConfirmed = false;
@@ -66,7 +59,7 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
         return Result.Success();
     }
 
-    public async Task<Result> UnlinkPhone(LinkAccountCommand request, CancellationToken cancellationToken)
+    public async Task<Result> UnlinkPhone(UnlinkAccountCommand request, CancellationToken cancellationToken)
     {
         var account = await _userManager.Users.SingleOrDefaultAsync(a => a.Id == request.Id.ToString());
         if (account == null)
@@ -74,14 +67,9 @@ public class UnlinkAccountCommandHandler : IRequestHandler<LinkAccountCommand, R
             return Result.Failure(AccountError.NotFound);
         }
 
-        if (!account.PhoneNumberConfirmed)
+        if (account.Email == null || account.PhoneNumber == null)
         {
-            return Result.Failure(AccountError.PhoneNotConfirmed);
-        }
-
-        if (!account.EmailConfirmed)
-        {
-            return Result.Failure(AccountError.EmailNotConfirmed);
+            return Result.Failure(AccountError.OnlyExistOneIdentifier);
         }
 
         account.PhoneNumber = null;

@@ -1,4 +1,4 @@
-import { useGetUserDetails, useUpdateUser } from "@/api/user";
+import { useGetUserDetails } from "@/api/user";
 import { saveUserData } from "@/slices/user.slice";
 import { useCallback, useState } from "react";
 import { useDispatch } from "react-redux";

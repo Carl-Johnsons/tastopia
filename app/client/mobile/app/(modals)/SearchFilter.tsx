@@ -3,6 +3,7 @@ import { globalStyles } from "@/components/common/GlobalStyles";
 import Ingredient from "@/components/screen/search/Ingredient";
 import SelectedTag from "@/components/screen/search/SelectedTag";
 import { colors } from "@/constants/colors";
+import { SETTING_VALUE } from "@/constants/settings";
 import useColorizer from "@/hooks/useColorizer";
 import useDarkMode from "@/hooks/useDarkMode";
 import useDebounce from "@/hooks/useDebounce";
@@ -11,6 +12,7 @@ import {
   removeTagValue,
   selectSearchTags
 } from "@/slices/searchRecipe.slice";
+import { selectLanguageSetting } from "@/slices/setting.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { AntDesign, Feather } from "@expo/vector-icons";
@@ -35,6 +37,8 @@ import {
 const SearchFilter = () => {
   const { c } = useColorizer();
   const { black, white } = colors;
+  const language = selectLanguageSetting();
+  const currentLanguage = language === SETTING_VALUE.LANGUAGE.VIETNAMESE ? "vi" : "en";
 
   const { t } = useTranslation("search");
   const dispatch = useAppDispatch();
@@ -131,10 +135,7 @@ const SearchFilter = () => {
   return (
     <SafeAreaView style={{ backgroundColor: c(white.DEFAULT, black[100]) }}>
       <View className={`size-full`}>
-        <View
-          style={{ marginTop: StatusBar.currentHeight }}
-          className='flex-between mb-4 h-[60px] flex-row items-center border-b-[0.6px] border-gray-400 px-6'
-        >
+        <View className='flex-between mb-4 h-[60px] flex-row items-center border-b-[0.6px] border-gray-400 px-6'>
           <TouchableWithoutFeedback onPress={handleCloseModal}>
             <View>
               <AntDesign
@@ -254,7 +255,7 @@ const SearchFilter = () => {
                   <View className={`mb-4 w-[48%] ${index % 2 === 0 ? "mr-[4%]" : ""}`}>
                     <Ingredient
                       code={item.code}
-                      value={item.value}
+                      value={item[currentLanguage]}
                       imageUrl={item.imageUrl}
                       setSelectedTags={setSelectedTags}
                     />

@@ -41,11 +41,10 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
 
         if (skip == null || tagCodes == null || category == null)
         {
-            return Result<PaginatedTagListResponse?>.Failure(TagError.NotFound);
+            return Result<PaginatedTagListResponse?>.Failure(TagError.NullParameter);
         }
 
         tagCodes.RemoveAll(string.IsNullOrEmpty);
-
 
         var tagsQuery = _context.Tags.Where(t => t.Status == TagStatus.Active).OrderByDescending(t => t.CreatedAt).AsQueryable();
 
@@ -61,7 +60,8 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
 
         if (!string.IsNullOrEmpty(keyword))
         {
-            tagsQuery = tagsQuery.Where(t => t.Value.ToLower().Contains(keyword.ToLower()));
+            keyword = keyword.ToLower();
+            tagsQuery = tagsQuery.Where(t => t.Value.En.ToLower().Contains(keyword) || t.Value.Vi.ToLower().Contains(keyword));
         }
 
         var totalPage = (await tagsQuery.CountAsync() + TAG_CONSTANTS.TAG_LIMIT - 1) / TAG_CONSTANTS.TAG_LIMIT;
@@ -72,7 +72,17 @@ public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<Paginate
             Limit = TAG_CONSTANTS.TAG_LIMIT
         });
 
-        var tagList = await tagsQuery.ToListAsync();
+        var tagList = await tagsQuery.Select(t => new TagResponse
+        {
+            Id = t.Id,
+            Category = t.Category.ToString(),
+            Code = t.Code,
+            ImageUrl = t.ImageUrl,
+            Status = t.Status.ToString(),
+            CreatedAt = t.CreatedAt,
+            En = t.Value.En,
+            Vi = t.Value.Vi
+        }).ToListAsync();
 
         if (tagList == null || !tagList.Any())
         {

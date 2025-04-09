@@ -2,9 +2,9 @@ import { useDeleteSearchRecipeHistory, useDeleteSearchUserHistory } from "@/api/
 import { colors } from "@/constants/colors";
 import { CloseIcon } from "@/constants/icons";
 import useColorizer from "@/hooks/useColorizer";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { FontAwesome6 } from "@expo/vector-icons";
-import { useTranslation } from "react-i18next";
-import { Alert, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Text, TouchableWithoutFeedback, View } from "react-native";
 import { useQueryClient } from "react-query";
 
 type SearchHistoryProps = {
@@ -24,7 +24,7 @@ const SearchHistory = ({ item, type, handleSelectHistory }: SearchHistoryProps) 
   const { c } = useColorizer();
   const { black, white } = colors;
   const queryClient = useQueryClient();
-  const { t } = useTranslation("search");
+  const { handleError } = useErrorHandler();
   const deleteHistory = useDeleteHistory(type);
 
   const handleRemoveHistory = async () => {
@@ -40,9 +40,7 @@ const SearchHistory = ({ item, type, handleSelectHistory }: SearchHistoryProps) 
             ]
           });
         },
-        onError: async _error => {
-          Alert.alert(t("deleteHistoryFail"));
-        }
+        onError: async error => handleError(error)
       }
     );
   };

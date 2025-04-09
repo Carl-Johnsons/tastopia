@@ -6,7 +6,7 @@ public class PaginatedRecipeFeedsListResponse : BasePaginatedResponse<RecipeFeed
 
 public class PaginatedSearchRecipeListResponse : BasePaginatedResponse<SearchRecipesResponse, AdvancePaginatedMetadata>;
 
-public class PaginatedTagListResponse : BasePaginatedResponse<Tag, AdvancePaginatedMetadata>;
+public class PaginatedTagListResponse : BasePaginatedResponse<TagResponse, AdvancePaginatedMetadata>;
 
 public class PaginatedRecipeCommentListResponse : BasePaginatedResponse<RecipeCommentResponse, AdvancePaginatedMetadata>;
 

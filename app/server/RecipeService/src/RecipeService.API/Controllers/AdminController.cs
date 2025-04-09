@@ -9,7 +9,6 @@ using RecipeService.Application.Reports.Commands;
 using RecipeService.Application.Reports.Queries;
 using RecipeService.Application.Tags.Commands;
 using RecipeService.Application.Tags.Queries;
-using RecipeService.Domain.Entities;
 using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -248,7 +247,7 @@ public class AdminController : BaseApiController
     {
         var result = await _sender.Send(new AdminGetTagsQuery
         {
-            PaginatedDTO = paginatedDTO
+            PaginatedDTO = paginatedDTO,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);
@@ -256,7 +255,7 @@ public class AdminController : BaseApiController
 
     [HttpPost("create-tag")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(TagResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> CreateTag([FromForm] CreateTagDTO createTagDTO)
     {
@@ -266,7 +265,8 @@ public class AdminController : BaseApiController
         var result = await _sender.Send(new CreateTagCommand
         {
             Code = createTagDTO.Code,
-            Value = createTagDTO.Value,
+            En = createTagDTO.En,
+            Vi = createTagDTO.Vi,
             Category = createTagDTO.Category,
             TagImage = createTagDTO.TagImage,
             CurrentAccountId = Guid.Parse(subjectId!)
@@ -277,7 +277,7 @@ public class AdminController : BaseApiController
 
     [HttpPost("update-tag")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(TagResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> UpdateTag([FromForm] UpdateTagDTO updateTagDTO)
     {
@@ -288,7 +288,8 @@ public class AdminController : BaseApiController
         {
             TagId = updateTagDTO.TagId,
             Code = updateTagDTO.Code,
-            Value = updateTagDTO.Value,
+            En = updateTagDTO.En,
+            Vi = updateTagDTO.Vi,
             Category = updateTagDTO.Category,
             Status = updateTagDTO.Status,
             TagImage = updateTagDTO.TagImage,
@@ -300,7 +301,7 @@ public class AdminController : BaseApiController
 
     [HttpPost("tag-detail")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(Tag), 200)]
+    [ProducesResponseType(typeof(TagResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> GetTagDetail([FromBody] AdminGetTagDetailDTO adminGetTagDetailDTO)
     {
@@ -352,14 +353,15 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("statistic/get-tag-ranking-by-popular")]
+    [HttpPost("statistic/get-tag-ranking-by-popular")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<RankingStatisticEntity>), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> GetTagRankingByPopular()
+    public async Task<IActionResult> GetTagRankingByPopular([FromBody] AdminGetTagDTO adminGetTagDTO)
     {
         var result = await _sender.Send(new AdminGetRankingTagsStatisticQuery
         {
+            Lang = adminGetTagDTO.Language
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

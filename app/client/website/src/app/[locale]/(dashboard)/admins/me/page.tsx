@@ -27,10 +27,20 @@ export default async function Page() {
           <ProfileHeader admin={currentUser} />
 
           <div className='mt-6 flex flex-col-reverse gap-6 lg:flex-row'>
-            <div className='flex-1'>{<ActivityFeed accountId={currentUser.accountId} self />}</div>
+            <div className='flex-1'>
+              {
+                <ActivityFeed
+                  accountId={currentUser.accountId}
+                  self
+                />
+              }
+            </div>
 
             <div className='flex flex-col space-y-6 lg:w-1/3'>
-              <ProfileInfo admin={currentUser} />
+              <ProfileInfo
+                admin={currentUser}
+                self
+              />
             </div>
           </div>
         </div>

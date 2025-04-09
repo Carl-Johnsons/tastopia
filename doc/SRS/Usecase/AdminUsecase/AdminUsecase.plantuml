@@ -8,19 +8,20 @@ actor "Admin" as admin
 actor "Cloudinary" as cl
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-2: Login" as ucLogin
+    usecase "UC-4: Forgot password" as ucForgotPassword
     usecase "UC-8: Logout" as ucLogout
-    usecase "UC-9: Manage settings" as ucManageSetting
-    usecase "UC-10: Manage profile" as ucManageProfile
+    usecase "UC-10: Manage settings" as ucManageSetting
+    usecase "UC-11: Manage profile" as ucManageProfile
 
-    usecase "UC-26: Administer users" as ucAdmUser
-    usecase "UC-27: Administer tags" as ucAdmTags
-    usecase "UC-29: Administer recipes" as ucAdmRecipe
-    usecase "UC-33: Administer reports" as ucAdmReport
+    usecase "UC-24: Administer users" as ucAdmUser
+    usecase "UC-25: Administer tags" as ucAdmTags
+    usecase "UC-26: Administer recipes" as ucAdmRecipe
+    usecase "UC-28: Administer reports" as ucAdmReport
 
-    note "Read/Delete" as noteAdmUser
-    note "Read/Delete" as noteAdmRecipe
-    note "Create" as noteAdmTag
-    note "Read/Delete" as noteAdmReport
+    note "Read/Delete/Restore" as noteAdmUser
+    note "Read/Delete/Restore" as noteAdmRecipe
+    note "Read/Create/Update/Delete/Restore" as noteAdmTag
+    note "Read/Delete/Restore" as noteAdmReport
 
     admin --> ucAdmUser
         ucAdmUser .. noteAdmUser
@@ -31,7 +32,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     admin --> ucAdmTags
         ucAdmTags .. noteAdmTag
     admin --> ucManageProfile
-        ucManageProfile <.. ucManageSetting: <<extend>>
+    admin --> ucManageSetting
     admin --> ucLogout
 
     ucLogout .....> ucLogin : <<include>>
@@ -39,6 +40,9 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     ucAdmRecipe .....> ucLogin : <<include>>
     ucAdmTags .....> ucLogin : <<include>>
     ucManageProfile .....> ucLogin : <<include>>
+    ucAdmReport .....> ucLogin : <<include>>
+
+    ucLogin <.. ucForgotPassword : <<extend>>
 
     cl --up----> ucManageProfile
     cl --up----> ucAdmTags

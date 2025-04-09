@@ -3,7 +3,6 @@ import Input from "@/components/common/Input";
 import { useTranslation } from "react-i18next";
 import { Control, FieldErrors } from "react-hook-form";
 import UploadImage from "@/components/common/UploadImage";
-import { memo } from "react";
 
 type HeaderFormFields = {
   title: string;

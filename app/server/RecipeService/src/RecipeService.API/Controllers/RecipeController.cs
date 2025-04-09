@@ -186,7 +186,7 @@ public class RecipeController : BaseApiController
             Skip = getTagsDTO.Skip,
             TagCodes = getTagsDTO.TagCodes,
             Keyword = getTagsDTO.Keyword,
-            Category = getTagsDTO.Category
+            Category = getTagsDTO.Category,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

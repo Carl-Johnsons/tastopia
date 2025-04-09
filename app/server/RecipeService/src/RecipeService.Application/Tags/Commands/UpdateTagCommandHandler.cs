@@ -9,22 +9,24 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
+using RecipeService.Domain.Responses;
 using UploadFileProto;
 
 namespace RecipeService.Application.Tags.Commands;
 
-public class UpdateTagCommand : IRequest<Result<Tag?>>
+public class UpdateTagCommand : IRequest<Result<TagResponse?>>
 {
     public Guid TagId { get; set; }
     public string Code { get; set; } = null!;
-    public string Value { get; set; } = null!;
+    public string En { get; set; } = null!;
+    public string Vi { get; set; } = null!;
     public string Category { get; set; } = null!;
     public string Status { get; set; } = null!;
     public IFormFile? TagImage { get; set; }
     public Guid CurrentAccountId { get; set; }
 
 }
-public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<Tag?>>
+public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<TagResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
@@ -40,28 +42,29 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
         _logger = logger;
         _grpcUploadFileClient = grpcUploadFileClient;
     }
-    public async Task<Result<Tag?>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
+    public async Task<Result<TagResponse?>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
     {
         var rollbackUrl = new List<string>();
         try
         {
             ActivityType activityType = ActivityType.UPDATE;
+            request.Code = request.Code.ToUpper().Replace(" ", "_");
             var tagId = request.TagId;
             if (tagId == Guid.Empty)
             {
-                return Result<Tag?>.Failure(TagError.NullParameter, "TagId is null.");
+                return Result<TagResponse?>.Failure(TagError.NullParameter, "TagId is null.");
             }
 
             var tag = _context.Tags.SingleOrDefault(t => t.Id == tagId);
             if (tag == null)
             {
-                return Result<Tag?>.Failure(TagError.NotFound, "Not found tag.");
+                return Result<TagResponse?>.Failure(TagError.NotFound, "Not found tag.");
             }
 
             var existTag = await _context.Tags.Where(t => t.Id != request.TagId && t.Code == request.Code).SingleOrDefaultAsync();
             if (existTag != null)
             {
-                return Result<Tag?>.Failure(TagError.AddTagFail, $"Tag code : {request.Code} is already exist");
+                return Result<TagResponse?>.Failure(TagError.AlreadyExist, $"Tag code : {request.Code} is already exist");
             }
             var tagImageUrl = tag.ImageUrl;
             if (request.TagImage != null)
@@ -69,7 +72,7 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
                 var result = await UpdateTagImage(request.TagImage, tag);
                 if (string.IsNullOrEmpty(result))
                 {
-                    return Result<Tag?>.Failure(TagError.UpdateTagFail, "Upload tag image fail.");
+                    return Result<TagResponse?>.Failure(TagError.UpdateTagFail, "Upload tag image fail.");
                 }
                 tagImageUrl = result;
                 rollbackUrl.Add(result);
@@ -83,7 +86,7 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
             }
 
             tag.Code = request.Code;
-            tag.Value = request.Value;
+            tag.Value = new TagValue { En = request.En, Vi = request.Vi};
             tag.UpdatedAt = DateTime.UtcNow;
             tag.Status = Enum.Parse<TagStatus>(request.Status);
             tag.Category = Enum.Parse<TagCategory>(request.Category);
@@ -97,13 +100,23 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
                 EntityId = tag.Id,
                 EntityType = ActivityEntityType.TAG,
             });
-            return Result<Tag?>.Success(tag);
+            return Result<TagResponse?>.Success(new TagResponse
+            {
+                Id = tag.Id,
+                Category = tag.Category.ToString(),
+                Code = tag.Code,
+                Vi = tag.Value.Vi,
+                En = tag.Value.En,
+                CreatedAt = tag.CreatedAt,
+                ImageUrl = tag.ImageUrl,
+                Status = tag.Status.ToString()
+            });
         }
         catch (Exception ex)
         {
             await RollBackImageGrpc(rollbackUrl);
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
-            return Result<Tag?>.Failure(TagError.UpdateTagFail, ex.Message);
+            return Result<TagResponse?>.Failure(TagError.UpdateTagFail, ex.Message);
         }
     }
 

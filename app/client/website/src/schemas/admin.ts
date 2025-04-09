@@ -56,15 +56,6 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
       .refine(val => PHONE_REGEX.test(val), {
         message: t("phone.errors.invalid")
       }),
-    password: z
-      .string({
-        required_error: t("password.errors.required")
-      })
-      .nonempty({
-        message: t("password.errors.required")
-      })
-      .min(6, t("password.errors.min"))
-      .max(50, t("password.errors.max")),
     gender: z
       .string()
       .refine(val => GENDER.includes(val), {
@@ -124,6 +115,5 @@ export const getUpdateAdminSchema = (t: (key: string) => string) => {
         .refine(val => STATUS.includes(val), {
           message: t("status.errors.invalid")
         })
-    })
-    .omit({ password: true });
+    });
 };

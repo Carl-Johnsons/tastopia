@@ -6,6 +6,7 @@ import InteractiveButton, { DataTableButton } from "@/components/shared/common/B
 import { BanIcon, SignOutIcon } from "@/components/shared/icons";
 import { Link, useRouter } from "@/i18n/navigation";
 import { updateAdmin } from "@/slices/admin.slice";
+import { useSelectUserId } from "@/slices/user.slice";
 import { useAppDispatch } from "@/store/hooks";
 import { DataTableButtonProps } from "@/types/report";
 import { useQueryClient } from "@tanstack/react-query";
@@ -71,12 +72,12 @@ export const RestoreAdminButton = ({
         await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
         onSuccess && onSuccess();
       },
-      onError: ({ message }) => {
+      onError: () => {
         toast.error(t("error"));
         onFailure && onFailure();
       }
     });
-  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
+  }, [t, onSuccess, onFailure, targetId, mutate, queryClient]);
 
   return (
     <InteractiveButton
@@ -109,12 +110,12 @@ export const DisableAdminButton = ({
         await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
         onSuccess && onSuccess();
       },
-      onError: ({ message }) => {
+      onError: () => {
         toast.error(t("error"));
         onFailure && onFailure();
       }
     });
-  }, [onSuccess, onFailure, targetId, mutate, queryClient]);
+  }, [t, onSuccess, onFailure, targetId, mutate, queryClient]);
 
   return (
     <InteractiveButton
@@ -137,10 +138,12 @@ export const UpdateAdminButton = ({
   ...props
 }: DataTableButtonProps) => {
   const dispatch = useAppDispatch();
+  const currentUserId = useSelectUserId();
+  const isSelf = useMemo(() => currentUserId === targetId, [currentUserId, targetId]);
 
   const handleClick = useCallback(async () => {
-    dispatch(updateAdmin({ targetId }));
-  }, [dispatch, targetId]);
+    dispatch(updateAdmin({ targetId, isSelf }));
+  }, [dispatch, targetId, isSelf]);
 
   return (
     <InteractiveButton
@@ -165,7 +168,7 @@ export const SignOutButton = ({ className }: Pick<DataTableButtonProps, "classNa
       title={t("signOut")}
       icon={<SignOutIcon className='text-white_black' />}
       onClick={handleClick}
-      className={`bg-blue-400 hover:bg-blue-500 ${className}`}
+      className={`bg-red-500 hover:bg-red-600 ${className}`}
     />
   );
 };

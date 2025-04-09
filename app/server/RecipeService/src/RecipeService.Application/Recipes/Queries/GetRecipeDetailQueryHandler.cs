@@ -122,7 +122,17 @@ public class GetRecipeDetailQueryHandler : IRequestHandler<GetRecipeDetailQuery,
             similarRecipes = similarRecipes,
             IsBookmarked = isBookmark,
             Vote = v.ToString(),
-            Tags = tagQuery.ToList()
+            Tags = tagQuery.Select(t => new TagResponse
+            {
+                Id = t.Id,
+                Category = t.Category.ToString(),
+                Code = t.Code,
+                En = t.Value.En,
+                Vi = t.Value.Vi,
+                ImageUrl = t.ImageUrl,
+                Status = t.Status.ToString(),
+                CreatedAt = t.CreatedAt,
+            }).ToList()
         };
 
         await _serviceBus.Publish(new CreateUserViewRecipeDetailEvent

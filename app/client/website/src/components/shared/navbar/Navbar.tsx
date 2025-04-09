@@ -20,7 +20,6 @@ const Navbar = () => {
           alt='Tastopia'
           width={36}
           height={36}
-          className='group-hover:animate-spin'
         />
         <p className='h2-bold font-spaceGrotesk text-dark-100 dark:text-light-900 flex flex-nowrap gap-1 text-nowrap max-sm:hidden'>
           <span className='text-black_white'>Tastopia</span>

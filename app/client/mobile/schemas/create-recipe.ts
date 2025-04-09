@@ -1,5 +1,4 @@
 import * as yup from "yup";
-
 const imageFileSchema = yup.object().shape({
   uri: yup.string().default(""),
   type: yup.string().default(""),
@@ -7,8 +6,11 @@ const imageFileSchema = yup.object().shape({
 });
 
 const schema = yup.object().shape({
-  title: yup.string().required("validation.title"),
-  description: yup.string().required("validation.description"),
+  title: yup.string().required("validation.title").max(50, "validation.title.maxLength"),
+  description: yup
+    .string()
+    .required("validation.description")
+    .max(500, "validation.description.maxLength"),
   serves: yup
     .number()
     .typeError("validation.serves.typeError")
@@ -28,7 +30,8 @@ const schema = yup.object().shape({
       content: yup.string().default(""),
       images: yup.array().of(imageFileSchema).default([])
     })
-  )
+  ),
+  tags: yup.array().of(yup.string().required()).nullable()
 });
 
 type CreateRecipeFormValue = {
@@ -55,6 +58,7 @@ type CreateRecipeFormValue = {
   description: string;
   serves: number;
   cookTime: string;
+  tags: string[];
 };
 
 type FormCreateRecipeType = yup.InferType<typeof schema>;

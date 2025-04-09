@@ -8,7 +8,6 @@ import { useBounce } from "@/hooks";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
 import Button from "@/components/Button";
-import uuid from "react-native-uuid";
 import {
   View,
   Image,
@@ -17,8 +16,7 @@ import {
   TouchableWithoutFeedback
 } from "react-native";
 import { selectLanguageSetting } from "@/slices/setting.slice";
-import { LANGUAGES } from "@/constants/languages";
-import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
+import { SETTING_VALUE } from "@/constants/settings";
 
 const RNFS = require("react-native-fs");
 
@@ -65,6 +63,7 @@ const PreviewView = ({
     (language === SETTING_VALUE.LANGUAGE.VIETNAMESE
       ? prediction?.classifications?.[0].name.vi
       : prediction?.classifications?.[0].name.en) ?? "";
+  const ingredientPredictCode = prediction?.classifications?.[0].code ?? "";
 
   // === Style ===
   const { animate: animatedSearchBtn, animatedStyles: animatedSearchBtnStyles } =
@@ -85,7 +84,7 @@ const PreviewView = ({
     animatedSearchBtn();
 
     setIsSearching(true);
-    dispatch(addTagValue({ code: uuid.v4(), value: ingredientPredict }));
+    dispatch(addTagValue({ code: ingredientPredictCode, value: ingredientPredict }));
 
     router.push({
       pathname: "/(protected)/search"

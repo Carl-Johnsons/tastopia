@@ -5,6 +5,7 @@ import { colors } from "@/constants/colors";
 import { ArrowBackIcon, DotIcon } from "@/constants/icons";
 import useIsOwner from "@/hooks/auth/useIsOwner";
 import { useProtectedExclude } from "@/hooks/auth/useProtected";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
 import { ROLE } from "@/slices/auth.slice";
 import { formatDate } from "@/utils/format-date";
 import { Feather } from "@expo/vector-icons";
@@ -14,6 +15,7 @@ import { router } from "expo-router";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View, Text, Alert, TouchableWithoutFeedback } from "react-native";
+import { useQueryErrorResetBoundary } from "react-query";
 
 type HeaderProps = {
   accountId: string;
@@ -48,6 +50,7 @@ export default function Header({
 }: HeaderProps) {
   const { t } = useTranslation("profile");
   const { black, white } = colors;
+  const { handleError } = useErrorHandler();
   const followerCounts = totalFollower || 0;
   const [followed, setIsFollowed] = useState<boolean>(isFollowing);
   const { mutateAsync: followUser, isLoading } = useFollowUnfollowUser();
@@ -65,10 +68,7 @@ export default function Header({
           onSuccess: async data => {
             setIsFollowed(data.isFollowing);
           },
-          onError: async error => {
-            console.log("Follow unfollow error", JSON.stringify(error, null, 2));
-            Alert.alert(t("followUnfollowError"));
-          }
+          onError: async error => handleError(error)
         }
       );
     }

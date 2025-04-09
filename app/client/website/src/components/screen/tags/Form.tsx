@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import Image from "next/image";
-import { CreateTagSchema, UpdateTagSchema } from "@/schemas/tag";
+import { getTagSchema } from "@/schemas/tag";
 import { FORM_TYPE } from "@/constants/form";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
@@ -65,19 +65,23 @@ const TagForm = ({ type }: FormProps) => {
   const [image, setImage] = useState<any>(isUpdate ? [tag?.imageUrl] : undefined);
   const [isImageModified, setIsImageModified] = useState(false);
 
+  const { CreateTagSchema, UpdateTagSchema } = getTagSchema(t);
   const schema = isUpdate ? UpdateTagSchema : CreateTagSchema;
+
+  type TagFormValues = z.infer<typeof CreateTagSchema> | z.infer<typeof UpdateTagSchema>;
 
   const defaultValues = {
     code: isUpdate ? tag?.code || "" : "",
-    value: isUpdate ? tag?.value || "" : "",
+    vi: isUpdate ? tag?.vi || "" : "",
+    en: isUpdate ? tag?.en || "" : "",
     category: isUpdate ? tag?.category || "" : "",
     tagImage: isUpdate ? tag?.imageUrl || "" : "",
     ...(isUpdate && { status: tag?.status || "" })
   };
 
-  const form = useForm<z.infer<typeof schema>>({
+  const form = useForm<TagFormValues>({
     resolver: zodResolver(schema),
-    defaultValues
+    defaultValues: defaultValues as TagFormValues
   });
 
   const handleUploadImage = (imageList: any) => {
@@ -85,8 +89,8 @@ const TagForm = ({ type }: FormProps) => {
     setIsImageModified(true);
   };
 
-  async function onSubmit(values: z.infer<typeof schema>) {
-    if (image.length === 0) {
+  async function onSubmit(values: TagFormValues) {
+    if (image === undefined || image?.length === 0) {
       toast.error(t("form.image.required"));
       return;
     }
@@ -97,7 +101,8 @@ const TagForm = ({ type }: FormProps) => {
       const formData = new FormData();
 
       formData.append("code", values.code);
-      formData.append("value", values.value);
+      formData.append("vi", values.vi);
+      formData.append("en", values.en);
       formData.append("category", values.category);
 
       if (isImageModified || !isUpdate) {
@@ -107,7 +112,9 @@ const TagForm = ({ type }: FormProps) => {
 
       if (isUpdate) {
         formData.append("tagId", tag?.id ?? "");
-        formData.append("status", values.status);
+        if ("status" in values) {
+          formData.append("status", values.status);
+        }
 
         const data = await updateTag(formData);
         updateTagInContext(data);
@@ -156,11 +163,30 @@ const TagForm = ({ type }: FormProps) => {
 
         <FormField
           control={form.control}
-          name='value'
+          name='vi'
           render={({ field }) => (
             <FormItem className='flex w-full flex-col'>
               <FormLabel className='paragraph-semibold text-black_white'>
-                {t("form.value.label")} <span className='text-red-600'>*</span>
+                {t("form.valueVi.label")} <span className='text-red-600'>*</span>
+              </FormLabel>
+              <FormControl>
+                <Input
+                  className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage className='text-red-600' />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name='en'
+          render={({ field }) => (
+            <FormItem className='flex w-full flex-col'>
+              <FormLabel className='paragraph-semibold text-black_white'>
+                {t("form.valueEn.label")} <span className='text-red-600'>*</span>
               </FormLabel>
               <FormControl>
                 <Input

@@ -8,16 +8,19 @@ export type CustomizedButtonProps = {
 } & PressableProps;
 
 export const Button = Animated.createAnimatedComponent(
-  forwardRef((props: CustomizedButtonProps, ref: React.LegacyRef<View>) => {
-    return (
-      <Pressable
-        {...props}
-        ref={ref}
-      >
-        {props.isLoading ? props.spinner : props.children}
-      </Pressable>
-    );
-  })
+  forwardRef(
+    ({ className, ...props }: CustomizedButtonProps, ref: React.LegacyRef<View>) => {
+      return (
+        <Pressable
+          {...props}
+          className={`${props.disabled ? "opacity-80" : ""} ${className}`}
+          ref={ref}
+        >
+          {props.isLoading ? props.spinner : props.children}
+        </Pressable>
+      );
+    }
+  )
 );
 
 export default Button;

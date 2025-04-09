@@ -1,6 +1,6 @@
 import { useGetUserByAccountId } from "@/api/user";
 import NotFound from "@/app/+not-found";
-import { globalStyles } from "@/components/common/GlobalStyles";
+import LoadingFullScreen from "@/components/common/LoadingFullScreen";
 import SettingComment from "@/components/common/SettingComment";
 import SettingRecipe from "@/components/common/SettingRecipe";
 import SettingUser from "@/components/common/SettingUser";
@@ -13,7 +13,7 @@ import useColorizer from "@/hooks/useColorizer";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useRef, useState } from "react";
-import { ActivityIndicator, StatusBar, View } from "react-native";
+import { StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Profile = () => {
@@ -24,10 +24,7 @@ const Profile = () => {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const bottomSheetCommentRef = useRef<BottomSheet>(null);
   const bottomSheetUserRef = useRef<BottomSheet>(null);
-  const {
-    ref: followModalRef,
-    openModal: openFollowModal,
-  } = useBottomSheetModal();
+  const { ref: followModalRef, openModal: openFollowModal } = useBottomSheetModal();
   const [currentRecipeId, setCurrentRecipeId] = useState("");
   const [currentAuthorId, setCurrentAuthorId] = useState("");
   const [currentComment, setCurrentComment] = useState<CommentCustomType>({
@@ -35,15 +32,18 @@ const Profile = () => {
     content: ""
   });
   const [currentCommentAuthorId, setCurrentCommentAuthorId] = useState("");
-  const { data: accountDetailData, isLoading: isLoadingAccountDetail, isStale, refetch: refectAccountDetailData } =
-    useGetUserByAccountId(accountId as string);
-  
+  const {
+    data: accountDetailData,
+    isLoading: isLoadingAccountDetail,
+    isStale,
+    refetch: refectAccountDetailData
+  } = useGetUserByAccountId(accountId as string);
+
   const fetchData = useCallback(() => {
     if (isStale) {
       refectAccountDetailData();
     }
   }, [isStale]);
-
 
   const handleTouchMenu = () => {
     bottomSheetUserRef.current?.expand();
@@ -56,21 +56,13 @@ const Profile = () => {
   useFocusEffect(fetchData);
 
   if (isLoadingAccountDetail) {
-    return (
-      <SafeAreaView
-        style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
-      >
-        <View className='flex-center size-full'>
-          <ActivityIndicator
-            color={globalStyles.color.primary}
-            size={"large"}
-          />
-        </View>
-      </SafeAreaView>
-    );
+    return <LoadingFullScreen />;
   }
 
-  if (!accountDetailData || !accountDetailData.isAccountActive) {
+  if (
+    (!accountDetailData || !accountDetailData.isAccountActive) &&
+    !isLoadingAccountDetail
+  ) {
     return <NotFound />;
   }
 

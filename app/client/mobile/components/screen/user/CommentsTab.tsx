@@ -13,6 +13,11 @@ import { filterUniqueItems } from "@/utils/dataFilter";
 import Empty from "../community/Empty";
 import Comment from "./Comment";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import {
+  IAccountRecipeCommentResponse,
+  IComment
+} from "@/generated/interfaces/recipe.interface";
+import LoadingFullScreen from "@/components/common/LoadingFullScreen";
 
 type CommentsTabProps = {
   accountId: string;
@@ -28,8 +33,15 @@ const CommentsTab = ({
   setCurrentCommentAuthorId
 }: CommentsTabProps) => {
   const [comments, setComments] = useState<IAccountRecipeCommentResponse[]>([]);
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch, isRefetching } =
-    useCommentsByAuthorId(accountId);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    isRefetching,
+    isLoading
+  } = useCommentsByAuthorId(accountId);
 
   const onRefresh = () => {
     refetch();
@@ -69,6 +81,10 @@ const CommentsTab = ({
       setComments(uniqueData);
     }
   }, [data]);
+
+  if (isLoading || isRefetching) {
+    return <LoadingFullScreen />;
+  }
 
   return (
     <TabView.Item

@@ -22,3 +22,6 @@ export { default as ArrowDownFillIcon } from "../assets/icons/arrow_down_fill.sv
 export { default as ArrowUpFillIcon } from "../assets/icons/arrow_up_fill.svg";
 export { default as ChatBubbleFillIcon } from "../assets/icons/chat_bubble_fill.svg";
 export { default as TrashIcon } from "../assets/icons/trash.svg";
+export { default as Leaf1Icon } from "../assets/icons/leaf1.svg";
+export { default as Leaf2Icon } from "../assets/icons/leaf2.svg";
+export { default as Leaf3Icon } from "../assets/icons/leaf3.svg";

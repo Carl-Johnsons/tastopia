@@ -52,7 +52,7 @@ public class RequestAddTagsCommandHandler : IRequestHandler<RequestAddTagsComman
                 var tag = new Tag
                 {
                     Id = Guid.NewGuid(),
-                    Value = value,
+                    Value = new TagValue { En = value, Vi = value},
                     Category = TagCategory.All,
                     Code = "",
                     ImageUrl = "",

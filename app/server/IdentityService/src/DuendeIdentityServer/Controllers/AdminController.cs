@@ -44,7 +44,6 @@ public class AdminController : BaseApiController
             Dob = dto.Dob,
             Gmail = dto.Gmail,
             Name = dto.Name,
-            Password = dto.Password,
             Phone = dto.Phone,
         });
         result.ThrowIfFailure();

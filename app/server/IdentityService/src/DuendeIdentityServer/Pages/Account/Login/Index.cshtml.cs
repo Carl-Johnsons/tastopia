@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System.Net;
 
 namespace DuendeIdentityServer.Pages.Account.Login;
@@ -112,9 +111,6 @@ public class Index : PageModel
         {
             ApplicationAccount? user = null;
             var method = IdentifierUtility.Check(Input.Username!);
-            Console.WriteLine("METHOD");
-            Console.WriteLine(method.ToString());
-            Console.WriteLine(JsonConvert.SerializeObject(Input, Formatting.Indented));
             switch (method)
             {
                 case AccountMethod.Phone:
@@ -164,9 +160,16 @@ public class Index : PageModel
                 return Page();
             }
 
-            var result = await _signInManager.PasswordSignInAsync(user.UserName!, Input.Password!, Input.RememberLogin, lockoutOnFailure: true);
+            var result = await _signInManager.CheckPasswordSignInAsync(user, Input.Password!, lockoutOnFailure: false);
             if (result.Succeeded)
             {
+                if (user.IsFirstTimeLogin)
+                {
+                    string url = $"~/Account/ChangePassword?returnUrl={Uri.EscapeDataString(Input.ReturnUrl!)}&identifier={Uri.EscapeDataString(user.UserName!)}";
+                    return Redirect(url);
+                }
+                var loginResult = await _signInManager.PasswordSignInAsync(user.UserName!, Input.Password!, Input.RememberLogin, lockoutOnFailure: true);
+
                 await _events.RaiseAsync(new UserLoginSuccessEvent(user!.UserName, user.Id, user.UserName, clientId: context?.Client.ClientId));
                 Telemetry.Metrics.UserLogin(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider);
 

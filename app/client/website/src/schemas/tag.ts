@@ -1,38 +1,51 @@
+import { useTranslations } from "next-intl";
 import * as z from "zod";
 
 const validCategories = ["All", "DishType", "Ingredient"];
-const MAX_FILE_SIZE = 15000000;
 
-export const CreateTagSchema = z.object({
-  code: z
-    .string()
-    .nonempty("Code is required")
-    .max(50, "Code must be 50 characters or less"),
+type TFunction = ReturnType<typeof useTranslations<"administerTags">>;
 
-  value: z
-    .string()
-    .nonempty("Ingredient name is required")
-    .max(50, "Ingredient name must be 50 characters or less"),
+export const getTagSchema = (t: TFunction) => {
+  const CreateTagSchema = z.object({
+    code: z
+      .string()
+      .nonempty(t("form.errors.codeRequired"))
+      .max(50, t("form.errors.codeMaxLength")),
 
-  category: z
-    .string()
-    .nonempty("Category is required")
-    .max(20, "Category must be 20 characters or less")
-    .refine(val => validCategories.includes(val), {
-      message: "Invalid category. Must be one of: " + validCategories.join(", ")
-    }),
+    vi: z
+      .string()
+      .nonempty(t("form.errors.nameRequired"))
+      .max(50, t("form.errors.nameMaxLength")),
 
-  tagImage: z.any()
-});
+    en: z
+      .string()
+      .nonempty(t("form.errors.nameRequired"))
+      .max(50, t("form.errors.nameMaxLength")),
 
-export const UpdateTagSchema = CreateTagSchema.extend({
-  status: z
-    .string()
-    .nonempty("Status is required")
-    .refine(val => ["Pending", "Active", "Inactive"].includes(val), {
-      message: "Invalid status. Must be one of: Pending, Active, Inactive"
-    })
-});
+    category: z
+      .string()
+      .nonempty(t("form.errors.categoryRequired"))
+      .max(20, t("form.errors.categoryMaxLength"))
+      .refine(val => validCategories.includes(val), {
+        message: t("form.errors.categoryInvalid", {
+          categories: validCategories.join(", ")
+        })
+      }),
+
+    tagImage: z.any()
+  });
+
+  const UpdateTagSchema = CreateTagSchema.extend({
+    status: z
+      .string()
+      .nonempty(t("form.errors.statusRequired"))
+      .refine(val => ["Pending", "Active", "Inactive"].includes(val), {
+        message: t("form.errors.statusInvalid", { statuses: "Pending, Active, Inactive" })
+      })
+  });
+
+  return { CreateTagSchema, UpdateTagSchema };
+};
 
 function checkFileType(file: File) {
   if (file?.name) {

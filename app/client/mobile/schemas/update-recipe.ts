@@ -13,8 +13,11 @@ const updateImageSchema = yup.object().shape({
 });
 
 const schema = yup.object().shape({
-  title: yup.string().required("validation.title"),
-  description: yup.string().required("validation.description"),
+  title: yup.string().required("validation.title").max(50, "validation.title.maxLength"),
+  description: yup
+    .string()
+    .required("validation.description")
+    .max(500, "validation.description.maxLength"),
   serves: yup
     .number()
     .typeError("validation.serves.typeError")
@@ -40,7 +43,8 @@ const schema = yup.object().shape({
         images: updateImageSchema.required()
       })
     )
-    .default([])
+    .default([]),
+  tags: yup.array().of(yup.string().required())
 });
 
 type ImageFileType = yup.InferType<typeof imageFileSchema>;
@@ -67,6 +71,7 @@ type UpdateRecipeFormValue = {
   description: string;
   serves: number;
   cookTime: string;
+  tags?: string[];
 };
 
 type FormUpdateRecipeType = yup.InferType<typeof schema>;

@@ -8,6 +8,7 @@ using IdentityService.Application;
 using IdentityService.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Newtonsoft.Json;
 
 namespace DuendeIdentityServer;
@@ -123,6 +124,14 @@ internal static class HostingExtensions
 
     public static async Task<WebApplication> ConfigurePipelineAsync(this WebApplication app)
     {
+        if (EnvUtility.IsProduction())
+        {
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
+        }
+
         app.Use(async (context, next) =>
         {
             // Add your custom CSP header, allowing images from res.cloudinary.com.

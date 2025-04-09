@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Roboto } from "next/font/google";
 import React from "react";
 
 import "./globals.css";
@@ -12,96 +12,30 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
 
-const sofiaPro = localFont({
-  src: [
-    {
-      path: "../../../public/fonts/Sofia-Pro-Black-Az.otf",
-      weight: "900",
-      style: "normal"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-Black-Italic-Az.otf",
-      weight: "900",
-      style: "italic"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-Bold-Az.otf",
-      weight: "700",
-      style: "normal"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-Bold-Italic-Az.otf",
-      weight: "700",
-      style: "italic"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-ExtraLight-Az.otf",
-      weight: "200",
-      style: "normal"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-ExtraLight-Italic-Az.otf",
-      weight: "200",
-      style: "italic"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-Light-Az.otf",
-      weight: "300",
-      style: "normal"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-Light-Italic-Az.otf",
-      weight: "300",
-      style: "italic"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-Medium-Az.otf",
-      weight: "500",
-      style: "normal"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-Medium-Italic-Az.otf",
-      weight: "500",
-      style: "italic"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-Regular-Az.otf",
-      weight: "400",
-      style: "normal"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-Regular-Italic-Az.otf",
-      weight: "400",
-      style: "italic"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-Semi-Bold-Az.otf",
-      weight: "600",
-      style: "normal"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-Semi-Bold-Italic-Az.otf",
-      weight: "600",
-      style: "italic"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-UltraLight-Az.otf",
-      weight: "100",
-      style: "normal"
-    },
-    {
-      path: "../../../public/fonts/Sofia-Pro-UltraLight-Italic-Az.otf",
-      weight: "100",
-      style: "italic"
-    }
-  ],
-  variable: "--font-sofia",
-  display: "swap"
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["100", "300", "400", "500", "700", "900"],
+  variable: "--font-inter"
 });
 
 export const metadata: Metadata = {
   title: "Tastopia",
-  description: "About Tastopia"
+  description: "About Tastopia",
+  icons: {
+    icon: "/assets/favicon.ico"
+  },
+  other: {
+    "og:url": "https://tastopia.social:3000/",
+    "og:type": "website",
+    "og:title": "Tastopia",
+    "og:image":
+      "https://res.cloudinary.com/zuong/image/upload/v1743763092/favicon_grrhm0.png",
+    "twitter:url": "https://tastopia.social:3000/",
+    "twitter:type": "website",
+    "twitter:title": "Tastopia",
+    "twitter:image":
+      "https://res.cloudinary.com/zuong/image/upload/v1743763092/favicon_grrhm0.png"
+  }
 };
 
 export default async function RootLayout({
@@ -118,7 +52,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${sofiaPro.className}`}>
+      <body className={`${roboto.className}`}>
         <NextIntlClientProvider>
           <Providers>
             <AuthListener />
