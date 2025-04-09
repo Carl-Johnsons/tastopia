@@ -184,7 +184,7 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
         GrpcGetSimpleUsersDTO? grpcUserMap = null;
         var accountIdList = paginatedQuery
             .ToList()
-            .Where(aal => aal.EntityType == ActivityEntityType.USER)
+            .Where(aal => aal.EntityType == ActivityEntityType.USER || aal.EntityType == ActivityEntityType.ADMIN)
             .Select(aal => aal.EntityId)
             .ToList();
 
@@ -301,7 +301,7 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                          return mapEntity;
                                      }
 
-                                     if (aal.EntityType == ActivityEntityType.USER && grpcUserMap != null)
+                                     if ((aal.EntityType == ActivityEntityType.USER || aal.EntityType == ActivityEntityType.ADMIN) && grpcUserMap != null)
                                      {
                                          var grpcUser = grpcUserMap.Users[aal.EntityId.ToString()];
 
