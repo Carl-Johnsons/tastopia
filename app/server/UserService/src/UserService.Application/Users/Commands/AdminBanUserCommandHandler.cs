@@ -58,7 +58,7 @@ public class BanAdminCommandHandler : IRequestHandler<BanAdminCommand, Result<Ad
             AccountId = currentAccountId,
             ActivityType = isRestored ? Contract.Constants.ActivityType.RESTORE : Contract.Constants.ActivityType.DISABLE,
             EntityId = request.AccountId,
-            EntityType = Contract.Constants.ActivityEntityType.USER
+            EntityType = Contract.Constants.ActivityEntityType.ADMIN
         });
 
         return Result<AdminBanUserResponse?>.Success(new AdminBanUserResponse

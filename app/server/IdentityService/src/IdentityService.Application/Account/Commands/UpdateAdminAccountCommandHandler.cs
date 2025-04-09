@@ -145,7 +145,7 @@ public class UpdateAdminAccountCommandHandler : IRequestHandler<UpdateAdminAccou
             AccountId = request.CurrentAccountId,
             EntityId = Guid.Parse(account.Id),
             ActivityType = ActivityType.UPDATE,
-            EntityType = ActivityEntityType.USER,
+            EntityType = ActivityEntityType.ADMIN,
         });
 
         return Result.Success();
