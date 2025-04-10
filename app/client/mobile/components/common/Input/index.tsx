@@ -77,6 +77,7 @@ const Input = ({
   onFocus,
   onBlur,
   value,
+  multiline = false,
   ...restProps
 }: InputTypes) => {
   const { c } = useColorizer();
@@ -190,8 +191,8 @@ const Input = ({
                       selectTextOnFocus={false}
                       selectionColor={globalStyles.color.primary}
                       cursorColor={globalStyles.color.primary}
-                      multiline={false}
-                      numberOfLines={1}
+                      multiline={multiline}
+                      numberOfLines={multiline ? 10 : 1}
                       {...restProps}
                       {...customProps}
                       onChangeText={value => {

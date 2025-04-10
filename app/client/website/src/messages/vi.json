@@ -31,7 +31,7 @@
   },
   "administerUsers": {
     "title": "Quản lý người dùng",
-    "search": "Tìm kiếm bằng tên tài khoản, tên, gmail,...",
+    "search": "Tìm kiếm bằng tên đăng nhập, tên, gmail,...",
     "columns": {
       "username": "Tên đăng nhập",
       "name": "Họ tên",
@@ -145,7 +145,7 @@
   "administerReportUsers": {
     "title": "Quản lý báo cáo",
     "subtitle": "Người dùng",
-    "search": "Tìm kiếm bằng tên tài khoản, tên,...",
+    "search": "Tìm kiếm bằng tên đăng nhập, tên,...",
     "columns": {
       "username": "Tên đăng nhập",
       "name": "Họ tên",
@@ -318,7 +318,7 @@
         "signOut": "Đăng xuất",
         "roles": {
           "ADMIN": "Quản trị viên",
-          "SUPER ADMIN": "Quản trị viên cấp cao"
+          "SUPER_ADMIN": "Quản trị viên cấp cao"
         }
       },
       "info": {
@@ -353,6 +353,7 @@
           "recipe": "Công thức",
           "comment": "Bình luận",
           "user": "Người dùng",
+          "admin": "Quản trị viên",
           "tag": "Thẻ",
           "reportUser": "Báo cáo người dùng",
           "reportRecipe": "Báo cáo công thức",
@@ -447,7 +448,7 @@
     },
     "columns": {
       "code": "Mã",
-      "value": "Giá trị",
+      "value": "Nguyên liệu",
       "category": "Danh mục",
       "createDate": "Ngày tạo",
       "status": "Trạng thái",

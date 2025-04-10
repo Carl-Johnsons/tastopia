@@ -61,6 +61,8 @@ export const useAdminActivityFeed = () => {
           return tE("tag");
         case ActivityEntityType.USER:
           return tE("user");
+        case ActivityEntityType.ADMIN:
+          return tE("admin");
         case ActivityEntityType.REPORT_USER:
           return tE("reportUser");
         case ActivityEntityType.REPORT_RECIPE:
@@ -87,6 +89,13 @@ export const useAdminActivityFeed = () => {
         );
       case ActivityEntityType.USER:
         return <UserCard user={(activity as IUserAdminActivityLogResponse).user} />;
+      case ActivityEntityType.ADMIN:
+        return (
+          <UserCard
+            user={(activity as IUserAdminActivityLogResponse).user}
+            isAdmin
+          />
+        );
       case ActivityEntityType.TAG:
         return <TagCard tag={(activity as ITagAdminActivityLogResponse).tag} />;
       case ActivityEntityType.REPORT_RECIPE:

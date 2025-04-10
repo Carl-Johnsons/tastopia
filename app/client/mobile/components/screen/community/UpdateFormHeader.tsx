@@ -77,6 +77,7 @@ const UpdateFormHeader = ({
           name='description'
           placeHolder={t("formPlaceholder.description")}
           errors={[t(errors.description?.message ?? "")]}
+          multiline={true}
         />
       </View>
 

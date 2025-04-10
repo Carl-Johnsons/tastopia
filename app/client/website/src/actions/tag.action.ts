@@ -12,10 +12,14 @@ export async function getTags(
   keyword = "",
   limit = 6
 ) {
+  const language = await getLocale();
+
   try {
     const url = `/api/admin/recipe/get-tags?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&Keyword=${encodeURIComponent(keyword.trim())}`;
 
-    const { data } = await protectedAxiosInstance.get(url);
+    const { data } = await protectedAxiosInstance.post(url, {
+      language
+    });
 
     return data as IPaginatedTagResponse;
   } catch (error) {
