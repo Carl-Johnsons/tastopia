@@ -47,10 +47,11 @@ export enum ActivityEntityType {
 	COMMENT = "COMMENT",
 	TAG = "TAG",
 	USER = "USER",
+	ADMIN = "ADMIN",
 	REPORT_RECIPE = "REPORT_RECIPE",
 	REPORT_COMMENT = "REPORT_COMMENT",
 	REPORT_USER = "REPORT_USER"
-}
+} 
 
 export enum ActivityType {
 	CREATE = "CREATE",

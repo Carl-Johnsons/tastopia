@@ -12,23 +12,28 @@ import { useGetCurrentAdminDetail } from "@/api/admin";
 const AuthListener = () => {
   const { data: session } = useSession();
   const dispatch = useAppDispatch();
-  const { data: user } = useGetCurrentAdminDetail();
-
+  const { data: user, refetch: refetchCurrentAdmin } = useGetCurrentAdminDetail({
+    enabled: false
+  });
   const clearData = useCallback(() => {
     dispatch(clearAuthData());
     dispatch(clearUserData());
   }, [dispatch]);
 
   useEffect(() => {
-    if (!session) return clearData();
-    if (user) dispatch(saveUserData({ ...user }));
+    const handle = async () => {
+      if (!session) return clearData();
+      await refetchCurrentAdmin();
+      if (user) dispatch(saveUserData({ ...user }));
 
-    const accessToken = session.accessToken as string;
-    const idToken = session.idToken as string;
-    const decodedToken = jwtDecode(accessToken) as any;
+      const accessToken = session.accessToken as string;
+      const idToken = session.idToken as string;
+      const decodedToken = jwtDecode(accessToken) as any;
 
-    dispatch(saveAuthData({ accessToken, idToken, role: decodedToken.role as Roles }));
-  }, [session, dispatch, clearData, user]);
+      dispatch(saveAuthData({ accessToken, idToken, role: decodedToken.role as Roles }));
+    };
+    handle();
+  }, [session, dispatch, clearData, user, refetchCurrentAdmin]);
 
   return null;
 };

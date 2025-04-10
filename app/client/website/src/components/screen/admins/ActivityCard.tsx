@@ -13,6 +13,7 @@ import { Link } from "@/i18n/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import useFormattedDistance from "@/hooks/format/useFormattedDistance";
 import { Clock, CornerDownRight } from "lucide-react";
+import { useMemo } from "react";
 
 export const RecipeCard = ({
   recipe,
@@ -112,18 +113,21 @@ export const CommentCard = ({
 
 export const UserCard = ({
   user,
-  className
+  className,
+  isAdmin
 }: {
   user: IUserLogResponse;
   className?: string;
+  isAdmin?: boolean;
 }) => {
   const { displayName, username, avatarURL, id } = user;
+  const LINK_PREFIX = useMemo(() => (isAdmin ? "/admins" : "/users"), [isAdmin]);
 
   return (
     <div className={`mt-4 rounded-lg border border-gray-200 p-4 ${className}`}>
       <div className='flex-center flex-col gap-2'>
         <Link
-          href={`/users/${id}`}
+          href={`/${LINK_PREFIX}/${id}`}
           className='transition-opacity hover:opacity-80'
         >
           <Avatar
@@ -132,7 +136,7 @@ export const UserCard = ({
           />
         </Link>
 
-        <Link href={`/users/${id}`}>
+        <Link href={`/${LINK_PREFIX}/${id}`}>
           <div className='text-black_white flex flex-col items-center'>
             <span className='font-bold transition-colors hover:text-primary'>
               {displayName}
@@ -148,7 +152,7 @@ export const UserCard = ({
 };
 
 export const TagCard = ({ tag }: { tag: ITagLogResponse }) => {
-  const { id, value, code, category, status, imageUrl } = tag;
+  const { value, code, category, status, imageUrl } = tag;
 
   return (
     <div className='mt-4 rounded-lg border border-gray-200 p-4'>
@@ -164,9 +168,7 @@ export const TagCard = ({ tag }: { tag: ITagLogResponse }) => {
         </div>
 
         <div className='flex flex-col'>
-          <Link href={`/tags/${id}`}>
-            <div className='text-black_white text-lg font-medium'>#{value}</div>
-          </Link>
+          <div className='text-black_white text-lg font-medium'>#{value}</div>
 
           <div className='flex items-center gap-2 text-sm text-gray-500'>
             <span>{category}</span>

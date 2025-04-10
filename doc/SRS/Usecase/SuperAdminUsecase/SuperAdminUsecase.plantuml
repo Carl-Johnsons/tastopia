@@ -6,6 +6,7 @@ skinparam defaultFontSize 12
 left to right direction
 actor "Super Admin" as admin
 actor "Cloudinary" as cl
+actor "SpeedSMS         " as sms
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-2: Login" as ucLogin
@@ -55,9 +56,10 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
 
     ucLogin <.. ucForgotPassword : <<extend>>
 
-    cl --up---> ucManageProfile
-    cl --up----> ucAdmEvent
-    cl --up---> ucAdmTags
+    cl --up-> ucManageProfile
+    cl --up-> ucAdmEvent
+    cl --up-> ucAdmTags
+    sms --up-> ucForgotPassword
 }
 
 @enduml
