@@ -74,7 +74,7 @@ def load_clip_features(names: dict, tag_dict: dict):
     return features_list, filename_index_list
 
 def sync_tags_and_load_faiss():
-    global tag_dict, names, index, filename_index
+    global tag_dict, names, index, filename_index, text_features, tag_codes
 
     # Load tags from MongoDB
     tag_dict = dict()
@@ -82,6 +82,7 @@ def sync_tags_and_load_faiss():
         tag_dict[tag['Code']] = {
             'En': tag['Value']['En'],
             'Vi': tag['Value']['Vi'],
+            'Pretrained': False,
         }
 
     # Load names from file
@@ -96,6 +97,14 @@ def sync_tags_and_load_faiss():
     features, filename_index = load_clip_features(names, tag_dict)
     index = faiss.IndexFlatL2(features.shape[1])
     index.add(features)
+
+    # Process text features
+    tag_codes = [i for i in tag_dict.keys()]
+    labels_list = [tag_dict[i]['En'] for i in tag_codes]
+    text = tokenizer(labels_list, context_length=clip_model.context_length)
+    text = torch.as_tensor(text)
+    with torch.no_grad():
+        text_features = clip_model.encode_text(text)
 
 # Initialize the index, tags and load features
 sync_tags_and_load_faiss()
@@ -208,15 +217,37 @@ def chose_res_clip(a):
     
     return ans
 
-def get_raw_clip_predict(image, no_sample=12):
+def encode_image_by_clip(image):
     image = preprocess(image).unsqueeze(0)
-    image_features = clip_model.encode_image(image).cpu().detach().numpy()
+    image_features = clip_model.encode_image(image)
+    return image_features
+
+def get_raw_clip_predict(image_features, no_sample=12):
+    image_features = image_features.cpu().detach().numpy()
 
     clip_pred_raw = []
     D, I = index.search(np.array(image_features), no_sample)
     pred_class = [int(filename_index[i].split('/')[1]) - 1 for i in I[0]]
     clip_pred_raw.append(pred_class)
     return clip_pred_raw
+
+def get_raw_clip_text_predict(image_features):
+    res = (image_features @ text_features.T)
+    res = res[0].tolist()
+
+    sorted_pairs = sorted(zip([i for i in range(len(res))], res), key=lambda x: x[1], reverse=True)
+    indexs, probs = zip(*sorted_pairs)
+
+    max_pretrained = 0
+    for i in range(len(indexs)):
+        print(indexs[i], tag_codes[indexs[i]], tag_dict.get(tag_codes[indexs[i]]))
+        if tag_dict.get(tag_codes[indexs[i]])['Pretrained']:
+            max_pretrained = probs[i]
+            break
+
+    if probs[0] > max_pretrained * 1.2 and not tag_dict.get(tag_codes[indexs[0]])['Pretrained']:
+        return indexs, probs
+    return [], []
 
 @app.post("/api/ingredient-predict-v2")
 async def predict(file: UploadFile = File(...)):
@@ -225,22 +256,40 @@ async def predict(file: UploadFile = File(...)):
     # Apply exif metadata if exist
     image = ImageOps.exif_transpose(image)
 
-    clip_pred_raw = get_raw_clip_predict(image, 50)
-    convnext_pred_raw = get_raw_convnext_predict(image)
-    indexs, probs = cal_mix_clip_cnn(clip_pred_raw[0], convnext_pred_raw[0])
-
     classifications = []
-    for class_index, conf in zip(indexs[:5], probs[:5]):
-        class_label = str(class_index + 1).zfill(3)
-        classifications.append({
-            "class": class_label,
-            "confidence": float(conf),
-            "name": {
-                'en': names[class_label][0],
-                'vi': names[class_label][1]
-            },
-            "code": '_'.join(names[class_label][0].split(' ')).upper(),
-        })
+
+    # Predict with pretrained and not pretrained text
+    image_features = encode_image_by_clip(image)
+    indexs, probs = get_raw_clip_text_predict(image_features)
+    if len(indexs) > 0:
+        for class_index, conf in zip(indexs[:5], probs[:5]):
+            class_label = '0'
+            classifications.append({
+                "class": class_label,
+                "confidence": float(conf),
+                "name": {
+                    'en': tag_dict.get(tag_codes[class_index])['En'],
+                    'vi': tag_dict.get(tag_codes[class_index])['Vi']
+                },
+                "code": tag_codes[class_index],
+            })
+    else:
+        # Predict with pretrained class
+        clip_pred_raw = get_raw_clip_predict(image_features, 50)
+        convnext_pred_raw = get_raw_convnext_predict(image)
+        indexs, probs = cal_mix_clip_cnn(clip_pred_raw[0], convnext_pred_raw[0])
+
+        for class_index, conf in zip(indexs[:5], probs[:5]):
+            class_label = str(class_index + 1).zfill(3)
+            classifications.append({
+                "class": class_label,
+                "confidence": float(conf),
+                "name": {
+                    'en': names[class_label][0],
+                    'vi': names[class_label][1]
+                },
+                "code": '_'.join(names[class_label][0].split(' ')).upper(),
+            })
 
     results = box_model(image, verbose=False)
     return {"classifications": classifications, "boxes": results[0].boxes.xyxyn.tolist()}
