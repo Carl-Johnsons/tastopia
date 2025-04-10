@@ -1,8 +1,11 @@
 "use server";
 
 import { protectedAxiosInstance } from "@/constants/host";
+import { Response } from "@/types/common";
 import { StatisticItem } from "@/types/statistic";
 import { IPaginatedTagResponse, Tag } from "@/types/tag";
+import { withErrorProcessor } from "@/utils/errorHanlder";
+import { AxiosError } from "axios";
 import { getLocale } from "next-intl/server";
 
 export async function getTags(
@@ -28,23 +31,25 @@ export async function getTags(
   }
 }
 
-export async function createTag(formData: FormData) {
+export async function createTag(formData: FormData): Promise<Response<Tag>> {
   try {
     const url = "/api/admin/recipe/create-tag";
-    const response = await protectedAxiosInstance.post(url, formData, {
+    const response = await protectedAxiosInstance.post<Tag>(url, formData, {
       headers: {
         "Content-Type": "multipart/form-data"
       }
     });
 
-    return response.data as Tag;
+    return {
+      ok: true,
+      data: response.data
+    };
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
-export async function updateTag(formData: FormData) {
+export async function updateTag(formData: FormData): Promise<Response<Tag>> {
   try {
     const url = "/api/admin/recipe/update-tag";
     const response = await protectedAxiosInstance.post(url, formData, {
@@ -53,10 +58,12 @@ export async function updateTag(formData: FormData) {
       }
     });
 
-    return response.data as Tag;
+    return {
+      ok: true,
+      data: response.data
+    };
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 

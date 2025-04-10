@@ -42,6 +42,8 @@ import { createTag, updateTag } from "@/actions/tag.action";
 import { useTags } from "./TagsContext";
 import { useLocale, useTranslations } from "next-intl";
 import { useInvalidateAdmin } from "@/hooks/query";
+import { useErrorHandler } from "@/hooks/error/useErrorHanler";
+import { Tag } from "@/types/tag";
 
 type FormProps = {
   type: string;
@@ -82,6 +84,8 @@ const TagForm = ({ type }: FormProps) => {
   const [image, setImage] = useState<any>(isUpdate ? [tag?.imageUrl] : undefined);
   const [isImageModified, setIsImageModified] = useState(false);
 
+  const { withBareErrorHanler } = useErrorHandler();
+
   const { CreateTagSchema, UpdateTagSchema } = getTagSchema(t);
   const schema = isUpdate ? UpdateTagSchema : CreateTagSchema;
 
@@ -114,51 +118,51 @@ const TagForm = ({ type }: FormProps) => {
 
     setIsSubmitting(true);
 
-    try {
-      const formData = new FormData();
+    const formData = new FormData();
 
-      formData.append("code", values.code);
-      formData.append("vi", values.vi);
-      formData.append("en", values.en);
-      formData.append("category", values.category);
+    formData.append("code", values.code);
+    formData.append("vi", values.vi);
+    formData.append("en", values.en);
+    formData.append("category", values.category);
 
-      if (isImageModified || !isUpdate) {
-        console.log("image", image);
-        formData.append("tagImage", image[0].file);
-      }
-
-      if (isUpdate) {
-        formData.append("tagId", tag?.id ?? "");
-        if ("status" in values) {
-          formData.append("status", values.status);
-        }
-
-        const data = await updateTag(formData);
-
-        /** Need to map to Vietnamese because data return is English */
-        updateTagInContext({
-          ...data,
-          category:
-            currentLanguage === "vi"
-              ? mapCategoryByLocale(data.category, "en")
-              : data.category
-        });
-        setOpenUpdateDialog(false);
-        toast.success(t("notifications.updateSuccess"));
-      } else {
-        const data = await createTag(formData);
-        createTagInContext(data);
-        setOpenCreateDialog(false);
-        toast.success(t("notifications.createSuccess"));
-      }
-
-      invalidateCurrentAdminActivities();
-    } catch (error) {
-      console.error(error);
-      toast.error(t("notifications.error"));
-    } finally {
-      setIsSubmitting(false);
+    if (isImageModified || !isUpdate) {
+      console.log("image", image);
+      formData.append("tagImage", image[0].file);
     }
+
+    if (isUpdate) {
+      formData.append("tagId", tag?.id ?? "");
+      if ("status" in values) {
+        formData.append("status", values.status);
+      }
+
+      await withBareErrorHanler<Tag>(() => updateTag(formData), {
+        onSuccess: data => {
+          /** Need to map to Vietnamese because data return is English */
+          updateTagInContext({
+            ...data,
+            category:
+              currentLanguage === "vi"
+                ? mapCategoryByLocale(data.category, "en")
+                : data.category
+          });
+          setOpenUpdateDialog(false);
+          toast.success(t("notifications.updateSuccess"));
+          invalidateCurrentAdminActivities();
+        }
+      });
+    } else {
+      await withBareErrorHanler<Tag>(() => createTag(formData), {
+        onSuccess: data => {
+          createTagInContext(data);
+          setOpenCreateDialog(false);
+          toast.success(t("notifications.createSuccess"));
+          invalidateCurrentAdminActivities();
+        }
+      });
+    }
+
+    setIsSubmitting(false);
   }
 
   return (
