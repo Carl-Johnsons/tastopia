@@ -1,5 +1,8 @@
-﻿using Contract.Event.TrackingEvent;
+﻿using Contract.Constants;
+using Contract.Event.NotificationEvent;
+using Contract.Event.TrackingEvent;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 
@@ -37,10 +40,14 @@ public class RestoreCommentCommandHandler : IRequestHandler<RestoreCommentComman
         var commentProjection = Builders<Recipe>.Projection.Expression(r =>
             r.Comments.FirstOrDefault(c => c.Id == request.CommentId));
 
-        var comment = await recipeCollection
-            .Find(recipeFilter)
+        var recipeQuery = recipeCollection
+            .Find(recipeFilter);
+
+        var comment = await recipeQuery
             .Project(commentProjection)
             .FirstOrDefaultAsync(cancellationToken);
+
+        var recipe = await recipeQuery.FirstOrDefaultAsync(cancellationToken);
 
         if (comment == null)
         {
@@ -69,11 +76,30 @@ public class RestoreCommentCommandHandler : IRequestHandler<RestoreCommentComman
         await _serviceBus.Publish(new AddActivityLogEvent
         {
             AccountId = request.CurrentAccountId,
-            ActivityType = Contract.Constants.ActivityType.RESTORE,
+            ActivityType = ActivityType.RESTORE,
             EntityId = request.CommentId,
-            EntityType = Contract.Constants.ActivityEntityType.COMMENT,
+            EntityType = ActivityEntityType.COMMENT,
             SecondaryEntityId = request.RecipeId,
-            SecondaryEntityType = Contract.Constants.ActivityEntityType.RECIPE
+            SecondaryEntityType = ActivityEntityType.RECIPE
+        });
+
+        await _serviceBus.Publish(new NotifyUserEvent
+        {
+            PrimaryActors = [
+                new ActorDTO
+                {
+                    ActorId = request.RecipeId + "~" + request.CommentId,
+                    Type = EntityType.COMMENT
+                }],
+            SecondaryActors = [],
+            TemplateCode = NotificationTemplateCode.ADMIN_RESTORE_COMMENT,
+            Channels = [NOTIFICATION_CHANNEL.DEFAULT],
+            JsonData = JsonConvert.SerializeObject(new
+            {
+                redirectUri = $"{CLIENT_URI.MOBILE.COMMUNITY}/{recipe.Id}"
+            }),
+            ImageUrl = recipe.ImageUrl,
+            RecipientIds = [comment.AccountId]
         });
 
         return Result.Success();

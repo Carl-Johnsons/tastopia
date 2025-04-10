@@ -123,14 +123,14 @@ public class CommentRecipeCommandHandler : IRequestHandler<CommentRecipeCommand,
                     PrimaryActors = [
                         new ActorDTO
                         {
-                            ActorId = accountId.Value,
+                            ActorId = accountId.Value.ToString(),
                             Type = EntityType.USER
                         }],
                     SecondaryActors = [
                         new ActorDTO
                         {
-                            ActorId = recipe.AuthorId,
-                            Type = EntityType.USER
+                            ActorId = recipe.Id.ToString() +"~"+ comment.Id.ToString(),
+                            Type = EntityType.COMMENT
                         }],
                     TemplateCode = NotificationTemplateCode.USER_COMMENT,
                     Channels = [NOTIFICATION_CHANNEL.DEFAULT],

@@ -2,17 +2,22 @@
 
 public enum NotificationTemplateCode
 {
-    USER_REPLY,
     USER_COMMENT,
     USER_CREATE_RECIPE,
     USER_FOLLOW,
     USER_UPVOTE,
-    USER_DOWNVOTE
+    SYSTEM_DISABLE_RECIPE,
+    ADMIN_DISABLE_RECIPE,
+    ADMIN_RESTORE_RECIPE,
+    ADMIN_DISABLE_COMMENT,
+    ADMIN_RESTORE_COMMENT
 }
 
 public enum EntityType
 {
-    EVENT,
-    SUBSCRIPTION,
+    RECIPE,
+    COMMENT,
+    ADMIN,
+    SYSTEM,
     USER
 }
