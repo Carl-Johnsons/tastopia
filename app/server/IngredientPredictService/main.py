@@ -245,12 +245,6 @@ async def predict(file: UploadFile = File(...)):
     results = box_model(image, verbose=False)
     return {"classifications": classifications, "boxes": results[0].boxes.xyxyn.tolist()}
 
-@app.get("/api/test")
-async def test_api():
-    for x in tag_collection.find():
-        print(x)
-    return ''
-
 @app.get("/")
 async def root():
     return {"message": "FastAPI is running!"}
