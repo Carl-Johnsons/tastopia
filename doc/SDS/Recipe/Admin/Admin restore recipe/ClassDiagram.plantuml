@@ -64,7 +64,7 @@ AdminController "1"--"1" RestoreRecipeCommand
 RestoreRecipeCommand --|> "IRequest<TResponse>"
 
 RestoreRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-RestoreRecipeCommandHandler "1" o--"1" RestoreRecipeCommand
+RestoreRecipeCommandHandler "1" --"1" RestoreRecipeCommand
 RestoreRecipeCommandHandler "1" o--"1" IApplicationDbContext
 RestoreRecipeCommandHandler "1" o--"1" IServiceBus
 RestoreRecipeCommandHandler "1" o--"1" IUnitOfWork

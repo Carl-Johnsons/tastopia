@@ -49,6 +49,9 @@ class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
     +TotalRow: int
 }
 
+PaginatedAdminReportCommentListResponse "1" o-- "1" NumberedPaginatedMetadata
+PaginatedAdminReportCommentListResponse "1" o-- "1..*" AdminReportCommentResponse
+
 class PaginatedDTO {
     +Skip : int
     +SortOrder : SortType
@@ -89,13 +92,13 @@ AdminController "1"--"1" GetCommentReportsQuery
 GetCommentReportsQuery --|> "IRequest<TResponse>"
 
 GetCommentReportsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetCommentReportsQueryHandler "1" o--"1" GetCommentReportsQuery
+GetCommentReportsQueryHandler "1" --"1" GetCommentReportsQuery
 GetCommentReportsQueryHandler "1" o--"1" IApplicationDbContext
 GetCommentReportsQueryHandler "1" o--"1" IPaginateDataUtility
 GetCommentReportsQueryHandler "1" o--"1" Result
-GetCommentReportsQueryHandler "1" o--"1" GrpcSearchUserRequest
-GetCommentReportsQueryHandler "1" o--"1" GrpcGetSimpleUsersRequest
 GetCommentReportsQueryHandler "1" o--"1" GrpcUserClient
+GetCommentReportsQueryHandler "1" -- "1..*" GrpcSearchUserRequest
+GetCommentReportsQueryHandler "1" -- "1..*" GrpcGetSimpleUsersRequest
 GetCommentReportsQueryHandler "1" --"1..*" PaginatedAdminReportCommentListResponse
 GetCommentReportsQueryHandler "1" --"1..*" NumberedPaginatedMetadata
 GetCommentReportsQueryHandler "1" --"1..*" AdminReportCommentResponse

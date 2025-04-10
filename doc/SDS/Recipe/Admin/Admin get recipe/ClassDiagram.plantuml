@@ -48,6 +48,9 @@ class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
     +TotalRow: int
 }
 
+PaginatedAdminRecipeListResponse "1" o-- "1" NumberedPaginatedMetadata
+PaginatedAdminRecipeListResponse "1" o-- "1..*" AdminRecipeResponse
+
 class PaginatedDTO {
     +Skip : int
     +SortOrder : SortType
@@ -101,14 +104,14 @@ AdminController "1"--"1" AdminGetRecipesQuery
 AdminGetRecipesQuery --|> "IRequest<TResponse>"
 
 AdminGetRecipesQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-AdminGetRecipesQueryHandler "1" o--"1" AdminGetRecipesQuery
+AdminGetRecipesQueryHandler "1" --"1" AdminGetRecipesQuery
 AdminGetRecipesQueryHandler "1" o--"1" IApplicationDbContext
 AdminGetRecipesQueryHandler "1" o--"1" IPaginateDataUtility
 AdminGetRecipesQueryHandler "1" o--"1" Result
-AdminGetRecipesQueryHandler "1" o--"1" GrpcSearchUserRequest
-AdminGetRecipesQueryHandler "1" o--"1" GrpcGetSimpleUsersRequest
 AdminGetRecipesQueryHandler "1" o--"1" GrpcUserClient
+AdminGetRecipesQueryHandler "1" --"1..*" GrpcSearchUserRequest
 AdminGetRecipesQueryHandler "1" --"1..*" PaginatedAdminRecipeListResponse
+AdminGetRecipesQueryHandler "1" --"1..*" GrpcGetSimpleUsersRequest
 AdminGetRecipesQueryHandler "1" --"1..*" NumberedPaginatedMetadata
 AdminGetRecipesQueryHandler "1" --"1..*" AdminRecipeResponse
 AdminGetRecipesQueryHandler "1" --"1..*" RecipeError

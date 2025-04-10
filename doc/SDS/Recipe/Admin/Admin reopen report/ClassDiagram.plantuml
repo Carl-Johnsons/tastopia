@@ -59,7 +59,7 @@ AdminController "1"--"1" ReopenReportCommand
 ReopenReportCommand --|> "IRequest<TResponse>"
 
 ReopenReportCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-ReopenReportCommandHandler "1" o--"1" ReopenReportCommand
+ReopenReportCommandHandler "1" --"1" ReopenReportCommand
 ReopenReportCommandHandler "1" o--"1" IApplicationDbContext
 ReopenReportCommandHandler "1" o--"1" IServiceBus
 ReopenReportCommandHandler "1" o--"1" IUnitOfWork

@@ -64,7 +64,7 @@ AdminController "1"--"1" GetTagDetailQuery
 GetTagDetailQuery --|> "IRequest<TResponse>"
 
 GetTagDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetTagDetailQueryHandler "1" o--"1" GetTagDetailQuery
+GetTagDetailQueryHandler "1" --"1" GetTagDetailQuery
 GetTagDetailQueryHandler "1" o--"1" IApplicationDbContext
 GetTagDetailQueryHandler "1" o--"1" Result
 GetTagDetailQueryHandler "1" --"1..*" TagResponse

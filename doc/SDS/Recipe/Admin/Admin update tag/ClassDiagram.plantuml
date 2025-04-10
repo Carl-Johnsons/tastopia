@@ -89,7 +89,7 @@ AdminController "1"--"1" UpdateTagCommand
 UpdateTagCommand --|> "IRequest<TResponse>"
 
 UpdateTagCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-UpdateTagCommandHandler "1" o--"1" UpdateTagCommand
+UpdateTagCommandHandler "1" --"1" UpdateTagCommand
 UpdateTagCommandHandler "1" o--"1" IApplicationDbContext
 UpdateTagCommandHandler "1" o--"1" IServiceBus
 UpdateTagCommandHandler "1" o--"1" IUnitOfWork

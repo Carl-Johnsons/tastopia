@@ -86,9 +86,9 @@ CommentRecipeCommandHandler "1" o-- "1" IUnitOfWork
 CommentRecipeCommandHandler "1" o-- "1" IApplicationDbContext
 CommentRecipeCommandHandler "1" o-- "1" IMapper
 CommentRecipeCommandHandler "1" o-- "1" GrpcUserClient
-CommentRecipeCommandHandler "1" o-- "1" GrpcGetSimpleUsersRequest
 CommentRecipeCommandHandler "1" o-- "1" IServiceBus
-CommentRecipeCommandHandler "1"--"1..*" CommentError
+CommentRecipeCommandHandler "1" --"1..*" GrpcGetSimpleUsersRequest
+CommentRecipeCommandHandler "1" --"1..*" CommentError
 
 Error "1" --"1..*" CommentError
 @enduml

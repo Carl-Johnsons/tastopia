@@ -46,6 +46,9 @@ class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
     + HasNextPage: bool
 }
 
+PaginatedAdminTagListResponse "1" o-- "1" AdvancePaginatedMetadata
+PaginatedAdminTagListResponse "1" o-- "1..*" AdminTagResponse
+
 class PaginatedDTO {
     + Skip : int
     + SortOrder : SortType
@@ -87,7 +90,7 @@ AdminController "1"--"1" AdminGetTagsQuery
 AdminGetTagsQuery --|> "IRequest<TResponse>"
 
 AdminGetTagsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-AdminGetTagsQueryHandler "1" o--"1" AdminGetTagsQuery
+AdminGetTagsQueryHandler "1" --"1" AdminGetTagsQuery
 AdminGetTagsQueryHandler "1" o--"1" IApplicationDbContext
 AdminGetTagsQueryHandler "1" o--"1" IPaginateDataUtility
 AdminGetTagsQueryHandler "1" o--"1" Result

@@ -59,7 +59,7 @@ AdminController "1"--"1" MarkReportCompleteCommand
 MarkReportCompleteCommand --|> "IRequest<TResponse>"
 
 MarkReportCompleteCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-MarkReportCompleteCommandHandler "1" o--"1" MarkReportCompleteCommand
+MarkReportCompleteCommandHandler "1" --"1" MarkReportCompleteCommand
 MarkReportCompleteCommandHandler "1" o--"1" IApplicationDbContext
 MarkReportCompleteCommandHandler "1" o--"1" IServiceBus
 MarkReportCompleteCommandHandler "1" o--"1" IUnitOfWork

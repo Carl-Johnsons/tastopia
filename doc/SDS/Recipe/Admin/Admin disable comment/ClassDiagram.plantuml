@@ -58,7 +58,7 @@ AdminController "1"--"1" DisableCommentCommand
 DisableCommentCommand --|> "IRequest<TResponse>"
 
 DisableCommentCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-DisableCommentCommandHandler "1" o--"1" DisableCommentCommand
+DisableCommentCommandHandler "1" --"1" DisableCommentCommand
 DisableCommentCommandHandler "1" o--"1" IApplicationDbContext
 DisableCommentCommandHandler "1" o--"1" IServiceBus
 DisableCommentCommandHandler "1" o--"1" IUnitOfWork

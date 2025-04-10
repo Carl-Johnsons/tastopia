@@ -64,7 +64,7 @@ AdminController "1"--"1" DisableRecipeCommand
 DisableRecipeCommand --|> "IRequest<TResponse>"
 
 DisableRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-DisableRecipeCommandHandler "1" o--"1" DisableRecipeCommand
+DisableRecipeCommandHandler "1" --"1" DisableRecipeCommand
 DisableRecipeCommandHandler "1" o--"1" IApplicationDbContext
 DisableRecipeCommandHandler "1" o--"1" IServiceBus
 DisableRecipeCommandHandler "1" o--"1" IUnitOfWork
