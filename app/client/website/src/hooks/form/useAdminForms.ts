@@ -22,6 +22,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { closeForm, saveAdminData, useSelectAdmin } from "@/slices/admin.slice";
 import { ImageListType } from "react-images-uploading";
 import { format, parse } from "date-fns";
+import { useErrorHandler } from "../error/useErrorHanler";
 
 type FormType = "create" | "update";
 
@@ -34,9 +35,11 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   const tNotification = useTranslations("administerAdmins.notifications");
   const tForm = useTranslations("administerAdmins.form");
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const { withBareErrorHanler } = useErrorHandler();
+
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
-  const { isSelf, isFormOpen, isFormLoading } = useSelectAdmin();
+  const { isSelf } = useSelectAdmin();
 
   const schema = useMemo(() => {
     return formType === "create"
@@ -111,34 +114,40 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
         console.debug("submitForm for", formType, "with values", formData);
 
         if (formType === "create") {
-          await createAdmin(formData);
-          toast.success(tNotification("create.success"));
+          withBareErrorHanler(() => createAdmin(formData), {
+            onSuccess: async () => {
+              toast.success(tNotification("create.success"));
+              await queryClient.invalidateQueries({ queryKey: ["admins"] });
+            }
+          });
         } else {
           formData.append("accountId", targetId ?? "");
 
-          await updateAdmin(formData);
-          toast.success(tNotification("update.success"));
+          withBareErrorHanler(() => updateAdmin(formData), {
+            onSuccess: async () => {
+              toast.success(tNotification("update.success"));
 
-          if (isSelf) await queryClient.invalidateQueries({ queryKey: ["currentAdmin"] });
-          await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
+              if (isSelf) {
+                await queryClient.invalidateQueries({ queryKey: ["currentAdmin"] });
+              }
+
+              await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
+              await queryClient.invalidateQueries({ queryKey: ["admins"] });
+            }
+          });
         }
 
-        await queryClient.invalidateQueries({ queryKey: ["admins"] });
         dispatch(closeForm());
         invalidateCurrentAdminActivities();
       } catch (error) {
-        console.error(error);
-
-        if (error instanceof Error) {
-          return toast.error(tNotification(`${formType}.${error.message}`));
-        }
-
-        return toast.error(tNotification("error"));
+        console.log(error);
+        toast.error(tNotification("error"));
       } finally {
         setIsSubmitting(false);
       }
     },
     [
+      withBareErrorHanler,
       form.formState.dirtyFields,
       isUpdate,
       formType,

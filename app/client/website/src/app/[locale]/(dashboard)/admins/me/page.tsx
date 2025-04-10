@@ -6,48 +6,46 @@ import SomethingWentWrong from "@/components/shared/common/Error";
 import { Link } from "@/i18n/navigation";
 import { ChevronRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 
 export default async function Page() {
   const t = await getTranslations("administerAdmins");
 
-  try {
-    const currentUser = await getCurrentAdminDetail();
+  const res = await getCurrentAdminDetail();
+  if (!res.ok) return <SomethingWentWrong />;
+  const currentUser = res.data;
 
-    return (
-      <div className='min-h-screen rounded-lg p-2'>
-        <div className='mb-4 flex gap-2 self-start'>
-          <Link href='/admins'>
-            <span className='text-gray-500'>{t("title")}</span>
-          </Link>
-          <ChevronRight className='text-black_white' />
-          <span className='text-black_white'>{t("detail.info.title")}</span>
-        </div>
+  return (
+    <div className='min-h-screen rounded-lg p-2'>
+      <div className='mb-4 flex gap-2 self-start'>
+        <Link href='/admins'>
+          <span className='text-gray-500'>{t("title")}</span>
+        </Link>
+        <ChevronRight className='text-black_white' />
+        <span className='text-black_white'>{t("detail.info.title")}</span>
+      </div>
 
-        <div className='mx-auto max-w-[960px]'>
-          <ProfileHeader admin={currentUser} />
+      <div className='mx-auto max-w-[960px]'>
+        <ProfileHeader admin={currentUser} />
 
-          <div className='mt-6 flex flex-col-reverse gap-6 lg:flex-row'>
-            <div className='flex-1'>
-              {
-                <ActivityFeed
-                  accountId={currentUser.accountId}
-                  self
-                />
-              }
-            </div>
-
-            <div className='flex flex-col space-y-6 lg:w-1/3'>
-              <ProfileInfo
-                admin={currentUser}
+        <div className='mt-6 flex flex-col-reverse gap-6 lg:flex-row'>
+          <div className='flex-1'>
+            {
+              <ActivityFeed
+                accountId={currentUser.accountId}
                 self
               />
-            </div>
+            }
+          </div>
+
+          <div className='flex flex-col space-y-6 lg:w-1/3'>
+            <ProfileInfo
+              admin={currentUser}
+              self
+            />
           </div>
         </div>
       </div>
-    );
-  } catch (error) {
-    console.log(error);
-    return <SomethingWentWrong />;
-  }
+    </div>
+  );
 }

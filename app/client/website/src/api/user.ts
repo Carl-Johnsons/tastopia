@@ -1,6 +1,5 @@
 import {
   getAdminUsers,
-  getCurrentUserDetails,
   getUserById,
   getUserDetailReports,
   getUserReports
