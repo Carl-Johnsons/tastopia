@@ -53,6 +53,7 @@ public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordComman
         }
 
         account.PasswordHash = _userManager.PasswordHasher.HashPassword(account, request.Password);
+        account.IsFirstTimeLogin = false;
         account.ForgotPasswordOTP = null;
         account.ForgotPasswordExpiry = null;
         account.ForgotPasswordCreated = null;
