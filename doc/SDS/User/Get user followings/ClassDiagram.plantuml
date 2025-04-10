@@ -32,25 +32,26 @@ together {
 }
 
 class GetUserFollowingsQueryHandler {
-    - _context : IApplicationDbContext
-    - _paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata> 
-    + Handle(request: GetUserFollowingsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedSimpleUserListResponse?>>
+    -_context : IApplicationDbContext
+    -_paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata> 
+    +GetUserFollowingsQueryHandler(context : IApplicationDbContext, paginateDataUtility : IPaginateDataUtility<User, AdvancePaginatedMetadata>)
+    +Handle(request: GetUserFollowingsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedSimpleUserListResponse?>>
 }
 
 class PaginatedSimpleUserListResponse
 
 class "BasePaginatedResponse<Type,MetadataType>" {
-    + PaginatedData: IEnumerable<Type>
-    + Metadata: MetadataType
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
 }
 
 class CommonPaginatedMetadata {
-    + TotalPage: int
+    +TotalPage: int
 
 }
 
 class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
-    + HasNextPage: bool
+    +HasNextPage: bool
 }
 
 
@@ -65,12 +66,12 @@ class USER_CONSTANTS {
 }
 
 class SimpleUserResponse {
-    - Id : Guid
-    - AvtUrl : string
-    - DisplayName : string
-    - Username : string
-    - NumberOfRecipe : int
-    - IsFollowing : bool
+    +Id : Guid
+    +AvtUrl : string
+    +DisplayName : string
+    +Username : string
+    +NumberOfRecipe : int
+    +IsFollowing : bool
 }
 
 ' =========== Library class ===========

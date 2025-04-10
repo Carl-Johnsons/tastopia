@@ -69,8 +69,8 @@ enum SETTING_VALUE::BOOLEAN {
 }
 
 class UpdateSettingCommandHandler {
-    - _context : IApplicationDbContext
-    + _unitOfWork : IUnitOfWork
+    -_context : IApplicationDbContext
+    +_unitOfWork : IUnitOfWork
     +UpdateSettingCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork)
     +Handle(request : UpdateSettingCommand, cancellationToken : CancellationToken) : Task<Result>
 }

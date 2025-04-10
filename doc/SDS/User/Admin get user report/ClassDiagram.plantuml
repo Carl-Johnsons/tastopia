@@ -24,40 +24,41 @@ class GetUserReportsQuery {
 }
 
 class PaginatedDTO{
-    + Skip : int
-    + SortOrder : SortType
-    + SortBy : string
-    + Keyword : string
-    + Limit : int
+    +Skip : int
+    +SortOrder : SortType
+    +SortBy : string
+    +Keyword : string
+    +Limit : int
 }
 
 class GetReportReasonsDTO {
-    + Lang : string
+    +Lang : string
 }
 
 class GetUserReportsQueryHandler {
-    - _context : IApplicationDbContext
-    - _paginateDataUtility: IPaginateDataUtility<AdminUserReportResponse, NumberedPaginatedMetadata> 
-    + Handle(request: GetUserReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminUserReportListResponse?>>
+    -_context : IApplicationDbContext
+    -_paginateDataUtility: IPaginateDataUtility<AdminUserReportResponse, NumberedPaginatedMetadata> 
+    +GetUserReportsQueryHandler(context : IApplicationDbContext, paginateDataUtility : IPaginateDataUtility<AdminUserReportResponse, NumberedPaginatedMetadata>)
+    +Handle(request: GetUserReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminUserReportListResponse?>>
 }
 
 class PaginatedAdminUserReportListResponse
 
 class "BasePaginatedResponse<Type,MetadataType>" {
-    + PaginatedData: IEnumerable<Type>
-    + Metadata: MetadataType
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
 }
 
 PaginatedAdminUserReportListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
 
 
 class CommonPaginatedMetadata {
-    + TotalPage: int
+    +TotalPage: int
 }
 
 class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
-    + CurrentPage: int
-    + TotalRow: int
+    +CurrentPage: int
+    +TotalRow: int
 }
 
 class AdminUserReportResponse{

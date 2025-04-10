@@ -26,10 +26,11 @@ class MarkReportCommand {
 }
 
 class MarkReportCommandHandler {
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    - _unitOfWork: IUnitOfWork 
-    + Handle(request: MarkReportCommand, cancellationToken: CancellationToken) : Task<Result<AdminMarkReportResponse?>>
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +MarkReportCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: MarkReportCommand, cancellationToken: CancellationToken) : Task<Result<AdminMarkReportResponse?>>
 }
 
 class ReportDTO {
@@ -37,8 +38,8 @@ class ReportDTO {
 }
 
 class AdminMarkReportResponse {
-    + UserReport : UserReport
-    + IsReopened : bool
+    +UserReport : UserReport
+    +IsReopened : bool
 }
 
 class UserError {

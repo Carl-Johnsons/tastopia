@@ -22,30 +22,30 @@ class GetUserDetailsQuery {
 }
 
 class GetUserDetailsQueryHandler {
-    - _mapper : IMapper
-    - _context : IApplicationDbContext
-    - _grpcAccountClient: GrpcAccountClient 
-    + GetUserDetailsQueryHandler(context: IApplicationDbContext, mapper: IMapper, grpcAccountClient: grpcAccountClient)
-    + Handle(request: GetUserDetailsQuery, cancellationToken: CancellationToken) : Task<Result>
+    -_mapper : IMapper
+    -_context : IApplicationDbContext
+    -_grpcAccountClient: GrpcAccountClient 
+    +GetUserDetailsQueryHandler(context: IApplicationDbContext, mapper: IMapper, grpcAccountClient: grpcAccountClient)
+    +Handle(request: GetUserDetailsQuery, cancellationToken: CancellationToken) : Task<Result>
 }
 
 class GetUserDetailsResponse {
-    - AccountId : Guid
-    - DisplayName : string
-    - AvatarUrl : string
-    - BackgroundUrl : string
-    - Dob : DateTime
-    - Gender : string
-    - Bio : string
-    - Address : string
-    - TotalFollwer : int
-    - TotalFollowing : int
-    - TotalRecipe : int
-    - IsAccountActive : bool
-    - AccountUsername : string
-    - IsAdmin : bool
-    - AccountEmail : string
-    - AccountPhoneNumber : string
+    +AccountId : Guid
+    +DisplayName : string
+    +AvatarUrl : string
+    +BackgroundUrl : string
+    +Dob : DateTime
+    +Gender : string
+    +Bio : string
+    +Address : string
+    +TotalFollwer : int
+    +TotalFollowing : int
+    +TotalRecipe : int
+    +IsAccountActive : bool
+    +AccountUsername : string
+    +IsAdmin : bool
+    +AccountEmail : string
+    +AccountPhoneNumber : string
 }
 
 

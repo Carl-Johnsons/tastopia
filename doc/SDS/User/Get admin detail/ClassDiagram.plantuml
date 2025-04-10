@@ -23,9 +23,10 @@ class GetAdminDetailQuery {
 }
 
 class GetAdminDetailQueryHandler {
-    - _context : IApplicationDbContext
-    - _grpcAccountClient: GrpcAccountClient 
-    + Handle(request: GetAdminDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminDetailResponse?>>
+    -_context : IApplicationDbContext
+    -_grpcAccountClient: GrpcAccountClient 
+    +GetAdminDetailQueryHandler(context : IApplicationDbContext, grpcAccountClient : GrpcAccountClient)
+    +Handle(request: GetAdminDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminDetailResponse?>>
 }
 
 class AdminDetailResponse{

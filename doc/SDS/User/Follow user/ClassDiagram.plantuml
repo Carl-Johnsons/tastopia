@@ -25,10 +25,11 @@ class FollowUserCommand {
 }
 
 class FollowUserCommandHandler {
-    - _mapper : IMapper
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    + Handle(request: FollowUserCommand, cancellationToken: CancellationToken) : Task<Result<FollowUserResponse?>>
+    -_mapper : IMapper
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    +FollowUserCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, mapper : IMapper)
+    +Handle(request: FollowUserCommand, cancellationToken: CancellationToken) : Task<Result<FollowUserResponse?>>
 }
 
 class FollowUserDTO {
@@ -36,9 +37,9 @@ class FollowUserDTO {
 }
 
 class FollowUserResponse {
-    - AccountId : Guid
-    - FollowingId : Guid
-    - IsFollowing : bool
+    +AccountId : Guid
+    +FollowingId : Guid
+    +IsFollowing : bool
 }
 
 class UserError {

@@ -23,36 +23,37 @@ class GetAdminsQuery {
 }
 
 class GetAdminsQueryHandler {
-    - _context : IApplicationDbContext
-    - _grpcAccountClient: GrpcAccountClient 
-    - _paginateDataUtility: IPaginateDataUtility<AdminResponse, NumberedPaginatedMetadata> 
-    + Handle(request: GetAdminsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminListResponse?>>
+    -_context : IApplicationDbContext
+    -_grpcAccountClient: GrpcAccountClient 
+    -_paginateDataUtility: IPaginateDataUtility<AdminResponse, NumberedPaginatedMetadata> 
+    +GetAdminsQueryHandler(context : IApplicationDbContext, grpcAccountClient : GrpcAccountClient, paginateDataUtility : IPaginateDataUtility<AdminResponse, NumberedPaginatedMetadata>)
+    +Handle(request: GetAdminsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminListResponse?>>
 }
 
 class PaginatedAdminListResponse
 
 class "BasePaginatedResponse<Type,MetadataType>" {
-    + PaginatedData: IEnumerable<Type>
-    + Metadata: MetadataType
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
 }
 
 PaginatedAdminListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
 
 class CommonPaginatedMetadata {
-    + TotalPage: int
+    +TotalPage: int
 }
 
 class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
-    + CurrentPage: int
-    + TotalRow: int
+    +CurrentPage: int
+    +TotalRow: int
 }
 
 class PaginatedDTO {
-    + Skip : int
-    + SortOrder : SortType
-    + SortBy : string
-    + Keyword : string
-    + Limit : int
+    +Skip : int
+    +SortOrder : SortType
+    +SortBy : string
+    +Keyword : string
+    +Limit : int
 }
 
 class AdminResponse{

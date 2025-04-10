@@ -26,10 +26,11 @@ class AdminBanUserCommand {
 }
 
 class AdminBanUserCommandHandler {
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    - _unitOfWork: IUnitOfWork 
-    + Handle(request: AdminBanUserCommand, cancellationToken: CancellationToken) : Task<Result<AdminBanUserResponse?>>
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +AdminBanUserCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: AdminBanUserCommand, cancellationToken: CancellationToken) : Task<Result<AdminBanUserResponse?>>
 }
 
 class AdminBanUserDTO {
@@ -37,10 +38,10 @@ class AdminBanUserDTO {
 }
 
 class AdminBanUserResponse {
-    + AdminId : Guid
-    + UserId : Guid
-    + IsRestored : bool
-    + User : User
+    +AdminId : Guid
+    +UserId : Guid
+    +IsRestored : bool
+    +User : User
 }
 
 class UserError {

@@ -24,9 +24,10 @@ class AdminGetUserDetailQuery {
 }
 
 class AdminGetUserDetailQueryHandler {
-    - _context : IApplicationDbContext
-    - _grpcAccountClient: GrpcAccountClient 
-    + Handle(request: AdminGetUserDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminGetUserDetailResponse?>>
+    -_context : IApplicationDbContext
+    -_grpcAccountClient: GrpcAccountClient 
+    +AdminGetUserDetailQueryHandler(context : IApplicationDbContext, grpcAccountClient : GrpcAccountClient)
+    +Handle(request: AdminGetUserDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminGetUserDetailResponse?>>
 }
 
 class GetUserDetailByAccountIdDTO {
@@ -34,22 +35,22 @@ class GetUserDetailByAccountIdDTO {
 }
 
 class AdminGetUserDetailResponse{
-    + AccountId : Guid
-    + DisplayName : string
-    + AvatarUrl : string
-    + Dob : DateTime
-    + Gender : string
-    + Address : string
-    + TotalFollower : int
-    + TotalFollowing : int
-    + TotalRecipe : int
-    + IsAccountActive : bool
-    + AccountUsername : string
-    + IsAdmin : bool
-    + Role : string
-    + IsCurrentUser : bool
-    + AccountEmail : string
-    + AccountPhoneNumber : string
+    +AccountId : Guid
+    +DisplayName : string
+    +AvatarUrl : string
+    +Dob : DateTime
+    +Gender : string
+    +Address : string
+    +TotalFollower : int
+    +TotalFollowing : int
+    +TotalRecipe : int
+    +IsAccountActive : bool
+    +AccountUsername : string
+    +IsAdmin : bool
+    +Role : string
+    +IsCurrentUser : bool
+    +AccountEmail : string
+    +AccountPhoneNumber : string
 }
 
 class UserError {

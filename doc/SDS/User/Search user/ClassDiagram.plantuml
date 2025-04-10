@@ -32,26 +32,26 @@ together {
 }
 
 class SearchUsersCommandHandler {
-    - _context : IApplicationDbContext
-    - _paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata> 
-    + SearchUsersCommandHandler(context: IApplicationDbContext, paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata>)
-    + Handle(request: SearchUsersCommand, cancellationToken: CancellationToken) : Task<Result>
+    +_context : IApplicationDbContext
+    +_paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata> 
+    +SearchUsersCommandHandler(context: IApplicationDbContext, paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata>)
+    +Handle(request: SearchUsersCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
 class PaginatedSearchUserListResponse
 
 class "BasePaginatedResponse<Type,MetadataType>" {
-    + PaginatedData: IEnumerable<Type>
-    + Metadata: MetadataType
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
 }
 
 class CommonPaginatedMetadata {
-    + TotalPage: int
+    +TotalPage: int
 
 }
 
 class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
-    + HasNextPage: bool
+    +HasNextPage: bool
 }
 
 
@@ -66,12 +66,12 @@ class USER_CONSTANTS {
 }
 
 class SearchUserResponse {
-    - Id : Guid
-    - AvtUrl : string
-    - DisplayName : string
-    - Username : string
-    - NumberOfRecipe : int
-    - IsFollowing : bool
+    +Id : Guid
+    +AvtUrl : string
+    +DisplayName : string
+    +Username : string
+    +NumberOfRecipe : int
+    +IsFollowing : bool
 }
 
 ' =========== Library class ===========

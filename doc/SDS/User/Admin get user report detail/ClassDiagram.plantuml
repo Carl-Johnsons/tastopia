@@ -31,27 +31,28 @@ class AdminGetUserReportByAccountIdDTO{
 }
 
 class GetUserReportDetailByAccountIdQueryHandler {
-    - _context : IApplicationDbContext
-    - _paginateDataUtility: IPaginateDataUtility<AdminUserReportDetailResponse, AdvancePaginatedMetadata> 
-    + Handle(request: GetUserReportDetailByAccountIdQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminUserReportDetailListResponse?>>
+    -_context : IApplicationDbContext
+    -_paginateDataUtility: IPaginateDataUtility<AdminUserReportDetailResponse, AdvancePaginatedMetadata> 
+    +GetUserReportDetailByAccountIdQueryHandler(context : IApplicationDbContext, paginateDataUtility : IPaginateDataUtility<AdminUserReportDetailResponse, AdvancePaginatedMetadata>)
+    +Handle(request: GetUserReportDetailByAccountIdQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminUserReportDetailListResponse?>>
 }
 
 class PaginatedAdminUserReportDetailListResponse
 
 class "BasePaginatedResponse<Type,MetadataType>" {
-    + PaginatedData: IEnumerable<Type>
-    + Metadata: MetadataType
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
 }
 
 PaginatedAdminUserReportDetailListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
 
 
 class CommonPaginatedMetadata {
-    + TotalPage: int
+    +TotalPage: int
 }
 
 class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
-    + HasNextPage: bool
+    +HasNextPage: bool
 }
 
 class AdminUserReportDetailResponse{
