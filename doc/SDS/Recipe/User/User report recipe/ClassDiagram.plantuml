@@ -28,7 +28,7 @@ class UserReportRecipeCommand {
 class UserReportRecipeCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
-    +Handle(UserReportRecipeCommand request, CancellationToken cancellationToken): async Task<Result<UserReportRecipeResponse?>> 
+    +Handle(request : UserReportRecipeCommand, cancellationToken : CancellationToken): async Task<Result<UserReportRecipeResponse?>> 
 }
 
 class UserReportRecipeDTO{

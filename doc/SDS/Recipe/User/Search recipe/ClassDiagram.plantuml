@@ -30,7 +30,7 @@ class SearchRecipesQueryHandler {
     -_mapper: IMapper
     -_grpcUserClient: GrpcUserClient
     -_paginateDataUtility: IPaginateDataUtility
-    +Handle(SearchRecipesQuery request, CancellationToken cancellationToken): async Task<Result<PaginatedSearchRecipeListResponse?>> 
+    +Handle(request : SearchRecipesQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedSearchRecipeListResponse?>> 
 }
 
 interface IMapper{

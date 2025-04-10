@@ -45,10 +45,10 @@ class UpdateRecipeCommandHandler{
     -_unitOfWork: IUnitOfWork
     -_serviceBus: IServicebus
     -_grpcUploadFileClient: GrpcUploadFileClient
-    +Handle(CommentRecipeCommand request, CancellationToken cancellationToken): async Task<Result<RecipeCommentResponse?>> 
-    -GetImageIndexMap(List<StepDTO> steps): Dictionary<string, int>
-    -GetGrpcFileStreamDTOsAsync(IFormFile recipeImage, List<StepDTO> steps): async Task<RepeatedField<GrpcFileStreamDTO>>
-    -GetDeleteUrls(Recipe recipe, IFormFile? recipeImage, List<UpdateStepDTO> steps): List<string>
+    +Handle(request : CommentRecipeCommand, cancellationToken : CancellationToken): async Task<Result<RecipeCommentResponse?>> 
+    -GetImageIndexMap(steps : List<StepDTO>): Dictionary<string, int>
+    -GetGrpcFileStreamDTOsAsync(recipeImage : IFormFile, steps : List<StepDTO>): async Task<RepeatedField<GrpcFileStreamDTO>>
+    -GetDeleteUrls(recipe : Recipe, recipeImage : IFormFile?, steps : List<UpdateStepDTO>): List<string>
 }
 
 interface IMapper{

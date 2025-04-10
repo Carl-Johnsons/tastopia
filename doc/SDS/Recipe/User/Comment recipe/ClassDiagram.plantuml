@@ -30,7 +30,7 @@ class CommentRecipeCommandHandler {
     -_mapper: IMapper
     -_grpcUserClient: GrpcUserClient
     -_serviceBus: IServicebus
-    +Handle(CommentRecipeCommand request, CancellationToken cancellationToken): async Task<Result<RecipeCommentResponse?>> 
+    +Handle(request : CommentRecipeCommand, cancellationToken : CancellationToken): async Task<Result<RecipeCommentResponse?>> 
 }
 
 interface IMapper{

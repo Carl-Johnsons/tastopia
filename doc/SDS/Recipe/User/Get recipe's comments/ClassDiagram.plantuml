@@ -27,7 +27,7 @@ class GetRecipeCommentsQueryHandler {
     -_mapper: IMapper
     -_grpcUserClient: GrpcUserClient
     -_paginateDataUtility: IPaginateDataUtility
-    +Handle(GetRecipeCommentsQuery request, CancellationToken cancellationToken): async Task<Result<PaginatedRecipeCommentListResponse?>> 
+    +Handle(request : GetRecipeCommentsQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedRecipeCommentListResponse?>> 
 }
 
 

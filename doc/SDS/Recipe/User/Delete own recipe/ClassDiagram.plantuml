@@ -26,7 +26,7 @@ class DeleteCommentCommand {
 class DeleteOwnRecipeCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
-    +Handle(DeleteOwnRecipeCommand request, CancellationToken cancellationToken): async Task<Result<Recipe?>> 
+    +Handle(request : DeleteOwnRecipeCommand, cancellationToken : CancellationToken): async Task<Result<Recipe?>> 
 }
 
 class DeleteOwnRecipeDTO{

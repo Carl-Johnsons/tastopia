@@ -28,7 +28,7 @@ class GetTagsQuery {
 class GetTagsQueryHandler {
     -_context: IApplicationDbContext
     -_paginateDataUtility: IPaginateDataUtility
-    +Handle(GetTagsQuery request, CancellationToken cancellationToken): async Task<Result<PaginatedTagListResponse?>> 
+    +Handle(request : GetTagsQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedTagListResponse?>> 
 }
 
 class PaginatedTagListResponse{

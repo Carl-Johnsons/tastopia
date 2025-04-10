@@ -28,7 +28,7 @@ class UserReportCommentCommand {
 class UserReportCommentCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
-    +Handle(UserReportCommentCommand request, CancellationToken cancellationToken): async Task<Result<UserReportCommentResponse?>> 
+    +Handle(request : UserReportCommentCommand, cancellationToken : CancellationToken): async Task<Result<UserReportCommentResponse?>> 
 }
 
 class UserReportCommentDTO{
