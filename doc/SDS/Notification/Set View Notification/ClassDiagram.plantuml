@@ -1,0 +1,60 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/Notification/NotificationDbContext.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class NotificationController {
+    +SetViewNotification(dto: SetViewNotifyDTO): async Task<IActionResult>
+}
+
+class SetViewNotifyDTO {
+    +NotificationId: Guid
+}
+
+class SetViewNotificationCommand {
+    +AccountId: Guid
+    +NotificationId: Guid
+}
+
+class SetViewNotificationCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +SetViewNotificationCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
+    +Handle(request: SetViewNotificationCommand, cancellationToken: CancellationToken): async Task<Result<Recipient>>
+}
+
+class NotificationErrors {
+    {static} +NotFound: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+NotificationController --|> BaseApiController
+NotificationController "1"--"1" SetViewNotificationCommand
+NotificationController "1"--"1" SetViewNotifyDTO
+SetViewNotificationCommand --|> "IRequest<TResponse>"
+SetViewNotificationCommand "1" o-- "1" DeviceType
+
+SetViewNotificationCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+SetViewNotificationCommandHandler "1" o--"1" SetViewNotificationCommand
+SetViewNotificationCommandHandler "1" o--"1" NotificationErrors
+SetViewNotificationCommandHandler "1" o--"1" Result
+SetViewNotificationCommandHandler "1" o-- "1" IApplicationDbContext
+SetViewNotificationCommandHandler "1" o-- "1" IUnitOfWork
+
+Error "1" --"1..*" NotificationErrors
+
+@enduml
