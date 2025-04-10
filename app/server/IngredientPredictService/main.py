@@ -47,11 +47,6 @@ print(mongo_client.list_database_names())
 recipe_db = mongo_client["RecipeDB"]
 tag_collection = recipe_db["Tag"]
 
-# Load names from file
-names = dict()
-for i in open("name_edited.txt", encoding='utf-8').read().splitlines():
-    names[i.split('_')[0]] = [i.split('_')[2], i.split('_')[4], i.split('_')[2].replace(' ', '_').upper()]
-
 def load_clip_features(names: dict, tag_dict: dict):
     # Load feature
     features = np.load('clip_feature/features.npy')
@@ -79,7 +74,7 @@ def load_clip_features(names: dict, tag_dict: dict):
     return features_list, filename_index_list
 
 def sync_tags_and_load_faiss():
-    global tag_dict, index, filename_index
+    global tag_dict, names, index, filename_index
 
     # Load tags from MongoDB
     tag_dict = dict()
@@ -88,6 +83,14 @@ def sync_tags_and_load_faiss():
             'En': tag['Value']['En'],
             'Vi': tag['Value']['Vi'],
         }
+
+    # Load names from file
+    names = dict()
+    for i in open("name_edited.txt", encoding='utf-8').read().splitlines():
+        code = i.split('_')[2].replace(' ', '_').upper()
+        names[i.split('_')[0]] = [i.split('_')[2], i.split('_')[4], code]
+        if tag_dict.get(code):
+            tag_dict[code]['Pretrained'] = True
 
     # Load feature
     features, filename_index = load_clip_features(names, tag_dict)
@@ -148,8 +151,8 @@ trigger = CronTrigger(hour=0, minute=0)  # midnight every day
 scheduler.add_job(sync_tags_and_load_faiss, trigger)
 scheduler.start()
 
-# app = FastAPI(lifespan=lifespan, redirect_slashes=False)
-app = FastAPI(redirect_slashes=False)
+app = FastAPI(lifespan=lifespan, redirect_slashes=False)
+# app = FastAPI(redirect_slashes=False)
 
 @app.get("/health")
 async def health():
