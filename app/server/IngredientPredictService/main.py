@@ -8,7 +8,6 @@ import pymongo
 import io
 import logging
 import logging.config
-import os
 import random
 import uvicorn
 import yaml
@@ -18,6 +17,9 @@ from open_clip import create_model_from_pretrained, get_tokenizer
 import torch
 import cv2
 import faiss
+from apscheduler.schedulers.background import BackgroundScheduler  # runs tasks in the background
+from apscheduler.triggers.cron import CronTrigger  # allows us to specify a recurring time for execution
+import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 with open("log_config.yaml", "r") as f:
@@ -44,14 +46,6 @@ mongo_client = pymongo.MongoClient(envUtil.get_mongodb_connection_string())
 print(mongo_client.list_database_names())
 recipe_db = mongo_client["RecipeDB"]
 tag_collection = recipe_db["Tag"]
-
-tag_dict = dict()
-# tag_list = tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list()
-for tag in tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list():
-    tag_dict[tag['Code']] = {
-        'En': tag['Value']['En'],
-        'Vi': tag['Value']['Vi'],
-    }
 
 # Load names from file
 names = dict()
@@ -84,11 +78,24 @@ def load_clip_features(names: dict, tag_dict: dict):
     filename_index_list = np.array(filename_index_list)
     return features_list, filename_index_list
 
-# Load CLIP features
-features, filename_index = load_clip_features(names, tag_dict)
-# Faiss init
-index = faiss.IndexFlatL2(features.shape[1])
-index.add(features)
+def sync_tags_and_load_faiss():
+    global tag_dict, index, filename_index
+
+    # Load tags from MongoDB
+    tag_dict = dict()
+    for tag in tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list():
+        tag_dict[tag['Code']] = {
+            'En': tag['Value']['En'],
+            'Vi': tag['Value']['Vi'],
+        }
+
+    # Load feature
+    features, filename_index = load_clip_features(names, tag_dict)
+    index = faiss.IndexFlatL2(features.shape[1])
+    index.add(features)
+
+# Initialize the index, tags and load features
+sync_tags_and_load_faiss()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -135,14 +142,20 @@ async def lifespan(app: FastAPI):
         else:
             logging.error("Deregistration failed:", response.text)
 
-app = FastAPI(lifespan=lifespan, redirect_slashes=False)
-# app = FastAPI(redirect_slashes=False)
+# Set up the scheduler
+scheduler = BackgroundScheduler()
+trigger = CronTrigger(hour=0, minute=0)  # midnight every day
+scheduler.add_job(sync_tags_and_load_faiss, trigger)
+scheduler.start()
+
+# app = FastAPI(lifespan=lifespan, redirect_slashes=False)
+app = FastAPI(redirect_slashes=False)
 
 @app.get("/health")
 async def health():
     return {"status": "ok"}
 
-def cal_mix_1(a, b):
+def cal_mix_clip_cnn(a, b):
     scores = dict()
     for i in a:
         scores[i] = 0
@@ -211,7 +224,7 @@ async def predict(file: UploadFile = File(...)):
 
     clip_pred_raw = get_raw_clip_predict(image, 50)
     convnext_pred_raw = get_raw_convnext_predict(image)
-    indexs, probs = cal_mix_1(clip_pred_raw[0], convnext_pred_raw[0])
+    indexs, probs = cal_mix_clip_cnn(clip_pred_raw[0], convnext_pred_raw[0])
 
     classifications = []
     for class_index, conf in zip(indexs[:5], probs[:5]):
