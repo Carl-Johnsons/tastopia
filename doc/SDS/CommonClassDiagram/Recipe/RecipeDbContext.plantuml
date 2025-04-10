@@ -123,13 +123,13 @@ IMongoDbContext o-- DbContext
 ' IApplicationDbContext o-- UserReportRecipe
 ' IApplicationDbContext o-- UserReportComment
 
-ApplicationDbContext o-- "DbSet<T>"
-ApplicationDbContext o-- Recipe
-ApplicationDbContext o-- Tag
-ApplicationDbContext o-- RecipeTag
-ApplicationDbContext o-- UserBookmarkRecipe
-ApplicationDbContext o-- UserReportRecipe
-ApplicationDbContext o-- UserReportComment
+ApplicationDbContext "1" o-- "0..*" "DbSet<T>"
+ApplicationDbContext "1" o-- "0..*" Recipe
+ApplicationDbContext "1" o-- "0..*" Tag
+ApplicationDbContext "1" o-- "0..*" RecipeTag
+ApplicationDbContext "1" o-- "0..*" UserBookmarkRecipe
+ApplicationDbContext "1" o-- "0..*" UserReportRecipe
+ApplicationDbContext "1" o-- "0..*" UserReportComment
 
 ' =========== Style ==============
 
@@ -138,6 +138,10 @@ ApplicationDbContext o-[hidden]down- Recipe
 ApplicationDbContext o-[hidden]down- Tag
 ApplicationDbContext o-[hidden]down- RecipeTag
 ApplicationDbContext o-[hidden]down- UserBookmarkRecipe
+ApplicationDbContext o-[hidden]down- UserReportRecipe
+ApplicationDbContext o-[hidden]down- UserReportComment
+ApplicationDbContext o-[hidden]down- UserRecipeBin
+
 
 BaseMongoDBAuditableEntity -[hidden]right- BaseMongoDBEntity 
 BaseMongoDBAuditableEntity -[hidden]up- Recipe 
@@ -150,8 +154,8 @@ BaseMongoDBAuditableEntity -[hidden]up- UserBookmarkRecipe
 BaseMongoDBAuditableEntity -[hidden]up- UserReportRecipe
 BaseMongoDBAuditableEntity -[hidden]up- UserReportComment 
 
-Recipe *--"1.." Step
-Recipe *--"1.." Comment
-Recipe *--"1.." RecipeVote
+Recipe "1"*--"1..*" Step
+Recipe "1"*--"0..*" Comment
+Recipe "1"*--"0..*" RecipeVote
 
 @enduml

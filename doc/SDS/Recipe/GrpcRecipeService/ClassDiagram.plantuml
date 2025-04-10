@@ -1,5 +1,4 @@
 @startuml GrpcRecipeSerciveClassDiagram
-!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
 skinparam classAttributeIconSize 0
@@ -19,45 +18,52 @@ class GrpcRecipeBase #Black;line:white;text:white
 class GrpcRecipeService extends GrpcRecipeBase {
     #_sender: ISender
     #_logger: ILogger
-    #_mapper: IMapper
-    +GetAllTags(GrpcEmpty request, ServerCallContext context): async Task<GrpcListTagDTO>
-    +GetRecipeDetails(GrpcRecipeIdRequest request, ServerCallContext context): async Task<GrpcRecipeDetailsDTO>
-    +GetSimpleRecipes(GrpcGetSimpleRecipeRequest request, ServerCallContext context): async Task<GrpcMapSimpleRecipes>
+    +GetAllTags(request : GrpcEmpty, context : ServerCallContext): async Task<GrpcListTagDTO>
+    +GetRecipeDetails(request : GrpcRecipeIdRequest, context : ServerCallContext): async Task<GrpcRecipeDetailsDTO>
+    +GetSimpleRecipes(request : GrpcGetSimpleRecipeRequest, context : ServerCallContext): async Task<GrpcMapSimpleRecipes>
+    +SearchSimpleRecipes(request : GrpcGetSimpleRecipeRequest, context : ServerCallContext): async Task<GrpcMapSimpleRecipes>
 }
 
 class GetAllTagsQuery {
 }
+class GetAllTagsQueryHandler {
+    -_context: IApplicationDbContext
+    +GetAllTagsQueryHandler(context: IApplicationDbContext)
+    +Handle(request : GetAllTagsQuery, cancellationToken : CancellationToken): async Task<Result<<List<Tag>>> 
+}
+
 
 class GetRecipeDetailForServerQuery {
     +RecipeId: Guid
+}
+class GetRecipeDetailForServerQueryHandler {
+    -_context: IApplicationDbContext
+    -_grpcAccountClient: GrpcAccountClient
+    +GetRecipeDetailForServerQueryHandler(context: IApplicationDbContext, grpcAccountClient: GrpcAccountClient)
+    +Handle(request : GetUserDetailsQuery, cancellationToken : CancellationToken): async Task<Result<GetUserDetailsResponse?>> 
 }
 
 class GetSimpleRecipesQuery {
     +AccountId: Guid
     +RecipeIds: HashSet<Guid>
 }
-
-class GetAllTagsQueryHandler {
-    -_context: IApplicationDbContext
-    +Handle(GetAllTagsQuery request, CancellationToken cancellationToken): async Task<Result<<List<Tag>>> 
-}
 class GetSimpleRecipesQueryHandler {
     -_context: IApplicationDbContext
-    -_mapper: IMapper
     -_grpcUserClient: GrpcUserClient
-    +Handle(GetSimpleRecipesQuery request, CancellationToken cancellationToken): async Task<Result<<List<SimpleRecipeResponse>>> 
+    +GetSimpleRecipesQueryHandler(context: IApplicationDbContext, grpcUserClient: GrpcUserClient)
+    +Handle(request : GetSimpleRecipesQuery, cancellationToken : CancellationToken): async Task<Result<<List<SimpleRecipeResponse>>> 
 }
 
-class GetRecipeDetailForServerQueryHandler {
+class SearchSimpleRecipesQuery {
+    +AccountId: Guid
+    +RecipeIds: HashSet<Guid>
+    +Keyword: string
+}
+class SearchSimpleRecipesQueryHandler {
     -_context: IApplicationDbContext
-    -_serviceBus: IServiceBus
-    -_mapper: IMapper
-    -_grpcAccountClient: GrpcAccountClient
-    +Handle(GetUserDetailsQuery request, CancellationToken cancellationToken): async Task<Result<GetUserDetailsResponse?>> 
-}
-
-interface IMapper{
-    #Map<TDestination>(object source): TDestination
+    -_grpcUserClient: GrpcUserClient
+    +SearchSimpleRecipesQueryHandler(context: IApplicationDbContext, grpcUserClient: GrpcUserClient)
+    +Handle(request : SearchSimpleRecipesQuery, cancellationToken : CancellationToken): async Task<Result<<List<SimpleRecipeResponse>>> 
 }
 
 ' Grpc DTO
@@ -65,72 +71,38 @@ class GrpcEmpty{
 }
 
 class GrpcRecipeIdRequest{
-    +RecipeId: Guid
 }
 
 class GrpcGetSimpleRecipeRequest{
-    +AccountId: Guid
-    +RecipeIds: List<Guid>
 }
 
+class GrpcSearchSimpleRecipeRequest{
+}
+
+' Grpc responses
+
 class GrpcTagDTO{
-    +Id: Guid
-    +Value: string
-    +Code: string
-    +Category: string
-    +Status: string
-    +ImageUrl: string
 }
 
 class GrpcListTagDTO{
-    +Tags: List<GrpcTagDTO>
-}
-
-class GrpcRecipeDetailsDTO{
-    +Id: Guid
-    +AuthorId: Guid
-    +Title: string
-    +Description: string
-    +ImageUrl: string
-    +Ingredients: string
-    +IsActive: bool
-    +VoteDiff: int
-    +NumberOfComment: int
-    +TotalView: int
-    +CookTime: string
-    +Serves: int
-    +Steps: List<GrpcStepDTO>
-    +Comments: List<GrpcCommentDTO>
-}
-
-class GrpcStepDTO{
-    +OrdinalNumber: int
-    +Content: string
-    +AttachedImageUrls: List<string>
-}
-
-class GrpcCommentDTO{
-    +Id: Guid
-    +Content: string
-    +AccountId: Guid
-    +IsActive: bool
-}
-
-class GrpcSimpleRecipe{
-    +Id: Guid
-    +AuthorId: Guid
-    +RecipeImgUrl: string
-    +Title: string
-    +Description: string
-    +VoteDiff: int
-    +NumberOfComment: int
-    +AuthorDisplayName: string
-    +AuthorAvtUrl: string
-    +Vote: string
 }
 
 class GrpcMapSimpleRecipes{
-    +Recipes: Dictionary<string, GrpcSimpleRecipe>
+}
+
+class GrpcRecipeDetailsDTO{
+}
+
+class GrpcStepDTO{
+}
+
+class GrpcCommentDTO{
+}
+
+class GrpcSimpleRecipe{
+}
+
+class GrpcMapSimpleRecipes{
 }
 
 ' DTO
@@ -160,18 +132,27 @@ class SimpleRecipeResponse{
 
 class RecipeError {
     {static} +NotFound: Error
-    {static} +PermissionDeny: Error
-    {static} +NullParameters: Error
     {static} +AddRecipeFail: Error
     {static} +UpdateRecipeFail: Error
     {static} +DeleteRecipeFail: Error
+    {static} +AddStepFail: Error
+    {static} +UpdateStepFail: Error
+    {static} +DeleteStepFail: Error
+    {static} +AddCommentFail: Error
+    {static} +UpdateCommentFail: Error
+    {static} +DeleteCommentFail: Error
+    {static} +VoteRecipeFail: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyActive: Error
 }
 
 class TagError {
     {static} +NotFound: Error
     {static} +AddTagFail: Error
-    {static} +DeleteTagFail: Error
     {static} +UpdateTagFail: Error
+    {static} +DeleteTagFail: Error
+    {static} +AlreadyExist: Error
+    {static} +NullParameters: Error
 }
 
 ' =========== Library class ===========
@@ -179,13 +160,17 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
+GetAllTagsQuery --|> "IRequest<TResponse>"
 GetRecipeDetailForServerQuery --|> "IRequest<TResponse>"
 GetSimpleRecipesQuery --|> "IRequest<TResponse>"
-GetAllTagsQuery --|> "IRequest<TResponse>"
+SearchSimpleRecipesQuery --|> "IRequest<TResponse>"
 
 GetAllTagsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 GetRecipeDetailForServerQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 GetSimpleRecipesQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+SearchSimpleRecipesQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+
+' Commands and queries
 
 GrpcRecipeService "1"--"1" GrpcEmpty
 GrpcRecipeService "1"--"1..*" GrpcTagDTO
@@ -206,6 +191,14 @@ GrpcRecipeService "1"--"1..*" GrpcSimpleRecipe
 GrpcRecipeService "1"--"1" SimpleRecipeResponse
 GrpcRecipeService "1"--"1" GetSimpleRecipesQuery
 
+GrpcRecipeService "1"--"1" GrpcSearchSimpleRecipeRequest
+GrpcRecipeService "1"--"1" GrpcMapSimpleRecipes
+GrpcRecipeService "1"--"1..*" GrpcSimpleRecipe
+GrpcRecipeService "1"--"1" SimpleRecipeResponse
+GrpcRecipeService "1"--"1" SearchSimpleRecipesQuery
+
+' Handlers
+
 GetAllTagsQueryHandler "1"--"1" GetAllTagsQuery
 GetAllTagsQueryHandler "1"--"1..*" Tag
 GetAllTagsQueryHandler "1"---"1" Result
@@ -217,7 +210,6 @@ GetRecipeDetailForServerQueryHandler "1"--"1" RecipeDetailsResponse
 GetRecipeDetailForServerQueryHandler "1"---"1" Result
 GetRecipeDetailForServerQueryHandler "1"---"1" GrpcAccountIdRequest
 GetRecipeDetailForServerQueryHandler "1" o-- "1" IApplicationDbContext
-GetRecipeDetailForServerQueryHandler "1" o---- "1" IMapper
 GetRecipeDetailForServerQueryHandler "1" o-- "1" IServiceBus
 GetRecipeDetailForServerQueryHandler "1" o-- "1" GrpcUserClient
 GetRecipeDetailForServerQueryHandler "1"----"1..*" RecipeError
@@ -227,15 +219,16 @@ GetSimpleRecipesQueryHandler "1"--"1" SimpleRecipeResponse
 GetSimpleRecipesQueryHandler "1"---"1" Result
 GetSimpleRecipesQueryHandler "1"---"1" GrpcGetSimpleUsersRequest
 GetSimpleRecipesQueryHandler "1" o-- "1" IApplicationDbContext
-GetSimpleRecipesQueryHandler "1" o---- "1" IMapper
 GetSimpleRecipesQueryHandler "1" o-- "1" GrpcUserClient
 GetSimpleRecipesQueryHandler "1"----"1..*" RecipeError
 
-GrpcRecipeDetailsDTO *--"1..*" GrpcStepDTO
-GrpcRecipeDetailsDTO *--"1..*" GrpcCommentDTO
-
-
-
+SearchSimpleRecipesQueryHandler "1"--"1" SearchSimpleRecipesQuery
+SearchSimpleRecipesQueryHandler "1"--"1" SimpleRecipeResponse
+SearchSimpleRecipesQueryHandler "1"---"1" Result
+SearchSimpleRecipesQueryHandler "1"---"1" GrpcGetSimpleUsersRequest
+SearchSimpleRecipesQueryHandler "1" o-- "1" IApplicationDbContext
+SearchSimpleRecipesQueryHandler "1" o-- "1" GrpcUserClient
+SearchSimpleRecipesQueryHandler "1"----"1..*" RecipeError
 ' =================STYLE=================
 
 together {
@@ -247,10 +240,12 @@ together {
 GrpcRecipeService -[hidden]down-|> GetAllTagsQuery
 GrpcRecipeService -[hidden]down-|> GetRecipeDetailForServerQuery
 GrpcRecipeService -[hidden]down-|> GetSimpleRecipesQuery
+GrpcRecipeService -[hidden]down-|> SearchSimpleRecipesQuery
 
 GetAllTagsQuery -[hidden]down-|> GetAllTagsQueryHandler
 GetRecipeDetailForServerQuery -[hidden]down-|> GetRecipeDetailForServerQueryHandler
 GetSimpleRecipesQuery -[hidden]down-|> GetSimpleRecipesQueryHandler
+SearchSimpleRecipesQuery -[hidden]down-|> SearchSimpleRecipesQueryHandler
 
 Error "1" --"1..*" RecipeError
 Error "1" --"1..*" TagError
