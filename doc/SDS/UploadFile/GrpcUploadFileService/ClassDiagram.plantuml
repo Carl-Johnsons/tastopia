@@ -5,19 +5,13 @@ skinparam linetype polyline
 skinparam nodesep 50
 skinparam ranksep 50
 skinparam classAttributeIconSize 0
-skinparam classBackgroundColor LightSalmon
-skinparam classBorderColor While
-skinparam classFontColor While
-skinparam classAttributeFontColor While
 
 hide circle
-
 class GrpcUploadFileBase #Black;line:white;text:white
 
 
-class GrpcUploadFileService extends GrpcUploadFileBase {
+class GrpcUploadFileService #LightSalmon;line:white;text:white extends GrpcUploadFileBase {
     #_sender: ISender
-    #_logger: ILogger
     #_fileUtility: IFileUtility
     +UpdateMultipleImage(GrpcUpdateMultipleImageRequest request, ServerCallContext context): async Task<GrpcListFileDTO>
     +UploadMultipleImage(GrpcUploadMultipleImageRequest request, ServerCallContext context): async Task<GrpcListFileDTO>
@@ -58,9 +52,10 @@ class UpdateMultipleImageFileCommand {
 class UpdateMultipleImageFileCommandHandler{
     -_fileUtility: IFileUtility
     -_cloudinary: Cloudinary
-    +Handle(UpdateMultipleImageFileCommand request, CancellationToken cancellationToken): async Task<Result<List<FileResponse>?>>
-    -UploadMultipleImage(List<IFormFile> formFiles, CancellationToken cancellationToken): async Task<Result<List<FileResponse>?>>
-    -DeleteMultipleImage(List<string> urls): async Task
+    +UpdateMultipleImageFileCommandHandler(fileUtility: IFileUtility, cloudinary: Cloudinary)
+    +Handle(request: UpdateMultipleImageFileCommand, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>?>>
+    -UploadMultipleImage(formFiles: List<IFormFile>, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>?>>
+    -DeleteMultipleImage(urls: List<string>): async Task
 }
 
 class CreateMultipleImageFileCommand {
@@ -70,38 +65,22 @@ class CreateMultipleImageFileCommand {
 class CreateMultipleImageFileCommandHandler{
     -_fileUtility: IFileUtility
     -_cloudinary: Cloudinary
-    +Handle(CreateMultipleImageFileCommand request, CancellationToken cancellationToken): async Task<Result<List<FileResponse>?>>
+    +CreateMultipleImageFileCommandHandler(fileUtility: IFileUtility, cloudinary: Cloudinary)
+    +Handle(request: CreateMultipleImageFileCommand, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>?>>
 }
 ' Grpc DTO
-class GrpcUpdateMultipleImageRequest{
-    +Files: List<GrpcFileStreamDTO>
-    +DeleteUrls: List<string>
+class GrpcUpdateMultipleImageRequest #LightSalmon;line:white;text:white{
 }
 
-class GrpcUploadMultipleImageRequest{
-    +Files: List<GrpcFileStreamDTO>
+class GrpcUploadMultipleImageRequest #LightSalmon;line:white;text:white{
 }
 
-class GrpcListFileDTO{
-    +Files: List<GrpcFileDTO>
+class GrpcListFileDTO #LightSalmon;line:white;text:white{
 }
 
-class GrpcFileDTO{
-    +Name: string
-    +PublicId: string
-    +Size: long
-    +Url: string
+class GrpcFileDTO #LightSalmon;line:white;text:white{
 }
 
-class GrpcFileStreamDTO{
-    +FileName: string
-    +ContentType: string
-    +Stream: byte[]
-}
-
-GrpcUpdateMultipleImageRequest *--"1.." GrpcFileStreamDTO
-GrpcUploadMultipleImageRequest *--"1.." GrpcFileStreamDTO
-GrpcListFileDTO *--"1.." GrpcFileDTO
 
 ' DTO
 class FileResponse{
