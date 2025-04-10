@@ -22,8 +22,9 @@ class AdminGetRankingRecipesStatisticQuery {
 }
 
 class AdminGetRankingRecipesStatisticQueryHandler {
-    - _context : IApplicationDbContext
-    + Handle(request: AdminGetRankingRecipesStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<RankingStatisticEntity>?>>
+    -_context : IApplicationDbContext
+    +AdminGetRankingRecipesStatisticQueryHandler(context : IApplicationDbContext)
+    +Handle(request: AdminGetRankingRecipesStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<RankingStatisticEntity>?>>
 }
 
 class RankingStatisticEntity extends StatisticEntity {

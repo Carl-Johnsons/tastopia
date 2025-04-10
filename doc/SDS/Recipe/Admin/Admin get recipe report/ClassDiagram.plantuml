@@ -24,36 +24,37 @@ class GetRecipeReportsQuery {
 }
 
 class GetRecipeReportQueryHandler {
-    - _context : IApplicationDbContext
-    - _grpcUserClient: GrpcUserClient 
-    - _paginateDataUtility: IPaginateDataUtility<AdminReportRecipeResponse, NumberedPaginatedMetadata> 
-    + Handle(request: GetRecipeReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminReportRecipeListResponse?>>
+    -_context : IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient 
+    -_paginateDataUtility: IPaginateDataUtility<AdminReportRecipeResponse, NumberedPaginatedMetadata> 
+    +GetRecipeReportQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility<AdminReportRecipeResponse, NumberedPaginatedMetadata>)
+    +Handle(request: GetRecipeReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminReportRecipeListResponse?>>
 }
 
 class PaginatedAdminReportRecipeListResponse
 
 class "BasePaginatedResponse<Type,MetadataType>" {
-    + PaginatedData: IEnumerable<Type>
-    + Metadata: MetadataType
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
 }
 
 PaginatedAdminReportRecipeListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
 
 class CommonPaginatedMetadata {
-    + TotalPage: int
+    +TotalPage: int
 }
 
 class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
-    + CurrentPage: int
-    + TotalRow: int
+    +CurrentPage: int
+    +TotalRow: int
 }
 
 class PaginatedDTO {
-    + Skip : int
-    + SortOrder : SortType
-    + SortBy : string
-    + Keyword : string
-    + Limit : int
+    +Skip : int
+    +SortOrder : SortType
+    +SortBy : string
+    +Keyword : string
+    +Limit : int
 }
 
 class AdminReportRecipeResponse{

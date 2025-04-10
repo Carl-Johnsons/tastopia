@@ -26,6 +26,7 @@ class DeleteCommentCommand {
 class DeleteCommentCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
+    +DeleteCommentCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork)
     +Handle(request : DeleteCommentCommand, cancellationToken : CancellationToken): async Task<Result<Comment?>> 
 }
 

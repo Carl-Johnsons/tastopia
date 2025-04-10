@@ -32,11 +32,12 @@ class UpdateTagCommand {
 }
 
 class UpdateTagCommandHandler {
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    - _unitOfWork: IUnitOfWork 
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
     -_grpcUploadFileClient: GrpcUploadFileClient
-    + Handle(request: UpdateTagCommand, cancellationToken: CancellationToken) : Task<Result<TagResponse?>>
+    +UpdateTagCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork, grpcUploadFileClient : GrpcUploadFile.GrpcUploadFileClient)
+    +Handle(request: UpdateTagCommand, cancellationToken: CancellationToken) : Task<Result<TagResponse?>>
 }
 
 class UpdateTagDTO {

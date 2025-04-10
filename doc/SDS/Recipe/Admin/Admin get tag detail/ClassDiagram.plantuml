@@ -22,8 +22,9 @@ class GetTagDetailQuery {
 }
 
 class GetTagDetailQueryHandler {
-    - _context : IApplicationDbContext
-    + Handle(request: GetTagDetailQuery, cancellationToken: CancellationToken) : Task<Result<TagResponse?>>
+    -_context : IApplicationDbContext
+    +GetTagDetailQueryHandler(context : IApplicationDbContext)
+    +Handle(request: GetTagDetailQuery, cancellationToken: CancellationToken) : Task<Result<TagResponse?>>
 }
 
 class AdminGetTagDetailDTO {

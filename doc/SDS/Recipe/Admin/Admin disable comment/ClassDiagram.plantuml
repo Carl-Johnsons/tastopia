@@ -27,10 +27,11 @@ class DisableCommentCommand {
 }
 
 class DisableCommentCommandHandler {
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    - _unitOfWork: IUnitOfWork 
-    + Handle(request: DisableCommentCommand, cancellationToken: CancellationToken) : Task<Result>
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +DisableCommentCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: DisableCommentCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
 class CommentError {

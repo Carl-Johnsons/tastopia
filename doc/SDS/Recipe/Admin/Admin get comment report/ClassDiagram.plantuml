@@ -24,36 +24,37 @@ class GetCommentReportsQuery {
 }
 
 class GetCommentReportsQueryHandler {
-    - _context : IApplicationDbContext
-    - _grpcUserClient: GrpcUserClient 
-    - _paginateDataUtility: IPaginateDataUtility<AdminReportCommentResponse, NumberedPaginatedMetadata> 
-    + Handle(request: GetCommentReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminReportCommentListResponse?>>
+    -_context : IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient 
+    -_paginateDataUtility: IPaginateDataUtility<AdminReportCommentResponse, NumberedPaginatedMetadata> 
+    +GetCommentReportsQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility<AdminReportCommentResponse, NumberedPaginatedMetadata>)
+    +Handle(request: GetCommentReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminReportCommentListResponse?>>
 }
 
 class PaginatedAdminReportCommentListResponse
 
 class "BasePaginatedResponse<Type,MetadataType>" {
-    + PaginatedData: IEnumerable<Type>
-    + Metadata: MetadataType
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
 }
 
 PaginatedAdminReportCommentListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
 
 class CommonPaginatedMetadata {
-    + TotalPage: int
+    +TotalPage: int
 }
 
 class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
-    + CurrentPage: int
-    + TotalRow: int
+    +CurrentPage: int
+    +TotalRow: int
 }
 
 class PaginatedDTO {
-    + Skip : int
-    + SortOrder : SortType
-    + SortBy : string
-    + Keyword : string
-    + Limit : int
+    +Skip : int
+    +SortOrder : SortType
+    +SortBy : string
+    +Keyword : string
+    +Limit : int
 }
 
 class AdminReportCommentResponse{

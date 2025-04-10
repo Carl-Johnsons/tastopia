@@ -30,11 +30,12 @@ class CreateTagCommand {
 }
 
 class CreateTagCommandHandler {
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    - _unitOfWork: IUnitOfWork 
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
     -_grpcUploadFileClient: GrpcUploadFileClient
-    + Handle(request: CreateTagCommand, cancellationToken: CancellationToken) : Task<Result<TagResponse?>>
+    +CreateTagCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork, grpcUploadFileClient : GrpcUploadFile.GrpcUploadFileClient)
+    +Handle(request: CreateTagCommand, cancellationToken: CancellationToken) : Task<Result<TagResponse?>>
 }
 
 class CreateTagDTO {

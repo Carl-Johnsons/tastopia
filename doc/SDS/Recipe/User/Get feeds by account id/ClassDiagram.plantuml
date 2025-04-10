@@ -29,6 +29,7 @@ class GetRecipeFeedsByAuthorIdQueryHandler {
     -_mapper: IMapper
     -_grpcUserClient: GrpcUserClient
     -_paginateDataUtility: IPaginateDataUtility
+    +GetRecipeFeedsByAuthorIdQueryHandler(context : IApplicationDbContext, mapper : IMapper, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility)
     +Handle(request : GetRecipeFeedsByAuthorIdQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedRecipeFeedsListResponse?>> 
 }
 

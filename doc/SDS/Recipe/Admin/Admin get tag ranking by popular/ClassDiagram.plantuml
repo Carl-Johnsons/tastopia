@@ -23,8 +23,9 @@ class AdminGetRankingTagsStatisticQuery {
 }
 
 class AdminGetRankingTagsStatisticQueryHandler {
-    - _context : IApplicationDbContext
-    + Handle(request: AdminGetRankingTagsStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<RankingStatisticEntity>?>>
+    -_context : IApplicationDbContext
+    +AdminGetRankingTagsStatisticQueryHandler(context : IApplicationDbContext)
+    +Handle(request: AdminGetRankingTagsStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<RankingStatisticEntity>?>>
 }
 
 class AdminGetTagDTO {

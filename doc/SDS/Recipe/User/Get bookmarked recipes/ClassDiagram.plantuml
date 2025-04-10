@@ -27,6 +27,7 @@ class GetRecipeBookmarksQueryHandler {
     -_mapper: IMapper
     -_grpcUserClient: GrpcUserClient
     -_paginateDataUtility: IPaginateDataUtility
+    +GetRecipeBookmarksQueryHandler(context : IApplicationDbContext, mapper : IMapper, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility)
     +Handle(request : GetRecipeBookmarksQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedRecipeFeedsListResponse?>> 
 }
 

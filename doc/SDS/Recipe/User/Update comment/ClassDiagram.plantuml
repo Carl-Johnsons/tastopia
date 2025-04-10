@@ -27,6 +27,7 @@ class UpdateCommentCommand {
 class UpdateCommentCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
+    +UpdateCommentCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork)
     +Handle(request : UpdateCommentCommand, cancellationToken : CancellationToken): async Task<Result<Comment>> 
 }
 

@@ -23,51 +23,52 @@ class AdminGetRecipesQuery {
 }
 
 class AdminGetRecipesQueryHandler {
-    - _context : IApplicationDbContext
-    - _grpcUserClient: GrpcUserClient 
-    - _paginateDataUtility: IPaginateDataUtility<AdminRecipeResponse, NumberedPaginatedMetadata> 
-    + Handle(request: AdminGetRecipesQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminRecipeListResponse?>>
+    -_context : IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient 
+    -_paginateDataUtility: IPaginateDataUtility<AdminRecipeResponse, NumberedPaginatedMetadata> 
+    +AdminGetRecipesQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility<AdminRecipeResponse, NumberedPaginatedMetadata>)
+    +Handle(request: AdminGetRecipesQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminRecipeListResponse?>>
 }
 
 class PaginatedAdminRecipeListResponse
 
 class "BasePaginatedResponse<Type,MetadataType>" {
-    + PaginatedData: IEnumerable<Type>
-    + Metadata: MetadataType
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
 }
 
 PaginatedAdminRecipeListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
 
 class CommonPaginatedMetadata {
-    + TotalPage: int
+    +TotalPage: int
 }
 
 class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
-    + CurrentPage: int
-    + TotalRow: int
+    +CurrentPage: int
+    +TotalRow: int
 }
 
 class PaginatedDTO {
-    + Skip : int
-    + SortOrder : SortType
-    + SortBy : string
-    + Keyword : string
-    + Limit : int
+    +Skip : int
+    +SortOrder : SortType
+    +SortBy : string
+    +Keyword : string
+    +Limit : int
 }
 
 class AdminRecipeResponse{
-    + Id : Guid
-    + AuthorId : Guid
-    + Title : string
-    + Description : string
-    + Ingredients : string
-    + AuthorAvatarURL : string
-    + AuthorDisplayName : string
-    + AuthorUsername : string
-    + IsActive : bool
-    + RecipeImageUrl : string
-    + CreatedAt : DateTime
-    + UpdatedAt : DateTime
+    +Id : Guid
+    +AuthorId : Guid
+    +Title : string
+    +Description : string
+    +Ingredients : string
+    +AuthorAvatarURL : string
+    +AuthorDisplayName : string
+    +AuthorUsername : string
+    +IsActive : bool
+    +RecipeImageUrl : string
+    +CreatedAt : DateTime
+    +UpdatedAt : DateTime
 }
 
 class RecipeError {

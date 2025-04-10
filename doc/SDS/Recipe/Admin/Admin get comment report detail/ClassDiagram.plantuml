@@ -24,9 +24,10 @@ class GetCommentReportDetailQuery {
 }
 
 class GetCommentReportDetailQueryHandler {
-    - _context : IApplicationDbContext
-    - _grpcUserClient: GrpcUserClient 
-    + Handle(request: GetCommentReportDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminReportCommentDetailResponse?>>
+    -_context : IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient 
+    +GetCommentReportDetailQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient)
+    +Handle(request: GetCommentReportDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminReportCommentDetailResponse?>>
 }
 
 class AdminReportCommentDetailResponse{

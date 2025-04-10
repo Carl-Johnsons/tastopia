@@ -23,22 +23,23 @@ class AdminGetTagsQuery {
 }
 
 class AdminGetTagsQueryHandler {
-    - _context : IApplicationDbContext
-    - _paginateDataUtility: IPaginateDataUtility<AdminTagResponse, AdvancePaginatedMetadata> 
-    + Handle(request: AdminGetTagsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminTagListResponse?>>
+    -_context : IApplicationDbContext
+    -_paginateDataUtility: IPaginateDataUtility<AdminTagResponse, AdvancePaginatedMetadata> 
+    +AdminGetTagsQueryHandler(context : IApplicationDbContext, paginateDataUtility : IPaginateDataUtility<AdminTagResponse, AdvancePaginatedMetadata>)
+    +Handle(request: AdminGetTagsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminTagListResponse?>>
 }
 
 class PaginatedAdminTagListResponse
 
 class "BasePaginatedResponse<Type,MetadataType>" {
-    + PaginatedData: IEnumerable<Type>
-    + Metadata: MetadataType
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
 }
 
 PaginatedAdminTagListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
 
 class CommonPaginatedMetadata {
-    + TotalPage: int
+    +TotalPage: int
 }
 
 class AdvancePaginatedMetadata extends CommonPaginatedMetadata {

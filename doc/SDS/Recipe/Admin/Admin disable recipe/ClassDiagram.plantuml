@@ -26,10 +26,11 @@ class DisableRecipeCommand {
 }
 
 class DisableRecipeCommandHandler {
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    - _unitOfWork: IUnitOfWork 
-    + Handle(request: DisableRecipeCommand, cancellationToken: CancellationToken) : Task<Result>
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +DisableRecipeCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: DisableRecipeCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
 class EntityIdDTO {

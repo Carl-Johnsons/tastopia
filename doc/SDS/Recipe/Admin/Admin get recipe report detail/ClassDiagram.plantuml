@@ -23,9 +23,10 @@ class GetRecipeReportDetailQuery {
 }
 
 class GetRecipeReportDetailQueryHandler {
-    - _context : IApplicationDbContext
-    - _grpcUserClient: GrpcUserClient 
-    + Handle(request: GetRecipeReportDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminReportRecipeDetailResponse?>>
+    -_context : IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient 
+    +GetRecipeReportDetailQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient)
+    +Handle(request: GetRecipeReportDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminReportRecipeDetailResponse?>>
 }
 
 class AdminReportRecipeDetailResponse{

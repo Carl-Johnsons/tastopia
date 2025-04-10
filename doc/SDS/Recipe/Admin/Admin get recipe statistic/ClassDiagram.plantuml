@@ -22,8 +22,9 @@ class AdminGetNumberOfRecipesStatisticQuery {
 }
 
 class AdminGetNumberOfRecipesStatisticQueryHandler {
-    - _context : IApplicationDbContext
-    + Handle(request: AdminGetNumberOfRecipesStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<StatisticEntity>?>>
+    -_context : IApplicationDbContext
+    +AdminGetNumberOfRecipesStatisticQueryHandler(context : IApplicationDbContext)
+    +Handle(request: AdminGetNumberOfRecipesStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<StatisticEntity>?>>
 }
 
 class DateStatisticEntity extends StatisticEntity {

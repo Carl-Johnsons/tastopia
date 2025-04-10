@@ -30,6 +30,7 @@ class CommentRecipeCommandHandler {
     -_mapper: IMapper
     -_grpcUserClient: GrpcUserClient
     -_serviceBus: IServicebus
+    +CommentRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork, mapper : IMapper, grpcUserClient : GrpcUserClient, serviceBus : IServicebus)
     +Handle(request : CommentRecipeCommand, cancellationToken : CancellationToken): async Task<Result<RecipeCommentResponse?>> 
 }
 

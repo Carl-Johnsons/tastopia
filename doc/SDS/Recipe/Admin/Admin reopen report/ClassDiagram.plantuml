@@ -26,10 +26,11 @@ class ReopenReportCommand {
 }
 
 class ReopenReportCommandHandler {
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    - _unitOfWork: IUnitOfWork 
-    + Handle(request: ReopenReportCommand, cancellationToken: CancellationToken) : Task<Result>
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +ReopenReportCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: ReopenReportCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
 class ReportDTO {

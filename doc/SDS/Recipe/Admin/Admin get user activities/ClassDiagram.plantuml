@@ -25,9 +25,10 @@ class AdminGetUserActivityQuery {
 }
 
 class AdminGetUserActivityQueryHandler {
-    - _context : IApplicationDbContext
-    - _grpcUserClient: GrpcUserClient 
-    + Handle(request: AdminGetUserActivityQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedUserActivityListResponse?>>
+    -_context : IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient 
+    +AdminGetUserActivityQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient)
+    +Handle(request: AdminGetUserActivityQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedUserActivityListResponse?>>
 }
 
 class AdminGetUserActivityDTO{
@@ -39,18 +40,18 @@ class AdminGetUserActivityDTO{
 class PaginatedUserActivityListResponse
 
 class "BasePaginatedResponse<Type,MetadataType>" {
-    + PaginatedData: IEnumerable<Type>
-    + Metadata: MetadataType
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
 }
 
 PaginatedUserActivityListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
 
 class CommonPaginatedMetadata {
-    + TotalPage: int
+    +TotalPage: int
 }
 
 class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
-    + HasNextPage: bool
+    +HasNextPage: bool
 }
 
 class UserActivityResponse{

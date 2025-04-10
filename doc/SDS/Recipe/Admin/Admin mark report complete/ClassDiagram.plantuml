@@ -26,10 +26,11 @@ class MarkReportCompleteCommand {
 }
 
 class MarkReportCompleteCommandHandler {
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    - _unitOfWork: IUnitOfWork 
-    + Handle(request: MarkReportCompleteCommand, cancellationToken: CancellationToken) : Task<Result>
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +MarkReportCompleteCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: MarkReportCompleteCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
 class ReportDTO {

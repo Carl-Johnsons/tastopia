@@ -27,6 +27,7 @@ class VoteRecipeCommand {
 class VoteRecipeCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
+    +VoteRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork)
     +Handle(request : VoteRecipeCommand, cancellationToken : CancellationToken): async Task<Result> 
 }
 

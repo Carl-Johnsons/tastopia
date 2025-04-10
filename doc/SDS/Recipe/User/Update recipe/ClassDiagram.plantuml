@@ -45,6 +45,7 @@ class UpdateRecipeCommandHandler{
     -_unitOfWork: IUnitOfWork
     -_serviceBus: IServicebus
     -_grpcUploadFileClient: GrpcUploadFileClient
+    +UpdateRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork, serviceBus : IServiceBus, grpcUploadFileClient : GrpcUploadFileClient)
     +Handle(request : CommentRecipeCommand, cancellationToken : CancellationToken): async Task<Result<RecipeCommentResponse?>> 
     -GetImageIndexMap(steps : List<StepDTO>): Dictionary<string, int>
     -GetGrpcFileStreamDTOsAsync(recipeImage : IFormFile, steps : List<StepDTO>): async Task<RepeatedField<GrpcFileStreamDTO>>

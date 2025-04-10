@@ -27,6 +27,7 @@ class GetRecipeDetailQueryHandler {
     -_serviceBus: IServiceBus
     -_context: IApplicationDbContext
     -_grpcUserClient: GrpcUserClient
+    +GetRecipeDetailQueryHandler(context : IApplicationDbContext, serviceBus : IServiceBus, grpcUserClient : GrpcUserClient)
     +Handle(request : GetRecipeDetailQuery, cancellationToken : CancellationToken): async Task<Result<RecipeDetailsResponse?>> 
 }
 

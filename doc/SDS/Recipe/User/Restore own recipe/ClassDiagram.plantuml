@@ -26,6 +26,7 @@ class RestoreOwnRecipeCommand {
 class RestoreOwnRecipeCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
+    +RestoreOwnRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork)
     +Handle(request : RestoreOwnRecipeCommand, cancellationToken : CancellationToken): async Task<Result<Recipe?>> 
 }
 

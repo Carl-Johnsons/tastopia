@@ -27,10 +27,11 @@ class RestoreCommentCommand {
 }
 
 class RestoreCommentCommandHandler {
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    - _unitOfWork: IUnitOfWork 
-    + Handle(request: RestoreCommentCommand, cancellationToken: CancellationToken) : Task<Result>
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +RestoreCommentCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: RestoreCommentCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
 class CommentError {
