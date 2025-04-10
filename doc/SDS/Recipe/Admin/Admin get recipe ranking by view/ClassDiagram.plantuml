@@ -49,7 +49,7 @@ AdminGetRankingRecipesStatisticQuery --|> "IRequest<TResponse>"
 AdminGetRankingRecipesStatisticQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 AdminGetRankingRecipesStatisticQueryHandler "1" --"1" AdminGetRankingRecipesStatisticQuery
 AdminGetRankingRecipesStatisticQueryHandler "1" o--"1" IApplicationDbContext
-AdminGetRankingRecipesStatisticQueryHandler "1" o--"1" Result
+AdminGetRankingRecipesStatisticQueryHandler "1" --"1" Result
 AdminGetRankingRecipesStatisticQueryHandler "1" --"1..*" Recipe
 AdminGetRankingRecipesStatisticQueryHandler "1" --"1..*" RankingStatisticEntity
 

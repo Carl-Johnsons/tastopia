@@ -49,8 +49,8 @@ AdminGetNumberOfRecipesStatisticQuery --|> "IRequest<TResponse>"
 AdminGetNumberOfRecipesStatisticQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1" AdminGetNumberOfRecipesStatisticQuery
 AdminGetNumberOfRecipesStatisticQueryHandler "1" o--"1" IApplicationDbContext
-AdminGetNumberOfRecipesStatisticQueryHandler "1" o--"1" Result
 AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1..*" Recipe
+AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1" Result
 AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1..*" DateStatisticEntity
 
 @enduml

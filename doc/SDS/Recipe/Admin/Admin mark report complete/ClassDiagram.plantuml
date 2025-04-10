@@ -63,7 +63,7 @@ MarkReportCompleteCommandHandler "1" --"1" MarkReportCompleteCommand
 MarkReportCompleteCommandHandler "1" o--"1" IApplicationDbContext
 MarkReportCompleteCommandHandler "1" o--"1" IServiceBus
 MarkReportCompleteCommandHandler "1" o--"1" IUnitOfWork
-MarkReportCompleteCommandHandler "1" o--"1" Result
+MarkReportCompleteCommandHandler "1" --"1" Result
 MarkReportCompleteCommandHandler "1" --"1..*" CommonReportEntity
 MarkReportCompleteCommandHandler "1" --"1..*" UserReportRecipe
 MarkReportCompleteCommandHandler "1" --"1..*" UserReportComment

@@ -73,8 +73,8 @@ GetRecipeReportDetailQuery --|> "IRequest<TResponse>"
 GetRecipeReportDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 GetRecipeReportDetailQueryHandler "1" --"1" GetRecipeReportDetailQuery
 GetRecipeReportDetailQueryHandler "1" o--"1" IApplicationDbContext
-GetRecipeReportDetailQueryHandler "1" o--"1" Result
 GetRecipeReportDetailQueryHandler "1" o--"1" GrpcUserClient
+GetRecipeReportDetailQueryHandler "1" --"1" Result
 GetRecipeReportDetailQueryHandler "1" --"1..*" GrpcGetSimpleUsersRequest
 GetRecipeReportDetailQueryHandler "1" --"1..*" GrpcAccountIdRequest
 GetRecipeReportDetailQueryHandler "1" --"1..*" AdminReportRecipeDetailResponse

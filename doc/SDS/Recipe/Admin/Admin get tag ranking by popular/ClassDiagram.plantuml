@@ -55,7 +55,7 @@ AdminGetRankingTagsStatisticQueryHandler --|> "IRequest<TResponse>"
 AdminGetRankingTagsStatisticQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 AdminGetRankingTagsStatisticQueryHandler "1" o--"1" AdminGetRankingTagsStatisticQuery
 AdminGetRankingTagsStatisticQueryHandler "1" o--"1" IApplicationDbContext
-AdminGetRankingTagsStatisticQueryHandler "1" o--"1" Result
+AdminGetRankingTagsStatisticQueryHandler "1" --"1" Result
 AdminGetRankingTagsStatisticQueryHandler "1" --"1..*" Recipe
 AdminGetRankingTagsStatisticQueryHandler "1" --"1..*" Tag
 AdminGetRankingTagsStatisticQueryHandler "1" --"1..*" RecipeTag

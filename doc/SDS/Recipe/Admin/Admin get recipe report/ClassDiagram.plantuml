@@ -93,8 +93,8 @@ GetRecipeReportQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 GetRecipeReportQueryHandler "1" --"1" GetRecipeReportsQuery
 GetRecipeReportQueryHandler "1" o--"1" IApplicationDbContext
 GetRecipeReportQueryHandler "1" o--"1" IPaginateDataUtility
-GetRecipeReportQueryHandler "1" o--"1" Result
 GetRecipeReportQueryHandler "1" o--"1" GrpcUserClient
+GetRecipeReportQueryHandler "1" --"1" Result
 GetRecipeReportQueryHandler "1" --"1..*" GrpcSearchUserRequest
 GetRecipeReportQueryHandler "1" --"1..*" GrpcGetSimpleUsersRequest
 GetRecipeReportQueryHandler "1" --"1..*" PaginatedAdminReportRecipeListResponse

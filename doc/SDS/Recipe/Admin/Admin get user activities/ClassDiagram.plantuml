@@ -110,8 +110,8 @@ AdminGetUserActivityQuery --|> "IRequest<TResponse>"
 AdminGetUserActivityQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 AdminGetUserActivityQueryHandler "1" --"1" AdminGetUserActivityQuery
 AdminGetUserActivityQueryHandler "1" o--"1" IApplicationDbContext
-AdminGetUserActivityQueryHandler "1" o--"1" Result
 AdminGetUserActivityQueryHandler "1" o--"1" GrpcUserClient
+AdminGetUserActivityQueryHandler "1" --"1" Result
 AdminGetUserActivityQueryHandler "1" --"1..*" GrpcGetSimpleUsersRequest
 AdminGetUserActivityQueryHandler "1" --"1..*" GrpcAccountIdRequest
 AdminGetUserActivityQueryHandler "1" --"1..*" PaginatedUserActivityListResponse

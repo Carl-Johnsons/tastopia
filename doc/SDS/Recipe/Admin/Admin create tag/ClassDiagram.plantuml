@@ -90,7 +90,7 @@ CreateTagCommandHandler "1" o--"1" IApplicationDbContext
 CreateTagCommandHandler "1" o--"1" IServiceBus
 CreateTagCommandHandler "1" o--"1" IUnitOfWork
 CreateTagCommandHandler "1" o--"1" GrpcUploadFileClient
-CreateTagCommandHandler "1" o--"1" Result
+CreateTagCommandHandler "1" --"1" Result
 CreateTagCommandHandler "1" --"1..*" TagResponse
 CreateTagCommandHandler "1" --"1..*" AddActivityLogEvent
 CreateTagCommandHandler "1" --"1..*" GrpcUploadMultipleImageRequest

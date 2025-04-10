@@ -62,7 +62,7 @@ DisableCommentCommandHandler "1" --"1" DisableCommentCommand
 DisableCommentCommandHandler "1" o--"1" IApplicationDbContext
 DisableCommentCommandHandler "1" o--"1" IServiceBus
 DisableCommentCommandHandler "1" o--"1" IUnitOfWork
-DisableCommentCommandHandler "1" o--"1" Result
+DisableCommentCommandHandler "1" --"1" Result
 DisableCommentCommandHandler "1" --"1..*" AddActivityLogEvent
 DisableCommentCommandHandler "1" --"1..*" CommentError
 

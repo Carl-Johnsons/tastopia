@@ -93,7 +93,7 @@ AdminGetTagsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 AdminGetTagsQueryHandler "1" --"1" AdminGetTagsQuery
 AdminGetTagsQueryHandler "1" o--"1" IApplicationDbContext
 AdminGetTagsQueryHandler "1" o--"1" IPaginateDataUtility
-AdminGetTagsQueryHandler "1" o--"1" Result
+AdminGetTagsQueryHandler "1" --"1" Result
 AdminGetTagsQueryHandler "1" --"1..*" PaginatedAdminTagListResponse
 AdminGetTagsQueryHandler "1" --"1..*" AdvancePaginatedMetadata
 AdminGetTagsQueryHandler "1" --"1..*" AdminTagResponse
