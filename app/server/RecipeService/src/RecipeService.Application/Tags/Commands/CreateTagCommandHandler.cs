@@ -43,7 +43,7 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
         try
         {
             request.Code = request.Code.ToUpper().Replace(" ", "_");
-            var existTag = await _context.Tags.Where(t => t.Code == request.Code).SingleOrDefaultAsync();
+            var existTag = await _context.Tags.Where(t => t.Code == request.Code || t.Value.En == request.En || t.Value.En == request.Vi || t.Value.Vi == request.Vi || t.Value.Vi == request.En).SingleOrDefaultAsync();
             if (existTag != null)
             {
                 return Result<TagResponse?>.Failure(TagError.AlreadyExist, $"Tag code : {request.Code} is already exist");
