@@ -64,11 +64,11 @@ AdminController "1"--"1" AdminBanUserCommand
 AdminBanUserCommand --|> "IRequest<TResponse>"
 
 AdminBanUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-AdminBanUserCommandHandler "1" o--"1" AdminBanUserCommand
+AdminBanUserCommandHandler "1" --"1" AdminBanUserCommand
 AdminBanUserCommandHandler "1" o--"1" IApplicationDbContext
 AdminBanUserCommandHandler "1" o--"1" IServiceBus
 AdminBanUserCommandHandler "1" o--"1" IUnitOfWork
-AdminBanUserCommandHandler "1" o--"1" Result
+AdminBanUserCommandHandler "1" --"1" Result
 AdminBanUserCommandHandler "1" --"1..*" AdminBanUserResponse
 AdminBanUserCommandHandler "1" --"1..*" AddActivityLogEvent
 AdminBanUserCommandHandler "1" --"1..*" UserError

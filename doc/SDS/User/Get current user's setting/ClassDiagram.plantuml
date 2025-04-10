@@ -51,11 +51,11 @@ SettingController "1"--"1" GetUserSettingQuery
 GetUserSettingQuery --|> "IRequest<TResponse>"
 
 GetUserSettingQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetUserSettingQueryHandler "1" o--"1" GetUserSettingQuery
-GetUserSettingQueryHandler "1" o--"1" UserError
+GetUserSettingQueryHandler "1" --"1" GetUserSettingQuery
 GetUserSettingQueryHandler "1" o--"1" IApplicationDbContext
-GetUserSettingQueryHandler "1" o--"1" UserSetting
-GetUserSettingQueryHandler "1" o--"1" Result
+GetUserSettingQueryHandler "1" --"1..*" UserError
+GetUserSettingQueryHandler "1" --"1..*" UserSetting
+GetUserSettingQueryHandler "1" --"1" Result
 
 Error "1" --"1" UserError
 

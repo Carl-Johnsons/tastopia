@@ -62,11 +62,11 @@ AdminController "1"--"1" MarkReportCommand
 MarkReportCommand --|> "IRequest<TResponse>"
 
 MarkReportCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-MarkReportCommandHandler "1" o--"1" MarkReportCommand
+MarkReportCommandHandler "1" --"1" MarkReportCommand
 MarkReportCommandHandler "1" o--"1" IApplicationDbContext
 MarkReportCommandHandler "1" o--"1" IServiceBus
 MarkReportCommandHandler "1" o--"1" IUnitOfWork
-MarkReportCommandHandler "1" o--"1" Result
+MarkReportCommandHandler "1" --"1" Result
 MarkReportCommandHandler "1" --"1..*" AdminMarkReportResponse
 MarkReportCommandHandler "1" --"1..*" AddActivityLogEvent
 MarkReportCommandHandler "1" --"1..*" UserReport

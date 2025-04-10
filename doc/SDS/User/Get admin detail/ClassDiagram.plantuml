@@ -65,11 +65,11 @@ AdminController "1"--"1" GetAdminDetailQuery
 GetAdminDetailQuery --|> "IRequest<TResponse>"
 
 GetAdminDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetAdminDetailQueryHandler "1" o--"1" GetAdminDetailQuery
+GetAdminDetailQueryHandler "1" --"1" GetAdminDetailQuery
 GetAdminDetailQueryHandler "1" o--"1" IApplicationDbContext
-GetAdminDetailQueryHandler "1" o--"1" Result
-GetAdminDetailQueryHandler "1" o--"1" GrpcAccountIdRequest
 GetAdminDetailQueryHandler "1" o--"1" GrpcAccountClient
+GetAdminDetailQueryHandler "1" --"1" Result
+GetAdminDetailQueryHandler "1" --"1..*" GrpcAccountIdRequest
 GetAdminDetailQueryHandler "1" --"1..*" AdminDetailResponse
 GetAdminDetailQueryHandler "1" --"1..*" UserError
 

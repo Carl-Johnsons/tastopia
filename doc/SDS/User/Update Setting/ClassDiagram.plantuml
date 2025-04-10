@@ -97,14 +97,14 @@ SettingController "1"--"1" UpdateSettingCommand
 UpdateSettingCommand --|> "IRequest<TResponse>"
 
 UpdateSettingCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-UpdateSettingCommandHandler "1" o--"1" UpdateSettingCommand
-UpdateSettingCommandHandler "1" o--"1" SettingError
+UpdateSettingCommandHandler "1" --"1" UpdateSettingCommand
 UpdateSettingCommandHandler "1" o--"1" IApplicationDbContext
-UpdateSettingCommandHandler "1" o--"1" UserSetting
 UpdateSettingCommandHandler "1" o--"1" IUnitOfWork
-UpdateSettingCommandHandler "1" o--"1" Result
-UpdateSettingCommandHandler "1" o--"1" SETTING_KEY
-UpdateSettingCommandHandler "1" o--"1" SETTING_VALUE
+UpdateSettingCommandHandler "1" --"1..*" SettingError
+UpdateSettingCommandHandler "1" --"1..*" UserSetting
+UpdateSettingCommandHandler "1" --"1" Result
+UpdateSettingCommandHandler "1" --"1..*" SETTING_KEY
+UpdateSettingCommandHandler "1" --"1..*" SETTING_VALUE
 
 Error "1" -up-"1" SettingError
 

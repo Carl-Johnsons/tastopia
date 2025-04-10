@@ -60,10 +60,10 @@ UserController "1"--"1" UserReportUserCommand
 UserReportUserCommand --|> "IRequest<TResponse>"
 
 UserReportUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-UserReportUserCommandHandler "1" o--"1" UserReportUserCommand
+UserReportUserCommandHandler "1" --"1" UserReportUserCommand
 UserReportUserCommandHandler "1" o--"1" IApplicationDbContext
-UserReportUserCommandHandler "1" o--"1" UserReportUserResponse
-UserReportUserCommandHandler "1" o--"1" Result
+UserReportUserCommandHandler "1" --"1..*" UserReportUserResponse
+UserReportUserCommandHandler "1" --"1" Result
 UserReportUserCommandHandler "1" --"1..*" UserError
 
 Error "1" --"1" UserError

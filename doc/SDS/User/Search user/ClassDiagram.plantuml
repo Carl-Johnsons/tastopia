@@ -86,15 +86,15 @@ UserController "1"--"1" SearchUserDTO
 SearchUsersCommand --|> "IRequest<TResponse>"
 
 SearchUsersCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-SearchUsersCommandHandler "1" o--"1" SearchUsersCommand
-SearchUsersCommandHandler "1" o--"1" UserError
+SearchUsersCommandHandler "1" --"1" SearchUsersCommand
 SearchUsersCommandHandler "1" o--"1" IPaginateDataUtility
 SearchUsersCommandHandler "1" o--"1" IApplicationDbContext
 SearchUsersCommandHandler "1" o--"1" USER_CONSTANTS
-SearchUsersCommandHandler "1" o--"1" SearchUserResponse
-SearchUsersCommandHandler "1" o--"1" Result
-SearchUsersCommandHandler "1" o--"1" AdvancePaginatedMetadata
-SearchUsersCommandHandler "1" o--"1" PaginatedSearchUserListResponse
+SearchUsersCommandHandler "1" --"1..*" UserError
+SearchUsersCommandHandler "1" --"1..*" SearchUserResponse
+SearchUsersCommandHandler "1" --"1" Result
+SearchUsersCommandHandler "1" --"1..*" AdvancePaginatedMetadata
+SearchUsersCommandHandler "1" --"1..*" PaginatedSearchUserListResponse
 
 "BasePaginatedResponse<Type,MetadataType>" "1" <|-up-"1" PaginatedSearchUserListResponse
 

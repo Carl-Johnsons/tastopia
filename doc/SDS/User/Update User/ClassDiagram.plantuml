@@ -90,19 +90,19 @@ UpdateUserCommand "1" o--"1" IFormFile
 UpdateUserCommand "1" o--"1" UpdateUserDTO
 
 UpdateUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-UpdateUserCommandHandler "1" o--"1" UpdateUserCommand
-UpdateUserCommandHandler "1" o--"1" UserError
+UpdateUserCommandHandler "1" --"1" UpdateUserCommand
 UpdateUserCommandHandler "1" o--"1" IUnitOfWork
-UpdateUserCommandHandler "1" o--"1" IFormFile
-UpdateUserCommandHandler "1" o--"1" FileUtility
 UpdateUserCommandHandler "1" o--"1" IApplicationDbContext
 UpdateUserCommandHandler "1" o--"1" GrpcUploadFileClient
-UpdateUserCommandHandler "1" o--"1" GrpcUpdateMultipleImageRequest
-UpdateUserCommandHandler "1" o--"1" GrpcUpdateAccountRequest
 UpdateUserCommandHandler "1" o--"1" GrpcAccountClient
-UpdateUserCommandHandler "1" o--"1" "RepeatedField<T>"
-UpdateUserCommandHandler "1" o--"1" GenderType
-UpdateUserCommandHandler "1" o--"1" Result
+UpdateUserCommandHandler "1" --"1..*" UserError
+UpdateUserCommandHandler "1" --"1..*" IFormFile
+UpdateUserCommandHandler "1" --"1" FileUtility
+UpdateUserCommandHandler "1" --"1..*" GrpcUpdateMultipleImageRequest
+UpdateUserCommandHandler "1" --"1..*" GrpcUpdateAccountRequest
+UpdateUserCommandHandler "1" --"1..*" "RepeatedField<T>"
+UpdateUserCommandHandler "1" --"1..*" GenderType
+UpdateUserCommandHandler "1" --"1" Result
 
 Error "1" --"1" UserError
 

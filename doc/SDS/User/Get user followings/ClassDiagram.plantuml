@@ -85,15 +85,15 @@ UserController "1"--"1" getUserFollowingsDTO
 GetUserFollowingsQuery --|> "IRequest<TResponse>"
 
 GetUserFollowingsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetUserFollowingsQueryHandler "1" o--"1" GetUserFollowingsQuery
-GetUserFollowingsQueryHandler "1" o--"1" UserError
+GetUserFollowingsQueryHandler "1" --"1" GetUserFollowingsQuery
 GetUserFollowingsQueryHandler "1" o--"1" IPaginateDataUtility
 GetUserFollowingsQueryHandler "1" o--"1" IApplicationDbContext
-GetUserFollowingsQueryHandler "1" o--"1" USER_CONSTANTS
-GetUserFollowingsQueryHandler "1" o--"1" SimpleUserResponse
-GetUserFollowingsQueryHandler "1" o--"1" Result
-GetUserFollowingsQueryHandler "1" o--"1" AdvancePaginatedMetadata
-GetUserFollowingsQueryHandler "1" o--"1" PaginatedSimpleUserListResponse
+GetUserFollowingsQueryHandler "1" --"1..*" USER_CONSTANTS
+GetUserFollowingsQueryHandler "1" --"1..*" UserError
+GetUserFollowingsQueryHandler "1" --"1..*" SimpleUserResponse
+GetUserFollowingsQueryHandler "1" --"1" Result
+GetUserFollowingsQueryHandler "1" --"1..*" AdvancePaginatedMetadata
+GetUserFollowingsQueryHandler "1" --"1..*" PaginatedSimpleUserListResponse
 
 "BasePaginatedResponse<Type,MetadataType>" "1" <|-up-"1" PaginatedSimpleUserListResponse
 

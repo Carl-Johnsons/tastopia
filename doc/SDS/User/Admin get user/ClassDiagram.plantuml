@@ -91,13 +91,13 @@ AdminController "1"--"1" AdminGetUsersQuery
 AdminGetUsersQuery --|> "IRequest<TResponse>"
 
 AdminGetUsersQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-AdminGetUsersQueryHandler "1" o--"1" AdminGetUsersQuery
+AdminGetUsersQueryHandler "1" --"1" AdminGetUsersQuery
 AdminGetUsersQueryHandler "1" o--"1" IApplicationDbContext
 AdminGetUsersQueryHandler "1" o--"1" IPaginateDataUtility
-AdminGetUsersQueryHandler "1" o--"1" Result
-AdminGetUsersQueryHandler "1" o--"1" GrpcSearchAccountRequest
-AdminGetUsersQueryHandler "1" o--"1" GrpcAccountIdListRequest
 AdminGetUsersQueryHandler "1" o--"1" GrpcAccountClient
+AdminGetUsersQueryHandler "1" --"1" Result
+AdminGetUsersQueryHandler "1" --"1..*" GrpcSearchAccountRequest
+AdminGetUsersQueryHandler "1" --"1..*" GrpcAccountIdListRequest
 AdminGetUsersQueryHandler "1" --"1..*" PaginatedAdminGetUserListResponse
 AdminGetUsersQueryHandler "1" --"1..*" NumberedPaginatedMetadata
 AdminGetUsersQueryHandler "1" --"1..*" AdminGetUserResponse
