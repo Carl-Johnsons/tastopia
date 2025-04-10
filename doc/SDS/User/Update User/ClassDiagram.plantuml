@@ -54,8 +54,8 @@ class UpdateUserCommandHandler {
     + _unitOfWork: IUnitOfWork
     - _grpcAccountClient: GrpcAccountClient 
     + _grpcUploadFileClient: GrpcUploadFileClient
-    + UpdateUserCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, GrpcAccount.GrpcAccountClient grpcAccountClient)
-    + Handle(UpdateUserCommand request, CancellationToken cancellationToken) : Task<Result>
+    + UpdateUserCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork, grpcUploadFileClient : GrpcUploadFile.GrpcUploadFileClient, grpcAccountClient : GrpcAccount.GrpcAccountClient)
+    + Handle(request : UpdateUserCommand, cancellationToken : CancellationToken) : Task<Result>
 }
 
 class UserError {

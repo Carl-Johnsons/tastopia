@@ -29,8 +29,8 @@ together {
 
 class GetUserSettingQueryHandler {
     - _context : IApplicationDbContext
-    + GetUserSettingQueryHandler(IApplicationDbContext context)
-    +Handle(GetUserSettingQuery request, CancellationToken cancellationToken) : Task<Result<List<UserSetting>>>
+    + GetUserSettingQueryHandler(context : IApplicationDbContext)
+    + Handle(request : GetUserSettingQuery, cancellationToken : CancellationToken) : Task<Result<List<UserSetting>>>
 }
 
 class UserError {
