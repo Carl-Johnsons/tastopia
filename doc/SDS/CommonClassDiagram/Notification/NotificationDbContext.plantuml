@@ -20,10 +20,29 @@ class AccountExpoPushToken extends BaseMongoDBAuditableEntity {
     +DeviceType: DeviceType
 }
 
-class AccountExpoPushToken extends BaseMongoDBAuditableEntity {
+class Notification extends BaseMongoDBAuditableEntity {
     +AccountId: Guid
-    +ExpoPushToken: string
-    +DeviceType: DeviceType
+    +PrimaryActors: List<Actor>
+    +SecondaryActors: List<Actor>
+    +ImageUrl: string
+    +JsonData: string
+    +Recipients: List<Recipient>
+}
+
+class Actor {
+    +ActorId: Guid
+    +Type: EntityType
+}
+
+class Recipient {
+    +RecipientId: Guid
+    +IsViewed: bool
+}
+
+class NotificationTemplate extends BaseMongoDBEntity {
+    +TemplateCode: NotificationTemplateCode
+    +TranslationTitles: Dictionary<string, string>
+    +TranslationMessages: Dictionary<string, string>
 }
 
 interface IApplicationDbContext extends IMongoDbContext {
@@ -31,6 +50,20 @@ interface IApplicationDbContext extends IMongoDbContext {
     +NotificationTemplates: DbSet<NotificationTemplate>
     +AccountExpoPushTokens: DbSet<AccountExpoPushToken>
 }
+
+enum NotificationTemplateCode {
+    USER_COMMENT
+    USER_CREATE_RECIPE
+    USER_FOLLOW
+    USER_UPVOTE
+    USER_DOWNVOTE
+}
+
+enum EntityType {
+    EVENT
+    USER
+}
+
 class ApplicationDbContext extends DbContext implements IApplicationDbContext {
     +Notifications: DbSet<Notification>
     +NotificationTemplates: DbSet<NotificationTemplate>
@@ -53,11 +86,20 @@ interface IDisposable #black;line:white;text:white
 class "DbSet<T>" #black;line:white;text:white
 class DbContext #black;line:white;text:white
 
-IMongoDbContext o-- DbContext
+IMongoDbContext "1" o-- "1" DbContext
 
-AccountExpoPushToken "1" o-- "1" DeviceType
+AccountExpoPushToken "1" *-- "1" DeviceType
 
-ApplicationDbContext o-- "DbSet<T>"
+ApplicationDbContext "1" o-- "0..*" "DbSet<T>"
+ApplicationDbContext "1" o-- "1" "Notification"
+ApplicationDbContext "1" o-- "1" "NotificationTemplate"
+ApplicationDbContext "1" o-- "1" "AccountExpoPushToken"
+
+Notification "1" *--"0..*" Actor
+Notification "1" *--"1..*" Recipient
+NotificationTemplate "1" *-- "1" NotificationTemplateCode
+
+"Actor" "1" *-- "1" EntityType
 
 ' =========== Style ==============
 ApplicationDbContext o-[hidden]down- "DbSet<T>"

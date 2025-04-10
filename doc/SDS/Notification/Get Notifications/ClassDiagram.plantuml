@@ -1,10 +1,11 @@
 @startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/Notification/NotificationDbContext.plantuml
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 !include doc/SDS/CommonClassDiagram/PaginateData.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 class BaseApiController {
@@ -35,8 +36,46 @@ class NotificationErrors {
     {static} +NotFound: Error
 }
 
+class NotificationResponse {
+    +Id: Guid
+    +IsViewed: bool
+    +Title: string
+    +Message: string
+    +Code: string
+    +ImageUrl: string
+    +JsonData: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
+
+class NotificationListMetadata extends AdvancePaginatedMetadata {
+    +UnreadNotifications: int
+}
+
+class PaginatedNotificationListResponse {}
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
+}
+
+' =========== Microservice class ===========
+together {
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+' =========== Microservice class ===========
 ' =========== Library class ===========
 interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IMapper" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
@@ -44,10 +83,24 @@ NotificationController --|> BaseApiController
 NotificationController "1"--"1" GetNotificationsQuery
 GetNotificationsQuery --|> "IRequest<TResponse>"
 
+PaginatedNotificationListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+PaginatedNotificationListResponse "1" o-- "1..*" NotificationResponse
+PaginatedNotificationListResponse "1" o-- "1" NotificationListMetadata
+
 GetNotificationsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
 GetNotificationsQueryHandler "1" o--"1" GetNotificationsQuery
 GetNotificationsQueryHandler "1" o--"1" NotificationErrors
 GetNotificationsQueryHandler "1" o--"1" Result
+GetNotificationsQueryHandler "1" o-- "1" IApplicationDbContext
+GetNotificationsQueryHandler "1" o-- "1" IPaginateDataUtility
+GetNotificationsQueryHandler "1" o-- "1" NotificationResponse
+GetNotificationsQueryHandler "1" o-- "1" PaginatedNotificationListResponse
+GetNotificationsQueryHandler "1" o-- "1" IMapper
+GetNotificationsQueryHandler "1" o-- "1" GrpcUserClient
+
+GetNotificationsQueryHandler "1" -- "1" GrpcGetSimpleUsersRequest
+GetNotificationsQueryHandler "1" -- "1" Notification
+GetNotificationsQueryHandler "1" -- "1" NotificationTemplate
 
 Error "1" --"1..*" NotificationErrors
 
