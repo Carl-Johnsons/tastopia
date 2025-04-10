@@ -33,28 +33,62 @@ box_model = YOLO('./model/bestv13.pt')
 clip_model, preprocess = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-ViT-H-14')
 tokenizer = get_tokenizer('ViT-H-14')
 
-# Load CLIP features
-features = np.load('clip_feature/features_f.npy')
-features = features.reshape(features.shape[0], features.shape[2])
-features.shape
-filename_index = np.load('clip_feature/features_index_f.npy')
-# Faiss init
-index = faiss.IndexFlatL2(features.shape[1])
-index.add(features)
-
 envUtil = EnvUtility()
 envUtil.load_env()
 
 service_host = os.getenv("SERVICE_HOST")
 service_port = int(os.getenv("PORT"))
 
-# mongo_client = pymongo.MongoClient(envUtil.get_mongodb_connection_string())
-# print(mongo_client.list_database_names())
-# recipe_db = mongo_client["RecipeDB"]
-# tag_collection = recipe_db["Tag"]
+# Load tag from MongoDB
+mongo_client = pymongo.MongoClient(envUtil.get_mongodb_connection_string())
+print(mongo_client.list_database_names())
+recipe_db = mongo_client["RecipeDB"]
+tag_collection = recipe_db["Tag"]
 
-# for x in tag_collection.find():
-#   print(x)
+tag_dict = dict()
+# tag_list = tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list()
+for tag in tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list():
+    tag_dict[tag['Code']] = {
+        'En': tag['Value']['En'],
+        'Vi': tag['Value']['Vi'],
+    }
+
+# Load names from file
+names = dict()
+for i in open("name_edited.txt", encoding='utf-8').read().splitlines():
+    names[i.split('_')[0]] = [i.split('_')[2], i.split('_')[4], i.split('_')[2].replace(' ', '_').upper()]
+
+def load_clip_features(names: dict, tag_dict: dict):
+    # Load feature
+    features = np.load('clip_feature/features.npy')
+    features = features.reshape(features.shape[0], features.shape[2])
+    filename_index = np.load('clip_feature/features_index.npy')
+
+    if not tag_dict or not names:
+        print("Filter clip features failed")
+    # Filter
+    features_list = []
+    filename_index_list = []
+    for i in range(filename_index.shape[0]):
+        new_index = len(filename_index_list)
+        class_label = filename_index[i].split('/')[1]
+        class_code = names[class_label][2]
+        if not tag_dict.get(class_code):
+            continue
+
+        new_filename = filename_index[i].split(' ')[0] + ' ' + str(new_index)
+        features_list.append(features[i])
+        filename_index_list.append(new_filename)
+
+    features_list = np.array(features_list)
+    filename_index_list = np.array(filename_index_list)
+    return features_list, filename_index_list
+
+# Load CLIP features
+features, filename_index = load_clip_features(names, tag_dict)
+# Faiss init
+index = faiss.IndexFlatL2(features.shape[1])
+index.add(features)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -103,10 +137,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, redirect_slashes=False)
 # app = FastAPI(redirect_slashes=False)
-
-names = dict()
-for i in open("name_edited.txt", encoding='utf-8').read().splitlines():
-    names[i.split('_')[0]] = [i.split('_')[2], i.split('_')[4]]
 
 @app.get("/health")
 async def health():
@@ -199,8 +229,14 @@ async def predict(file: UploadFile = File(...)):
     results = box_model(image, verbose=False)
     return {"classifications": classifications, "boxes": results[0].boxes.xyxyn.tolist()}
 
+@app.get("/api/test")
+async def test_api():
+    for x in tag_collection.find():
+        print(x)
+    return ''
+
 @app.get("/")
 async def root():
-    return {"message": "YOLO FastAPI is running!"}
+    return {"message": "FastAPI is running!"}
 
 uvicorn.run(app, host="0.0.0.0", port=service_port,log_config=log_config)
