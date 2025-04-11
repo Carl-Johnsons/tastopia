@@ -12,24 +12,11 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { z } from "zod";
-import Image from "next/image";
 import { getTagSchema, validVietnameseCategories } from "@/schemas/tag";
 import { FORM_TYPE } from "@/constants/form";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
-import ImageUploading, { ImageListType } from "react-images-uploading";
 import { Input } from "@/components/ui/input";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
