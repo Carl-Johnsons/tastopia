@@ -87,7 +87,6 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
             var recipe = new Recipe();
 
-            recipe.Id = Guid.NewGuid();
             recipe.AuthorId = request.AuthorId;
             recipe.Serves = request.Serves;
             recipe.CookTime = request.CookTime;
@@ -143,10 +142,15 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
                     PrimaryActors = [
                         new ActorDTO
                         {
-                            ActorId = request.AuthorId,
+                            ActorId = request.AuthorId.ToString(),
                             Type = EntityType.USER
                         }],
-                    SecondaryActors = [],
+                    SecondaryActors = [
+                        new ActorDTO
+                        {
+                            ActorId = recipe.Id.ToString(),
+                            Type = EntityType.RECIPE
+                        }],
                     TemplateCode = NotificationTemplateCode.USER_CREATE_RECIPE,
                     Channels = [NOTIFICATION_CHANNEL.DEFAULT],
                     JsonData = JsonConvert.SerializeObject(new

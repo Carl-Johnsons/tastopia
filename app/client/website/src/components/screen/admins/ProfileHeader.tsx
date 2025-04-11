@@ -5,9 +5,10 @@ import { useTranslations } from "next-intl";
 import { DisableAdminButton, RestoreAdminButton, SignOutButton } from "./Button";
 import { ItemStatusText } from "../report/common/StatusText";
 import { IAdminDetailResponse } from "@/generated/interfaces/user.interface";
-import { Roles } from "@/constants/role";
 import Avatar from "@/components/shared/common/Avatar";
 import { useSelectUserId } from "@/slices/user.slice";
+import { useSelectRole } from "@/slices/auth.slice";
+import { Roles } from "@/constants/role";
 
 type Props = {
   admin: IAdminDetailResponse;
@@ -16,16 +17,13 @@ type Props = {
 export default function ProfileHeader({ admin }: Props) {
   const [isActive, setIsActive] = useState(admin.isActive);
   const { avatarUrl, username, accountId } = admin;
-  const role = Roles.ADMIN;
+  const role = useSelectRole();
 
   const tRole = useTranslations("administerAdmins.detail.header.roles");
   const tTooltip = useTranslations("administerAdmins.tooltip");
 
   const userId = useSelectUserId();
-  const isCurrentUser = useMemo(
-    () => userId === accountId,
-    [userId, accountId]
-  );
+  const isCurrentUser = useMemo(() => userId === accountId, [userId, accountId]);
 
   return (
     <div className='bg-white_black100 overflow-hidden rounded-xl border border-gray-200 shadow-sm dark:border-gray-600'>
@@ -43,7 +41,7 @@ export default function ProfileHeader({ admin }: Props) {
             </h1>
             <div className='flex flex-col items-center gap-x-2 sm:flex-row'>
               <p className='text-center text-gray-600 dark:text-gray-500'>
-                {tRole(role)}
+                {tRole(role as Roles)}
               </p>
               <ItemStatusText
                 isActive={isActive}

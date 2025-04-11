@@ -1,9 +1,9 @@
-﻿
-using Consul;
+﻿using Consul;
 using Contract.Common;
+using Contract.Interfaces;
+using Contract.Services;
 using MassTransit;
 using RecipeProto;
-using RecipeWorker.EventPublishing;
 using RecipeWorker.Interfaces;
 using RecipeWorker.Services;
 using System.Reflection;

@@ -239,15 +239,16 @@ public class AdminController : BaseApiController
     }
 
     //Tag
-    [HttpGet("get-tags")]
+    [HttpPost("get-tags")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedAdminTagListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetTag([FromQuery] PaginatedDTO paginatedDTO)
+    public async Task<IActionResult> AdminGetTag([FromBody] AdminGetTagDTO adminGetTagDTO, [FromQuery] PaginatedDTO paginatedDTO)
     {
         var result = await _sender.Send(new AdminGetTagsQuery
         {
             PaginatedDTO = paginatedDTO,
+            Lang = adminGetTagDTO.Language,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

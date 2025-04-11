@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using UserProto;
 
 namespace DuendeIdentityServer.Pages.Account.ForgotPassword;
@@ -41,14 +40,6 @@ public class Index : PageModel
 
     public async Task<IActionResult> OnGet(string? identifier)
     {
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine(JsonConvert.SerializeObject(Input, Formatting.Indented));
         // the user clicked the "cancel" button
         if (Input.Button == "Cancel")
         {

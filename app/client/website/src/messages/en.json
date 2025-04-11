@@ -64,7 +64,7 @@
         "back": "Back to Users",
         "disable": "Disable User",
         "restore": "Restore User",
-        "edit": "Edit Profile"
+        "edit": "Update Profile"
       }
     },
     "info": {
@@ -313,7 +313,7 @@
         "signOut": "Sign out",
         "roles": {
           "ADMIN": "Admin",
-          "SUPER ADMIN": "Super Admin"
+          "SUPER_ADMIN": "Super Admin"
         }
       },
       "info": {
@@ -348,6 +348,7 @@
           "recipe": "Recipe",
           "comment": "Comment",
           "user": "User",
+          "admin": "Admin",
           "tag": "Tag",
           "reportUser": "User Report",
           "reportRecipe": "Recipe Report",
@@ -515,5 +516,89 @@
       "createdDate": "Created Date"
     },
     "search": "Search by username, command, entity..."
+  },
+  "error": {
+    "AccountError": {
+      "NotFound": "Account not found",
+      "EmailNotFound": "Email not found",
+      "PhoneNotFound": "Phone number not found",
+      "EmailAlreadyExisted": "Email already exists",
+      "PhoneAlreadyExisted": "Phone number already exists",
+      "CreateAccountFailed": "Failed to create account",
+      "InvalidOTP": "Invalid OTP",
+      "OTPExpired": "OTP has expired",
+      "VerifyFailed": "Verification failed",
+      "EmailAlreadyConfirmed": "Email already confirmed",
+      "EmailNotConfirmed": "Email not confirmed",
+      "PhoneAlreadyConfirmed": "Phone number already confirmed",
+      "PhoneNotConfirmed": "Phone number not confirmed",
+      "ResendOTPFailed": "Failed to resend OTP",
+      "LinkAccountFailed": "Failed to link account",
+      "UnlinkAccountFailed": "Failed to unlink account",
+      "UsernameAlreadyExisted": "Username already exists",
+      "UpdateAccountFailed": "Failed to update account",
+      "InvalidAccountMethod": "Invalid account method",
+      "ResetPasswordFailed": "Failed to reset password",
+      "OnlyExistOneIdentifier": "Cannot unlink when the account only has one identifier",
+      "NullParameter": "Missing or null parameter"
+    },
+    "NotificationErrors": {
+      "NotFound": "Notification not found",
+      "TemplateNotFound": "Notification template not found",
+      "ExpoPushTokenNotFound": "Expo push token not found",
+      "UpdateNotificationFail": "Failed to update notification"
+    },
+    "CommentError": {
+      "NotFound": "Comment not found",
+      "AddCommentFail": "Failed to add comment",
+      "DeleteCommentFail": "Failed to delete comment",
+      "UpdateCommentFail": "Failed to update comment",
+      "AlreadyInactive": "Comment is already inactive",
+      "AlreadyActive": "Comment is already active"
+    },
+    "RecipeError": {
+      "NotFound": "Recipe not found",
+      "AddRecipeFail": "Failed to add recipe",
+      "DeleteRecipeFail": "Failed to delete recipe",
+      "UpdateRecipeFail": "Failed to update recipe",
+      "VoteFail": "Failed to vote",
+      "NullParameter": "Missing or null parameter",
+      "PermissionDeny": "Permission denied",
+      "AlreadyInactive": "Recipe is already inactive",
+      "AlreadyActive": "Recipe is already active"
+    },
+    "TagError": {
+      "NotFound": "Tag not found",
+      "AddTagFail": "Failed to add tag",
+      "DeleteTagFail": "Failed to delete tag",
+      "UpdateTagFail": "Failed to update tag",
+      "NullParameter": "Missing or null parameter",
+      "PermissionDeny": "Permission denied",
+      "AlreadyInactive": "Tag is already inactive",
+      "AlreadyExist": "Tag already exists"
+    },
+    "SettingError": {
+      "NotFound": "Setting not found",
+      "InvalidSettingKey": "Invalid setting key",
+      "InvalidSettingValue": "Invalid setting value"
+    },
+    "UserError": {
+      "NotFound": "User not found",
+      "AlreadyExistUser": "User already exists",
+      "NullParameters": "Missing or null parameters",
+      "FollowFail": "Failed to follow user",
+      "PermissionDenied": "Permission denied",
+      "UpdateUserFail": "Failed to update user"
+    },
+    "UserReportError": {
+      "NotFound": "User report not found",
+      "AddUserReportFail": "Failed to add user report",
+      "DeleteUserReportFail": "Failed to delete user report",
+      "UpdateUserReportFail": "Failed to update user report",
+      "NullParameter": "Missing or null parameter",
+      "AlreadyMarkComplete": "User report is already marked as complete",
+      "AlreadyPending": "User report is already pending"
+    },
+    "General": "An error has occurred. Please try again later"
   }
 }

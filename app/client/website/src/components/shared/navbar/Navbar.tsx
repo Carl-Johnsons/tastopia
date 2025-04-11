@@ -29,10 +29,10 @@ const Navbar = () => {
       <div className='flex-between gap-1'>
         <Theme />
         <Language />
-        <Profile />
-        <div className='px-3'>
-          <MobileNav />
+        <div className='pl-2 pr-4'>
+          <Profile />
         </div>
+        <MobileNav />
       </div>
     </nav>
   );
