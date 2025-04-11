@@ -3,6 +3,7 @@
 import React, {
   FC,
   forwardRef,
+  memo,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -240,14 +241,12 @@ const FormInput = ({ field, label, placeholder, isLoading }: FormInputProps) => 
           <FormLabel className='paragraph-semibold text-black_white'>
             {label} <Askterisk />
           </FormLabel>
-          <FormControl>
-            <Input
-              value={value as string}
-              className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
-              placeholder={placeholder}
-              {...fields}
-            />
-          </FormControl>
+          <Input
+            value={value as string}
+            className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
+            placeholder={placeholder}
+            {...fields}
+          />
         </>
       )}
       <FormMessage className='text-red-600' />
@@ -270,7 +269,7 @@ const FormSelect = ({
       return;
     }
 
-    console.log("gender value", value)
+    console.log("gender value", value);
   }, [value]);
 
   return (
@@ -286,7 +285,10 @@ const FormSelect = ({
             {label} <span className='text-red-600'>*</span>
           </FormLabel>
 
-          <Select value={value} onValueChange={onChange}>
+          <Select
+            value={value}
+            onValueChange={onChange}
+          >
             <FormControl>
               <SelectTrigger className='bg-white_black200 light-border text-black_white'>
                 <SelectValue placeholder={placeholder} />
@@ -448,50 +450,54 @@ const FormDatePicker = ({
   );
 };
 
-export const FormImageUpload = ({ label, field, isLoading }: FormImageUploadProps) => {
-  const { value, onChange } = field;
+export const FormImageUpload = memo(
+  ({ label, field, isLoading }: FormImageUploadProps) => {
+    const { value, onChange } = field;
 
-  return (
-    <FormItem className='relative flex w-full flex-col'>
-      {isLoading ? (
-        <>
-          <SkeletonControl className='h-4 w-20' />
-          <div className='flex-center'>
-            <SkeletonControl className='size-[200px] rounded-full' />
-          </div>
-        </>
-      ) : (
-        <>
-          <FormLabel className='paragraph-semibold text-black_white'>
-            {label} <Askterisk />
-          </FormLabel>
-          <FormControl className='mt-3.5'>
-            <ImageUploading
-              multiple={false}
-              value={value as ImageListType}
-              onChange={onChange}
-              maxFileSize={15242880}
-              acceptType={["jpg", "jpeg", "png", "webp"]}
-              ImageComponent={({ src, alt }) => (
-                <Image
-                  src={src}
-                  alt={alt}
-                  className='h-[200px] rounded-full'
-                  width={200}
-                  height={200}
-                  wrapperClassName='flex-center'
-                  skeletonClassName='rounded-full inset-auto'
-                />
-              )}
-            />
-          </FormControl>
-        </>
-      )}
+    return (
+      <FormItem className='relative flex w-full flex-col'>
+        {isLoading ? (
+          <>
+            <SkeletonControl className='h-4 w-20' />
+            <div className='flex-center'>
+              <SkeletonControl className='size-[200px] rounded-full' />
+            </div>
+          </>
+        ) : (
+          <>
+            <FormLabel className='paragraph-semibold text-black_white'>
+              {label} <Askterisk />
+            </FormLabel>
+            <FormControl className='mt-3.5'>
+              <ImageUploading
+                multiple={false}
+                value={value as ImageListType}
+                onChange={onChange}
+                maxFileSize={15242880}
+                acceptType={["jpg", "jpeg", "png", "webp"]}
+                ImageComponent={({ src, alt }) => (
+                  <Image
+                    src={src}
+                    alt={alt}
+                    className='h-[200px] rounded-full'
+                    width={200}
+                    height={200}
+                    wrapperClassName='flex-center'
+                    skeletonClassName='rounded-full inset-auto'
+                  />
+                )}
+              />
+            </FormControl>
+          </>
+        )}
 
-      <FormMessage className='text-red-600' />
-    </FormItem>
-  );
-};
+        <FormMessage className='text-red-600' />
+      </FormItem>
+    );
+  }
+);
+
+FormImageUpload.displayName = "FormImageUpload";
 
 const SkeletonControl = ({ className }: { className?: string }) => {
   return <Skeleton className={`h-8 w-full ${className}`} />;
