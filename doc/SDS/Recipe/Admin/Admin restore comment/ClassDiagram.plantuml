@@ -49,6 +49,7 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 together {
+    class NotifyUserEvent #Cyan;line:white;text:black
     class AddActivityLogEvent #CadetBlue;line:white;text:white
 }
 
@@ -64,6 +65,7 @@ RestoreCommentCommandHandler "1" o--"1" IServiceBus
 RestoreCommentCommandHandler "1" o--"1" IUnitOfWork
 RestoreCommentCommandHandler "1" --"1" Result
 RestoreCommentCommandHandler "1" --"1..*" AddActivityLogEvent
+RestoreCommentCommandHandler "1" --"1..*" NotifyUserEvent
 RestoreCommentCommandHandler "1" --"1..*" CommentError
 
 Error "1" --"1" CommentError
