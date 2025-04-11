@@ -81,7 +81,7 @@ const TagForm = ({ type }: FormProps) => {
   const isUpdate = type === FORM_TYPE.UPDATE;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [image, setImage] = useState<any>(isUpdate ? [tag?.imageUrl] : undefined);
+  const [image, setImage] = useState<any>(isUpdate && !!tag?.imageUrl ? [tag?.imageUrl] : undefined);
   const [isImageModified, setIsImageModified] = useState(false);
 
   const { withBareErrorHanler } = useErrorHandler();
