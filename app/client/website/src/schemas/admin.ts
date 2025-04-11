@@ -2,14 +2,14 @@ import { Gender } from "@/constants/gender";
 import { isValid, parse } from "date-fns";
 import * as z from "zod";
 
-const MAX_FILE_SIZE = 15000000;
+export const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
 const PHONE_REGEX = /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/;
 const DATE_REGEX = /\d{1,2}\/\d{1,2}\/\d\d\d\d/;
 const GENDER: Array<string> = [Gender.Male, Gender.Female];
 const STATUS: Array<string> = ["Active", "Inactive"];
-const IMAGE_TYPE = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
+export const IMAGE_TYPE = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
 
-const imageSchemma = (t: (key: string) => string) =>
+export const imageSchemma = (t: (key: string) => string) =>
   z.array(
     z.object({
       dataURL: z.string().optional(),

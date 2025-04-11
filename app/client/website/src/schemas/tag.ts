@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import * as z from "zod";
+import { IMAGE_TYPE, imageSchemma, MAX_FILE_SIZE } from "./admin";
 
 const validCategories = ["All", "DishType", "Ingredient"];
 
@@ -32,7 +33,23 @@ export const getTagSchema = (t: TFunction) => {
         })
       }),
 
-    tagImage: z.any()
+    tagImage: z.array(
+      z.object({
+        dataURL: z.string().optional(),
+        file: z
+          .any()
+          .refine(image => image?.size <= MAX_FILE_SIZE, {
+            message: t("form.image.errors.maxSize")
+          })
+          .refine(image => IMAGE_TYPE.includes(image?.type), {
+            message: t("form.image.errors.acceptType")
+          })
+          .optional()
+      }),
+      {
+        required_error: t("form.image.errors.required")
+      }
+    )
   });
 
   const UpdateTagSchema = CreateTagSchema.extend({

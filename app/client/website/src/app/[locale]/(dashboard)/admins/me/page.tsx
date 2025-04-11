@@ -6,7 +6,6 @@ import SomethingWentWrong from "@/components/shared/common/Error";
 import { Link } from "@/i18n/navigation";
 import { ChevronRight } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { Suspense } from "react";
 
 export default async function Page() {
   const t = await getTranslations("administerAdmins");
