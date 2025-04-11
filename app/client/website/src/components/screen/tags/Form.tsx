@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import Image from "next/image";
-import { getTagSchema } from "@/schemas/tag";
+import { getTagSchema, validVietnameseCategories } from "@/schemas/tag";
 import { FORM_TYPE } from "@/constants/form";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
@@ -81,7 +81,9 @@ const TagForm = ({ type }: FormProps) => {
   const isUpdate = type === FORM_TYPE.UPDATE;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [image, setImage] = useState<any>(isUpdate && !!tag?.imageUrl ? [tag?.imageUrl] : undefined);
+  const [image, setImage] = useState<any>(
+    isUpdate && !!tag?.imageUrl ? [tag?.imageUrl] : undefined
+  );
   const [isImageModified, setIsImageModified] = useState(false);
 
   const { withBareErrorHanler } = useErrorHandler();
@@ -120,12 +122,15 @@ const TagForm = ({ type }: FormProps) => {
 
     const formData = new FormData();
 
+    console.log("values.category", values.category);
+    console.log("values.category map", mapCategoryByLocale(values.category, "vi"));
+
     formData.append("code", values.code);
     formData.append("vi", values.vi);
     formData.append("en", values.en);
     formData.append(
       "category",
-      currentLanguage === "vi"
+      validVietnameseCategories.includes(values.category)
         ? mapCategoryByLocale(values.category, "vi")
         : values.category
     );

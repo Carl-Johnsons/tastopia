@@ -1,8 +1,8 @@
 import { useTranslations } from "next-intl";
 import * as z from "zod";
 
-const validCategories = ["All", "DishType", "Ingredient"];
-const validVietnameseCategories = ["Tất cả", "Loại món ăn", "Nguyên liệu"];
+export const validCategories = ["All", "DishType", "Ingredient"];
+export const validVietnameseCategories = ["Tất cả", "Loại món ăn", "Nguyên liệu"];
 
 type TFunction = ReturnType<typeof useTranslations<"administerTags">>;
 
@@ -28,10 +28,7 @@ export const getTagSchema = (t: TFunction, language: string) => {
       .nonempty(t("form.errors.categoryRequired"))
       .max(20, t("form.errors.categoryMaxLength"))
       .refine(
-        val =>
-          language === "vi"
-            ? validVietnameseCategories.includes(val)
-            : validCategories.includes(val),
+        val => validVietnameseCategories.includes(val) || validCategories.includes(val),
         {
           message: t("form.errors.categoryInvalid", {
             categories:
