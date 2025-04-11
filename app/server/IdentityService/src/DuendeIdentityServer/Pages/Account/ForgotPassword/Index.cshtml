@@ -25,6 +25,7 @@
                         </div>
                         <h1 class="mt-4 mb-4">Recover your<br /><span class="title">Tastopia account</span></h1>
                         <input type="hidden" asp-for="Input.ReturnUrl" />
+                        <input type="hidden" asp-for="Input.IsDirty" value="true" />
 
                         <div class="form-group form-floating">
                             <input class="form-control shadow-sm" id="floatingInput" placeholder="Your email or phone number" asp-for="Input.Identifier" autofocus>
@@ -69,6 +70,7 @@
                         <h1 class="mt-4 mb-4">Recover your<br /><span class="title">Tastopia account</span></h1>
                         <input type="hidden" asp-for="Input.ReturnUrl" />
                         <input type="hidden" asp-for="Input.Identifier" />
+                        <input type="hidden" asp-for="Input.IsDirty" value="true" />
                         <div class="d-flex flex-column justify-content-between align-items-center">
                             <h4>@Model.View.User.DisplayName</h4>
                             <img class="avatar rounded-circle" src="@Model.View.User.AvtUrl" />
