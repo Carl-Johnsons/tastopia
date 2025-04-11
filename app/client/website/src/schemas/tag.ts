@@ -1,11 +1,13 @@
 import { useTranslations } from "next-intl";
 import * as z from "zod";
+import { IMAGE_TYPE, imageSchemma, MAX_FILE_SIZE } from "./admin";
 
-const validCategories = ["All", "DishType", "Ingredient"];
+export const validCategories = ["All", "DishType", "Ingredient"];
+export const validVietnameseCategories = ["Tất cả", "Loại món ăn", "Nguyên liệu"];
 
 type TFunction = ReturnType<typeof useTranslations<"administerTags">>;
 
-export const getTagSchema = (t: TFunction) => {
+export const getTagSchema = (t: TFunction, language: string) => {
   const CreateTagSchema = z.object({
     code: z
       .string()
@@ -26,13 +28,35 @@ export const getTagSchema = (t: TFunction) => {
       .string()
       .nonempty(t("form.errors.categoryRequired"))
       .max(20, t("form.errors.categoryMaxLength"))
-      .refine(val => validCategories.includes(val), {
-        message: t("form.errors.categoryInvalid", {
-          categories: validCategories.join(", ")
-        })
-      }),
+      .refine(
+        val => validVietnameseCategories.includes(val) || validCategories.includes(val),
+        {
+          message: t("form.errors.categoryInvalid", {
+            categories:
+              language === "vi"
+                ? validVietnameseCategories.join(", ")
+                : validCategories.join(", ")
+          })
+        }
+      ),
 
-    tagImage: z.any()
+    tagImage: z.array(
+      z.object({
+        dataURL: z.string().optional(),
+        file: z
+          .any()
+          .refine(image => image?.size <= MAX_FILE_SIZE, {
+            message: t("form.image.errors.maxSize")
+          })
+          .refine(image => IMAGE_TYPE.includes(image?.type), {
+            message: t("form.image.errors.acceptType")
+          })
+          .optional()
+      }),
+      {
+        required_error: t("form.image.errors.required")
+      }
+    )
   });
 
   const UpdateTagSchema = CreateTagSchema.extend({

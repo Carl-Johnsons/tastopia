@@ -35,7 +35,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   const tNotification = useTranslations("administerAdmins.notifications");
   const tForm = useTranslations("administerAdmins.form");
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
-  const { withBareErrorHanler } = useErrorHandler();
+  const { withBareErrorHandler } = useErrorHandler();
 
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
@@ -114,7 +114,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
         console.debug("submitForm for", formType, "with values", formData);
 
         if (formType === "create") {
-          withBareErrorHanler(() => createAdmin(formData), {
+          withBareErrorHandler(() => createAdmin(formData), {
             onSuccess: async () => {
               toast.success(tNotification("create.success"));
               await queryClient.invalidateQueries({ queryKey: ["admins"] });
@@ -123,7 +123,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
         } else {
           formData.append("accountId", targetId ?? "");
 
-          withBareErrorHanler(() => updateAdmin(formData), {
+          withBareErrorHandler(() => updateAdmin(formData), {
             onSuccess: async () => {
               toast.success(tNotification("update.success"));
 
@@ -147,7 +147,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       }
     },
     [
-      withBareErrorHanler,
+      withBareErrorHandler,
       form.formState.dirtyFields,
       isUpdate,
       formType,

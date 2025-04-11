@@ -448,7 +448,7 @@ const FormDatePicker = ({
   );
 };
 
-const FormImageUpload = ({ label, field, isLoading }: FormImageUploadProps) => {
+export const FormImageUpload = ({ label, field, isLoading }: FormImageUploadProps) => {
   const { value, onChange } = field;
 
   return (

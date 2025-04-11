@@ -119,9 +119,6 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
 
             var actorIdSet = paginatedNotificationQuery.SelectMany(n => n.PrimaryActors.Concat(n.SecondaryActors)).ToList();
 
-            Console.WriteLine(JsonConvert.SerializeObject(actorIdSet, Formatting.Indented));
-            Console.WriteLine(JsonConvert.SerializeObject(userIdList, Formatting.Indented));
-
             if (userIdList.Count > 0)
             {
                 var repeatedField = _mapper.Map<RepeatedField<string>>(userIdList);
@@ -154,8 +151,6 @@ public partial class GetNotificationsQueryHandler : IRequestHandler<GetNotificat
                     RecipeIds = { repeatedField }
                 }, cancellationToken: cancellationToken);
             }
-
-            Console.WriteLine(JsonConvert.SerializeObject(recipeIdList, Formatting.Indented));
 
             // Get comment detail map
             GrpcMapSimpleComments? grpcCommentMap = null;

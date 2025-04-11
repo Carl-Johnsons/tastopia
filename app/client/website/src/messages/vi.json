@@ -411,11 +411,11 @@
       },
       "image": {
         "label": "Hình ảnh",
-        "required": "Hình ảnh thẻ là bắt buộc",
         "errors": {
+          "required": "Hình ảnh thẻ là bắt buộc",
           "maxNumber": "Số lượng hình ảnh đã vượt quá 1",
           "acceptType": "Loại tệp đã chọn không được phép",
-          "maxFileSize": "Kích thước tệp đã chọn vượt quá kích thước tối đa (15MB)"
+          "maxSize": "Kích thước tệp đã chọn vượt quá kích thước tối đa (15MB)"
         },
         "upload": {
           "clickToUpload": "Nhấn để tải lên",
