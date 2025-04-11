@@ -5,17 +5,13 @@ skinparam linetype polyline
 skinparam nodesep 50
 skinparam ranksep 50
 skinparam classAttributeIconSize 0
-skinparam classBackgroundColor LightSalmon
-skinparam classBorderColor While
-skinparam classFontColor While
-skinparam classAttributeFontColor While
 
 hide circle
 
-class UploadFileServiceConsumer {
+class UploadFileServiceConsumer #LightSalmon;line:white;text:white{
     #_sender: ISender
     #_logger: ILogger
-    +DeleteMultipleFileConsumer(ConsumeContext<DeleteMultipleFileEvent> context): async Task
+    +DeleteMultipleFileConsumer(context: ConsumeContext<DeleteMultipleFileEvent>): async Task
 }
 
 
@@ -53,7 +49,7 @@ class DeleteMultipleImageFileCommandHandler{
 }
 
 ' Event DTO
-class DeleteMultipleFileEvent{
+class DeleteMultipleFileEvent #LightSalmon;line:white;text:white{
     +DeleteUrls: List<string>
 }
 
