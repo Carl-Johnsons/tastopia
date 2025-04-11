@@ -111,11 +111,6 @@ const TagForm = ({ type }: FormProps) => {
     const formData = new FormData();
 
     Object.entries(values).forEach(([key, value]) => {
-      if (isUpdate) {
-        const isValueModified = !!(form.formState.dirtyFields as any)[key];
-        if (!isValueModified) return;
-      }
-
       if (key === "tagImage" && !!value) {
         formData.append(key, (value as ImageFieldType)?.at(0)?.file as Blob);
       }
@@ -131,6 +126,9 @@ const TagForm = ({ type }: FormProps) => {
         formData.append(key, value as string);
       }
     });
+
+    console.debug("data passed to form", values);
+    console.debug("data form", formData);
 
     if (isUpdate) {
       formData.append("tagId", tag?.id ?? "");
