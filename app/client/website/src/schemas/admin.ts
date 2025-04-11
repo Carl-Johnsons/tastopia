@@ -9,23 +9,25 @@ const GENDER: Array<string> = [Gender.Male, Gender.Female];
 export const IMAGE_TYPE = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
 
 export const imageSchemma = (t: (key: string) => string) =>
-  z.array(
-    z.object({
-      dataURL: z.string().optional(),
-      file: z
-        .any()
-        .refine(image => image?.size <= MAX_FILE_SIZE, {
-          message: t("image.errors.maxSize")
-        })
-        .refine(image => IMAGE_TYPE.includes(image?.type), {
-          message: t("image.errors.acceptType")
-        })
-        .optional()
-    }),
-    {
-      required_error: t("image.errors.required")
-    }
-  );
+  z
+    .array(
+      z.object({
+        dataURL: z.string().optional(),
+        file: z
+          .any()
+          .refine(image => image?.size <= MAX_FILE_SIZE, {
+            message: t("image.errors.maxSize")
+          })
+          .refine(image => IMAGE_TYPE.includes(image?.type), {
+            message: t("image.errors.acceptType")
+          })
+          .optional()
+      }),
+      {
+        required_error: t("image.errors.required")
+      }
+    )
+    .min(1, t("image.errors.required"));
 
 export const getCreateAdminSchema = (t: (key: string) => string) =>
   z.object({
