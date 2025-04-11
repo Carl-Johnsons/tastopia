@@ -40,13 +40,29 @@ import {
 import { Plus } from "lucide-react";
 import { createTag, updateTag } from "@/actions/tag.action";
 import { useTags } from "./TagsContext";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useInvalidateAdmin } from "@/hooks/query";
 import { useErrorHandler } from "@/hooks/error/useErrorHanler";
 import { Tag } from "@/types/tag";
 
 type FormProps = {
   type: string;
+};
+
+const mapCategoryByLocale = (category: string, language: string) => {
+  const viMap: Record<string, string> = {
+    "Tất cả": "All",
+    "Loại món ăn": "DishType",
+    "Nguyên liệu": "Ingredient"
+  };
+
+  const enMap: Record<string, string> = {
+    All: "Tất cả",
+    DishType: "Loại món ăn",
+    Ingredient: "Nguyên liệu"
+  };
+
+  return language === "vi" ? viMap[category] : enMap[category];
 };
 
 const TagForm = ({ type }: FormProps) => {
@@ -57,6 +73,7 @@ const TagForm = ({ type }: FormProps) => {
     setOpenUpdateDialog,
     getTagToUpdate
   } = useTags();
+  const currentLanguage = useLocale();
   const t = useTranslations("administerTags");
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
@@ -121,7 +138,14 @@ const TagForm = ({ type }: FormProps) => {
 
       await withBareErrorHanler<Tag>(() => updateTag(formData), {
         onSuccess: data => {
-          updateTagInContext(data);
+          /** Need to map to Vietnamese because data return is English */
+          updateTagInContext({
+            ...data,
+            category:
+              currentLanguage === "vi"
+                ? mapCategoryByLocale(data.category, "en")
+                : data.category
+          });
           setOpenUpdateDialog(false);
           toast.success(t("notifications.updateSuccess"));
           invalidateCurrentAdminActivities();
@@ -216,7 +240,11 @@ const TagForm = ({ type }: FormProps) => {
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={
+                      currentLanguage === "en"
+                        ? field.value
+                        : mapCategoryByLocale(field.value, currentLanguage)
+                    }
                   >
                     <FormControl>
                       <SelectTrigger className='bg-white_black100 text-black_white'>

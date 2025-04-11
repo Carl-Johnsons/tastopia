@@ -8,6 +8,8 @@ actor "User" as user
 actor "Gmail" as gmail
 actor "Cloudinary" as cl
 actor "SpeedSMS         " as sms
+actor "Gemma" as gemma
+actor "Expo Speech Recognition" as speech
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-2: Login" as ucLogin
@@ -74,6 +76,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     gmail -up-> ucLogin
     cl --up-> ucManageProfile
     cl --up-> ucManageRecipe
+    gemma --up-> ucManageRecipe
     sms --up-> ucForgotPassword
 
     ucSearch .....> ucLogin : <<include>>
@@ -86,10 +89,10 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-24: Command by voice \n in cooking mode" as ucCommandVoiceCCM
     usecase "UC-25: Recognize ingredients \n by capturing image" as ucRecognizeIngre
 
+    speech --up-> ucCommandVoiceCCM
 
     user --> ucRecognizeIngre
     ucGuidedCCM <.. ucCommandVoiceCCM : <<extend>>
-        ucCommandVoiceCCM . noteCommandVoiceCCM
 
     ucRecognizeIngre .....> ucLogin : <<include>>
 
