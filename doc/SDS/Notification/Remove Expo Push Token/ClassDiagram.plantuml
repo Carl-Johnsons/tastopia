@@ -1,0 +1,58 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/Notification/NotificationDbContext.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 60
+skinparam ranksep 60
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class NotificationController {
+    +RemoveExpoAndroidPushToken(): async Task<IActionResult>
+    +RemoveExpoIOSPushToken(): async Task<IActionResult>
+}
+
+class RemoveExpoPushTokenCommand {
+    +AccountId: Guid
+    +DeviceType: DeviceType
+}
+
+class RemoveExpoPushTokenCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +RemoveExpoPushTokenCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
+    +Handle(request: RemoveExpoPushTokenCommand, cancellationToken: CancellationToken): async Task<Result>
+}
+
+class NotificationErrors {
+    {static} +ExpoPushTokenNotFound: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+NotificationController --|> BaseApiController
+NotificationController "1"--"1" RemoveExpoPushTokenCommand
+RemoveExpoPushTokenCommand ..|> "IRequest<TResponse>"
+RemoveExpoPushTokenCommand "1" o-- "1" DeviceType
+
+RemoveExpoPushTokenCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+RemoveExpoPushTokenCommandHandler "1" o-- "1" RemoveExpoPushTokenCommand
+RemoveExpoPushTokenCommandHandler "1" o-- "1" IApplicationDbContext
+RemoveExpoPushTokenCommandHandler "1" o-- "1" IUnitOfWork
+
+RemoveExpoPushTokenCommandHandler "1" -- "1..*" NotificationErrors
+RemoveExpoPushTokenCommandHandler "1" -- "1" AccountExpoPushToken
+RemoveExpoPushTokenCommandHandler "1" --"1..*" Result
+
+Error "1" --"1..*" NotificationErrors
+
+@enduml

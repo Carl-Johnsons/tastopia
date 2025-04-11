@@ -4,8 +4,8 @@
 !include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 100
-skinparam ranksep 100
+skinparam nodesep 60
+skinparam ranksep 60
 hide circle
 
 class BaseApiController {
@@ -14,17 +14,18 @@ class BaseApiController {
 }
 
 class NotificationController {
-    +SaveExpoPushToken(dto: SaveExpoPushTokenDTO): async Task<IActionResult>
-}
-
-class SaveExpoPushTokenDTO {
-    +ExpoPushToken: string
+    +SaveExpoAndroidPushToken(dto: SaveExpoPushTokenDTO): async Task<IActionResult>
+    +SaveExpoIOSPushToken(dto: SaveExpoPushTokenDTO): async Task<IActionResult>
 }
 
 class SaveExpoPushTokenCommand {
     +AccountId: Guid
     +ExpoPushToken: string
     +DeviceType: DeviceType
+}
+
+class SaveExpoPushTokenDTO {
+    +ExpoPushToken: string
 }
 
 class SaveExpoPushTokenCommandHandler {
@@ -34,10 +35,6 @@ class SaveExpoPushTokenCommandHandler {
     +Handle(request: SaveExpoPushTokenCommand, cancellationToken: CancellationToken): async Task<Result>
 }
 
-class NotificationErrors {
-    {static} +NotFound: Error
-}
-
 ' =========== Library class ===========
 interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
@@ -45,19 +42,16 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 
 NotificationController --|> BaseApiController
 NotificationController "1"--"1" SaveExpoPushTokenCommand
-NotificationController "1"--"1" SaveExpoPushTokenDTO
-SaveExpoPushTokenCommand --|> "IRequest<TResponse>"
+NotificationController "1" -- "1" SaveExpoPushTokenDTO
+SaveExpoPushTokenCommand ..|> "IRequest<TResponse>"
 SaveExpoPushTokenCommand "1" o-- "1" DeviceType
 
-SaveExpoPushTokenCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+SaveExpoPushTokenCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 SaveExpoPushTokenCommandHandler "1" o--"1" SaveExpoPushTokenCommand
-SaveExpoPushTokenCommandHandler "1" o--"1" NotificationErrors
-SaveExpoPushTokenCommandHandler "1" o--"1" Result
 SaveExpoPushTokenCommandHandler "1" o-- "1" IApplicationDbContext
 SaveExpoPushTokenCommandHandler "1" o-- "1" IUnitOfWork
 
 SaveExpoPushTokenCommandHandler "1" -- "1" AccountExpoPushToken
-
-Error "1" --"1..*" NotificationErrors
+SaveExpoPushTokenCommandHandler "1" --"1..*" Result
 
 @enduml

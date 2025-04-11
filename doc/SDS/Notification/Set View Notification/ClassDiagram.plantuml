@@ -45,15 +45,16 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 NotificationController --|> BaseApiController
 NotificationController "1"--"1" SetViewNotificationCommand
 NotificationController "1"--"1" SetViewNotifyDTO
-SetViewNotificationCommand --|> "IRequest<TResponse>"
+SetViewNotificationCommand ..|> "IRequest<TResponse>"
 SetViewNotificationCommand "1" o-- "1" DeviceType
 
-SetViewNotificationCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-SetViewNotificationCommandHandler "1" o--"1" SetViewNotificationCommand
-SetViewNotificationCommandHandler "1" o--"1" NotificationErrors
-SetViewNotificationCommandHandler "1" o--"1" Result
+SetViewNotificationCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+SetViewNotificationCommandHandler "1" o--" 1" SetViewNotificationCommand
 SetViewNotificationCommandHandler "1" o-- "1" IApplicationDbContext
 SetViewNotificationCommandHandler "1" o-- "1" IUnitOfWork
+
+SetViewNotificationCommandHandler "1" -- "1..*" Result
+SetViewNotificationCommandHandler "1" -- "1..*" NotificationErrors
 
 Error "1" --"1..*" NotificationErrors
 

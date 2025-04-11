@@ -30,7 +30,7 @@ class Notification extends BaseMongoDBAuditableEntity {
 }
 
 class Actor {
-    +ActorId: Guid
+    +ActorId: string
     +Type: EntityType
 }
 
@@ -56,11 +56,18 @@ enum NotificationTemplateCode {
     USER_CREATE_RECIPE
     USER_FOLLOW
     USER_UPVOTE
-    USER_DOWNVOTE
+    SYSTEM_DISABLE_RECIPE
+    ADMIN_DISABLE_RECIPE
+    ADMIN_RESTORE_RECIPE
+    ADMIN_DISABLE_COMMENT
+    ADMIN_RESTORE_COMMENT
 }
 
 enum EntityType {
-    EVENT
+    RECIPE
+    COMMENT
+    ADMIN
+    SYSTEM
     USER
 }
 

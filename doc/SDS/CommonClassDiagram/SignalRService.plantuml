@@ -1,0 +1,27 @@
+@startuml SignalRService
+!include doc/SDS/CommonClassDiagram/ConsulRegistryService.plantuml
+
+interface ISignalRService {
+    +HubConnection: HubConnection
+    +StartConnectionAsync(): Task
+    +StopConnectionAsync(): Task
+    +InvokeAction<T>(action: string, obj: T): Task
+    +InvokeAction(action: string): Task
+}
+class SignalRService implements ISignalRService {
+    -_consulRegistryService: IConsulRegistryService
+    +HubConnection: HubConnection
+    +SignalRService(consulRegistryService: IConsulRegistryService)
+    +StartConnectionAsync(): Task
+    +StopConnectionAsync(): Task
+    +InvokeAction<T>(action: string, obj: T): Task
+    +InvokeAction(action: string): Task
+}
+
+interface "HubConnection" #black;line:white;text:white
+
+ISignalRService "1" o-- "1" HubConnection
+SignalRService "1" o-- "1" HubConnection
+SignalRService "1" o-- "1" IConsulRegistryService
+
+@enduml
