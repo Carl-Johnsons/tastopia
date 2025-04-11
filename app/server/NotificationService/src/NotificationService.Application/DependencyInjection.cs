@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using NotificationService.Application.Configs;
+using RecipeProto;
 using UserProto;
 
 namespace NotificationService.Application;
@@ -25,6 +26,11 @@ public static class DependencyInjection
         services.AddGrpcClient<GrpcUser.GrpcUserClient>(options =>
         {
             options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_USER", "Not Found"));
+        });
+
+        services.AddGrpcClient<GrpcRecipe.GrpcRecipeClient>(options =>
+        {
+            options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_RECIPE", "Not Found"));
         });
     }
 }

@@ -16,7 +16,7 @@ internal class MockupData
     public async Task SeedAllData()
     {
         await SeedNotificationTemplate();
-        await SeedNotifications();
+        //await SeedNotifications();
     }
     private async Task SeedNotificationTemplate()
     {

@@ -4,7 +4,9 @@ using RecipeWorker.Utilities;
 using RecipeProto;
 using Newtonsoft.Json;
 using RecipeWorker.Constants;
-using Contract.Event.UserEvent;
+using Contract.Interfaces;
+using Contract.Constants;
+using Contract.Event.NotificationEvent;
 namespace RecipeWorker.Services;
 
 public class CommunityRecipeService : IRecipeService
@@ -23,7 +25,8 @@ public class CommunityRecipeService : IRecipeService
 
     public async Task CheckRecipeAbuse(Guid recipeId)
     {
-        try {
+        try
+        {
             var response = await _grpcRecipeClient.GetRecipeDetailsAsync(new GrpcRecipeIdRequest
             {
                 RecipeId = recipeId.ToString(),
@@ -57,7 +60,7 @@ public class CommunityRecipeService : IRecipeService
             result = result.Replace("%", "");
             var percent = float.Parse(result);
             _logger.LogInformation("==================================================================");
-            _logger.LogInformation("Offensive percent: "+ result);
+            _logger.LogInformation("Offensive percent: " + result);
 
             if (percent < OffensiveTextCheckerConstants.OFFENSIVE_THRESHOLD)
             {
@@ -71,8 +74,28 @@ public class CommunityRecipeService : IRecipeService
                 RecipeId = recipeId,
                 IsActive = false,
             });
+
+            await _serviceBus.Publish(new NotifyUserEvent
+            {
+                PrimaryActors = [
+                        new ActorDTO
+                        {
+                            ActorId = recipeId.ToString(),
+                            Type = EntityType.RECIPE
+                        }],
+                SecondaryActors = [],
+                TemplateCode = NotificationTemplateCode.SYSTEM_DISABLE_RECIPE,
+                Channels = [NOTIFICATION_CHANNEL.DEFAULT],
+                JsonData = JsonConvert.SerializeObject(new
+                {
+                    redirectUri = $"{CLIENT_URI.MOBILE.NOTIFICATION}"
+                }),
+                ImageUrl = response.ImageUrl,
+                RecipientIds = [Guid.Parse(response.AuthorId)]
+            });
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
         }
 
@@ -120,7 +143,8 @@ public class CommunityRecipeService : IRecipeService
             {
                 listRecipeTagCodes.Add(tagRequesteds[v].Code);
             }
-            else {
+            else
+            {
                 additionTagValues.Add(value);
             }
         }

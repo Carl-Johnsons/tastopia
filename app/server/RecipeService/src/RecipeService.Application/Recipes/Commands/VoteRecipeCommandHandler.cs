@@ -127,25 +127,23 @@ public class VoteRecipeCommandHandler : IRequestHandler<VoteRecipeCommand, Resul
 
             // Notify other user
 
-            if (vote != Vote.None && accountId.Value != recipe.AuthorId)
+            if (vote != Vote.None && accountId.Value != recipe.AuthorId && vote == Vote.Upvote)
             {
-                var templateCode = vote == Vote.Upvote ? NotificationTemplateCode.USER_UPVOTE : NotificationTemplateCode.USER_DOWNVOTE;
-
                 await _serviceBus.Publish(new NotifyUserEvent
                 {
                     PrimaryActors = [
                         new ActorDTO
                         {
-                            ActorId = accountId.Value,
+                            ActorId = accountId.Value.ToString(),
                             Type = EntityType.USER
                         }],
                     SecondaryActors = [
                         new ActorDTO
                         {
-                            ActorId = recipe.AuthorId,
-                            Type = EntityType.USER
+                            ActorId = recipe.Id.ToString(),
+                            Type = EntityType.RECIPE
                         }],
-                    TemplateCode = templateCode,
+                    TemplateCode = NotificationTemplateCode.USER_UPVOTE,
                     Channels = [NOTIFICATION_CHANNEL.DEFAULT],
                     JsonData = Newtonsoft.Json.JsonConvert.SerializeObject(new
                     {

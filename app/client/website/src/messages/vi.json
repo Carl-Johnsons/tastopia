@@ -521,5 +521,89 @@
       "createdDate": "Ngày tạo"
     },
     "search": "Tìm kiếm theo tên người dùng, lệnh, thực thể..."
+  },
+  "error": {
+    "AccountError": {
+      "NotFound": "Không tìm thấy tài khoản",
+      "EmailNotFound": "Không tìm thấy email",
+      "PhoneNotFound": "Không tìm thấy số điện thoại",
+      "EmailAlreadyExisted": "Email đã tồn tại",
+      "PhoneAlreadyExisted": "Số điện thoại đã tồn tại",
+      "CreateAccountFailed": "Tạo tài khoản thất bại",
+      "InvalidOTP": "Mã OTP không hợp lệ",
+      "OTPExpired": "Mã OTP đã hết hạn",
+      "VerifyFailed": "Xác thực thất bại",
+      "EmailAlreadyConfirmed": "Email đã được xác nhận",
+      "EmailNotConfirmed": "Email chưa được xác nhận",
+      "PhoneAlreadyConfirmed": "Số điện thoại đã được xác nhận",
+      "PhoneNotConfirmed": "Số điện thoại chưa được xác nhận",
+      "ResendOTPFailed": "Gửi lại mã OTP thất bại",
+      "LinkAccountFailed": "Liên kết tài khoản thất bại",
+      "UnlinkAccountFailed": "Hủy liên kết tài khoản thất bại",
+      "UsernameAlreadyExisted": "Tên người dùng đã tồn tại",
+      "UpdateAccountFailed": "Cập nhật tài khoản thất bại",
+      "InvalidAccountMethod": "Phương thức tài khoản không hợp lệ",
+      "ResetPasswordFailed": "Đặt lại mật khẩu thất bại",
+      "OnlyExistOneIdentifier": "Không thể hủy liên kết khi tài khoản chỉ có một phương thức đăng nhập",
+      "NullParameter": "Thiếu thông tin hoặc thông tin trống"
+    },
+    "NotificationErrors": {
+      "NotFound": "Không tìm thấy thông báo",
+      "TemplateNotFound": "Không tìm thấy mẫu thông báo",
+      "ExpoPushTokenNotFound": "Không tìm thấy token Expo Push",
+      "UpdateNotificationFail": "Cập nhật thông báo thất bại"
+    },
+    "CommentError": {
+      "NotFound": "Không tìm thấy bình luận",
+      "AddCommentFail": "Thêm bình luận thất bại",
+      "DeleteCommentFail": "Xóa bình luận thất bại",
+      "UpdateCommentFail": "Cập nhật bình luận thất bại",
+      "AlreadyInactive": "Bình luận đã bị vô hiệu hóa",
+      "AlreadyActive": "Bình luận đã hoạt động"
+    },
+    "RecipeError": {
+      "NotFound": "Không tìm thấy công thức",
+      "AddRecipeFail": "Thêm công thức thất bại",
+      "DeleteRecipeFail": "Xóa công thức thất bại",
+      "UpdateRecipeFail": "Cập nhật công thức thất bại",
+      "VoteFail": "Bình chọn thất bại",
+      "NullParameter": "Thiếu thông tin hoặc thông tin trống",
+      "PermissionDeny": "Quyền truy cập bị từ chối",
+      "AlreadyInactive": "Công thức đã bị vô hiệu hóa",
+      "AlreadyActive": "Công thức đã hoạt động"
+    },
+    "TagError": {
+      "NotFound": "Không tìm thấy thẻ",
+      "AddTagFail": "Thêm thẻ thất bại",
+      "DeleteTagFail": "Xóa thẻ thất bại",
+      "UpdateTagFail": "Cập nhật thẻ thất bại",
+      "NullParameter": "Thiếu thông tin hoặc thông tin trống",
+      "PermissionDeny": "Quyền truy cập bị từ chối",
+      "AlreadyInactive": "Thẻ đã bị vô hiệu hóa",
+      "AlreadyExist": "Thẻ đã tồn tại"
+    },
+    "SettingError": {
+      "NotFound": "Không tìm thấy cài đặt",
+      "InvalidSettingKey": "Khóa cài đặt không hợp lệ",
+      "InvalidSettingValue": "Giá trị cài đặt không hợp lệ"
+    },
+    "UserError": {
+      "NotFound": "Không tìm thấy người dùng",
+      "AlreadyExistUser": "Người dùng đã tồn tại",
+      "NullParameters": "Thiếu thông tin hoặc thông tin trống",
+      "FollowFail": "Theo dõi người dùng thất bại",
+      "PermissionDenied": "Quyền truy cập bị từ chối",
+      "UpdateUserFail": "Cập nhật người dùng thất bại"
+    },
+    "UserReportError": {
+      "NotFound": "Không tìm thấy báo cáo người dùng",
+      "AddUserReportFail": "Thêm báo cáo người dùng thất bại",
+      "DeleteUserReportFail": "Xóa báo cáo người dùng thất bại",
+      "UpdateUserReportFail": "Cập nhật báo cáo người dùng thất bại",
+      "NullParameter": "Thiếu thông tin hoặc thông tin trống",
+      "AlreadyMarkComplete": "Báo cáo người dùng đã được đánh dấu hoàn thành",
+      "AlreadyPending": "Báo cáo người dùng đã ở trạng thái chờ xử lý"
+    },
+    "General": "Đã xảy ra lỗi. Vui lòng thử lại sau"
   }
 }
