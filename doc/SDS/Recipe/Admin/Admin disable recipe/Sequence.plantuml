@@ -53,7 +53,14 @@ RecipeService <-- MongoDB--: 7. Return response
           RecipeService -[hidden]-> Rabbitmq
           deactivate Rabbitmq
           destroy Rabbitmq
+
+          RecipeService -> Rabbitmq: 17. Publish "NotifyUserEvent" event <<Async>>
           deactivate RecipeService
+          activate Rabbitmq
+          ref over Rabbitmq: 18. NotifyUserConsumer
+          RecipeService -[hidden]-> Rabbitmq
+          deactivate Rabbitmq
+          destroy Rabbitmq
       end alt
   end alt
 end alt

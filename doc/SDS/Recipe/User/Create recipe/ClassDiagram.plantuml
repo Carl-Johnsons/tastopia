@@ -75,6 +75,7 @@ class RecipeError {
 ' =========== Microservice class ===========
 together {
     class ValidateRecipeEvent #SeaGreen;line:white;text:white
+    class NotifyUserEvent #Cyan;line:white;text:black
     class DeleteMultipleFileEvent #LightSalmon;line:white;text:white
     class GrpcUploadMultipleImageRequest #LightSalmon;line:white;text:white
     class GrpcUploadFileClient #LightSalmon;line:white;text:white
@@ -104,6 +105,7 @@ CreateRecipeCommandHandler "1" o-- "1" GrpcUploadFileClient
 CreateRecipeCommandHandler "1"--"1..*" GrpcUploadMultipleImageRequest
 CreateRecipeCommandHandler "1"--"1..*" DeleteMultipleFileEvent
 CreateRecipeCommandHandler "1"--"1..*" ValidateRecipeEvent
+CreateRecipeCommandHandler "1"--"1..*" NotifyUserEvent
 CreateRecipeCommandHandler "1"--"1..*" RecipeError
 
 Error "1" --"1..*" RecipeError

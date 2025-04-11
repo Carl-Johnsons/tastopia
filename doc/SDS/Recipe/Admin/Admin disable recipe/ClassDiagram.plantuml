@@ -54,6 +54,7 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 together {
+    class NotifyUserEvent #Cyan;line:white;text:black
     class AddActivityLogEvent #CadetBlue;line:white;text:white
 }
 
@@ -70,6 +71,7 @@ DisableRecipeCommandHandler "1" o--"1" IServiceBus
 DisableRecipeCommandHandler "1" o--"1" IUnitOfWork
 DisableRecipeCommandHandler "1" --"1" Result
 DisableRecipeCommandHandler "1" --"1..*" AddActivityLogEvent
+DisableRecipeCommandHandler "1" --"1..*" NotifyUserEvent
 DisableRecipeCommandHandler "1" --"1..*" RecipeError
 
 Error "1" --"1" RecipeError
