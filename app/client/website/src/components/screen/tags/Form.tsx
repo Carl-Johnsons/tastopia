@@ -86,7 +86,7 @@ const TagForm = ({ type }: FormProps) => {
 
   const { withBareErrorHanler } = useErrorHandler();
 
-  const { CreateTagSchema, UpdateTagSchema } = getTagSchema(t);
+  const { CreateTagSchema, UpdateTagSchema } = getTagSchema(t, currentLanguage);
   const schema = isUpdate ? UpdateTagSchema : CreateTagSchema;
 
   type TagFormValues = z.infer<typeof CreateTagSchema> | z.infer<typeof UpdateTagSchema>;
@@ -118,7 +118,16 @@ const TagForm = ({ type }: FormProps) => {
 
       if (key === "tagImage" && !!value) {
         formData.append(key, (value as ImageFieldType)?.at(0)?.file as Blob);
-      } else if (value !== undefined) {
+      }
+
+      if (key === "category" && !!value) {
+    formData.append(
+      "category",
+      currentLanguage === "vi"
+        ? mapCategoryByLocale(values.category, "vi")
+        : values.category)
+      }
+      else if (value !== undefined) {
         formData.append(key, value as string);
       }
     });

@@ -3,10 +3,11 @@ import * as z from "zod";
 import { IMAGE_TYPE, imageSchemma, MAX_FILE_SIZE } from "./admin";
 
 const validCategories = ["All", "DishType", "Ingredient"];
+const validVietnameseCategories = ["Tất cả", "Loại món ăn", "Nguyên liệu"];
 
 type TFunction = ReturnType<typeof useTranslations<"administerTags">>;
 
-export const getTagSchema = (t: TFunction) => {
+export const getTagSchema = (t: TFunction, language: string) => {
   const CreateTagSchema = z.object({
     code: z
       .string()
@@ -27,11 +28,20 @@ export const getTagSchema = (t: TFunction) => {
       .string()
       .nonempty(t("form.errors.categoryRequired"))
       .max(20, t("form.errors.categoryMaxLength"))
-      .refine(val => validCategories.includes(val), {
-        message: t("form.errors.categoryInvalid", {
-          categories: validCategories.join(", ")
-        })
-      }),
+      .refine(
+        val =>
+          language === "vi"
+            ? validVietnameseCategories.includes(val)
+            : validCategories.includes(val),
+        {
+          message: t("form.errors.categoryInvalid", {
+            categories:
+              language === "vi"
+                ? validVietnameseCategories.join(", ")
+                : validCategories.join(", ")
+          })
+        }
+      ),
 
     tagImage: z.array(
       z.object({
