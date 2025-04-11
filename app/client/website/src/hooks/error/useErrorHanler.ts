@@ -43,7 +43,7 @@ export const useErrorHandler = () => {
    * Use this when you call an axios request directly in client code, without
    * using React Query.
    */
-  const withBareErrorHanler = useCallback(
+  const withBareErrorHandler = useCallback(
     async <T>(queryFn: QueryFn<T>, options?: QueryOptions<T>) => {
       const res = await queryFn();
 
@@ -58,5 +58,5 @@ export const useErrorHandler = () => {
     [t]
   );
 
-  return { handleError, withErrorProcessor, withBareErrorHanler };
+  return { handleError, withErrorProcessor, withBareErrorHandler };
 };

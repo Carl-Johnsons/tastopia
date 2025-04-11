@@ -84,7 +84,7 @@ const TagForm = ({ type }: FormProps) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { withBareErrorHanler } = useErrorHandler();
+  const { withBareErrorHandler } = useErrorHandler();
 
   const { CreateTagSchema, UpdateTagSchema } = getTagSchema(t, currentLanguage);
   const schema = isUpdate ? UpdateTagSchema : CreateTagSchema;
@@ -137,7 +137,7 @@ const TagForm = ({ type }: FormProps) => {
         formData.append("status", values.status);
       }
 
-      await withBareErrorHanler<Tag>(() => updateTag(formData), {
+      await withBareErrorHandler<Tag>(() => updateTag(formData), {
         onSuccess: data => {
           /** Need to map to Vietnamese because data return is English */
           updateTagInContext({
@@ -153,7 +153,7 @@ const TagForm = ({ type }: FormProps) => {
         }
       });
     } else {
-      await withBareErrorHanler<Tag>(() => createTag(formData), {
+      await withBareErrorHandler<Tag>(() => createTag(formData), {
         onSuccess: data => {
           createTagInContext(data);
           setOpenCreateDialog(false);
