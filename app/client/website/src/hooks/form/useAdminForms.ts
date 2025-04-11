@@ -49,7 +49,8 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
 
   const currentUserId = useSelectUserId();
   const { data: admin, isLoading } = useGetAdminById(
-    targetId ?? (currentUserId as string)
+    targetId ?? (currentUserId as string),
+    isSelf
   );
 
   const defaultValues: Partial<CreateAdminFormFields> | undefined = useMemo(() => {
@@ -127,7 +128,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
         } else {
           formData.append("accountId", targetId ?? "");
 
-          await withBareErrorHandler(() => updateAdmin(formData), {
+          await withBareErrorHandler(() => updateAdmin(formData, isSelf), {
             onSuccess: async () => {
               toast.success(tNotification("update.success"));
 
