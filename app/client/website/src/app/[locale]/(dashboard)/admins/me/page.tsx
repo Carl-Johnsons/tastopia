@@ -5,18 +5,17 @@ import ActivityFeed from "@/components/screen/admins/ActivityFeed";
 import ProfileHeader from "@/components/screen/admins/ProfileHeader";
 import ProfileInfo from "@/components/screen/admins/ProfileInfo";
 import SomethingWentWrong from "@/components/shared/common/Error";
-import Loader from "@/components/ui/Loader";
 import { Link } from "@/i18n/navigation";
 import { ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Loading from "../../users/[id]/loading";
 
 export default function Page() {
   const t = useTranslations("administerAdmins");
-
   const { data: currentUser, isError, isLoading } = useGetCurrentAdminDetail();
 
   if (isError) return <SomethingWentWrong />;
-  if (isLoading || !currentUser) return <Loader />;
+  if (isLoading || !currentUser) return <Loading />;
 
   return (
     <div className='min-h-screen rounded-lg p-2'>

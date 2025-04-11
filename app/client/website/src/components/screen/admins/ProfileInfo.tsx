@@ -57,7 +57,7 @@ export default function ProfileInfo({ admin, self }: Props) {
     {
       icon: Icon.GENDER,
       label: t("fields.gender"),
-      value: !!gender
+      value: gender
         ? gender === Gender.Male
           ? t("fields.genders.male")
           : t("fields.genders.female")

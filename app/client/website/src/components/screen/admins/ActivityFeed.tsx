@@ -2,7 +2,7 @@
 
 import Empty from "@/components/shared/common/Empty";
 import { IAdminActivityLogResponse } from "@/generated/interfaces/tracking.interface";
-import { ActivityItem } from "./ActivityItem";
+import { ActivityItem, ActivityItemSkeleton } from "./ActivityItem";
 import { useLocale, useTranslations } from "next-intl";
 import { useGetAdminActivities } from "@/api/admin";
 import Loader from "@/components/ui/Loader";
@@ -28,7 +28,7 @@ export default function ActivityFeed({ accountId, self }: ActivityFeedProps) {
 
       <div className='space-y-6'>
         {isFetching || isLoading || !data?.pages ? (
-          <Loader />
+          <ActivityItemSkeleton />
         ) : (
           !!data.pages[0].paginatedData.length || <Empty />
         )}
