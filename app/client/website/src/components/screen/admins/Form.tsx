@@ -37,11 +37,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Image from "@/components/shared/common/Image";
 import { ImageListType } from "react-images-uploading";
-import { saveAdminData, useSelectAdmin } from "@/slices/admin.slice";
+import { useSelectAdmin } from "@/slices/admin.slice";
 import { Calendar } from "@/components/shared/common/Calendar";
 import { useAdminForm } from "@/hooks/form";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useAppDispatch } from "@/store/hooks";
 
 type FormInputProps = {
   field: ControllerRenderProps<any>;
@@ -335,7 +334,7 @@ const FormDatePicker = ({
       if (!date) {
         setDate(undefined);
         setInputValue("");
-        onChange("");
+        onChange(undefined);
       } else {
         const formattedDate = format(date, "dd/MM/yyyy");
 
