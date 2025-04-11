@@ -86,7 +86,7 @@ const TagForm = ({ type }: FormProps) => {
 
   const { withBareErrorHanler } = useErrorHandler();
 
-  const { CreateTagSchema, UpdateTagSchema } = getTagSchema(t);
+  const { CreateTagSchema, UpdateTagSchema } = getTagSchema(t, currentLanguage);
   const schema = isUpdate ? UpdateTagSchema : CreateTagSchema;
 
   type TagFormValues = z.infer<typeof CreateTagSchema> | z.infer<typeof UpdateTagSchema>;
@@ -123,7 +123,12 @@ const TagForm = ({ type }: FormProps) => {
     formData.append("code", values.code);
     formData.append("vi", values.vi);
     formData.append("en", values.en);
-    formData.append("category", values.category);
+    formData.append(
+      "category",
+      currentLanguage === "vi"
+        ? mapCategoryByLocale(values.category, "vi")
+        : values.category
+    );
 
     if (isImageModified || !isUpdate) {
       console.log("image", image);
@@ -373,20 +378,26 @@ const TagForm = ({ type }: FormProps) => {
                     ) : (
                       <>
                         <div className='flex w-full flex-col items-center justify-center gap-4'>
-                          {imageList.map((image, index) => (
-                            <div
-                              className='flex w-full items-center justify-center gap-4'
-                              key={index}
-                            >
-                              <Image
-                                src={isUpdate && !image.data_url ? image : image.data_url}
-                                alt='uploaded image'
-                                width={400}
-                                height={400}
-                                className='max-h-[400px] w-auto rounded-3xl'
-                              />
-                            </div>
-                          ))}
+                          {imageList.map((image, index) => {
+                            console.log("imag test", image);
+
+                            return (
+                              <div
+                                className='flex w-full items-center justify-center gap-4'
+                                key={index}
+                              >
+                                <Image
+                                  src={
+                                    isUpdate && !image.data_url ? image : image.data_url
+                                  }
+                                  alt='uploaded image'
+                                  width={400}
+                                  height={400}
+                                  className='max-h-[400px] w-auto rounded-3xl'
+                                />
+                              </div>
+                            );
+                          })}
 
                           <AlertDialog>
                             <AlertDialogTrigger>
