@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import Image from "next/image";
-import { getTagSchema } from "@/schemas/tag";
+import { getTagSchema, validVietnameseCategories } from "@/schemas/tag";
 import { FORM_TYPE } from "@/constants/form";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
@@ -121,16 +121,15 @@ const TagForm = ({ type }: FormProps) => {
       }
 
       if (key === "category" && !!value) {
+
     formData.append(
       "category",
-      currentLanguage === "vi"
+      validVietnameseCategories.includes(values.category)
         ? mapCategoryByLocale(values.category, "vi")
-        : values.category)
-      }
-      else if (value !== undefined) {
+        : values.category);
+      } else if (value !== undefined) {
         formData.append(key, value as string);
       }
-    });
 
     if (isUpdate) {
       formData.append("tagId", tag?.id ?? "");
