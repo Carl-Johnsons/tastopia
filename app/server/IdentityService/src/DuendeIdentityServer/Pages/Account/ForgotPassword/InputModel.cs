@@ -8,4 +8,5 @@ public class InputModel
     public string? Identifier { get; set; } = string.Empty;
     public string? ReturnUrl { get; set; }
     public string? Button { get; set; }
+    public bool IsDirty { get; set; } = false;
 }

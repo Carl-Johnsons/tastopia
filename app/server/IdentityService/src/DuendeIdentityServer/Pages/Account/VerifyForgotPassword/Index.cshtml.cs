@@ -153,6 +153,16 @@ public class Index : PageModel
                             ModelState.AddModelError("Input.RetypePassword", "Password does not match!");
                         }
 
+                        if (string.IsNullOrEmpty(Input.Password))
+                        {
+                            ModelState.AddModelError("Input.Password", "The Password field is required");
+                        }
+
+                        if (string.IsNullOrEmpty(Input.RetypePassword))
+                        {
+                            ModelState.AddModelError("Input.RetypePassword", "The Retype password field is required");
+                        }
+
                         if (!ModelState.IsValid)
                         {
                             View = new ViewModel

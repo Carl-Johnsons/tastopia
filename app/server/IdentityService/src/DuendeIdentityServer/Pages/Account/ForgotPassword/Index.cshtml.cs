@@ -45,6 +45,10 @@ public class Index : PageModel
         {
             return await DenyAuthorization(Input.ReturnUrl);
         }
+        if (string.IsNullOrEmpty(Input.Identifier) && Input.IsDirty)
+        {
+            ModelState.AddModelError("Input.Identifier", Options.IdentifierRequired);
+        }
 
         if (!string.IsNullOrEmpty(Input.Identifier))
         {
@@ -59,7 +63,7 @@ public class Index : PageModel
             }
 
             var role = await _userManager.GetRolesAsync(acc);
-            if (!(role[0] == Roles.Code.ADMIN.ToString() || role[0] == Roles.Code.SUPER_ADMIN.ToString()))
+            if (role[0].ToLower() != Roles.Code.USER.ToString().ToLower())
             {
                 ModelState.AddModelError(string.Empty, Options.NotFound);
                 return Page();
