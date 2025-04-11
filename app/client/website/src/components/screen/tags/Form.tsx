@@ -121,15 +121,16 @@ const TagForm = ({ type }: FormProps) => {
       }
 
       if (key === "category" && !!value) {
-
-    formData.append(
-      "category",
-      validVietnameseCategories.includes(values.category)
-        ? mapCategoryByLocale(values.category, "vi")
-        : values.category);
+        formData.append(
+          "category",
+          validVietnameseCategories.includes(values.category)
+            ? mapCategoryByLocale(values.category, "vi")
+            : values.category
+        );
       } else if (value !== undefined) {
         formData.append(key, value as string);
       }
+    });
 
     if (isUpdate) {
       formData.append("tagId", tag?.id ?? "");
