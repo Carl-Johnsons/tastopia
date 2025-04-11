@@ -1,0 +1,112 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/Notification/NotificationDbContext.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/SignalRService.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 60
+skinparam ranksep 60
+hide circle
+
+class NotifyUserConsumer {
+    -_sender: ISender
+    +NotifyUserConsumer(sender: ISender)
+    +Consume(context: ConsumeContext<NotifyUserEvent>): Task
+}
+
+class NotifyUserEvent {
+    +PrimaryActors: List<ActorDTO>
+    +SecondaryActors: List<ActorDTO>
+    +RecipientIds: List<Guid>
+    +TemplateCode: NotificationTemplateCode
+    +Channels: List<string>
+    +JsonData: string
+    +ImageUrl: string
+}
+
+class ActorDTO {
+    +ActorId: string
+    +Type: EntityType
+}
+
+class NotifyUserCommand {
+    +PrimaryActors: List<Actor>
+    +SecondaryActors: List<Actor>
+    +RecipientIds: List<Guid>
+    +TemplateCode: NotificationTemplateCode
+    +Channels: List<string>
+    +JsonData: string
+    +ImageUrl: string
+}
+
+class NotifyUserCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    -_grpcUserClient: GrpcUserClient
+    -_grpcRecipeClient: GrpcRecipeClient
+    -_mapper: IMapper
+    -_serviceBus: IServiceBus
+    -_signalRService: ISignalRService
+    +NotifyUserCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork, serviceBus: IServiceBus, grpcUserClient: GrpcUserClient, mapper: IMapper, signalRService: ISignalRService, grpcRecipeClient: GrpcRecipeClient)
+    +Handle(request: NotifyUserCommand, cancellationToken: CancellationToken): async Task<Result>
+}
+
+class NotificationErrors {
+    {static} +TemplateNotFound: Error
+}
+
+class PushNotificationEvent {
+    +ExpoPushTokens: List<string>
+    +Message: string
+    +JsonData: string
+    +ChannelId: string
+    +Title: string
+}
+
+' =========== Microservice class ===========
+class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+class GrpcUserClient #DarkBlue;line:white;text:white
+
+class GrpcGetSimpleRecipeRequest #Green;line:white;text:white
+class GrpcRecipeClient #Green;line:white;text:white
+' =========== Microservice class ===========
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IMapper" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+interface "IConsumer<T>" #black;line:white;text:white
+' =========== Library class ===========
+
+NotifyUserConsumer ..|> "IConsumer<T>"
+NotifyUserConsumer "1"--"1" NotifyUserCommand
+NotifyUserConsumer "1" o-- "1" NotifyUserEvent
+
+NotifyUserCommand ..|> "IRequest<TResponse>"
+NotifyUserCommand "1" o-- "0..1" Actor 
+NotifyUserCommand "1" o-- "1" NotificationTemplateCode 
+
+NotifyUserEvent "1" *-- "0..1" ActorDTO
+NotifyUserEvent "1" o-- "1" NotificationTemplateCode
+ActorDTO "1" o-- "1" EntityType
+
+NotifyUserCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+NotifyUserCommandHandler "1" o-- "1" NotifyUserCommand
+NotifyUserCommandHandler "1" o-- "1" IApplicationDbContext
+NotifyUserCommandHandler "1" o-- "1" IMapper
+NotifyUserCommandHandler "1" o-- "1" GrpcUserClient
+NotifyUserCommandHandler "1" o-- "1" GrpcRecipeClient
+NotifyUserCommandHandler "1" o-- "1" IUnitOfWork
+NotifyUserCommandHandler "1" o-- "1" ISignalRService
+
+NotifyUserCommandHandler "1" -- "1..*" NotificationErrors
+NotifyUserCommandHandler "1" -- "1..*" Result
+NotifyUserCommandHandler "1" -- "1" GrpcGetSimpleUsersRequest
+NotifyUserCommandHandler "1" -- "1" GrpcGetSimpleRecipeRequest
+NotifyUserCommandHandler "1" -- "1" Notification
+NotifyUserCommandHandler "1" -- "1" NotificationTemplate
+NotifyUserCommandHandler "1" -- "1" PushNotificationEvent
+
+Error "1" --"1..*" NotificationErrors
+
+@enduml
