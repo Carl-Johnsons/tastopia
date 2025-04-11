@@ -1,6 +1,7 @@
 import {
-  handleError as baseHanlder,
-  handleBareError as baseBareHanlder
+  handleError as baseHandler,
+  handleBareError as baseBareHanlder,
+  ApiError
 } from "@/lib/error/errorHanler";
 import { ErrorResponse, Response } from "@/types/common";
 import { useTranslations } from "next-intl";
@@ -15,12 +16,28 @@ type QueryOptions<T> = {
 export const useErrorHandler = () => {
   const t = useTranslations("error");
 
+  /**
+   * Handle ApiError, with translations.
+   */
   const handleError = useCallback(
-    (error: any) => {
-      baseHanlder(error, t);
+    (error: ApiError) => {
+      baseHandler(error, t);
     },
     [t]
   );
+
+  /**
+   * Use this when you call an axios request with React Query.
+   */
+  const withErrorProcessor = useCallback(async <T>(queryFn: QueryFn<T>): Promise<T> => {
+    const res = await queryFn();
+
+    if (!res.ok) {
+      throw new ApiError(res);
+    }
+
+    return res.data;
+  }, []);
 
   /**
    * Use this when you call an axios request directly in client code, without
@@ -41,5 +58,5 @@ export const useErrorHandler = () => {
     [t]
   );
 
-  return { handleError, withBareErrorHanler };
+  return { handleError, withErrorProcessor, withBareErrorHanler };
 };

@@ -91,13 +91,13 @@ public class FollowUserCommandHandler : IRequestHandler<FollowUserCommand, Resul
                     PrimaryActors = [
                         new ActorDTO
                         {
-                            ActorId = accountId.Value,
+                            ActorId = accountId.Value.ToString(),
                             Type = EntityType.USER
                         }],
                     SecondaryActors = [
                         new ActorDTO
                         {
-                            ActorId = followingId.Value,
+                            ActorId = followingId.Value.ToString(),
                             Type = EntityType.USER
                         }],
                     TemplateCode = NotificationTemplateCode.USER_FOLLOW,

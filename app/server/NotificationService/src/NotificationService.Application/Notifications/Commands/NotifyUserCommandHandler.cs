@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Contract.Constants;
 using Contract.DTOs.SignalRDTO;
-using Contract.DTOs.UserDTO;
 using Contract.Event.NotificationEvent;
 using Contract.Utilities;
 using Google.Protobuf.Collections;
@@ -9,8 +8,10 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using NotificationService.Domain.Errors;
+using RecipeProto;
 using SmartFormat;
 using UserProto;
+using static RecipeProto.GrpcRecipe;
 
 namespace NotificationService.Application.Notifications.Commands;
 
@@ -33,6 +34,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
     private readonly IMapper _mapper;
     private readonly ILogger<NotifyUserCommandHandler> _logger;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
+    private readonly GrpcRecipeClient _grpcRecipeClient;
     private readonly ISignalRService _signalRService;
 
     public NotifyUserCommandHandler(IApplicationDbContext context,
@@ -41,7 +43,8 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
                                     IServiceBus serviceBus,
                                     GrpcUser.GrpcUserClient grpcUserClient,
                                     IMapper mapper,
-                                    ISignalRService signalRService)
+                                    ISignalRService signalRService,
+                                    GrpcRecipeClient grpcRecipeClient)
     {
         _context = context;
         _unitOfWork = unitOfWork;
@@ -50,6 +53,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
         _grpcUserClient = grpcUserClient;
         _mapper = mapper;
         _signalRService = signalRService;
+        _grpcRecipeClient = grpcRecipeClient;
     }
 
     private record UserSettingObj
@@ -62,6 +66,7 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
     public async Task<Result> Handle(NotifyUserCommand request,
                                CancellationToken cancellationToken)
     {
+        var MAX_NAME = 20;
         var channels = request.Channels;
         var jsonData = request.JsonData;
         if (channels.Count == 0)
@@ -110,29 +115,56 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
         }
         else
         {
-            var actorIdSets = notification.PrimaryActors.Concat(notification.SecondaryActors)
-                                                        .Select(merge => merge.ActorId.ToString())
-                                                        .ToHashSet();
-            var res = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
-            {
-                AccountId = { _mapper.Map<RepeatedField<string>>(actorIdSets) }
-            }, cancellationToken: cancellationToken);
+            // Get user detail map
+            GrpcGetSimpleUsersDTO? grpcUserMap = null;
 
-            var mapUsers = new Dictionary<Guid, SimpleUser>();
+            var userPrimaryIds = notification.PrimaryActors.Where(a => a.Type == EntityType.USER).Select(a => a.ActorId).ToList();
+            var userSecondaryIds = notification.SecondaryActors.Where(a => a.Type == EntityType.USER).Select(a => a.ActorId).ToList();
 
-            foreach (var (key, value) in res.Users)
+            var userIdList = userPrimaryIds.Concat(userSecondaryIds).ToList();
+
+            if (userIdList.Count > 0)
             {
-                mapUsers[Guid.Parse(key)] = new SimpleUser
+                var repeatedField = _mapper.Map<RepeatedField<string>>(userIdList);
+                grpcUserMap = await _grpcUserClient.GetSimpleUserAsync(new GrpcGetSimpleUsersRequest
                 {
-                    AccountId = Guid.Parse(value.AccountId),
-                    AvtUrl = value.AvtUrl,
-                    DisplayName = value.DisplayName,
-                };
+                    AccountId = { _mapper.Map<RepeatedField<string>>(repeatedField) }
+                }, cancellationToken: cancellationToken);
             }
 
-            if (res == null || mapUsers.Count != actorIdSets.Count)
+            // Get recipe detail map
+            GrpcMapSimpleRecipes? grpcRecipeMap = null;
+
+            var recipePrimaryIds = notification.PrimaryActors.Where(a => a.Type == EntityType.RECIPE).Select(a => a.ActorId).ToList();
+            var recipeSecondaryIds = notification.SecondaryActors.Where(a => a.Type == EntityType.RECIPE).Select(a => a.ActorId).ToList();
+
+            var recipeIdList = recipePrimaryIds.Concat(recipeSecondaryIds).ToList();
+            if (recipeIdList.Count > 0)
             {
-                return Result.Failure(NotificationErrors.NotFound, "Actor not found for push notification");
+                var repeatedField = _mapper.Map<RepeatedField<string>>(recipeIdList);
+
+                grpcRecipeMap = await _grpcRecipeClient.GetSimpleRecipesAsync(new GrpcGetSimpleRecipeRequest
+                {
+                    AccountId = request.RecipientIds[0].ToString(), // Dummy Id for this action to work, otherwise this Id has no use
+                    RecipeIds = { repeatedField }
+                }, cancellationToken: cancellationToken);
+            }
+
+            // Get comment detail map
+            GrpcMapSimpleComments? grpcCommentMap = null;
+            var recipeAndCommentPrimaryIds = notification.PrimaryActors.Where(a => a.Type == EntityType.COMMENT).Select(a => a.ActorId).ToList();
+            var recipeAndCommentSecondaryIds = notification.SecondaryActors.Where(a => a.Type == EntityType.COMMENT).Select(a => a.ActorId).ToList();
+
+            var commentAndRecipeIdList = recipeAndCommentPrimaryIds.Concat(recipeAndCommentSecondaryIds).ToList();
+
+            if (commentAndRecipeIdList.Count > 0)
+            {
+                var repeatedField = _mapper.Map<RepeatedField<string>>(commentAndRecipeIdList);
+
+                grpcCommentMap = await _grpcRecipeClient.GetSimpleCommentsAsync(new GrpcGetSimpleCommentRequest
+                {
+                    Ids = { repeatedField }
+                }, cancellationToken: cancellationToken);
             }
 
             var recipientIdSet = notification.Recipients.Select(merge => merge.RecipientId.ToString())
@@ -176,16 +208,50 @@ public class NotifyUserCommandHandler : IRequestHandler<NotifyUserCommand, Resul
 
             var mapSettingNotificationTemplate = new Dictionary<string, List<string>> {
                 {SETTING_KEY.NOTIFICATION_FOLLOW.ToString(), [NotificationTemplateCode.USER_FOLLOW.ToString()]},
-                {SETTING_KEY.NOTIFICATION_VOTE.ToString(), [NotificationTemplateCode.USER_DOWNVOTE.ToString(),
-                                                            NotificationTemplateCode.USER_UPVOTE.ToString()]},
+                {SETTING_KEY.NOTIFICATION_VOTE.ToString(), [NotificationTemplateCode.USER_UPVOTE.ToString()]},
                 {SETTING_KEY.NOTIFICATION_COMMENT.ToString(), [NotificationTemplateCode.USER_COMMENT.ToString()]},
             };
 
-
             foreach (var (key, value) in mapUserSettings)
             {
-                var paNames = notification.PrimaryActors.Select(pa => mapUsers[pa.ActorId].DisplayName).ToList();
-                var saNames = notification.SecondaryActors.Select(sa => mapUsers[sa.ActorId].DisplayName).ToList();
+                var paNames = notification.PrimaryActors.Select(pa =>
+                {
+                    var finalName = "";
+                    switch (pa.Type)
+                    {
+                        case EntityType.USER:
+                            finalName = grpcUserMap?.Users[pa.ActorId.ToString()].DisplayName ?? "";
+                            break;
+                        case EntityType.RECIPE:
+                            finalName = grpcRecipeMap?.Recipes[pa.ActorId.ToString()].Title ?? "";
+                            break;
+                        case EntityType.COMMENT:
+                            finalName = grpcCommentMap?.Comments[pa.ActorId].Content ?? "";
+                            break;
+                    }
+
+                    return finalName.Length > MAX_NAME ? finalName.Substring(0, MAX_NAME) + "..." : finalName;
+                }).ToList();
+
+                var saNames = notification.SecondaryActors.Select(sa =>
+                {
+                    var finalName = "";
+                    switch (sa.Type)
+                    {
+                        case EntityType.USER:
+                            finalName = grpcUserMap?.Users[sa.ActorId.ToString()].DisplayName ?? "";
+                            break;
+                        case EntityType.RECIPE:
+                            finalName = grpcRecipeMap?.Recipes[sa.ActorId.ToString()].Title ?? "";
+                            break;
+                        case EntityType.COMMENT:
+                            finalName = grpcCommentMap?.Comments[sa.ActorId].Content ?? "";
+                            break;
+                    }
+
+                    return finalName.Length > MAX_NAME ? finalName.Substring(0, MAX_NAME) + "..." : finalName;
+
+                }).ToList();
                 var message = template.TranslationMessages.GetValueOrDefault(value.SingleOrDefault(v => v.Code
                                                                                                         == SETTING_KEY.LANGUAGE.ToString())!.Value)
                               ?? "";
