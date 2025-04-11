@@ -127,9 +127,6 @@ const TagForm = ({ type }: FormProps) => {
       }
     });
 
-    console.debug("data passed to form", values);
-    console.debug("data form", formData);
-
     if (isUpdate) {
       formData.append("tagId", tag?.id ?? "");
       if ("status" in values) {
@@ -311,13 +308,15 @@ const TagForm = ({ type }: FormProps) => {
         <FormField
           control={form.control}
           name='tagImage'
-          render={({ field }) => (
-            <FormImageUpload
-              field={field}
-              label={t("form.image.label")}
-              isLoading={false}
-            />
-          )}
+          render={({ field }) => {
+            return (
+              <FormImageUpload
+                field={field}
+                label={t("form.image.label")}
+                isLoading={false}
+              />
+            );
+          }}
         />
 
         <div className='flex justify-end'>
