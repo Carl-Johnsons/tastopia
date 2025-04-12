@@ -110,19 +110,19 @@ public class AdminController : BaseApiController
         return NoContent();
     }
 
-    [HttpGet("mark-all-recipe-report")]
+    [HttpPost("mark-all-recipe-report")]
     [Produces("application/json")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminMarkAllRecipeReport(Guid RecipeId, bool IsReopened)
+    public async Task<IActionResult> AdminMarkAllRecipeReport([FromBody] MarkAllRecipeReportDTO markAllRecipeReportDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
         var result = await _sender.Send(new MarkAllRecipeReportCommand
         {
-            RecipeId = RecipeId,
-            IsReopened = IsReopened,
+            RecipeId = markAllRecipeReportDTO.RecipeId,
+            IsReopened = markAllRecipeReportDTO.IsReopened,
             CurrentAccountId = Guid.Parse(subjectId!)
         });
 
@@ -130,20 +130,20 @@ public class AdminController : BaseApiController
         return NoContent();
     }
 
-    [HttpGet("mark-all-comment-report")]
+    [HttpPost("mark-all-comment-report")]
     [Produces("application/json")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminMarkAllCommentReport(Guid RecipeId, Guid CommentId, bool IsReopened)
+    public async Task<IActionResult> AdminMarkAllCommentReport([FromBody] MarkAllCommentReportDTO markAllCommentReportDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
 
         var result = await _sender.Send(new MarkAllCommentReportCommand
         {
-            RecipeId = RecipeId,
-            CommentId = CommentId,
-            IsReopened = IsReopened,
+            RecipeId = markAllCommentReportDTO.RecipeId,
+            CommentId = markAllCommentReportDTO.CommentId,
+            IsReopened = markAllCommentReportDTO.IsReopened,
             CurrentAccountId = Guid.Parse(subjectId!)
         });
 
