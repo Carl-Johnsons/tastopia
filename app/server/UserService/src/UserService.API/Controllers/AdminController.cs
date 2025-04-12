@@ -142,6 +142,25 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
+    [HttpGet("mark-all-report")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<AdminMarkReportResponse>), 200)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminMarkAllReport(Guid AccountId, bool IsReopened)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+        var result = await _sender.Send(new MarkAllReportCommand
+        {
+            AccountId = AccountId,
+            IsReopened = IsReopened,
+            CurrentAccountId = Guid.Parse(subjectId!)
+        });
+
+        result.ThrowIfFailure();
+        return Ok(result.Value);
+    }
+
     [HttpGet]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedAdminListResponse), 200)]
