@@ -36,7 +36,8 @@ yolo_model = YOLO("./model/yolo_best_f.pt")
 clip_model, preprocess = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-ViT-H-14')
 tokenizer = get_tokenizer('ViT-H-14')
 
-device = torch.device('cuda:0' if torch.backends.cuda.is_built() else 'cpu')
+# device = torch.device('cuda:0' if torch.backends.cuda.is_built() else 'cpu')
+device = torch.device('cpu')
 clip_model = clip_model.to(device)
 
 envUtil = EnvUtility()
