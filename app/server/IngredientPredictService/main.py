@@ -30,7 +30,8 @@ logging.addLevelName(logging.WARNING, "Warning")
 
 # Load the YOLO model
 # model = YOLO("./model/best_filtered.pt")
-convnext_model = tf.keras.models.load_model('model/convnext_224_f.model.keras')
+# convnext_model = tf.keras.models.load_model('model/convnext_224_f.model.keras')
+yolo_model = YOLO("./model/yolo_best_f.pt")
 # box_model = YOLO('./model/bestv13.pt')
 clip_model, preprocess = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-ViT-H-14')
 tokenizer = get_tokenizer('ViT-H-14')
@@ -248,7 +249,7 @@ def get_raw_clip_text_predict(image_features):
         return indexs, probs
     return [], []
 
-@app.post("/api/ingredient-predict-v2")
+@app.post("/api/ingredient-predict")
 async def predict(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
     image = image.convert("RGB")
@@ -277,6 +278,56 @@ async def predict(file: UploadFile = File(...)):
         clip_pred_raw = get_raw_clip_predict(image_features, 50)
         convnext_pred_raw = get_raw_convnext_predict(image)
         indexs, probs = cal_mix_clip_cnn(clip_pred_raw[0], convnext_pred_raw[0])
+
+        for class_index, conf in zip(indexs[:5], probs[:5]):
+            class_label = str(class_index + 1).zfill(3)
+            classifications.append({
+                "class": class_label,
+                "confidence": float(conf),
+                "name": {
+                    'en': names[class_label][0],
+                    'vi': names[class_label][1]
+                },
+                "code": '_'.join(names[class_label][0].split(' ')).upper(),
+            })
+
+    # results = box_model(image, verbose=False)
+    return {"classifications": classifications, "boxes": []}
+
+@app.post("/api/ingredient-predict-v2")
+async def predict(file: UploadFile = File(...)):
+    image = Image.open(io.BytesIO(await file.read()))
+    image = image.convert("RGB")
+    # Apply exif metadata if exist
+    image = ImageOps.exif_transpose(image)
+
+    classifications = []
+
+    # Predict with pretrained and not pretrained text
+    image_features = encode_image_by_clip(image)
+    indexs, probs = get_raw_clip_text_predict(image_features)
+    if len(indexs) > 0:
+        for class_index, conf in zip(indexs[:5], probs[:5]):
+            class_label = '0'
+            classifications.append({
+                "class": class_label,
+                "confidence": float(conf),
+                "name": {
+                    'en': tag_dict.get(tag_codes[class_index])['En'],
+                    'vi': tag_dict.get(tag_codes[class_index])['Vi']
+                },
+                "code": tag_codes[class_index],
+            })
+    else:
+        # Predict with pretrained class
+        clip_pred_raw = get_raw_clip_predict(image_features, 50)
+        results = yolo_model(image, verbose=False)
+        yolo_pred_raw = [[0] * 300]
+        for i in range(len(results[0].names)):
+            class_index = int(results[0].names[i]) - 1
+            yolo_pred_raw[0][class_index] = float(results[0].probs.data[i])
+        # yolo_pred_raw = [results[0].probs.data.tolist()]
+        indexs, probs = cal_mix_clip_cnn(clip_pred_raw[0], yolo_pred_raw[0])
 
         for class_index, conf in zip(indexs[:5], probs[:5]):
             class_label = str(class_index + 1).zfill(3)
