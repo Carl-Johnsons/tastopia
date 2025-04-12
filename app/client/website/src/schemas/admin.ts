@@ -3,7 +3,7 @@ import { isValid, parse } from "date-fns";
 import * as z from "zod";
 
 export const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
-const PHONE_REGEX = /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/;
+const PHONE_REGEX = /^0(3|5|7|8|9)+([0-9]{8})$/;
 const DATE_REGEX = /\d{1,2}\/\d{1,2}\/\d\d\d\d/;
 const GENDER: Array<string> = [Gender.Male, Gender.Female];
 export const IMAGE_TYPE = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
