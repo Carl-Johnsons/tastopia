@@ -143,6 +143,49 @@ export const RestoreRecipeButton = ({
 };
 
 /**
+ * Mark all reports as completed.
+ */
+export const MarkAllReportsAsCompletedButton = ({
+  title,
+  targetId,
+  onSuccess,
+  onFailure,
+  className
+}: DataTableButtonProps) => {
+  const { mutate, isPending } = useMarkReportAsCompleted();
+  const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+
+  const handleClick = useCallback(async () => {
+    mutate(
+      { reportId: targetId, reportType: ReportType.RECIPE },
+      {
+        onSuccess: async () => {
+          toast.success("All reports marked as completed successfully.");
+          await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
+          invalidateCurrentAdminActivities();
+          onSuccess && onSuccess();
+        },
+        onError: ({ message }) => {
+          toast.error(message);
+          onFailure && onFailure();
+        }
+      }
+    );
+  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+
+  return (
+    <DataTableButton
+      title={title}
+      icon={<Check className='text-white_black' />}
+      isLoading={isPending}
+      onClick={handleClick}
+      className={`bg-purple-400 hover:bg-purple-500 ${className}`}
+    />
+  );
+};
+
+/**
  * Mark a report as completed.
  */
 export const MarkAsCompletedButton = ({

@@ -3,6 +3,7 @@ import {
   getRecipeComments,
   getRecipeReports,
   getRecipes,
+  markAllReportAsCompleted,
   markReportAsCompleted,
   reopenReport,
   restoreRecipe
@@ -99,6 +100,12 @@ export const useReopenReport = () => {
 export const useMarkReportAsCompleted = () => {
   return useMutation<void, Error, IReportDTO>({
     mutationFn: params => markReportAsCompleted(params)
+  });
+};
+
+export const useMarkAllReportAsCompleted = () => {
+  return useMutation<void, Error, IReportDTO>({
+    mutationFn: params => markAllReportAsCompleted(params)
   });
 };
 
