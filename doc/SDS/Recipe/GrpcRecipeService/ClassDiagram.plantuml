@@ -6,16 +6,11 @@ skinparam linetype polyline
 skinparam nodesep 50
 skinparam ranksep 50
 skinparam classAttributeIconSize 0
-skinparam classBackgroundColor Green
-skinparam classBorderColor While
-skinparam classFontColor While
-skinparam classAttributeFontColor While
-
 hide circle
 
 class GrpcRecipeBase #Black;line:white;text:white
 
-class GrpcRecipeService extends GrpcRecipeBase {
+class GrpcRecipeService #Green;line:white;text:white extends GrpcRecipeBase {
     #_sender: ISender
     #_logger: ILogger
     +GetAllTags(request : GrpcEmpty, context : ServerCallContext): async Task<GrpcListTagDTO>
@@ -67,42 +62,42 @@ class SearchSimpleRecipesQueryHandler {
 }
 
 ' Grpc DTO
-class GrpcEmpty{
+class GrpcEmpty #Green;line:white;text:white{
 }
 
-class GrpcRecipeIdRequest{
+class GrpcRecipeIdRequest #Green;line:white;text:white{
 }
 
-class GrpcGetSimpleRecipeRequest{
+class GrpcGetSimpleRecipeRequest #Green;line:white;text:white{
 }
 
-class GrpcSearchSimpleRecipeRequest{
+class GrpcSearchSimpleRecipeRequest #Green;line:white;text:white{
 }
 
 ' Grpc responses
 
-class GrpcTagDTO{
+class GrpcTagDTO #Green;line:white;text:white{
 }
 
-class GrpcListTagDTO{
+class GrpcListTagDTO #Green;line:white;text:white{
 }
 
-class GrpcMapSimpleRecipes{
+class GrpcMapSimpleRecipes #Green;line:white;text:white{
 }
 
-class GrpcRecipeDetailsDTO{
+class GrpcRecipeDetailsDTO #Green;line:white;text:white{
 }
 
-class GrpcStepDTO{
+class GrpcStepDTO #Green;line:white;text:white{
 }
 
-class GrpcCommentDTO{
+class GrpcCommentDTO #Green;line:white;text:white{
 }
 
-class GrpcSimpleRecipe{
+class GrpcSimpleRecipe #Green;line:white;text:white{
 }
 
-class GrpcMapSimpleRecipes{
+class GrpcMapSimpleRecipes #Green;line:white;text:white{
 }
 
 ' DTO

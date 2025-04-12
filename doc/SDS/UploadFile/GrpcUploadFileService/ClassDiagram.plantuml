@@ -13,8 +13,8 @@ class GrpcUploadFileBase #Black;line:white;text:white
 class GrpcUploadFileService #LightSalmon;line:white;text:white extends GrpcUploadFileBase {
     #_sender: ISender
     #_fileUtility: IFileUtility
-    +UpdateMultipleImage(GrpcUpdateMultipleImageRequest request, ServerCallContext context): async Task<GrpcListFileDTO>
-    +UploadMultipleImage(GrpcUploadMultipleImageRequest request, ServerCallContext context): async Task<GrpcListFileDTO>
+    +UpdateMultipleImage(request: GrpcUpdateMultipleImageRequest, context: ServerCallContext): async Task<GrpcListFileDTO>
+    +UploadMultipleImage(request: GrpcUploadMultipleImageRequest, context: ServerCallContext): async Task<GrpcListFileDTO>
 }
 
 
@@ -105,13 +105,11 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
-DeleteMultipleImageCommand --|> "IRequest<TResponse>"
 UpdateMultipleImageFileCommand --|> "IRequest<TResponse>"
 CreateMultipleImageFileCommand --|> "IRequest<TResponse>"
 
 UpdateMultipleImageFileCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
 CreateMultipleImageFileCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-DeleteMultipleImageCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
 
 GrpcUploadFileService "1"--"1" GrpcUpdateMultipleImageRequest
 GrpcUploadFileService "1"--"1..*" GrpcListFileDTO
@@ -120,9 +118,6 @@ GrpcUploadFileService "1"--"1..*" FileResponse
 GrpcUploadFileService "1"--"1" UpdateMultipleImageFileCommand
 
 GrpcUploadFileService "1"--"1" GrpcUploadMultipleImageRequest
-GrpcUploadFileService "1"--"1..*" GrpcListFileDTO
-GrpcUploadFileService "1"--"1..*" GrpcFileDTO
-GrpcUploadFileService "1"--"1..*" FileResponse
 GrpcUploadFileService "1"--"1" CreateMultipleImageFileCommand
 
 UpdateMultipleImageFileCommandHandler "1"--"1" UpdateMultipleImageFileCommand

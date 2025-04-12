@@ -6,16 +6,12 @@ skinparam linetype polyline
 skinparam nodesep 50
 skinparam ranksep 50
 skinparam classAttributeIconSize 0
-skinparam classBackgroundColor Green
-skinparam classBorderColor While
-skinparam classFontColor While
-skinparam classAttributeFontColor While
 
 hide circle
 
 class GrpcRecipeBase #Black;line:white;text:white
 
-class GrpcRecipeService extends GrpcRecipeBase {
+class GrpcRecipeService #Green;line:white;text:white extends GrpcRecipeBase {
     #_sender: ISender
     #_logger: ILogger
     +GetSimpleComments(request : GrpcRecipeIdRequest, context : ServerCallContext): async Task<GrpcMapSimpleComments>
@@ -66,36 +62,36 @@ class GetTagsByHashSetQueryHandler{
 }
 
 ' Grpc DTO
-class GrpcGetSimpleCommentRequest{
+class GrpcGetSimpleCommentRequest #Green;line:white;text:white{
 }
 
-class GrpcGetCommentReportRequest{
+class GrpcGetCommentReportRequest #Green;line:white;text:white{
 }
 
-class GrpcGetRecipeReportRequest{
+class GrpcGetRecipeReportRequest #Green;line:white;text:white{
 }
 
-class GrpcGetTagsRequest{
+class GrpcGetTagsRequest #Green;line:white;text:white{
 }
 
 ' Grpc responses
 
-class GrpcTagDTO{
+class GrpcTagDTO #Green;line:white;text:white{
 }
 
-class GrpcMapTagResponse{
+class GrpcMapTagResponse #Green;line:white;text:white{
 }
 
-class GrpcMapSimpleComments{
+class GrpcMapSimpleComments #Green;line:white;text:white{
 }
 
-class GrpcCommentReportResponse{
+class GrpcCommentReportResponse #Green;line:white;text:white{
 }
 
-class GrpcMapCommentReports{
+class GrpcMapCommentReports #Green;line:white;text:white{
 }
 
-class GrpcMapRecipeReports{
+class GrpcMapRecipeReports #Green;line:white;text:white{
 }
 
 ' DTO
