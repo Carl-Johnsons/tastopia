@@ -31,7 +31,7 @@ logging.addLevelName(logging.WARNING, "Warning")
 # Load the YOLO model
 # model = YOLO("./model/best_filtered.pt")
 convnext_model = tf.keras.models.load_model('model/convnext_224_f.model.keras')
-box_model = YOLO('./model/bestv13.pt')
+# box_model = YOLO('./model/bestv13.pt')
 clip_model, preprocess = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-ViT-H-14')
 tokenizer = get_tokenizer('ViT-H-14')
 
@@ -240,7 +240,6 @@ def get_raw_clip_text_predict(image_features):
 
     max_pretrained = 0
     for i in range(len(indexs)):
-        print(indexs[i], tag_codes[indexs[i]], tag_dict.get(tag_codes[indexs[i]]))
         if tag_dict.get(tag_codes[indexs[i]])['Pretrained']:
             max_pretrained = probs[i]
             break
@@ -291,8 +290,8 @@ async def predict(file: UploadFile = File(...)):
                 "code": '_'.join(names[class_label][0].split(' ')).upper(),
             })
 
-    results = box_model(image, verbose=False)
-    return {"classifications": classifications, "boxes": results[0].boxes.xyxyn.tolist()}
+    # results = box_model(image, verbose=False)
+    return {"classifications": classifications, "boxes": []}
 
 @app.get("/")
 async def root():
