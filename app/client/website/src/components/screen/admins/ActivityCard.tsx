@@ -14,6 +14,7 @@ import { useLocale, useTranslations } from "next-intl";
 import useFormattedDistance from "@/hooks/format/useFormattedDistance";
 import { Clock, CornerDownRight } from "lucide-react";
 import { useMemo } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const RecipeCard = ({
   recipe,
@@ -61,6 +62,31 @@ export const RecipeCard = ({
           />
         </div>
       </Link>
+    </div>
+  );
+};
+
+export const RecipeCardSkeleton = ({ className }: { className?: string }) => {
+  return (
+    <div className={`mt-4 rounded-lg border border-gray-200 p-4 ${className}`}>
+      {/* Title */}
+      <Skeleton className='h-7 w-3/4 rounded-md' />
+
+      <div className='mt-1 flex flex-wrap gap-2'>
+        {/* Username */}
+        <Skeleton className='h-5 w-28 rounded-md' />
+
+        {/* Time indicator */}
+        <div className='flex items-center gap-1 text-gray-300'>
+          <Skeleton className='size-4 rounded-full' />
+          <Skeleton className='h-4 w-20 rounded-md' />
+        </div>
+      </div>
+
+      {/* Image */}
+      <div className='mt-3 h-[300px] overflow-hidden rounded-lg'>
+        <Skeleton className='size-full' />
+      </div>
     </div>
   );
 };

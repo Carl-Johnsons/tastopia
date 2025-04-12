@@ -98,18 +98,21 @@ const TagForm = ({ type }: FormProps) => {
     const formData = new FormData();
 
     Object.entries(values).forEach(([key, value]) => {
-      if (key === "tagImage" && !!value) {
+      const isValueExists = !!value;
+      if (!isValueExists) return;
+
+      if (key === "tagImage") {
         formData.append(key, (value as ImageFieldType)?.at(0)?.file as Blob);
       }
 
-      if (key === "category" && !!value) {
+      if (key === "category") {
         formData.append(
           "category",
           validVietnameseCategories.includes(values.category)
             ? mapCategoryByLocale(values.category, "vi")
             : values.category
         );
-      } else if (value !== undefined) {
+      } else {
         formData.append(key, value as string);
       }
     });
