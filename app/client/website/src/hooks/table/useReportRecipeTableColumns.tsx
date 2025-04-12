@@ -24,7 +24,7 @@ export default function useReportRecipeTableColumns() {
       name: t("recipeName"),
       selector: row => row.recipeTitle,
       sortable: true,
-      grow: 3
+      grow: 2
     },
     {
       name: t("recipeOwner"),
