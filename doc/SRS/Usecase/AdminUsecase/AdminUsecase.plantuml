@@ -7,7 +7,7 @@ left to right direction
 actor "Admin" as admin
 actor "Cloudinary" as cl
 actor "SpeedSMS      " as sms
-rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
+rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>dashboard<U+0020>website {
     usecase "UC-2: Login" as ucLogin
     usecase "UC-4: Forgot password" as ucForgotPassword
     usecase "UC-8: Logout" as ucLogout
