@@ -36,6 +36,9 @@ yolo_model = YOLO("./model/yolo_best_f.pt")
 clip_model, preprocess = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-ViT-H-14')
 tokenizer = get_tokenizer('ViT-H-14')
 
+device = torch.device('cuda:0' if torch.backends.cuda.is_built() else 'cpu')
+clip_model = clip_model.to(device)
+
 envUtil = EnvUtility()
 envUtil.load_env()
 
@@ -103,7 +106,7 @@ def sync_tags_and_load_faiss():
     tag_codes = [i for i in tag_dict.keys()]
     labels_list = [tag_dict[i]['En'] for i in tag_codes]
     text = tokenizer(labels_list, context_length=clip_model.context_length)
-    text = torch.as_tensor(text)
+    text = torch.as_tensor(text, device=device)
     with torch.no_grad():
         text_features = clip_model.encode_text(text)
 
