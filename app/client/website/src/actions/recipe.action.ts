@@ -12,6 +12,7 @@ import { IGetRecipeCommentsDTO } from "../../../mobile/generated/interfaces/reci
 import { withErrorProcessor } from "@/utils/errorHanlder";
 import { PaginatedQueryParams } from "@/types/common";
 import { StatisticDateItem, StatisticItem } from "@/types/statistic";
+import { AxiosError } from "axios";
 
 export async function getRecipes(options?: PaginatedQueryParams) {
   const url = "/api/admin/recipe/get-recipes";
@@ -41,8 +42,7 @@ export async function getRecipes(options?: PaginatedQueryParams) {
 
     return data;
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
@@ -72,8 +72,7 @@ export async function getRecipeReports(options?: PaginatedQueryParams) {
 
     return data;
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
@@ -104,8 +103,7 @@ export async function getRecipeReportById({
 
     return data;
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
@@ -126,8 +124,7 @@ export async function getRecipeComments({ recipeId, options }: GetRecipeComments
 
     return data;
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
@@ -137,8 +134,17 @@ export const markReportAsCompleted = async ({ reportId, reportType }: IReportDTO
   try {
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
+  }
+};
+
+export const markAllReportsAsCompleted = async ({ reportId, reportType }: IReportDTO) => {
+  const url = "/api/admin/recipe/mark-report-complete";
+
+  try {
+    // await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
+  } catch (error) {
+    return withErrorProcessor(error as AxiosError);
   }
 };
 
@@ -148,8 +154,17 @@ export const reopenReport = async ({ reportId, reportType }: IReportDTO) => {
   try {
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
+  }
+};
+
+export const reopenAllReports = async ({ reportId, reportType }: IReportDTO) => {
+  const url = "/api/admin/recipe/reopen-report";
+
+  try {
+    // await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
+  } catch (error) {
+    return withErrorProcessor(error as AxiosError);
   }
 };
 
@@ -159,8 +174,7 @@ export const disableRecipe = async (id: string) => {
   try {
     await protectedAxiosInstance.delete<undefined>(url, { params: { id } });
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 };
 
@@ -170,8 +184,7 @@ export const restoreRecipe = async (id: string) => {
   try {
     await protectedAxiosInstance.put<undefined>(url, undefined, { params: { id } });
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 };
 
@@ -181,8 +194,7 @@ export async function getTotalRecipes() {
     const { data } = await protectedAxiosInstance.get<number>(url);
     return data;
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
@@ -192,8 +204,7 @@ export async function getRecipeRanking() {
     const { data } = await protectedAxiosInstance.get<StatisticItem[]>(url);
     return data;
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
@@ -203,7 +214,6 @@ export async function getRecipeStatistic() {
     const { data } = await protectedAxiosInstance.get<StatisticDateItem[]>(url);
     return data;
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
