@@ -110,6 +110,47 @@ public class AdminController : BaseApiController
         return NoContent();
     }
 
+    [HttpGet("mark-all-recipe-report")]
+    [Produces("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminMarkAllRecipeReport(Guid RecipeId, bool IsReopened)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new MarkAllRecipeReportCommand
+        {
+            RecipeId = RecipeId,
+            IsReopened = IsReopened,
+            CurrentAccountId = Guid.Parse(subjectId!)
+        });
+
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [HttpGet("mark-all-comment-report")]
+    [Produces("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminMarkAllCommentReport(Guid RecipeId, Guid CommentId, bool IsReopened)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new MarkAllCommentReportCommand
+        {
+            RecipeId = RecipeId,
+            CommentId = CommentId,
+            IsReopened = IsReopened,
+            CurrentAccountId = Guid.Parse(subjectId!)
+        });
+
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
     [HttpDelete()]
     [Produces("application/json")]
     [ProducesResponseType(204)]

@@ -142,9 +142,9 @@ public class AdminController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpGet("mark-all-report")]
+    [HttpGet("mark-all-user-report")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(List<AdminMarkReportResponse>), 200)]
+    [ProducesResponseType(200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
     public async Task<IActionResult> AdminMarkAllReport(Guid AccountId, bool IsReopened)
     {
@@ -158,7 +158,7 @@ public class AdminController : BaseApiController
         });
 
         result.ThrowIfFailure();
-        return Ok(result.Value);
+        return NoContent();
     }
 
     [HttpGet]

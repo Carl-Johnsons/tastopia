@@ -1,63 +1,63 @@
 ﻿using Contract.Constants;
 using Contract.Event.TrackingEvent;
 using Microsoft.EntityFrameworkCore;
-using UserService.Domain.Errors;
+using RecipeService.Domain.Errors;
 namespace RecipeService.Application.Reports.Commands;
-public record MarkAllReportCommand : IRequest<Result>
+
+public record MarkAllCommentReportCommand : IRequest<Result>
 {
-    public Guid AccountId { get; set; }
+    public Guid RecipeId { get; set; }
+    public Guid CommentId { get; set; }
     public Guid CurrentAccountId { get; set; }
     public bool IsReopened { get; set; }
 }
-public class MarkAllReportCommandHandler : IRequestHandler<MarkAllReportCommand, Result>
+
+public class MarkAllCommentReportCommandHandler : IRequestHandler<MarkAllCommentReportCommand, Result>
 {
     private readonly IApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceBus _serviceBus;
-
-    public MarkAllReportCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus)
+    public MarkAllCommentReportCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, IServiceBus serviceBus)
     {
         _context = context;
         _unitOfWork = unitOfWork;
         _serviceBus = serviceBus;
     }
 
-    public async Task<Result> Handle(MarkAllReportCommand request,
+    public async Task<Result> Handle(MarkAllCommentReportCommand request,
                                CancellationToken cancellationToken)
     {
-        if (request.AccountId == Guid.Empty)
+        if(request.RecipeId == Guid.Empty || request.CommentId == Guid.Empty)
         {
-            return Result.Failure(UserReportError.NullParameter, "AccountId is null.");
+            return Result.Failure(ReportError.NullParameter, "RecipeId or CommentId not found");
         }
-        var reports = await _context.UserReports.Where(rp => rp.ReportedId == request.AccountId && (rp.Status == (request.IsReopened ? ReportStatus.Done : ReportStatus.Pending))).ToListAsync();
 
+        var reports = await _context.UserReportComments.Where(rp => (rp.RecipeId == request.RecipeId || rp.EntityId == request.CommentId) && rp.Status == (request.IsReopened ? ReportStatus.Done : ReportStatus.Pending)).ToListAsync();
         if(reports == null || reports.Count == 0)
         {
-            return Result.Failure(UserReportError.NotFound, "Not found user report.");
+            return Result.Failure(ReportError.NotFound, "Not found comment reports");
         }
-
         if (reports != null && reports.Count != 0)
         {
-            foreach(var rp in reports)
+            foreach (var rp in reports)
             {
                 rp.Status = request.IsReopened ? ReportStatus.Pending : ReportStatus.Done;
             }
-            _context.UserReports.UpdateRange(reports);
+            _context.UserReportComments.UpdateRange(reports);
         }
-        
         await _unitOfWork.SaveChangeAsync();
-
-        foreach(var rs in reports!)
+        foreach (var rs in reports!)
         {
             await _serviceBus.Publish(new AddActivityLogEvent
             {
                 AccountId = request.CurrentAccountId,
                 ActivityType = request.IsReopened ? ActivityType.REOPEN : ActivityType.MARK_COMPLETE,
                 EntityId = rs.Id,
-                EntityType = ActivityEntityType.REPORT_USER
+                EntityType = ActivityEntityType.REPORT_COMMENT
             });
 
         }
         return Result.Success();
     }
+
 }
