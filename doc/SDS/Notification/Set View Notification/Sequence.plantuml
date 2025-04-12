@@ -27,7 +27,7 @@ deactivate IdentityService
 
 ApiGateway -> NotificationService ++: 4. Forward request
 
-NotificationService -> MongoDB++: 5. Query data
+NotificationService -> MongoDB++: 5. Query notifications data
 NotificationService <-- MongoDB--: 6. Return response
 
 alt Notification not found
@@ -35,18 +35,16 @@ alt Notification not found
   MobileUI <-- ApiGateway: 7A.2. Forward response
   User <-- MobileUI: 7A.3. Display error message
 else
-  NotificationService -> MongoDB++: 8. Query data
-  NotificationService <-- MongoDB--: 9. Return response
   alt Recipient not found
-    ApiGateway <-- NotificationService: 10A.1. Return NotFound error
-    MobileUI <-- ApiGateway: 10A.2. Forward response
-    User <-- MobileUI: 10A.3. Display error message
+    ApiGateway <-- NotificationService: 7B.1. Return NotFound error
+    MobileUI <-- ApiGateway: 7B.2. Forward response
+    User <-- MobileUI: 7B.3. Display error message
   else
-    NotificationService -> MongoDB++: 11. Update view status
-    NotificationService <-- MongoDB--: 12. Return response
-    ApiGateway <-- NotificationService--: 13. Return success
-    MobileUI <-- ApiGateway--: 14. Forward response
-    User <-- MobileUI--: 15. Display notification list
+    NotificationService -> MongoDB++: 8. Update view status
+    NotificationService <-- MongoDB--: 9. Return response
+    ApiGateway <-- NotificationService--: 10. Return success
+    MobileUI <-- ApiGateway--: 11. Forward response
+    User <-- MobileUI--: 12. Display notification list
   end
 end
 
