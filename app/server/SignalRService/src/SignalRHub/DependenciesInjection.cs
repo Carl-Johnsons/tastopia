@@ -24,7 +24,7 @@ public static class DependenciesInjection
 
         services.AddCommonInfrastructureServices("SignalRHub");
 
-        var websiteUrl = DotNetEnv.Env.GetString("WEBSITE_CLIENT_URL", "http://localhost:3000");
+        var apiGatewayUrl = DotNetEnv.Env.GetString("API_GATEWAY_URL", "https://localhost:7000");
 
         services.AddSingleton<IMemoryTracker, MemoryTracker>();
 
@@ -47,7 +47,7 @@ public static class DependenciesInjection
             options.AddPolicy("AllowSPAClientOrigin",
                 builder =>
                 {
-                    builder.WithOrigins(websiteUrl)
+                    builder.WithOrigins(apiGatewayUrl)
                            .AllowAnyMethod()
                            .AllowAnyHeader()
                            .AllowCredentials();
