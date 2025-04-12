@@ -222,7 +222,7 @@ def chose_res_clip(a):
     return ans
 
 def encode_image_by_clip(image):
-    image = preprocess(image).unsqueeze(0)
+    image = preprocess(image).unsqueeze(0).to(device)
     image_features = clip_model.encode_image(image)
     return image_features
 
