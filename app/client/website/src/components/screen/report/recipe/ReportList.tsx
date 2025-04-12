@@ -1,14 +1,16 @@
 "use client";
 
-import { Clock } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "@/i18n/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { IReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import { format } from "date-fns";
 import { MarkAsCompletedButton, ReopenReportButton } from "./Button";
 import { ReportStatus } from "@/constants/reports";
 import StatusText from "../common/StatusText";
+import InteractiveButton from "@/components/shared/common/Button";
+import { Check, RotateCw, Clock } from "lucide-react";
+import { markAllRecipeReport } from "@/actions/recipe.action";
 
 type ReportListProps = {
   reports: IReportRecipeResponse[];
@@ -16,8 +18,46 @@ type ReportListProps = {
 };
 
 export default function ReportList({ reports, className }: ReportListProps) {
+  const hasPending = useMemo(
+    () => reports.some(report => report.status === ReportStatus.Pending),
+    [reports]
+  );
+  const hasDone = useMemo(
+    () => reports.some(report => report.status === ReportStatus.Done),
+    [reports]
+  );
+
+  const handleResolveAll = () => {};
+
+  const handleRestoreAll = () => {};
+
   return (
     <div className={`flex gap-8 overflow-x-scroll xl:flex-col ${className}`}>
+      {/* Resolve reports */}
+
+      <div>
+        <p className='text-black_white base-medium mb-2 flex w-full flex-col gap-4'>
+          {"Report list"}
+        </p>
+        <div className='flex-between flex gap-2'>
+          <InteractiveButton
+            title={"Resolve All"}
+            icon={<Check className='text-white_black' />}
+            onClick={handleResolveAll}
+            disabled={!hasPending}
+            className={`rounded-full bg-purple-400 hover:bg-purple-500`}
+          />
+
+          <InteractiveButton
+            title={"Restore All"}
+            icon={<RotateCw className='text-white_black' />}
+            onClick={handleRestoreAll}
+            disabled={!hasDone}
+            className={`rounded-full bg-green-400 hover:bg-green-500`}
+          />
+        </div>
+      </div>
+
       {reports.map(
         ({
           id,

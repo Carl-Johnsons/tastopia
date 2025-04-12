@@ -217,3 +217,19 @@ export async function getRecipeStatistic() {
     return withErrorProcessor(error as AxiosError);
   }
 }
+
+export async function markAllRecipeReport({
+  recipeId,
+  isReopened
+}: {
+  recipeId: string;
+  isReopened: boolean;
+}) {
+  const url = "/api/admin/recipe/mark-all-recipe-report";
+  try {
+    const { data } = await protectedAxiosInstance.post(url, { recipeId, isReopened });
+    return data;
+  } catch (error) {
+    return withErrorProcessor(error as AxiosError);
+  }
+}
