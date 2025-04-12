@@ -3,17 +3,14 @@
 import { protectedAxiosInstance } from "@/constants/host";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 import { AxiosError } from "axios";
-import { UserState } from "@/slices/user.slice";
 import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 import { stringify } from "@/utils/debug";
 import {
   IAdminGetUserDetailResponse,
-  IGetUserDetailsResponse,
   IPaginatedAdminGetUserListResponse,
   IPaginatedAdminUserReportListResponse
 } from "@/generated/interfaces/user.interface";
 import { IInfiniteAdminUserReportListResponse } from "@/types/user";
-import { withErrorProcessor } from "@/utils/errorHanlder";
 import { StatisticDateItem } from "@/types/statistic";
 
 export async function getUserById(id: string) {

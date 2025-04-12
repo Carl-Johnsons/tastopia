@@ -2,6 +2,7 @@
 
 import {
   useDisableRecipe,
+  useMarkAllReport,
   useMarkReportAsCompleted,
   useReopenReport,
   useRestoreRecipe
@@ -57,11 +58,67 @@ export const ViewDetailButton = ({
 };
 
 /**
+ * Reopen all reports.
+ */
+export const ReopenAllReportsButton = ({
+  title,
+  targetId,
+  onSuccess,
+  onFailure,
+  className,
+  ...props
+}: DataTableButtonProps) => {
+  const { mutate, isPending } = useMarkAllReport();
+  const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+
+  const handleClick = useCallback(() => {
+    mutate(
+      {
+        recipeId: targetId,
+        isReopened: true
+      },
+      {
+        onSuccess: async () => {
+          toast.success("Reopened all reports successfully.");
+          await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
+          invalidateCurrentAdminActivities();
+          onSuccess && onSuccess();
+        },
+        onError: ({ message }) => {
+          toast.error(message);
+          onFailure && onFailure();
+        }
+      }
+    );
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
+
+  return (
+    <DataTableButton
+      title={title}
+      icon={<RotateCw className='text-white_black' />}
+      isLoading={isPending}
+      onClick={handleClick}
+      className={`bg-green-400 hover:bg-green-500 ${className}`}
+      {...props}
+    />
+  );
+};
+
+/**
  * Reopen a report.
  */
 export const ReopenReportButton = ({
   title,
   targetId,
+  recipeId,
   onSuccess,
   onFailure,
   className
@@ -79,7 +136,7 @@ export const ReopenReportButton = ({
       {
         onSuccess: async () => {
           toast.success("Report reopened successfully.");
-          await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
+          await queryClient.invalidateQueries({ queryKey: ["recipeReport", recipeId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
@@ -89,7 +146,15 @@ export const ReopenReportButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    recipeId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <DataTableButton
@@ -129,7 +194,14 @@ export const RestoreRecipeButton = ({
         onFailure && onFailure();
       }
     });
-  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <InteractiveButton
@@ -150,15 +222,16 @@ export const MarkAllReportsAsCompletedButton = ({
   targetId,
   onSuccess,
   onFailure,
-  className
+  className,
+  ...props
 }: DataTableButtonProps) => {
-  const { mutate, isPending } = useMarkReportAsCompleted();
+  const { mutate, isPending } = useMarkAllReport();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleClick = useCallback(async () => {
     mutate(
-      { reportId: targetId, reportType: ReportType.RECIPE },
+      { recipeId: targetId, isReopened: false },
       {
         onSuccess: async () => {
           toast.success("All reports marked as completed successfully.");
@@ -172,7 +245,14 @@ export const MarkAllReportsAsCompletedButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <DataTableButton
@@ -181,6 +261,7 @@ export const MarkAllReportsAsCompletedButton = ({
       isLoading={isPending}
       onClick={handleClick}
       className={`bg-purple-400 hover:bg-purple-500 ${className}`}
+      {...props}
     />
   );
 };
@@ -191,6 +272,7 @@ export const MarkAllReportsAsCompletedButton = ({
 export const MarkAsCompletedButton = ({
   title,
   targetId,
+  recipeId,
   onSuccess,
   onFailure,
   className
@@ -205,7 +287,7 @@ export const MarkAsCompletedButton = ({
       {
         onSuccess: async () => {
           toast.success("Report marked as completed successfully.");
-          await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
+          await queryClient.invalidateQueries({ queryKey: ["recipeReport", recipeId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
@@ -215,7 +297,15 @@ export const MarkAsCompletedButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    recipeId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <DataTableButton
@@ -255,7 +345,14 @@ export const DisableRecipeButton = ({
         onFailure && onFailure();
       }
     });
-  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <InteractiveButton
@@ -296,7 +393,15 @@ export const SmallDisableCommentButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    onSuccess,
+    onFailure,
+    recipeId,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <DataTableButton
@@ -341,7 +446,15 @@ export const SmallRestoreCommentButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    onSuccess,
+    onFailure,
+    recipeId,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <DataTableButton

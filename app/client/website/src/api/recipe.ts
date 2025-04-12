@@ -1,19 +1,25 @@
 import {
   disableRecipe,
   getRecipeComments,
+  getRecipeReportById,
+  GetRecipeReportDetailParams,
   getRecipeReports,
   getRecipes,
-  markAllReportAsCompleted,
+  MarkAllRecipeReportParams,
+  markAllReports,
   markReportAsCompleted,
   reopenReport,
   restoreRecipe
 } from "@/actions/recipe.action";
 import {
+  IAdminReportRecipeDetailResponse,
   IPaginatedAdminRecipeListResponse,
   IPaginatedAdminReportRecipeListResponse,
   IPaginatedRecipeCommentListResponse,
   IReportDTO
 } from "@/generated/interfaces/recipe.interface";
+import { useErrorHandler } from "@/hooks/error/useErrorHanler";
+import { ApiError } from "@/lib/error/errorHanler";
 import { PaginatedQueryParams } from "@/types/common";
 import {
   InfiniteData,
@@ -31,17 +37,21 @@ export const useGetRecipes = ({
   lang,
   keyword
 }: PaginatedQueryParams) => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useQuery<IPaginatedAdminRecipeListResponse>({
     queryKey: ["recipes", skip, sortBy, sortOrder, lang, keyword, limit],
     queryFn: () =>
-      getRecipes({
-        limit,
-        skip,
-        sortBy,
-        sortOrder,
-        lang,
-        keyword
-      })
+      withErrorProcessor(() =>
+        getRecipes({
+          limit,
+          skip,
+          sortBy,
+          sortOrder,
+          lang,
+          keyword
+        })
+      )
   });
 };
 
@@ -53,21 +63,27 @@ export const useGetRecipeReports = ({
   lang,
   keyword
 }: PaginatedQueryParams) => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useQuery<IPaginatedAdminReportRecipeListResponse>({
     queryKey: ["recipeReports", skip, sortBy, sortOrder, lang, keyword, limit],
     queryFn: () =>
-      getRecipeReports({
-        limit,
-        skip,
-        sortBy,
-        sortOrder,
-        lang,
-        keyword
-      })
+      withErrorProcessor(() =>
+        getRecipeReports({
+          limit,
+          skip,
+          sortBy,
+          sortOrder,
+          lang,
+          keyword
+        })
+      )
   });
 };
 
 export const useGetRecipeComments = (recipeId: string) => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useInfiniteQuery<
     IPaginatedRecipeCommentListResponse,
     AxiosError,
@@ -78,12 +94,14 @@ export const useGetRecipeComments = (recipeId: string) => {
     queryKey: ["recipeComments", recipeId],
     initialPageParam: 0,
     queryFn: ({ pageParam }) =>
-      getRecipeComments({
-        recipeId,
-        options: {
-          skip: pageParam
-        }
-      }),
+      withErrorProcessor(() =>
+        getRecipeComments({
+          recipeId,
+          options: {
+            skip: pageParam
+          }
+        })
+      ),
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage.metadata?.hasNextPage) return undefined;
       return allPages.length;
@@ -92,31 +110,58 @@ export const useGetRecipeComments = (recipeId: string) => {
 };
 
 export const useReopenReport = () => {
+  const { withErrorProcessor } = useErrorHandler();
+
+  return useMutation<void, ApiError, IReportDTO>({
+    mutationFn: params => withErrorProcessor(() => reopenReport(params))
+  });
+};
+
+export const useReopenAllReports = () => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useMutation<void, Error, IReportDTO>({
-    mutationFn: params => reopenReport(params)
+    mutationFn: params => withErrorProcessor(() => reopenReport(params))
   });
 };
 
 export const useMarkReportAsCompleted = () => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useMutation<void, Error, IReportDTO>({
-    mutationFn: params => markReportAsCompleted(params)
+    mutationFn: params => withErrorProcessor(() => markReportAsCompleted(params))
   });
 };
 
-export const useMarkAllReportAsCompleted = () => {
-  return useMutation<void, Error, IReportDTO>({
-    mutationFn: params => markAllReportAsCompleted(params)
+export const useMarkAllReport = () => {
+  const { withErrorProcessor } = useErrorHandler();
+
+  return useMutation<void, Error, MarkAllRecipeReportParams>({
+    mutationFn: params => withErrorProcessor(() => markAllReports(params))
   });
 };
 
 export const useDisableRecipe = () => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useMutation<void, Error, string>({
-    mutationFn: id => disableRecipe(id)
+    mutationFn: id => withErrorProcessor(() => disableRecipe(id))
   });
 };
 
 export const useRestoreRecipe = () => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useMutation<void, Error, string>({
-    mutationFn: id => restoreRecipe(id)
+    mutationFn: id => withErrorProcessor(() => restoreRecipe(id))
+  });
+};
+
+export const useGetRecipeReport = (params: GetRecipeReportDetailParams) => {
+  const { withErrorProcessor } = useErrorHandler();
+
+  return useQuery<IAdminReportRecipeDetailResponse>({
+    queryKey: ["recipeReport", params.recipeId],
+    queryFn: () => withErrorProcessor(() => getRecipeReportById(params))
   });
 };
