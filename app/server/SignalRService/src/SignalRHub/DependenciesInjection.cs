@@ -2,7 +2,6 @@
 using Contract.Utilities;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
-using Serilog;
 using SignalRHub.Extensions;
 using SignalRHub.Filters;
 using SignalRHub.Hubs;
@@ -25,7 +24,7 @@ public static class DependenciesInjection
 
         services.AddCommonInfrastructureServices("SignalRHub");
 
-        var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
+        var websiteUrl = DotNetEnv.Env.GetString("WEBSITE_CLIENT_URL", "http://localhost:3000");
 
         services.AddSingleton<IMemoryTracker, MemoryTracker>();
 
@@ -48,7 +47,7 @@ public static class DependenciesInjection
             options.AddPolicy("AllowSPAClientOrigin",
                 builder =>
                 {
-                    builder.WithOrigins(reactUrl)
+                    builder.WithOrigins(websiteUrl)
                            .AllowAnyMethod()
                            .AllowAnyHeader()
                            .AllowCredentials();
