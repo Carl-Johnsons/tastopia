@@ -17,7 +17,7 @@ public static class DependenciesInjection
     public static WebApplicationBuilder AddAPIServices(this WebApplicationBuilder builder)
     {
         EnvUtility.LoadEnvFile();
-        var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
+        var websiteUrl = DotNetEnv.Env.GetString("WEBSITE_CLIENT_URL", "http://localhost:3000");
         var config = builder.Configuration;
         var services = builder.Services;
         var host = builder.Host;
@@ -58,7 +58,7 @@ public static class DependenciesInjection
             options.AddPolicy("AllowAnyOriginPolicy",
                 builder =>
                 {
-                    builder.WithOrigins(reactUrl)
+                    builder.WithOrigins(websiteUrl)
                            .AllowAnyMethod()
                            .AllowAnyHeader()
                            .AllowCredentials();

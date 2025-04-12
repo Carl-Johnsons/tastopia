@@ -19,7 +19,7 @@ internal static class HostingExtensions
     {
         EnvUtility.LoadEnvFile();
 
-        var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000");
+        var websiteUrl = DotNetEnv.Env.GetString("WEBSITE_CLIENT_URL", "http://localhost:3000");
         var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");
         var services = builder.Services;
 
@@ -112,7 +112,7 @@ internal static class HostingExtensions
 
         services.AddCors(o => o.AddPolicy("AllowSpecificOrigins", builder =>
         {
-            builder.WithOrigins(reactUrl, "http://api-gateway", "http://localhost:5000")
+            builder.WithOrigins(websiteUrl, "http://api-gateway", "http://localhost:5000")
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
