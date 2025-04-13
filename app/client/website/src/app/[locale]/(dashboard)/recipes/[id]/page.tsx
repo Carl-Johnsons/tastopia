@@ -2,26 +2,21 @@
 
 import { useGetRecipeReport } from "@/api/recipe";
 import RecipeDetail from "@/components/screen/report/recipe/RecipeDetail";
-import ReportList from "@/components/screen/report/recipe/ReportList";
 import SomethingWentWrong from "@/components/shared/common/Error";
 import { Link } from "@/i18n/navigation";
 import { ParamsProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
-import { useEffect } from "react";
 import Loader from "@/components/ui/Loader";
+import { useLocale } from "next-intl";
+import ReportList from "@/components/screen/report/common/ReportList";
+import { ReportType } from "@/generated/enums/recipe.enum";
 
 export default function Page({ params }: ParamsProps) {
-  console.log("Params", params);
+  const lang = useLocale();
   const { data, isError, isLoading } = useGetRecipeReport({
     recipeId: params.id,
-    options: {
-      lang: "en"
-    }
+    options: { lang }
   });
-
-  useEffect(() => {
-    console.log("data", data);
-  }, [data]);
 
   if (isError) return <SomethingWentWrong />;
   if (isLoading || !data) return <Loader />;
@@ -41,7 +36,9 @@ export default function Page({ params }: ParamsProps) {
       >
         {reports.length > 0 && (
           <ReportList
+            targetId={recipe.id}
             recipeId={recipe.id}
+            reportType={ReportType.RECIPE}
             reports={reports}
             className='xl:col-start-2'
           />
