@@ -5,6 +5,7 @@ import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 import { AxiosError } from "axios";
 import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 import {
+  IAdminBanUserResponse,
   IAdminGetUserDetailResponse,
   IPaginatedAdminGetUserListResponse,
   IPaginatedAdminUserReportListResponse
@@ -102,7 +103,9 @@ export async function adminBanUser(accountId: string): Promise<Response<any>> {
   }
 }
 
-export async function markUserReport(reportId: string): Promise<Response<any>> {
+export async function markUserReport(
+  reportId: string
+): Promise<Response<IAdminBanUserResponse>> {
   try {
     const url = "/api/admin/user/mark-report";
     const { data } = await protectedAxiosInstance.post(url, {
