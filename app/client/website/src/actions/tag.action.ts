@@ -67,16 +67,19 @@ export async function updateTag(formData: FormData): Promise<Response<Tag>> {
   }
 }
 
-export async function getTagRanking() {
+export async function getTagRanking(): Promise<Response<StatisticItem[]>> {
   const language = await getLocale();
   const url = "/api/admin/recipe/statistic/get-tag-ranking-by-popular";
   try {
     const { data } = await protectedAxiosInstance.post<StatisticItem[]>(url, {
       language
     });
-    return data;
+
+    return {
+      ok: true,
+      data
+    };
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }

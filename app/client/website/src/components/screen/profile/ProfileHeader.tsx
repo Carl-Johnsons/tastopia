@@ -21,18 +21,20 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
   const [active, setActive] = useState<boolean>(user.isAccountActive);
 
   const handleToggleStatus = async () => {
-    const result = await adminBanUser(user.accountId);
-    if (result.userId) {
-      const newStatus = result.isRestored;
-      setActive(newStatus);
+    const { ok, data: result } = await adminBanUser(user.accountId);
 
-      if (result.isRestored) {
-        toast.success(t("notifications.userRestored"));
-      } else {
-        toast.success(t("notifications.userDisabled"));
-      }
-    } else {
+    if (!ok || !result?.userId) {
       toast.error(t("notifications.error"));
+      return;
+    }
+
+    const newStatus = result.isRestored;
+    setActive(newStatus);
+
+    if (result.isRestored) {
+      toast.success(t("notifications.userRestored"));
+    } else {
+      toast.success(t("notifications.userDisabled"));
     }
   };
   return (

@@ -66,6 +66,7 @@ export const ViewDetailButton = ({
 export const ReopenReportButton = ({
   title,
   targetId,
+  commentId,
   onSuccess,
   onFailure,
   className,
@@ -85,7 +86,7 @@ export const ReopenReportButton = ({
       {
         onSuccess: async () => {
           toast.success("Report reopened successfully.");
-          await queryClient.invalidateQueries({ queryKey: ["commentReport", targetId] });
+          await queryClient.invalidateQueries({ queryKey: ["commentReport", commentId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
@@ -124,6 +125,7 @@ export const ReopenAllReportsButton = ({
   title,
   targetId,
   recipeId,
+  commentId,
   onSuccess,
   onFailure,
   className,
@@ -140,7 +142,7 @@ export const ReopenAllReportsButton = ({
       {
         onSuccess: async () => {
           toast.success("All reports reopened successfully.");
-          await queryClient.invalidateQueries({ queryKey: ["commentReport", targetId] });
+          await queryClient.invalidateQueries({ queryKey: ["commentReport", commentId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
@@ -179,6 +181,7 @@ export const ReopenAllReportsButton = ({
 export const MarkAsCompletedButton = ({
   title,
   targetId,
+  commentId,
   onSuccess,
   onFailure,
   className,
@@ -195,7 +198,7 @@ export const MarkAsCompletedButton = ({
       {
         onSuccess: async () => {
           toast.success("Report marked as completed successfully.");
-          await queryClient.invalidateQueries({ queryKey: ["commentReport", targetId] });
+          await queryClient.invalidateQueries({ queryKey: ["commentReport", commentId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },

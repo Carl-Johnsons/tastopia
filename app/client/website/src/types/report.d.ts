@@ -39,6 +39,7 @@ export type DataTableButtonProps = Pick<
 > & {
   title: string;
   recipeId?: string;
+  commentId?: string;
   targetId: string;
   /** Callback to override the component's internal click hanlder. */
   onClick?: () => void;

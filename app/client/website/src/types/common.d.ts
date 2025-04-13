@@ -12,10 +12,12 @@ export type PaginatedQueryParams = {
 export type SuccessResponse<T> = {
   ok: true;
   data: T;
+  error: null;
 };
 
 export type ErrorResponse = {
   ok: false;
+  data: null;
   error: IErrorResponseDTO;
 };
 

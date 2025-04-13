@@ -86,40 +86,44 @@ export const ActionButtons = ({
   };
 
   const handleBanUser = async () => {
-    const result = await adminBanUser(reportedId);
-    if (result.userId) {
-      const newStatus = result.isRestored;
-      setReportedStatus(newStatus);
+    const { ok, data: result } = await adminBanUser(reportedId);
 
-      if (result.isRestored) {
-        toast.success(t("notifications.restoreUserSuccess"));
-      } else {
-        toast.success(t("notifications.disableUserSuccess"));
-      }
-
-      invalidateCurrentAdminActivities();
-    } else {
+    if (!ok || !result?.userId) {
       toast.error(t("notifications.error"));
+      return;
     }
+
+    const newStatus = result.isRestored;
+    setReportedStatus(newStatus);
+
+    if (result.isRestored) {
+      toast.success(t("notifications.restoreUserSuccess"));
+    } else {
+      toast.success(t("notifications.disableUserSuccess"));
+    }
+
+    invalidateCurrentAdminActivities();
   };
 
   const handleMarkReport = async () => {
-    const result = await markUserReport(reportId);
-    if (result.userReport.reportedId) {
-      const newStatus = result.userReport.status;
-      setReportStatus(newStatus);
-      onStatusUpdate(reportId, newStatus);
+    const { ok, data: result } = await markUserReport(reportId);
 
-      if (result.isReopened) {
-        toast.success(t("notifications.restoreReportSuccess"));
-      } else {
-        toast.success(t("notifications.completeReportSuccess"));
-      }
-
-      invalidateCurrentAdminActivities();
-    } else {
+    if (!ok || !result?.userReport.reportedId) {
       toast.error(t("notifications.error"));
+      return;
     }
+
+    const newStatus = result.userReport.status;
+    setReportStatus(newStatus);
+    onStatusUpdate(reportId, newStatus);
+
+    if (result.isReopened) {
+      toast.success(t("notifications.restoreReportSuccess"));
+    } else {
+      toast.success(t("notifications.completeReportSuccess"));
+    }
+
+    invalidateCurrentAdminActivities();
   };
 
   return (
