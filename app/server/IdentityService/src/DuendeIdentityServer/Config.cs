@@ -46,7 +46,7 @@ public static class Config
                        mobileURL
                     },
                     PostLogoutRedirectUris ={mobileURL},
-                    AllowedCorsOrigins = { mobileURL, "https://www.getpostman.com" },
+                    AllowedCorsOrigins = {"https://www.getpostman.com" },
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
