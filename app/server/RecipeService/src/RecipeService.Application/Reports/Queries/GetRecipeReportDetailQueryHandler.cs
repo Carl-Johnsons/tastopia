@@ -143,6 +143,8 @@ public class GetRecipeReportDetailQueryHandler : IRequestHandler<GetRecipeReport
             AdditionalDetail = urr.AdditionalDetails,
             CreatedAt = urr.CreatedAt,
             Status = urr.Status.ToString(),
+            ReporterId  = urr.AccountId,
+            ReporterDisplayName = mapUserGrpc.Users[urr.AccountId.ToString()].DisplayName,
             ReporterUsername = mapUserGrpc.Users[urr.AccountId.ToString()].AccountUsername,
             ReporterAvtUrl = mapUserGrpc.Users[urr.AccountId.ToString()].AvtUrl,
             Reasons = ReportReasonData.RecipeReportReasons.Where(rrr => urr.ReasonCodes.Contains(rrr.Code))
