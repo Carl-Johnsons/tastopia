@@ -21,11 +21,21 @@ import { AxiosError } from "axios";
 export default async function System() {
   try {
     const t = await getTranslations("statistic");
-    const totalRecipe = await getTotalRecipes();
+
+    const totalRecipeResponse = await getTotalRecipes();
+    if (!totalRecipeResponse.ok) return <SomethingWentWrong />;
+    const totalRecipe = totalRecipeResponse.data;
+
+    const recipeRankingListResponse = await getRecipeRanking();
+    if (!recipeRankingListResponse.ok) return <SomethingWentWrong />;
+    const recipeRankingList = recipeRankingListResponse.data;
+
+    const recipeStatisticResponse = await getRecipeStatistic();
+    if (!recipeStatisticResponse.ok) return <SomethingWentWrong />;
+    const recipeStatistic = recipeStatisticResponse.data;
+
     const totalUser = await getTotalUsers();
-    const recipeRankingList = await getRecipeRanking();
     const tagRankingList = await getTagRanking();
-    const recipeStatistic = await getRecipeStatistic();
     const accountStatistic = await getAccountStatistic();
 
     return (

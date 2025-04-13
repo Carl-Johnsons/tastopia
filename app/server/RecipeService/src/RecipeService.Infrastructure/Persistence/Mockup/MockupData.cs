@@ -122,7 +122,7 @@ internal class MockupData
                 {
                     Id = Guid.NewGuid(),
                     Code = "",
-                    Value = new TagValue { En = seedTag.En, Vi = seedTag.Vi },
+                    Value = new TagValue { En = seedTag.En, Vi = seedTag.En },
                     Category = Enum.Parse<TagCategory>(seedTag.Category),
                     ImageUrl = "",
                     Status = TagStatus.Pending

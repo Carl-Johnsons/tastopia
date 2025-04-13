@@ -8,12 +8,18 @@ export interface AdminState {
   targetId?: string;
   /** Whether the form's data is being fetched. */
   isFormLoading: boolean;
+  /** Whether the form's is being submitted. */
+  isFormSubmiting: boolean;
+  /** Whether the form's submit button should be disabled. */
+  isSubmitDisabled?: boolean;
   /** Whether the form is for updating the current user. */
   isSelf?: boolean;
 }
 
 const initialState: AdminState = {
   isFormOpen: false,
+  isFormSubmiting: false,
+  isSubmitDisabled: false,
   formType: "create",
   isFormLoading: false,
 };

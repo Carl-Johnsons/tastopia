@@ -1,15 +1,18 @@
+"use client";
+
 import Header from "./Header";
 import { IRecipe } from "../../../../../../mobile/generated/interfaces/recipe.interface";
-import { getUserById } from "@/actions/user.action";
 import Content from "./Content";
 import Comments from "./Comments";
+import { useGetUserById } from "@/api/user";
+import SomethingWentWrong from "@/components/shared/common/Error";
 
 type Props = {
   recipe: IRecipe;
   className?: string;
 };
 
-export default async function RecipeDetail({ recipe, className }: Props) {
+export default function RecipeDetail({ recipe, className }: Props) {
   const {
     id,
     title,
@@ -24,7 +27,10 @@ export default async function RecipeDetail({ recipe, className }: Props) {
     cookTime
   } = recipe;
 
-  const author = await getUserById(authorId);
+  const { data: author, isError, isLoading } = useGetUserById(authorId);
+
+  if (isError) return <SomethingWentWrong/>;
+  if (isLoading || !author) return null;
 
   return (
     <div

@@ -90,6 +90,11 @@ public class HubServer : Hub<IHubClient>
         await base.OnDisconnectedAsync(exception);
     }
 
+    public Task<int> GetOnlineUserNumber()
+    {
+        return Task.FromResult(_memoryTracker.OnlineUserNumber);
+    }
+
     public async Task LeaveGroup(int groupId)
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupId.ToString());

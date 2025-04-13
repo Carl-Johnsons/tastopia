@@ -16,4 +16,8 @@ public class ReportError
         new("ReportError.AlreadyPending",
            Message: "Report already pending",
            StatusCode: (int)HttpStatusCode.BadRequest);
+    public static Error NullParameter =>
+        new("ReportError.NullParameter",
+            Message: "Null parameter",
+            StatusCode: (int)HttpStatusCode.InternalServerError);
 }

@@ -33,7 +33,7 @@ const columns: TableColumn<IAdminRecipeResponse>[] = [
     name: "Recipe Name",
     selector: row => row.title,
     sortable: true,
-    maxWidth: "200px"
+    width: "200px"
   },
   {
     name: "Ingredients",
@@ -256,9 +256,9 @@ export default function Table() {
           onChange={handleSearch}
           isLoading={isLoading || isFetching}
         />
-        <div className='flex gap-2 self-start'>
-          <span className='text-black_white'>Administer Recipes</span>
-        </div>
+        <p className='text-black_white base-medium flex w-full flex-col gap-4'>
+          Administer Recipes
+        </p>
       </div>
 
       <DataTableProvider value={contextValue}>

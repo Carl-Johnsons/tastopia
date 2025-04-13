@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ActivityItem } from "@/types/user";
 import {
   BanIcon,
@@ -12,6 +11,7 @@ import { ActivityType } from "@/constants/activities";
 import Empty from "@/components/shared/common/Empty";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import Image from "@/components/shared/common/Image";
 
 type ActivityFeedProps = {
   activities: ActivityItem[];
@@ -173,13 +173,12 @@ export default function ActivityFeed({ activities }: ActivityFeedProps) {
                     </div>
                   </div>
 
-                  <div className='mt-3 overflow-hidden rounded-lg'>
+                  <div className='mt-3 aspect-square w-full overflow-hidden rounded-lg'>
                     <Image
                       src={activity.recipeImageUrl ?? "/assets/images/pizza.jpg"}
                       alt={"activity comment"}
-                      width={600}
-                      height={300}
-                      className='h-auto w-full object-cover'
+                      fill
+                      className='object-cover'
                     />
                   </div>
                 </div>

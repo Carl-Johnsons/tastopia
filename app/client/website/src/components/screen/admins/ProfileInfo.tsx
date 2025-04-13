@@ -1,3 +1,5 @@
+"use client";
+
 import {
   CalendarIcon,
   EmailIcon,
@@ -7,13 +9,13 @@ import {
   PhoneIcon,
   UserIcon
 } from "@/components/shared/icons";
-import { getTranslations } from "next-intl/server";
 import { Gender } from "@/constants/gender";
 import { ReactNode } from "react";
 import { format } from "date-fns";
 import { IAdminDetailResponse } from "@/generated/interfaces/user.interface";
 import { UpdateAdminButton } from "./Button";
 import AdminDialog from "./Dialog";
+import { useTranslations } from "next-intl";
 
 type Props = {
   admin: IAdminDetailResponse;
@@ -37,9 +39,9 @@ export type InfoItem = {
   value: string | null;
 };
 
-export default async function ProfileInfo({ admin, self }: Props) {
-  const t = await getTranslations("administerAdmins.detail.info");
-  const tTooltip = await getTranslations("administerAdmins.tooltip");
+export default function ProfileInfo({ admin, self }: Props) {
+  const t = useTranslations("administerAdmins.detail.info");
+  const tTooltip = useTranslations("administerAdmins.tooltip");
 
   const { username, displayName, email, phoneNumber, address, gender, accountId } =
     admin as IAdminDetailResponse;
@@ -56,7 +58,7 @@ export default async function ProfileInfo({ admin, self }: Props) {
       icon: Icon.GENDER,
       label: t("fields.gender"),
       value: gender
-        ? Gender.Male
+        ? gender === Gender.Male
           ? t("fields.genders.male")
           : t("fields.genders.female")
         : null

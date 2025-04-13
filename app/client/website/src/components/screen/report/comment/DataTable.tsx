@@ -35,7 +35,6 @@ const columns: TableColumn<IAdminReportCommentResponse>[] = [
   {
     name: "Comment Owner",
     selector: row => row.commentOwnerUsername,
-    maxWidth: "160px",
     hide: 952,
     sortable: true
   },

@@ -1,51 +1,109 @@
 "use client";
 
-import { Clock } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "@/i18n/navigation";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { IReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import { format } from "date-fns";
-import { MarkAsCompletedButton, ReopenReportButton } from "./Button";
+import {
+  MarkAllReportsAsCompletedButton,
+  MarkAsCompletedButton,
+  ReopenAllReportsButton,
+  ReopenReportButton
+} from "./Button";
 import { ReportStatus } from "@/constants/reports";
 import StatusText from "../common/StatusText";
+import { Clock } from "lucide-react";
 
 type ReportListProps = {
+  recipeId: string;
   reports: IReportRecipeResponse[];
   className?: string;
 };
 
-export default function ReportList({ reports, className }: ReportListProps) {
+export default function ReportList({ recipeId, reports, className }: ReportListProps) {
+  const hasPending = useMemo(
+    () => reports.some(report => report.status === ReportStatus.Pending),
+    [reports]
+  );
+
+  const hasDone = useMemo(
+    () => reports.some(report => report.status === ReportStatus.Done),
+    [reports]
+  );
+
+  const hasDifferentStates = useMemo(() => hasPending && hasDone, [hasPending, hasDone]);
+
+  useEffect(() => {
+    console.log("reports changed in ReportList", reports);
+  }, [reports]);
+
   return (
-    <div className={`flex gap-8 overflow-x-scroll xl:flex-col ${className}`}>
-      {reports.map(
-        ({
-          id,
-          additionalDetail,
-          reasons,
-          status,
-          reporterUsername,
-          createdAt,
-          reporterAvtUrl
-        }) => (
-          <ReportItem
-            key={id}
-            reportId={id}
-            reportReason={additionalDetail}
-            status={status as ReportStatus}
-            reportCodes={reasons}
-            reporter={reporterUsername}
-            reporterAvatar={reporterAvtUrl}
-            createdAt={format(new Date(createdAt), "h:mm a - dd/MM/yyyy")}
+    <div className={`flex flex-col gap-8 overflow-x-hidden ${className}`}>
+      {/* Resolve reports */}
+
+      <div>
+        <p className='text-black_white base-medium mb-2 flex w-full flex-col gap-4'>
+          {"Report list"}
+        </p>
+        <div className='flex gap-2'>
+          <MarkAllReportsAsCompletedButton
+            title={"Resolve All"}
+            targetId={recipeId}
+            className='w-fit rounded-full'
+            disabled={!hasPending}
+            noTruncateText
+            noText={false}
           />
-        )
-      )}
+          <ReopenAllReportsButton
+            title={"Reopen All"}
+            targetId={recipeId}
+            className='w-fit rounded-full'
+            disabled={!hasDone}
+            noTruncateText
+            noText={false}
+          />
+        </div>
+      </div>
+
+      <div className='flex gap-8 overflow-x-scroll xl:flex-col'>
+        {reports.map(
+          ({
+            id,
+            additionalDetail,
+            reasons,
+            status,
+            reporterUsername,
+            createdAt,
+            reporterAvtUrl
+          }) => (
+            <ReportItem
+              key={id}
+              reportId={id}
+              recipeId={recipeId}
+              reportReason={additionalDetail}
+              status={
+                hasDifferentStates
+                  ? (status as ReportStatus)
+                  : hasDone
+                    ? ReportStatus.Done
+                    : ReportStatus.Pending
+              }
+              reportCodes={reasons}
+              reporter={reporterUsername}
+              reporterAvatar={reporterAvtUrl}
+              createdAt={format(new Date(createdAt), "h:mm a - dd/MM/yyyy")}
+            />
+          )
+        )}
+      </div>
     </div>
   );
 }
 
 type ReportItemProps = {
   reportId: string;
+  recipeId: string;
   reportReason?: string;
   status: ReportStatus;
   reportCodes: string[];
@@ -56,6 +114,7 @@ type ReportItemProps = {
 
 const ReportItem = ({
   reportId,
+  recipeId,
   reportReason,
   status,
   reportCodes,
@@ -65,6 +124,10 @@ const ReportItem = ({
 }: ReportItemProps) => {
   const router = useRouter();
   const [isActive, setIsActive] = useState(status !== ReportStatus.Done);
+
+  useEffect(() => {
+    setIsActive(status !== ReportStatus.Done);
+  }, [status]);
 
   return (
     <div
@@ -79,6 +142,7 @@ const ReportItem = ({
           <MarkAsCompletedButton
             title='Mark as completed'
             targetId={reportId}
+            recipeId={recipeId}
             onSuccess={() => {
               setIsActive(false);
             }}
@@ -87,6 +151,7 @@ const ReportItem = ({
           <ReopenReportButton
             title='Reopen report'
             targetId={reportId}
+            recipeId={recipeId}
             onSuccess={() => {
               setIsActive(true);
             }}
