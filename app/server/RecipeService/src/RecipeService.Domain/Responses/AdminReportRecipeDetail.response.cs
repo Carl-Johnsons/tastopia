@@ -16,6 +16,7 @@ public class AdminReportRecipeDetailResponse
 public class ReportRecipeResponse
 {
     public Guid Id { get; set; }
+    public Guid ReporterId { get; set; }
     public string ReporterUsername { get; set; } = null!;
     public string ReporterDisplayName { get; set; } = null!;
     public string ReporterAvtUrl { get; set; } = null!;

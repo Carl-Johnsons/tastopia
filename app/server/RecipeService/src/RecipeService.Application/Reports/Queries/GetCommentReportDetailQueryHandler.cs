@@ -123,6 +123,7 @@ public class GetCommentReportDetailQueryHandler : IRequestHandler<GetCommentRepo
                 Id = urc.Id,
                 AdditionalDetail = urc.AdditionalDetails,
                 CreatedAt = result.CreatedAt,
+                ReporterId = urc.AccountId,
                 ReporterAvtUrl = mapUserGrpc.Users[urc.AccountId.ToString()].AvtUrl,
                 ReporterDisplayName = mapUserGrpc.Users[urc.AccountId.ToString()].DisplayName,
                 ReporterUsername = mapUserGrpc.Users[urc.AccountId.ToString()].AccountUsername,
