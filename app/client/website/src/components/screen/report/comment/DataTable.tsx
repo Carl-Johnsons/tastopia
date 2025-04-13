@@ -141,6 +141,7 @@ const ActionButtons = ({
         <ReopenReportButton
           title='Restore'
           targetId={reportId}
+          commentId={targetId}
           onSuccess={() => {
             onChangeActive({ reportId, value: true });
           }}
@@ -149,6 +150,7 @@ const ActionButtons = ({
         <MarkAsCompletedButton
           title='Mark as completed'
           targetId={reportId}
+          commentId={targetId}
           onSuccess={() => {
             onChangeActive({ reportId, value: false });
           }}
