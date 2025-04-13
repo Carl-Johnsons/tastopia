@@ -4,7 +4,6 @@ import { protectedAxiosInstance } from "@/constants/host";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 import { AxiosError } from "axios";
 import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
-import { stringify } from "@/utils/debug";
 import {
   IAdminGetUserDetailResponse,
   IPaginatedAdminGetUserListResponse,
@@ -12,18 +11,21 @@ import {
 } from "@/generated/interfaces/user.interface";
 import { IInfiniteAdminUserReportListResponse } from "@/types/user";
 import { StatisticDateItem } from "@/types/statistic";
+import { Response } from "@/types/common";
+import { withErrorProcessor, withSuccessfulResponse } from "@/utils/errorHanlder";
 
-export async function getUserById(id: string) {
+export async function getUserById(
+  id: string
+): Promise<Response<IAdminGetUserDetailResponse>> {
   try {
     const url = "/api/admin/user/get-user-detail";
     const { data } = await protectedAxiosInstance.post<IAdminGetUserDetailResponse>(url, {
       accountId: id
     });
 
-    return data;
+    return withSuccessfulResponse(data);
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
@@ -36,10 +38,9 @@ export async function getUserActivitiesById(id: string, language: string) {
       skip: 0
     });
 
-    return data;
+    return withSuccessfulResponse(data);
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
@@ -52,7 +53,9 @@ export type UpdateSettingParams = {
   }>;
 };
 
-export const useUpdateSettings = async (data: UpdateSettingParams) => {
+export const useUpdateSettings = async (
+  data: UpdateSettingParams
+): Promise<Response<UpdateSettingResponse>> => {
   const url = "/api/setting";
 
   try {
@@ -60,16 +63,10 @@ export const useUpdateSettings = async (data: UpdateSettingParams) => {
       url,
       data
     );
-    return response;
+
+    return withSuccessfulResponse(response);
   } catch (error) {
-    console.debug("useUpdateSettings", stringify(error));
-
-    if (error instanceof AxiosError) {
-      const data = error.response?.data as IErrorResponseDTO;
-      throw new Error(data.message);
-    }
-
-    throw new Error("An error has occurred.");
+    return withErrorProcessor(error as AxiosError);
   }
 };
 
@@ -79,44 +76,42 @@ export async function getAdminUsers(
   sortOrder = "asc",
   keyword = "",
   limit = 6
-) {
+): Promise<Response<IPaginatedAdminGetUserListResponse>> {
   try {
     const url = `/api/admin/user/get-users?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&keyword=${encodeURIComponent(keyword.trim())}`;
 
-    const { data } = await protectedAxiosInstance.get(url);
+    const { data } =
+      await protectedAxiosInstance.get<IPaginatedAdminGetUserListResponse>(url);
 
-    return data as IPaginatedAdminGetUserListResponse;
+    return withSuccessfulResponse(data);
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
-export async function adminBanUser(accountId: string) {
+export async function adminBanUser(accountId: string): Promise<Response<any>> {
   try {
     const url = "/api/admin/user/ban-user";
     const { data } = await protectedAxiosInstance.post(url, {
       accountId
     });
 
-    return data;
+    return withSuccessfulResponse(data);
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
-export async function markUserReport(reportId: string) {
+export async function markUserReport(reportId: string): Promise<Response<any>> {
   try {
     const url = "/api/admin/user/mark-report";
     const { data } = await protectedAxiosInstance.post(url, {
       reportId
     });
 
-    return data;
+    return withSuccessfulResponse(data);
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
@@ -127,16 +122,16 @@ export async function getUserReports(
   keyword = "",
   limit = 6,
   language = "en"
-) {
+): Promise<Response<IPaginatedAdminUserReportListResponse>> {
   try {
     const url = `/api/admin/user/get-user-reports?Skip=${skip}&SortBy=${sortBy}&SortOrder=${sortOrder}&limit=${limit}&language=${language}&keyword=${encodeURIComponent(keyword.trim())}`;
 
-    const { data } = await protectedAxiosInstance.get(url);
+    const { data } =
+      await protectedAxiosInstance.get<IPaginatedAdminUserReportListResponse>(url);
 
-    return data as IPaginatedAdminUserReportListResponse;
+    return withSuccessfulResponse(data);
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
@@ -144,40 +139,39 @@ export async function getUserDetailReports(
   accountId = "",
   language = "en",
   pageParam = 0
-) {
+): Promise<Response<IInfiniteAdminUserReportListResponse>> {
   try {
     const url = "/api/admin/user/get-user-report-by-account-id";
-    const { data } = await protectedAxiosInstance.post(url, {
-      accountId,
-      language,
-      skip: pageParam.toString()
-    });
+    const { data } =
+      await protectedAxiosInstance.post<IInfiniteAdminUserReportListResponse>(url, {
+        accountId,
+        language,
+        skip: pageParam.toString()
+      });
 
-    return data as IInfiniteAdminUserReportListResponse;
+    return withSuccessfulResponse(data);
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
-export async function getTotalUsers() {
+export async function getTotalUsers(): Promise<Response<number>> {
   const url = "/api/admin/user/statistic/get-total-user";
   try {
     const { data } = await protectedAxiosInstance.get<number>(url);
-    return data;
+    return withSuccessfulResponse(data);
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
-export async function getAccountStatistic() {
+export async function getAccountStatistic(): Promise<Response<StatisticDateItem[]>> {
   const url = "/api/admin/account/statistic/get-account-statistic";
+
   try {
     const { data } = await protectedAxiosInstance.get<StatisticDateItem[]>(url);
-    return data;
+    return withSuccessfulResponse(data);
   } catch (error) {
-    console.log(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }

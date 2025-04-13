@@ -8,8 +8,15 @@ import ReportList from "@/components/screen/report/user/ReportList";
 
 export default async function ReportedDetail({ params }: ParamsProps) {
   try {
-    const currentUser = await getUserById(params.id);
-    const currentUserActivities = await getUserActivitiesById(params.id, "en");
+    const { ok: userOk, data: currentUser } = await getUserById(params.id);
+    const { ok: activityOk, data: currentUserActivities } = await getUserActivitiesById(
+      params.id,
+      "en"
+    );
+
+    if (!userOk || !activityOk) {
+      throw new Error("Failed to fetch data");
+    }
 
     return (
       <div className='min-h-screen rounded-lg p-2'>
@@ -32,7 +39,6 @@ export default async function ReportedDetail({ params }: ParamsProps) {
       </div>
     );
   } catch (error) {
-    console.log(error);
     return <SomeThingWentWrong />;
   }
 }

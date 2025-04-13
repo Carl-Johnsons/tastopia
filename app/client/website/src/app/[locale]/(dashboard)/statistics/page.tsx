@@ -23,20 +23,29 @@ export default async function System() {
     const t = await getTranslations("statistic");
 
     const totalRecipeResponse = await getTotalRecipes();
-    if (!totalRecipeResponse.ok) return <SomethingWentWrong />;
-    const totalRecipe = totalRecipeResponse.data;
-
     const recipeRankingListResponse = await getRecipeRanking();
-    if (!recipeRankingListResponse.ok) return <SomethingWentWrong />;
-    const recipeRankingList = recipeRankingListResponse.data;
-
     const recipeStatisticResponse = await getRecipeStatistic();
-    if (!recipeStatisticResponse.ok) return <SomethingWentWrong />;
-    const recipeStatistic = recipeStatisticResponse.data;
+    const totalUserResponse = await getTotalUsers();
+    const tagRankingResponse = await getTagRanking();
+    const accountStatisticResponse = await getAccountStatistic();
 
-    const totalUser = await getTotalUsers();
-    const tagRankingList = await getTagRanking();
-    const accountStatistic = await getAccountStatistic();
+    if (
+      !totalRecipeResponse.ok ||
+      !recipeRankingListResponse.ok ||
+      !recipeStatisticResponse.ok ||
+      !totalUserResponse.ok ||
+      !tagRankingResponse.ok ||
+      !accountStatisticResponse.ok
+    ) {
+      throw new Error("Failed to fetch data");
+    }
+
+    const totalRecipe = totalRecipeResponse.data;
+    const recipeRankingList = recipeRankingListResponse.data;
+    const recipeStatistic = recipeStatisticResponse.data;
+    const totalUser = totalUserResponse.data;
+    const tagRankingList = tagRankingResponse.data;
+    const accountStatistic = accountStatisticResponse.data;
 
     return (
       <div className='flex size-full flex-col justify-center gap-4'>
