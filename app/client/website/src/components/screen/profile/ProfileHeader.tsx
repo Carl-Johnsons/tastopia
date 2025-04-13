@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Status from "@/components/ui/Status";
 import { IAdminGetUserDetailResponse } from "@/generated/interfaces/user.interface";
 import { adminBanUser } from "@/actions/user.action";
@@ -9,6 +8,7 @@ import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Ban, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Avatar from "@/components/shared/common/Avatar";
 
 type ProfileHeaderProps = {
   user: IAdminGetUserDetailResponse;
@@ -43,11 +43,10 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
         <div className='flex items-center gap-5'>
           <div className='relative size-24 overflow-hidden rounded-full bg-orange-100'>
             {user.avatarUrl ? (
-              <Image
+              <Avatar
                 src={user.avatarUrl}
                 alt={user.accountUsername}
-                fill
-                className='object-cover'
+                className='object-cover size-full'
               />
             ) : (
               <div className='flex size-full items-center justify-center bg-orange-200 text-3xl font-bold text-orange-600'>

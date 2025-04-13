@@ -1,7 +1,6 @@
 "use client";
 
 import { Check, Clock, Loader2, RotateCcw } from "lucide-react";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "@/i18n/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { format } from "date-fns";
@@ -16,6 +15,7 @@ import StatusText from "../common/StatusText";
 import { useTranslations } from "next-intl";
 import { DataTableButton } from "@/components/shared/common/Button";
 import { useQueryClient } from "@tanstack/react-query";
+import Avatar from "@/components/shared/common/Avatar";
 
 type ReportListType = {
   reportedId: string;
@@ -300,9 +300,11 @@ const ReportItem = ({
             router.push(`/users/${reporterId}`);
           }}
         >
-          <Avatar>
-            <AvatarImage src={reporterAvatar} />
-          </Avatar>
+          <Avatar
+            src={reporterAvatar}
+            alt={reporter}
+            className='size-10'
+          />
         </button>
         <button
           onClick={() => {

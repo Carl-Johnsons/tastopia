@@ -2,7 +2,6 @@
 "use client";
 
 import { Clock } from "lucide-react";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "@/i18n/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { IReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
@@ -22,6 +21,7 @@ import {
   ReopenAllReportsButton as ReopenAllCommentReportsButton
 } from "../comment/Button";
 import { useTranslations } from "next-intl";
+import Avatar from "@/components/shared/common/Avatar";
 
 type ReportListProps = {
   reports: Array<IReportRecipeResponse>;
@@ -113,7 +113,8 @@ export default function ReportList({
             status,
             reporterUsername,
             createdAt,
-            reporterAvtUrl
+            reporterAvtUrl,
+            reporterId
           }) => (
             <ReportItem
               key={id}
@@ -131,6 +132,7 @@ export default function ReportList({
               }
               reportCodes={reasons}
               reporter={reporterUsername}
+              reporterId={reporterId}
               reporterAvatar={reporterAvtUrl}
               createdAt={format(new Date(createdAt), "h:mm a - dd/MM/yyyy")}
             />
@@ -150,6 +152,7 @@ type ReportItemProps = {
   status: ReportStatus;
   reportCodes: string[];
   reporter: string;
+  reporterId: string;
   reporterAvatar: string;
   createdAt: string;
 };
@@ -163,6 +166,7 @@ const ReportItem = ({
   status,
   reportCodes,
   reporter,
+  reporterId,
   reporterAvatar,
   createdAt
 }: ReportItemProps) => {
@@ -250,16 +254,18 @@ const ReportItem = ({
       <div className='flex items-center gap-2 text-gray-700'>
         <button
           onClick={() => {
-            router.push("/users/bb06e4ec-f371-45d5-804e-22c65c77f67d");
+            router.push("/users/" + reporterId);
           }}
         >
-          <Avatar>
-            <AvatarImage src={reporterAvatar} />
-          </Avatar>
+          <Avatar
+            src={reporterAvatar}
+            alt={reporter}
+            className='size-10'
+          />
         </button>
         <button
           onClick={() => {
-            router.push("/users/bb06e4ec-f371-45d5-804e-22c65c77f67d");
+            router.push("/users/" + reporterId);
           }}
         >
           <span className='text-sm font-bold text-gray-700 hover:text-black dark:text-gray-400 dark:hover:text-white'>
