@@ -13,8 +13,8 @@ export default async function UserProfile({ params }: ParamsProps) {
     const currentUserActivities = await getUserActivitiesById(params.id, currentLanguage);
 
     return (
-      <div className='min-h-screen rounded-lg p-2'>
-        <div className='mx-auto max-w-[96]'>
+      <div className='container min-h-screen rounded-lg p-2'>
+        <div>
           <ProfileHeader user={currentUser} />
 
           <div className='mt-6 flex flex-col-reverse gap-6 lg:flex-row'>

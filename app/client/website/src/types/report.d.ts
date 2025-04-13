@@ -35,7 +35,7 @@ export interface IAdminReportCommentResponse {
 
 export type DataTableButtonProps = Pick<
   InteractiveButtonProps,
-  "noTruncateText" | "noText" | "toolTip"
+  "noTruncateText" | "noText" | "toolTip" | "disabled"
 > & {
   title: string;
   recipeId?: string;

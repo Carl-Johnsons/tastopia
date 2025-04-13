@@ -26,7 +26,8 @@ public static class Config
         {
             EnvUtility.LoadEnvFile();
 
-            var reactUrl = DotNetEnv.Env.GetString("REACT_URL", "http://localhost:3000").Trim();
+            var mobileURL = DotNetEnv.Env.GetString("MOBILE_CLIENT_URL", "http://localhost:3000").Trim();
+            var websiteURL = DotNetEnv.Env.GetString("WEBSITE_CLIENT_URL", "http://localhost:3000").Trim();
 
             return [
                 new Client
@@ -42,10 +43,10 @@ public static class Config
                     AllowOfflineAccess = true,
                     RedirectUris = {
                        "https://www.getpostman.com/oauth2/callback",
-                       "com.tastopia.app://"
+                       mobileURL
                     },
-                    PostLogoutRedirectUris ={reactUrl},
-                    AllowedCorsOrigins = { reactUrl, "https://www.getpostman.com" },
+                    PostLogoutRedirectUris ={mobileURL},
+                    AllowedCorsOrigins = { mobileURL, "https://www.getpostman.com" },
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
@@ -66,11 +67,11 @@ public static class Config
                     AccessTokenLifetime = 2592000,
                     AllowOfflineAccess = true,
                     RedirectUris = {
-                       $"{reactUrl}/api/auth/callback/duende-identity-server6",
+                       $"{websiteURL}/api/auth/callback/duende-identity-server6",
                        "https://www.getpostman.com/oauth2/callback",
                     },
-                    PostLogoutRedirectUris ={reactUrl},
-                    AllowedCorsOrigins = { reactUrl, "https://www.getpostman.com" },
+                    PostLogoutRedirectUris ={websiteURL},
+                    AllowedCorsOrigins = { websiteURL, "https://www.getpostman.com" },
                     AllowedScopes = {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,

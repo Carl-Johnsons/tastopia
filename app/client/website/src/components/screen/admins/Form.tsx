@@ -3,6 +3,7 @@
 import React, {
   FC,
   forwardRef,
+  memo,
   useCallback,
   useEffect,
   useImperativeHandle,
@@ -29,14 +30,12 @@ import {
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
 import { Gender } from "@/constants/gender";
-import { ItemStatusText } from "../report/common/StatusText";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "@/components/shared/icons";
 import { format, isValid, parse } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Image from "@/components/shared/common/Image";
-import { BinaryStatus } from "@/constants/status";
 import { ImageListType } from "react-images-uploading";
 import { useSelectAdmin } from "@/slices/admin.slice";
 import { Calendar } from "@/components/shared/common/Calendar";
@@ -48,6 +47,7 @@ type FormInputProps = {
   label: string;
   placeholder?: string;
   isLoading: boolean;
+  required?: boolean;
 };
 
 type SelectItemData = {
@@ -66,34 +66,23 @@ type FormImageUploadProps = Omit<FormInputProps, "placeholder">;
 
 export type AdminFormRef = {
   submitForm: () => void;
-  isSubmitting: boolean;
-  isSubmitDisabled: boolean;
 };
 
 const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
-  const { formType: type, targetId, isSelf, isFormLoading } = useSelectAdmin();
-  const { form, isSubmitting, submitForm } = useAdminForm({
+  const { formType: type, targetId, isFormLoading } = useSelectAdmin();
+  const { form, submitForm } = useAdminForm({
     formType: type,
     targetId
   });
 
   const t = useTranslations("administerAdmins.form");
-  const isUpdate = useMemo(() => type === "update", [type]);
-
-  const { isDirty, isValid } = form.formState;
-  const isSubmitDisabled = useMemo(
-    () => isSubmitting || !isDirty || !isValid,
-    [isSubmitting, isDirty, isValid]
-  );
 
   useImperativeHandle(
     ref,
     () => ({
-      submitForm,
-      isSubmitting,
-      isSubmitDisabled
+      submitForm
     }),
-    [submitForm, isSubmitting, isSubmitDisabled]
+    [submitForm]
   );
 
   return (
@@ -108,6 +97,7 @@ const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
               label={t("name.label")}
               placeholder={t("name.placeholder")}
               isLoading={isFormLoading}
+              required
             />
           )}
         />
@@ -120,6 +110,7 @@ const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
               label={t("gmail.label")}
               placeholder={t("gmail.placeholder")}
               isLoading={isFormLoading}
+              required
             />
           )}
         />
@@ -132,6 +123,7 @@ const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
               placeholder={t("phone.placeholder")}
               field={field}
               isLoading={isFormLoading}
+              required
             />
           )}
         />
@@ -144,6 +136,7 @@ const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
               label={t("address.label")}
               placeholder={t("address.placeholder")}
               isLoading={isFormLoading}
+              required
             />
           )}
         />
@@ -179,32 +172,6 @@ const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
             </div>
           )}
         />
-        {isUpdate && !isSelf && (
-          <FormField
-            control={form.control}
-            name='status'
-            render={({ field }) => (
-              <div className='w-[240px]'>
-                <FormSelect
-                  field={field}
-                  label={t("status.label")}
-                  placeholder={t("status.placeholder")}
-                  isLoading={isFormLoading}
-                  items={[
-                    { value: BinaryStatus.Active, label: t("status.options.active") },
-                    {
-                      value: BinaryStatus.Inactive,
-                      label: t("status.options.inactive")
-                    }
-                  ]}
-                  SelectItemChild={({ value }) => (
-                    <ItemStatusText isActive={value === BinaryStatus.Active} />
-                  )}
-                />
-              </div>
-            )}
-          />
-        )}
         <FormField
           control={form.control}
           name='avatarFile'
@@ -213,6 +180,7 @@ const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
               field={field}
               label={t("image.label")}
               isLoading={isFormLoading}
+              required
             />
           )}
         />
@@ -225,7 +193,13 @@ AdminForm.displayName = "AdminForm";
 
 const Askterisk = () => <span className='text-red-600'>*</span>;
 
-const FormInput = ({ field, label, placeholder, isLoading }: FormInputProps) => {
+const FormInput = ({
+  field,
+  label,
+  placeholder,
+  isLoading,
+  required
+}: FormInputProps) => {
   const { value, ...fields } = field;
 
   return (
@@ -238,16 +212,14 @@ const FormInput = ({ field, label, placeholder, isLoading }: FormInputProps) => 
       ) : (
         <>
           <FormLabel className='paragraph-semibold text-black_white'>
-            {label} <Askterisk />
+            {label} {required && <Askterisk />}
           </FormLabel>
-          <FormControl>
-            <Input
-              value={value as string}
-              className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
-              placeholder={placeholder}
-              {...fields}
-            />
-          </FormControl>
+          <Input
+            value={value as string}
+            className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
+            placeholder={placeholder}
+            {...fields}
+          />
         </>
       )}
       <FormMessage className='text-red-600' />
@@ -261,17 +233,10 @@ const FormSelect = ({
   placeholder,
   items,
   SelectItemChild,
-  isLoading
+  isLoading,
+  required
 }: FormSelectProps) => {
   const { onChange, value } = field;
-
-  useEffect(() => {
-    if (field.name !== "gender") {
-      return;
-    }
-
-    console.log("gender value", value)
-  }, [value]);
 
   return (
     <FormItem className='relative'>
@@ -283,10 +248,13 @@ const FormSelect = ({
       ) : (
         <>
           <FormLabel className='paragraph-semibold text-black_white'>
-            {label} <span className='text-red-600'>*</span>
+            {label} {required && <Askterisk />}
           </FormLabel>
 
-          <Select value={value} onValueChange={onChange}>
+          <Select
+            value={value}
+            onValueChange={onChange}
+          >
             <FormControl>
               <SelectTrigger className='bg-white_black200 light-border text-black_white'>
                 <SelectValue placeholder={placeholder} />
@@ -323,7 +291,8 @@ const FormDatePicker = ({
   field,
   label,
   placeholder,
-  isLoading
+  isLoading,
+  required
 }: FormDatePickerProps) => {
   const { value, onChange } = field;
   const parsedDate = useMemo(
@@ -365,7 +334,7 @@ const FormDatePicker = ({
       if (!date) {
         setDate(undefined);
         setInputValue("");
-        onChange("");
+        onChange(undefined);
       } else {
         const formattedDate = format(date, "dd/MM/yyyy");
 
@@ -384,7 +353,7 @@ const FormDatePicker = ({
         <Skeleton className='h-4 w-20' />
       ) : (
         <FormLabel className='paragraph-semibold text-black_white'>
-          {label} <Askterisk />
+          {label} {required && <Askterisk />}
         </FormLabel>
       )}
 
@@ -448,50 +417,54 @@ const FormDatePicker = ({
   );
 };
 
-export const FormImageUpload = ({ label, field, isLoading }: FormImageUploadProps) => {
-  const { value, onChange } = field;
+export const FormImageUpload = memo(
+  ({ label, field, isLoading, required }: FormImageUploadProps) => {
+    const { value, onChange } = field;
 
-  return (
-    <FormItem className='relative flex w-full flex-col'>
-      {isLoading ? (
-        <>
-          <SkeletonControl className='h-4 w-20' />
-          <div className='flex-center'>
-            <SkeletonControl className='size-[200px] rounded-full' />
-          </div>
-        </>
-      ) : (
-        <>
-          <FormLabel className='paragraph-semibold text-black_white'>
-            {label} <Askterisk />
-          </FormLabel>
-          <FormControl className='mt-3.5'>
-            <ImageUploading
-              multiple={false}
-              value={value as ImageListType}
-              onChange={onChange}
-              maxFileSize={15242880}
-              acceptType={["jpg", "jpeg", "png", "webp"]}
-              ImageComponent={({ src, alt }) => (
-                <Image
-                  src={src}
-                  alt={alt}
-                  className='h-[200px] rounded-full'
-                  width={200}
-                  height={200}
-                  wrapperClassName='flex-center'
-                  skeletonClassName='rounded-full inset-auto'
-                />
-              )}
-            />
-          </FormControl>
-        </>
-      )}
+    return (
+      <FormItem className='relative flex w-full flex-col'>
+        {isLoading ? (
+          <>
+            <SkeletonControl className='h-4 w-20' />
+            <div className='flex-center'>
+              <SkeletonControl className='size-[200px] rounded-full' />
+            </div>
+          </>
+        ) : (
+          <>
+            <FormLabel className='paragraph-semibold text-black_white'>
+              {label} {required && <Askterisk />}
+            </FormLabel>
+            <FormControl className='mt-3.5'>
+              <ImageUploading
+                multiple={false}
+                value={value as ImageListType}
+                onChange={onChange}
+                maxFileSize={15242880}
+                acceptType={["jpg", "jpeg", "png", "webp"]}
+                ImageComponent={({ src, alt }) => (
+                  <Image
+                    src={src}
+                    alt={alt}
+                    className='h-[200px] rounded-full'
+                    width={200}
+                    height={200}
+                    wrapperClassName='flex-center'
+                    skeletonClassName='rounded-full inset-auto'
+                  />
+                )}
+              />
+            </FormControl>
+          </>
+        )}
 
-      <FormMessage className='text-red-600' />
-    </FormItem>
-  );
-};
+        <FormMessage className='text-red-600' />
+      </FormItem>
+    );
+  }
+);
+
+FormImageUpload.displayName = "FormImageUpload";
 
 const SkeletonControl = ({ className }: { className?: string }) => {
   return <Skeleton className={`h-8 w-full ${className}`} />;

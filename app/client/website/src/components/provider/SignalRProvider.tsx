@@ -54,10 +54,10 @@ const SignalRHubProvider = ({ children }: Props) => {
 
     connectionRef.current
       .start()
-      .then(() => {
-        connectionRef.current && subscribeAllEvents(connectionRef.current);
+      .then(async () => {
+        if (!connectionRef.current) return;
+        subscribeAllEvents(connectionRef.current);
         setWaitingToReconnect(false);
-        console.log("signalR connected");
       })
       .catch(err => console.error(err));
   }, [subscribeAllEvents, user, accessToken, isConnected]);

@@ -11,7 +11,7 @@ import {
 } from "@/types/admin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { BaseSyntheticEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { BaseSyntheticEvent, useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useInvalidateAdmin } from "../query";
@@ -48,10 +48,10 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   }, [formType, tForm]);
 
   const currentUserId = useSelectUserId();
-  const { data: fetchedAdmin, isLoading } = useGetAdminById(
-    targetId ?? (currentUserId as string)
+  const { data: admin, isLoading } = useGetAdminById(
+    targetId ?? (currentUserId as string),
+    isSelf
   );
-  const [admin, setAdmin] = useState(fetchedAdmin);
 
   const defaultValues: Partial<CreateAdminFormFields> | undefined = useMemo(() => {
     if (formType === "create") {
@@ -63,7 +63,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       ? format(new Date(admin?.dob), "dd/MM/yyyy")
       : undefined;
 
-    const valuenew = {
+    const valueNew = {
       name: admin?.displayName,
       gmail: admin?.email,
       phone: admin?.phoneNumber,
@@ -74,12 +74,8 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       avatarFile: images
     };
 
-    console.debug("data passed to form", valuenew);
-
-    return valuenew;
+    return valueNew;
   }, [admin, formType]);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isUpdate = useMemo(() => formType === "update", [formType]);
   const form = useForm<CreateAdminFormFields | UpdateAdminFormFields>({
@@ -87,14 +83,23 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
     values: defaultValues as any
   });
 
+  const onSuccess = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: ["admins"] });
+
+    dispatch(closeForm());
+    invalidateCurrentAdminActivities();
+  }, [dispatch, invalidateCurrentAdminActivities, queryClient]);
+
   const onSubmit = useCallback(
     async (data: CreateAdminFormFields | UpdateAdminFormFields) => {
-      setIsSubmitting(true);
-
       try {
+        dispatch(saveAdminData({ isFormSubmiting: true }));
         const formData = new FormData();
 
         Object.entries(data).forEach(([key, value]) => {
+          const isValueExists = !!value;
+          if (!isValueExists) return;
+
           if (isUpdate) {
             const isValueModified = !!(form.formState.dirtyFields as any)[key];
             if (!isValueModified) return;
@@ -105,7 +110,7 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
           } else if (key === "dob") {
             const parsedDate = parse(value as string, "dd/MM/yyyy", new Date());
             formData.append(key, parsedDate.toISOString());
-          } else if (value !== undefined) {
+          } else {
             formData.append(key, value as string);
           }
         });
@@ -114,16 +119,16 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
         console.debug("submitForm for", formType, "with values", formData);
 
         if (formType === "create") {
-          withBareErrorHandler(() => createAdmin(formData), {
+          await withBareErrorHandler(() => createAdmin(formData), {
             onSuccess: async () => {
               toast.success(tNotification("create.success"));
-              await queryClient.invalidateQueries({ queryKey: ["admins"] });
+              await onSuccess();
             }
           });
         } else {
           formData.append("accountId", targetId ?? "");
 
-          withBareErrorHandler(() => updateAdmin(formData), {
+          await withBareErrorHandler(() => updateAdmin(formData, isSelf), {
             onSuccess: async () => {
               toast.success(tNotification("update.success"));
 
@@ -132,31 +137,28 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
               }
 
               await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
-              await queryClient.invalidateQueries({ queryKey: ["admins"] });
+              await onSuccess();
             }
           });
         }
-
-        dispatch(closeForm());
-        invalidateCurrentAdminActivities();
       } catch (error) {
         console.log(error);
         toast.error(tNotification("error"));
       } finally {
-        setIsSubmitting(false);
+        dispatch(saveAdminData({ isFormSubmiting: false }));
       }
     },
     [
+      onSuccess,
       withBareErrorHandler,
       form.formState.dirtyFields,
       isUpdate,
       formType,
       tNotification,
-      invalidateCurrentAdminActivities,
       targetId,
       queryClient,
-      dispatch,
-      isSelf
+      isSelf,
+      dispatch
     ]
   );
 
@@ -168,18 +170,12 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
   );
 
   useEffect(() => {
-    if (isLoading && !fetchedAdmin) {
+    if (isLoading && !admin) {
       dispatch(saveAdminData({ isFormLoading: true }));
     } else {
       dispatch(saveAdminData({ isFormLoading: false }));
     }
-  }, [isLoading, fetchedAdmin, dispatch]);
+  }, [isLoading, admin, dispatch]);
 
-  useEffect(() => {
-    if (fetchedAdmin) {
-      setAdmin(fetchedAdmin);
-    }
-  }, [fetchedAdmin]);
-
-  return { submitForm, form, isSubmitting };
+  return { submitForm, form };
 };
