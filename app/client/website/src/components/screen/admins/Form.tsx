@@ -150,6 +150,7 @@ const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
                 label={t("gender.label")}
                 placeholder={t("gender.placeholder")}
                 isLoading={isFormLoading}
+                required
                 items={[
                   { value: Gender.Male, label: t("gender.options.male") },
                   { value: Gender.Female, label: t("gender.options.female") }
@@ -168,6 +169,7 @@ const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
                 label={t("dateOfBirth.label")}
                 placeholder={t("dateOfBirth.placeholder")}
                 isLoading={isFormLoading}
+                required
               />
             </div>
           )}
