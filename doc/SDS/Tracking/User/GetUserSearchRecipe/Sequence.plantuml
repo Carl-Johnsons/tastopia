@@ -1,0 +1,32 @@
+@startuml Sequence
+title "Get user search recipe diagram"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<coordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n TrackingService" as TrackingService
+database MongoDB
+
+User -> MobileUI++: 1. Touch on search bar \n in search recipe screen
+
+MobileUI -> ApiGateway++: 2. Get search keyword
+
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> TrackingService++: 4. Forward request
+
+TrackingService -> MongoDB++: 5. Query search keyword data
+TrackingService <-- MongoDB--: 6. Return response
+ApiGateway <-- TrackingService--: 7. Return keyword list
+MobileUI <-- ApiGateway--: 8. Forward response
+User <-- MobileUI--: 9. Display keyword list
+
+@enduml

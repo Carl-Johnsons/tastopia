@@ -1,0 +1,48 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Tracking/TrackingDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class TrackingController {
+    +GetUserSearchUser(): async Task<IActionResult>
+}
+
+class GetUserSearchUserQuery {
+    +AccountId: Guid
+}
+
+class GetUserSearchUserQueryHandler {
+    -_context: IApplicationDbContext
+    +GetUserSearchUserQueryHandler(context: IApplicationDbContext)
+    +Handle(request: GetUserSearchUserQuery, cancellationToken: CancellationToken): async Task<Result<List<string>>>
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+TrackingController --|> BaseApiController
+TrackingController "1"--"1" GetUserSearchUserQuery
+
+GetUserSearchUserQuery ..|> "IRequest<TResponse>"
+
+GetUserSearchUserQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetUserSearchUserQueryHandler "1"--"1" GetUserSearchUserQuery
+GetUserSearchUserQueryHandler "1" o-- "1" IApplicationDbContext
+
+GetUserSearchUserQueryHandler "1"--"1..*" Result
+GetUserSearchUserQueryHandler "1"--"1..*" UserSearchUser
+' ====================STYLE====================
+
+@enduml

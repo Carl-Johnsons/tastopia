@@ -1,0 +1,245 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/Tracking/TrackingDbContext.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +GetCurrentAdminActivityLog(dto: PaginatedDTO, lang: string): async Task<IActionResult>
+    +GetAdminActivityLog(dto: PaginatedDTO, accountId: Guid, lang: string): async Task<IActionResult>
+}
+
+class GetAdminActivityLogQuery {
+    +AccountId: Guid
+    +Lang: string
+    +DTO: PaginatedDTO
+}
+
+class GetAdminActivityLogQueryHandler {
+    -_context: IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient
+    -_grpcRecipeClient: GrpcRecipeClient
+    -_mapper: IMapper
+    -_paginateDataUtility: IPaginateDataUtility<AdminActivityLogResponse, NumberedPaginatedMetadata>
+    +GetAdminActivityLogQueryHandler(context: IApplicationDbContext, paginateDataUtility: IPaginateDataUtility<AdminActivityLogResponse, NumberedPaginatedMetadata>, mapper: IMapper, grpcRecipeClient: GrpcRecipeClient, grpcUserClient: GrpcUserClient)
+    +Handle(request: GetAdminActivityLogQuery, cancellationToken: CancellationToken): async Task<Result<PaginatedAdminActivityLogListResponse>>
+}
+
+class RecipeAdminActivityLogResponse extends AdminActivityLogResponse {
+    +Recipe: RecipeLogResponse
+}
+
+class CommentAdminActivityLogResponse extends AdminActivityLogResponse {
+    +Recipe: RecipeLogResponse
+    +Comment: CommentLogResponse
+}
+
+class UserReportAdminActivityLogResponse extends AdminActivityLogResponse {
+    +User: UserLogResponse
+    +Reporter: UserLogResponse
+    +Report: ReportLogResponse
+}
+
+class CommentReportAdminActivityLogResponse extends AdminActivityLogResponse {
+    +Reporter: UserLogResponse
+    +Recipe: RecipeLogResponse
+    +Comment: CommentLogResponse
+    +Report: ReportLogResponse
+}
+
+class RecipeReportAdminActivityLogResponse extends AdminActivityLogResponse
+{
+    +Reporter: UserLogResponse
+    +Recipe: RecipeLogResponse
+    +Report: ReportLogResponse
+}
+
+class TagAdminActivityLogResponse extends AdminActivityLogResponse
+{
+    +Tag: TagLogResponse
+}
+
+class UserAdminActivityLogResponse extends AdminActivityLogResponse
+{
+    +User: UserLogResponse
+}
+
+class RecipeLogResponse
+{
+    +Id: Guid
+    +Title: string
+    +AuthorId: Guid
+    +AuthorUsername: string
+    +AuthorDisplayName: string
+    +ImageURL: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+    +VoteDiff: int
+}
+
+class CommentLogResponse
+{
+    +Id: Guid
+    +RecipeId: Guid
+    +AuthorAvatarURL: string
+    +AuthorId: Guid
+    +AuthorDisplayName: string
+    +AuthorUsername: string
+    +Content: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+    +IsActive: bool
+}
+
+class TagLogResponse
+{
+    +Id: Guid
+    +Value: string
+    +Code: string
+    +Category: string
+    +Status: string
+    +ImageUrl: string
+}
+
+class UserLogResponse
+{
+    +Id: Guid
+    +Username: string
+    +DisplayName: string
+    +AvatarURL: string
+}
+
+class ReportLogResponse
+{
+    +Id: Guid
+    +ReporterAccountId: Guid
+    +Reasons: List<string>
+    +AdditionalDetail: string
+    +Status: string
+    +CreatedAt: DateTime
+}
+
+class AdminActivityLogResponse {
+    +AccountId: Guid
+    +ActivityType: ActivityType
+    +AccountUsername: string
+    +EntityId: Guid
+    +EntityType: ActivityEntityType
+    +SecondaryEntityId: Guid
+    +SecondaryEntityType: ActivityEntityType
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+}
+
+class PaginatedDTO {
+    +Skip: int
+    +SortOrder: SortType
+    +SortBy: string
+    +Keyword: string
+    +Limit: int
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
+    +CurrentPage: int
+    +TotalRow: int
+}
+
+class PaginatedAdminActivityLogListResponse {}
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
+}
+
+' =========== Microservice class ==========='
+together {
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcGetUserReportRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+
+    class GrpcGetSimpleRecipeRequest #Green;line:white;text:white
+    class GrpcGetSimpleCommentRequest #Green;line:white;text:white
+    class GrpcGetCommentReportRequest #Green;line:white;text:white
+    class GrpcGetRecipeReportRequest #Green;line:white;text:white
+    class GrpcGetTagsRequest #Green;line:white;text:white
+    class GrpcRecipeClient #Green;line:white;text:white
+}
+' =========== Microservice class ===========
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IMapper" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" GetAdminActivityLogQuery
+AdminController "1"--"1" PaginatedDTO
+GetAdminActivityLogQuery ..|> "IRequest<TResponse>"
+GetAdminActivityLogQuery "1" o-- "1" PaginatedDTO
+
+PaginatedAdminActivityLogListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+PaginatedAdminActivityLogListResponse "1" o-- "1..*" AdminActivityLogResponse
+PaginatedAdminActivityLogListResponse "1" o-- "1" NumberedPaginatedMetadata
+
+RecipeAdminActivityLogResponse "1" o-- "1" RecipeLogResponse
+
+CommentAdminActivityLogResponse "1" o-- "1" RecipeLogResponse
+CommentAdminActivityLogResponse "1" o-- "1" CommentLogResponse
+
+UserReportAdminActivityLogResponse "1" o-- "2" UserLogResponse
+UserReportAdminActivityLogResponse "1" o-- "1" ReportLogResponse
+
+CommentReportAdminActivityLogResponse "1" o-- "1" UserLogResponse
+CommentReportAdminActivityLogResponse "1" o-- "1" RecipeLogResponse
+CommentReportAdminActivityLogResponse "1" o-- "1" CommentLogResponse
+CommentReportAdminActivityLogResponse "1" o-- "1" ReportLogResponse
+
+RecipeReportAdminActivityLogResponse "1" o-- "1" UserLogResponse
+RecipeReportAdminActivityLogResponse "1" o-- "1" RecipeLogResponse
+RecipeReportAdminActivityLogResponse "1" o-- "1" ReportLogResponse
+
+TagAdminActivityLogResponse "1" o-- "1" TagLogResponse
+
+UserAdminActivityLogResponse "1" o-- "1" UserLogResponse
+
+GetAdminActivityLogQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetAdminActivityLogQueryHandler "1" o-- "1" GetAdminActivityLogQuery
+GetAdminActivityLogQueryHandler "1" o-- "1" IApplicationDbContext
+GetAdminActivityLogQueryHandler "1" o-- "1" IPaginateDataUtility
+GetAdminActivityLogQueryHandler "1" o-- "1" PaginatedAdminActivityLogListResponse
+GetAdminActivityLogQueryHandler "1" o-- "1" IMapper
+GetAdminActivityLogQueryHandler "1" o-- "1" GrpcUserClient
+GetAdminActivityLogQueryHandler "1" o-- "1" GrpcRecipeClient
+
+GetAdminActivityLogQueryHandler "1" -- "1..*" Result
+GetAdminActivityLogQueryHandler "1" -- "1..*" AdminActivityLogResponse
+GetAdminActivityLogQueryHandler "1" -- "1" GrpcGetSimpleUsersRequest
+GetAdminActivityLogQueryHandler "1" -- "1" GrpcGetUserReportRequest
+GetAdminActivityLogQueryHandler "1" -- "1" GrpcGetSimpleRecipeRequest
+GetAdminActivityLogQueryHandler "1" -- "1" GrpcGetSimpleCommentRequest
+GetAdminActivityLogQueryHandler "1" -- "1" GrpcGetCommentReportRequest
+GetAdminActivityLogQueryHandler "1" -- "1" GrpcGetRecipeReportRequest
+GetAdminActivityLogQueryHandler "1" -- "1" GrpcGetTagsRequest
+
+GetAdminActivityLogQueryHandler "1" -- "1" RecipeAdminActivityLogResponse
+GetAdminActivityLogQueryHandler "1" -- "1" CommentAdminActivityLogResponse
+GetAdminActivityLogQueryHandler "1" -- "1" UserReportAdminActivityLogResponse
+GetAdminActivityLogQueryHandler "1" -- "1" CommentReportAdminActivityLogResponse
+GetAdminActivityLogQueryHandler "1" -- "1" RecipeReportAdminActivityLogResponse
+GetAdminActivityLogQueryHandler "1" -- "1" TagAdminActivityLogResponse
+GetAdminActivityLogQueryHandler "1" -- "1" UserAdminActivityLogResponse
+
+@enduml

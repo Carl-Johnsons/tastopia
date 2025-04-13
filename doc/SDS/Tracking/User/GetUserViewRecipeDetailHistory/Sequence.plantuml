@@ -11,7 +11,7 @@ title "Get user view recipe detail history"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n TrackingService" as TrackingService
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UserService" as UserService

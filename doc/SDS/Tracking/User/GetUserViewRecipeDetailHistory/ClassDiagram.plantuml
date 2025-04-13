@@ -1,0 +1,111 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Tracking/TrackingDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class TrackingController {
+    +GetUserViewRecipeDetailHistory(dto: GetUserViewRecipeDetailHistoryDTO): async Task<IActionResult>
+}
+
+class GetUserViewRecipeDetailQuery {
+    +Skip: int
+    +AccountId: Guid
+}
+
+class GetUserViewRecipeDetailQueryHandler {
+    -_context: IApplicationDbContext
+    -_paginateDataUtility: IPaginateDataUtility<UserViewRecipeDetail, AdvancePaginatedMetadata>
+    -_mapper: IMapper
+    -_grpcRecipeClient: GrpcRecipeClient
+    +GetUserViewRecipeDetailQueryHandler(grpcRecipeClient: GrpcRecipeClient, mapper: IMapper, context: IApplicationDbContext, paginateDataUtility: IPaginateDataUtility<UserViewRecipeDetail, AdvancePaginatedMetadata>)
+    +Handle(request: GetUserViewRecipeDetailQuery, cancellationToken: CancellationToken): async Task<Result<PaginatedUserViewRecipeDetailListResponse>> 
+}
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    +PaginatedData : IEnumerable<Type>
+    +Metadata: MetadataType
+}
+
+class PaginatedUserViewRecipeDetailListResponse {
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
+
+class SimpleRecipeResponse {
+    +Id: Guid
+    +AuthorId: Guid
+    +RecipeImgUrl: string
+    +Title: string
+    +Description: string
+    +AuthorDisplayName: string
+    +AuthorAvtUrl: string
+    +VoteDiff: int
+    +NumberOfComment: int
+    +Vote: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+}
+
+class GetUserViewRecipeDetailHistoryDTO {
+    +Skip: int
+}
+
+class UserViewRecipeDetailError {
+    {static} +NotFound: Error
+}
+
+together {
+    class GrpcGetSimpleRecipeRequest #Green;line:white;text:white
+    class GrpcRecipeClient #Green;line:white;text:white
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IMapper" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+TrackingController --|> BaseApiController
+TrackingController "1"--"1" GetUserViewRecipeDetailHistoryDTO
+TrackingController "1"--"1" GetUserViewRecipeDetailQuery
+
+PaginatedUserViewRecipeDetailListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+PaginatedUserViewRecipeDetailListResponse "1" *-- "1" SimpleRecipeResponse
+PaginatedUserViewRecipeDetailListResponse "1" o-- "1" AdvancePaginatedMetadata
+
+GetUserViewRecipeDetailQuery ..|> "IRequest<TResponse>"
+
+GetUserViewRecipeDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetUserViewRecipeDetailQueryHandler "1"--"1" GetUserViewRecipeDetailQuery
+GetUserViewRecipeDetailQueryHandler "1"--"1" PaginatedUserViewRecipeDetailListResponse
+GetUserViewRecipeDetailQueryHandler "1" o-- "1" IApplicationDbContext
+GetUserViewRecipeDetailQueryHandler "1" o-- "1" IPaginateDataUtility
+GetUserViewRecipeDetailQueryHandler "1" o-- "1" IMapper
+GetUserViewRecipeDetailQueryHandler "1" o-- "1" GrpcRecipeClient
+
+GetUserViewRecipeDetailQueryHandler "1"--"1..*" Result
+GetUserViewRecipeDetailQueryHandler "1"--"1..*" UserViewRecipeDetail
+GetUserViewRecipeDetailQueryHandler "1"--"1" SimpleRecipeResponse
+GetUserViewRecipeDetailQueryHandler "1"--"1" GrpcGetSimpleRecipeRequest
+GetUserViewRecipeDetailQueryHandler "1"--"1..*" UserViewRecipeDetailError
+Error "1" --"1..*" UserViewRecipeDetailError
+' ====================STYLE====================
+
+@enduml
