@@ -63,6 +63,8 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       ? format(new Date(admin?.dob), "dd/MM/yyyy")
       : undefined;
 
+    console.log("admin.dob", admin?.dob, "parsedDate", parsedDate);
+
     const valueNew = {
       name: admin?.displayName,
       gmail: admin?.email,
