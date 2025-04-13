@@ -4,24 +4,29 @@
 import { Clock } from "lucide-react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "@/i18n/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { IReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import { format } from "date-fns";
 import { ReportStatus, ReportType } from "@/constants/reports";
 import StatusText from "../common/StatusText";
 import {
+  MarkAllReportsAsCompletedButton as MarkAllRecipeReportsAsCompletedButton,
   MarkAsCompletedButton as MarkAsCompletedRecipeButton,
-  ReopenReportButton as ReopenReportRecipeButton
+  ReopenReportButton as ReopenReportRecipeButton,
+  ReopenAllReportsButton as ReopenAllRecipeReportsButton
 } from "../recipe/Button";
 import {
+  MarkAllAsCompletedButton as MarkAllCommentReportsAsCompletedButton,
   MarkAsCompletedButton as MarkAsCompletedCommentButton,
-  ReopenReportButton as ReopenReportCommentButton
+  ReopenReportButton as ReopenReportCommentButton,
+  ReopenAllReportsButton as ReopenAllCommentReportsButton
 } from "../comment/Button";
 
 type ReportListProps = {
-  reports: IReportRecipeResponse[];
+  reports: Array<IReportRecipeResponse>;
   reportType: ReportType;
   recipeId?: string;
+  targetId: string;
   className?: string;
 };
 
@@ -29,36 +34,106 @@ export default function ReportList({
   reportType,
   reports,
   recipeId,
+  targetId,
   className
 }: ReportListProps) {
+  const hasPending = useMemo(
+    () => reports.some(report => report.status === ReportStatus.Pending),
+    [reports]
+  );
+
+  const hasDone = useMemo(
+    () => reports.some(report => report.status === ReportStatus.Done),
+    [reports]
+  );
+
+  const hasDifferentStates = useMemo(() => hasPending && hasDone, [hasPending, hasDone]);
+
+  const MarkAllReportsAsCompletedButton = useMemo(() => {
+    switch (reportType) {
+      case ReportType.COMMENT:
+        return MarkAllCommentReportsAsCompletedButton;
+      case ReportType.RECIPE:
+        return MarkAllRecipeReportsAsCompletedButton;
+      default:
+        throw new Error("Unsupported report type");
+    }
+  }, [reportType]);
+
+  const ReopenAllReportsButton = useMemo(() => {
+    switch (reportType) {
+      case ReportType.COMMENT:
+        return ReopenAllCommentReportsButton;
+      case ReportType.RECIPE:
+        return ReopenAllRecipeReportsButton;
+      default:
+        throw new Error("Unsupported report type");
+    }
+  }, [reportType]);
+
   return (
-    <div
-      className={`flex gap-8 overflow-x-scroll xl:flex-col ${reportType === ReportType.COMMENT && "grid justify-items-center gap-4 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] overflow-x-auto"} ${className}`}
-    >
-      {reports.map(
-        ({
-          id,
-          additionalDetail,
-          reasons,
-          status,
-          reporterUsername,
-          createdAt,
-          reporterAvtUrl
-        }) => (
-          <ReportItem
-            key={id}
-            reportType={reportType}
-            reportId={id}
-            {...(reportType === ReportType.COMMENT && { recipeId })}
-            reportReason={additionalDetail}
-            status={status as ReportStatus}
-            reportCodes={reasons}
-            reporter={reporterUsername}
-            reporterAvatar={reporterAvtUrl}
-            createdAt={format(new Date(createdAt), "h:mm a - dd/MM/yyyy")}
+    <div className={`flex flex-col gap-8 overflow-x-hidden ${className}`}>
+      <div>
+        <p className='text-black_white base-medium mb-2 flex w-full flex-col gap-4'>
+          {"Report list"}
+        </p>
+        <div className='flex gap-2'>
+          <MarkAllReportsAsCompletedButton
+            title={"Resolve All"}
+            targetId={targetId}
+            recipeId={recipeId}
+            className='w-fit rounded-full'
+            disabled={!hasPending}
+            noTruncateText
+            noText={false}
           />
-        )
-      )}
+          <ReopenAllReportsButton
+            title={"Reopen All"}
+            targetId={targetId}
+            recipeId={recipeId}
+            className='w-fit rounded-full'
+            disabled={!hasDone}
+            noTruncateText
+            noText={false}
+          />
+        </div>
+      </div>
+
+      <div
+        className={`flex gap-8 overflow-x-scroll xl:flex-col ${reportType === ReportType.COMMENT && "grid justify-items-center gap-4 overflow-x-auto sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]"}`}
+      >
+        {reports.map(
+          ({
+            id,
+            additionalDetail,
+            reasons,
+            status,
+            reporterUsername,
+            createdAt,
+            reporterAvtUrl
+          }) => (
+            <ReportItem
+              key={id}
+              reportType={reportType}
+              recipeId={recipeId}
+              reportId={id}
+              {...(reportType === ReportType.COMMENT && { recipeId })}
+              reportReason={additionalDetail}
+              status={
+                hasDifferentStates
+                  ? (status as ReportStatus)
+                  : hasDone
+                    ? ReportStatus.Done
+                    : ReportStatus.Pending
+              }
+              reportCodes={reasons}
+              reporter={reporterUsername}
+              reporterAvatar={reporterAvtUrl}
+              createdAt={format(new Date(createdAt), "h:mm a - dd/MM/yyyy")}
+            />
+          )
+        )}
+      </div>
     </div>
   );
 }
@@ -66,7 +141,7 @@ export default function ReportList({
 type ReportItemProps = {
   reportType: ReportType;
   reportId: string;
-  recipeId?: string;
+  recipeId: string | undefined;
   reportReason?: string;
   status: ReportStatus;
   reportCodes: string[];
@@ -88,6 +163,10 @@ const ReportItem = ({
 }: ReportItemProps) => {
   const router = useRouter();
   const [isActive, setIsActive] = useState(status !== ReportStatus.Done);
+
+  useEffect(() => {
+    setIsActive(status !== ReportStatus.Done);
+  }, [status]);
 
   const MarkAsCompletedComponent = useMemo(() => {
     switch (reportType) {
@@ -124,6 +203,7 @@ const ReportItem = ({
           <MarkAsCompletedComponent
             title='Mark as completed'
             targetId={reportId}
+            recipeId={recipeId}
             {...(reportType === ReportType.COMMENT && { recipeId })}
             onSuccess={() => {
               setIsActive(false);
@@ -133,6 +213,7 @@ const ReportItem = ({
           <ReOpenReportComponent
             title='Reopen report'
             targetId={reportId}
+            recipeId={recipeId}
             onSuccess={() => {
               setIsActive(true);
             }}

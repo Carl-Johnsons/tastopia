@@ -2,6 +2,7 @@
 
 import {
   useDisableComment,
+  useMarkAllReport,
   useMarkReportAsCompleted,
   useReopenReport,
   useRestoreComment
@@ -68,6 +69,7 @@ export const ReopenReportButton = ({
   onSuccess,
   onFailure,
   className,
+  disabled,
   ...props
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useReopenReport();
@@ -93,13 +95,77 @@ export const ReopenReportButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <DataTableButton
       title={title}
       icon={<RotateCw className='text-white_black' />}
       isLoading={isPending}
+      disabled={isPending || disabled}
+      onClick={handleClick}
+      className={`bg-green-400 hover:bg-green-500 ${className}`}
+      {...props}
+    />
+  );
+};
+
+/**
+ * Reopen all reports for a comment.
+ */
+export const ReopenAllReportsButton = ({
+  title,
+  targetId,
+  recipeId,
+  onSuccess,
+  onFailure,
+  className,
+  disabled,
+  ...props
+}: DataTableButtonProps) => {
+  const { mutate, isPending } = useMarkAllReport();
+  const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+
+  const handleClick = useCallback(async () => {
+    mutate(
+      { commentId: targetId, recipeId: recipeId as string, isReopened: true },
+      {
+        onSuccess: async () => {
+          toast.success("All reports reopened successfully.");
+          await queryClient.invalidateQueries({ queryKey: ["commentReport", targetId] });
+          invalidateCurrentAdminActivities();
+          onSuccess && onSuccess();
+        },
+        onError: ({ message }) => {
+          toast.error(message);
+          onFailure && onFailure();
+        }
+      }
+    );
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    recipeId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
+
+  return (
+    <DataTableButton
+      title={title}
+      icon={<RotateCw className='text-white_black' />}
+      isLoading={isPending}
+      disabled={isPending || disabled}
       onClick={handleClick}
       className={`bg-green-400 hover:bg-green-500 ${className}`}
       {...props}
@@ -116,6 +182,7 @@ export const MarkAsCompletedButton = ({
   onSuccess,
   onFailure,
   className,
+  disabled,
   ...props
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useMarkReportAsCompleted();
@@ -138,13 +205,77 @@ export const MarkAsCompletedButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <DataTableButton
       title={title}
       icon={<Check className='text-white_black' />}
       isLoading={isPending}
+      disabled={isPending || disabled}
+      onClick={handleClick}
+      className={`bg-purple-400 hover:bg-purple-500 ${className}`}
+      {...props}
+    />
+  );
+};
+
+/**
+ * Mark all reports as completed.
+ */
+export const MarkAllAsCompletedButton = ({
+  title,
+  targetId,
+  recipeId,
+  onSuccess,
+  onFailure,
+  className,
+  disabled,
+  ...props
+}: DataTableButtonProps) => {
+  const { mutate, isPending } = useMarkAllReport();
+  const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+
+  const handleClick = useCallback(async () => {
+    mutate(
+      { commentId: targetId, recipeId: recipeId as string, isReopened: false },
+      {
+        onSuccess: async () => {
+          toast.success("All reports marked as completed successfully.");
+          await queryClient.invalidateQueries({ queryKey: ["commentReport", targetId] });
+          invalidateCurrentAdminActivities();
+          onSuccess && onSuccess();
+        },
+        onError: ({ message }) => {
+          toast.error(message);
+          onFailure && onFailure();
+        }
+      }
+    );
+  }, [
+    onSuccess,
+    onFailure,
+    targetId,
+    recipeId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
+
+  return (
+    <DataTableButton
+      title={title}
+      icon={<Check className='text-white_black' />}
+      isLoading={isPending}
+      disabled={isPending || disabled}
       onClick={handleClick}
       className={`bg-purple-400 hover:bg-purple-500 ${className}`}
       {...props}
@@ -183,7 +314,15 @@ export const DisableCommentButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    onSuccess,
+    onFailure,
+    recipeId,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <InteractiveButton
@@ -227,7 +366,15 @@ export const RestoreCommentButton = ({
         }
       }
     );
-  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    onSuccess,
+    onFailure,
+    recipeId,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <InteractiveButton
