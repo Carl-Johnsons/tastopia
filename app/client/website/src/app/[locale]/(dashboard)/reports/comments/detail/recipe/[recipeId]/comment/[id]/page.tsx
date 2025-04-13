@@ -45,7 +45,8 @@ export default function Page({ params }: CommentDetailParamProps) {
         />
         <ReportList
           reports={reports}
-          targetId={comment.id}
+          targetId={id}
+          commentId={id}
           recipeId={recipeId}
           reportType={ReportType.COMMENT}
           className='w-full'

@@ -26,6 +26,7 @@ type ReportListProps = {
   reports: Array<IReportRecipeResponse>;
   reportType: ReportType;
   recipeId?: string;
+  commentId?: string;
   targetId: string;
   className?: string;
 };
@@ -34,6 +35,7 @@ export default function ReportList({
   reportType,
   reports,
   recipeId,
+  commentId,
   targetId,
   className
 }: ReportListProps) {
@@ -82,6 +84,7 @@ export default function ReportList({
             title={"Resolve All"}
             targetId={targetId}
             recipeId={recipeId}
+            commentId={commentId}
             className='w-fit rounded-full'
             disabled={!hasPending}
             noTruncateText
@@ -91,6 +94,7 @@ export default function ReportList({
             title={"Reopen All"}
             targetId={targetId}
             recipeId={recipeId}
+            commentId={commentId}
             className='w-fit rounded-full'
             disabled={!hasDone}
             noTruncateText
@@ -100,7 +104,7 @@ export default function ReportList({
       </div>
 
       <div
-        className={`flex gap-8 overflow-x-scroll xl:flex-col ${reportType === ReportType.COMMENT && "grid justify-items-center gap-4 overflow-x-auto sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]"}`}
+        className={`flex gap-8 overflow-x-scroll xl:flex-col ${reportType === ReportType.COMMENT && "grid justify-items-center gap-4 overflow-x-auto lg:grid-cols-[repeat(auto-fill,minmax(330px,1fr))]"}`}
       >
         {reports.map(
           ({
@@ -117,7 +121,7 @@ export default function ReportList({
               reportType={reportType}
               recipeId={recipeId}
               reportId={id}
-              {...(reportType === ReportType.COMMENT && { recipeId })}
+              commentId={commentId}
               reportReason={additionalDetail}
               status={
                 hasDifferentStates
@@ -141,7 +145,8 @@ export default function ReportList({
 type ReportItemProps = {
   reportType: ReportType;
   reportId: string;
-  recipeId: string | undefined;
+  recipeId?: string;
+  commentId?: string;
   reportReason?: string;
   status: ReportStatus;
   reportCodes: string[];
@@ -154,6 +159,7 @@ const ReportItem = ({
   reportType,
   reportId,
   recipeId,
+  commentId,
   reportReason,
   status,
   reportCodes,
@@ -204,7 +210,7 @@ const ReportItem = ({
             title='Mark as completed'
             targetId={reportId}
             recipeId={recipeId}
-            {...(reportType === ReportType.COMMENT && { recipeId })}
+            commentId={commentId}
             onSuccess={() => {
               setIsActive(false);
             }}
@@ -214,6 +220,7 @@ const ReportItem = ({
             title='Reopen report'
             targetId={reportId}
             recipeId={recipeId}
+            commentId={commentId}
             onSuccess={() => {
               setIsActive(true);
             }}
