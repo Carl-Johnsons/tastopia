@@ -175,3 +175,21 @@ export async function getAccountStatistic(): Promise<Response<StatisticDateItem[
     return withErrorProcessor(error as AxiosError);
   }
 }
+
+export type MarkAllUserReportsParams = {
+  accountId: string;
+  isReopened: boolean;
+};
+
+export const markAllReports = async (
+  params: MarkAllUserReportsParams
+): Promise<Response<undefined>> => {
+  const url = "/api/admin/user/mark-all-user-report";
+
+  try {
+    const { data } = await protectedAxiosInstance.post(url, params);
+    return withSuccessfulResponse(data);
+  } catch (error) {
+    return withErrorProcessor(error as AxiosError);
+  }
+};

@@ -137,6 +137,15 @@
       "loadMore": "Load more"
     }
   },
+  "administerReportComments": {
+    "title": "Administer Reports",
+    "subtitle": "Comment",
+    "notifications": {
+      "restoreSuccess": "Restore comment successfully!",
+      "disableSuccess": "Disable comment successfully!",
+      "error": "Something went wrong!"
+    }
+  },
   "administerReportUsers": {
     "title": "Administer Reports",
     "subtitle": "User",
@@ -167,6 +176,8 @@
       "disableUserSuccess": "Disable user successfully!",
       "restoreReportSuccess": "Restore report successfully!",
       "completeReportSuccess": "Mark report as completed successfully!",
+      "restoreAllReportsSuccess": "Restore all reports successfully!",
+      "completeAllReportsSuccess": "Mark all reports as completed successfully!",
       "error": "Something went wrong!"
     }
   },
@@ -516,6 +527,17 @@
       "createdDate": "Created Date"
     },
     "search": "Search by username, command, entity..."
+  },
+  "report": {
+    "reportList": "Report list",
+    "resolveAll": "Mark all reports as completed",
+    "resolve": "Mark as completed",
+    "reopenAll": "Reopen all reports",
+    "reopen": "Reopen report",
+    "resolveAllSuccess": "Mark all reports as completed successfully",
+    "reopenAllSuccess": "Reopen all reports successfully",
+    "resolveSuccess": "Mark report as completed successfully",
+    "reopenSuccess": "Reopen report successfully"
   },
   "error": {
     "AccountError": {

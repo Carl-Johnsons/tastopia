@@ -23,14 +23,14 @@ export default async function ReportedDetail({ params }: ParamsProps) {
         <div className='container'>
           <ProfileHeader user={currentUser} />
 
-          <div className='mt-6 flex flex-col-reverse gap-6 lg:flex-row'>
+          <div className='mt-6 flex flex-col-reverse gap-6 xl:flex-row'>
             <div className='flex-1'>
               {currentUserActivities && (
                 <ActivityFeed activities={currentUserActivities.paginatedData} />
               )}
             </div>
 
-            <div className='flex flex-col space-y-6 lg:w-1/3'>
+            <div className='flex flex-col space-y-6 xl:w-1/3'>
               <ReportList reportedId={params.id} />
               <ProfileInfo user={currentUser} />
             </div>

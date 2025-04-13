@@ -2,7 +2,9 @@ import {
   getAdminUsers,
   getUserById,
   getUserDetailReports,
-  getUserReports
+  getUserReports,
+  markAllReports,
+  MarkAllUserReportsParams
 } from "@/actions/user.action";
 import {
   IPaginatedAdminGetUserListResponse,
@@ -10,7 +12,7 @@ import {
 } from "@/generated/interfaces/user.interface";
 import { useErrorHandler } from "@/hooks/error/useErrorHanler";
 import { IInfiniteAdminUserReportListResponse } from "@/types/user";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
 
 export const useGetAdminUsers = (
@@ -91,5 +93,13 @@ export const useGetUserDetailReports = (accountId: string, language?: string) =>
       }
       return pages.length;
     }
+  });
+};
+
+export const useMarkAllReports = () => {
+  const { withErrorProcessor } = useErrorHandler();
+
+  return useMutation<void, Error, MarkAllUserReportsParams>({
+    mutationFn: params => withErrorProcessor(() => markAllReports(params))
   });
 };

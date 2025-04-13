@@ -21,6 +21,7 @@ import {
   ReopenReportButton as ReopenReportCommentButton,
   ReopenAllReportsButton as ReopenAllCommentReportsButton
 } from "../comment/Button";
+import { useTranslations } from "next-intl";
 
 type ReportListProps = {
   reports: Array<IReportRecipeResponse>;
@@ -39,6 +40,8 @@ export default function ReportList({
   targetId,
   className
 }: ReportListProps) {
+  const t = useTranslations("report");
+
   const hasPending = useMemo(
     () => reports.some(report => report.status === ReportStatus.Pending),
     [reports]
@@ -77,28 +80,24 @@ export default function ReportList({
     <div className={`flex flex-col gap-8 overflow-x-hidden ${className}`}>
       <div>
         <p className='text-black_white base-medium mb-2 flex w-full flex-col gap-4'>
-          {"Report list"}
+          {t("reportList")}
         </p>
         <div className='flex gap-2'>
           <MarkAllReportsAsCompletedButton
-            title={"Resolve All"}
+            title={t("resolveAll")}
             targetId={targetId}
             recipeId={recipeId}
             commentId={commentId}
-            className='w-fit rounded-full'
+            className='w-fit'
             disabled={!hasPending}
-            noTruncateText
-            noText={false}
           />
           <ReopenAllReportsButton
-            title={"Reopen All"}
+            title={t("reopenAll")}
             targetId={targetId}
             recipeId={recipeId}
             commentId={commentId}
-            className='w-fit rounded-full'
+            className='w-fit'
             disabled={!hasDone}
-            noTruncateText
-            noText={false}
           />
         </div>
       </div>
@@ -168,10 +167,18 @@ const ReportItem = ({
   createdAt
 }: ReportItemProps) => {
   const router = useRouter();
+  const t = useTranslations("report");
+
   const [isActive, setIsActive] = useState(status !== ReportStatus.Done);
 
   useEffect(() => {
-    setIsActive(status !== ReportStatus.Done);
+    const newStatus = status !== ReportStatus.Done;
+
+    if (newStatus !== isActive) {
+      setIsActive(newStatus);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
   const MarkAsCompletedComponent = useMemo(() => {
@@ -207,7 +214,7 @@ const ReportItem = ({
         />
         {isActive ? (
           <MarkAsCompletedComponent
-            title='Mark as completed'
+            title={t("resolve")}
             targetId={reportId}
             recipeId={recipeId}
             commentId={commentId}
@@ -217,7 +224,7 @@ const ReportItem = ({
           />
         ) : (
           <ReOpenReportComponent
-            title='Reopen report'
+            title={t("reopen")}
             targetId={reportId}
             recipeId={recipeId}
             commentId={commentId}
