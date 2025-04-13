@@ -65,7 +65,9 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
         message: t("gender.errors.invalid")
       }),
     dob: z
-      .string()
+      .string({
+        required_error: t("dateOfBirth.errors.required")
+      })
       .regex(DATE_REGEX, {
         message: t("dateOfBirth.errors.invalid")
       })
@@ -95,8 +97,7 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
         {
           message: t("dateOfBirth.errors.max")
         }
-      )
-      .optional(),
+      ),
     address: z
       .string({
         required_error: t("address.errors.required")

@@ -102,7 +102,7 @@ export const InteractiveButton = ({
         >
           {RenderedContent}
         </TooltipTrigger>
-        <TooltipContent className='rounded-md bg-gray-900'>
+        <TooltipContent className='rounded-md bg-gray-900 dark:border dark:border-gray-200'>
           <div className='text-sm text-white'>
             <span>{title}</span>
           </div>

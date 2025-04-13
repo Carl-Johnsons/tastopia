@@ -135,18 +135,20 @@ const ReportItem = ({
   const t = useTranslations("administerReportUsers.notifications");
 
   const handleMarkReport = async () => {
-    const result = await markUserReport(reportId);
-    if (result.userReport.reportedId) {
-      const newStatus = result.userReport.status;
-      setIsActive(newStatus);
+    const { ok, data: result } = await markUserReport(reportId);
 
-      if (result.isReopened) {
-        toast.success(t("restoreReportSuccess"));
-      } else {
-        toast.success(t("completeReportSuccess"));
-      }
-    } else {
+    if (!ok || !result?.userReport.reportedId) {
       toast.error(t("error"));
+      return;
+    }
+
+    const newStatus = result.userReport.status;
+    setIsActive(newStatus);
+
+    if (result.isReopened) {
+      toast.success(t("restoreReportSuccess"));
+    } else {
+      toast.success(t("completeReportSuccess"));
     }
   };
 
