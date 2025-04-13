@@ -188,7 +188,7 @@ export const RestoreRecipeButton = ({
   const handleClick = useCallback(async () => {
     mutate(targetId, {
       onSuccess: async () => {
-        toast.success(t("restoreSuccess"));
+        toast.success(t("restoreRecipeSuccess"));
         await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
         invalidateCurrentAdminActivities();
         onSuccess && onSuccess();
