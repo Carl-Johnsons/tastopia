@@ -13,9 +13,6 @@ boundary MobileUI
 participant "<<cordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UserService" as UserService
-participant "<<cordinator>>\n Rabbitmq" as Rabbitmq
-participant "<<service>>\n RecipeWorker" as RecipeWorker
-participant "<<service>>\n GerminiAPI" as GerminiAPI
 database MongoDB
 database Postgresql
 
@@ -37,29 +34,10 @@ RecipeService <-- UserService--: 10. Return user's information <<gRPC>>
 
 RecipeService -> Rabbitmq++: 11. Publish "NotifyUserEvent" message <<Async>>
 ref over Rabbitmq: 12. NotifyUserConsumer
-RecipeService -> Rabbitmq: 13. Publish "UserCommentRecipeEvent" \n message <<Async>>
-ApiGateway <-- RecipeService--: 14. Return recipe comment
-destroy RecipeService
-MobileUI <-- ApiGateway--: 15. Forward response
-User <-- MobileUI--: 16. Display recipe comment
-
-Rabbitmq -> RecipeWorker: 17. Deliver "UserCommentRecipeEvent"\n message
+ApiGateway <-- RecipeService--: 13. Return recipe comment
 deactivate Rabbitmq
-activate RecipeWorker
+destroy Rabbitmq
+MobileUI <-- ApiGateway--: 14. Forward response
+User <-- MobileUI--: 15. Display recipe comment
 
-RecipeWorker -> GerminiAPI++: 18. Consume event and \n call api to check abuse
-RecipeWorker <-- GerminiAPI--: 19. Return response
-
-opt Comment has abusive word
-    RecipeWorker -> Rabbitmq: 20A. Publish "AbusiveCommentEvent" \n message <<Async>>
-    deactivate RecipeWorker
-    activate Rabbitmq
-    Rabbitmq -> RecipeService: 20A.1. Deliver "AbusiveCommentEvent"\n message
-    deactivate Rabbitmq
-    activate RecipeService
-    RecipeService -> MongoDB++: 20A.2. Consume message and update data
-    RecipeService <-- MongoDB--: 20A.3. Return response.
-    destroy RecipeService
-    deactivate RecipeService
-end opt
 @enduml
