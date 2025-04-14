@@ -12,12 +12,17 @@ import { Roles } from "@/constants/role";
 
 type Props = {
   admin: IAdminDetailResponse;
+  isViewingAdmin?: boolean;
 };
 
-export default function ProfileHeader({ admin }: Props) {
+export default function ProfileHeader({ admin, isViewingAdmin }: Props) {
   const [isActive, setIsActive] = useState(admin.isActive);
   const { avatarUrl, username, accountId } = admin;
-  const role = useSelectRole();
+  const currentUserRole = useSelectRole();
+  const role = useMemo(
+    () => (isViewingAdmin ? Roles.ADMIN : currentUserRole),
+    [isViewingAdmin, currentUserRole]
+  );
 
   const tRole = useTranslations("administerAdmins.detail.header.roles");
   const tTooltip = useTranslations("administerAdmins.tooltip");
@@ -36,9 +41,7 @@ export default function ProfileHeader({ admin }: Props) {
           />
 
           <div>
-            <h1 className='h3-semibold text-black_white text-left'>
-              {username}
-            </h1>
+            <h1 className='h3-semibold text-black_white text-left'>{username}</h1>
             <div className='flex flex-col items-center gap-x-2 lg:flex-row'>
               <p className='text-center text-gray-600 dark:text-gray-500'>
                 {tRole(role as Roles)}
