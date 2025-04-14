@@ -115,7 +115,7 @@ export default function Table() {
         />
 
         <div className='flex gap-2 self-start'>
-          <span className='text-black_white'>{t("title")}</span>
+          <span className='text-gray-500'>{t("title")}</span>
           <ChevronRight className='text-black_white' />
           <span className='text-black_white'>{t("subtitle")}</span>
         </div>
