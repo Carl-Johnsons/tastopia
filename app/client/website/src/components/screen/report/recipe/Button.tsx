@@ -387,7 +387,7 @@ export const SmallDisableCommentButton = ({
   const { mutate, isPending } = useDisableComment();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
-  const t = useTranslations("administerReportComments");
+  const t = useTranslations("administerReportComments.notifications");
 
   const handleClick = useCallback(async () => {
     mutate(
@@ -443,7 +443,7 @@ export const SmallRestoreCommentButton = ({
   const { mutate, isPending } = useRestoreComment();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
-  const t = useTranslations("administerReportComments");
+  const t = useTranslations("administerReportComments.notifications");
 
   const handleClick = useCallback(async () => {
     mutate(
