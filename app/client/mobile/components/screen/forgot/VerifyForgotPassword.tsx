@@ -72,6 +72,7 @@ export const VerifyForgotPasswordForm = (props: VerifyFormProps) => {
           <Input
             key={index}
             ref={ref}
+            keyboardType='numeric'
             autoCapitalize='characters'
             className={`aspect-square w-[53px] shrink grow border-gray-300 text-center text-primary focus:border-primary`}
             value={formValues[index]}
