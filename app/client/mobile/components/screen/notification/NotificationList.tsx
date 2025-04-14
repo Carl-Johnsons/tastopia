@@ -95,14 +95,19 @@ export const Notification = ({
         { notificationId: id },
         {
           onSuccess: async () => {
-            await queryClient.invalidateQueries({ queryKey: "getNotification" });
+            await queryClient.invalidateQueries({ queryKey: ["getNotification"] });
           },
           onError: error => handleError(error)
         }
       );
     }
 
-    if (!redirectUri || redirectUri === NOTIFICATION_ROUTE) return;
+    if (
+      !redirectUri ||
+      redirectUri === NOTIFICATION_ROUTE ||
+      type === NotificationCategories.SYSTEM
+    )
+      return;
     router.push(redirectUri as any);
   }, [jsonData, currentRouteName, id, isViewed]);
 
@@ -257,7 +262,6 @@ const Tab = ({ type }: TabProps) => {
   const { data, isLoading, isStale, refetch, fetchNextPage } = useGetNotification(type);
   useHydrateData({ source: data, setter: setNotifications });
 
-  const dispatch = useAppDispatch();
   const fetchData = useCallback(() => {
     if (isStale) {
       refetch();
@@ -265,14 +269,6 @@ const Tab = ({ type }: TabProps) => {
   }, [isStale]);
 
   useFocusEffect(fetchData);
-
-  useEffect(() => {
-    dispatch(
-      saveNotificationData({
-        unreadNotifications: data?.pages[0].metadata?.unreadNotifications ?? 0
-      })
-    );
-  }, [data]);
 
   return (
     <TabView.Item className='w-full'>
