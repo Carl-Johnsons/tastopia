@@ -46,7 +46,7 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
               <Avatar
                 src={user.avatarUrl}
                 alt={user.accountUsername}
-                className='object-cover size-full'
+                className='size-full object-cover'
               />
             ) : (
               <div className='flex size-full items-center justify-center bg-orange-200 text-3xl font-bold text-orange-600'>
