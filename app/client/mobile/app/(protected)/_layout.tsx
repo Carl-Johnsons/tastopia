@@ -10,11 +10,12 @@ import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet, Keyboard, ActivityIndicator, Platform } from "react-native";
 import useColorizer from "@/hooks/useColorizer";
+import { NotificationCategories } from "@/generated/enums/notification.enum";
 
 const isAndroid = Platform.OS === "android";
 
 const ProtectedLayout = () => {
-  const { data } = useGetNotification();
+  const { data } = useGetNotification(NotificationCategories.ALL);
 
   const queryClient = useQueryClient();
   const { t } = useTranslation("menu");

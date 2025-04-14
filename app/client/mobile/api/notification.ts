@@ -3,18 +3,18 @@ import { SETTING_VALUE } from "@/constants/settings";
 import { IPaginatedNotificationListResponse } from "@/generated/interfaces/notification.interface";
 import { selectAccessToken } from "@/slices/auth.slice";
 import { selectSetting } from "@/slices/setting.slice";
-import { AxiosError } from "axios";
 import { useInfiniteQuery, useMutation } from "react-query";
 import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { NotificationCategories } from "@/generated/enums/notification.enum";
 
-export const useGetNotification = () => {
+export const useGetNotification = (type: NotificationCategories) => {
   const accessToken = selectAccessToken();
   const { LANGUAGE } = selectSetting();
   const { handleError } = useErrorHandler();
 
   return useInfiniteQuery<IPaginatedNotificationListResponse, Error>({
-    queryKey: "getNotification",
+    queryKey: ["getNotification", type],
     enabled: !!accessToken,
     queryFn: async ({ pageParam = 0 }) => {
       const { data } =
@@ -23,7 +23,8 @@ export const useGetNotification = () => {
           {
             params: {
               lang: LANGUAGE === SETTING_VALUE.LANGUAGE.ENGLISH ? "en" : "vi",
-              skip: pageParam
+              skip: pageParam,
+              type
             }
           }
         );

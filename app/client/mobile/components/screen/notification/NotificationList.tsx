@@ -12,69 +12,49 @@ import { enUS, vi } from "date-fns/locale";
 import { formatDistanceToNow } from "date-fns";
 import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
 import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
-import { router, usePathname } from "expo-router";
+import { router, useFocusEffect, usePathname } from "expo-router";
 import { saveNotificationData } from "@/slices/notification.slice";
 import { useAppDispatch } from "@/store/hooks";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
 import Empty from "../community/Empty";
 import i18n from "@/i18n/i18next";
 import useHydrateData from "@/hooks/useHydrateData";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
+import CustomTab, { ItemProps } from "@/components/common/Tab";
+import { TabView } from "@rneui/themed";
+import Header from "./Header";
+import { NotificationCategories } from "@/generated/enums/notification.enum";
 
 export default function NotificationList() {
-  const { data, isLoading, refetch, fetchNextPage } = useGetNotification();
-  const { primary } = colors;
-  const dispatch = useAppDispatch();
-  const [notifications, setNotifications] = useState<INotificationsResponse[]>();
-  useHydrateData({ source: data, setter: setNotifications });
+  const { t } = useTranslation("notification");
 
-  useEffect(() => {
-    dispatch(
-      saveNotificationData({
-        unreadNotifications: data?.pages[0].metadata?.unreadNotifications ?? 0
-      })
-    );
-  }, [data]);
+  const tabItems: ItemProps[] = useMemo(
+    () => [{ title: t("community") }, { title: t("system") }],
+    [t]
+  );
 
-  if (isLoading || !notifications) {
-    return (
-      <View className='flex-center h-[90%] w-full'>
-        <ActivityIndicator
-          size='large'
-          color={primary}
-        />
-      </View>
-    );
-  }
+  const tabViews: ReactElement[] = useMemo(
+    () => [
+      <Tab
+        key='CommunityTab'
+        type={NotificationCategories.USER}
+      />,
+      <Tab
+        key='SystemTab'
+        type={NotificationCategories.SYSTEM}
+      />
+    ],
+    []
+  );
 
   return (
-    <View className='pb-[60px] pt-2'>
-      <FlatList
-        className='h-full'
-        contentContainerStyle={{ paddingBottom: 25 }}
-        data={notifications}
-        onEndReached={() => fetchNextPage()}
-        onEndReachedThreshold={0.1}
-        ListEmptyComponent={() => (
-          <View className='h-[100vh]'>
-            <Empty type='emptyNotification' />
-          </View>
-        )}
-        renderItem={({ item, index }) => (
-          <Notification
-            item={item}
-            index={index}
-          />
-        )}
-        refreshControl={
-          <RefreshControl
-            refreshing={isLoading}
-            tintColor={primary}
-            onRefresh={refetch}
-          />
-        }
+    <View className='h-[92vh]'>
+      <Header />
+      <CustomTab
+        tabItems={tabItems}
+        tabViews={tabViews}
       />
     </View>
   );
@@ -85,8 +65,7 @@ type INotificationJsonData = {
 };
 
 export const Notification = ({
-  item,
-  index
+  item
 }: {
   item: INotificationsResponse;
   index: number;
@@ -222,5 +201,67 @@ export const Notification = ({
         </Text>
       </View>
     </Pressable>
+  );
+};
+
+type TabProps = {
+  type: NotificationCategories;
+};
+
+const Tab = ({ type }: TabProps) => {
+  const { primary } = colors;
+
+  const [notifications, setNotifications] = useState<INotificationsResponse[]>();
+  const { data, isLoading, refetch, fetchNextPage } = useGetNotification(type);
+  useHydrateData({ source: data, setter: setNotifications });
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    console.log("data changed");
+  }, [data]);
+
+  useFocusEffect(() => {
+    refetch();
+  });
+
+  useEffect(() => {
+    dispatch(
+      saveNotificationData({
+        unreadNotifications: data?.pages[0].metadata?.unreadNotifications ?? 0
+      })
+    );
+  }, [data]);
+
+  return (
+    <TabView.Item className='w-full'>
+      <View className='pb-[60px] pt-2'>
+        <FlatList
+          className='h-full'
+          contentContainerStyle={{ paddingBottom: 25 }}
+          data={notifications}
+          onEndReached={() => fetchNextPage()}
+          onEndReachedThreshold={0.1}
+          ListEmptyComponent={() => (
+            <View className='h-[100vh]'>
+              <Empty type='emptyNotification' />
+            </View>
+          )}
+          renderItem={({ item, index }) => (
+            <Notification
+              item={item}
+              index={index}
+            />
+          )}
+          refreshControl={
+            <RefreshControl
+              refreshing={isLoading}
+              tintColor={primary}
+              onRefresh={refetch}
+            />
+          }
+        />
+      </View>
+    </TabView.Item>
   );
 };

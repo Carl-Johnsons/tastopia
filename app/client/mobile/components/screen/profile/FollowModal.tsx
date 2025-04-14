@@ -14,13 +14,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { TabView } from "@rneui/themed";
 import { useFocusEffect } from "expo-router";
-import {
-  ReactElement,
-  forwardRef,
-  useCallback,
-  useMemo,
-  useState
-} from "react";
+import { ReactElement, forwardRef, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
@@ -93,21 +87,15 @@ const Header = (className: { className?: string }) => {
 
 const Body = ({ className }: { className?: string }) => {
   const { t } = useTranslation("follow");
-  const styles = StyleSheet.create({
-    title: {}
-  });
 
   const tabItems: ItemProps[] = useMemo(
-    () => [
-      { title: t("follower.title"), titleStyle: styles.title },
-      { title: t("following.title"), titleStyle: styles.title }
-    ],
-    [styles.title]
+    () => [{ title: t("follower.title") }, { title: t("following.title") }],
+    [t]
   );
 
   const tabViews: ReactElement[] = useMemo(
     () => [<FollowersTab key='FollowersTab' />, <FollowingTab key='FollowingTab' />],
-    [styles.title]
+    []
   );
 
   return (
@@ -218,7 +206,7 @@ const FollowingTab = () => {
   const [keyword, setKeyword] = useState<string>("");
   const [followings, setFollowings] = useState<SearchUserResultType[]>();
 
-  const {t} = useTranslation("follow", { keyPrefix: "following" });
+  const { t } = useTranslation("follow", { keyPrefix: "following" });
   const debouncedKeyword = useDebounce(keyword, 200);
   const { data, isLoading, refetch, isStale, fetchNextPage } =
     useGetUserFollowings(debouncedKeyword);
