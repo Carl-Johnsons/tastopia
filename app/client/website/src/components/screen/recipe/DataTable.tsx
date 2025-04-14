@@ -108,6 +108,7 @@ export default function Table() {
         <SearchBar
           onChange={handleSearch}
           isLoading={isLoading || isFetching}
+          placeholder={t("search")}
         />
         <p className='text-black_white base-medium flex w-full flex-col gap-4'>
           {t("title")}
