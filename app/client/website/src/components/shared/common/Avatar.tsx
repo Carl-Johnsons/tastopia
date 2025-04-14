@@ -20,7 +20,7 @@ export default function Avatar({ src, alt, className, ...props }: Props) {
         className='bg-orange-100'
         src={src}
       />
-      <AvatarFallback className='bg-orange-100'>{alt.at(0)}</AvatarFallback>
+      <AvatarFallback className='bg-orange-100'>{alt ? alt.at(0) : ""}</AvatarFallback>
     </BaseAvatar>
   );
 }

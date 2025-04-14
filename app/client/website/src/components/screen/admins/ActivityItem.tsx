@@ -23,7 +23,7 @@ export const ActivityItem = ({ activity, self }: ActivityItemProps) => {
     isFetching,
     isLoading
   } = useGetAdminById(activity.accountId, self);
-  const { createdAt, activityType, entityType, accountUsername } = activity;
+  const { createdAt, activityType, entityType } = activity;
   const t = useTranslations("administerAdmins.detail.activity");
 
   const locale = useLocale();
@@ -45,17 +45,17 @@ export const ActivityItem = ({ activity, self }: ActivityItemProps) => {
   );
 
   if (isFetching || isLoading || !admin) return <ActivityItemSkeleton />;
-  const { avatarUrl } = admin;
+  const { avatarUrl, username } = admin;
 
   return (
     <div className='flex gap-4'>
       <Avatar
         src={avatarUrl}
-        alt={accountUsername as string}
+        alt={username as string}
       />
       <div className='flex w-full flex-col gap-2'>
         <div className='flex flex-wrap items-center gap-4'>
-          <h3 className='base-semibold text-black_white'>{accountUsername}</h3>
+          <h3 className='base-semibold text-black_white'>{username}</h3>
           <div className='flex items-center gap-2 text-sm text-gray-500'>
             <Clock className='size-4' />
             <span>{`${timeAgo} ${t("ago")}`}</span>
