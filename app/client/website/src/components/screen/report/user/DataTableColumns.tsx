@@ -65,44 +65,21 @@ type ActionButtonsProps = {
   reportId: string;
   reportedId: string;
   status: ReportStatus;
-  reportedIsActive: boolean;
   onStatusUpdate: (reportId: string, status: ReportStatus) => void;
 };
 export const ActionButtons = ({
   reportId,
   reportedId,
   status,
-  reportedIsActive,
   onStatusUpdate
 }: ActionButtonsProps) => {
   const t = useTranslations("administerReportUsers");
   const router = useRouter();
   const [reportStatus, setReportStatus] = useState<ReportStatus>(status);
-  const [reportedStatus, setReportedStatus] = useState<boolean>(reportedIsActive);
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleDetailClick = () => {
     router.push(`/reports/users/detail/${reportedId}`);
-  };
-
-  const handleBanUser = async () => {
-    const { ok, data: result } = await adminBanUser(reportedId);
-
-    if (!ok || !result?.userId) {
-      toast.error(t("notifications.error"));
-      return;
-    }
-
-    const newStatus = result.isRestored;
-    setReportedStatus(newStatus);
-
-    if (result.isRestored) {
-      toast.success(t("notifications.restoreUserSuccess"));
-    } else {
-      toast.success(t("notifications.disableUserSuccess"));
-    }
-
-    invalidateCurrentAdminActivities();
   };
 
   const handleMarkReport = async () => {
@@ -134,23 +111,6 @@ export const ActionButtons = ({
         onClick={handleDetailClick}
         className='bg-primary hover:bg-secondary'
       />
-
-      {/* Ban */}
-      {reportedStatus ? (
-        <TooltipButton
-          title={t("tooltip.disableUser")}
-          icon={<Ban className='text-white_black' />}
-          onClick={handleBanUser}
-          className='bg-red hover:bg-red-600'
-        />
-      ) : (
-        <TooltipButton
-          title={t("tooltip.restoreUser")}
-          icon={<RotateCcw className='text-white_black' />}
-          onClick={handleBanUser}
-          className='bg-green-400 hover:bg-green-500'
-        />
-      )}
 
       {/* Mark report */}
       {reportStatus === ReportStatus.Pending ? (

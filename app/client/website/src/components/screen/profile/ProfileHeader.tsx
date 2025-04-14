@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Ban, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Avatar from "@/components/shared/common/Avatar";
+import { useQueryClient } from "@tanstack/react-query";
 
 type ProfileHeaderProps = {
   user: IAdminGetUserDetailResponse;
