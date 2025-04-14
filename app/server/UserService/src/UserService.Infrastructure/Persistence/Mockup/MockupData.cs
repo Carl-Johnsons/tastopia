@@ -57,6 +57,9 @@ internal class MockupData
         var seedBioFile = File.ReadAllText(Path.Combine(SeedDataPath, "bios.json"));
         var seedBios = JsonConvert.DeserializeObject<List<string>>(seedBioFile) ?? [];
 
+        var seedToxicBioFile = File.ReadAllText(Path.Combine(SeedDataPath, "toxic-bios.json"));
+        var seedToxicBios = JsonConvert.DeserializeObject<List<string>>(seedToxicBioFile) ?? [];
+
         var seedUsers = seedAllUsers.Where(u => u.RoleCode == "USER").ToList();
         var seedAdminUsers = seedAllUsers.Where(u => u.RoleCode != "USER").ToList();
 
@@ -85,7 +88,7 @@ internal class MockupData
             AvatarUrl = u.Gender == "Male" ? maleAvtUrl : femaleAvtUrl,
             BackgroundUrl = backgroundUrl,
             Address = seedAddresses[random.Next(seedAddresses.Count)],
-            Bio = seedBios[random.Next(seedBios.Count)],
+            Bio = seedToxicBios[random.Next(seedToxicBios.Count)],
         });
 
         var adminUsers = seedAdminUsers.Select(u => new User
