@@ -22,7 +22,6 @@ interface UpdateDraggableStepProps {
   stepKey: string;
   content: string;
   images: UpdateImage;
-  drag: () => void;
   remove: (index: number) => void;
 }
 
@@ -31,7 +30,6 @@ const UpdateDraggableStep = ({
   stepKey,
   content,
   images,
-  drag,
   remove
 }: UpdateDraggableStepProps) => {
   const { c } = useColorizer();
@@ -155,16 +153,6 @@ const UpdateDraggableStep = ({
           images={images}
         />
       </View>
-
-      <TouchableWithoutFeedback onLongPress={drag}>
-        <View style={styles.dragHandle}>
-          <MaterialCommunityIcons
-            name='drag-vertical'
-            size={24}
-            color='#6B7280'
-          />
-        </View>
-      </TouchableWithoutFeedback>
     </View>
   );
 };
@@ -212,10 +200,5 @@ const styles = StyleSheet.create({
   },
   inputFocused: {
     borderBottomColor: globalStyles.color.primary
-  },
-  dragHandle: {
-    padding: 8,
-    justifyContent: "center",
-    alignItems: "center"
   }
 });

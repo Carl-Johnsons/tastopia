@@ -129,7 +129,8 @@ const Input = ({
       isPassword && styles.inputPassword,
       {
         backgroundColor: disabled ? "#e9ecef" : globalStyles.color.light,
-        color: `${c(black.DEFAULT, white.DEFAULT)}`
+        color: `${c(black.DEFAULT, white.DEFAULT)}`,
+        minHeight: 40
       }
     ];
 
