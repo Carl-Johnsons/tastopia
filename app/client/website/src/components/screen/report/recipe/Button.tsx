@@ -8,11 +8,11 @@ import {
   useRestoreRecipe
 } from "@/api/recipe";
 import InteractiveButton, { DataTableButton } from "@/components/shared/common/Button";
-import { BanIcon } from "@/components/shared/icons";
+import { BanIcon, LoadingIcon } from "@/components/shared/icons";
 import { ReportType } from "@/constants/reports";
 import { CommentDataTableButtonProps, DataTableButtonProps } from "@/types/report";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, RotateCw, Search, Trash } from "lucide-react";
+import { Check, Loader, Loader2, RotateCw, Search, Trash } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -406,6 +406,7 @@ export const SmallDisableCommentButton = ({
       }
     );
   }, [
+    t,
     onSuccess,
     onFailure,
     recipeId,
@@ -421,8 +422,9 @@ export const SmallDisableCommentButton = ({
       icon={<Trash className='text-black_white group-hover:text-red-500' />}
       isLoading={isPending}
       onClick={handleClick}
+      loader={<Loader2 className={`text-black_white animate-spin`} />}
       className={`ms-auto size-fit bg-transparent p-0 pb-1 shadow-none hover:bg-transparent ${className}`}
-      loaderClassName='text-black_white'
+      loaderClassName='text-black'
     />
   );
 };
@@ -460,6 +462,7 @@ export const SmallRestoreCommentButton = ({
       }
     );
   }, [
+    t,
     onSuccess,
     onFailure,
     recipeId,
@@ -474,9 +477,9 @@ export const SmallRestoreCommentButton = ({
       title={title}
       icon={<RotateCw className='text-black_white group-hover:text-green-500' />}
       isLoading={isPending}
+      loader={<Loader2 className={`text-black_white animate-spin`} />}
       onClick={handleClick}
       className={`ms-auto size-fit bg-transparent p-0 pb-1 shadow-none hover:bg-transparent ${className}`}
-      loaderClassName='text-black_white'
     />
   );
 };

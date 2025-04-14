@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 import { ReactNode, useMemo } from "react";
 import { LoadingIcon } from "../icons";
+import { Loader2 } from "lucide-react";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
@@ -45,7 +46,9 @@ const buttonVariants = cva(
 export type InteractiveButtonProps = ButtonProps & {
   icon: ReactNode;
   isLoading?: boolean;
+  /** Class name for the default loader. */
   loaderClassName?: string;
+  loader?: ReactNode;
   title: string;
   onClick?: () => void;
   className?: string;
@@ -58,6 +61,7 @@ export const InteractiveButton = ({
   icon,
   isLoading,
   loaderClassName,
+  loader,
   noTruncateText,
   className,
   onClick,
@@ -72,11 +76,13 @@ export const InteractiveButton = ({
   const RenderedContent = useMemo(
     () => (
       <div className={`relative flex items-center gap-1.5`}>
-        {isLoading ? (
-          <LoadingIcon className={`text-white_black ${loaderClassName}`} />
-        ) : (
-          icon
-        )}
+        {isLoading
+          ? (loader ?? (
+              <Loader2
+                className={`animate-spin text-white dark:text-black ${loaderClassName}`}
+              />
+            ))
+          : icon}
 
         {!noText && (
           <span
@@ -87,7 +93,7 @@ export const InteractiveButton = ({
         )}
       </div>
     ),
-    [icon, title, noText, isLoading, noTruncateText, loaderClassName]
+    [loader, icon, title, noText, isLoading, noTruncateText, loaderClassName]
   );
 
   return showToolTip ? (
