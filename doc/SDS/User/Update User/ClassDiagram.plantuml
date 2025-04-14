@@ -85,11 +85,11 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 
 UserController --|> BaseApiController
 UserController "1"--"1" UpdateUserCommand
-UpdateUserCommand --|> "IRequest<TResponse>"
+UpdateUserCommand ..|> "IRequest<TResponse>"
 UpdateUserCommand "1" o--"1" IFormFile
 UpdateUserCommand "1" o--"1" UpdateUserDTO
 
-UpdateUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateUserCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 UpdateUserCommandHandler "1" --"1" UpdateUserCommand
 UpdateUserCommandHandler "1" o--"1" IUnitOfWork
 UpdateUserCommandHandler "1" o--"1" IApplicationDbContext

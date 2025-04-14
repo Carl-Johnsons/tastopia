@@ -68,8 +68,8 @@ RecipeController --|> BaseApiController
 RecipeController "1"--"1" SearchRecipesDTO
 RecipeController "1"--"1" SearchRecipesQuery
 
-SearchRecipesQuery --|> "IRequest<TResponse>"
-SearchRecipesQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+SearchRecipesQuery ..|> "IRequest<TResponse>"
+SearchRecipesQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 
 SearchRecipesQueryHandler "1"--"1" SearchRecipesQuery
 SearchRecipesQueryHandler "1"--"1" Result

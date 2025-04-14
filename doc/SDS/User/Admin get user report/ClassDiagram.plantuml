@@ -89,9 +89,9 @@ AdminController "1"--"1" PaginatedDTO
 AdminController "1"--"1" GetReportReasonsDTO
 AdminController "1"--"1" GetUserReportsQuery
 
-GetUserReportsQuery --|> "IRequest<TResponse>"
+GetUserReportsQuery ..|> "IRequest<TResponse>"
 
-GetUserReportsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetUserReportsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetUserReportsQueryHandler "1" --"1" GetUserReportsQuery
 GetUserReportsQueryHandler "1" o--"1" IApplicationDbContext
 GetUserReportsQueryHandler "1" o--"1" IPaginateDataUtility

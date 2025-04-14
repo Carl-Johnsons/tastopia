@@ -93,9 +93,9 @@ RecipeController "1" o-- "1" IMapper
 RecipeController "1"--"1" UpdateRecipeDTO
 RecipeController "1"--"1" UpdateRecipeCommand
 
-UpdateRecipeCommand --|> "IRequest<TResponse>"
+UpdateRecipeCommand ..|> "IRequest<TResponse>"
 
-UpdateRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 UpdateRecipeCommandHandler "1"--"1" UpdateRecipeCommand
 UpdateRecipeCommandHandler "1"--"1" Result
 UpdateRecipeCommandHandler "1"--"1" Recipe

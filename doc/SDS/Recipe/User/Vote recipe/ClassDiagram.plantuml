@@ -64,9 +64,9 @@ RecipeController --|> BaseApiController
 RecipeController "1"--"1" VoteRecipeDTO
 RecipeController "1"--"1" VoteRecipeCommand
 
-VoteRecipeCommand --|> "IRequest<TResponse>"
+VoteRecipeCommand ..|> "IRequest<TResponse>"
 
-VoteRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+VoteRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 VoteRecipeCommandHandler "1"--"1" VoteRecipeCommand
 VoteRecipeCommandHandler "1"--"1" Result
 VoteRecipeCommandHandler "1" o-- "1" IUnitOfWork

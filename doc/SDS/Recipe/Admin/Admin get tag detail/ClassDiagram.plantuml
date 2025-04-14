@@ -61,9 +61,9 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" AdminGetTagDetailDTO
 AdminController "1"--"1" GetTagDetailQuery
 
-GetTagDetailQuery --|> "IRequest<TResponse>"
+GetTagDetailQuery ..|> "IRequest<TResponse>"
 
-GetTagDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetTagDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetTagDetailQueryHandler "1" --"1" GetTagDetailQuery
 GetTagDetailQueryHandler "1" o--"1" IApplicationDbContext
 GetTagDetailQueryHandler "1" --"1" Result

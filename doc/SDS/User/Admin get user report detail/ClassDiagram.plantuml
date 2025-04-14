@@ -85,9 +85,9 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" AdminGetUserReportByAccountIdDTO
 AdminController "1"--"1" GetUserReportDetailByAccountIdQuery
 
-GetUserReportDetailByAccountIdQuery --|> "IRequest<TResponse>"
+GetUserReportDetailByAccountIdQuery ..|> "IRequest<TResponse>"
 
-GetUserReportDetailByAccountIdQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetUserReportDetailByAccountIdQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetUserReportDetailByAccountIdQueryHandler "1" --"1" GetUserReportDetailByAccountIdQuery
 GetUserReportDetailByAccountIdQueryHandler "1" o--"1" IApplicationDbContext
 GetUserReportDetailByAccountIdQueryHandler "1" o--"1" IPaginateDataUtility

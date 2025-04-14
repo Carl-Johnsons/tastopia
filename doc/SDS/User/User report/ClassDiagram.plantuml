@@ -57,9 +57,9 @@ UserController --|> BaseApiController
 UserController "1"--"1" UserReportUserDTO
 UserController "1"--"1" UserReportUserCommand
 
-UserReportUserCommand --|> "IRequest<TResponse>"
+UserReportUserCommand ..|> "IRequest<TResponse>"
 
-UserReportUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UserReportUserCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 UserReportUserCommandHandler "1" --"1" UserReportUserCommand
 UserReportUserCommandHandler "1" o--"1" IApplicationDbContext
 UserReportUserCommandHandler "1" --"1..*" UserReportUserResponse

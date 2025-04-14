@@ -112,24 +112,24 @@ GrpcAccountService "1" o-- "1" GrpcListAdminAccountsDTO
 GrpcAccountService "1" o-- "1" GetAccountDetailQuery
 GrpcAccountService "1" o-- "1" SearchSimpleAccountQuery
 
-GetAccountDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetAccountDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetAccountDetailQueryHandler "1" o-- "1" GetAccountDetailQuery
 GetAccountDetailQueryHandler "1" o-- "1..*" ApplicationAccount
 GetAccountDetailQueryHandler "1" o-- "1" "UserManager<TUser>"
 
-UpdateAccountCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateAccountCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 UpdateAccountCommandHandler "1" o-- "1" UpdateAccountCommand
 UpdateAccountCommandHandler "1" o-- "1" AccountError
 UpdateAccountCommandHandler "1" o-- "1" "UserManager<TUser>"
 UpdateAccountCommandHandler "1" o-- "1" ApplicationAccount
 
-SearchSimpleAccountQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+SearchSimpleAccountQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 SearchSimpleAccountQueryHandler "1" o-- "1" SearchSimpleAccountQuery
 SearchSimpleAccountQueryHandler "1" o-- "1" AccountError
 SearchSimpleAccountQueryHandler "1" o-- "1" "UserManager<TUser>"
 SearchSimpleAccountQueryHandler "1" o-- "1" ApplicationAccount
 
-GetAdminAccountDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetAdminAccountDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetAdminAccountDetailQueryHandler "1" o-- "1" AccountError
 GetAdminAccountDetailQueryHandler "1" o-- "1" GetAdminAccountDetailQuery
 GetAdminAccountDetailQueryHandler "1" o-- "1" "UserManager<TUser>"

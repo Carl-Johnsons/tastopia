@@ -44,9 +44,9 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 AdminController --|> BaseApiController
 AdminController "1"--"1" AdminGetNumberOfRecipesStatisticQuery
 
-AdminGetNumberOfRecipesStatisticQuery --|> "IRequest<TResponse>"
+AdminGetNumberOfRecipesStatisticQuery ..|> "IRequest<TResponse>"
 
-AdminGetNumberOfRecipesStatisticQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminGetNumberOfRecipesStatisticQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1" AdminGetNumberOfRecipesStatisticQuery
 AdminGetNumberOfRecipesStatisticQueryHandler "1" o--"1" IApplicationDbContext
 AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1..*" Recipe

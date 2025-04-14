@@ -68,9 +68,9 @@ RecipeController --|> BaseApiController
 RecipeController "1"--"1" GetUserRecipeBinsDTO
 RecipeController "1"--"1" GetUserRecipeBinsQuery
 
-GetUserRecipeBinsQuery --|> "IRequest<TResponse>"
+GetUserRecipeBinsQuery ..|> "IRequest<TResponse>"
 
-GetUserRecipeBinsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetUserRecipeBinsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetUserRecipeBinsQueryHandler "1"--"1" GetUserRecipeBinsQuery
 GetUserRecipeBinsQueryHandler "1"--"1" Result
 GetUserRecipeBinsQueryHandler "1"--"1" PaginatedRecipeFeedsListResponse

@@ -50,9 +50,9 @@ RecipeController --|> BaseApiController
 RecipeController "1"--"1" RestoreOwnRecipeDTO
 RecipeController "1"--"1" RestoreOwnRecipeCommand
 
-RestoreOwnRecipeCommand --|> "IRequest<TResponse>"
+RestoreOwnRecipeCommand ..|> "IRequest<TResponse>"
 
-RestoreOwnRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+RestoreOwnRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 RestoreOwnRecipeCommandHandler "1"--"1" RestoreOwnRecipeCommand
 RestoreOwnRecipeCommandHandler "1"--"1" Recipe
 RestoreOwnRecipeCommandHandler "1"--"1" Result

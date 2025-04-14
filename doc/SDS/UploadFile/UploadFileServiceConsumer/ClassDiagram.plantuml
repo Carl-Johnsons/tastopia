@@ -66,8 +66,8 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
-DeleteMultipleImageFileCommand --|> "IRequest<TResponse>"
-DeleteMultipleImageFileCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+DeleteMultipleImageFileCommand ..|> "IRequest<TResponse>"
+DeleteMultipleImageFileCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 
 UploadFileServiceConsumer "1"--"1" DeleteMultipleFileEvent
 UploadFileServiceConsumer "1"--"1" DeleteMultipleImageFileCommand

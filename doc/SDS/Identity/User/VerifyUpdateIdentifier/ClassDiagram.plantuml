@@ -72,9 +72,9 @@ AccountController --|> BaseApiController
 AccountController "1"--"1" VerifyUpdateIdentifierDTO
 AccountController "1"--"1" VerifyUpdateIdentifierCommand
 VerifyUpdateIdentifierCommand "1"--"1" AccountMethod
-VerifyUpdateIdentifierCommand --|> "IRequest<TResponse>"
+VerifyUpdateIdentifierCommand ..|> "IRequest<TResponse>"
 
-VerifyUpdateIdentifierCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+VerifyUpdateIdentifierCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 VerifyUpdateIdentifierCommandHandler "1" o--"1" VerifyUpdateIdentifierCommand
 VerifyUpdateIdentifierCommandHandler "1" o---"1" ApplicationAccount
 VerifyUpdateIdentifierCommandHandler "1" o--"1" AccountError

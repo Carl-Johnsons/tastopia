@@ -117,9 +117,9 @@ class "UserManager<TUser>" #black;line:white;text:white
 AccountController --|> BaseApiController
 AccountController "1"--"1" UpdateAdminAccountCommand
 AccountController "1"--"1" UpdateAdminAccountDTO
-UpdateAdminAccountCommand --|> "IRequest<TResponse>"
+UpdateAdminAccountCommand ..|> "IRequest<TResponse>"
 
-UpdateAdminAccountCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateAdminAccountCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 UpdateAdminAccountCommandHandler "1" o--"1" UpdateAdminAccountCommand
 UpdateAdminAccountCommandHandler "1" o---"1" ApplicationAccount
 UpdateAdminAccountCommandHandler "1" o--"1" AccountError

@@ -83,9 +83,9 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 UserController --|> BaseApiController
 UserController "1"--"1" SearchUsersCommand
 UserController "1"--"1" SearchUserDTO
-SearchUsersCommand --|> "IRequest<TResponse>"
+SearchUsersCommand ..|> "IRequest<TResponse>"
 
-SearchUsersCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+SearchUsersCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 SearchUsersCommandHandler "1" --"1" SearchUsersCommand
 SearchUsersCommandHandler "1" o--"1" IPaginateDataUtility
 SearchUsersCommandHandler "1" o--"1" IApplicationDbContext

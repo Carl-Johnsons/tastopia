@@ -76,9 +76,9 @@ RecipeController --|> BaseApiController
 RecipeController "1"--"1" CommentRecipeDTO
 RecipeController "1"--"1" CommentRecipeCommand
 
-CommentRecipeCommand --|> "IRequest<TResponse>"
+CommentRecipeCommand ..|> "IRequest<TResponse>"
 
-CommentRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+CommentRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 CommentRecipeCommandHandler "1"--"1" CommentRecipeCommand
 CommentRecipeCommandHandler "1"--"1" Result
 CommentRecipeCommandHandler "1"--"1..*" RecipeCommentResponse

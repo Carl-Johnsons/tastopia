@@ -56,9 +56,9 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" ReportDTO
 AdminController "1"--"1" ReopenReportCommand
 
-ReopenReportCommand --|> "IRequest<TResponse>"
+ReopenReportCommand ..|> "IRequest<TResponse>"
 
-ReopenReportCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+ReopenReportCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 ReopenReportCommandHandler "1" --"1" ReopenReportCommand
 ReopenReportCommandHandler "1" o--"1" IApplicationDbContext
 ReopenReportCommandHandler "1" o--"1" IServiceBus

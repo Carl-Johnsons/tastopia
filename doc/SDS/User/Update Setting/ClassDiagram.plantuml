@@ -94,9 +94,9 @@ SETTING_VALUE *-- "1..*" SETTING_VALUE::BOOLEAN
 SettingController --|> BaseApiController
 SettingController --|> UpdateSettingDTO
 SettingController "1"--"1" UpdateSettingCommand
-UpdateSettingCommand --|> "IRequest<TResponse>"
+UpdateSettingCommand ..|> "IRequest<TResponse>"
 
-UpdateSettingCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateSettingCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 UpdateSettingCommandHandler "1" --"1" UpdateSettingCommand
 UpdateSettingCommandHandler "1" o--"1" IApplicationDbContext
 UpdateSettingCommandHandler "1" o--"1" IUnitOfWork

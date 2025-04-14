@@ -61,9 +61,9 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" AdminBanUserDTO
 AdminController "1"--"1" AdminBanUserCommand
 
-AdminBanUserCommand --|> "IRequest<TResponse>"
+AdminBanUserCommand ..|> "IRequest<TResponse>"
 
-AdminBanUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminBanUserCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 AdminBanUserCommandHandler "1" --"1" AdminBanUserCommand
 AdminBanUserCommandHandler "1" o--"1" IApplicationDbContext
 AdminBanUserCommandHandler "1" o--"1" IServiceBus

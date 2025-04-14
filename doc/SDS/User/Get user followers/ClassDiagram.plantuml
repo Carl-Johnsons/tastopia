@@ -82,9 +82,9 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 UserController --|> BaseApiController
 UserController "1"--"1" GetUserFollowersQuery
 UserController "1"--"1" getUserFollowersDTO
-GetUserFollowersQuery --|> "IRequest<TResponse>"
+GetUserFollowersQuery ..|> "IRequest<TResponse>"
 
-GetUserFollowersQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetUserFollowersQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetUserFollowersQueryHandler "1" --"1" GetUserFollowersQuery
 GetUserFollowersQueryHandler "1" o--"1" IPaginateDataUtility
 GetUserFollowersQueryHandler "1" o--"1" IApplicationDbContext

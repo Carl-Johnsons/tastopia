@@ -78,9 +78,9 @@ class "UserManager<TUser>" #black;line:white;text:white
 AccountController --|> BaseApiController
 AccountController "1"--"1" ResendOTPCommand
 ResendOTPCommand "1" o--"1" AccountMethod
-ResendOTPCommand --|> "IRequest<TResponse>"
+ResendOTPCommand ..|> "IRequest<TResponse>"
 
-ResendOTPCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+ResendOTPCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 ResendOTPCommandHandler "1" o--"1" ResendOTPCommand
 ResendOTPCommandHandler "1" o---"1" ApplicationAccount
 ResendOTPCommandHandler "1" o--"1" AccountError

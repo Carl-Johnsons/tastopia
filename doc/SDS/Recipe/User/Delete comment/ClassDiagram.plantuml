@@ -50,9 +50,9 @@ RecipeController --|> BaseApiController
 RecipeController "1"--"1" DeleteCommentDTO
 RecipeController "1"--"1" DeleteCommentCommand
 
-DeleteCommentCommand --|> "IRequest<TResponse>"
+DeleteCommentCommand ..|> "IRequest<TResponse>"
 
-DeleteCommentCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+DeleteCommentCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 DeleteCommentCommandHandler "1"--"1" DeleteCommentCommand
 DeleteCommentCommandHandler "1"--"1" Comment
 DeleteCommentCommandHandler "1"--"1" Result

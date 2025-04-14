@@ -87,9 +87,9 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" PaginatedDTO
 AdminController "1"--"1" AdminGetTagsQuery
 
-AdminGetTagsQuery --|> "IRequest<TResponse>"
+AdminGetTagsQuery ..|> "IRequest<TResponse>"
 
-AdminGetTagsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminGetTagsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 AdminGetTagsQueryHandler "1" --"1" AdminGetTagsQuery
 AdminGetTagsQueryHandler "1" o--"1" IApplicationDbContext
 AdminGetTagsQueryHandler "1" o--"1" IPaginateDataUtility

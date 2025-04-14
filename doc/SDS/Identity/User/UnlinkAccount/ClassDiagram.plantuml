@@ -61,9 +61,9 @@ class "UserManager<TUser>" #black;line:white;text:white
 AccountController --|> BaseApiController
 AccountController "1"--"1" UnlinkAccountCommand
 UnlinkAccountCommand "1" o--"1" AccountMethod
-UnlinkAccountCommand --|> "IRequest<TResponse>"
+UnlinkAccountCommand ..|> "IRequest<TResponse>"
 
-UnlinkAccountCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UnlinkAccountCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 UnlinkAccountCommandHandler "1" o--"1" UnlinkAccountCommand
 UnlinkAccountCommandHandler "1" o---"1" ApplicationAccount
 UnlinkAccountCommandHandler "1" o--"1" AccountError

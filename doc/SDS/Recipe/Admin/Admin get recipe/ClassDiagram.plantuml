@@ -101,9 +101,9 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" PaginatedDTO
 AdminController "1"--"1" AdminGetRecipesQuery
 
-AdminGetRecipesQuery --|> "IRequest<TResponse>"
+AdminGetRecipesQuery ..|> "IRequest<TResponse>"
 
-AdminGetRecipesQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminGetRecipesQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 AdminGetRecipesQueryHandler "1" --"1" AdminGetRecipesQuery
 AdminGetRecipesQueryHandler "1" o--"1" IApplicationDbContext
 AdminGetRecipesQueryHandler "1" o--"1" IPaginateDataUtility

@@ -65,9 +65,9 @@ together {
 AdminController --|> BaseApiController
 AdminController "1"--"1" GetCommentReportDetailQuery
 
-GetCommentReportDetailQuery --|> "IRequest<TResponse>"
+GetCommentReportDetailQuery ..|> "IRequest<TResponse>"
 
-GetCommentReportDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetCommentReportDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetCommentReportDetailQueryHandler "1" --"1" GetCommentReportDetailQuery
 GetCommentReportDetailQueryHandler "1" o--"1" IApplicationDbContext
 GetCommentReportDetailQueryHandler "1" o--"1" GrpcUserClient

@@ -155,15 +155,15 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
-GetAllTagsQuery --|> "IRequest<TResponse>"
-GetRecipeDetailForServerQuery --|> "IRequest<TResponse>"
-GetSimpleRecipesQuery --|> "IRequest<TResponse>"
-SearchSimpleRecipesQuery --|> "IRequest<TResponse>"
+GetAllTagsQuery ..|> "IRequest<TResponse>"
+GetRecipeDetailForServerQuery ..|> "IRequest<TResponse>"
+GetSimpleRecipesQuery ..|> "IRequest<TResponse>"
+SearchSimpleRecipesQuery ..|> "IRequest<TResponse>"
 
-GetAllTagsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetRecipeDetailForServerQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetSimpleRecipesQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-SearchSimpleRecipesQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetAllTagsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetRecipeDetailForServerQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetSimpleRecipesQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+SearchSimpleRecipesQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 
 ' Commands and queries
 

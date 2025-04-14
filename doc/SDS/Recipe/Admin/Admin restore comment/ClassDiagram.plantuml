@@ -56,9 +56,9 @@ together {
 AdminController --|> BaseApiController
 AdminController "1"--"1" RestoreCommentCommand
 
-RestoreCommentCommand --|> "IRequest<TResponse>"
+RestoreCommentCommand ..|> "IRequest<TResponse>"
 
-RestoreCommentCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+RestoreCommentCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 RestoreCommentCommandHandler "1" --"1" RestoreCommentCommand
 RestoreCommentCommandHandler "1" o--"1" IApplicationDbContext
 RestoreCommentCommandHandler "1" o--"1" IServiceBus

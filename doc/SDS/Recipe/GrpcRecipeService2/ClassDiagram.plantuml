@@ -147,15 +147,15 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
-GetCommentDetailQuery --|> "IRequest<TResponse>"
-GetCommentReportDetailByHashSetQuery --|> "IRequest<TResponse>"
-GetRecipeReportDetailByHashSetQuery --|> "IRequest<TResponse>"
-GetTagsByHashSetQuery --|> "IRequest<TResponse>"
+GetCommentDetailQuery ..|> "IRequest<TResponse>"
+GetCommentReportDetailByHashSetQuery ..|> "IRequest<TResponse>"
+GetRecipeReportDetailByHashSetQuery ..|> "IRequest<TResponse>"
+GetTagsByHashSetQuery ..|> "IRequest<TResponse>"
 
-GetCommentDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetCommentReportDetailByHashSetQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetRecipeReportDetailByHashSetQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetTagsByHashSetQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetCommentDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetCommentReportDetailByHashSetQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetRecipeReportDetailByHashSetQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetTagsByHashSetQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 
 ' Commands and queries
 GrpcRecipeService "1"--"1" GrpcGetSimpleCommentRequest

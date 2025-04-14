@@ -105,11 +105,11 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
-UpdateMultipleImageFileCommand --|> "IRequest<TResponse>"
-CreateMultipleImageFileCommand --|> "IRequest<TResponse>"
+UpdateMultipleImageFileCommand ..|> "IRequest<TResponse>"
+CreateMultipleImageFileCommand ..|> "IRequest<TResponse>"
 
-UpdateMultipleImageFileCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-CreateMultipleImageFileCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateMultipleImageFileCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+CreateMultipleImageFileCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 
 GrpcUploadFileService "1"--"1" GrpcUpdateMultipleImageRequest
 GrpcUploadFileService "1"--"1..*" GrpcListFileDTO

@@ -66,9 +66,9 @@ class "UserManager<TUser>" #black;line:white;text:white
 AccountController --|> BaseApiController
 AccountController "1"--"1" AdminGetNumberOfAccountStatisticQuery
 AdminGetNumberOfAccountStatisticQuery "1" o--"1" AccountMethod
-AdminGetNumberOfAccountStatisticQuery --|> "IRequest<TResponse>"
+AdminGetNumberOfAccountStatisticQuery ..|> "IRequest<TResponse>"
 
-AdminGetNumberOfAccountStatisticQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminGetNumberOfAccountStatisticQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 AdminGetNumberOfAccountStatisticQueryHandler "1" o--"1" AdminGetNumberOfAccountStatisticQuery
 AdminGetNumberOfAccountStatisticQueryHandler "1" o---"1" ApplicationAccount
 AdminGetNumberOfAccountStatisticQueryHandler "1" o--"1" AccountError

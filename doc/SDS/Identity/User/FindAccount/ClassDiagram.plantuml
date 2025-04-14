@@ -75,9 +75,9 @@ AccountController --|> BaseApiController
 AccountController "1"--"1" FindAccountQuery
 AccountController "1"--"1" AccountIdentifierDTO
 FindAccountQuery "1" o--"1" AccountMethod
-FindAccountQuery --|> "IRequest<TResponse>"
+FindAccountQuery ..|> "IRequest<TResponse>"
 
-FindAccountQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+FindAccountQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 FindAccountQueryHandler "1" o--"1" FindAccountQuery
 FindAccountQueryHandler "1" o---"1" ApplicationAccount
 FindAccountQueryHandler "1" o--"1" AccountError

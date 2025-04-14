@@ -68,9 +68,9 @@ together {
 AdminController --|> BaseApiController
 AdminController "1"--"1" GetRecipeReportDetailQuery
 
-GetRecipeReportDetailQuery --|> "IRequest<TResponse>"
+GetRecipeReportDetailQuery ..|> "IRequest<TResponse>"
 
-GetRecipeReportDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetRecipeReportDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetRecipeReportDetailQueryHandler "1" --"1" GetRecipeReportDetailQuery
 GetRecipeReportDetailQueryHandler "1" o--"1" IApplicationDbContext
 GetRecipeReportDetailQueryHandler "1" o--"1" GrpcUserClient

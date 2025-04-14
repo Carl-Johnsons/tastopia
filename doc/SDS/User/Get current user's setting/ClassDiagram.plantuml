@@ -48,9 +48,9 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 
 SettingController --|> BaseApiController
 SettingController "1"--"1" GetUserSettingQuery
-GetUserSettingQuery --|> "IRequest<TResponse>"
+GetUserSettingQuery ..|> "IRequest<TResponse>"
 
-GetUserSettingQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetUserSettingQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetUserSettingQueryHandler "1" --"1" GetUserSettingQuery
 GetUserSettingQueryHandler "1" o--"1" IApplicationDbContext
 GetUserSettingQueryHandler "1" --"1..*" UserError

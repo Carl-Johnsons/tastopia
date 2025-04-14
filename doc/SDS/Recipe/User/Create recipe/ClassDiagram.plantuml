@@ -92,9 +92,9 @@ RecipeController "1" o-- "1" IMapper
 RecipeController "1"--"1" CreateRecipeDTO
 RecipeController "1"--"1" CreateRecipeCommand
 
-CreateRecipeCommand --|> "IRequest<TResponse>"
+CreateRecipeCommand ..|> "IRequest<TResponse>"
 
-CreateRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+CreateRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 CreateRecipeCommandHandler "1"--"1" CreateRecipeCommand
 CreateRecipeCommandHandler "1"--"1" Result
 CreateRecipeCommandHandler "1"--"1" Recipe

@@ -56,9 +56,9 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" ReportDTO
 AdminController "1"--"1" MarkReportCompleteCommand
 
-MarkReportCompleteCommand --|> "IRequest<TResponse>"
+MarkReportCompleteCommand ..|> "IRequest<TResponse>"
 
-MarkReportCompleteCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+MarkReportCompleteCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 MarkReportCompleteCommandHandler "1" --"1" MarkReportCompleteCommand
 MarkReportCompleteCommandHandler "1" o--"1" IApplicationDbContext
 MarkReportCompleteCommandHandler "1" o--"1" IServiceBus

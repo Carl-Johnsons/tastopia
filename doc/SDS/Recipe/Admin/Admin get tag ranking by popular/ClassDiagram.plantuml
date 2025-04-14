@@ -50,9 +50,9 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" AdminGetTagDTO
 AdminController "1"--"1" AdminGetRankingTagsStatisticQuery
 
-AdminGetRankingTagsStatisticQueryHandler --|> "IRequest<TResponse>"
+AdminGetRankingTagsStatisticQueryHandler ..|> "IRequest<TResponse>"
 
-AdminGetRankingTagsStatisticQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminGetRankingTagsStatisticQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 AdminGetRankingTagsStatisticQueryHandler "1" o--"1" AdminGetRankingTagsStatisticQuery
 AdminGetRankingTagsStatisticQueryHandler "1" o--"1" IApplicationDbContext
 AdminGetRankingTagsStatisticQueryHandler "1" --"1" Result

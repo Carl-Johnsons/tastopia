@@ -59,9 +59,9 @@ UserController --|> BaseApiController
 UserController "1"--"1" FollowUserDTO
 UserController "1"--"1" FollowUserCommand
 
-FollowUserCommand --|> "IRequest<TResponse>"
+FollowUserCommand ..|> "IRequest<TResponse>"
 
-FollowUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+FollowUserCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 FollowUserCommandHandler "1" --"1" FollowUserCommand
 FollowUserCommandHandler "1" o--"1" IApplicationDbContext
 FollowUserCommandHandler "1" o--"1" IServiceBus

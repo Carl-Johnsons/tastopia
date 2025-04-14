@@ -67,9 +67,9 @@ AccountController --|> BaseApiController
 AccountController "1"--"1" CheckUpdateIdentifierOTPQuery
 AccountController "1"--"1" VerifyUpdateIdentifierDTO
 CheckUpdateIdentifierOTPQuery "1" o--"1" AccountMethod
-CheckUpdateIdentifierOTPQuery --|> "IRequest<TResponse>"
+CheckUpdateIdentifierOTPQuery ..|> "IRequest<TResponse>"
 
-CheckUpdateIdentifierOTPQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+CheckUpdateIdentifierOTPQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 CheckUpdateIdentifierOTPQueryHandler "1" o--"1" CheckUpdateIdentifierOTPQuery
 CheckUpdateIdentifierOTPQueryHandler "1" o---"1" ApplicationAccount
 CheckUpdateIdentifierOTPQueryHandler "1" o--"1" AccountError

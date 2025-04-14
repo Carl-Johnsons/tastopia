@@ -82,9 +82,9 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" CreateTagDTO
 AdminController "1"--"1" CreateTagCommand
 
-CreateTagCommand --|> "IRequest<TResponse>"
+CreateTagCommand ..|> "IRequest<TResponse>"
 
-CreateTagCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+CreateTagCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 CreateTagCommandHandler "1" --"1" CreateTagCommand
 CreateTagCommandHandler "1" o--"1" IApplicationDbContext
 CreateTagCommandHandler "1" o--"1" IServiceBus

@@ -64,9 +64,9 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
-GetAccountRecipeCommentsQuery --|> "IRequest<TResponse>"
+GetAccountRecipeCommentsQuery ..|> "IRequest<TResponse>"
 
-GetAccountRecipeCommentsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetAccountRecipeCommentsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" GetAccountRecipeCommentsDTO
 RecipeController "1"--"1" GetAccountRecipeCommentsQuery

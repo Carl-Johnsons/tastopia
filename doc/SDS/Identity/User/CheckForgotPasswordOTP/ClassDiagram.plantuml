@@ -66,9 +66,9 @@ AccountController --|> BaseApiController
 AccountController "1"--"1" CheckForgotPasswordOTPQuery
 AccountController "1"--"1" CheckForgotPasswordDTO
 CheckForgotPasswordOTPQuery "1" o--"1" AccountMethod
-CheckForgotPasswordOTPQuery --|> "IRequest<TResponse>"
+CheckForgotPasswordOTPQuery ..|> "IRequest<TResponse>"
 
-CheckForgotPasswordOTPQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+CheckForgotPasswordOTPQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 CheckForgotPasswordOTPQueryHandler "1" o--"1" CheckForgotPasswordOTPQuery
 CheckForgotPasswordOTPQueryHandler "1" o---"1" ApplicationAccount
 CheckForgotPasswordOTPQueryHandler "1" o--"1" AccountError

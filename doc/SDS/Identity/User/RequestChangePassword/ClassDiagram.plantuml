@@ -87,13 +87,13 @@ AccountController --|> BaseApiController
 AccountController "1"--"1" AccountIdentifierDTO
 AccountController "1"--"1" RequestChangePasswordCommand
 RequestChangePasswordCommand "1"--"1" AccountMethod
-RequestChangePasswordCommand --|> "IRequest<TResponse>"
+RequestChangePasswordCommand ..|> "IRequest<TResponse>"
 
 UserSendOTPEvent "1"--"1" AccountMethod
 UserSendOTPEvent "1"--"1" OTPMethod
 
 RequestChangePasswordCommandHandler "1" o--"1" RequestChangePasswordCommand
-RequestChangePasswordCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+RequestChangePasswordCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 RequestChangePasswordCommandHandler "1" o--"1" ApplicationAccount
 RequestChangePasswordCommandHandler "1" o--"1" UserSendOTPEvent
 RequestChangePasswordCommandHandler "1" o-- "1" IServiceBus

@@ -90,13 +90,13 @@ AccountController --|> BaseApiController
 AccountController "1"--"1" AccountIdentifierDTO
 AccountController "1"--"1" RequestUpdateIdentifierCommand
 RequestUpdateIdentifierCommand "1"--"1" AccountMethod
-RequestUpdateIdentifierCommand --|> "IRequest<TResponse>"
+RequestUpdateIdentifierCommand ..|> "IRequest<TResponse>"
 
 UserSendOTPEvent "1"--"1" AccountMethod
 UserSendOTPEvent "1"--"1" OTPMethod
 
 RequestUpdateIdentifierCommandHandler "1" o--"1" RequestUpdateIdentifierCommand
-RequestUpdateIdentifierCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+RequestUpdateIdentifierCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 RequestUpdateIdentifierCommandHandler "1" o--"1" ApplicationAccount
 RequestUpdateIdentifierCommandHandler "1" o--"1" IApplicationDbContext
 RequestUpdateIdentifierCommandHandler "1" o--"1" UserSendOTPEvent

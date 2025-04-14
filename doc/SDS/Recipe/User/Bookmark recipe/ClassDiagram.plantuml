@@ -57,9 +57,9 @@ RecipeController --|> BaseApiController
 RecipeController "1"--"1" BookmarkRecipeDTO
 RecipeController "1"--"1" BookmarkRecipeCommand
 
-BookmarkRecipeCommand --|> "IRequest<TResponse>"
+BookmarkRecipeCommand ..|> "IRequest<TResponse>"
 
-BookmarkRecipeCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+BookmarkRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 BookmarkRecipeCommandHandler "1"--"1" BookmarkRecipeCommand
 BookmarkRecipeCommandHandler "1"--"1" BookmarkRecipeResponse
 BookmarkRecipeCommandHandler "1"--"1" Result

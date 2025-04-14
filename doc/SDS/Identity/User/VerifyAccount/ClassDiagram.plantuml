@@ -72,9 +72,9 @@ AccountController --|> BaseApiController
 AccountController "1"--"1" VerifyAccountDTO
 AccountController "1"--"1" VerifyAccountCommand
 VerifyAccountCommand "1"--"1" AccountMethod
-VerifyAccountCommand --|> "IRequest<TResponse>"
+VerifyAccountCommand ..|> "IRequest<TResponse>"
 
-VerifyAccountCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+VerifyAccountCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 VerifyAccountCommandHandler "1" o--"1" VerifyAccountCommand
 VerifyAccountCommandHandler "1" o---"1" ApplicationAccount
 VerifyAccountCommandHandler "1" o--"1" AccountError

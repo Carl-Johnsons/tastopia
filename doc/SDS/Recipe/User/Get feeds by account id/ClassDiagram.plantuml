@@ -72,9 +72,9 @@ RecipeController --|> BaseApiController
 RecipeController "1"--"1" GetRecipeFeedsByAuthorIdDTO 
 RecipeController "1"--"1" GetRecipeFeedsByAuthorIdQuery
 
-GetRecipeFeedsByAuthorIdQuery --|> "IRequest<TResponse>"
+GetRecipeFeedsByAuthorIdQuery ..|> "IRequest<TResponse>"
 
-GetRecipeFeedsByAuthorIdQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetRecipeFeedsByAuthorIdQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetRecipeFeedsByAuthorIdQueryHandler "1"--"1" GetRecipeFeedsByAuthorIdQuery
 GetRecipeFeedsByAuthorIdQueryHandler "1"--"1" Result
 GetRecipeFeedsByAuthorIdQueryHandler "1"--"1" PaginatedRecipeFeedsListResponse

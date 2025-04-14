@@ -62,9 +62,9 @@ together {
 AdminController --|> BaseApiController
 AdminController "1"--"1" GetAdminDetailQuery
 
-GetAdminDetailQuery --|> "IRequest<TResponse>"
+GetAdminDetailQuery ..|> "IRequest<TResponse>"
 
-GetAdminDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetAdminDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetAdminDetailQueryHandler "1" --"1" GetAdminDetailQuery
 GetAdminDetailQueryHandler "1" o--"1" IApplicationDbContext
 GetAdminDetailQueryHandler "1" o--"1" GrpcAccountClient

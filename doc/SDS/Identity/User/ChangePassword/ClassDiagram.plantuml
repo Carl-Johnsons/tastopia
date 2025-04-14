@@ -69,9 +69,9 @@ AccountController --|> BaseApiController
 AccountController "1"--"1" ChangePasswordCommand
 AccountController "1"--"1" ChangePasswordDTO
 ChangePasswordCommand "1" o--"1" AccountMethod
-ChangePasswordCommand --|> "IRequest<TResponse>"
+ChangePasswordCommand ..|> "IRequest<TResponse>"
 
-ChangePasswordCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+ChangePasswordCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 ChangePasswordCommandHandler "1" o--"1" ChangePasswordCommand
 ChangePasswordCommandHandler "1" o---"1" ApplicationAccount
 ChangePasswordCommandHandler "1" o--"1" AccountError

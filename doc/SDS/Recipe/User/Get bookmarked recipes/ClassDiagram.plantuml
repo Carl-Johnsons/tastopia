@@ -70,9 +70,9 @@ RecipeController --|> BaseApiController
 RecipeController "1"--"1" GetRecipeBookmarkDTO
 RecipeController "1"--"1" GetRecipeBookmarksQuery
 
-GetRecipeBookmarksQuery --|> "IRequest<TResponse>"
+GetRecipeBookmarksQuery ..|> "IRequest<TResponse>"
 
-GetRecipeBookmarksQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetRecipeBookmarksQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetRecipeBookmarksQueryHandler "1"--"1" GetRecipeBookmarksQuery
 GetRecipeBookmarksQueryHandler "1"--"1" Result
 GetRecipeBookmarksQueryHandler "1"--"1" PaginatedRecipeFeedsListResponse

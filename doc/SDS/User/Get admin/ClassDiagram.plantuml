@@ -89,9 +89,9 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" PaginatedDTO
 AdminController "1"--"1" GetAdminsQuery
 
-GetAdminsQuery --|> "IRequest<TResponse>"
+GetAdminsQuery ..|> "IRequest<TResponse>"
 
-GetAdminsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetAdminsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetAdminsQueryHandler "1" --"1" GetAdminsQuery
 GetAdminsQueryHandler "1" o--"1" IApplicationDbContext
 GetAdminsQueryHandler "1" o--"1" IPaginateDataUtility

@@ -68,9 +68,9 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 
 UserController --|> BaseApiController
 UserController "1"--"1" GetUserDetailsQuery
-GetUserDetailsQuery --|> "IRequest<TResponse>"
+GetUserDetailsQuery ..|> "IRequest<TResponse>"
 
-GetUserDetailsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+GetUserDetailsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetUserDetailsQueryHandler "1" --"1" GetUserDetailsQuery
 GetUserDetailsQueryHandler "1" o--"1" IApplicationDbContext
 GetUserDetailsQueryHandler "1" o--"1" GrpcAccountClient

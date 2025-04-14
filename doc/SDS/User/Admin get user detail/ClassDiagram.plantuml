@@ -72,9 +72,9 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" GetUserDetailByAccountIdDTO
 AdminController "1"--"1" AdminGetUserDetailQuery
 
-AdminGetUserDetailQuery --|> "IRequest<TResponse>"
+AdminGetUserDetailQuery ..|> "IRequest<TResponse>"
 
-AdminGetUserDetailQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
+AdminGetUserDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 AdminGetUserDetailQueryHandler "1" --"1" AdminGetUserDetailQuery
 AdminGetUserDetailQueryHandler "1" o--"1" IApplicationDbContext
 AdminGetUserDetailQueryHandler "1" o--"1" GrpcAccountClient
