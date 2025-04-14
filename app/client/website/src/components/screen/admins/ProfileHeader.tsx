@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { DisableAdminButton, RestoreAdminButton, SignOutButton } from "./Button";
 import { ItemStatusText } from "../report/common/StatusText";
@@ -29,6 +29,16 @@ export default function ProfileHeader({ admin, isViewingAdmin }: Props) {
 
   const userId = useSelectUserId();
   const isCurrentUser = useMemo(() => userId === accountId, [userId, accountId]);
+
+  useEffect(() => {
+    const newStatus = admin.isActive;
+
+    if (newStatus !== isActive) {
+      setIsActive(newStatus);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [admin.isActive]);
 
   return (
     <div className='bg-white_black100 overflow-hidden rounded-xl border border-gray-200 shadow-sm dark:border-gray-600'>

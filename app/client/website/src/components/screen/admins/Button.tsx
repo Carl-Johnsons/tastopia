@@ -70,6 +70,7 @@ export const RestoreAdminButton = ({
       onSuccess: async () => {
         toast.success(t("restoreSuccess"));
         await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
+        console.log("invalidateQueries", ["admin", targetId]);
         onSuccess && onSuccess();
       },
       onError: () => {
@@ -108,6 +109,7 @@ export const DisableAdminButton = ({
       onSuccess: async () => {
         toast.success(t("disableSuccess"));
         await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
+        console.log("invalidateQueries", ["admin", targetId]);
         onSuccess && onSuccess();
       },
       onError: () => {

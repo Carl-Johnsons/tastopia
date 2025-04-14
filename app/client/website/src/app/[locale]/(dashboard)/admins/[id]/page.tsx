@@ -1,4 +1,6 @@
-import { getAdminById } from "@/actions/admin.action";
+"use client";
+
+import { useGetAdminById } from "@/api/admin";
 import ActivityFeed from "@/components/screen/admins/ActivityFeed";
 import ProfileHeader from "@/components/screen/admins/ProfileHeader";
 import ProfileInfo from "@/components/screen/admins/ProfileInfo";
@@ -6,18 +8,21 @@ import SomethingWentWrong from "@/components/shared/common/Error";
 import { Link } from "@/i18n/navigation";
 import { ParamsProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "next-intl";
+import Loading from "../../users/[id]/loading";
 
-export default async function Page({ params }: ParamsProps) {
+export default function Page({ params }: ParamsProps) {
   const { id } = params;
-  const t = await getTranslations("administerAdmins");
-  const res = await getAdminById(id);
+  const t = useTranslations("administerAdmins");
+  const { data: currentUser, isError, isLoading } = useGetAdminById(id);
 
-  if (!res.ok) {
+  if (isError) {
     return <SomethingWentWrong />;
   }
 
-  const currentUser = res.data;
+  if (isLoading || !currentUser) {
+    return <Loading />;
+  }
 
   return (
     <div className='min-h-screen rounded-lg p-2'>
@@ -30,7 +35,10 @@ export default async function Page({ params }: ParamsProps) {
       </div>
 
       <div className='mx-auto max-w-[960px]'>
-        <ProfileHeader admin={currentUser} isViewingAdmin />
+        <ProfileHeader
+          admin={currentUser}
+          isViewingAdmin
+        />
 
         <div className='mt-6 flex flex-col-reverse gap-6 lg:flex-row'>
           <div className='flex-1'>{<ActivityFeed accountId={id} />}</div>

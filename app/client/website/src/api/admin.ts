@@ -50,6 +50,7 @@ export const useGetAdmins = ({
 export const useGetAdminById = (id: string, self?: boolean) => {
   const { withErrorProcessor } = useErrorHandler();
 
+  console.log("queryKey", self ? ["currentAdmin"] : ["admin", id]);
   return useQuery({
     queryKey: self ? ["currentAdmin"] : ["admin", id],
     queryFn: () =>

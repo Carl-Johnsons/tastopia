@@ -1,6 +1,6 @@
 "use server";
 
-import { withErrorProcessor } from "@/utils/errorHanlder";
+import { withErrorProcessor, withSuccessfulResponse } from "@/utils/errorHanlder";
 import { PaginatedQueryParams, Response } from "@/types/common";
 import { protectedAxiosInstance } from "@/constants/host";
 import { IPaginatedAdminActivityLogListResponse } from "@/generated/interfaces/tracking.interface";
@@ -35,10 +35,7 @@ export async function getAdmins(
       }
     });
 
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -54,10 +51,7 @@ export async function getAdminById(id: string): Promise<Response<IAdminDetailRes
       }
     });
 
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -68,10 +62,7 @@ export async function getCurrentAdminDetail(): Promise<Response<IAdminDetailResp
 
   try {
     const { data } = await protectedAxiosInstance.get<IAdminDetailResponse>(url);
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -82,10 +73,7 @@ export const disableAdmin = async (id: string): Promise<Response<void>> => {
 
   try {
     await protectedAxiosInstance.post<undefined>(url, { accountId: id });
-    return {
-      ok: true,
-      data: undefined
-    };
+    return withSuccessfulResponse(undefined);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -105,10 +93,7 @@ export async function createAdmin(formData: FormData): Promise<Response<undefine
       }
     });
 
-    return {
-      ok: true,
-      data: undefined
-    };
+    return withSuccessfulResponse(undefined);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -127,10 +112,7 @@ export async function updateAdmin(
       }
     });
 
-    return {
-      ok: true,
-      data: undefined
-    };
+    return withSuccessfulResponse(undefined);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -154,10 +136,7 @@ export async function getAdminActivies(
         }
       });
 
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -179,10 +158,7 @@ export async function getCurrentAdminActivies(
         }
       });
 
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
