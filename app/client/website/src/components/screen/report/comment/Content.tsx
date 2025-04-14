@@ -69,7 +69,6 @@ const Content = ({ commentId, recipeId, content, author, ...props }: Props) => {
 
         {isActive ? (
           <DisableCommentButton
-            title='Disable'
             onSuccess={() => setIsActive(false)}
             targetId={commentId}
             recipeId={recipeId}
@@ -77,7 +76,6 @@ const Content = ({ commentId, recipeId, content, author, ...props }: Props) => {
           />
         ) : (
           <RestoreCommentButton
-            title='Restore'
             onSuccess={() => setIsActive(true)}
             targetId={commentId}
             recipeId={recipeId}
