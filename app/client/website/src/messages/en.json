@@ -105,6 +105,36 @@
       "error": "An error occurred. Please try again."
     }
   },
+  "administerRecipes": {
+    "title": "Administer Recipes",
+    "subtitle": "Recipe",
+    "search": "Search by recipe name, ingredients, ...",
+    "columns": {
+      "recipeName": "Recipe Name",
+      "ingredients": "Ingredients",
+      "username": "Username",
+      "name": "Name",
+      "createdDate": "Created Date",
+      "status": "Status",
+      "recipeImage": "Image",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewDetail": "View detail",
+      "disable": "Disable",
+      "restore": "Restore"
+    },
+    "tooltip": {
+      "viewDetail": "View detail",
+      "disable": "Disable recipe",
+      "restore": "Restore recipe"
+    },
+    "notifications": {
+      "restoreSuccess": "Restore recipe successfully!",
+      "disableSuccess": "Disable recipe successfully!",
+      "error": "Something went wrong!"
+    }
+  },
   "administerReportRecipes": {
     "title": "Administer Reports",
     "subtitle": "Recipe",

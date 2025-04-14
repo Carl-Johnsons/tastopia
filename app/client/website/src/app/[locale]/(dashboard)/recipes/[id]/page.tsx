@@ -6,13 +6,15 @@ import SomethingWentWrong from "@/components/shared/common/Error";
 import { Link } from "@/i18n/navigation";
 import { ParamsProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import ReportList from "@/components/screen/report/common/ReportList";
 import { ReportType } from "@/generated/enums/recipe.enum";
 import Loading from "../../users/[id]/loading";
 
 export default function Page({ params }: ParamsProps) {
   const lang = useLocale();
+  const t = useTranslations("administerRecipes");
+
   const { data, isError, isLoading } = useGetRecipeReport({
     recipeId: params.id,
     options: { lang }
@@ -26,8 +28,10 @@ export default function Page({ params }: ParamsProps) {
     <div className='flex flex-col gap-10'>
       <div className='flex gap-2'>
         <Link href='/recipes'>
-          <span className='text-gray-500'>Administer Recipes</span>
+          <span className='text-gray-500'>{t("title")}</span>
         </Link>
+        <ChevronRight className='text-black_white' />
+        <span className='text-black_white'>{t("subtitle")}</span>
         <ChevronRight className='text-black_white' />
         <span className='text-black_white'>{recipe.title}</span>
       </div>

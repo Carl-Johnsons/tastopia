@@ -3,11 +3,13 @@
 import { useDisableRecipe, useRestoreRecipe } from "@/api/recipe";
 import InteractiveButton, { DataTableButton } from "@/components/shared/common/Button";
 import { BanIcon } from "@/components/shared/icons";
+import { useErrorHandler } from "@/hooks/error/useErrorHanler";
 import { useInvalidateAdmin } from "@/hooks/query";
 import { Link, useRouter } from "@/i18n/navigation";
 import { DataTableButtonProps } from "@/types/report";
 import { useQueryClient } from "@tanstack/react-query";
 import { RotateCw, Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -63,21 +65,25 @@ export const RestoreRecipeButton = ({
   const { mutate, isPending } = useRestoreRecipe();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("administerReportRecipes.notifications");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
       onSuccess: async () => {
-        toast.success("Recipe restored successfully.");
+        toast.success(t("restoreRecipeSuccess"));
         await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
         invalidateCurrentAdminActivities();
         onSuccess && onSuccess();
       },
-      onError: ({ message }) => {
-        toast.error(message);
+      onError: error => {
+        handleError(error);
         onFailure && onFailure();
       }
     });
   }, [
+    t,
+    handleError,
     onSuccess,
     onFailure,
     targetId,
@@ -112,21 +118,25 @@ export const DisableRecipeButton = ({
   const { mutate, isPending } = useDisableRecipe();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("administerReportRecipes.notifications");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
       onSuccess: async () => {
-        toast.success("Recipe disabled successfully.");
+        toast.success(t("disableRecipeSuccess"));
         await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
         invalidateCurrentAdminActivities();
         onSuccess && onSuccess();
       },
-      onError: ({ message }) => {
-        toast.error(message);
+      onError: error => {
+        handleError(error);
         onFailure && onFailure();
       }
     });
   }, [
+    t,
+    handleError,
     onSuccess,
     onFailure,
     targetId,

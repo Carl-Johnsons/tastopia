@@ -120,7 +120,7 @@ export const useReopenReport = () => {
 export const useReopenAllReports = () => {
   const { withErrorProcessor } = useErrorHandler();
 
-  return useMutation<void, Error, IReportDTO>({
+  return useMutation<void, ApiError, IReportDTO>({
     mutationFn: params => withErrorProcessor(() => reopenReport(params))
   });
 };
@@ -128,7 +128,7 @@ export const useReopenAllReports = () => {
 export const useMarkReportAsCompleted = () => {
   const { withErrorProcessor } = useErrorHandler();
 
-  return useMutation<void, Error, IReportDTO>({
+  return useMutation<void, ApiError, IReportDTO>({
     mutationFn: params => withErrorProcessor(() => markReportAsCompleted(params))
   });
 };
@@ -136,7 +136,7 @@ export const useMarkReportAsCompleted = () => {
 export const useMarkAllReport = () => {
   const { withErrorProcessor } = useErrorHandler();
 
-  return useMutation<void, Error, MarkAllRecipeReportParams>({
+  return useMutation<void, ApiError, MarkAllRecipeReportParams>({
     mutationFn: params => withErrorProcessor(() => markAllReports(params))
   });
 };
@@ -144,7 +144,7 @@ export const useMarkAllReport = () => {
 export const useDisableRecipe = () => {
   const { withErrorProcessor } = useErrorHandler();
 
-  return useMutation<void, Error, string>({
+  return useMutation<void, ApiError, string>({
     mutationFn: id => withErrorProcessor(() => disableRecipe(id))
   });
 };
@@ -152,7 +152,7 @@ export const useDisableRecipe = () => {
 export const useRestoreRecipe = () => {
   const { withErrorProcessor } = useErrorHandler();
 
-  return useMutation<void, Error, string>({
+  return useMutation<void, ApiError, string>({
     mutationFn: id => withErrorProcessor(() => restoreRecipe(id))
   });
 };
