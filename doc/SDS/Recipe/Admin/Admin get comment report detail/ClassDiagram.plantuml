@@ -38,6 +38,7 @@ class AdminReportCommentDetailResponse{
 
 class ReportRecipeResponse{
     +Id : Guid
+    +ReporterId : Guid
     +ReporterUsername : string
     +ReporterDisplayName : string
     +ReporterAvtUrl : string
