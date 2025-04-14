@@ -245,9 +245,9 @@ const UploadImage = ({
         </View>
 
         {/* Upload image button */}
-        {((imageCount <= 4 && !isDisabled && isMultiple) ||
-          (imageCount === 0 && !startUploadImage)) &&
-          imageCount < selectionLimit && (
+        {!isDisabled &&
+          imageCount < selectionLimit &&
+          (isMultiple || imageCount === 0) && (
             <TouchableHighlight
               onPress={pickImage}
               style={styles.uploadButton}

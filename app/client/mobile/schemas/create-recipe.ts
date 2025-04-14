@@ -62,5 +62,6 @@ type CreateRecipeFormValue = {
 };
 
 type FormCreateRecipeType = yup.InferType<typeof schema>;
+type ImageFileType = yup.InferType<typeof imageFileSchema>;
 
-export { schema, FormCreateRecipeType, CreateRecipeFormValue };
+export { schema, FormCreateRecipeType, CreateRecipeFormValue, ImageFileType };

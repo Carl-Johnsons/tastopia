@@ -1,12 +1,4 @@
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Alert
-} from "react-native";
-import { AntDesign, MaterialCommunityIcons } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { useCallback, useState } from "react";
 import { globalStyles } from "@/components/common/GlobalStyles";
 import { useTranslation } from "react-i18next";
@@ -15,13 +7,13 @@ import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import { Controller, useFormContext } from "react-hook-form";
 import { CreateRecipeFormValue } from "@/schemas/create-recipe";
+import { StyleSheet, View, TextInput, TouchableOpacity, Alert } from "react-native";
 
 interface CreateDraggableStepProps {
   index: number;
   stepKey: string;
   content: string;
   images: ImageFileType[];
-  drag: () => void;
   remove: (index: number) => void;
 }
 
@@ -30,7 +22,6 @@ const CreateDraggableStep = ({
   stepKey,
   content,
   images,
-  drag,
   remove
 }: CreateDraggableStepProps) => {
   const { c } = useColorizer();
@@ -38,7 +29,6 @@ const CreateDraggableStep = ({
 
   const { control, getValues, setValue } = useFormContext();
   const { t } = useTranslation("createRecipe");
-  const [inputValue, setInputValue] = useState(content);
   const [isFocused, setIsFocused] = useState(false);
 
   const handleRemoveItem = useCallback(() => {
@@ -48,25 +38,21 @@ const CreateDraggableStep = ({
   }, [index, remove]);
 
   const confirmRemoveItem = () => {
-    if (inputValue !== "") {
-      Alert.alert(
-        t("removeIngredientAlert.title"),
-        t("removeIngredientAlert.description"),
-        [
-          {
-            text: t("removeIngredientAlert.cancel")
-          },
-          {
-            text: t("removeIngredientAlert.delete"),
-            onPress: () => {
-              handleRemoveItem();
-            }
+    Alert.alert(
+      t("removeIngredientAlert.title"),
+      t("removeIngredientAlert.description"),
+      [
+        {
+          text: t("removeIngredientAlert.cancel")
+        },
+        {
+          text: t("removeIngredientAlert.delete"),
+          onPress: () => {
+            handleRemoveItem();
           }
-        ]
-      );
-    } else {
-      handleRemoveItem();
-    }
+        }
+      ]
+    );
   };
 
   const onFileChange = (files: ImageFileType[]) => {
@@ -110,6 +96,7 @@ const CreateDraggableStep = ({
               onChangeText={onChange}
               placeholder={t("formPlaceholder.steps")}
               placeholderTextColor='#9CA3AF'
+              multiline={true}
             />
           )}
         />
@@ -120,16 +107,6 @@ const CreateDraggableStep = ({
           defaultImages={images}
         />
       </View>
-
-      <TouchableWithoutFeedback onLongPress={drag}>
-        <View style={styles.dragHandle}>
-          <MaterialCommunityIcons
-            name='drag-vertical'
-            size={24}
-            color='#6B7280'
-          />
-        </View>
-      </TouchableWithoutFeedback>
     </View>
   );
 };
@@ -177,10 +154,5 @@ const styles = StyleSheet.create({
   },
   inputFocused: {
     borderBottomColor: globalStyles.color.primary
-  },
-  dragHandle: {
-    padding: 8,
-    justifyContent: "center",
-    alignItems: "center"
   }
 });

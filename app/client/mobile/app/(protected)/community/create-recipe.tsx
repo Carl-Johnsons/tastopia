@@ -19,7 +19,8 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  FlatList
+  FlatList,
+  ScrollView
 } from "react-native";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { protectedAxiosInstance } from "@/constants/host";
@@ -28,10 +29,6 @@ import useColorizer from "@/hooks/useColorizer";
 import { colors } from "@/constants/colors";
 import CreateIngredient from "@/components/screen/community/CreateIngredient";
 import TagList from "@/components/screen/community/TagList";
-import DraggableFlatList, {
-  RenderItemParams,
-  ScaleDecorator
-} from "react-native-draggable-flatlist";
 import CreateDraggableStep from "@/components/screen/community/CreateDraggableStep";
 import CreateFormHeader from "@/components/screen/community/CreateFormHeader";
 import { useRecipesFeed } from "@/api/recipe";
@@ -213,25 +210,6 @@ const CreateRecipe = () => {
     }
   };
 
-  const renderStepItem = useCallback(
-    ({ item, drag, isActive, getIndex }: RenderItemParams<CreateStepType>) => {
-      return (
-        <ScaleDecorator>
-          <CreateDraggableStep
-            key={item.key}
-            stepKey={item.key}
-            content={item.content}
-            images={item.images}
-            drag={drag}
-            index={getIndex()!}
-            remove={removeStep}
-          />
-        </ScaleDecorator>
-      );
-    },
-    [setSelectedTags]
-  );
-
   return (
     <SafeAreaView
       style={{ backgroundColor: c(white.DEFAULT, black[100]), height: "100%" }}
@@ -281,117 +259,116 @@ const CreateRecipe = () => {
           {/* Form */}
           <View className='relative flex-1 px-6'>
             {isLoading && (
-              <View className='flex-center absolute left-6 z-10 size-full'>
-                <ActivityIndicator
-                  size={"large"}
-                  color={globalStyles.color.primary}
-                />
-              </View>
+              <View className='flex-center absolute left-6 z-10 size-full'></View>
             )}
 
             <FormProvider {...formCreateRecipe}>
-              <DraggableFlatList
-                key={"draggable-flat-list-create-steps"}
-                data={stepsFields}
-                style={{ height: "100%" }}
-                onDragEnd={({ data }) => setValue("steps", data)}
-                keyExtractor={item => item.key}
-                renderItem={renderStepItem}
+              <ScrollView
                 showsVerticalScrollIndicator={false}
-                ListHeaderComponent={() => {
-                  return (
-                    <View className='gap-4'>
-                      <CreateFormHeader
-                        images={images}
-                        onFileChange={onFileChange}
-                        formControl={formControl}
-                        errors={errors}
-                      />
-                      {/* Ingredient */}
-                      <View>
-                        <FlatList
-                          scrollEnabled={false}
-                          key={"draggable-flat-list-create-ingredients"}
-                          data={ingredientsFields}
-                          keyExtractor={item => item.key ?? uuid.v4()}
-                          renderItem={({ item, index }) => (
-                            <CreateIngredient
-                              key={item.key}
-                              index={index}
-                              remove={removeIngredient}
-                            />
-                          )}
-                          showsVerticalScrollIndicator={false}
-                          ListHeaderComponent={() => {
-                            return (
-                              <Text className='body-semibold text-black_white mb-2'>
-                                {t("formTitle.ingredients")}
-                              </Text>
-                            );
-                          }}
-                          ListFooterComponent={() => {
-                            return (
-                              <View className='flex-center mt-2'>
-                                <TouchableWithoutFeedback
-                                  onPress={handleAddMoreIngredient}
-                                >
-                                  <View className='flex-center flex-row gap-1'>
-                                    <Entypo
-                                      name='plus'
-                                      size={24}
-                                      color={c(black.DEFAULT, white.DEFAULT)}
-                                    />
-                                    <Text className='body-semibold text-black_white'>
-                                      {t("formTitle.ingredients")}
-                                    </Text>
-                                  </View>
-                                </TouchableWithoutFeedback>
+                style={{ flex: 1 }}
+                keyboardShouldPersistTaps='handled'
+              >
+                {/* Header Content */}
+                <View className='gap-4'>
+                  <CreateFormHeader
+                    images={images}
+                    onFileChange={onFileChange}
+                    formControl={formControl}
+                    errors={errors}
+                  />
+                  {/* Ingredient */}
+                  <View>
+                    <FlatList
+                      scrollEnabled={false}
+                      key={"flat-list-create-ingredients"}
+                      data={ingredientsFields}
+                      keyExtractor={item => item.key ?? uuid.v4()}
+                      renderItem={({ item, index }) => (
+                        <CreateIngredient
+                          key={item.key}
+                          index={index}
+                          remove={removeIngredient}
+                        />
+                      )}
+                      showsVerticalScrollIndicator={false}
+                      ListHeaderComponent={() => {
+                        return (
+                          <Text className='body-semibold text-black_white mb-2'>
+                            {t("formTitle.ingredients")}
+                          </Text>
+                        );
+                      }}
+                      ListFooterComponent={() => {
+                        return (
+                          <View className='flex-center mt-2'>
+                            <TouchableWithoutFeedback onPress={handleAddMoreIngredient}>
+                              <View className='flex-center flex-row gap-1'>
+                                <Entypo
+                                  name='plus'
+                                  size={24}
+                                  color={c(black.DEFAULT, white.DEFAULT)}
+                                />
+                                <Text className='body-semibold text-black_white'>
+                                  {t("formTitle.ingredients")}
+                                </Text>
                               </View>
-                            );
-                          }}
-                        />
-                      </View>
-
-                      <View className='mt-4'>
-                        <Text className='body-semibold text-black_white mb-2'>
-                          {t("formTitle.method")}
-                        </Text>
-                      </View>
-                    </View>
-                  );
-                }}
-                ListFooterComponent={() => {
-                  return (
-                    <View>
-                      <View className='flex-center mt-2'>
-                        <TouchableWithoutFeedback onPress={handleAddMoreStep}>
-                          <View className='flex-center flex-row gap-1'>
-                            <Entypo
-                              name='plus'
-                              size={24}
-                              color={c(black.DEFAULT, white.DEFAULT)}
-                            />
-                            <Text className='body-semibold text-black_white'>
-                              {t("formTitle.step")}
-                            </Text>
+                            </TouchableWithoutFeedback>
                           </View>
-                        </TouchableWithoutFeedback>
-                      </View>
+                        );
+                      }}
+                    />
+                  </View>
 
-                      {/* Tag */}
-                      <View className='mb-4 mt-4'>
-                        <Text className='body-semibold text-black_white mb-2'>
-                          {t("formTitle.tag")}
-                        </Text>
-                        <TagList
-                          selectedTags={selectedTags}
-                          setSelectedTags={setSelectedTags}
-                        />
-                      </View>
-                    </View>
+                  <View className='mt-4'>
+                    <Text className='body-semibold text-black_white mb-2'>
+                      {t("formTitle.method")}
+                    </Text>
+                  </View>
+                </View>
+
+                {stepsFields.map((item, index) => {
+                  const stepImages = item.images || [];
+                  return (
+                    <CreateDraggableStep
+                      key={item.key}
+                      stepKey={item.key}
+                      index={index}
+                      images={stepImages}
+                      remove={removeStep}
+                      content={item.content}
+                    />
                   );
-                }}
-              />
+                })}
+
+                {/* Footer Content */}
+                <View>
+                  <View className='flex-center mt-2'>
+                    <TouchableWithoutFeedback onPress={handleAddMoreStep}>
+                      <View className='flex-center flex-row gap-1'>
+                        <Entypo
+                          name='plus'
+                          size={24}
+                          color={c(black.DEFAULT, white.DEFAULT)}
+                        />
+                        <Text className='body-semibold text-black_white'>
+                          {t("formTitle.step")}
+                        </Text>
+                      </View>
+                    </TouchableWithoutFeedback>
+                  </View>
+
+                  {/* Tag */}
+                  <View className='mb-4 mt-4'>
+                    <Text className='body-semibold text-black_white mb-2'>
+                      {t("formTitle.tag")}
+                    </Text>
+                    <TagList
+                      selectedTags={selectedTags}
+                      setSelectedTags={setSelectedTags}
+                    />
+                  </View>
+                </View>
+              </ScrollView>
             </FormProvider>
           </View>
         </KeyboardAvoidingView>
