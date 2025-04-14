@@ -6,7 +6,7 @@ import {
   ChatBubbleFillIcon,
   UserIcon
 } from "@/constants/icons";
-import { ActivityIndicator, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import { Avatar } from "@rneui/base";
 import { enUS, vi } from "date-fns/locale";
 import { formatDistanceToNow } from "date-fns";
@@ -26,6 +26,8 @@ import CustomTab, { ItemProps } from "@/components/common/Tab";
 import { TabView } from "@rneui/themed";
 import Header from "./Header";
 import { NotificationCategories } from "@/generated/enums/notification.enum";
+import { NotificationTemplateCode } from "@/constants/notifications";
+import { AntDesign, Feather } from "@expo/vector-icons";
 
 export default function NotificationList() {
   const { t } = useTranslation("notification");
@@ -65,15 +67,19 @@ type INotificationJsonData = {
 };
 
 export const Notification = ({
-  item
+  item,
+  type
 }: {
   item: INotificationsResponse;
   index: number;
+  type: NotificationCategories;
 }) => {
   const { message, imageUrl, jsonData, code, isViewed, id, createdAt } = item;
   const currentRouteName = usePathname();
+
   const { t } = useTranslation("component");
   const { primary } = colors;
+
   const { mutateAsync: setViewedNotification } = useSetViewedNotification();
   const queryClient = useQueryClient();
   const { handleError } = useErrorHandler();
@@ -106,64 +112,88 @@ export const Notification = ({
     }
   });
 
-  type ActionCode =
-    | "USER_REPLY"
-    | "USER_FOLLOW"
-    | "USER_COMMENT"
-    | "USER_UPVOTE"
-    | "USER_DOWNVOTE";
-
-  const renderIcon = (code: ActionCode) => {
-    switch (code) {
-      case "USER_REPLY":
-        return (
-          <ChatBubbleFillIcon
-            width={24}
-            height={24}
-            color={primary}
-          />
-        );
-      case "USER_FOLLOW":
-        return (
-          <UserIcon
-            width={24}
-            height={24}
-          />
-        );
-      case "USER_COMMENT":
-        return (
-          <ChatBubbleFillIcon
-            width={24}
-            height={24}
-            color={primary}
-          />
-        );
-      case "USER_UPVOTE":
-        return (
-          <ArrowUpFillIcon
-            width={24}
-            height={24}
-            color={primary}
-          />
-        );
-      case "USER_DOWNVOTE":
-        return (
-          <ArrowDownFillIcon
-            width={24}
-            height={24}
-            color={primary}
-          />
-        );
-      default:
-        return (
-          <ChatBubbleFillIcon
-            width={24}
-            height={24}
-            color={primary}
-          />
-        );
-    }
-  };
+  const renderIcon = useCallback(
+    (code: NotificationTemplateCode) => {
+      switch (code) {
+        case NotificationTemplateCode.USER_COMMENT:
+          return (
+            <ChatBubbleFillIcon
+              width={24}
+              height={24}
+              color={primary}
+            />
+          );
+        case NotificationTemplateCode.USER_CREATE_RECIPE:
+          return (
+            <AntDesign
+              name='plus'
+              size={24}
+              color={primary}
+            />
+          );
+        case NotificationTemplateCode.USER_FOLLOW:
+          return (
+            <UserIcon
+              width={24}
+              height={24}
+            />
+          );
+        case NotificationTemplateCode.USER_REPLY:
+          return (
+            <ChatBubbleFillIcon
+              width={24}
+              height={24}
+              color={primary}
+            />
+          );
+        case NotificationTemplateCode.USER_UPVOTE:
+          return (
+            <ArrowUpFillIcon
+              width={24}
+              height={24}
+              color={primary}
+            />
+          );
+        case NotificationTemplateCode.USER_DOWNVOTE:
+          return (
+            <ArrowDownFillIcon
+              width={24}
+              height={24}
+              color={primary}
+            />
+          );
+        case NotificationTemplateCode.SYSTEM_DISABLE_RECIPE:
+        case NotificationTemplateCode.ADMIN_DISABLE_RECIPE:
+        case NotificationTemplateCode.ADMIN_DISABLE_COMMENT:
+          return (
+            <Feather
+              name='slash'
+              size={24}
+              color={primary}
+            />
+          );
+        case NotificationTemplateCode.ADMIN_RESTORE_RECIPE:
+        case NotificationTemplateCode.ADMIN_RESTORE_COMMENT:
+          return (
+            <Feather
+              name='rotate-cw'
+              size={24}
+              color={primary}
+            />
+          );
+        default:
+          console.log("Unknown notification code:", code);
+          return (
+            <ChatBubbleFillIcon
+              width={24}
+              height={24}
+              color={primary}
+            />
+          );
+      }
+    },
+    [primary]
+  );
 
   return (
     <Pressable
@@ -173,17 +203,29 @@ export const Notification = ({
     >
       <View className='relative'>
         <View className='max-h-[75px]'>
-          <Avatar
-            size={70}
-            rounded
-            source={
-              imageUrl ? { uri: imageUrl } : require("../../../assets/images/avatar.png")
-            }
-            containerStyle={imageUrl && { backgroundColor: "#FFC529" }}
-          />
-          <View className='absolute bottom-0 right-0'>
-            {renderIcon(code as ActionCode)}
-          </View>
+          {type === NotificationCategories.SYSTEM ? (
+            <>
+              <View className='flex-center size-[70px] rounded-full border border-gray-600'>
+                {renderIcon(code as NotificationTemplateCode)}
+              </View>
+            </>
+          ) : (
+            <>
+              <Avatar
+                size={70}
+                rounded
+                source={
+                  imageUrl
+                    ? { uri: imageUrl }
+                    : require("../../../assets/images/avatar.png")
+                }
+                containerStyle={imageUrl && { backgroundColor: "#FFC529" }}
+              />
+              <View className='absolute bottom-0 right-0'>
+                {renderIcon(code as NotificationTemplateCode)}
+              </View>
+            </>
+          )}
         </View>
       </View>
       <View className='shrink justify-center pt-2'>
@@ -212,18 +254,17 @@ const Tab = ({ type }: TabProps) => {
   const { primary } = colors;
 
   const [notifications, setNotifications] = useState<INotificationsResponse[]>();
-  const { data, isLoading, refetch, fetchNextPage } = useGetNotification(type);
+  const { data, isLoading, isStale, refetch, fetchNextPage } = useGetNotification(type);
   useHydrateData({ source: data, setter: setNotifications });
 
   const dispatch = useAppDispatch();
+  const fetchData = useCallback(() => {
+    if (isStale) {
+      refetch();
+    }
+  }, [isStale]);
 
-  useEffect(() => {
-    console.log("data changed");
-  }, [data]);
-
-  useFocusEffect(() => {
-    refetch();
-  });
+  useFocusEffect(fetchData);
 
   useEffect(() => {
     dispatch(
@@ -251,6 +292,7 @@ const Tab = ({ type }: TabProps) => {
             <Notification
               item={item}
               index={index}
+              type={type}
             />
           )}
           refreshControl={
