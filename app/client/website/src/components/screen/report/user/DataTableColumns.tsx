@@ -113,7 +113,7 @@ export const ActionButtons = ({
       return;
     }
 
-    const newStatus = result.userReport.status;
+    const newStatus = result.userReport.status as unknown as ReportStatus;
     setReportStatus(newStatus);
     onStatusUpdate(reportId, newStatus);
 
