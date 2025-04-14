@@ -59,7 +59,6 @@ export default function useActivityLogTableColumns() {
         name: t("createdDate"),
         sortable: true,
         width: "200px",
-        center: true,
         hide: 1160,
         cell: ({ createdAt }) => {
           return (
