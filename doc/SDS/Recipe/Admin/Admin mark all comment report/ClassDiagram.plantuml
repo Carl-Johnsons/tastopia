@@ -1,0 +1,77 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 20
+skinparam ranksep 20
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminMarkAllCommentReport(markAllCommentReportDTO : MarkAllCommentReportDTO): async Task<IActionResult>
+}
+
+class MarkAllCommentReportCommand {
+    +RecipeId : Guid
+    +CommentId : Guid
+    +IsReopened : bool
+    +CurrentAccountId : Guid
+}
+
+class MarkAllCommentReportCommandHandler {
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +MarkAllCommentReportCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: MarkAllCommentReportCommand, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class MarkAllCommentReportDTO {
+    +RecipeId : Guid
+    +CommentId : Guid
+    +IsReopened : bool
+}
+
+class ReportError {
+    {static} +NotFound: Error
+    {static} +NullParameter: Error
+    {static} +AlreadyMarkComplete: Error
+    {static} +AlreadyPending: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" ReportDTO
+AdminController "1"--"1" MarkAllCommentReportCommand
+
+MarkAllCommentReportCommand ..|> "IRequest<TResponse>"
+
+MarkAllCommentReportCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+MarkAllCommentReportCommandHandler "1" --"1" MarkAllCommentReportCommand
+MarkAllCommentReportCommandHandler "1" o--"1" IApplicationDbContext
+MarkAllCommentReportCommandHandler "1" o--"1" IServiceBus
+MarkAllCommentReportCommandHandler "1" o--"1" IUnitOfWork
+MarkAllCommentReportCommandHandler "1" --"1" Result
+MarkAllCommentReportCommandHandler "1" --"1..*" AddActivityLogEvent
+MarkAllCommentReportCommandHandler "1" --"1..*" UserReportComment
+MarkAllCommentReportCommandHandler "1" --"1..*" ReportError
+
+Error "1..*" --o "1" ReportError
+
+@enduml

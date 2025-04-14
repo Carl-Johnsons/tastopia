@@ -17,28 +17,25 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminMarkReport(reportDTO : ReportDTO): async Task<IActionResult>
+    +AdminMarkAllReport(markAllUserReportDTO : MarkAllUserReportDTO): async Task<IActionResult>
 }
 
-class MarkReportCommand {
-    +ReportId : Guid
+class MarkAllReportCommand {
+    +AccountId : Guid
+    +IsReopened : bool
     +CurrentAccountId : Guid
 }
 
-class MarkReportCommandHandler {
+class MarkAllReportCommandHandler {
     -_context : IApplicationDbContext
     -_serviceBus: IServiceBus 
     -_unitOfWork: IUnitOfWork 
     +MarkReportCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
-    +Handle(request: MarkReportCommand, cancellationToken: CancellationToken) : Task<Result<AdminMarkReportResponse?>>
+    +Handle(request: MarkAllReportCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
-class ReportDTO {
-    +ReportId : Guid
-}
-
-class AdminMarkReportResponse {
-    +UserReport : UserReport
+class MarkAllUserReportDTO {
+    +AccountId : Guid
     +IsReopened : bool
 }
 
@@ -62,20 +59,19 @@ together {
 
 AdminController --|> BaseApiController
 AdminController "1"--"1" ReportDTO
-AdminController "1"--"1" MarkReportCommand
+AdminController "1"--"1" MarkAllReportCommand
 
-MarkReportCommand ..|> "IRequest<TResponse>"
+MarkAllReportCommand ..|> "IRequest<TResponse>"
 
-MarkReportCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-MarkReportCommandHandler "1" --"1" MarkReportCommand
-MarkReportCommandHandler "1" o--"1" IApplicationDbContext
-MarkReportCommandHandler "1" o--"1" IServiceBus
-MarkReportCommandHandler "1" o--"1" IUnitOfWork
-MarkReportCommandHandler "1" --"1" Result
-MarkReportCommandHandler "1" --"1..*" AdminMarkReportResponse
-MarkReportCommandHandler "1" --"1..*" AddActivityLogEvent
-MarkReportCommandHandler "1" --"1..*" UserReport
-MarkReportCommandHandler "1" --"1..*" UserReportError
+MarkAllReportCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+MarkAllReportCommandHandler "1" --"1" MarkAllReportCommandHandler
+MarkAllReportCommandHandler "1" o--"1" IApplicationDbContext
+MarkAllReportCommandHandler "1" o--"1" IServiceBus
+MarkAllReportCommandHandler "1" o--"1" IUnitOfWork
+MarkAllReportCommandHandler "1" --"1" Result
+MarkAllReportCommandHandler "1" --"1..*" AddActivityLogEvent
+MarkAllReportCommandHandler "1" --"1..*" UserReport
+MarkAllReportCommandHandler "1" --"1..*" UserReportError
 
 Error "1..*" --o "1" UserReportError
 
