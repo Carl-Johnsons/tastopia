@@ -21,8 +21,8 @@ export const ReportStatusText = ({
         </>
       ) : (
         <>
-          <div className='size-2 rounded-full bg-red-500' />
-          <span className={`font-medium ${coloring && "text-red-500"}`}>
+          <div className='size-2 rounded-full bg-blue-500' />
+          <span className={`font-medium ${coloring && "text-blue-500"}`}>
             {t("pending")}
           </span>
         </>
