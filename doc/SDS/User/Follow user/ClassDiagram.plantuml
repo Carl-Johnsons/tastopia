@@ -6,8 +6,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -52,7 +52,7 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 together {
-    class NotifyUserEvent #Cyan;line:white;text:black
+    class NotifyUserEvent #Cyan;line:black;text:black
 }
 
 UserController --|> BaseApiController

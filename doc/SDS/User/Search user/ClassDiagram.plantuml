@@ -5,8 +5,8 @@
 !include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 together {
@@ -54,8 +54,6 @@ class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
     +HasNextPage: bool
 }
 
-
-
 class UserError {
     {static} +NotFound: Error
     {static} +NullParameters: Error
@@ -78,7 +76,8 @@ class SearchUserResponse {
 interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
-
+PaginatedSearchUserListResponse "1" o-- "1..*" SearchUserResponse
+PaginatedSearchUserListResponse "1" o-- "1" AdvancePaginatedMetadata
 
 UserController --|> BaseApiController
 UserController "1"--"1" SearchUsersCommand
@@ -89,11 +88,9 @@ SearchUsersCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 SearchUsersCommandHandler "1" --"1" SearchUsersCommand
 SearchUsersCommandHandler "1" o--"1" IPaginateDataUtility
 SearchUsersCommandHandler "1" o--"1" IApplicationDbContext
-SearchUsersCommandHandler "1" o--"1" USER_CONSTANTS
+SearchUsersCommandHandler "1" --"1" USER_CONSTANTS
 SearchUsersCommandHandler "1" --"1..*" UserError
-SearchUsersCommandHandler "1" --"1..*" SearchUserResponse
 SearchUsersCommandHandler "1" --"1" Result
-SearchUsersCommandHandler "1" --"1..*" AdvancePaginatedMetadata
 SearchUsersCommandHandler "1" --"1..*" PaginatedSearchUserListResponse
 
 "BasePaginatedResponse<Type,MetadataType>" "1" <|-up-"1" PaginatedSearchUserListResponse

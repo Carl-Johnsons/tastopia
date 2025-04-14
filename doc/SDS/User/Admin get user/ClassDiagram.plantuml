@@ -1,12 +1,13 @@
 
 @startuml ClassDiagram
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
 !include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml 
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -84,6 +85,9 @@ together {
     class GrpcAccountIdListRequest #DarkViolet;line:white;text:white
     class GrpcAccountClient #DarkViolet;line:white;text:white
 }
+PaginatedAdminGetUserListResponse "1" o-- "1" AdminGetUserResponse
+PaginatedAdminGetUserListResponse "1" o-- "1..*" NumberedPaginatedMetadata
+
 AdminController --|> BaseApiController
 AdminController "1"--"1" PaginatedDTO
 AdminController "1"--"1" AdminGetUsersQuery
@@ -99,8 +103,6 @@ AdminGetUsersQueryHandler "1" --"1" Result
 AdminGetUsersQueryHandler "1" --"1..*" GrpcSearchAccountRequest
 AdminGetUsersQueryHandler "1" --"1..*" GrpcAccountIdListRequest
 AdminGetUsersQueryHandler "1" --"1..*" PaginatedAdminGetUserListResponse
-AdminGetUsersQueryHandler "1" --"1..*" NumberedPaginatedMetadata
-AdminGetUsersQueryHandler "1" --"1..*" AdminGetUserResponse
 AdminGetUsersQueryHandler "1" --"1..*" UserError
 
 Error "1..*" --o "1" UserError

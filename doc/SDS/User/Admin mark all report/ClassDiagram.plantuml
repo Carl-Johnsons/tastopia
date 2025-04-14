@@ -7,8 +7,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -17,7 +17,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminMarkAllReport(markAllUserReportDTO : MarkAllUserReportDTO): async Task<IActionResult>
+    +AdminMarkAllReport(dto : MarkAllUserReportDTO): async Task<IActionResult>
 }
 
 class MarkAllReportCommand {
@@ -58,13 +58,13 @@ together {
 }
 
 AdminController --|> BaseApiController
-AdminController "1"--"1" ReportDTO
+AdminController "1"--"1" MarkAllUserReportDTO
 AdminController "1"--"1" MarkAllReportCommand
 
 MarkAllReportCommand ..|> "IRequest<TResponse>"
 
 MarkAllReportCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-MarkAllReportCommandHandler "1" --"1" MarkAllReportCommandHandler
+MarkAllReportCommandHandler "1" --"1" MarkAllReportCommand
 MarkAllReportCommandHandler "1" o--"1" IApplicationDbContext
 MarkAllReportCommandHandler "1" o--"1" IServiceBus
 MarkAllReportCommandHandler "1" o--"1" IUnitOfWork

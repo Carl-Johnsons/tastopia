@@ -4,8 +4,8 @@
 !include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -56,6 +56,7 @@ class UserError {
 
 ' =========== Microservice class ===========
 together {
+    class IMapper #Black;line:white;text:white
     class GrpcAccountIdRequest #DarkViolet;line:white;text:white
     class GrpcAccountClient #DarkViolet;line:white;text:white
 }
@@ -74,6 +75,7 @@ GetUserDetailsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetUserDetailsQueryHandler "1" --"1" GetUserDetailsQuery
 GetUserDetailsQueryHandler "1" o--"1" IApplicationDbContext
 GetUserDetailsQueryHandler "1" o--"1" GrpcAccountClient
+GetUserDetailsQueryHandler "1" o--"1" IMapper
 GetUserDetailsQueryHandler "1" --"1..*" GrpcAccountIdRequest
 GetUserDetailsQueryHandler "1" --"1" Result
 GetUserDetailsQueryHandler "1" --"1..*" GetUserDetailsResponse

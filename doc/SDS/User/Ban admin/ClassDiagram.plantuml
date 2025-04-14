@@ -7,8 +7,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -17,7 +17,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +BanAdmin(adminBanUserDTO : AdminBanUserDTO): async Task<IActionResult>
+    +BanAdmin(dto : AdminBanUserDTO): async Task<IActionResult>
 }
 
 class BanAdminCommand {
@@ -59,7 +59,7 @@ together {
 
 AdminController --|> BaseApiController
 AdminController "1"--"1" AdminBanUserDTO
-AdminController "1"--"1" AdminBanUserCommand
+AdminController "1"--"1" BanAdminCommand
 
 BanAdminCommand ..|> "IRequest<TResponse>"
 

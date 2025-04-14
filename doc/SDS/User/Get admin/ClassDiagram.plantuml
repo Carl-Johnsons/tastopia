@@ -1,12 +1,13 @@
 
 @startuml ClassDiagram
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
 !include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml 
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 class BaseApiController {
@@ -85,6 +86,9 @@ together {
     class GrpcAccountIdListRequest #DarkViolet;line:white;text:white
     class GrpcAccountClient #DarkViolet;line:white;text:white
 }
+PaginatedAdminListResponse "1" o-- "1..*" AdminResponse
+PaginatedAdminListResponse "1" o-- "1" NumberedPaginatedMetadata
+
 AdminController --|> BaseApiController
 AdminController "1"--"1" PaginatedDTO
 AdminController "1"--"1" GetAdminsQuery
@@ -99,9 +103,7 @@ GetAdminsQueryHandler "1" o--"1" GrpcAccountClient
 GetAdminsQueryHandler "1" --"1" Result
 GetAdminsQueryHandler "1" --"1..*" GrpcSearchAccountRequest
 GetAdminsQueryHandler "1" --"1..*" GrpcAccountIdListRequest
-GetAdminsQueryHandler "1" --"1..*" PaginatedAdminGetUserListResponse
-GetAdminsQueryHandler "1" --"1..*" NumberedPaginatedMetadata
-GetAdminsQueryHandler "1" --"1..*" AdminResponse
+GetAdminsQueryHandler "1" --"1..*" PaginatedAdminListResponse
 GetAdminsQueryHandler "1" --"1..*" UserError
 
 Error "1..*" --o "1" UserError

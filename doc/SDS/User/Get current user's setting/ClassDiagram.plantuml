@@ -4,8 +4,8 @@
 !include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 remove UserReport
@@ -37,8 +37,6 @@ class UserError {
     {static} +NotFound: Error
     {static} +NullParameters: Error
 }
-
-
 
 ' =========== Library class ===========
 interface "IRequest<TResponse>" #black;line:white;text:white

@@ -5,8 +5,8 @@
 !include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 remove UserReport
@@ -49,11 +49,11 @@ class SettingObject {
 }
 
 enum SETTING_KEY {
-    LANGUAGE,
-    DARK_MODE,
-    NOTIFICATION_COMMENT,
-    NOTIFICATION_VOTE,
-    NOTIFICATION_FOLLOW,
+    LANGUAGE
+    DARK_MODE
+    NOTIFICATION_COMMENT
+    NOTIFICATION_VOTE
+    NOTIFICATION_FOLLOW
 }
 
 class SETTING_VALUE
@@ -70,7 +70,7 @@ enum SETTING_VALUE::BOOLEAN {
 
 class UpdateSettingCommandHandler {
     -_context : IApplicationDbContext
-    +_unitOfWork : IUnitOfWork
+    -_unitOfWork : IUnitOfWork
     +UpdateSettingCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork)
     +Handle(request : UpdateSettingCommand, cancellationToken : CancellationToken) : Task<Result>
 }
