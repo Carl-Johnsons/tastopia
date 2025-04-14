@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import { useDisableComment, useRestoreComment } from "@/api/comment";
 import { useInvalidateAdmin } from "@/hooks/query";
 import { useTranslations } from "next-intl";
+import { useErrorHandler } from "@/hooks/error/useErrorHanler";
 
 export const ViewDetailButton = ({
   title,
@@ -73,6 +74,7 @@ export const ReopenAllReportsButton = ({
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("report");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(() => {
     mutate(
@@ -87,13 +89,15 @@ export const ReopenAllReportsButton = ({
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
-        onError: ({ message }) => {
-          toast.error(message);
+        onError: error => {
+          handleError(error);
           onFailure && onFailure();
         }
       }
     );
   }, [
+    t,
+    handleError,
     onSuccess,
     onFailure,
     targetId,
@@ -129,6 +133,7 @@ export const ReopenReportButton = ({
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("report");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(() => {
     mutate(
@@ -143,13 +148,15 @@ export const ReopenReportButton = ({
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
-        onError: ({ message }) => {
-          toast.error(message);
+        onError: error => {
+          handleError(error);
           onFailure && onFailure();
         }
       }
     );
   }, [
+    t,
+    handleError,
     onSuccess,
     onFailure,
     targetId,
@@ -184,6 +191,7 @@ export const RestoreRecipeButton = ({
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("administerReportRecipes.notifications");
   const tButton = useTranslations("administerReportRecipes.actions");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
@@ -193,13 +201,14 @@ export const RestoreRecipeButton = ({
         invalidateCurrentAdminActivities();
         onSuccess && onSuccess();
       },
-      onError: ({ message }) => {
-        toast.error(message);
+      onError: error => {
+        handleError(error);
         onFailure && onFailure();
       }
     });
   }, [
     t,
+    handleError,
     onSuccess,
     onFailure,
     targetId,
@@ -234,6 +243,7 @@ export const MarkAllReportsAsCompletedButton = ({
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("report");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(async () => {
     mutate(
@@ -245,14 +255,15 @@ export const MarkAllReportsAsCompletedButton = ({
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
-        onError: ({ message }) => {
-          toast.error(message);
+        onError: error => {
+          handleError(error);
           onFailure && onFailure();
         }
       }
     );
   }, [
     t,
+    handleError,
     onSuccess,
     onFailure,
     targetId,
@@ -288,6 +299,7 @@ export const MarkAsCompletedButton = ({
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("report");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(async () => {
     mutate(
@@ -299,14 +311,15 @@ export const MarkAsCompletedButton = ({
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
-        onError: ({ message }) => {
-          toast.error(message);
+        onError: error => {
+          handleError(error);
           onFailure && onFailure();
         }
       }
     );
   }, [
     t,
+    handleError,
     onSuccess,
     onFailure,
     targetId,
@@ -341,6 +354,7 @@ export const DisableRecipeButton = ({
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("administerReportRecipes.notifications");
   const tButton = useTranslations("administerReportRecipes.actions");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
@@ -350,13 +364,14 @@ export const DisableRecipeButton = ({
         invalidateCurrentAdminActivities();
         onSuccess && onSuccess();
       },
-      onError: ({ message }) => {
-        toast.error(message);
+      onError: error => {
+        handleError(error);
         onFailure && onFailure();
       }
     });
   }, [
     t,
+    handleError,
     onSuccess,
     onFailure,
     targetId,
@@ -377,7 +392,6 @@ export const DisableRecipeButton = ({
 };
 
 export const SmallDisableCommentButton = ({
-  title,
   targetId,
   recipeId,
   onSuccess,
@@ -389,6 +403,7 @@ export const SmallDisableCommentButton = ({
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("administerReportComments.notifications");
   const tButton = useTranslations("administerReportComments.actions");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(async () => {
     mutate(
@@ -401,14 +416,15 @@ export const SmallDisableCommentButton = ({
           await queryClient.invalidateQueries({ queryKey: ["recipeComments", recipeId] });
           invalidateCurrentAdminActivities();
         },
-        onError: ({ message }) => {
+        onError: error => {
           onFailure && onFailure();
-          toast.error(message);
+          handleError(error);
         }
       }
     );
   }, [
     t,
+    handleError,
     onSuccess,
     onFailure,
     recipeId,
@@ -435,7 +451,6 @@ export const SmallDisableCommentButton = ({
  * Restore a comment.
  */
 export const SmallRestoreCommentButton = ({
-  title,
   targetId,
   recipeId,
   onSuccess,
@@ -447,6 +462,7 @@ export const SmallRestoreCommentButton = ({
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("administerReportComments.notifications");
   const tButton = useTranslations("administerReportComments.actions");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(async () => {
     mutate(
@@ -459,14 +475,15 @@ export const SmallRestoreCommentButton = ({
           await queryClient.invalidateQueries({ queryKey: ["recipeComments", recipeId] });
           invalidateCurrentAdminActivities();
         },
-        onError: ({ message }) => {
+        onError: error => {
           onFailure && onFailure();
-          toast.error(message);
+          handleError(error);
         }
       }
     );
   }, [
     t,
+    handleError,
     onSuccess,
     onFailure,
     recipeId,
