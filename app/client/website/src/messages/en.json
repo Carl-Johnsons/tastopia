@@ -190,14 +190,33 @@
   "administerReportComments": {
     "title": "Administer Reports",
     "subtitle": "Comment",
+    "search": "Search by comment content, username,...",
+    "columns": {
+      "commentOwner": "Comment Owner",
+      "content": "Content",
+      "recipeImage": "Recipe Image",
+      "reporter": "Reporter",
+      "reportReason": "Report Reason",
+      "createdDate": "Created Date",
+      "status": "Status",
+      "actions": "Actions"
+    },
     "actions": {
       "disable": "Disable",
       "restore": "Restore"
+    },
+    "tooltip": {
+      "viewDetail": "View detail",
+      "markAsCompleted": "Mark as completed",
+      "restoreReport": "Restore report"
     },
     "notifications": {
       "restoreSuccess": "Restore comment successfully!",
       "disableSuccess": "Disable comment successfully!",
       "error": "Something went wrong!"
+    },
+    "detail": {
+      "detail": "Detail"
     }
   },
   "administerReportUsers": {
@@ -237,7 +256,7 @@
   },
   "administerAdmins": {
     "title": "Administer Admins",
-    "search": "Search by username, name ,gmail, ...",
+    "search": "Search by username, display name, ...",
     "columns": {
       "username": "Username",
       "displayName": "Display Name",
@@ -588,10 +607,10 @@
     "resolve": "Mark as completed",
     "reopenAll": "Reopen all reports",
     "reopen": "Reopen report",
-    "resolveAllSuccess": "Mark all reports as completed successfully",
-    "reopenAllSuccess": "Reopen all reports successfully",
-    "resolveSuccess": "Mark report as completed successfully",
-    "reopenSuccess": "Reopen report successfully"
+    "resolveAllSuccess": "Mark all reports as completed successfully!",
+    "reopenAllSuccess": "Reopen all reports successfully!",
+    "resolveSuccess": "Mark report as completed successfully!",
+    "reopenSuccess": "Reopen report successfully!"
   },
   "noRecords": {
     "content": "No records found"

@@ -180,14 +180,33 @@
   "administerReportComments": {
     "title": "Quản lý báo cáo",
     "subtitle": "Bình luận",
+    "search": "Tìm kiếm theo nội dung bình luận, tên người dùng,...",
+    "columns": {
+      "commentOwner": "Chủ bình luận",
+      "content": "Nội dung",
+      "recipeImage": "Ảnh công thức",
+      "reporter": "Người báo cáo",
+      "reportReason": "Lý do báo cáo",
+      "createdDate": "Ngày tạo",
+      "status": "Trạng thái",
+      "actions": "Hành động"
+    },
     "actions": {
       "disable": "Vô hiệu hóa",
       "restore": "Khôi phục"
+    },
+    "tooltip": {
+      "viewDetail": "Xem chi tiết",
+      "markAsCompleted": "Đánh dấu hoàn tất",
+      "restoreReport": "Khôi phục báo cáo"
     },
     "notifications": {
       "restoreSuccess": "Khôi phục bình luận thành công!",
       "disableSuccess": "Vô hiệu hóa bình luận thành công!",
       "error": "Đã xảy ra lỗi!"
+    },
+    "detail": {
+      "detail": "Chi tiết"
     }
   },
   "administerReportUsers": {
@@ -227,7 +246,7 @@
   },
   "administerAdmins": {
     "title": "Quản lý quản trị viên",
-    "search": "Tìm kiếm theo tên người dùng, họ tên, Gmail, ...",
+    "search": "Tìm kiếm theo tên người dùng, tên hiển thị, ...",
     "columns": {
       "username": "Tên đăng nhập",
       "displayName": "Tên hiển thị",
@@ -578,10 +597,10 @@
     "resolve": "Đánh dấu là đã hoàn thành",
     "reopenAll": "Mở lại tất cả báo cáo",
     "reopen": "Mở lại báo cáo",
-    "resolveAllSuccess": "Đánh dấu tất cả báo cáo là đã hoàn thành thành công",
-    "reopenAllSuccess": "Mở lại tất cả báo cáo thành công",
-    "resolveSuccess": "Đánh dấu báo cáo là đã hoàn thành thành công",
-    "reopenSuccess": "Mở lại báo cáo thành công"
+    "resolveAllSuccess": "Đánh dấu tất cả báo cáo là đã hoàn thành thành công!",
+    "reopenAllSuccess": "Mở lại tất cả báo cáo thành công!",
+    "resolveSuccess": "Đánh dấu báo cáo là đã hoàn thành thành công!",
+    "reopenSuccess": "Mở lại báo cáo thành công!"
   },
   "noRecords": {
     "content": "Không có bản ghi nào"

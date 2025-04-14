@@ -48,7 +48,7 @@ export type DataTableButtonProps = Pick<
   className?: string;
 };
 
-export type CommentDataTableButtonProps = DataTableButtonProps & {
+export type CommentDataTableButtonProps = Omit<DataTableButtonProps, "title"> & {
   recipeId: string;
 };
 
