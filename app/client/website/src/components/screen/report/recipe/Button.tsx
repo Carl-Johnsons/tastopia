@@ -394,14 +394,15 @@ export const SmallDisableCommentButton = ({
       { recipeId, commentId: targetId },
       {
         onSuccess: async () => {
+          onSuccess && onSuccess();
           toast.success(t("disableSuccess"));
           await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
+          await queryClient.invalidateQueries({ queryKey: ["recipeComments", recipeId] });
           invalidateCurrentAdminActivities();
-          onSuccess && onSuccess();
         },
         onError: ({ message }) => {
-          toast.error(message);
           onFailure && onFailure();
+          toast.error(message);
         }
       }
     );
@@ -450,14 +451,15 @@ export const SmallRestoreCommentButton = ({
       { recipeId, commentId: targetId },
       {
         onSuccess: async () => {
+          onSuccess && onSuccess();
           toast.success(t("restoreSuccess"));
           await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
+          await queryClient.invalidateQueries({ queryKey: ["recipeComments", recipeId] });
           invalidateCurrentAdminActivities();
-          onSuccess && onSuccess();
         },
         onError: ({ message }) => {
-          toast.error(message);
           onFailure && onFailure();
+          toast.error(message);
         }
       }
     );

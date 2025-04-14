@@ -7,7 +7,7 @@ import Loader from "@/components/ui/Loader";
 import { IRecipeCommentResponse } from "@/generated/interfaces/recipe.interface";
 import { formatRelative } from "date-fns";
 import { Link } from "@/i18n/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SmallDisableCommentButton, SmallRestoreCommentButton } from "./Button";
 import { useTranslations } from "next-intl";
 
@@ -73,6 +73,16 @@ function Comment({ comment, recipeId }: CommentProps) {
 
   const [isActive, setIsActive] = useState(comment.isActive);
   const lowOpacityOnInactive = useMemo(() => (isActive ? "" : "opacity-50"), [isActive]);
+
+  useEffect(() => {
+    const newStatus = comment.isActive;
+
+    if (newStatus !== isActive) {
+      setIsActive(newStatus);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [comment.isActive]);
 
   return (
     <div className={`grid grid-cols-[auto_1fr] items-center gap-x-2`}>
