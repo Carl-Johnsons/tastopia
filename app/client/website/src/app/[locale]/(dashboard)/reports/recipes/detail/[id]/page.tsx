@@ -9,11 +9,13 @@ import { ReportType } from "@/generated/enums/recipe.enum";
 import { Link } from "@/i18n/navigation";
 import { ParamsProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export default function Page({ params }: ParamsProps) {
   const recipeId = params.id;
+
   const lang = useLocale();
+  const t = useTranslations("administerReportRecipes");
 
   const { data, isError, isLoading } = useGetRecipeReport({
     recipeId: params.id,
@@ -28,10 +30,10 @@ export default function Page({ params }: ParamsProps) {
   return (
     <div className='flex flex-col gap-10'>
       <div className='flex gap-2'>
-        <span className='text-gray-500'>Administer Reports</span>
+        <span className='text-gray-500'>{t("title")}</span>
         <ChevronRight className='text-black_white' />
         <Link href='/reports/recipes'>
-          <span className='text-black_white'>Recipe</span>
+          <span className='text-black_white'>{t("subtitle")}</span>
         </Link>
         <ChevronRight className='text-black_white' />
         <span className='text-black_white'>{data.recipe.title}</span>

@@ -74,9 +74,11 @@ export const useRestoreComment = () => {
 
 export const useGetCommentReport = (params: GetCommentReportDetailParams) => {
   const { withErrorProcessor } = useErrorHandler();
+  const { options } = params;
+  const { lang } = options || {};
 
   return useQuery({
-    queryKey: ["commentReport", params.commentId],
+    queryKey: ["commentReport", params.commentId, lang],
     queryFn: () => withErrorProcessor(() => getCommentReportById(params))
   });
 };

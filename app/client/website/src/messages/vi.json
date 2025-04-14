@@ -108,7 +108,7 @@
   "administerReportRecipes": {
     "title": "Quản lý báo cáo",
     "subtitle": "Công thức",
-    "search": "Tìm kiếm bằng tên người dùng, tên hiển thị, gmail...",
+    "search": "Tìm kiếm theo tên công thức, người tạo công thức, ...",
     "columns": {
       "recipeName": "Tên công thức",
       "recipeOwner": "Người tạo",
@@ -139,12 +139,31 @@
       "error": "Đã xảy ra lỗi!"
     },
     "detail": {
-      "loadMore": "Xem thêm"
+      "header": {
+        "followers": "người theo dõi",
+        "follower": "người theo dõi"
+      },
+      "content": {
+        "ingredient": "Nguyên liệu",
+        "for": "Cho",
+        "servings": "khẩu phần",
+        "serving": "khẩu phần",
+        "instruction": "Hướng dẫn",
+        "cookingTime": "Thời gian nấu"
+      },
+      "comments": {
+        "title": "Bình luận",
+        "loadMore": "Tải thêm"
+      }
     }
   },
   "administerReportComments": {
     "title": "Quản lý báo cáo",
     "subtitle": "Bình luận",
+    "actions": {
+      "disable": "Vô hiệu hóa",
+      "restore": "Khôi phục"
+    },
     "notifications": {
       "restoreSuccess": "Khôi phục bình luận thành công!",
       "disableSuccess": "Vô hiệu hóa bình luận thành công!",
@@ -543,6 +562,9 @@
     "reopenAllSuccess": "Mở lại tất cả báo cáo thành công",
     "resolveSuccess": "Đánh dấu báo cáo là đã hoàn thành thành công",
     "reopenSuccess": "Mở lại báo cáo thành công"
+  },
+  "noRecords": {
+    "content": "Không có bản ghi nào"
   },
   "error": {
     "AccountError": {

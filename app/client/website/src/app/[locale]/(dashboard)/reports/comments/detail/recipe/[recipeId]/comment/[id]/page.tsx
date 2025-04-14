@@ -6,10 +6,12 @@ import CommentDetail from "@/components/screen/report/comment/CommentDetail";
 import ReportList from "@/components/screen/report/common/ReportList";
 import SomethingWentWrong from "@/components/shared/common/Error";
 import { ReportType } from "@/constants/reports";
+import { ICommentDetailResponse, IReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import { Link } from "@/i18n/navigation";
 import { CommentDetailParamProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
 import { useLocale } from "next-intl";
+import { useMemo } from "react";
 
 export default function Page({ params }: CommentDetailParamProps) {
   const { id, recipeId } = params;
@@ -23,9 +25,12 @@ export default function Page({ params }: CommentDetailParamProps) {
     }
   });
 
+  const comment = useMemo(() => data?.comment, [data?.comment]);
+  const reports = useMemo(() => data?.reports, [data?.reports]);
+
   if (isError) return <SomethingWentWrong />;
   if (isLoading || !data) return <Loading />;
-  const { comment, reports } = data;
+
 
   return (
     <div className='flex flex-col gap-10'>
@@ -40,11 +45,11 @@ export default function Page({ params }: CommentDetailParamProps) {
       </div>
       <div className='flex-center container flex-col gap-10'>
         <CommentDetail
-          comment={comment}
+          comment={comment as ICommentDetailResponse}
           recipeId={recipeId}
         />
         <ReportList
-          reports={reports}
+          reports={reports as IReportRecipeResponse[]}
           targetId={id}
           commentId={id}
           recipeId={recipeId}

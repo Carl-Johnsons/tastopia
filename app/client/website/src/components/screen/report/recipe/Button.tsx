@@ -8,11 +8,11 @@ import {
   useRestoreRecipe
 } from "@/api/recipe";
 import InteractiveButton, { DataTableButton } from "@/components/shared/common/Button";
-import { BanIcon, LoadingIcon } from "@/components/shared/icons";
+import { BanIcon } from "@/components/shared/icons";
 import { ReportType } from "@/constants/reports";
 import { CommentDataTableButtonProps, DataTableButtonProps } from "@/types/report";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, Loader, Loader2, RotateCw, Search, Trash } from "lucide-react";
+import { Check, Loader2, RotateCw, Search, Trash } from "lucide-react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
@@ -174,7 +174,6 @@ export const ReopenReportButton = ({
  * Restore a recipe.
  */
 export const RestoreRecipeButton = ({
-  title,
   targetId,
   onSuccess,
   onFailure,
@@ -184,6 +183,7 @@ export const RestoreRecipeButton = ({
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("administerReportRecipes.notifications");
+  const tButton = useTranslations("administerReportRecipes.actions");
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
@@ -210,7 +210,7 @@ export const RestoreRecipeButton = ({
 
   return (
     <InteractiveButton
-      title={title}
+      title={tButton("restore")}
       icon={<RotateCw className='text-white_black' />}
       isLoading={isPending}
       onClick={handleClick}
@@ -331,7 +331,6 @@ export const MarkAsCompletedButton = ({
  * Disable a recipe.
  */
 export const DisableRecipeButton = ({
-  title,
   targetId,
   onSuccess,
   onFailure,
@@ -341,6 +340,7 @@ export const DisableRecipeButton = ({
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("administerReportRecipes.notifications");
+  const tButton = useTranslations("administerReportRecipes.actions");
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
@@ -367,7 +367,7 @@ export const DisableRecipeButton = ({
 
   return (
     <InteractiveButton
-      title={title}
+      title={tButton("disable")}
       icon={<BanIcon className='text-white_black' />}
       isLoading={isPending}
       onClick={handleClick}
@@ -388,6 +388,7 @@ export const SmallDisableCommentButton = ({
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("administerReportComments.notifications");
+  const tButton = useTranslations("administerReportComments.actions");
 
   const handleClick = useCallback(async () => {
     mutate(
@@ -419,7 +420,7 @@ export const SmallDisableCommentButton = ({
 
   return (
     <DataTableButton
-      title={title}
+      title={tButton("disable")}
       icon={<Trash className='text-black_white group-hover:text-red-500' />}
       isLoading={isPending}
       onClick={handleClick}
@@ -445,6 +446,7 @@ export const SmallRestoreCommentButton = ({
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("administerReportComments.notifications");
+  const tButton = useTranslations("administerReportComments.actions");
 
   const handleClick = useCallback(async () => {
     mutate(
@@ -476,7 +478,7 @@ export const SmallRestoreCommentButton = ({
 
   return (
     <DataTableButton
-      title={title}
+      title={tButton("restore")}
       icon={<RotateCw className='text-black_white group-hover:text-green-500' />}
       isLoading={isPending}
       loader={<Loader2 className={`text-black_white animate-spin`} />}

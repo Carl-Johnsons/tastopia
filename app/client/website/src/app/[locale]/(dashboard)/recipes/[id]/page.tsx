@@ -6,10 +6,10 @@ import SomethingWentWrong from "@/components/shared/common/Error";
 import { Link } from "@/i18n/navigation";
 import { ParamsProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
-import Loader from "@/components/ui/Loader";
 import { useLocale } from "next-intl";
 import ReportList from "@/components/screen/report/common/ReportList";
 import { ReportType } from "@/generated/enums/recipe.enum";
+import Loading from "../../users/[id]/loading";
 
 export default function Page({ params }: ParamsProps) {
   const lang = useLocale();
@@ -19,7 +19,7 @@ export default function Page({ params }: ParamsProps) {
   });
 
   if (isError) return <SomethingWentWrong />;
-  if (isLoading || !data) return <Loader />;
+  if (isLoading || !data) return <Loading />;
   const { recipe, reports } = data;
 
   return (

@@ -108,7 +108,7 @@
   "administerReportRecipes": {
     "title": "Administer Reports",
     "subtitle": "Recipe",
-    "search": "Search by username, name, gmail,...",
+    "search": "Search by recipe name, recipe owner, ...",
     "columns": {
       "recipeName": "Recipe name",
       "recipeOwner": "Recipe owner",
@@ -118,6 +118,11 @@
       "createdDate": "Created date",
       "status": "Status",
       "action": "Actions"
+    },
+    "actions": {
+      "detail": "Detail",
+      "disable": "Disable",
+      "restore": "Restore"
     },
     "tooltip": {
       "viewDetail": "Report detail",
@@ -134,12 +139,31 @@
       "error": "Something went wrong!"
     },
     "detail": {
-      "loadMore": "Load more"
+      "header": {
+        "followers": "followers",
+        "follower": "follower"
+      },
+      "content": {
+        "ingredient": "Ingredient",
+        "for": "For",
+        "servings": "servings",
+        "serving": "serving",
+        "instruction": "Instruction",
+        "cookingTime": "Cook time"
+      },
+      "comments": {
+        "title": "Comments",
+        "loadMore": "Load more"
+      }
     }
   },
   "administerReportComments": {
     "title": "Administer Reports",
     "subtitle": "Comment",
+    "actions": {
+      "disable": "Disable",
+      "restore": "Restore"
+    },
     "notifications": {
       "restoreSuccess": "Restore comment successfully!",
       "disableSuccess": "Disable comment successfully!",
@@ -538,6 +562,9 @@
     "reopenAllSuccess": "Reopen all reports successfully",
     "resolveSuccess": "Mark report as completed successfully",
     "reopenSuccess": "Reopen report successfully"
+  },
+  "noRecords": {
+    "content": "No records found"
   },
   "error": {
     "AccountError": {

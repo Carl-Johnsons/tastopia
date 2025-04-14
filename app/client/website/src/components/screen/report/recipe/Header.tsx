@@ -8,6 +8,7 @@ import { IAdminGetUserDetailResponse } from "@/generated/interfaces/user.interfa
 import { ItemStatusText } from "../common/StatusText";
 import Image from "@/components/shared/common/Image";
 import Avatar from "@/components/shared/common/Avatar";
+import { useTranslations } from "next-intl";
 
 type HeaderProps = {
   recipeId: string;
@@ -30,6 +31,7 @@ const Header = ({
 }: HeaderProps) => {
   const { accountId, avatarUrl, displayName, accountUsername, totalFollower } = author;
   const [isActive, setIsActive] = useState(props.isActive);
+  const t = useTranslations("administerReportRecipes.detail.header");
 
   return (
     <div className='grid gap-6 lg:grid-cols-[300px_1fr]'>
@@ -72,8 +74,8 @@ const Header = ({
                 </div>
               </Link>
               <span className='text-sm text-gray-700'>
-                {totalFollower || 0} follower
-                {!!totalFollower && totalFollower > 2 && "s"}
+                {totalFollower || 0}{" "}
+                {t(`follower${!!totalFollower && totalFollower > 2 ? "s" : ""}`)}
               </span>
             </div>
           </div>

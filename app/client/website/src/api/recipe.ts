@@ -159,9 +159,11 @@ export const useRestoreRecipe = () => {
 
 export const useGetRecipeReport = (params: GetRecipeReportDetailParams) => {
   const { withErrorProcessor } = useErrorHandler();
+  const { options } = params;
+  const { lang } = options || {};
 
   return useQuery<IAdminReportRecipeDetailResponse>({
-    queryKey: ["recipeReport", params.recipeId],
+    queryKey: ["recipeReport", params.recipeId, lang],
     queryFn: () => withErrorProcessor(() => getRecipeReportById(params))
   });
 };

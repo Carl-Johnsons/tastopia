@@ -5,7 +5,6 @@ import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 import { AxiosError } from "axios";
 import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 import {
-  IAdminBanUserResponse,
   IAdminGetUserDetailResponse,
   IAdminMarkReportResponse,
   IPaginatedAdminGetUserListResponse,
