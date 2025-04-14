@@ -134,7 +134,7 @@ UpdateAdminAccountCommandHandler "1" o--"1" FileUtility
 UpdateAdminAccountCommandHandler "1" o--"1" GrpcFileStreamDTO
 UpdateAdminAccountCommandHandler "1" o--"1" AddActivityLogEvent
 
-Error "1..*" -- "1" AccountError
+Error "1..*" --o "1" AccountError
 
 AddActivityLogEvent "1" o--"1" ActivityType
 AddActivityLogEvent "1" o--"1" ActivityEntityType

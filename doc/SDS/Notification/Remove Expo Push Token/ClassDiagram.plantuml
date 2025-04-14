@@ -53,6 +53,6 @@ RemoveExpoPushTokenCommandHandler "1" -- "1..*" NotificationErrors
 RemoveExpoPushTokenCommandHandler "1" -- "1" AccountExpoPushToken
 RemoveExpoPushTokenCommandHandler "1" --"1..*" Result
 
-Error "1..*" -- "1" NotificationErrors
+Error "1..*" --o "1" NotificationErrors
 
 @enduml

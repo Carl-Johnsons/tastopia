@@ -107,6 +107,6 @@ NotifyUserCommandHandler "1" -- "1" Notification
 NotifyUserCommandHandler "1" -- "1" NotificationTemplate
 NotifyUserCommandHandler "1" -- "1" PushNotificationEvent
 
-Error "1..*" -- "1" NotificationErrors
+Error "1..*" --o "1" NotificationErrors
 
 @enduml

@@ -72,6 +72,6 @@ RestoreRecipeCommandHandler "1" --"1" Result
 RestoreRecipeCommandHandler "1" --"1..*" AddActivityLogEvent
 RestoreRecipeCommandHandler "1" --"1..*" RecipeError
 
-Error "1..*" -- "1" RecipeError
+Error "1..*" --o "1" RecipeError
 
 @enduml

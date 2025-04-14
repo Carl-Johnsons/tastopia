@@ -108,7 +108,7 @@ UpdateRecipeCommandHandler "1"--"1..*" DeleteMultipleFileEvent
 UpdateRecipeCommandHandler "1"--"1..*" ValidateRecipeEvent
 UpdateRecipeCommandHandler "1"--"1..*" RecipeError
 
-Error "1..*" -- "1" RecipeError
+Error "1..*" --o "1" RecipeError
 ' ====================STYLE====================
 RecipeController -[hidden]down-|> UpdateRecipeCommand
 UpdateRecipeCommand -[hidden]up-|> UpdateRecipeCommandHandler

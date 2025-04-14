@@ -155,7 +155,7 @@ CreateAdminAccountCommandHandler "1" o--"1" GrpcFileStreamDTO
 CreateAdminAccountCommandHandler "1" o--"1" AddActivityLogEvent
 CreateAdminAccountCommandHandler "1" o--"1" UserSendOTPEvent
 
-Error "1..*" -- "1" AccountError
+Error "1..*" --o "1" AccountError
 
 AddActivityLogEvent "1" o--"1" ActivityType
 AddActivityLogEvent "1" o--"1" ActivityEntityType

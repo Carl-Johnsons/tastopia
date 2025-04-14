@@ -87,6 +87,6 @@ FindAccountQueryHandler "1" o--"1" SimpleUserResponse
 FindAccountQueryHandler "1" o--"1" GrpcGetSimpleUsersRequest
 FindAccountQueryHandler "1" o--"1" GrpcUserClient
 
-Error "1..*" -- "1" AccountError
+Error "1..*" --o "1" AccountError
 
 @enduml

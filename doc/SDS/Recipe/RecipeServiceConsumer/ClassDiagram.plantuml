@@ -149,6 +149,6 @@ RequestAddTagsCommand -[hidden]down-|> RequestAddTagsCommandHandler
 UpdateRecipeIsActiveCommand -[hidden]down-|> UpdateRecipeIsActiveCommandHandler
 UpdateRecipeTagsCommand -[hidden]down-|> UpdateRecipeTagsCommandHandler
 
-Error "1..*" -- "1" RecipeError
-Error "1..*" -- "1" TagError
+Error "1..*" --o "1" RecipeError
+Error "1..*" --o "1" TagError
 @enduml

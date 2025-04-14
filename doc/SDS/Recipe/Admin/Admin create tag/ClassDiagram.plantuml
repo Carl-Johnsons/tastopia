@@ -97,6 +97,6 @@ CreateTagCommandHandler "1" --"1..*" GrpcUploadMultipleImageRequest
 CreateTagCommandHandler "1" --"1..*" DeleteMultipleFileEvent
 CreateTagCommandHandler "1" --"1..*" TagError
 
-Error "1..*" -- "1" TagError
+Error "1..*" --o "1" TagError
 
 @enduml

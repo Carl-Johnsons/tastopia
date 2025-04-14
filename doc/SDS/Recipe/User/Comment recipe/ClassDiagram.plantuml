@@ -90,5 +90,5 @@ CommentRecipeCommandHandler "1" o-- "1" IServiceBus
 CommentRecipeCommandHandler "1" --"1..*" GrpcGetSimpleUsersRequest
 CommentRecipeCommandHandler "1" --"1..*" CommentError
 
-Error "1..*" -- "1" CommentError
+Error "1..*" --o "1" CommentError
 @enduml

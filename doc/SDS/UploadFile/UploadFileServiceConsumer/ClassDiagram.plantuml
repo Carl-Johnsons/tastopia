@@ -86,5 +86,5 @@ UploadFileServiceConsumer -[hidden]down-|> DeleteMultipleImageFileCommand
 
 DeleteMultipleImageFileCommand -[hidden]down-|> DeleteMultipleImageFileCommandHandler
 
-Error "1..*" -- "1" CloudinaryFileError
+Error "1..*" --o "1" CloudinaryFileError
 @enduml

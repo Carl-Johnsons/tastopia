@@ -82,5 +82,5 @@ GetRecipeCommentsQueryHandler "1" o-- "1" IPaginateDataUtility
 GetRecipeCommentsQueryHandler "1" o-- "1" GrpcUserClient
 GetRecipeCommentsQueryHandler "1"--"1..*" RecipeError
 
-Error "1..*" -- "1" RecipeError
+Error "1..*" --o "1" RecipeError
 @enduml

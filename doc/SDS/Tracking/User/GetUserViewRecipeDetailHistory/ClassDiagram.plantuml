@@ -105,7 +105,7 @@ GetUserViewRecipeDetailQueryHandler "1"--"1..*" UserViewRecipeDetail
 GetUserViewRecipeDetailQueryHandler "1"--"1" SimpleRecipeResponse
 GetUserViewRecipeDetailQueryHandler "1"--"1" GrpcGetSimpleRecipeRequest
 GetUserViewRecipeDetailQueryHandler "1"--"1..*" UserViewRecipeDetailError
-Error "1..*" -- "1" UserViewRecipeDetailError
+Error "1..*" --o "1" UserViewRecipeDetailError
 ' ====================STYLE====================
 
 @enduml

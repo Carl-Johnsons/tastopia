@@ -76,6 +76,6 @@ CheckUpdateIdentifierOTPQueryHandler "1" o--"1" AccountError
 CheckUpdateIdentifierOTPQueryHandler "1" o--"1" Result
 CheckUpdateIdentifierOTPQueryHandler "1" o--"1" "UserManager<TUser>"
 
-Error "1..*" -- "1" AccountError
+Error "1..*" --o "1" AccountError
 
 @enduml

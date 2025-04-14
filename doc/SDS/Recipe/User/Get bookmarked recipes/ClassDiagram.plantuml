@@ -83,5 +83,5 @@ GetRecipeBookmarksQueryHandler "1" o-- "1" IPaginateDataUtility
 GetRecipeBookmarksQueryHandler "1" o-- "1" GrpcUserClient
 GetRecipeBookmarksQueryHandler "1"--"1..*" RecipeError
 
-Error "1..*" -- "1" RecipeError
+Error "1..*" --o "1" RecipeError
 @enduml

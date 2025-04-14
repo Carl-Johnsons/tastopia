@@ -81,6 +81,6 @@ VerifyAccountCommandHandler "1" o--"1" AccountError
 VerifyAccountCommandHandler "1" o--"1" Result
 VerifyAccountCommandHandler "1" o--"1" "UserManager<TUser>"
 
-Error "1..*" -- "1" AccountError
+Error "1..*" --o "1" AccountError
 
 @enduml

@@ -68,6 +68,6 @@ RestoreCommentCommandHandler "1" --"1..*" AddActivityLogEvent
 RestoreCommentCommandHandler "1" --"1..*" NotifyUserEvent
 RestoreCommentCommandHandler "1" --"1..*" CommentError
 
-Error "1..*" -- "1" CommentError
+Error "1..*" --o "1" CommentError
 
 @enduml

@@ -81,5 +81,5 @@ GetUserRecipeBinsQueryHandler "1" o-- "1" IPaginateDataUtility
 GetUserRecipeBinsQueryHandler "1" o-- "1" GrpcUserClient
 GetUserRecipeBinsQueryHandler "1"--"1..*" RecipeError
 
-Error "1..*" -- "1" RecipeError
+Error "1..*" --o "1" RecipeError
 @enduml

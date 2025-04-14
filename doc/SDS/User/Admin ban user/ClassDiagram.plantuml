@@ -73,6 +73,6 @@ AdminBanUserCommandHandler "1" --"1..*" AdminBanUserResponse
 AdminBanUserCommandHandler "1" --"1..*" AddActivityLogEvent
 AdminBanUserCommandHandler "1" --"1..*" UserError
 
-Error "1..*" -- "1" UserError
+Error "1..*" --o "1" UserError
 
 @enduml

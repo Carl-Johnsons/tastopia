@@ -82,7 +82,7 @@ SearchRecipesQueryHandler "1" o-- "1" GrpcUserClient
 SearchRecipesQueryHandler "1" o-- "1" IPaginateDataUtility
 SearchRecipesQueryHandler "1"--"1..*" RecipeError
 
-Error "1..*" -- "1" RecipeError
+Error "1..*" --o "1" RecipeError
 
 together {
     class GrpcSearchUserRequest #DarkBlue;line:white;text:white
