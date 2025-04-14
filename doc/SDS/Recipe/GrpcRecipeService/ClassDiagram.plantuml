@@ -242,7 +242,7 @@ GetRecipeDetailForServerQuery -[hidden]down-|> GetRecipeDetailForServerQueryHand
 GetSimpleRecipesQuery -[hidden]down-|> GetSimpleRecipesQueryHandler
 SearchSimpleRecipesQuery -[hidden]down-|> SearchSimpleRecipesQueryHandler
 
-Error "1" --"1..*" RecipeError
-Error "1" --"1..*" TagError
+Error "1..*" -- "1" RecipeError
+Error "1..*" -- "1" TagError
 
 @enduml

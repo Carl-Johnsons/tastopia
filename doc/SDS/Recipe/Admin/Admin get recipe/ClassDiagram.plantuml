@@ -116,6 +116,6 @@ AdminGetRecipesQueryHandler "1" --"1..*" NumberedPaginatedMetadata
 AdminGetRecipesQueryHandler "1" --"1..*" AdminRecipeResponse
 AdminGetRecipesQueryHandler "1" --"1..*" RecipeError
 
-Error "1" --"1" RecipeError
+Error "1..*" -- "1" RecipeError
 
 @enduml

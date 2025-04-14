@@ -67,6 +67,6 @@ BookmarkRecipeCommandHandler "1" o-- "1" IUnitOfWork
 BookmarkRecipeCommandHandler "1" o-- "1" IApplicationDbContext
 BookmarkRecipeCommandHandler "1"--"1..*" RecipeError
 
-Error "1" --"1..*" RecipeError
+Error "1..*" -- "1" RecipeError
 
 @enduml

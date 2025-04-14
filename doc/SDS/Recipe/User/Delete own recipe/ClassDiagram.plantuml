@@ -61,6 +61,6 @@ DeleteOwnRecipeCommandHandler "1" o-- "1" IUnitOfWork
 DeleteOwnRecipeCommandHandler "1" o-- "1" IApplicationDbContext
 DeleteOwnRecipeCommandHandler "1"--"1..*" RecipeError
 
-Error "1" --"1..*" RecipeError
+Error "1..*" -- "1" RecipeError
 
 @enduml

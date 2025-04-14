@@ -57,6 +57,6 @@ GetUserSettingQueryHandler "1" --"1..*" UserError
 GetUserSettingQueryHandler "1" --"1..*" UserSetting
 GetUserSettingQueryHandler "1" --"1" Result
 
-Error "1" --"1" UserError
+Error "1..*" -- "1" UserError
 
 @enduml

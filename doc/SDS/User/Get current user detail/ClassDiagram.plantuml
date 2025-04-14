@@ -79,6 +79,6 @@ GetUserDetailsQueryHandler "1" --"1" Result
 GetUserDetailsQueryHandler "1" --"1..*" GetUserDetailsResponse
 GetUserDetailsQueryHandler "1" --"1..*" UserError
 
-Error "1" --"1" UserError
+Error "1..*" -- "1" UserError
 
 @enduml

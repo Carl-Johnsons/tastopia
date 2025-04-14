@@ -62,6 +62,6 @@ UpdateCommentCommandHandler "1" o-- "1" IUnitOfWork
 UpdateCommentCommandHandler "1" o-- "1" IApplicationDbContext
 UpdateCommentCommandHandler "1"--"1..*" RecipeError
 
-Error "1" --"1..*" RecipeError
+Error "1..*" -- "1" RecipeError
 
 @enduml

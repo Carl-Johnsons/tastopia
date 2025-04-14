@@ -90,7 +90,7 @@ ResendOTPCommandHandler "1" o--"1" OTPUtility
 ResendOTPCommandHandler "1" o--"1" IServiceBus
 ResendOTPCommandHandler "1" o--"1" "UserManager<TUser>"
 
-Error "1" --"1..*" AccountError
+Error "1..*" -- "1" AccountError
 
 UserResendOTPEvent "1" o-- "1" AccountMethod
 

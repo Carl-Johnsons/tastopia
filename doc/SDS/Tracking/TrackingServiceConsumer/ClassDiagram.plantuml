@@ -70,5 +70,5 @@ TrackingServiceConsumer -[hidden]down-|> CreateUserVewRecipeDetailCommand
 
 CreateUserVewRecipeDetailCommand -[hidden]down-|> CreateUserVewRecipeDetailCommandHandler
 
-Error "1" --"1..*" UserViewRecipeDetailError
+Error "1..*" -- "1" UserViewRecipeDetailError
 @enduml

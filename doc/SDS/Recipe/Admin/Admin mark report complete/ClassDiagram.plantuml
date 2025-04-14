@@ -70,6 +70,6 @@ MarkReportCompleteCommandHandler "1" --"1..*" UserReportComment
 MarkReportCompleteCommandHandler "1" --"1..*" AddActivityLogEvent
 MarkReportCompleteCommandHandler "1" --"1..*" ReportError
 
-Error "1" --"1" ReportError
+Error "1..*" -- "1" ReportError
 
 @enduml

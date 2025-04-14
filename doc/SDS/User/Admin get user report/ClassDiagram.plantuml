@@ -101,6 +101,6 @@ GetUserReportsQueryHandler "1" --"1..*" NumberedPaginatedMetadata
 GetUserReportsQueryHandler "1" --"1..*" AdminUserReportResponse
 GetUserReportsQueryHandler "1" --"1..*" UserError
 
-Error "1" --"1" UserError
+Error "1..*" -- "1" UserError
 
 @enduml

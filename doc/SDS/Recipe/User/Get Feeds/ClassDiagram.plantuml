@@ -86,5 +86,5 @@ GetRecipeFeedsQueryHandler "1" o-- "1" GrpcUserClient
 GetRecipeFeedsQueryHandler "1" o-- "1" IPaginateDataUtility
 GetRecipeFeedsQueryHandler "1"--"1..*" RecipeError
 
-Error "1" --"1..*" RecipeError
+Error "1..*" -- "1" RecipeError
 @enduml

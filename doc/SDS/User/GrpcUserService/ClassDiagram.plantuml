@@ -214,4 +214,7 @@ GetMultipleUserSettingQueryHandler "1"--"1" UserSetting
 GetMultipleUserSettingQueryHandler "1"----"1" Result
 GetMultipleUserSettingQueryHandler "1" o-- "1" IApplicationDbContext
 GetMultipleUserSettingQueryHandler "1"--"1" SettingError
+
+Error "1..*" -- "1" UserError
+Error "1..*" -- "1" SettingError
 @enduml

@@ -106,6 +106,6 @@ UpdateSettingCommandHandler "1" --"1" Result
 UpdateSettingCommandHandler "1" --"1..*" SETTING_KEY
 UpdateSettingCommandHandler "1" --"1..*" SETTING_VALUE
 
-Error "1" -up-"1" SettingError
+Error "1..*" -up-"1" SettingError
 
 @enduml

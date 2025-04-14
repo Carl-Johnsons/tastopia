@@ -70,6 +70,6 @@ UnlinkAccountCommandHandler "1" o--"1" AccountError
 UnlinkAccountCommandHandler "1" o--"1" Result
 UnlinkAccountCommandHandler "1" o--"1" "UserManager<TUser>"
 
-Error "1" --"1..*" AccountError
+Error "1..*" -- "1" AccountError
 
 @enduml

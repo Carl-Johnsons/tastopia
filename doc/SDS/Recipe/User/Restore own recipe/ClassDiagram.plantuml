@@ -60,6 +60,6 @@ RestoreOwnRecipeCommandHandler "1" o-- "1" IUnitOfWork
 RestoreOwnRecipeCommandHandler "1" o-- "1" IApplicationDbContext
 RestoreOwnRecipeCommandHandler "1"--"1..*" RecipeError
 
-Error "1" --"1..*" RecipeError
+Error "1..*" -- "1" RecipeError
 
 @enduml

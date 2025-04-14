@@ -206,4 +206,7 @@ UpdateGprcUserCommandHandler "1"----"1" Result
 UpdateGprcUserCommandHandler "1" o-- "1" IApplicationDbContext
 UpdateGprcUserCommandHandler "1" o-- "1" IUnitOfWork
 UpdateGprcUserCommandHandler "1"--"1" UserError
+
+Error "1..*" -- "1" UserError
+Error "1..*" -- "1" SettingError
 @enduml

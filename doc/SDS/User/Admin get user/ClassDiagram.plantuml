@@ -103,6 +103,6 @@ AdminGetUsersQueryHandler "1" --"1..*" NumberedPaginatedMetadata
 AdminGetUsersQueryHandler "1" --"1..*" AdminGetUserResponse
 AdminGetUsersQueryHandler "1" --"1..*" UserError
 
-Error "1" --"1" UserError
+Error "1..*" -- "1" UserError
 
 @enduml

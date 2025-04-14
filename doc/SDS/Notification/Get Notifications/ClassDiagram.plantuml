@@ -114,6 +114,6 @@ GetNotificationsQueryHandler "1" -- "1" GrpcGetSimpleRecipeRequest
 GetNotificationsQueryHandler "1" -- "1" Notification
 GetNotificationsQueryHandler "1" -- "1" NotificationTemplate
 
-Error "1" --"1..*" NotificationErrors
+Error "1..*" -- "1" NotificationErrors
 
 @enduml

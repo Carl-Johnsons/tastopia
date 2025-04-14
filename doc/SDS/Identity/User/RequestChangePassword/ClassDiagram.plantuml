@@ -102,6 +102,6 @@ RequestChangePasswordCommandHandler "1" o--"1" AccountError
 RequestChangePasswordCommandHandler "1" o--"1" Result
 RequestChangePasswordCommandHandler "1" o--"1" "UserManager<TUser>"
 
-Error "1" --"1..*" AccountError
+Error "1..*" -- "1" AccountError
 
 @enduml

@@ -56,6 +56,6 @@ SetViewNotificationCommandHandler "1" o-- "1" IUnitOfWork
 SetViewNotificationCommandHandler "1" -- "1..*" Result
 SetViewNotificationCommandHandler "1" -- "1..*" NotificationErrors
 
-Error "1" --"1..*" NotificationErrors
+Error "1..*" -- "1" NotificationErrors
 
 @enduml

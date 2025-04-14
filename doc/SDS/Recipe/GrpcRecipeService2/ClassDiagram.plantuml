@@ -229,7 +229,7 @@ GetCommentReportDetailByHashSetQuery -[hidden]down-|> GetCommentReportDetailByHa
 GetRecipeReportDetailByHashSetQuery -[hidden]down-|> GetRecipeReportDetailByHashSetQueryHandler
 GetTagsByHashSetQuery -[hidden]down-|> GetTagsByHashSetQueryHandler
 
-Error "1" --"1..*" TagError
-Error "1" --"1..*" CommentError
-Error "1" --"1..*" ReportError
+Error "1..*" -- "1" TagError
+Error "1..*" -- "1" CommentError
+Error "1..*" -- "1" ReportError
 @enduml

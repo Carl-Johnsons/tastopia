@@ -70,6 +70,6 @@ FollowUserCommandHandler "1" --"1" Result
 FollowUserCommandHandler "1" --"1..*" UserError
 FollowUserCommandHandler "1"--"1" NotifyUserEvent
 
-Error "1" --"1" UserError
+Error "1..*" -- "1" UserError
 
 @enduml

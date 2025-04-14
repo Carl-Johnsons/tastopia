@@ -99,6 +99,6 @@ AdminGetTagsQueryHandler "1" --"1..*" AdvancePaginatedMetadata
 AdminGetTagsQueryHandler "1" --"1..*" AdminTagResponse
 AdminGetTagsQueryHandler "1" --"1..*" TagError
 
-Error "1" --"1" TagError
+Error "1..*" -- "1" TagError
 
 @enduml

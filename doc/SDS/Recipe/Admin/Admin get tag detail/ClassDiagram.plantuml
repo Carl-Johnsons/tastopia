@@ -70,6 +70,6 @@ GetTagDetailQueryHandler "1" --"1" Result
 GetTagDetailQueryHandler "1" --"1..*" TagResponse
 GetTagDetailQueryHandler "1" --"1..*" TagError
 
-Error "1" --"1" TagError
+Error "1..*" -- "1" TagError
 
 @enduml

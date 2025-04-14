@@ -73,5 +73,5 @@ GetTagsQueryHandler "1" o-- "1" IApplicationDbContext
 GetTagsQueryHandler "1" o-- "1" IPaginateDataUtility
 GetTagsQueryHandler "1"--"1..*" TagError
 
-Error "1" --"1..*" TagError
+Error "1..*" -- "1" TagError
 @enduml

@@ -147,6 +147,6 @@ GrpcUploadFileService -[hidden]down-|> CreateMultipleImageFileCommand
 UpdateMultipleImageFileCommand -[hidden]down-|> UpdateMultipleImageFileCommandHandler
 CreateMultipleImageFileCommand -[hidden]down-|> CreateMultipleImageFileCommandHandler
 
-Error "1" --"1..*" CloudinaryFileError
+Error "1..*" -- "1" CloudinaryFileError
 
 @enduml

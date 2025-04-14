@@ -104,6 +104,6 @@ UpdateUserCommandHandler "1" --"1..*" "RepeatedField<T>"
 UpdateUserCommandHandler "1" --"1..*" GenderType
 UpdateUserCommandHandler "1" --"1" Result
 
-Error "1" --"1" UserError
+Error "1..*" -- "1" UserError
 
 @enduml

@@ -72,6 +72,6 @@ MarkReportCommandHandler "1" --"1..*" AddActivityLogEvent
 MarkReportCommandHandler "1" --"1..*" UserReport
 MarkReportCommandHandler "1" --"1..*" UserError
 
-Error "1" --"1" UserError
+Error "1..*" -- "1" UserError
 
 @enduml

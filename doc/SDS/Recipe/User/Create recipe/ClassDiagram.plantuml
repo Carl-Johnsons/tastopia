@@ -108,7 +108,7 @@ CreateRecipeCommandHandler "1"--"1..*" ValidateRecipeEvent
 CreateRecipeCommandHandler "1"--"1..*" NotifyUserEvent
 CreateRecipeCommandHandler "1"--"1..*" RecipeError
 
-Error "1" --"1..*" RecipeError
+Error "1..*" -- "1" RecipeError
 ' ====================STYLE====================
 RecipeController -[hidden]down-|> CreateRecipeCommand
 CreateRecipeCommand -[hidden]up-|> CreateRecipeCommandHandler

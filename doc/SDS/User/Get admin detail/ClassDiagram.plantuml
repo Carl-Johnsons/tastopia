@@ -73,6 +73,6 @@ GetAdminDetailQueryHandler "1" --"1..*" GrpcAccountIdRequest
 GetAdminDetailQueryHandler "1" --"1..*" AdminDetailResponse
 GetAdminDetailQueryHandler "1" --"1..*" UserError
 
-Error "1" --"1" UserError
+Error "1..*" -- "1" UserError
 
 @enduml

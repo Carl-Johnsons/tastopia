@@ -134,6 +134,6 @@ RegisterAccountCommandHandler "1" o--"1" Result
 RegisterAccountCommandHandler "1" o--"1" "UserManager<TUser>"
 RegisterAccountCommandHandler "1" o-- "1" GrpcUserClient
 
-Error "1" --"1..*" AccountError
+Error "1..*" -- "1" AccountError
 
 @enduml

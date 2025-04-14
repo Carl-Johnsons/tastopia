@@ -100,6 +100,6 @@ GetUserFollowersQueryHandler "1" --"1..*" PaginatedSimpleUserListResponse
 ' Style
 CommonPaginatedMetadata -[hidden]up- AdvancePaginatedMetadata
 
-Error "1" --"1" UserError
+Error "1..*" -- "1" UserError
 
 @enduml
