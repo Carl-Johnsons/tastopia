@@ -1,15 +1,15 @@
 "use client";
 
 import { useGetRecipeReport } from "@/api/recipe";
+import Loading from "@/app/[locale]/(dashboard)/users/[id]/loading";
+import ReportList from "@/components/screen/report/common/ReportList";
 import RecipeDetail from "@/components/screen/report/recipe/RecipeDetail";
-import ReportList from "@/components/screen/report/recipe/ReportList";
 import SomethingWentWrong from "@/components/shared/common/Error";
-import Loader from "@/components/ui/Loader";
+import { ReportType } from "@/generated/enums/recipe.enum";
 import { Link } from "@/i18n/navigation";
 import { ParamsProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
 import { useLocale } from "next-intl";
-import { useEffect } from "react";
 
 export default function Page({ params }: ParamsProps) {
   const recipeId = params.id;
@@ -22,12 +22,8 @@ export default function Page({ params }: ParamsProps) {
     }
   });
 
-  useEffect(() => {
-    console.log("data", data);
-  }, [data]);
-
   if (isError) return <SomethingWentWrong />;
-  if (isLoading || !data) return <Loader />;
+  if (isLoading || !data) return <Loading />;
 
   return (
     <div className='flex flex-col gap-10'>
@@ -42,8 +38,10 @@ export default function Page({ params }: ParamsProps) {
       </div>
       <div className='container grid gap-10 xl:grid-cols-[70%_30%] xl:gap-3'>
         <ReportList
-          recipeId={recipeId}
           reports={data.reports}
+          targetId={recipeId}
+          recipeId={recipeId}
+          reportType={ReportType.RECIPE}
           className='xl:col-start-2'
         />
         <RecipeDetail

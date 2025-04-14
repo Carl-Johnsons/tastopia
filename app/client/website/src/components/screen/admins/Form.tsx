@@ -150,6 +150,7 @@ const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
                 label={t("gender.label")}
                 placeholder={t("gender.placeholder")}
                 isLoading={isFormLoading}
+                required
                 items={[
                   { value: Gender.Male, label: t("gender.options.male") },
                   { value: Gender.Female, label: t("gender.options.female") }
@@ -168,6 +169,7 @@ const AdminForm = forwardRef<AdminFormRef>((_, ref) => {
                 label={t("dateOfBirth.label")}
                 placeholder={t("dateOfBirth.placeholder")}
                 isLoading={isFormLoading}
+                required
               />
             </div>
           )}
@@ -301,7 +303,6 @@ const FormDatePicker = ({
   );
 
   const [date, setDate] = useState<Date | undefined>(value && parsedDate);
-  const [inputValue, setInputValue] = useState<string>(value ?? "");
   const [month, setMonth] = useState(date);
 
   const handleInputChange = useCallback(
@@ -310,12 +311,10 @@ const FormDatePicker = ({
 
       if (!value) {
         setDate(undefined);
-        setInputValue("");
         onChange("");
         return;
       }
 
-      setInputValue(value);
       onChange(value);
       const parsedDate = parse(value, "dd/MM/yyyy", new Date());
 
@@ -333,7 +332,6 @@ const FormDatePicker = ({
     (date: Date | undefined) => {
       if (!date) {
         setDate(undefined);
-        setInputValue("");
         onChange(undefined);
       } else {
         const formattedDate = format(date, "dd/MM/yyyy");
@@ -341,7 +339,6 @@ const FormDatePicker = ({
         setDate(date);
         setMonth(date);
         onChange(formattedDate);
-        setInputValue(formattedDate);
       }
     },
     [onChange]
@@ -367,7 +364,7 @@ const FormDatePicker = ({
           <>
             <FormControl className='w-[90%]'>
               <Input
-                value={inputValue}
+                value={value ?? ""}
                 onChange={handleInputChange}
                 className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
                 placeholder={placeholder}

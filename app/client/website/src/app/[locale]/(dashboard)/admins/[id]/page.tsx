@@ -30,7 +30,7 @@ export default async function Page({ params }: ParamsProps) {
       </div>
 
       <div className='mx-auto max-w-[960px]'>
-        <ProfileHeader admin={currentUser} />
+        <ProfileHeader admin={currentUser} isViewingAdmin />
 
         <div className='mt-6 flex flex-col-reverse gap-6 lg:flex-row'>
           <div className='flex-1'>{<ActivityFeed accountId={id} />}</div>

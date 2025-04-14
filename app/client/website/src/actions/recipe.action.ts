@@ -9,7 +9,7 @@ import {
   IReportDTO
 } from "@/generated/interfaces/recipe.interface";
 import { IGetRecipeCommentsDTO } from "../../../mobile/generated/interfaces/recipe.interface";
-import { withErrorProcessor } from "@/utils/errorHanlder";
+import { withErrorProcessor, withSuccessfulResponse } from "@/utils/errorHanlder";
 import { PaginatedQueryParams, Response } from "@/types/common";
 import { StatisticDateItem, StatisticItem } from "@/types/statistic";
 import { AxiosError } from "axios";
@@ -42,10 +42,7 @@ export async function getRecipes(
       }
     );
 
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -77,10 +74,7 @@ export async function getRecipeReports(
         }
       });
 
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -111,10 +105,7 @@ export async function getRecipeReportById({
       }
     );
 
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -138,10 +129,7 @@ export async function getRecipeComments({
         ...options
       });
 
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -155,10 +143,7 @@ export const markReportAsCompleted = async ({
 
   try {
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
-    return {
-      ok: true,
-      data: undefined
-    };
+    return withSuccessfulResponse(undefined);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -172,10 +157,7 @@ export const reopenReport = async ({
 
   try {
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
-    return {
-      ok: true,
-      data: undefined
-    };
+    return withSuccessfulResponse(undefined);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -194,10 +176,7 @@ export const markAllReports = async ({
 
   try {
     const { data } = await protectedAxiosInstance.post(url, { recipeId, isReopened });
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -208,10 +187,7 @@ export const disableRecipe = async (id: string): Promise<Response<undefined>> =>
 
   try {
     await protectedAxiosInstance.delete<undefined>(url, { params: { id } });
-    return {
-      ok: true,
-      data: undefined
-    };
+    return withSuccessfulResponse(undefined);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -222,10 +198,7 @@ export const restoreRecipe = async (id: string): Promise<Response<undefined>> =>
 
   try {
     await protectedAxiosInstance.put<undefined>(url, undefined, { params: { id } });
-    return {
-      ok: true,
-      data: undefined
-    };
+    return withSuccessfulResponse(undefined);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -235,10 +208,7 @@ export async function getTotalRecipes(): Promise<Response<number>> {
   const url = "/api/admin/recipe/statistic/get-total-recipe";
   try {
     const { data } = await protectedAxiosInstance.get<number>(url);
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -248,10 +218,7 @@ export async function getRecipeRanking(): Promise<Response<StatisticItem[]>> {
   const url = "/api/admin/recipe/statistic/get-recipe-ranking-by-views";
   try {
     const { data } = await protectedAxiosInstance.get<StatisticItem[]>(url);
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
@@ -261,11 +228,9 @@ export async function getRecipeStatistic(): Promise<Response<StatisticDateItem[]
   const url = "/api/admin/recipe/statistic/get-recipe-statistic";
   try {
     const { data } = await protectedAxiosInstance.get<StatisticDateItem[]>(url);
-    return {
-      ok: true,
-      data
-    };
+    return withSuccessfulResponse(data);
   } catch (error) {
     return withErrorProcessor(error as AxiosError);
   }
 }
+

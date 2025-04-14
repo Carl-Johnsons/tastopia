@@ -142,6 +142,15 @@
       "loadMore": "Xem thêm"
     }
   },
+  "administerReportComments": {
+    "title": "Quản lý báo cáo",
+    "subtitle": "Bình luận",
+    "notifications": {
+      "restoreSuccess": "Khôi phục bình luận thành công!",
+      "disableSuccess": "Vô hiệu hóa bình luận thành công!",
+      "error": "Đã xảy ra lỗi!"
+    }
+  },
   "administerReportUsers": {
     "title": "Quản lý báo cáo",
     "subtitle": "Người dùng",
@@ -171,7 +180,9 @@
       "restoreUserSuccess": "Khôi phục người dùng thành công!",
       "disableUserSuccess": "Vô hiệu hóa người dùng thành công!",
       "restoreReportSuccess": "Khôi phục báo cáo thành công!",
-      "completeReportSuccess": "Đánh dấu báo cáo hoàn thành!",
+      "completeReportSuccess": "Đánh dấu báo cáo là đã hoàn thành thành công!",
+      "restoreAllReportsSuccess": "Khôi phục tất cả báo cáo thành công!",
+      "completeAllReportsSuccess": "Đánh dấu tất cả báo cáo là đã hoàn thành thành công!",
       "error": "Đã xảy ra lỗi!"
     }
   },
@@ -522,6 +533,17 @@
     },
     "search": "Tìm kiếm theo tên người dùng, lệnh, thực thể..."
   },
+  "report": {
+    "reportList": "Danh sách báo cáo",
+    "resolveAll": "Đánh dấu tất cả báo cáo là đã hoàn thành",
+    "resolve": "Đánh dấu là đã hoàn thành",
+    "reopenAll": "Mở lại tất cả báo cáo",
+    "reopen": "Mở lại báo cáo",
+    "resolveAllSuccess": "Đánh dấu tất cả báo cáo là đã hoàn thành thành công",
+    "reopenAllSuccess": "Mở lại tất cả báo cáo thành công",
+    "resolveSuccess": "Đánh dấu báo cáo là đã hoàn thành thành công",
+    "reopenSuccess": "Mở lại báo cáo thành công"
+  },
   "error": {
     "AccountError": {
       "NotFound": "Không tìm thấy tài khoản",
@@ -605,6 +627,7 @@
       "AlreadyPending": "Báo cáo người dùng đã ở trạng thái chờ xử lý"
     },
     "General": "Đã xảy ra lỗi. Vui lòng thử lại sau",
-    "GENERAL": "Đã xảy ra lỗi. Vui lòng thử lại sau"
+    "GENERAL": "Đã xảy ra lỗi. Vui lòng thử lại sau",
+    "ValidationError": "Dữ liệu không hợp lệ. Vui lòng thử lại sau"
   }
 }

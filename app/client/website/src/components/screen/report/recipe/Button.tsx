@@ -18,6 +18,7 @@ import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useDisableComment, useRestoreComment } from "@/api/comment";
 import { useInvalidateAdmin } from "@/hooks/query";
+import { useTranslations } from "next-intl";
 
 export const ViewDetailButton = ({
   title,
@@ -71,6 +72,7 @@ export const ReopenAllReportsButton = ({
   const { mutate, isPending } = useMarkAllReport();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("report");
 
   const handleClick = useCallback(() => {
     mutate(
@@ -80,7 +82,7 @@ export const ReopenAllReportsButton = ({
       },
       {
         onSuccess: async () => {
-          toast.success("Reopened all reports successfully.");
+          toast.success(t("reopenAllSuccess"));
           await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
@@ -126,6 +128,7 @@ export const ReopenReportButton = ({
   const { mutate, isPending } = useReopenReport();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("report");
 
   const handleClick = useCallback(() => {
     mutate(
@@ -135,7 +138,7 @@ export const ReopenReportButton = ({
       },
       {
         onSuccess: async () => {
-          toast.success("Report reopened successfully.");
+          toast.success(t("reopenSuccess"));
           await queryClient.invalidateQueries({ queryKey: ["recipeReport", recipeId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
@@ -180,11 +183,12 @@ export const RestoreRecipeButton = ({
   const { mutate, isPending } = useRestoreRecipe();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("administerReportRecipes.notifications");
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
       onSuccess: async () => {
-        toast.success("Recipe restored successfully.");
+        toast.success(t("restoreRecipeSuccess"));
         await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
         invalidateCurrentAdminActivities();
         onSuccess && onSuccess();
@@ -195,6 +199,7 @@ export const RestoreRecipeButton = ({
       }
     });
   }, [
+    t,
     onSuccess,
     onFailure,
     targetId,
@@ -228,13 +233,14 @@ export const MarkAllReportsAsCompletedButton = ({
   const { mutate, isPending } = useMarkAllReport();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("report");
 
   const handleClick = useCallback(async () => {
     mutate(
       { recipeId: targetId, isReopened: false },
       {
         onSuccess: async () => {
-          toast.success("All reports marked as completed successfully.");
+          toast.success(t("resolveAllSuccess"));
           await queryClient.invalidateQueries({ queryKey: ["recipeReport", targetId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
@@ -246,6 +252,7 @@ export const MarkAllReportsAsCompletedButton = ({
       }
     );
   }, [
+    t,
     onSuccess,
     onFailure,
     targetId,
@@ -280,13 +287,14 @@ export const MarkAsCompletedButton = ({
   const { mutate, isPending } = useMarkReportAsCompleted();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("report");
 
   const handleClick = useCallback(async () => {
     mutate(
       { reportId: targetId, reportType: ReportType.RECIPE },
       {
         onSuccess: async () => {
-          toast.success("Report marked as completed successfully.");
+          toast.success(t("resolveSuccess"));
           await queryClient.invalidateQueries({ queryKey: ["recipeReport", recipeId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
@@ -298,6 +306,7 @@ export const MarkAsCompletedButton = ({
       }
     );
   }, [
+    t,
     onSuccess,
     onFailure,
     targetId,
@@ -331,11 +340,12 @@ export const DisableRecipeButton = ({
   const { mutate, isPending } = useDisableRecipe();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("administerReportRecipes.notifications");
 
   const handleClick = useCallback(async () => {
     mutate(targetId, {
       onSuccess: async () => {
-        toast.success("Recipe disabled successfully.");
+        toast.success(t("disableRecipeSuccess"));
         await queryClient.invalidateQueries({ queryKey: ["recipe", targetId] });
         invalidateCurrentAdminActivities();
         onSuccess && onSuccess();
@@ -346,6 +356,7 @@ export const DisableRecipeButton = ({
       }
     });
   }, [
+    t,
     onSuccess,
     onFailure,
     targetId,
@@ -376,13 +387,14 @@ export const SmallDisableCommentButton = ({
   const { mutate, isPending } = useDisableComment();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("administerReportComments");
 
   const handleClick = useCallback(async () => {
     mutate(
       { recipeId, commentId: targetId },
       {
         onSuccess: async () => {
-          toast.success("Comment disabled successfully.");
+          toast.success(t("disableSuccess"));
           await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
@@ -429,13 +441,14 @@ export const SmallRestoreCommentButton = ({
   const { mutate, isPending } = useRestoreComment();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("administerReportComments");
 
   const handleClick = useCallback(async () => {
     mutate(
       { recipeId, commentId: targetId },
       {
         onSuccess: async () => {
-          toast.success("Comment restored successfully.");
+          toast.success(t("restoreSuccess"));
           await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();

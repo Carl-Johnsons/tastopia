@@ -1,7 +1,7 @@
 import { IDENTIFIER_TYPE } from "../api/user";
 
 export const getIdentifierType = (value: string) => {
-  const emailRegex = /[a-zA-Z@]/;
+  const emailRegex = /[@]/;
   const phoneNumberRegex = /^\d+$/;
 
   if (emailRegex.test(value)) {

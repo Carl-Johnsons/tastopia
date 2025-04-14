@@ -81,12 +81,12 @@ export const ActionButtons = ({
 
   const handleToggleStatus = async () => {
     const result = await adminBanUser(accountId);
-    if (result.userId) {
-      const newStatus = result.isRestored;
+    if (result.data.userId) {
+      const newStatus = result.data.isRestored;
       setActive(newStatus);
       onStatusUpdate(accountId, newStatus);
 
-      if (result.isRestored) {
+      if (result.data.isRestored) {
         toast.success(t("notifications.restoreSuccess"));
       } else {
         toast.success(t("notifications.disableSuccess"));

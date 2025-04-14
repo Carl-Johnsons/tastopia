@@ -37,15 +37,10 @@ const Ingredient = ({ ingredient, serves = 0 }: IngredientProps) => {
         For {serves} Serving{serves > 2 && "s"}
       </span>
       {ingredient.map((item, index) => (
-        <>
+        <div key={item}>
           {index !== 0 && <div className='border-black_white border-t border-dashed' />}
-          <span
-            key={item}
-            className='text-black_white'
-          >
-            {item}
-          </span>
-        </>
+          <span className='text-black_white'>{item}</span>
+        </div>
       ))}
     </div>
   );

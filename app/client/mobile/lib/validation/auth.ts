@@ -1,6 +1,8 @@
 import { IDENTIFIER_TYPE } from "@/api/user";
 import { lazy, object, ref, string } from "yup";
 
+export const EMAIL_REGEX = /[@]/;
+
 export const passwordSchema = string()
   .required("Please enter password.")
   .min(6, "Password must be at least 6 characters long.")
@@ -16,14 +18,13 @@ export const loginSchema = object({
 
 export const forgotPasswordSchema = object({
   identifier: lazy(value => {
-    const emailRegex = /[a-zA-Z@]/;
     const phoneNumberRegex = /^\d+$/;
 
     if (typeof value !== "string") {
       return string().required("Please enter email or phone number.");
     }
 
-    if (emailRegex.test(value)) {
+    if (EMAIL_REGEX.test(value)) {
       return string().email("Please enter a valid email address.");
     } else if (phoneNumberRegex.test(value)) {
       return string().matches(

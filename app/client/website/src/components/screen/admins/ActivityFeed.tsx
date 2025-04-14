@@ -5,7 +5,6 @@ import { IAdminActivityLogResponse } from "@/generated/interfaces/tracking.inter
 import { ActivityItem, ActivityItemSkeleton } from "./ActivityItem";
 import { useLocale, useTranslations } from "next-intl";
 import { useGetAdminActivities } from "@/api/admin";
-import Loader from "@/components/ui/Loader";
 import { Button } from "@/components/ui/button";
 
 export type ActivityItemType = IAdminActivityLogResponse;

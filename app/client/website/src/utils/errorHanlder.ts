@@ -1,8 +1,21 @@
 import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 import { redirect } from "@/i18n/navigation";
-import { ErrorResponse } from "@/types/common";
+import { ErrorResponse, SuccessResponse } from "@/types/common";
 import { AxiosError } from "axios";
 import { getLocale } from "next-intl/server";
+
+/**
+ * Handle Axios success response by returning a SuccessResponse object.
+ */
+export const withSuccessfulResponse = <T>(data: T): SuccessResponse<T> => {
+  const response: SuccessResponse<T> = {
+    ok: true,
+    data,
+    error: null
+  };
+
+  return response;
+};
 
 /**
  * Handle Axios error by returning a customised ErrorResponse object. Intented to be used in a catch
@@ -20,7 +33,8 @@ export const withErrorProcessor = (error: AxiosError): ErrorResponse => {
       status: status ?? 500,
       code: code ?? "GENERAL",
       message: message ?? error.message
-    } as IErrorResponseDTO
+    } as IErrorResponseDTO,
+    data: null
   };
 
   return response;

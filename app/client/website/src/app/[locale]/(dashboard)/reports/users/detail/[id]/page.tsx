@@ -8,22 +8,29 @@ import ReportList from "@/components/screen/report/user/ReportList";
 
 export default async function ReportedDetail({ params }: ParamsProps) {
   try {
-    const currentUser = await getUserById(params.id);
-    const currentUserActivities = await getUserActivitiesById(params.id, "en");
+    const { ok: userOk, data: currentUser } = await getUserById(params.id);
+    const { ok: activityOk, data: currentUserActivities } = await getUserActivitiesById(
+      params.id,
+      "en"
+    );
+
+    if (!userOk || !activityOk) {
+      throw new Error("Failed to fetch data");
+    }
 
     return (
       <div className='min-h-screen rounded-lg p-2'>
-        <div className='mx-auto max-w-[96]'>
+        <div className='container'>
           <ProfileHeader user={currentUser} />
 
-          <div className='mt-6 flex flex-col-reverse gap-6 lg:flex-row'>
+          <div className='mt-6 flex flex-col-reverse gap-6 xl:flex-row'>
             <div className='flex-1'>
               {currentUserActivities && (
                 <ActivityFeed activities={currentUserActivities.paginatedData} />
               )}
             </div>
 
-            <div className='flex flex-col space-y-6 lg:w-1/3'>
+            <div className='flex flex-col space-y-6 xl:w-1/3'>
               <ReportList reportedId={params.id} />
               <ProfileInfo user={currentUser} />
             </div>
@@ -32,7 +39,6 @@ export default async function ReportedDetail({ params }: ParamsProps) {
       </div>
     );
   } catch (error) {
-    console.log(error);
     return <SomeThingWentWrong />;
   }
 }

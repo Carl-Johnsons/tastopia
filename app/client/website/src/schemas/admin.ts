@@ -3,7 +3,7 @@ import { isValid, parse } from "date-fns";
 import * as z from "zod";
 
 export const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
-const PHONE_REGEX = /^0(3|5|7|8|9)+([0-9]{8})$/;
+export const PHONE_REGEX = /^0(3|5|7|8|9)+([0-9]{8})$/;
 const DATE_REGEX = /\d{1,2}\/\d{1,2}\/\d\d\d\d/;
 const GENDER: Array<string> = [Gender.Male, Gender.Female];
 export const IMAGE_TYPE = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
@@ -58,13 +58,16 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
         message: t("phone.errors.invalid")
       }),
     gender: z
-      .string()
+      .string({
+        required_error: t("gender.errors.required")
+      })
       .refine(val => GENDER.includes(val), {
         message: t("gender.errors.invalid")
-      })
-      .optional(),
+      }),
     dob: z
-      .string()
+      .string({
+        required_error: t("dateOfBirth.errors.required")
+      })
       .regex(DATE_REGEX, {
         message: t("dateOfBirth.errors.invalid")
       })
@@ -94,8 +97,7 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
         {
           message: t("dateOfBirth.errors.max")
         }
-      )
-      .optional(),
+      ),
     address: z
       .string({
         required_error: t("address.errors.required")

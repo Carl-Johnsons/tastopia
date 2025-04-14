@@ -1,6 +1,10 @@
+"use client";
+
 import { ICommentDetailResponse } from "@/generated/interfaces/recipe.interface";
-import { getUserById } from "@/actions/user.action";
 import Content from "./Content";
+import { useGetUserById } from "@/api/user";
+import SomethingWentWrong from "@/components/shared/common/Error";
+import Loader from "@/components/ui/Loader";
 
 type Props = {
   comment: ICommentDetailResponse;
@@ -8,9 +12,12 @@ type Props = {
   className?: string;
 };
 
-export default async function CommentDetail({ comment, recipeId, className }: Props) {
+export default function CommentDetail({ comment, recipeId, className }: Props) {
   const { id, authorId, content, isActive } = comment;
-  const author = await getUserById(authorId);
+  const { data: author, isLoading, isError } = useGetUserById(authorId);
+
+  if (isError) return <SomethingWentWrong />;
+  if (isLoading || !author) return <Loader />;
 
   return (
     <div
