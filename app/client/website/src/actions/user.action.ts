@@ -7,6 +7,7 @@ import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 import {
   IAdminBanUserResponse,
   IAdminGetUserDetailResponse,
+  IAdminMarkReportResponse,
   IPaginatedAdminGetUserListResponse,
   IPaginatedAdminUserReportListResponse
 } from "@/generated/interfaces/user.interface";
@@ -105,7 +106,7 @@ export async function adminBanUser(accountId: string): Promise<Response<any>> {
 
 export async function markUserReport(
   reportId: string
-): Promise<Response<IAdminBanUserResponse>> {
+): Promise<Response<IAdminMarkReportResponse>> {
   try {
     const url = "/api/admin/user/mark-report";
     const { data } = await protectedAxiosInstance.post(url, {
