@@ -50,7 +50,6 @@ export default function useRecipeTableColumns() {
       name: t("createdDate"),
       sortable: true,
       width: "160px",
-      center: true,
       hide: 1476,
       cell: ({ createdAt }) => {
         return (
@@ -63,7 +62,6 @@ export default function useRecipeTableColumns() {
     {
       name: t("status"),
       sortable: true,
-      center: true,
       hide: 520,
       cell: ({ isActive }) => {
         return (
@@ -77,7 +75,7 @@ export default function useRecipeTableColumns() {
     {
       name: t("recipeImage"),
       hide: 1368,
-      width: "140px",
+      width: "160px",
       center: true,
       cell: ({ recipeImageUrl }) => (
         <div className='p-2'>

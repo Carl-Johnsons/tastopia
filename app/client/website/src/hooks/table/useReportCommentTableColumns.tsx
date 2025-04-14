@@ -68,7 +68,6 @@ export default function useReportCommentTableColumns() {
       name: t("createdDate"),
       sortable: true,
       width: "160px",
-      center: true,
       hide: 1476,
       cell: ({ createdAt }) => {
         return (
@@ -82,7 +81,6 @@ export default function useReportCommentTableColumns() {
       name: t("status"),
       sortable: true,
       width: "120px",
-      center: true,
       hide: 500,
       selector: row => row.status,
       cell: ({ status }) => {

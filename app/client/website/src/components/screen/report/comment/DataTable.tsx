@@ -112,6 +112,7 @@ export default function Table() {
         <SearchBar
           onChange={handleSearch}
           isLoading={isLoading || isFetching}
+          placeholder={t("search")}
         />
 
         <div className='flex gap-2 self-start'>
