@@ -168,6 +168,7 @@ const TagForm = ({ type }: FormProps) => {
               </FormLabel>
               <FormControl>
                 <Input
+                  placeholder={t("form.code.placeholder")}
                   className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
                   {...field}
                 />
@@ -187,6 +188,7 @@ const TagForm = ({ type }: FormProps) => {
               </FormLabel>
               <FormControl>
                 <Input
+                  placeholder={t("form.valueVi.placeholder")}
                   className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
                   {...field}
                 />
@@ -206,6 +208,7 @@ const TagForm = ({ type }: FormProps) => {
               </FormLabel>
               <FormControl>
                 <Input
+                  placeholder={t("form.valueEn.placeholder")}
                   className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
                   {...field}
                 />
@@ -235,7 +238,7 @@ const TagForm = ({ type }: FormProps) => {
                   >
                     <FormControl>
                       <SelectTrigger className='bg-white_black100 text-black_white'>
-                        <SelectValue placeholder='Select a category' />
+                        <SelectValue placeholder={t("form.category.placeholder")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className='bg-white_black100 text-black_white'>
