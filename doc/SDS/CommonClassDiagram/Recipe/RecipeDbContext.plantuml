@@ -1,4 +1,4 @@
-@startuml AccountDbContext
+@startuml RecipeDbContext
 
 interface IMongoDbContext extends IDisposable {
     +Instance : DbContext
@@ -113,24 +113,19 @@ interface IDisposable #black;line:white;text:white
 class "DbSet<T>" #black;line:white;text:white
 class DbContext #black;line:white;text:white
 
-IMongoDbContext o-- DbContext
+IMongoDbContext "1" o-- "1..*" DbContext
 
-' IApplicationDbContext o-- "DbSet<T>"
-' IApplicationDbContext o-- Recipe
-' IApplicationDbContext o-- Tag
-' IApplicationDbContext o-- RecipeTag
-' IApplicationDbContext o-- UserBookmarkRecipe
-' IApplicationDbContext o-- UserReportRecipe
-' IApplicationDbContext o-- UserReportComment
+ApplicationDbContext "1" o-- "1..*" "DbSet<T>"
+ApplicationDbContext "1" o-- "1" Recipe
+ApplicationDbContext "1" o-- "1" Tag
+ApplicationDbContext "1" o-- "1" RecipeTag
+ApplicationDbContext "1" o-- "1" UserBookmarkRecipe
+ApplicationDbContext "1" o-- "1" UserReportRecipe
+ApplicationDbContext "1" o-- "1" UserReportComment
 
-ApplicationDbContext "1" o-- "0..*" "DbSet<T>"
-ApplicationDbContext "1" o-- "0..*" Recipe
-ApplicationDbContext "1" o-- "0..*" Tag
-ApplicationDbContext "1" o-- "0..*" RecipeTag
-ApplicationDbContext "1" o-- "0..*" UserBookmarkRecipe
-ApplicationDbContext "1" o-- "0..*" UserReportRecipe
-ApplicationDbContext "1" o-- "0..*" UserReportComment
-
+Recipe "1"*--"1..*" Step
+Recipe "1"*--"0..*" Comment
+Recipe "1"*--"0..*" RecipeVote
 ' =========== Style ==============
 
 ApplicationDbContext o-[hidden]down- "DbSet<T>"
@@ -142,7 +137,6 @@ ApplicationDbContext o-[hidden]down- UserReportRecipe
 ApplicationDbContext o-[hidden]down- UserReportComment
 ApplicationDbContext o-[hidden]down- UserRecipeBin
 
-
 BaseMongoDBAuditableEntity -[hidden]right- BaseMongoDBEntity 
 BaseMongoDBAuditableEntity -[hidden]up- Recipe 
 BaseMongoDBAuditableEntity -[hidden]up- Step 
@@ -153,9 +147,5 @@ BaseMongoDBEntity -[hidden]up- RecipeTag
 BaseMongoDBAuditableEntity -[hidden]up- UserBookmarkRecipe 
 BaseMongoDBAuditableEntity -[hidden]up- UserReportRecipe
 BaseMongoDBAuditableEntity -[hidden]up- UserReportComment 
-
-Recipe "1"*--"1..*" Step
-Recipe "1"*--"0..*" Comment
-Recipe "1"*--"0..*" RecipeVote
 
 @enduml

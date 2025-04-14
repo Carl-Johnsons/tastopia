@@ -1,0 +1,62 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/Tracking/TrackingDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+
+hide circle
+
+class CreateUserSearchRecipeConsumer #CadetBlue;line:white;text:white {
+    #_sender: ISender
+    +CreateUserSearchRecipeConsumer(sender: ISender)
+    +Consume(context: ConsumeContext<CreateUserSearchRecipeEvent>): async Task
+}
+
+class CreateUserSearchRecipeCommand implements "IRequest<TResponse>" {
+    +AccountId: Guid
+    +Keyword: string
+    +SearchTime: DateTime
+}
+
+class CreateUserSearchRecipeCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +Handle(request: CreateUserSearchRecipeCommand, cancellationToken: CancellationToken): async Task<Result>
+}
+
+' Event DTO
+class CreateUserSearchRecipeEvent #CadetBlue;line:white;text:white {
+    +AccountId: Guid
+    +Keyword: string
+    +SearchTime: DateTime
+}
+
+class UserSearchRecipeError {
+    {static} +AddUserSearchRecipeErrorFail: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+CreateUserSearchRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+
+CreateUserSearchRecipeConsumer "1"--"1" CreateUserSearchRecipeEvent
+CreateUserSearchRecipeConsumer "1"--"1" CreateUserSearchRecipeCommand
+
+CreateUserSearchRecipeCommandHandler "1"--"1" CreateUserSearchRecipeCommand
+CreateUserSearchRecipeCommandHandler "1" o-- "1" IApplicationDbContext
+CreateUserSearchRecipeCommandHandler "1" o-- "1" IUnitOfWork
+
+CreateUserSearchRecipeCommandHandler "1"--"1..*" Result
+CreateUserSearchRecipeCommandHandler "1"--"1..*" UserSearchRecipeError
+CreateUserSearchRecipeCommandHandler "1"--"1..*" UserSearchRecipe
+
+UserSearchRecipeError "1" o-- "1..*" Error
+
+@enduml

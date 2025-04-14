@@ -46,13 +46,12 @@ together {
 }
 
 IDbContext ..|> IDisposable
-IDbContext o-- DbContext
+IDbContext "1" o-- "1..*" DbContext
 
 IApplicationDbContext ..|> IDbContext
-IApplicationDbContext o-- "DbSet<T>"
-IApplicationDbContext o-- "IdentityUserLogin<T>"
-IApplicationDbContext o-- ApplicationAccount
 
-ApplicationDbContext o-- ApplicationAccount
+ApplicationDbContext "1" o-- "1..*" "DbSet<T>"
+ApplicationDbContext "1" o-- "1" "IdentityUserLogin<T>"
+ApplicationDbContext "1" o-- "1" ApplicationAccount
 
 @enduml

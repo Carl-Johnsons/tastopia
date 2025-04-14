@@ -30,7 +30,7 @@ together {
     }
 }
 
-Result "1" --"1..*" Error
+Result "1" o-- "1..*" Error
 Result <|-- "Result<T>"
 
 @enduml
