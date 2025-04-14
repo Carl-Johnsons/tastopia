@@ -48,7 +48,7 @@ GrpcTrackingService "1" -- "1" GrpcUserViewRecipeDetailRequest
 GrpcTrackingService "1" o-- "1" CreateUserVewRecipeDetailCommand
 
 CreateUserVewRecipeDetailCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-CreateUserVewRecipeDetailCommandHandler "1" o-- "1" CreateUserVewRecipeDetailCommand
+CreateUserVewRecipeDetailCommandHandler "1" -- "1" CreateUserVewRecipeDetailCommand
 CreateUserVewRecipeDetailCommandHandler "1" o-- "1" IUnitOfWork
 CreateUserVewRecipeDetailCommandHandler "1" o-- "1" IApplicationDbContext
 

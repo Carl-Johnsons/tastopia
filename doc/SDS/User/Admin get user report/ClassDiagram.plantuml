@@ -39,7 +39,7 @@ class GetUserReportsQueryHandler {
     -_context : IApplicationDbContext
     -_paginateDataUtility: IPaginateDataUtility<AdminUserReportResponse, NumberedPaginatedMetadata> 
     +GetUserReportsQueryHandler(context : IApplicationDbContext, paginateDataUtility : IPaginateDataUtility<AdminUserReportResponse, NumberedPaginatedMetadata>)
-    +Handle(request: GetUserReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminUserReportListResponse?>>
+    +Handle(request: GetUserReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminUserReportListResponse>>
 }
 
 class PaginatedAdminUserReportListResponse

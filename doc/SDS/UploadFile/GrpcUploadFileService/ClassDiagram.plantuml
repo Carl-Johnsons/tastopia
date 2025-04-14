@@ -2,8 +2,8 @@
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 50
-skinparam ranksep 50
+skinparam nodesep 100
+skinparam ranksep 100
 skinparam classAttributeIconSize 0
 
 hide circle
@@ -30,43 +30,45 @@ class ImageUploadResult #Black;line:white;text:white {
 class DeletionParams #Black;line:white;text:white{
 }
 
+class IFormFile #Black;line:white;text:white
+
 interface IFileUtility {
-    #GetFileType(string fileName): enum
-    #GetPublicIdByUrl(string url): string?
+    #GetFileType(string fileName): FileType
+    #GetPublicIdByUrl(string url): string
     #ConvertGrpcFileStreamToIFormFileAsync(List<GrpcFileStreamDTO> streams): Task<List<IFormFile>>
     #ConvertFileStreamDTOToIFormFileAsync(List<FileStreamDTO> streams): Task<List<IFormFile>>
 }
 
 class FileUtility Implements IFileUtility {
-    +GetFileType(string fileName): enum
-    +GetPublicIdByUrl(string url): string?
+    +GetFileType(string fileName): FileType
+    +GetPublicIdByUrl(string url): string
     +ConvertGrpcFileStreamToIFormFileAsync(List<GrpcFileStreamDTO> streams): Task<List<IFormFile>>
     +ConvertFileStreamDTOToIFormFileAsync(List<FileStreamDTO> streams): Task<List<IFormFile>>
 }
 
 class UpdateMultipleImageFileCommand {
-    +DeleteUrls: List<string>?
-    +FormFiles: List<IFormFile>?
+    +DeleteUrls: List<string>
+    +FormFiles: List<IFormFile>
 }
 
 class UpdateMultipleImageFileCommandHandler{
     -_fileUtility: IFileUtility
     -_cloudinary: Cloudinary
     +UpdateMultipleImageFileCommandHandler(fileUtility: IFileUtility, cloudinary: Cloudinary)
-    +Handle(request: UpdateMultipleImageFileCommand, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>?>>
-    -UploadMultipleImage(formFiles: List<IFormFile>, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>?>>
+    +Handle(request: UpdateMultipleImageFileCommand, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>>>
+    -UploadMultipleImage(formFiles: List<IFormFile>, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>>>
     -DeleteMultipleImage(urls: List<string>): async Task
 }
 
 class CreateMultipleImageFileCommand {
-    +FormFiles: List<IFormFile>?
+    +FormFiles: List<IFormFile>
 }
 
 class CreateMultipleImageFileCommandHandler{
     -_fileUtility: IFileUtility
     -_cloudinary: Cloudinary
     +CreateMultipleImageFileCommandHandler(fileUtility: IFileUtility, cloudinary: Cloudinary)
-    +Handle(request: CreateMultipleImageFileCommand, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>?>>
+    +Handle(request: CreateMultipleImageFileCommand, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>>>
 }
 ' Grpc DTO
 class GrpcUpdateMultipleImageRequest #LightSalmon;line:white;text:white{
@@ -81,6 +83,12 @@ class GrpcListFileDTO #LightSalmon;line:white;text:white{
 class GrpcFileDTO #LightSalmon;line:white;text:white{
 }
 
+enum FileType {
+    INVALID
+    IMAGE
+    VIDEO
+    RAW
+} 
 
 ' DTO
 class FileResponse{
@@ -106,10 +114,15 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
 UpdateMultipleImageFileCommand ..|> "IRequest<TResponse>"
+UpdateMultipleImageFileCommand "1" o-- "1..*" IFormFile
 CreateMultipleImageFileCommand ..|> "IRequest<TResponse>"
+CreateMultipleImageFileCommand "1" o-- "1..*" IFormFile
 
 UpdateMultipleImageFileCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 CreateMultipleImageFileCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+
+FileUtility "1" o-- "1" FileType
+FileUtility "1" o-- "1..*" IFormFile
 
 GrpcUploadFileService "1"--"1" GrpcUpdateMultipleImageRequest
 GrpcUploadFileService "1"--"1..*" GrpcListFileDTO
@@ -129,6 +142,7 @@ UpdateMultipleImageFileCommandHandler "1"--"1..*" CloudinaryFileError
 UpdateMultipleImageFileCommandHandler "1"--"1..*" ImageUploadResult
 UpdateMultipleImageFileCommandHandler "1"--"1..*" ImageUploadParams
 UpdateMultipleImageFileCommandHandler "1"--"1..*" DeletionParams
+UpdateMultipleImageFileCommandHandler "1"--"1" IFormFile
 
 CreateMultipleImageFileCommandHandler "1"--"1" CreateMultipleImageFileCommand
 CreateMultipleImageFileCommandHandler "1"--"1..*" FileResponse
@@ -138,7 +152,7 @@ CreateMultipleImageFileCommandHandler "1" o-- "1" Cloudinary
 CreateMultipleImageFileCommandHandler "1"--"1..*" CloudinaryFileError
 CreateMultipleImageFileCommandHandler "1"--"1..*" ImageUploadResult
 CreateMultipleImageFileCommandHandler "1"--"1..*" ImageUploadParams
-
+CreateMultipleImageFileCommandHandler "1"--"1" IFormFile
 
 ' =================STYLE=================
 GrpcUploadFileService -[hidden]down-|> UpdateMultipleImageFileCommand

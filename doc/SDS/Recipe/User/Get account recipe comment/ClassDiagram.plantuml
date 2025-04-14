@@ -28,21 +28,35 @@ class GetAccountRecipeCommentsQueryHandler {
     -_grpcUserClient: GrpcUserClient
     -_paginateDataUtility: IPaginateDataUtility
     +GetAccountRecipeCommentsQueryHandler(context : IApplicationDbContext, mapper : IMapper, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility)
-    +Handle(request : GetAccountRecipeCommentsQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedAccountRecipeCommentListResponse?>> 
+    +Handle(request : GetAccountRecipeCommentsQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedAccountRecipeCommentListResponse>> 
 }
 
-
-interface IMapper{
-    #Map<TDestination>(object source): TDestination
-}
-
-class PaginatedAccountRecipeCommentListResponse{
-}
+class PaginatedAccountRecipeCommentListResponse 
 class BasePaginatedResponse{
     +PaginatedData : IEnumerable<Type>
-    +Metadata: MetadataType?
+    +Metadata: MetadataType
 }
 PaginatedAccountRecipeCommentListResponse --|> BasePaginatedResponse
+
+class AccountRecipeCommentResponse {
+    +Id: Guid
+    +AccountId: Guid
+    +RecipeId: Guid
+    +DisplayName: string
+    +Content: string
+    +RecipeTitle: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+    +IsActive: bool
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
 
 class GetAccountRecipeCommentsDTO{
     +AccountId: Guid
@@ -56,6 +70,7 @@ class RecipeError {
     {static} +UpdateRecipeFail: Error
 }
 together {
+    class IMapper #Black;line:white;text:white
     class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
     class GrpcUserClient #DarkBlue;line:white;text:white
 }
@@ -65,6 +80,9 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
 GetAccountRecipeCommentsQuery ..|> "IRequest<TResponse>"
+
+PaginatedAccountRecipeCommentListResponse "1" o-- "1..*" AccountRecipeCommentResponse
+PaginatedAccountRecipeCommentListResponse "1" o-- "1" AdvancePaginatedMetadata
 
 GetAccountRecipeCommentsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 RecipeController --|> BaseApiController

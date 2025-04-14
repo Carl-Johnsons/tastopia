@@ -1,12 +1,13 @@
 
 @startuml ClassDiagram
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -28,7 +29,7 @@ class GetCommentReportsQueryHandler {
     -_grpcUserClient: GrpcUserClient 
     -_paginateDataUtility: IPaginateDataUtility<AdminReportCommentResponse, NumberedPaginatedMetadata> 
     +GetCommentReportsQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility<AdminReportCommentResponse, NumberedPaginatedMetadata>)
-    +Handle(request: GetCommentReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminReportCommentListResponse?>>
+    +Handle(request: GetCommentReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminReportCommentListResponse>>
 }
 
 class PaginatedAdminReportCommentListResponse
@@ -90,18 +91,20 @@ AdminController "1"--"1" PaginatedDTO
 AdminController "1"--"1" GetCommentReportsQuery
 
 GetCommentReportsQuery ..|> "IRequest<TResponse>"
+GetCommentReportsQuery "1" o-- "1" PaginatedDTO
 
 GetCommentReportsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-GetCommentReportsQueryHandler "1" --"1" GetCommentReportsQuery
-GetCommentReportsQueryHandler "1" o--"1" IApplicationDbContext
-GetCommentReportsQueryHandler "1" o--"1" IPaginateDataUtility
-GetCommentReportsQueryHandler "1" o--"1" GrpcUserClient
-GetCommentReportsQueryHandler "1" --"1" Result
+GetCommentReportsQueryHandler "1" -- "1" GetCommentReportsQuery
+GetCommentReportsQueryHandler "1" o-- "1" IApplicationDbContext
+GetCommentReportsQueryHandler "1" o-- "1" IPaginateDataUtility
+GetCommentReportsQueryHandler "1" o-- "1" GrpcUserClient
+
+GetCommentReportsQueryHandler "1" -- "1" Result
 GetCommentReportsQueryHandler "1" -- "1..*" GrpcSearchUserRequest
 GetCommentReportsQueryHandler "1" -- "1..*" GrpcGetSimpleUsersRequest
-GetCommentReportsQueryHandler "1" --"1..*" PaginatedAdminReportCommentListResponse
-GetCommentReportsQueryHandler "1" --"1..*" NumberedPaginatedMetadata
-GetCommentReportsQueryHandler "1" --"1..*" AdminReportCommentResponse
+GetCommentReportsQueryHandler "1" -- "1..*" PaginatedAdminReportCommentListResponse
+GetCommentReportsQueryHandler "1" -- "1..*" NumberedPaginatedMetadata
+GetCommentReportsQueryHandler "1" -- "1..*" AdminReportCommentResponse
 
 
 @enduml

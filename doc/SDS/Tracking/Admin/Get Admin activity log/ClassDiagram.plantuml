@@ -4,8 +4,8 @@
 !include doc/SDS/CommonClassDiagram/PaginateData.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 100
-skinparam ranksep 100
+skinparam nodesep 150
+skinparam ranksep 150
 hide circle
 
 class BaseApiController {
@@ -212,18 +212,17 @@ RecipeReportAdminActivityLogResponse "1" o-- "1" RecipeLogResponse
 RecipeReportAdminActivityLogResponse "1" o-- "1" ReportLogResponse
 
 TagAdminActivityLogResponse "1" o-- "1" TagLogResponse
-
 UserAdminActivityLogResponse "1" o-- "1" UserLogResponse
 
 GetAdminActivityLogQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-GetAdminActivityLogQueryHandler "1" o-- "1" GetAdminActivityLogQuery
+GetAdminActivityLogQueryHandler "1" -- "1" GetAdminActivityLogQuery
 GetAdminActivityLogQueryHandler "1" o-- "1" IApplicationDbContext
 GetAdminActivityLogQueryHandler "1" o-- "1" IPaginateDataUtility
-GetAdminActivityLogQueryHandler "1" o-- "1" PaginatedAdminActivityLogListResponse
 GetAdminActivityLogQueryHandler "1" o-- "1" IMapper
 GetAdminActivityLogQueryHandler "1" o-- "1" GrpcUserClient
 GetAdminActivityLogQueryHandler "1" o-- "1" GrpcRecipeClient
 
+GetAdminActivityLogQueryHandler "1" -- "1" PaginatedAdminActivityLogListResponse
 GetAdminActivityLogQueryHandler "1" -- "1..*" Result
 GetAdminActivityLogQueryHandler "1" -- "1..*" AdminActivityLogResponse
 GetAdminActivityLogQueryHandler "1" -- "1" GrpcGetSimpleUsersRequest

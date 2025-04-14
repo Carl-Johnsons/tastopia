@@ -3,8 +3,8 @@
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 50
-skinparam ranksep 50
+skinparam nodesep 150
+skinparam ranksep 150
 skinparam classAttributeIconSize 0
 hide circle
 
@@ -33,9 +33,9 @@ class GetRecipeDetailForServerQuery {
 }
 class GetRecipeDetailForServerQueryHandler {
     -_context: IApplicationDbContext
-    -_grpcAccountClient: GrpcAccountClient
-    +GetRecipeDetailForServerQueryHandler(context: IApplicationDbContext, grpcAccountClient: GrpcAccountClient)
-    +Handle(request : GetUserDetailsQuery, cancellationToken : CancellationToken): async Task<Result<GetUserDetailsResponse?>> 
+    -_grpcUserClient: GrpcUserClient
+    +GetRecipeDetailForServerQueryHandler(context: IApplicationDbContext, grpcUserClient: GrpcUserClient)
+    +Handle(request : GetUserDetailsQuery, cancellationToken : CancellationToken): async Task<Result<GetUserDetailsResponse>> 
 }
 
 class GetSimpleRecipesQuery {
@@ -107,7 +107,7 @@ class RecipeDetailsResponse{
     +AuthorDisplayName: string
     +AuthorAvtUrl: string
     +AuthorNumberOfFollower: int
-    +Vote: enum
+    +Vote: string
     +IsBookmarked: bool
     +Tags: List<Tag>
 }
@@ -122,7 +122,7 @@ class SimpleRecipeResponse{
     +AuthorAvtUrl: string
     +VoteDiff: int
     +NumberOfComment: int
-    +Vote: enum
+    +Vote: Vote
 }
 
 class RecipeError {
@@ -150,6 +150,12 @@ class TagError {
     {static} +NullParameters: Error
 }
 
+enum Vote {
+    None
+    Upvote
+    Downvote
+}
+
 ' =========== Library class ===========
 interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
@@ -164,6 +170,8 @@ GetAllTagsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetRecipeDetailForServerQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetSimpleRecipesQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 SearchSimpleRecipesQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+
+SimpleRecipeResponse "1" o-- Vote
 
 ' Commands and queries
 
@@ -205,7 +213,6 @@ GetRecipeDetailForServerQueryHandler "1"--"1" RecipeDetailsResponse
 GetRecipeDetailForServerQueryHandler "1"---"1" Result
 GetRecipeDetailForServerQueryHandler "1"---"1" GrpcAccountIdRequest
 GetRecipeDetailForServerQueryHandler "1" o-- "1" IApplicationDbContext
-GetRecipeDetailForServerQueryHandler "1" o-- "1" IServiceBus
 GetRecipeDetailForServerQueryHandler "1" o-- "1" GrpcUserClient
 GetRecipeDetailForServerQueryHandler "1"----"1..*" RecipeError
 

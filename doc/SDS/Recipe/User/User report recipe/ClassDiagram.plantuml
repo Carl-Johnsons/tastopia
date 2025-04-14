@@ -29,7 +29,7 @@ class UserReportRecipeCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
     +UserReportRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork)
-    +Handle(request : UserReportRecipeCommand, cancellationToken : CancellationToken): async Task<Result<UserReportRecipeResponse?>> 
+    +Handle(request : UserReportRecipeCommand, cancellationToken : CancellationToken): async Task<Result<UserReportRecipeResponse>> 
 }
 
 class UserReportRecipeDTO{
@@ -43,7 +43,7 @@ class UserReportRecipeResponse{
     +IsRemoved: bool
 }
 
-UserReportRecipeResponse "1"--"1" UserReportRecipe
+UserReportRecipeResponse "1" o-- "1" UserReportRecipe
 
 class RecipeError {
     {static} +NotFound: Error

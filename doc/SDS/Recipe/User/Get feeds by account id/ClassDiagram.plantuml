@@ -5,8 +5,8 @@
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 25
-skinparam ranksep 25
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -30,11 +30,7 @@ class GetRecipeFeedsByAuthorIdQueryHandler {
     -_grpcUserClient: GrpcUserClient
     -_paginateDataUtility: IPaginateDataUtility
     +GetRecipeFeedsByAuthorIdQueryHandler(context : IApplicationDbContext, mapper : IMapper, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility)
-    +Handle(request : GetRecipeFeedsByAuthorIdQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedRecipeFeedsListResponse?>> 
-}
-
-interface IMapper{
-    #Map<TDestination>(object source): TDestination
+    +Handle(request : GetRecipeFeedsByAuthorIdQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedRecipeFeedsListResponse>> 
 }
 
 class GetRecipeFeedsByAuthorIdDTO {
@@ -46,9 +42,30 @@ class PaginatedRecipeFeedsListResponse
 
 class "BasePaginatedResponse<Type, MetadataType>" {
     +PaginatedData : IEnumerable<Type>
-    +Metadata: MetadataType?
+    +Metadata: MetadataType
 }
 PaginatedRecipeFeedsListResponse --|> "BasePaginatedResponse<Type, MetadataType>"
+
+class RecipeFeedResponse {
+    +Id: Guid
+    +AuthorId: Guid
+    +RecipeImgUrl: string
+    +Title: string
+    +Description: string
+    +AuthorDisplayName: string
+    +AuthorAvtUrl: string
+    +VoteDiff: int
+    +NumberOfComment: int
+    +Vote: string
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
 
 class RecipeError {
     {static} +NotFound: Error
@@ -59,6 +76,7 @@ class RecipeError {
 
 ' =========== Microservice class ===========
 together {
+    class IMapper #Black;line:white;text:white
     class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
     class GrpcUserClient #DarkBlue;line:white;text:white
 }
@@ -67,6 +85,9 @@ together {
 interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
+
+PaginatedRecipeFeedsListResponse "1" o-- "1..*" RecipeFeedResponse
+PaginatedRecipeFeedsListResponse "1" o-- "1" AdvancePaginatedMetadata
 
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" GetRecipeFeedsByAuthorIdDTO 

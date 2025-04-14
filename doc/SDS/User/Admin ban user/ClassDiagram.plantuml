@@ -7,8 +7,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -29,8 +29,8 @@ class AdminBanUserCommandHandler {
     -_context : IApplicationDbContext
     -_serviceBus: IServiceBus 
     -_unitOfWork: IUnitOfWork 
-    +AdminBanUserCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
-    +Handle(request: AdminBanUserCommand, cancellationToken: CancellationToken) : Task<Result<AdminBanUserResponse?>>
+    +AdminBanUserCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: AdminBanUserCommand, cancellationToken: CancellationToken) : Task<Result<AdminBanUserResponse>>
 }
 
 class AdminBanUserDTO {

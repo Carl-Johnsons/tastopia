@@ -7,13 +7,13 @@ skinparam nodesep 100
 skinparam ranksep 100
 hide circle
 
-class UserRegisterConsumer {
+class UserRegisterConsumer #Cyan;line:black;text:black {
     -_sender: ISender
     +UserRegisterConsumer(sender: ISender)
     +Consume(context: ConsumeContext<UserRegisterEvent>): Task
 }
 
-class UserRegisterEvent {
+class UserRegisterEvent #Cyan;line:black;text:black {
     +AccountId: Guid
     +Identifier: string
     +OTP: string
@@ -53,6 +53,18 @@ class SendSMSCommandHandler {
     +Handle(request: SendSMSCommand, cancellationToken: CancellationToken): async Task<Result>
 }
 
+class SendSMSEvent #Cyan;line:black;text:black {
+    +PhoneTo: string
+    +Message: string
+}
+
+class SendEmailEvent #Cyan;line:black;text:black {
+    +EmailTo: string
+    +Subject: string
+    +Body: string
+    +IsHTML: bool
+}
+
 ' =========== Library class ===========
 interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
@@ -69,17 +81,19 @@ UserRegisterEvent "1" o-- "1" AccountMethod
 SendEmailCommand ..|> "IRequest<TResponse>"
 
 SendEmailCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-SendEmailCommandHandler "1" o-- "1" SendEmailCommand
+SendEmailCommandHandler "1" -- "1" SendEmailCommand
 SendEmailCommandHandler "1" o-- "1" IServiceBus
 
 SendEmailCommandHandler "1" -- "1..*" Result
+SendEmailCommandHandler "1" -- "1" SendEmailEvent
 
 SendSMSCommand ..|> "IRequest<TResponse>"
 
 SendSMSCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-SendSMSCommandHandler "1" o-- "1" SendSMSCommand
+SendSMSCommandHandler "1" -- "1" SendSMSCommand
 SendSMSCommandHandler "1" o-- "1" IServiceBus
 
 SendSMSCommandHandler "1" -- "1..*" Result
+SendSMSCommandHandler "1" -- "1" SendSMSEvent
 
 @enduml

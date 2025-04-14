@@ -89,13 +89,13 @@ PaginatedAdminActivityLogListResponse "1" o-- "1..*" AdminActivityLogResponse
 PaginatedAdminActivityLogListResponse "1" o-- "1" NumberedPaginatedMetadata
 
 GetAllAdminActivityLogQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-GetAllAdminActivityLogQueryHandler "1" o-- "1" GetAllAdminActivityLogQuery
+GetAllAdminActivityLogQueryHandler "1" -- "1" GetAllAdminActivityLogQuery
 GetAllAdminActivityLogQueryHandler "1" o-- "1" IApplicationDbContext
 GetAllAdminActivityLogQueryHandler "1" o-- "1" IPaginateDataUtility
-GetAllAdminActivityLogQueryHandler "1" o-- "1" PaginatedAdminActivityLogListResponse
 GetAllAdminActivityLogQueryHandler "1" o-- "1" IMapper
 GetAllAdminActivityLogQueryHandler "1" o-- "1" GrpcUserClient
 
+GetAllAdminActivityLogQueryHandler "1" -- "1" PaginatedAdminActivityLogListResponse
 GetAllAdminActivityLogQueryHandler "1" -- "1..*" AdminActivityLogResponse
 GetAllAdminActivityLogQueryHandler "1" -- "1..*" Result
 GetAllAdminActivityLogQueryHandler "1" -- "1" GrpcGetSimpleUsersRequest

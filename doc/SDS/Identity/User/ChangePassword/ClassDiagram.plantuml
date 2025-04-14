@@ -2,8 +2,8 @@
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -72,12 +72,12 @@ ChangePasswordCommand "1" o--"1" AccountMethod
 ChangePasswordCommand ..|> "IRequest<TResponse>"
 
 ChangePasswordCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-ChangePasswordCommandHandler "1" o--"1" ChangePasswordCommand
-ChangePasswordCommandHandler "1" o---"1" ApplicationAccount
-ChangePasswordCommandHandler "1" o--"1" AccountError
-ChangePasswordCommandHandler "1" o--"1" Result
+ChangePasswordCommandHandler "1" --"1" ChangePasswordCommand
 ChangePasswordCommandHandler "1" o--"1" "UserManager<TUser>"
 
+ChangePasswordCommandHandler "1" -- "1..*" Result
+ChangePasswordCommandHandler "1" -- "1..*" AccountError
+ChangePasswordCommandHandler "1" ---"1..*" ApplicationAccount
 Error "1..*" --o "1" AccountError
 
 @enduml

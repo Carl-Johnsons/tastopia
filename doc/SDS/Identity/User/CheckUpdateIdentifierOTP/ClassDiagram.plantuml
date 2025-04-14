@@ -2,8 +2,8 @@
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -64,17 +64,18 @@ class "UserManager<TUser>" #black;line:white;text:white
 ' =========== Library class ===========
 
 AccountController --|> BaseApiController
-AccountController "1"--"1" CheckUpdateIdentifierOTPQuery
-AccountController "1"--"1" VerifyUpdateIdentifierDTO
-CheckUpdateIdentifierOTPQuery "1" o--"1" AccountMethod
+AccountController "1" -- "1" CheckUpdateIdentifierOTPQuery
+AccountController "1" -- "1" VerifyUpdateIdentifierDTO
+CheckUpdateIdentifierOTPQuery "1" o-- "1" AccountMethod
 CheckUpdateIdentifierOTPQuery ..|> "IRequest<TResponse>"
 
 CheckUpdateIdentifierOTPQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-CheckUpdateIdentifierOTPQueryHandler "1" o--"1" CheckUpdateIdentifierOTPQuery
-CheckUpdateIdentifierOTPQueryHandler "1" o---"1" ApplicationAccount
-CheckUpdateIdentifierOTPQueryHandler "1" o--"1" AccountError
-CheckUpdateIdentifierOTPQueryHandler "1" o--"1" Result
-CheckUpdateIdentifierOTPQueryHandler "1" o--"1" "UserManager<TUser>"
+CheckUpdateIdentifierOTPQueryHandler "1" -- "1" CheckUpdateIdentifierOTPQuery
+CheckUpdateIdentifierOTPQueryHandler "1" o-- "1" "UserManager<TUser>"
+
+CheckUpdateIdentifierOTPQueryHandler "1" ---"1..*" ApplicationAccount
+CheckUpdateIdentifierOTPQueryHandler "1" -- "1..*" Result
+CheckUpdateIdentifierOTPQueryHandler "1" -- "1..*" AccountError
 
 Error "1..*" --o "1" AccountError
 

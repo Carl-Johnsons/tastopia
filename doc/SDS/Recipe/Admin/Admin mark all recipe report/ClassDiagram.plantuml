@@ -7,8 +7,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -30,7 +30,7 @@ class MarkAllRecipeReportCommandHandler {
     -_context : IApplicationDbContext
     -_serviceBus: IServiceBus 
     -_unitOfWork: IUnitOfWork 
-    +MarkAllRecipeReportCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +MarkAllRecipeReportCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
     +Handle(request: MarkAllRecipeReportCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
@@ -55,7 +55,7 @@ together {
 }
 
 AdminController --|> BaseApiController
-AdminController "1"--"1" ReportDTO
+AdminController "1"--"1" MarkAllRecipeReportDTO
 AdminController "1"--"1" MarkAllRecipeReportCommand
 
 MarkAllRecipeReportCommand ..|> "IRequest<TResponse>"

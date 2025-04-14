@@ -27,7 +27,7 @@ class BookmarkRecipeCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
     +BookmarkRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork)
-    +Handle(request : BookmarkRecipeCommand, cancellationToken : CancellationToken): async Task<Result<BookmarkRecipeResponse?>> 
+    +Handle(request : BookmarkRecipeCommand, cancellationToken : CancellationToken): async Task<Result<BookmarkRecipeResponse>> 
 }
 
 class BookmarkRecipeDTO{

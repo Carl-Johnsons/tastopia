@@ -8,17 +8,17 @@ skinparam classAttributeIconSize 0
 
 hide circle
 
-class RecipeWorkerConsumer #SeaGreen;line:white;text:white {
+class RecipeWorkerConsumer #Green;line:white;text:white {
     -_recipeService: IRecipeService
     +ValidateRecipeConsumer(context: ConsumeContext<ValidateRecipeEvent>): async Task
 }
 
-interface IRecipeService #SeaGreen;line:white;text:white {
+interface IRecipeService #Green;line:white;text:white {
     +CheckRecipeAbuse(recipeId: Guid): async Task
     +CheckRecipeTags(recipeId: Guid, tagValues: list<string>): async Task
 }
 
-class CommunityRecipeService #SeaGreen;line:white;text:white implements IRecipeService {
+class CommunityRecipeService #Green;line:white;text:white implements IRecipeService {
     -_serviceBus: IServiceBus
     -_textCheckerService: IOffensiveTextCheckerService
     -_grpcRecipeClient: GrpcRecipeClient
@@ -27,11 +27,11 @@ class CommunityRecipeService #SeaGreen;line:white;text:white implements IRecipeS
     #CheckRecipeTags(recipeId: Guid, tagValues: list<string>): async Task
 }
 
-interface IOffensiveTextCheckerService #SeaGreen;line:white;text:white {
+interface IOffensiveTextCheckerService #Green;line:white;text:white {
     +CheckOffensiveText(text: string): async Task<string>
 }
 
-class OffensiveTextCheckerService #SeaGreen;line:white;text:white implements IOffensiveTextCheckerService {
+class OffensiveTextCheckerService #Green;line:white;text:white implements IOffensiveTextCheckerService {
     -apiKey: string
     -endpoint: string
     +OffensiveTextCheckerService()
@@ -81,13 +81,6 @@ CommunityRecipeService "1" -- "1..*" NotifyUserEvent
 CommunityRecipeService "1" -- "1..*" UpdateRecipeIsActiveEvent 
 CommunityRecipeService "1" -- "1..*" UpdateRecipeTagsEvent 
 CommunityRecipeService "1" -- "1..*" RequestAddTagsEvent
-
-
-
-
-
-
-
 
 ' =================STYLE=================
 

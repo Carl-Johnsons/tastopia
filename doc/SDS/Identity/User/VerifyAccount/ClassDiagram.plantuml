@@ -3,8 +3,8 @@
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -69,17 +69,18 @@ class "UserManager<TUser>" #black;line:white;text:white
 ' =========== Library class ===========
 
 AccountController --|> BaseApiController
-AccountController "1"--"1" VerifyAccountDTO
-AccountController "1"--"1" VerifyAccountCommand
-VerifyAccountCommand "1"--"1" AccountMethod
+AccountController "1" -- "1" VerifyAccountDTO
+AccountController "1" -- "1" VerifyAccountCommand
 VerifyAccountCommand ..|> "IRequest<TResponse>"
+VerifyAccountCommand "1" o-- "1" AccountMethod
 
 VerifyAccountCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-VerifyAccountCommandHandler "1" o--"1" VerifyAccountCommand
-VerifyAccountCommandHandler "1" o---"1" ApplicationAccount
-VerifyAccountCommandHandler "1" o--"1" AccountError
-VerifyAccountCommandHandler "1" o--"1" Result
+VerifyAccountCommandHandler "1" -- "1" VerifyAccountCommand
 VerifyAccountCommandHandler "1" o--"1" "UserManager<TUser>"
+
+VerifyAccountCommandHandler "1" -- "1..*" AccountError
+VerifyAccountCommandHandler "1" -- "1..*" Result
+VerifyAccountCommandHandler "1" --- "1..*" ApplicationAccount
 
 Error "1..*" --o "1" AccountError
 

@@ -49,7 +49,7 @@ SetViewNotificationCommand ..|> "IRequest<TResponse>"
 SetViewNotificationCommand "1" o-- "1" DeviceType
 
 SetViewNotificationCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-SetViewNotificationCommandHandler "1" o--" 1" SetViewNotificationCommand
+SetViewNotificationCommandHandler "1" -- "1" SetViewNotificationCommand
 SetViewNotificationCommandHandler "1" o-- "1" IApplicationDbContext
 SetViewNotificationCommandHandler "1" o-- "1" IUnitOfWork
 

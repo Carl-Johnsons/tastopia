@@ -35,7 +35,7 @@ class GetUserFollowingsQueryHandler {
     -_context : IApplicationDbContext
     -_paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata> 
     +GetUserFollowingsQueryHandler(context : IApplicationDbContext, paginateDataUtility : IPaginateDataUtility<User, AdvancePaginatedMetadata>)
-    +Handle(request: GetUserFollowingsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedSimpleUserListResponse?>>
+    +Handle(request: GetUserFollowingsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedSimpleUserListResponse>>
 }
 
 class PaginatedSimpleUserListResponse

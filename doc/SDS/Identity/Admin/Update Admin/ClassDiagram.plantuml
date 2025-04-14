@@ -4,8 +4,8 @@
 !include doc/SDS/CommonClassDiagram/FileUtility.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 class BaseApiController {
@@ -13,7 +13,7 @@ class BaseApiController {
     #_httpContextAccessor: HttpContextAccessor
 }
 
-class AccountController {
+class AdminController {
     +UpdateAdmin(dto: UpdateAdminAccountDTO): async Task<IActionResult>
 }
 
@@ -58,35 +58,6 @@ class UpdateAdminAccountDTO {
     +AvatarFile: IFormFile
 }
 
-class AddActivityLogEvent {
-    +AccountId: Guid
-    +ActivityType: ActivityType
-    +EntityId: Guid
-    +EntityType: ActivityEntityType
-    +SecondaryEntityId: Guid
-    +SecondaryEntityType: ActivityEntityType
-}
-
-enum ActivityType
-{
-    CREATE
-    UPDATE
-    DISABLE
-    RESTORE
-    MARK_COMPLETE
-    REOPEN
-}
-
-enum ActivityEntityType{
-    RECIPE
-    COMMENT
-    TAG
-    USER
-    REPORT_RECIPE
-    REPORT_COMMENT
-    REPORT_USER
-}
-
 !include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml 
 remove IDisposable
 remove DbSet<T>
@@ -106,6 +77,7 @@ together {
 together {
     class GrpcUpdateAdminRequest #DarkBlue;line:white;text:white
     class GrpcUserClient #DarkBlue;line:white;text:white
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
 }
 
 ' =========== Library class ===========
@@ -114,29 +86,28 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 class "UserManager<TUser>" #black;line:white;text:white
 ' =========== Library class ===========
 
-AccountController --|> BaseApiController
-AccountController "1"--"1" UpdateAdminAccountCommand
-AccountController "1"--"1" UpdateAdminAccountDTO
+AdminController --|> BaseApiController
+AdminController "1"--"1" UpdateAdminAccountCommand
+UpdateAdminAccountDTO "1" o-- IFormFile
 UpdateAdminAccountCommand ..|> "IRequest<TResponse>"
+UpdateAdminAccountCommand "1" o-- "1" IFormFile
 
 UpdateAdminAccountCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-UpdateAdminAccountCommandHandler "1" o--"1" UpdateAdminAccountCommand
-UpdateAdminAccountCommandHandler "1" o---"1" ApplicationAccount
-UpdateAdminAccountCommandHandler "1" o--"1" AccountError
-UpdateAdminAccountCommandHandler "1" o--"1" Result
-UpdateAdminAccountCommandHandler "1" o--"1" "UserManager<TUser>"
-UpdateAdminAccountCommandHandler "1" o--"1" IServiceBus
-UpdateAdminAccountCommandHandler "1" o--"1" GrpcUploadMultipleImageRequest
-UpdateAdminAccountCommandHandler "1" o--"1" GrpcUploadFileClient
-UpdateAdminAccountCommandHandler "1" o--"1" GrpcUpdateAdminRequest
-UpdateAdminAccountCommandHandler "1" o--"1" GrpcUserClient
-UpdateAdminAccountCommandHandler "1" o--"1" FileUtility
-UpdateAdminAccountCommandHandler "1" o--"1" GrpcFileStreamDTO
-UpdateAdminAccountCommandHandler "1" o--"1" AddActivityLogEvent
+UpdateAdminAccountCommandHandler "1" -- "1" UpdateAdminAccountCommand
+UpdateAdminAccountCommandHandler "1" o-- "1" "UserManager<TUser>"
+UpdateAdminAccountCommandHandler "1" o-- "1" GrpcUploadFileClient
+UpdateAdminAccountCommandHandler "1" o-- "1" IServiceBus
+UpdateAdminAccountCommandHandler "1" o-- "1" GrpcUserClient
+
+UpdateAdminAccountCommandHandler "1" -- "1..*" AccountError
+UpdateAdminAccountCommandHandler "1" --- "1..*" ApplicationAccount
+UpdateAdminAccountCommandHandler "1" -- "1..*" Result
+UpdateAdminAccountCommandHandler "1" -- "1" GrpcUploadMultipleImageRequest
+UpdateAdminAccountCommandHandler "1" -- "1" GrpcUpdateAdminRequest
+UpdateAdminAccountCommandHandler "1" -- "1" FileUtility
+UpdateAdminAccountCommandHandler "1" -- "1" GrpcFileStreamDTO
+UpdateAdminAccountCommandHandler "1" -- "1" AddActivityLogEvent
 
 Error "1..*" --o "1" AccountError
-
-AddActivityLogEvent "1" o--"1" ActivityType
-AddActivityLogEvent "1" o--"1" ActivityEntityType
 
 @enduml

@@ -27,7 +27,7 @@ class AdminGetUserDetailQueryHandler {
     -_context : IApplicationDbContext
     -_grpcAccountClient: GrpcAccountClient 
     +AdminGetUserDetailQueryHandler(context : IApplicationDbContext, grpcAccountClient : GrpcAccountClient)
-    +Handle(request: AdminGetUserDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminGetUserDetailResponse?>>
+    +Handle(request: AdminGetUserDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminGetUserDetailResponse>>
 }
 
 class GetUserDetailByAccountIdDTO {

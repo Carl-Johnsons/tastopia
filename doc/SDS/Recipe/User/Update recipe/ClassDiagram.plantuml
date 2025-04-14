@@ -5,8 +5,8 @@
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 50
-skinparam ranksep 50
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 class BaseApiController {
@@ -24,47 +24,43 @@ class UpdateRecipeCommand {
     +RecipeImage: IFormFile
     +Title: string
     +Description: string
-    +Serves: int?
-    +CookTime: string?
+    +Serves: int
+    +CookTime: string
     +Ingredients: List<string>
     +Steps: List<UpdateStepDTO>
-    +TagValues: List<string>?
+    +TagValues: List<string>
 }
 
 class UpdateStepDTO{
     +StepId: Guid
     +OrdinalNumber: int
     +Content: string
-    +Images: List<IFormFile>?
-    +DeleteUrls: List<string>?
+    +Images: List<IFormFile>
+    +DeleteUrls: List<string>
 }
 UpdateRecipeCommand "1"--"1..*" UpdateStepDTO
 
 class UpdateRecipeCommandHandler{
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
-    -_serviceBus: IServicebus
+    -_serviceBus: IServiceBus
     -_grpcUploadFileClient: GrpcUploadFileClient
     +UpdateRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork, serviceBus : IServiceBus, grpcUploadFileClient : GrpcUploadFileClient)
-    +Handle(request : CommentRecipeCommand, cancellationToken : CancellationToken): async Task<Result<RecipeCommentResponse?>> 
+    +Handle(request : CommentRecipeCommand, cancellationToken : CancellationToken): async Task<Result<RecipeCommentResponse>> 
     -GetImageIndexMap(steps : List<StepDTO>): Dictionary<string, int>
     -GetGrpcFileStreamDTOsAsync(recipeImage : IFormFile, steps : List<StepDTO>): async Task<RepeatedField<GrpcFileStreamDTO>>
-    -GetDeleteUrls(recipe : Recipe, recipeImage : IFormFile?, steps : List<UpdateStepDTO>): List<string>
-}
-
-interface IMapper{
-    #Map<TDestination>(object source): TDestination
+    -GetDeleteUrls(recipe : Recipe, recipeImage : IFormFile, steps : List<UpdateStepDTO>): List<string>
 }
 
 class UpdateRecipeDTO{
     +RecipeImage: IFormFile
     +Title: string
     +Description: string
-    +Serves: int?
-    +CookTime: string?
+    +Serves: int
+    +CookTime: string
     +Ingredients: List<string>
     +Steps: List<StepDTO>
-    +TagValues: List<string>?
+    +TagValues: List<string>
 }
 
 UpdateRecipeDTO "1"--"1..*" UpdateStepDTO
@@ -76,6 +72,8 @@ class RecipeError {
     {static} +UpdateRecipeFail: Error
 }
 ' =========== Microservice class ===========
+class IMapper #Black;line:white;text:white
+class IFormFile #Black;line:white;text:white
 together {
     class ValidateRecipeEvent #SeaGreen;line:white;text:white
     class DeleteMultipleFileEvent #LightSalmon;line:white;text:white
@@ -93,7 +91,11 @@ RecipeController "1" o-- "1" IMapper
 RecipeController "1"--"1" UpdateRecipeDTO
 RecipeController "1"--"1" UpdateRecipeCommand
 
+UpdateRecipeDTO "1" o-- "1" IFormFile
+UpdateStepDTO "1" o-- "1..*" IFormFile
+
 UpdateRecipeCommand ..|> "IRequest<TResponse>"
+UpdateRecipeCommand "1" o-- "1" IFormFile
 
 UpdateRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 UpdateRecipeCommandHandler "1"--"1" UpdateRecipeCommand

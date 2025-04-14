@@ -4,8 +4,8 @@
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 50
-skinparam ranksep 50
+skinparam nodesep 100
+skinparam ranksep 100
 skinparam classAttributeIconSize 0
 hide circle
 
@@ -20,7 +20,7 @@ class RecipeController {
 
 class SearchRecipesQuery {
     +Skip: int
-    +TagCodes: List<string>?
+    +TagCodes: List<string>
     +Keyword: string
     +AccountId: Guid
 }
@@ -31,24 +31,38 @@ class SearchRecipesQueryHandler {
     -_grpcUserClient: GrpcUserClient
     -_paginateDataUtility: IPaginateDataUtility
     +SearchRecipesQueryHandler(context : IApplicationDbContext, mapper : IMapper, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility)
-    +Handle(request : SearchRecipesQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedSearchRecipeListResponse?>> 
-}
-
-interface IMapper{
-    #Map<TDestination>(object source): TDestination
+    +Handle(request : SearchRecipesQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedSearchRecipeListResponse>> 
 }
 
 class PaginatedSearchRecipeListResponse{
 }
 class BasePaginatedResponse{
     +PaginatedData : IEnumerable<Type>
-    +Metadata: MetadataType?
+    +Metadata: MetadataType
 }
 PaginatedSearchRecipeListResponse --|> BasePaginatedResponse
 
+class SearchRecipesResponse {
+    +Id: Guid
+    +AuthorId: Guid
+    +Title: string
+    +Description: string
+    +AuthorDisplayName: string
+    +AuthorAvtUrl: string
+    +RecipeImageUrl: string
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
+
 class SearchRecipesDTO{
     +Skip: int
-    +TagCodes: List<string>?
+    +TagCodes: List<string>
     +Keyword: string
 }
 
@@ -63,6 +77,9 @@ class RecipeError {
 interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
+
+PaginatedSearchRecipeListResponse "1" o-- "1..*" SearchRecipesResponse
+PaginatedSearchRecipeListResponse "1" o-- "1" AdvancePaginatedMetadata
 
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" SearchRecipesDTO
@@ -85,6 +102,7 @@ SearchRecipesQueryHandler "1"--"1..*" RecipeError
 Error "1..*" --o "1" RecipeError
 
 together {
+    class IMapper #Black;line:white;text:white
     class GrpcSearchUserRequest #DarkBlue;line:white;text:white
     class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
     class GrpcUserClient #DarkBlue;line:white;text:white

@@ -4,8 +4,8 @@
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 50
-skinparam ranksep 50
+skinparam nodesep 100
+skinparam ranksep 100
 skinparam classAttributeIconSize 0
 hide circle
 
@@ -18,8 +18,8 @@ class RecipeController {
     +DeleteOwnRecipe(deleteOwnRecipeDTO : DeleteOwnRecipeDTO): async Task<IActionResult>
 }
 
-class DeleteCommentCommand {
-    +AccountId: Guid
+class DeleteOwnRecipeCommand {
+    +AuthorId: Guid
     +RecipeId: Guid
 }
 
@@ -27,7 +27,7 @@ class DeleteOwnRecipeCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
     +DeleteOwnRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork)
-    +Handle(request : DeleteOwnRecipeCommand, cancellationToken : CancellationToken): async Task<Result<Recipe?>> 
+    +Handle(request : DeleteOwnRecipeCommand, cancellationToken : CancellationToken): async Task<Result<Recipe>> 
 }
 
 class DeleteOwnRecipeDTO{

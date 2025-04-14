@@ -28,21 +28,37 @@ class GetRecipeBookmarksQueryHandler {
     -_grpcUserClient: GrpcUserClient
     -_paginateDataUtility: IPaginateDataUtility
     +GetRecipeBookmarksQueryHandler(context : IApplicationDbContext, mapper : IMapper, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility)
-    +Handle(request : GetRecipeBookmarksQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedRecipeFeedsListResponse?>> 
-}
-
-
-interface IMapper{
-    #Map<TDestination>(object source): TDestination
+    +Handle(request : GetRecipeBookmarksQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedRecipeFeedsListResponse>> 
 }
 
 class PaginatedRecipeFeedsListResponse{
 }
 class BasePaginatedResponse{
     +PaginatedData : IEnumerable<Type>
-    +Metadata: MetadataType?
+    +Metadata: MetadataType
 }
 PaginatedRecipeFeedsListResponse --|> BasePaginatedResponse
+
+class RecipeFeedResponse {
+    +Id: Guid
+    +AuthorId: Guid
+    +RecipeImgUrl: string
+    +Title: string
+    +Description: string
+    +AuthorDisplayName: string
+    +AuthorAvtUrl: string
+    +VoteDiff: int
+    +NumberOfComment: int
+    +Vote: string
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
 
 class GetRecipeBookmarkDTO{
     +Skip: int
@@ -56,6 +72,7 @@ class RecipeError {
 }
 
 together {
+    class IMapper #Black;line:white;text:white
     class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
     class GrpcUserClient #DarkBlue;line:white;text:white
 }
@@ -65,6 +82,8 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
+PaginatedRecipeFeedsListResponse "1" o-- "1..*" RecipeFeedResponse
+PaginatedRecipeFeedsListResponse "1" o-- "1" AdvancePaginatedMetadata
 
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" GetRecipeBookmarkDTO

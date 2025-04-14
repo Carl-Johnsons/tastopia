@@ -45,13 +45,13 @@ RemoveExpoPushTokenCommand ..|> "IRequest<TResponse>"
 RemoveExpoPushTokenCommand "1" o-- "1" DeviceType
 
 RemoveExpoPushTokenCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-RemoveExpoPushTokenCommandHandler "1" o-- "1" RemoveExpoPushTokenCommand
+RemoveExpoPushTokenCommandHandler "1" -- "1" RemoveExpoPushTokenCommand
 RemoveExpoPushTokenCommandHandler "1" o-- "1" IApplicationDbContext
 RemoveExpoPushTokenCommandHandler "1" o-- "1" IUnitOfWork
 
 RemoveExpoPushTokenCommandHandler "1" -- "1..*" NotificationErrors
 RemoveExpoPushTokenCommandHandler "1" -- "1" AccountExpoPushToken
-RemoveExpoPushTokenCommandHandler "1" --"1..*" Result
+RemoveExpoPushTokenCommandHandler "1" -- "1..*" Result
 
 Error "1..*" --o "1" NotificationErrors
 

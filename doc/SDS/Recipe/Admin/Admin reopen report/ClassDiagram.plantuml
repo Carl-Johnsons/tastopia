@@ -6,8 +6,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -22,26 +22,32 @@ class AdminController {
 class ReopenReportCommand {
     +CurrentAccountId : Guid
     +ReportId : Guid
-    +ReportType : enum
+    +ReportType : ReportType
 }
 
 class ReopenReportCommandHandler {
     -_context : IApplicationDbContext
     -_serviceBus: IServiceBus 
     -_unitOfWork: IUnitOfWork 
-    +ReopenReportCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +ReopenReportCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
     +Handle(request: ReopenReportCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
 class ReportDTO {
     +ReportId : Guid
-    +ReportType : enum
+    +ReportType : ReportType
 }
 
 class ReportError{
     {static} +NotFound: Error
     {static} +AlreadyMarkComplete: Error
     {static} +AlreadyPending: Error
+}
+
+enum ReportType {
+    USER
+    RECIPE
+    COMMENT
 }
 
 ' =========== Library class ===========
@@ -55,14 +61,17 @@ together {
 AdminController --|> BaseApiController
 AdminController "1"--"1" ReportDTO
 AdminController "1"--"1" ReopenReportCommand
+ReportDTO "1" o-- "1" ReportType
 
 ReopenReportCommand ..|> "IRequest<TResponse>"
+ReopenReportCommand "1" o-- "1" ReportType 
 
 ReopenReportCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-ReopenReportCommandHandler "1" --"1" ReopenReportCommand
-ReopenReportCommandHandler "1" o--"1" IApplicationDbContext
-ReopenReportCommandHandler "1" o--"1" IServiceBus
-ReopenReportCommandHandler "1" o--"1" IUnitOfWork
+ReopenReportCommandHandler "1" -- "1" ReopenReportCommand
+ReopenReportCommandHandler "1" o-- "1" IApplicationDbContext
+ReopenReportCommandHandler "1" o-- "1" IServiceBus
+ReopenReportCommandHandler "1" o-- "1" IUnitOfWork
+
 ReopenReportCommandHandler "1" --"1" Result
 ReopenReportCommandHandler "1" --"1..*" CommonReportEntity
 ReopenReportCommandHandler "1" --"1..*" UserReportRecipe

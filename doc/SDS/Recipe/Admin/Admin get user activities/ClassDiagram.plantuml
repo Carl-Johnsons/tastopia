@@ -5,8 +5,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -28,7 +28,7 @@ class AdminGetUserActivityQueryHandler {
     -_context : IApplicationDbContext
     -_grpcUserClient: GrpcUserClient 
     +AdminGetUserActivityQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient)
-    +Handle(request: AdminGetUserActivityQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedUserActivityListResponse?>>
+    +Handle(request: AdminGetUserActivityQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedUserActivityListResponse>>
 }
 
 class AdminGetUserActivityDTO{
@@ -57,8 +57,8 @@ class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
 PaginatedUserActivityListResponse "1" o-- "1" AdvancePaginatedMetadata
 PaginatedUserActivityListResponse "1" o-- "1..*" UserActivityResponse
 
-class UserActivityResponse{
-    +Type : enum
+class UserActivityResponse {
+    +Type : UserActivityType
     +Title : string
     +Description : string
     +TimeAgo : string
@@ -90,6 +90,14 @@ class RecipeError {
     {static} +DeleteRecipeFail: Error
 }
 
+enum UserActivityType {
+    CreateRecipe
+    CommentRecipe
+    UpvoteRecipe
+    DownvoteRecipe
+    Banned
+}
+
 ' =========== Library class ===========
 interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
@@ -105,12 +113,16 @@ AdminController --|> BaseApiController
 AdminController "1"--"1" AdminGetUserActivityDTO
 AdminController "1"--"1" AdminGetUserActivityQuery
 
+UserActivityResponse "1" *-- "1" UserActivityType
+
 AdminGetUserActivityQuery ..|> "IRequest<TResponse>"
 
 AdminGetUserActivityQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-AdminGetUserActivityQueryHandler "1" --"1" AdminGetUserActivityQuery
-AdminGetUserActivityQueryHandler "1" o--"1" IApplicationDbContext
-AdminGetUserActivityQueryHandler "1" o--"1" GrpcUserClient
+AdminGetUserActivityQueryHandler "1" -- "1" AdminGetUserActivityQuery
+
+AdminGetUserActivityQueryHandler "1" o-- "1" IApplicationDbContext
+AdminGetUserActivityQueryHandler "1" o-- "1" GrpcUserClient
+
 AdminGetUserActivityQueryHandler "1" --"1" Result
 AdminGetUserActivityQueryHandler "1" --"1..*" GrpcGetSimpleUsersRequest
 AdminGetUserActivityQueryHandler "1" --"1..*" GrpcAccountIdRequest
