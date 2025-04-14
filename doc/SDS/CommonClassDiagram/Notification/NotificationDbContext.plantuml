@@ -93,11 +93,11 @@ interface IDisposable #black;line:white;text:white
 class "DbSet<T>" #black;line:white;text:white
 class DbContext #black;line:white;text:white
 
-IMongoDbContext "1" o-- "1" DbContext
+IMongoDbContext "1" o-- "1..*" DbContext
 
 AccountExpoPushToken "1" *-- "1" DeviceType
 
-ApplicationDbContext "1" o-- "0..*" "DbSet<T>"
+ApplicationDbContext "1" o-- "1..*" "DbSet<T>"
 ApplicationDbContext "1" o-- "1" "Notification"
 ApplicationDbContext "1" o-- "1" "NotificationTemplate"
 ApplicationDbContext "1" o-- "1" "AccountExpoPushToken"
