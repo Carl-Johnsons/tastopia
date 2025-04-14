@@ -4,8 +4,8 @@
 !include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 60
-skinparam ranksep 60
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 class BaseApiController {
@@ -47,11 +47,11 @@ SaveExpoPushTokenCommand ..|> "IRequest<TResponse>"
 SaveExpoPushTokenCommand "1" o-- "1" DeviceType
 
 SaveExpoPushTokenCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-SaveExpoPushTokenCommandHandler "1" o--"1" SaveExpoPushTokenCommand
+SaveExpoPushTokenCommandHandler "1" -- "1" SaveExpoPushTokenCommand
 SaveExpoPushTokenCommandHandler "1" o-- "1" IApplicationDbContext
 SaveExpoPushTokenCommandHandler "1" o-- "1" IUnitOfWork
 
 SaveExpoPushTokenCommandHandler "1" -- "1" AccountExpoPushToken
-SaveExpoPushTokenCommandHandler "1" --"1..*" Result
+SaveExpoPushTokenCommandHandler "1" -- "1..*" Result
 
 @enduml

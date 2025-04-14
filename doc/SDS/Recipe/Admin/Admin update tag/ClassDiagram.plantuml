@@ -7,8 +7,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -28,7 +28,7 @@ class UpdateTagCommand {
     +Vi : string
     +Category : string
     +Status : string
-    +TagImage : string
+    +TagImage : IFormFile
 }
 
 class UpdateTagCommandHandler {
@@ -36,8 +36,8 @@ class UpdateTagCommandHandler {
     -_serviceBus: IServiceBus 
     -_unitOfWork: IUnitOfWork 
     -_grpcUploadFileClient: GrpcUploadFileClient
-    +UpdateTagCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork, grpcUploadFileClient : GrpcUploadFile.GrpcUploadFileClient)
-    +Handle(request: UpdateTagCommand, cancellationToken: CancellationToken) : Task<Result<TagResponse?>>
+    +UpdateTagCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork, grpcUploadFileClient : GrpcUploadFileClient)
+    +Handle(request: UpdateTagCommand, cancellationToken: CancellationToken) : Task<Result<TagResponse>>
 }
 
 class UpdateTagDTO {
@@ -77,6 +77,7 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 together {
     class AddActivityLogEvent #CadetBlue;line:white;text:white
+    class IFormFile #Black;line:white;text:white
     class DeleteMultipleFileEvent #LightSalmon;line:white;text:white
     class GrpcUploadMultipleImageRequest #LightSalmon;line:white;text:white
     class GrpcUploadFileClient #LightSalmon;line:white;text:white
@@ -85,8 +86,10 @@ together {
 AdminController --|> BaseApiController
 AdminController "1"--"1" UpdateTagDTO
 AdminController "1"--"1" UpdateTagCommand
+UpdateTagDTO "1" o-- "1" IFormFile
 
 UpdateTagCommand ..|> "IRequest<TResponse>"
+UpdateTagCommand "1" o-- "1" IFormFile
 
 UpdateTagCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 UpdateTagCommandHandler "1" --"1" UpdateTagCommand

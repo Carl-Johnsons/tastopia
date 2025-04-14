@@ -5,8 +5,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -25,7 +25,7 @@ class AdminGetRankingTagsStatisticQuery {
 class AdminGetRankingTagsStatisticQueryHandler {
     -_context : IApplicationDbContext
     +AdminGetRankingTagsStatisticQueryHandler(context : IApplicationDbContext)
-    +Handle(request: AdminGetRankingTagsStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<RankingStatisticEntity>?>>
+    +Handle(request: AdminGetRankingTagsStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<RankingStatisticEntity>>>
 }
 
 class AdminGetTagDTO {
@@ -47,18 +47,19 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
 AdminController --|> BaseApiController
-AdminController "1"--"1" AdminGetTagDTO
-AdminController "1"--"1" AdminGetRankingTagsStatisticQuery
+AdminController "1" -- "1" AdminGetTagDTO
+AdminController "1" -- "1" AdminGetRankingTagsStatisticQuery
 
 AdminGetRankingTagsStatisticQueryHandler ..|> "IRequest<TResponse>"
 
 AdminGetRankingTagsStatisticQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-AdminGetRankingTagsStatisticQueryHandler "1" o--"1" AdminGetRankingTagsStatisticQuery
-AdminGetRankingTagsStatisticQueryHandler "1" o--"1" IApplicationDbContext
-AdminGetRankingTagsStatisticQueryHandler "1" --"1" Result
-AdminGetRankingTagsStatisticQueryHandler "1" --"1..*" Recipe
-AdminGetRankingTagsStatisticQueryHandler "1" --"1..*" Tag
-AdminGetRankingTagsStatisticQueryHandler "1" --"1..*" RecipeTag
-AdminGetRankingTagsStatisticQueryHandler "1" --"1..*" RankingStatisticEntity
+AdminGetRankingTagsStatisticQueryHandler "1" -- "1" AdminGetRankingTagsStatisticQuery
+AdminGetRankingTagsStatisticQueryHandler "1" o-- "1" IApplicationDbContext
+
+AdminGetRankingTagsStatisticQueryHandler "1" -- "1" Result
+AdminGetRankingTagsStatisticQueryHandler "1" -- "1..*" Recipe
+AdminGetRankingTagsStatisticQueryHandler "1" -- "1..*" Tag
+AdminGetRankingTagsStatisticQueryHandler "1" -- "1..*" RecipeTag
+AdminGetRankingTagsStatisticQueryHandler "1" -- "1..*" RankingStatisticEntity
 
 @enduml

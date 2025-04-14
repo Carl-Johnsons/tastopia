@@ -4,8 +4,8 @@
 !include doc/SDS/CommonClassDiagram/FileUtility.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 class BaseApiController {
@@ -13,7 +13,7 @@ class BaseApiController {
     #_httpContextAccessor: HttpContextAccessor
 }
 
-class AccountController {
+class AdminController {
     +CreateAdmin(dto: CreateAdminAccountDTO): async Task<IActionResult>
 }
 
@@ -55,58 +55,6 @@ class CreateAdminAccountDTO {
     +AvatarFile: IFormFile
 }
 
-class AddActivityLogEvent {
-    +AccountId: Guid
-    +ActivityType: ActivityType
-    +EntityId: Guid
-    +EntityType: ActivityEntityType
-    +SecondaryEntityId: Guid
-    +SecondaryEntityType: ActivityEntityType
-}
-
-enum ActivityType
-{
-    CREATE
-    UPDATE
-    DISABLE
-    RESTORE
-    MARK_COMPLETE
-    REOPEN
-}
-
-enum ActivityEntityType{
-    RECIPE
-    COMMENT
-    TAG
-    USER
-    REPORT_RECIPE
-    REPORT_COMMENT
-    REPORT_USER
-}
-
-class UserSendOTPEvent {
-    +AccountId: Guid
-    +Identifier: string
-    +OTP: string
-    +Method: AccountMethod
-    +OTPMethod: OTPMethod
-}
-
-enum AccountMethod {
-    Phone
-    Email
-    Username
-    Google
-}
-
-enum OTPMethod
-{
-    Resend
-    ForgotPassword
-    UpdateIdentifier
-    AdminAccountCreated
-}
-
 !include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml 
 remove IDisposable
 remove DbSet<T>
@@ -126,7 +74,10 @@ together {
 together {
     class GrpcCreateAdminRequest #DarkBlue;line:white;text:white
     class GrpcUserClient #DarkBlue;line:white;text:white
+    class AddActivityLogEvent #CadetBlue;line:white;text:white 
+    class UserSendOTPEvent #Cyan;line:black;text:black
 }
+
 
 ' =========== Library class ===========
 interface "IRequest<TResponse>" #black;line:white;text:white
@@ -134,33 +85,30 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 class "UserManager<TUser>" #black;line:white;text:white
 ' =========== Library class ===========
 
-AccountController --|> BaseApiController
-AccountController "1"--"1" CreateAdminAccountCommand
-AccountController "1"--"1" CreateAdminAccountDTO
+AdminController --|> BaseApiController
+AdminController "1" -- "1" CreateAdminAccountCommand
+AdminController "1" -- "1" CreateAdminAccountDTO
+CreateAdminAccountDTO "1" o--- "1" IFormFile
 CreateAdminAccountCommand ..|> "IRequest<TResponse>"
+CreateAdminAccountCommand "1" o-- "1" "IFormFile"
 
 CreateAdminAccountCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-CreateAdminAccountCommandHandler "1" o--"1" CreateAdminAccountCommand
-CreateAdminAccountCommandHandler "1" o---"1" ApplicationAccount
-CreateAdminAccountCommandHandler "1" o--"1" AccountError
-CreateAdminAccountCommandHandler "1" o--"1" Result
-CreateAdminAccountCommandHandler "1" o--"1" "UserManager<TUser>"
-CreateAdminAccountCommandHandler "1" o--"1" IServiceBus
-CreateAdminAccountCommandHandler "1" o--"1" GrpcUploadMultipleImageRequest
-CreateAdminAccountCommandHandler "1" o--"1" GrpcUploadFileClient
-CreateAdminAccountCommandHandler "1" o--"1" GrpcCreateAdminRequest
-CreateAdminAccountCommandHandler "1" o--"1" GrpcUserClient
-CreateAdminAccountCommandHandler "1" o--"1" FileUtility
-CreateAdminAccountCommandHandler "1" o--"1" GrpcFileStreamDTO
-CreateAdminAccountCommandHandler "1" o--"1" AddActivityLogEvent
-CreateAdminAccountCommandHandler "1" o--"1" UserSendOTPEvent
+CreateAdminAccountCommandHandler "1" o-- "1" "UserManager<TUser>"
+CreateAdminAccountCommandHandler "1" o-- "1" IServiceBus
+CreateAdminAccountCommandHandler "1" o-- "1" GrpcUploadFileClient
+CreateAdminAccountCommandHandler "1" o-- "1" GrpcUserClient
+
+CreateAdminAccountCommandHandler "1" -- "1..*" Result
+CreateAdminAccountCommandHandler "1" -- "1" FileUtility
+CreateAdminAccountCommandHandler "1" -- "1" CreateAdminAccountCommand
+CreateAdminAccountCommandHandler "1" -- "1..*" AccountError
+CreateAdminAccountCommandHandler "1" -- "1" GrpcCreateAdminRequest
+CreateAdminAccountCommandHandler "1" -- "1" GrpcFileStreamDTO
+CreateAdminAccountCommandHandler "1" -- "1" AddActivityLogEvent
+CreateAdminAccountCommandHandler "1" -- "1" GrpcUploadMultipleImageRequest
+CreateAdminAccountCommandHandler "1" --- "1..*" ApplicationAccount
+CreateAdminAccountCommandHandler "1" -- "1" UserSendOTPEvent
 
 Error "1..*" --o "1" AccountError
-
-AddActivityLogEvent "1" o--"1" ActivityType
-AddActivityLogEvent "1" o--"1" ActivityEntityType
-
-UserSendOTPEvent "1" o--"1" AccountMethod
-UserSendOTPEvent "1" o--"1" OTPMethod
 
 @enduml

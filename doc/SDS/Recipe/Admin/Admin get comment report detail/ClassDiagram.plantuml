@@ -4,8 +4,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -14,7 +14,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminGetCommentReports(lang string?, recipeId : Guid, commentId : Guid): async Task<IActionResult>
+    +AdminGetCommentReports(lang string, recipeId : Guid, commentId : Guid): async Task<IActionResult>
 }
 
 class GetCommentReportDetailQuery {
@@ -27,7 +27,7 @@ class GetCommentReportDetailQueryHandler {
     -_context : IApplicationDbContext
     -_grpcUserClient: GrpcUserClient 
     +GetCommentReportDetailQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient)
-    +Handle(request: GetCommentReportDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminReportCommentDetailResponse?>>
+    +Handle(request: GetCommentReportDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminReportCommentDetailResponse>>
 }
 
 class AdminReportCommentDetailResponse{
@@ -48,10 +48,9 @@ class ReportRecipeResponse{
     +CreatedAt : DateTime
 }
 
-AdminReportCommentDetailResponse *--"1.." ReportRecipeResponse
-AdminReportCommentDetailResponse "1"--"1" Recipe
-AdminReportCommentDetailResponse "1"--"1" Comment
-
+AdminReportCommentDetailResponse "1" *-- "1.." ReportRecipeResponse
+AdminReportCommentDetailResponse "1" -- "1" Recipe
+AdminReportCommentDetailResponse "1" -- "1" Comment
 
 ' =========== Library class ===========
 interface "IRequest<TResponse>" #black;line:white;text:white
@@ -69,11 +68,12 @@ AdminController "1"--"1" GetCommentReportDetailQuery
 GetCommentReportDetailQuery ..|> "IRequest<TResponse>"
 
 GetCommentReportDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-GetCommentReportDetailQueryHandler "1" --"1" GetCommentReportDetailQuery
-GetCommentReportDetailQueryHandler "1" o--"1" IApplicationDbContext
-GetCommentReportDetailQueryHandler "1" o--"1" GrpcUserClient
+GetCommentReportDetailQueryHandler "1" -- "1" GetCommentReportDetailQuery
+GetCommentReportDetailQueryHandler "1" o-- "1" IApplicationDbContext
+GetCommentReportDetailQueryHandler "1" o-- "1" GrpcUserClient
+
 GetCommentReportDetailQueryHandler "1" --"1" Result
-GetCommentReportDetailQueryHandler "1" --"1..*" GrpcGetSimpleUsersRequest
-GetCommentReportDetailQueryHandler "1" --"1..*" AdminReportCommentDetailResponse
+GetCommentReportDetailQueryHandler "1" -- "1..*" GrpcGetSimpleUsersRequest
+GetCommentReportDetailQueryHandler "1" -- "1..*" AdminReportCommentDetailResponse
 
 @enduml

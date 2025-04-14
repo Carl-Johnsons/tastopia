@@ -4,8 +4,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -24,7 +24,7 @@ class GetTagDetailQuery {
 class GetTagDetailQueryHandler {
     -_context : IApplicationDbContext
     +GetTagDetailQueryHandler(context : IApplicationDbContext)
-    +Handle(request: GetTagDetailQuery, cancellationToken: CancellationToken) : Task<Result<TagResponse?>>
+    +Handle(request: GetTagDetailQuery, cancellationToken: CancellationToken) : Task<Result<TagResponse>>
 }
 
 class AdminGetTagDetailDTO {
@@ -66,6 +66,7 @@ GetTagDetailQuery ..|> "IRequest<TResponse>"
 GetTagDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
 GetTagDetailQueryHandler "1" --"1" GetTagDetailQuery
 GetTagDetailQueryHandler "1" o--"1" IApplicationDbContext
+
 GetTagDetailQueryHandler "1" --"1" Result
 GetTagDetailQueryHandler "1" --"1..*" TagResponse
 GetTagDetailQueryHandler "1" --"1..*" TagError

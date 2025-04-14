@@ -5,8 +5,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -24,7 +24,7 @@ class AdminGetNumberOfRecipesStatisticQuery {
 class AdminGetNumberOfRecipesStatisticQueryHandler {
     -_context : IApplicationDbContext
     +AdminGetNumberOfRecipesStatisticQueryHandler(context : IApplicationDbContext)
-    +Handle(request: AdminGetNumberOfRecipesStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<StatisticEntity>?>>
+    +Handle(request: AdminGetNumberOfRecipesStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<StatisticEntity>>>
 }
 
 class DateStatisticEntity extends StatisticEntity {
@@ -47,10 +47,11 @@ AdminController "1"--"1" AdminGetNumberOfRecipesStatisticQuery
 AdminGetNumberOfRecipesStatisticQuery ..|> "IRequest<TResponse>"
 
 AdminGetNumberOfRecipesStatisticQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1" AdminGetNumberOfRecipesStatisticQuery
-AdminGetNumberOfRecipesStatisticQueryHandler "1" o--"1" IApplicationDbContext
-AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1..*" Recipe
-AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1" Result
-AdminGetNumberOfRecipesStatisticQueryHandler "1" --"1..*" DateStatisticEntity
+AdminGetNumberOfRecipesStatisticQueryHandler "1" -- "1" AdminGetNumberOfRecipesStatisticQuery
+AdminGetNumberOfRecipesStatisticQueryHandler "1" o-- "1" IApplicationDbContext
+
+AdminGetNumberOfRecipesStatisticQueryHandler "1" -- "1..*" Recipe
+AdminGetNumberOfRecipesStatisticQueryHandler "1" -- "1" Result
+AdminGetNumberOfRecipesStatisticQueryHandler "1" -- "1..*" DateStatisticEntity
 
 @enduml

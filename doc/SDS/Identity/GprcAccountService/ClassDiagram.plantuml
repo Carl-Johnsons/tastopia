@@ -2,8 +2,8 @@
 !include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 50
-skinparam ranksep 50
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 remove IApplicationDbContext
@@ -49,7 +49,7 @@ class GetAccountDetailQuery implements "IRequest<TResponse>" {
 class GetAccountDetailQueryHandler {
     -_userManager: UserManager<ApplicationAccount>
     +GetAccountDetailQueryHandler(userManager: UserManager<ApplicationAccount>)
-    +Handle(request: GetAccountDetailQuery, cancellationToken: CancellationToken): async Task<Result<List<ApplicationAccount>?>>
+    +Handle(request: GetAccountDetailQuery, cancellationToken: CancellationToken): async Task<Result<List<ApplicationAccount>>>
 }
 
 class UpdateAccountCommand implements "IRequest<TResponse>" {
@@ -97,42 +97,42 @@ interface "IRequest<TResponse>" #Black;line:White;text:White
 interface "IRequestHandler<TRequest, TResponse>" #Black;line:White;text:White
 ' ========== Library class ==========
 
-GrpcAccountService "1" o-- "1" GrpcAccountIdRequest
-GrpcAccountService "1" o-- "1" GrpcUpdateAccountRequest
-GrpcAccountService "1" o-- "1" ServerCallContext
-GrpcAccountService "1" o-- "1" GrpcAccountIdListRequest
-GrpcAccountService "1" o-- "1" GrpcSearchAccountRequest
+GrpcAccountService "1" -- "1" GrpcAccountIdRequest
+GrpcAccountService "1" -- "1" GrpcUpdateAccountRequest
+GrpcAccountService "1" -- "1..*" ServerCallContext
+GrpcAccountService "1" -- "1" GrpcAccountIdListRequest
+GrpcAccountService "1" -- "1" GrpcSearchAccountRequest
 
-GrpcAccountService "1" o-- "1" GrpcAccountDTO
-GrpcAccountService "1" o-- "1" GrpcEmpty
-GrpcAccountService "1" o-- "1" GrpcListSimpleAccountsDTO
-GrpcAccountService "1" o-- "1" GrpcListAccountIds
-GrpcAccountService "1" o-- "1" GrpcListAdminAccountsDTO
+GrpcAccountService "1" -- "1" GrpcAccountDTO
+GrpcAccountService "1" -- "1" GrpcEmpty
+GrpcAccountService "1" -- "1" GrpcListSimpleAccountsDTO
+GrpcAccountService "1" -- "1" GrpcListAccountIds
+GrpcAccountService "1" -- "1" GrpcListAdminAccountsDTO
 
-GrpcAccountService "1" o-- "1" GetAccountDetailQuery
-GrpcAccountService "1" o-- "1" SearchSimpleAccountQuery
+GrpcAccountService "1" -- "1" GetAccountDetailQuery
+GrpcAccountService "1" -- "1" SearchSimpleAccountQuery
 
 GetAccountDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-GetAccountDetailQueryHandler "1" o-- "1" GetAccountDetailQuery
-GetAccountDetailQueryHandler "1" o-- "1..*" ApplicationAccount
 GetAccountDetailQueryHandler "1" o-- "1" "UserManager<TUser>"
+GetAccountDetailQueryHandler "1" -- "1" GetAccountDetailQuery
+GetAccountDetailQueryHandler "1" -- "1..*" ApplicationAccount
 
 UpdateAccountCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-UpdateAccountCommandHandler "1" o-- "1" UpdateAccountCommand
-UpdateAccountCommandHandler "1" o-- "1" AccountError
 UpdateAccountCommandHandler "1" o-- "1" "UserManager<TUser>"
-UpdateAccountCommandHandler "1" o-- "1" ApplicationAccount
+UpdateAccountCommandHandler "1" -- "1..*" AccountError
+UpdateAccountCommandHandler "1" -- "1" UpdateAccountCommand
+UpdateAccountCommandHandler "1" -- "1..*" ApplicationAccount
 
 SearchSimpleAccountQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-SearchSimpleAccountQueryHandler "1" o-- "1" SearchSimpleAccountQuery
-SearchSimpleAccountQueryHandler "1" o-- "1" AccountError
 SearchSimpleAccountQueryHandler "1" o-- "1" "UserManager<TUser>"
-SearchSimpleAccountQueryHandler "1" o-- "1" ApplicationAccount
+SearchSimpleAccountQueryHandler "1" -- "1" SearchSimpleAccountQuery
+SearchSimpleAccountQueryHandler "1" -- "1..*" AccountError
+SearchSimpleAccountQueryHandler "1" -- "1..*" ApplicationAccount
 
-GetAdminAccountDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-GetAdminAccountDetailQueryHandler "1" o-- "1" AccountError
-GetAdminAccountDetailQueryHandler "1" o-- "1" GetAdminAccountDetailQuery
 GetAdminAccountDetailQueryHandler "1" o-- "1" "UserManager<TUser>"
-GetAdminAccountDetailQueryHandler "1" o-- "1..*" ApplicationAccount
+GetAdminAccountDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetAdminAccountDetailQueryHandler "1" -- "1..*" AccountError
+GetAdminAccountDetailQueryHandler "1" -- "1" GetAdminAccountDetailQuery
+GetAdminAccountDetailQueryHandler "1" -- "1..*" ApplicationAccount
 
 @enduml

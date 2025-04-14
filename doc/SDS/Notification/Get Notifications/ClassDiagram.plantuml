@@ -4,8 +4,8 @@
 !include doc/SDS/CommonClassDiagram/PaginateData.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 60
-skinparam ranksep 60
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 class BaseApiController {
@@ -30,7 +30,7 @@ class GetNotificationsQueryHandler {
     -_grpcRecipeClient: GrpcRecipeClient
     -_mapper: IMapper
     -_paginateDataUtility: IPaginateDataUtility<Notification, AdvancePaginatedMetadata>
-    +GetNotificationsQueryHandler(IApplicationDbContext context, grpcUserClient: GrpcUserClient, mapper: IMapper, paginateDataUtility: IPaginateDataUtility<Notification, AdvancePaginatedMetadata>, grpcRecipeClient: GrpcRecipeClient)
+    +GetNotificationsQueryHandler(context: IApplicationDbContext, grpcUserClient: GrpcUserClient, mapper: IMapper, paginateDataUtility: IPaginateDataUtility<Notification, AdvancePaginatedMetadata>, grpcRecipeClient: GrpcRecipeClient)
     +Handle(request: GetNotificationsQuery, cancellationToken: CancellationToken): async Task<Result<PaginatedNotificationListResponse>>
 }
 
@@ -98,15 +98,15 @@ PaginatedNotificationListResponse "1" o-- "1..*" NotificationResponse
 PaginatedNotificationListResponse "1" o-- "1" NotificationListMetadata
 
 GetNotificationsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-GetNotificationsQueryHandler "1" o-- "1" GetNotificationsQuery
+GetNotificationsQueryHandler "1" -- "1" GetNotificationsQuery
 GetNotificationsQueryHandler "1" o-- "1" IApplicationDbContext
 GetNotificationsQueryHandler "1" o-- "1" IPaginateDataUtility
-GetNotificationsQueryHandler "1" o-- "1" NotificationResponse
-GetNotificationsQueryHandler "1" o-- "1" PaginatedNotificationListResponse
 GetNotificationsQueryHandler "1" o-- "1" IMapper
 GetNotificationsQueryHandler "1" o-- "1" GrpcUserClient
 GetNotificationsQueryHandler "1" o-- "1" GrpcRecipeClient
 
+GetNotificationsQueryHandler "1" -- "1" PaginatedNotificationListResponse
+GetNotificationsQueryHandler "1" -- "1" NotificationResponse
 GetNotificationsQueryHandler "1" -- "1..*" Result
 GetNotificationsQueryHandler "1" -- "1..*" NotificationErrors
 GetNotificationsQueryHandler "1" -- "1" GrpcGetSimpleUsersRequest

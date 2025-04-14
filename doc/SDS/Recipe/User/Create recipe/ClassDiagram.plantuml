@@ -5,8 +5,8 @@
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 50
-skinparam ranksep 50
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 class BaseApiController {
@@ -24,11 +24,11 @@ class CreateRecipeCommand {
     +RecipeImage: IFormFile
     +Title: string
     +Description: string
-    +Serves: int?
-    +CookTime: string?
+    +Serves: int
+    +CookTime: string
     +Ingredients: List<string>
     +Steps: List<StepDTO>
-    +TagValues: List<string>?
+    +TagValues: List<string>
 }
 
 class StepDTO{
@@ -41,30 +41,26 @@ CreateRecipeCommand "1"--"1..*" StepDTO
 class CreateRecipeCommandHandler{
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
-    -_serviceBus: IServicebus
+    -_serviceBus: IServiceBus
     -_grpcUploadFileClient: GrpcUploadFileClient
-    +CreateRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork, serviceBus : IServicebus, grpcUploadFileClient : GrpcUploadFileClient)
-    +Handle(request : CommentRecipeCommand, cancellationToken : CancellationToken): async Task<Result<RecipeCommentResponse?>> 
+    +CreateRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork, serviceBus : IServiceBus, grpcUploadFileClient : GrpcUploadFileClient)
+    +Handle(request : CommentRecipeCommand, cancellationToken : CancellationToken): async Task<Result<RecipeCommentResponse>> 
     -GetImageIndexMap(steps : List<StepDTO>): Dictionary<string, int>
     -GetGrpcFileStreamDTOsAsync(recipeImage : IFormFile, steps : List<StepDTO>): async Task<RepeatedField<GrpcFileStreamDTO>>
-}
-
-interface IMapper{
-    #Map<TDestination>(object source): TDestination
 }
 
 class CreateRecipeDTO{
     +RecipeImage: IFormFile
     +Title: string
     +Description: string
-    +Serves: int?
-    +CookTime: string?
+    +Serves: int
+    +CookTime: string
     +Ingredients: List<string>
     +Steps: List<StepDTO>
-    +TagValues: List<string>?
+    +TagValues: List<string>
 }
 
-CreateRecipeDTO "1"--"1..*" StepDTO
+CreateRecipeDTO "1"*--"1..*" StepDTO
 
 class RecipeError {
     {static} +NotFound: Error
@@ -74,8 +70,10 @@ class RecipeError {
 }
 ' =========== Microservice class ===========
 together {
+    class IFormFile #Black;line:white;text:white
+    class IMapper #Black;line:white;text:white
     class ValidateRecipeEvent #SeaGreen;line:white;text:white
-    class NotifyUserEvent #Cyan;line:white;text:black
+    class NotifyUserEvent #Cyan;line:black;text:black
     class DeleteMultipleFileEvent #LightSalmon;line:white;text:white
     class GrpcUploadMultipleImageRequest #LightSalmon;line:white;text:white
     class GrpcUploadFileClient #LightSalmon;line:white;text:white
@@ -91,8 +89,11 @@ RecipeController --|> BaseApiController
 RecipeController "1" o-- "1" IMapper
 RecipeController "1"--"1" CreateRecipeDTO
 RecipeController "1"--"1" CreateRecipeCommand
+CreateRecipeDTO "1" o-- "1" IFormFile
+StepDTO "1" o-- "1..*" IFormFile
 
 CreateRecipeCommand ..|> "IRequest<TResponse>"
+CreateRecipeCommand "1" o-- "1" IFormFile
 
 CreateRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 CreateRecipeCommandHandler "1"--"1" CreateRecipeCommand

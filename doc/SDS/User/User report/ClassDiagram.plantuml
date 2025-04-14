@@ -29,7 +29,7 @@ class UserReportUserCommandHandler {
     -_context : IApplicationDbContext
     -_serviceBus: IServiceBus 
     +UserReportUserCommandHandler(context: IApplicationDbContext, serviceBus: IServiceBus)
-    +Handle(request: UserReportUserCommand, cancellationToken: CancellationToken) : Task<Result<UserReportUserResponse?>>
+    +Handle(request: UserReportUserCommand, cancellationToken: CancellationToken) : Task<Result<UserReportUserResponse>>
 }
 
 class UserReportUserDTO {

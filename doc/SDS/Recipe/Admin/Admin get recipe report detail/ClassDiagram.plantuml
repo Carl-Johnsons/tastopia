@@ -4,8 +4,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -14,7 +14,7 @@ class BaseApiController {
 }
 
 class AdminController {
-    +AdminGetRecipeReportDetail(lang : string?, recipeId : Guid): async Task<IActionResult>
+    +AdminGetRecipeReportDetail(lang : string, recipeId : Guid): async Task<IActionResult>
 }
 
 class GetRecipeReportDetailQuery {
@@ -26,7 +26,7 @@ class GetRecipeReportDetailQueryHandler {
     -_context : IApplicationDbContext
     -_grpcUserClient: GrpcUserClient 
     +GetRecipeReportDetailQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient)
-    +Handle(request: GetRecipeReportDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminReportRecipeDetailResponse?>>
+    +Handle(request: GetRecipeReportDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminReportRecipeDetailResponse>>
 }
 
 class AdminReportRecipeDetailResponse{
@@ -51,9 +51,9 @@ class ReportRecipeResponse{
     +CreatedAt : DateTime
 }
 
-AdminReportRecipeDetailResponse *--"1.." ReportRecipeResponse
-AdminReportRecipeDetailResponse *--"1.." Tag
-AdminReportRecipeDetailResponse "1"--"1" Recipe
+AdminReportRecipeDetailResponse "1" *-- "1..*" ReportRecipeResponse
+AdminReportRecipeDetailResponse "1" *-- "1..*" Tag
+AdminReportRecipeDetailResponse "1" -- "1" Recipe
 
 ' =========== Library class ===========
 interface "IRequest<TResponse>" #black;line:white;text:white
@@ -67,17 +67,18 @@ together {
     class GrpcUserClient #DarkBlue;line:white;text:white
 }
 AdminController --|> BaseApiController
-AdminController "1"--"1" GetRecipeReportDetailQuery
+AdminController "1" -- "1" GetRecipeReportDetailQuery
 
 GetRecipeReportDetailQuery ..|> "IRequest<TResponse>"
 
 GetRecipeReportDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-GetRecipeReportDetailQueryHandler "1" --"1" GetRecipeReportDetailQuery
-GetRecipeReportDetailQueryHandler "1" o--"1" IApplicationDbContext
-GetRecipeReportDetailQueryHandler "1" o--"1" GrpcUserClient
-GetRecipeReportDetailQueryHandler "1" --"1" Result
-GetRecipeReportDetailQueryHandler "1" --"1..*" GrpcGetSimpleUsersRequest
-GetRecipeReportDetailQueryHandler "1" --"1..*" GrpcAccountIdRequest
-GetRecipeReportDetailQueryHandler "1" --"1..*" AdminReportRecipeDetailResponse
+GetRecipeReportDetailQueryHandler "1" -- "1" GetRecipeReportDetailQuery
+GetRecipeReportDetailQueryHandler "1" o-- "1" IApplicationDbContext
+GetRecipeReportDetailQueryHandler "1" o-- "1" GrpcUserClient
+
+GetRecipeReportDetailQueryHandler "1" -- "1" Result
+GetRecipeReportDetailQueryHandler "1" -- "1..*" GrpcGetSimpleUsersRequest
+GetRecipeReportDetailQueryHandler "1" -- "1..*" GrpcAccountIdRequest
+GetRecipeReportDetailQueryHandler "1" -- "1..*" AdminReportRecipeDetailResponse
 
 @enduml

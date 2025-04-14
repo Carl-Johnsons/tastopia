@@ -7,8 +7,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -29,7 +29,7 @@ class DisableRecipeCommandHandler {
     -_context : IApplicationDbContext
     -_serviceBus: IServiceBus 
     -_unitOfWork: IUnitOfWork 
-    +DisableRecipeCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +DisableRecipeCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
     +Handle(request: DisableRecipeCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
@@ -59,20 +59,21 @@ together {
 }
 
 AdminController --|> BaseApiController
-AdminController "1"--"1" EntityIdDTO
-AdminController "1"--"1" DisableRecipeCommand
+AdminController "1" -- "1" EntityIdDTO
+AdminController "1" -- "1" DisableRecipeCommand
 
 DisableRecipeCommand ..|> "IRequest<TResponse>"
 
 DisableRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-DisableRecipeCommandHandler "1" --"1" DisableRecipeCommand
-DisableRecipeCommandHandler "1" o--"1" IApplicationDbContext
-DisableRecipeCommandHandler "1" o--"1" IServiceBus
-DisableRecipeCommandHandler "1" o--"1" IUnitOfWork
-DisableRecipeCommandHandler "1" --"1" Result
-DisableRecipeCommandHandler "1" --"1..*" AddActivityLogEvent
-DisableRecipeCommandHandler "1" --"1..*" NotifyUserEvent
-DisableRecipeCommandHandler "1" --"1..*" RecipeError
+DisableRecipeCommandHandler "1" -- "1" DisableRecipeCommand
+DisableRecipeCommandHandler "1" o-- "1" IApplicationDbContext
+DisableRecipeCommandHandler "1" o-- "1" IServiceBus
+DisableRecipeCommandHandler "1" o-- "1" IUnitOfWork
+
+DisableRecipeCommandHandler "1" -- "1" Result
+DisableRecipeCommandHandler "1" -- "1..*" AddActivityLogEvent
+DisableRecipeCommandHandler "1" -- "1..*" NotifyUserEvent
+DisableRecipeCommandHandler "1" -- "1..*" RecipeError
 
 Error "1..*" --o "1" RecipeError
 

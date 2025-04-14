@@ -7,8 +7,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -31,7 +31,7 @@ class MarkAllCommentReportCommandHandler {
     -_context : IApplicationDbContext
     -_serviceBus: IServiceBus 
     -_unitOfWork: IUnitOfWork 
-    +MarkAllCommentReportCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +MarkAllCommentReportCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
     +Handle(request: MarkAllCommentReportCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
@@ -57,16 +57,18 @@ together {
 }
 
 AdminController --|> BaseApiController
-AdminController "1"--"1" ReportDTO
-AdminController "1"--"1" MarkAllCommentReportCommand
+AdminController "1" -- "1" MarkAllCommentReportDTO
+AdminController "1" -- "1" MarkAllCommentReportCommand
 
 MarkAllCommentReportCommand ..|> "IRequest<TResponse>"
 
 MarkAllCommentReportCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 MarkAllCommentReportCommandHandler "1" --"1" MarkAllCommentReportCommand
-MarkAllCommentReportCommandHandler "1" o--"1" IApplicationDbContext
-MarkAllCommentReportCommandHandler "1" o--"1" IServiceBus
-MarkAllCommentReportCommandHandler "1" o--"1" IUnitOfWork
+
+MarkAllCommentReportCommandHandler "1" o-- "1" IApplicationDbContext
+MarkAllCommentReportCommandHandler "1" o-- "1" IServiceBus
+MarkAllCommentReportCommandHandler "1" o-- "1" IUnitOfWork
+
 MarkAllCommentReportCommandHandler "1" --"1" Result
 MarkAllCommentReportCommandHandler "1" --"1..*" AddActivityLogEvent
 MarkAllCommentReportCommandHandler "1" --"1..*" UserReportComment

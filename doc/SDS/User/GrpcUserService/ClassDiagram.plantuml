@@ -43,33 +43,33 @@ class GetMultipleUserSettingQuery {
 class GetSimpleUsersQueryHandler {
     -_context: IApplicationDbContext
     +GetSimpleUsersQueryHandler(context: IApplicationDbContext)
-    +Handle(request: GetSimpleUsersQuery, cancellationToken: CancellationToken): async Task<Result<<List<User>?>> 
+    +Handle(request: GetSimpleUsersQuery, cancellationToken: CancellationToken): async Task<Result<<List<User>>> 
 }
 
 class GetUserDetailsQueryHandler {
     -_context: IApplicationDbContext
     -_grpcAccountClient: GrpcAccountClient
     +GetUserDetailsQueryHandler(context: IApplicationDbContext, grpcAccountClient: GrpcAccountClient)
-    +Handle(request: GetUserDetailsQuery, cancellationToken: CancellationToken): async Task<Result<GetUserDetailsResponse?>> 
+    +Handle(request: GetUserDetailsQuery, cancellationToken: CancellationToken): async Task<Result<GetUserDetailsResponse>> 
 }
 
 class CreateUserCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
     +CreateUserCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
-    +Handle(request: CreateUserCommand, cancellationToken: CancellationToken): async Task<Result<User?>> 
+    +Handle(request: CreateUserCommand, cancellationToken: CancellationToken): async Task<Result<User>> 
 }
 
 class SearchSimpleUserQueryHandler {
     -_context: IApplicationDbContext
     +SearchSimpleUserQueryHandler(context: IApplicationDbContext)
-    +Handle(request: SearchSimpleUserQuery, cancellationToken: CancellationToken): async Task<Result<<List<Guid>?>> 
+    +Handle(request: SearchSimpleUserQuery, cancellationToken: CancellationToken): async Task<Result<<List<Guid>>> 
 }
 
 class GetMultipleUserSettingQueryHandler {
     -_context: IApplicationDbContext
     +GetMultipleUserSettingQueryHandler(context: IApplicationDbContext)
-    +Handle(request: GetMultipleUserSettingQuery, cancellationToken: CancellationToken): async Task<Result<Dictionary<Guid, List<UserSetting>>?>>
+    +Handle(request: GetMultipleUserSettingQuery, cancellationToken: CancellationToken): async Task<Result<Dictionary<Guid, List<UserSetting>>>>
 }
 ' Grpc DTO
 class GrpcEmpty #DarkBlue;line:white;text:white{

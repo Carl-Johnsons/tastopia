@@ -3,19 +3,21 @@
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 !include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
 !include doc/SDS/CommonClassDiagram/SignalRService.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 60
-skinparam ranksep 60
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
-class NotifyUserConsumer {
+class NotifyUserConsumer #Cyan;line:black;text:black {
     -_sender: ISender
     +NotifyUserConsumer(sender: ISender)
     +Consume(context: ConsumeContext<NotifyUserEvent>): Task
 }
 
-class NotifyUserEvent {
+class NotifyUserEvent #Cyan;line:black;text:black {
     +PrimaryActors: List<ActorDTO>
     +SecondaryActors: List<ActorDTO>
     +RecipientIds: List<Guid>
@@ -56,7 +58,7 @@ class NotificationErrors {
     {static} +TemplateNotFound: Error
 }
 
-class PushNotificationEvent {
+class PushNotificationEvent #Cyan;line:black;text:black {
     +ExpoPushTokens: List<string>
     +Message: string
     +JsonData: string
@@ -91,13 +93,14 @@ NotifyUserEvent "1" o-- "1" NotificationTemplateCode
 ActorDTO "1" o-- "1" EntityType
 
 NotifyUserCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-NotifyUserCommandHandler "1" o-- "1" NotifyUserCommand
+NotifyUserCommandHandler "1" -- "1" NotifyUserCommand
 NotifyUserCommandHandler "1" o-- "1" IApplicationDbContext
 NotifyUserCommandHandler "1" o-- "1" IMapper
 NotifyUserCommandHandler "1" o-- "1" GrpcUserClient
 NotifyUserCommandHandler "1" o-- "1" GrpcRecipeClient
 NotifyUserCommandHandler "1" o-- "1" IUnitOfWork
 NotifyUserCommandHandler "1" o-- "1" ISignalRService
+NotifyUserCommandHandler "1" o-- "1" IServiceBus
 
 NotifyUserCommandHandler "1" -- "1..*" NotificationErrors
 NotifyUserCommandHandler "1" -- "1..*" Result

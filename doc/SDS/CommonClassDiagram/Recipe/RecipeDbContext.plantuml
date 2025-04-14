@@ -20,8 +20,8 @@ class Recipe extends BaseMongoDBAuditableEntity {
     +Description: string
     +ImageUrl: string
     +Ingredients: List<string>
-    +CookTime: string?
-    +Serves: int?
+    +CookTime: string
+    +Serves: int
     +VoteDiff: int
     +NumberOfComment: int
     +IsActive: bool
@@ -34,7 +34,7 @@ class Recipe extends BaseMongoDBAuditableEntity {
 class Step extends BaseMongoDBAuditableEntity {
     +OrdinalNumber: int
     +Content: string
-    +AttachedImageUrls: List<string>?
+    +AttachedImageUrls: List<string>
 }
 
 class Comment extends BaseMongoDBAuditableEntity {
@@ -51,8 +51,8 @@ class RecipeVote extends BaseMongoDBEntity {
 class Tag extends BaseMongoDBAuditableEntity {
     +Value: string
     +Code: string
-    +Category: enum
-    +Status: enum
+    +Category: TagCategory
+    +Status: TagStatus
     +ImageUrl: string
 }
 
@@ -71,7 +71,27 @@ class CommonReportEntity extends BaseMongoDBAuditableEntity {
     +Entity: Guid
     +ReasonCodes: List<string>
     +AdditionalDetails: string
-    +Status: enum
+    +Status: ReportStatus
+}
+
+enum ReportStatus
+{
+    Pending
+    Done
+}
+
+enum TagStatus {
+    Rejected
+    Pending
+    Active
+    Inactive
+}
+
+enum TagCategory
+{
+    All
+    Ingredient
+    DishType
 }
 
 class UserReportRecipe extends CommonReportEntity {
@@ -126,6 +146,10 @@ ApplicationDbContext "1" o-- "1" UserReportComment
 Recipe "1"*--"1..*" Step
 Recipe "1"*--"0..*" Comment
 Recipe "1"*--"0..*" RecipeVote
+
+Tag "1"*--"1" TagCategory
+Tag "1"*--"1" TagStatus
+CommonReportEntity "1" *-- "1" ReportStatus
 ' =========== Style ==============
 
 ApplicationDbContext o-[hidden]down- "DbSet<T>"

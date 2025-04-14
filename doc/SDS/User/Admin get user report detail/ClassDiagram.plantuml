@@ -34,7 +34,7 @@ class GetUserReportDetailByAccountIdQueryHandler {
     -_context : IApplicationDbContext
     -_paginateDataUtility: IPaginateDataUtility<AdminUserReportDetailResponse, AdvancePaginatedMetadata> 
     +GetUserReportDetailByAccountIdQueryHandler(context : IApplicationDbContext, paginateDataUtility : IPaginateDataUtility<AdminUserReportDetailResponse, AdvancePaginatedMetadata>)
-    +Handle(request: GetUserReportDetailByAccountIdQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminUserReportDetailListResponse?>>
+    +Handle(request: GetUserReportDetailByAccountIdQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminUserReportDetailListResponse>>
 }
 
 class PaginatedAdminUserReportDetailListResponse

@@ -29,8 +29,8 @@ class BanAdminCommandHandler {
     -_context : IApplicationDbContext
     -_serviceBus: IServiceBus 
     -_unitOfWork: IUnitOfWork 
-    +BanAdminCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
-    +Handle(request: BanAdminCommand, cancellationToken: CancellationToken) : Task<Result<AdminBanUserResponse?>>
+    +BanAdminCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: BanAdminCommand, cancellationToken: CancellationToken) : Task<Result<AdminBanUserResponse>>
 }
 
 class AdminBanUserDTO {

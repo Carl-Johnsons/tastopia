@@ -1,12 +1,13 @@
 
 @startuml ClassDiagram
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 class BaseApiController {
@@ -27,7 +28,7 @@ class AdminGetRecipesQueryHandler {
     -_grpcUserClient: GrpcUserClient 
     -_paginateDataUtility: IPaginateDataUtility<AdminRecipeResponse, NumberedPaginatedMetadata> 
     +AdminGetRecipesQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility<AdminRecipeResponse, NumberedPaginatedMetadata>)
-    +Handle(request: AdminGetRecipesQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminRecipeListResponse?>>
+    +Handle(request: AdminGetRecipesQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminRecipeListResponse>>
 }
 
 class PaginatedAdminRecipeListResponse
@@ -102,12 +103,14 @@ AdminController "1"--"1" PaginatedDTO
 AdminController "1"--"1" AdminGetRecipesQuery
 
 AdminGetRecipesQuery ..|> "IRequest<TResponse>"
+AdminGetRecipesQuery "1" o-- "1" PaginatedDTO
 
 AdminGetRecipesQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
-AdminGetRecipesQueryHandler "1" --"1" AdminGetRecipesQuery
+AdminGetRecipesQueryHandler "1" -- "1" AdminGetRecipesQuery
 AdminGetRecipesQueryHandler "1" o--"1" IApplicationDbContext
 AdminGetRecipesQueryHandler "1" o--"1" IPaginateDataUtility
 AdminGetRecipesQueryHandler "1" o--"1" GrpcUserClient
+
 AdminGetRecipesQueryHandler "1" --"1" Result
 AdminGetRecipesQueryHandler "1" --"1..*" GrpcSearchUserRequest
 AdminGetRecipesQueryHandler "1" --"1..*" PaginatedAdminRecipeListResponse

@@ -3,8 +3,8 @@
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 50
-skinparam ranksep 50
+skinparam nodesep 100
+skinparam ranksep 100
 skinparam classAttributeIconSize 0
 
 hide circle
@@ -94,14 +94,18 @@ class GrpcMapCommentReports #Green;line:white;text:white{
 class GrpcMapRecipeReports #Green;line:white;text:white{
 }
 
+class GrpcSimpleComment #Green;line:white;text:white
+
+class GrpcRecipeReportResponse #Green;line:white;text:white
+
 ' DTO
-class RecipeDetailsResponse{
+class RecipeDetailsResponse {
     +Recipe: Recipe
     +AuthorUsername: string
     +AuthorDisplayName: string
     +AuthorAvtUrl: string
     +AuthorNumberOfFollower: int
-    +Vote: enum
+    +Vote: string
     +IsBookmarked: bool
     +Tags: List<Tag>
 }

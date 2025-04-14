@@ -27,7 +27,7 @@ class GetAdminsQueryHandler {
     -_grpcAccountClient: GrpcAccountClient 
     -_paginateDataUtility: IPaginateDataUtility<AdminResponse, NumberedPaginatedMetadata> 
     +GetAdminsQueryHandler(context : IApplicationDbContext, grpcAccountClient : GrpcAccountClient, paginateDataUtility : IPaginateDataUtility<AdminResponse, NumberedPaginatedMetadata>)
-    +Handle(request: GetAdminsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminListResponse?>>
+    +Handle(request: GetAdminsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminListResponse>>
 }
 
 class PaginatedAdminListResponse

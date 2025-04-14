@@ -5,8 +5,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 80
+skinparam ranksep 80
 hide circle
 
 class BaseApiController {
@@ -24,7 +24,7 @@ class AdminGetRankingRecipesStatisticQuery {
 class AdminGetRankingRecipesStatisticQueryHandler {
     -_context : IApplicationDbContext
     +AdminGetRankingRecipesStatisticQueryHandler(context : IApplicationDbContext)
-    +Handle(request: AdminGetRankingRecipesStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<RankingStatisticEntity>?>>
+    +Handle(request: AdminGetRankingRecipesStatisticQuery, cancellationToken: CancellationToken) : Task<Result<List<RankingStatisticEntity>>>
 }
 
 class RankingStatisticEntity extends StatisticEntity {

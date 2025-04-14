@@ -30,7 +30,7 @@ class DisableCommentCommandHandler {
     -_context : IApplicationDbContext
     -_serviceBus: IServiceBus 
     -_unitOfWork: IUnitOfWork 
-    +DisableCommentCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +DisableCommentCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
     +Handle(request: DisableCommentCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
@@ -54,19 +54,20 @@ together {
 }
 
 AdminController --|> BaseApiController
-AdminController "1"--"1" DisableCommentCommand
+AdminController "1" -- "1" DisableCommentCommand
 
 DisableCommentCommand ..|> "IRequest<TResponse>"
 
 DisableCommentCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-DisableCommentCommandHandler "1" --"1" DisableCommentCommand
-DisableCommentCommandHandler "1" o--"1" IApplicationDbContext
-DisableCommentCommandHandler "1" o--"1" IServiceBus
-DisableCommentCommandHandler "1" o--"1" IUnitOfWork
-DisableCommentCommandHandler "1" --"1" Result
-DisableCommentCommandHandler "1" --"1..*" AddActivityLogEvent
-DisableCommentCommandHandler "1" --"1..*" NotifyUserEvent
-DisableCommentCommandHandler "1" --"1..*" CommentError
+DisableCommentCommandHandler "1" -- "1" DisableCommentCommand
+DisableCommentCommandHandler "1" o-- "1" IApplicationDbContext
+DisableCommentCommandHandler "1" o-- "1" IServiceBus
+DisableCommentCommandHandler "1" o-- "1" IUnitOfWork
+
+DisableCommentCommandHandler "1" -- "1" Result
+DisableCommentCommandHandler "1" -- "1..*" AddActivityLogEvent
+DisableCommentCommandHandler "1" -- "1..*" NotifyUserEvent
+DisableCommentCommandHandler "1" -- "1..*" CommentError
 
 Error "1..*" --o "1" CommentError
 

@@ -7,8 +7,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -29,7 +29,7 @@ class RestoreRecipeCommandHandler {
     -_context : IApplicationDbContext
     -_serviceBus: IServiceBus 
     -_unitOfWork: IUnitOfWork 
-    +RestoreRecipeCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +RestoreRecipeCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
     +Handle(request: RestoreRecipeCommand, cancellationToken: CancellationToken) : Task<Result>
 }
 
@@ -65,9 +65,11 @@ RestoreRecipeCommand ..|> "IRequest<TResponse>"
 
 RestoreRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 RestoreRecipeCommandHandler "1" --"1" RestoreRecipeCommand
+
 RestoreRecipeCommandHandler "1" o--"1" IApplicationDbContext
 RestoreRecipeCommandHandler "1" o--"1" IServiceBus
 RestoreRecipeCommandHandler "1" o--"1" IUnitOfWork
+
 RestoreRecipeCommandHandler "1" --"1" Result
 RestoreRecipeCommandHandler "1" --"1..*" AddActivityLogEvent
 RestoreRecipeCommandHandler "1" --"1..*" RecipeError

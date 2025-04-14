@@ -1,4 +1,4 @@
-@startuml GetRecipeCommentClassDiagram
+@startuml ClassDiagram
 !include doc/SDS/CommonClassDiagram/PaginateData.plantuml
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 !include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
@@ -28,21 +28,35 @@ class GetRecipeCommentsQueryHandler {
     -_grpcUserClient: GrpcUserClient
     -_paginateDataUtility: IPaginateDataUtility
     +GetRecipeCommentsQueryHandler(context : IApplicationDbContext, mapper : IMapper, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility)
-    +Handle(request : GetRecipeCommentsQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedRecipeCommentListResponse?>> 
+    +Handle(request : GetRecipeCommentsQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedRecipeCommentListResponse>> 
 }
 
+class PaginatedRecipeCommentListResponse
 
-interface IMapper{
-    #Map<TDestination>(object source): TDestination
-}
-
-class PaginatedRecipeCommentListResponse{
-}
 class BasePaginatedResponse{
     +PaginatedData : IEnumerable<Type>
-    +Metadata: MetadataType?
+    +Metadata: MetadataType
 }
 PaginatedRecipeCommentListResponse --|> BasePaginatedResponse
+
+class RecipeCommentResponse {
+    +Id: Guid
+    +AccountId: Guid
+    +DisplayName: string
+    +Content: string
+    +AvatarUrl: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+    +IsActive: bool
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
 
 class GetRecipeCommentsDTO{
     +RecipeId: Guid
@@ -56,6 +70,7 @@ class RecipeError {
     {static} +UpdateRecipeFail: Error
 }
 together {
+    class IMapper #Black;line:white;text:white
     class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
     class GrpcUserClient #DarkBlue;line:white;text:white
 }
@@ -64,6 +79,9 @@ together {
 interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
+
+PaginatedRecipeCommentListResponse "1" o-- "1..*" RecipeCommentResponse
+PaginatedRecipeCommentListResponse "1" o-- "1" AdvancePaginatedMetadata
 
 RecipeController --|> BaseApiController
 RecipeController "1"--"1" GetRecipeCommentsDTO

@@ -51,33 +51,33 @@ class UpdateGprcUserCommand {
 class GetUserFollowerIdsQueryHandler {
     -_context: IApplicationDbContext
     +GetUserFollowerIdsQueryHandler(context: IApplicationDbContext)
-    +Handle(request: GetUserFollowerIdsQuery, cancellationToken: CancellationToken): async Task<Result<<List<Guid>?>> 
+    +Handle(request: GetUserFollowerIdsQuery, cancellationToken: CancellationToken): async Task<Result<<List<Guid>>> 
 }
 
 class GetUserFollowingIdsQueryHandler {
     -_context: IApplicationDbContext
     +GetUserFollowerIdsQueryHandler(context: IApplicationDbContext)
-    +Handle(request: GetUserFollowingIdsQuery, cancellationToken: CancellationToken): async Task<Result<Guid?>> 
+    +Handle(request: GetUserFollowingIdsQuery, cancellationToken: CancellationToken): async Task<Result<Guid>> 
 }
 
 class GetUserReportQueryByHashSetHandler {
     -_context: IApplicationDbContext
     +GetUserReportQueryByHashSetHandler(context: IApplicationDbContext)
-    +Handle(request: GetUserReportQueryByHashSet, cancellationToken: CancellationToken): async Task<Result<Dictionary<Guid, List<UserReport>>?>>
+    +Handle(request: GetUserReportQueryByHashSet, cancellationToken: CancellationToken): async Task<Result<Dictionary<Guid, List<UserReport>>>>
 }
 
 class CreateUserCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
     +CreateUserCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
-    +Handle(request: CreateUserCommand, cancellationToken: CancellationToken): async Task<Result<User?>> 
+    +Handle(request: CreateUserCommand, cancellationToken: CancellationToken): async Task<Result<User>> 
 }
 
 class UpdateGprcUserCommandHandler {
     -_context: IApplicationDbContext
     -_unitOfWork: IUnitOfWork
     +UpdateGprcUserCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
-    +Handle(request: UpdateGprcUserCommand, cancellationToken: CancellationToken): async Task<Result<User?>> 
+    +Handle(request: UpdateGprcUserCommand, cancellationToken: CancellationToken): async Task<Result<User>> 
 }
 ' Grpc DTO
 class GrpcAccountIdRequest #DarkBlue;line:white;text:white{

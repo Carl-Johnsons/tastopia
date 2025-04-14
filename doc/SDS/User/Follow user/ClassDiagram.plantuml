@@ -28,8 +28,8 @@ class FollowUserCommandHandler {
     -_mapper : IMapper
     -_context : IApplicationDbContext
     -_serviceBus: IServiceBus 
-    +FollowUserCommandHandler(context : IApplicationDbContext, _serviceBus : IServiceBus, mapper : IMapper)
-    +Handle(request: FollowUserCommand, cancellationToken: CancellationToken) : Task<Result<FollowUserResponse?>>
+    +FollowUserCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, mapper : IMapper)
+    +Handle(request: FollowUserCommand, cancellationToken: CancellationToken) : Task<Result<FollowUserResponse>>
 }
 
 class FollowUserDTO {

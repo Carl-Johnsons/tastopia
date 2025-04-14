@@ -28,7 +28,7 @@ class GetRecipeDetailQueryHandler {
     -_context: IApplicationDbContext
     -_grpcUserClient: GrpcUserClient
     +GetRecipeDetailQueryHandler(context : IApplicationDbContext, serviceBus : IServiceBus, grpcUserClient : GrpcUserClient)
-    +Handle(request : GetRecipeDetailQuery, cancellationToken : CancellationToken): async Task<Result<RecipeDetailsResponse?>> 
+    +Handle(request : GetRecipeDetailQuery, cancellationToken : CancellationToken): async Task<Result<RecipeDetailsResponse>> 
 }
 
 class RecipeDetailsResponse{
@@ -46,7 +46,7 @@ class SimilarRecipe{
     +Title: Title
 }
 
-RecipeDetailsResponse o--"1.." SimilarRecipe
+RecipeDetailsResponse "1" o--"1..*" SimilarRecipe
 
 interface IApplicationDbContext {
     +Recipes: DbSet<Recipe>
@@ -94,6 +94,7 @@ GetRecipeDetailQueryHandler "1" o-- "1" GrpcUserClient
 GetRecipeDetailQueryHandler "1" o-- "1" IServiceBus
 GetRecipeDetailQueryHandler "1"--"1..*" RecipeError
 GetRecipeDetailQueryHandler "1"--"1" CreateUserViewRecipeDetailEvent
+GetRecipeDetailQueryHandler "1"--"1" GrpcAccountIdRequest
 
 Error "1..*" --o "1" RecipeError
 

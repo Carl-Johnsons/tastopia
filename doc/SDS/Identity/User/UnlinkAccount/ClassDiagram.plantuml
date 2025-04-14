@@ -2,8 +2,8 @@
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 remove IDisposable
@@ -59,16 +59,17 @@ class "UserManager<TUser>" #black;line:white;text:white
 ' =========== Library class ===========
 
 AccountController --|> BaseApiController
-AccountController "1"--"1" UnlinkAccountCommand
-UnlinkAccountCommand "1" o--"1" AccountMethod
+AccountController "1" -- "1" UnlinkAccountCommand
+UnlinkAccountCommand "1" o-- "1" AccountMethod
 UnlinkAccountCommand ..|> "IRequest<TResponse>"
 
 UnlinkAccountCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-UnlinkAccountCommandHandler "1" o--"1" UnlinkAccountCommand
-UnlinkAccountCommandHandler "1" o---"1" ApplicationAccount
-UnlinkAccountCommandHandler "1" o--"1" AccountError
-UnlinkAccountCommandHandler "1" o--"1" Result
-UnlinkAccountCommandHandler "1" o--"1" "UserManager<TUser>"
+UnlinkAccountCommandHandler "1" -- "1" UnlinkAccountCommand
+UnlinkAccountCommandHandler "1" o-- "1" "UserManager<TUser>"
+
+UnlinkAccountCommandHandler "1" -- "1..*" AccountError
+UnlinkAccountCommandHandler "1" -- "1..*" Result
+UnlinkAccountCommandHandler "1" ---"1..*" ApplicationAccount
 
 Error "1..*" --o "1" AccountError
 
