@@ -15,9 +15,9 @@ participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\nTrackingService" as TrackingService
 database MongoDB
 
-User -> MobileUI++: 1. Touch on search bar \n in search recipe screen
+User -> MobileUI++: 1. Touch on search bar in search recipe\n screen and touch delete icon
 
-MobileUI -> ApiGateway++: 2. Get search keyword
+MobileUI -> ApiGateway++: 2. Delete search keyword
 
 ref over ApiGateway: 3. Verify access token
 
@@ -25,8 +25,16 @@ ApiGateway -> TrackingService++: 4. Forward request
 
 TrackingService -> MongoDB++: 5. Query search keyword data
 TrackingService <-- MongoDB--: 6. Return response
-ApiGateway <-- TrackingService--: 7. Return keyword list
-MobileUI <-- ApiGateway--: 8. Forward response
-User <-- MobileUI--: 9. Display keyword list
+alt if keyword is not found
+  ApiGateway <-- TrackingService: 7A.1. Return not found error
+  MobileUI <-- ApiGateway: 7A.2. Forward response
+  User <-- MobileUI: 7A.3. Display error alert
+else
+  TrackingService -> MongoDB ++: 8. Delete data
+  TrackingService <-- MongoDB --: 9. Return response
+  ApiGateway <-- TrackingService--: 10. Return success status code
+  MobileUI <-- ApiGateway--: 11. Forward response
+  User <-- MobileUI--: 12. Re-render the search keyword
+end
 
 @enduml
