@@ -4,12 +4,12 @@
     "action": "Update"
   },
   "formTitle": {
-    "serves": "Serves",
-    "cookTime": "Cook Time",
-    "ingredients": "Ingredients",
-    "method": "Method",
-    "step": "Step",
-    "tag": "Tag",
+    "serves": "Serves*",
+    "cookTime": "Cook Time*",
+    "ingredients": "Ingredients*",
+    "method": "Method*",
+    "step": "Step*",
+    "tag": "Tag*",
     "updateSuccessfully": "Update recipe successfully",
     "updateError": "Update recipe fail"
   },
@@ -26,10 +26,17 @@
     "title.maxLength": "Title cannot exceed 50 characters",
     "description": "Please enter recipe description",
     "description.maxLength": "Description cannot exceed 500 characters",
-    "serves": "Please enter recipe serves",
+    "serves": {
+      "required": "Please enter recipe serves",
+      "typeError": "Recipe serves must be a number",
+      "positive": "Recipe serves must be a positive number",
+      "integer": "Recipe serves must be a whole number"
+    },
     "cookTime": "Please enter recipe cook time",
+    "cookTime.maxLength": "Cook time cannot exceed 50 characters",
     "image": "Please upload recipe image",
     "step": "Please enter cooking step",
+    "stepRequired": "Recipe must have at least one step",
     "ingredient": "Please enter ingredient",
     "ingredientRequired": "Recipe must have at least one ingredient",
     "ingredients": {

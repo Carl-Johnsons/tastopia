@@ -66,16 +66,18 @@ const CreateDraggableStep = ({
 
   return (
     <View style={[styles.container, { backgroundColor: c(white.DEFAULT, black[200]) }]}>
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={confirmRemoveItem}
-      >
-        <AntDesign
-          name='close'
-          size={20}
-          color={globalStyles.color.primary}
-        />
-      </TouchableOpacity>
+      {getValues("steps").length > 1 && (
+        <TouchableOpacity
+          style={styles.iconContainer}
+          onPress={confirmRemoveItem}
+        >
+          <AntDesign
+            name='close'
+            size={20}
+            color={globalStyles.color.primary}
+          />
+        </TouchableOpacity>
+      )}
 
       <View style={styles.inputContainer}>
         <Controller
