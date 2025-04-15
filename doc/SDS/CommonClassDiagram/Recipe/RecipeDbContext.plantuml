@@ -1,4 +1,4 @@
-@startuml AccountDbContext
+@startuml RecipeDbContext
 
 interface IMongoDbContext extends IDisposable {
     +Instance : DbContext
@@ -20,8 +20,8 @@ class Recipe extends BaseMongoDBAuditableEntity {
     +Description: string
     +ImageUrl: string
     +Ingredients: List<string>
-    +CookTime: string?
-    +Serves: int?
+    +CookTime: string
+    +Serves: int
     +VoteDiff: int
     +NumberOfComment: int
     +IsActive: bool
@@ -34,7 +34,7 @@ class Recipe extends BaseMongoDBAuditableEntity {
 class Step extends BaseMongoDBAuditableEntity {
     +OrdinalNumber: int
     +Content: string
-    +AttachedImageUrls: List<string>?
+    +AttachedImageUrls: List<string>
 }
 
 class Comment extends BaseMongoDBAuditableEntity {
@@ -51,8 +51,8 @@ class RecipeVote extends BaseMongoDBEntity {
 class Tag extends BaseMongoDBAuditableEntity {
     +Value: string
     +Code: string
-    +Category: enum
-    +Status: enum
+    +Category: TagCategory
+    +Status: TagStatus
     +ImageUrl: string
 }
 
@@ -66,18 +66,39 @@ class UserBookmarkRecipe extends BaseMongoDBAuditableEntity {
     +RecipeId: Guid
 }
 
-class UserReportRecipe extends BaseMongoDBAuditableEntity {
+class CommonReportEntity extends BaseMongoDBAuditableEntity {
     +AccountId: Guid
-    +RecipeId: Guid
-    +Reason: string
-    +Status: enum
+    +Entity: Guid
+    +ReasonCodes: List<string>
+    +AdditionalDetails: string
+    +Status: ReportStatus
 }
 
-class UserReportComment extends BaseMongoDBAuditableEntity {
-    +AccountId: Guid
-    +CommentId: Guid
-    +Reason: string
-    +Status: enum
+enum ReportStatus
+{
+    Pending
+    Done
+}
+
+enum TagStatus {
+    Rejected
+    Pending
+    Active
+    Inactive
+}
+
+enum TagCategory
+{
+    All
+    Ingredient
+    DishType
+}
+
+class UserReportRecipe extends CommonReportEntity {
+}
+
+class UserReportComment extends CommonReportEntity {
+    +RecipeId: Guid
 }
 
 class UserRecipeBin extends BaseMongoDBAuditableEntity {
@@ -93,12 +114,12 @@ interface IApplicationDbContext extends IMongoDbContext {
     + UserReportComments : DbSet<UserReportComment>
 }
 class ApplicationDbContext extends DbContext implements IApplicationDbContext {
-    +DbSet<Recipe> Recipes
-    +DbSet<Tag> Tags
-    +DbSet<RecipeTag> RecipeTags
-    +DbSet<UserBookmarkRecipe> UserBookmarkRecipes
-    +DbSet<UserReportRecipe> UserReportRecipes
-    +DbSet<UserReportComment> UserReportComments
+    +Recipes : DbSet<Recipe> 
+    +Tags : DbSet<Tag>
+    +RecipeTags : DbSet<RecipeTag>
+    +UserBookmarkRecipes : DbSet<UserBookmarkRecipe>
+    +UserReportRecipes : DbSet<UserReportRecipe> 
+    +UserReportComments : DbSet<UserReportComment>
     +Instance : DbContext
     +ApplicationDbContext()
     +ApplicationDbContext(options : DbContextOptions<ApplicationDbContext>)
@@ -112,24 +133,23 @@ interface IDisposable #black;line:white;text:white
 class "DbSet<T>" #black;line:white;text:white
 class DbContext #black;line:white;text:white
 
-IMongoDbContext o-- DbContext
+IMongoDbContext "1" o-- "1..*" DbContext
 
-' IApplicationDbContext o-- "DbSet<T>"
-' IApplicationDbContext o-- Recipe
-' IApplicationDbContext o-- Tag
-' IApplicationDbContext o-- RecipeTag
-' IApplicationDbContext o-- UserBookmarkRecipe
-' IApplicationDbContext o-- UserReportRecipe
-' IApplicationDbContext o-- UserReportComment
+ApplicationDbContext "1" o-- "1..*" "DbSet<T>"
+ApplicationDbContext "1" o-- "1" Recipe
+ApplicationDbContext "1" o-- "1" Tag
+ApplicationDbContext "1" o-- "1" RecipeTag
+ApplicationDbContext "1" o-- "1" UserBookmarkRecipe
+ApplicationDbContext "1" o-- "1" UserReportRecipe
+ApplicationDbContext "1" o-- "1" UserReportComment
 
-ApplicationDbContext o-- "DbSet<T>"
-ApplicationDbContext o-- Recipe
-ApplicationDbContext o-- Tag
-ApplicationDbContext o-- RecipeTag
-ApplicationDbContext o-- UserBookmarkRecipe
-ApplicationDbContext o-- UserReportRecipe
-ApplicationDbContext o-- UserReportComment
+Recipe "1"*--"1..*" Step
+Recipe "1"*--"0..*" Comment
+Recipe "1"*--"0..*" RecipeVote
 
+Tag "1"*--"1" TagCategory
+Tag "1"*--"1" TagStatus
+CommonReportEntity "1" *-- "1" ReportStatus
 ' =========== Style ==============
 
 ApplicationDbContext o-[hidden]down- "DbSet<T>"
@@ -137,6 +157,9 @@ ApplicationDbContext o-[hidden]down- Recipe
 ApplicationDbContext o-[hidden]down- Tag
 ApplicationDbContext o-[hidden]down- RecipeTag
 ApplicationDbContext o-[hidden]down- UserBookmarkRecipe
+ApplicationDbContext o-[hidden]down- UserReportRecipe
+ApplicationDbContext o-[hidden]down- UserReportComment
+ApplicationDbContext o-[hidden]down- UserRecipeBin
 
 BaseMongoDBAuditableEntity -[hidden]right- BaseMongoDBEntity 
 BaseMongoDBAuditableEntity -[hidden]up- Recipe 
@@ -148,9 +171,5 @@ BaseMongoDBEntity -[hidden]up- RecipeTag
 BaseMongoDBAuditableEntity -[hidden]up- UserBookmarkRecipe 
 BaseMongoDBAuditableEntity -[hidden]up- UserReportRecipe
 BaseMongoDBAuditableEntity -[hidden]up- UserReportComment 
-
-Recipe *--"1.." Step
-Recipe *--"1.." Comment
-Recipe *--"1.." RecipeVote
 
 @enduml

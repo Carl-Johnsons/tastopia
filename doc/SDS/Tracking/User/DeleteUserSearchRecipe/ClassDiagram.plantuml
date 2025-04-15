@@ -1,0 +1,64 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/Tracking/TrackingDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class TrackingController {
+    +DeleteUserSearchRecipe(dto: DeleteUserSearchRecipeKeywordDTO): async Task<IActionResult>
+}
+
+class DeleteUserSearchRecipeKeywordDTO {
+    +Keyword: string
+}
+
+class DeleteUserSearchRecipeCommand {
+    +AccountId: Guid
+    +Keyword: string
+}
+
+class DeleteUserSearchRecipeCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +DeleteUserSearchRecipeCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
+    +Handle(request: DeleteUserSearchRecipeCommand, cancellationToken: CancellationToken): async Task<Result<UserSearchRecipe>>
+}
+
+class UserSearchRecipeError {
+    +NotFound: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+TrackingController --|> BaseApiController
+TrackingController "1"--"1" DeleteUserSearchRecipeCommand
+TrackingController "1" -- "1" DeleteUserSearchRecipeKeywordDTO
+
+DeleteUserSearchRecipeCommand ..|> "IRequest<TResponse>"
+
+DeleteUserSearchRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+DeleteUserSearchRecipeCommandHandler "1"-- "1" DeleteUserSearchRecipeCommand
+DeleteUserSearchRecipeCommandHandler "1" o-- "1" IApplicationDbContext
+DeleteUserSearchRecipeCommandHandler "1" o-- "1" IUnitOfWork
+
+DeleteUserSearchRecipeCommandHandler "1"--"1..*" Result
+DeleteUserSearchRecipeCommandHandler "1"--"1..*" UserSearchRecipeError
+DeleteUserSearchRecipeCommandHandler "1"--"1..*" UserSearchRecipe
+' ====================STYLE====================
+
+UserSearchRecipeError "1" o-- "1..*" Error
+
+@enduml

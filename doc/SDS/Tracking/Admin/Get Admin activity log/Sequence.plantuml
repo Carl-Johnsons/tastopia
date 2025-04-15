@@ -1,0 +1,93 @@
+@startuml Sequence
+title "Get admin's activity log diagram"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor "Super Admin" as SuperAdmin
+boundary WebsiteUI
+participant "<<coordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n TrackingService" as TrackingService
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UserService" as UserService
+database Postgresql
+database MongoDB
+
+SuperAdmin -> WebsiteUI++: 1. Navigate to admin's profile detail page
+
+WebsiteUI -> ApiGateway++: 2. Get admin's activity log
+
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> TrackingService++: 4. Forward request
+
+TrackingService -> MongoDB++: 5. Query AdminActivityLog data
+TrackingService <-- MongoDB--: 6. Return response
+
+alt AdminActivityLog list is empty
+    ApiGateway <-- TrackingService: 7A.1. Return empty list
+    WebsiteUI <-- ApiGateway: 7A.2. Forward response
+    SuperAdmin <-- WebsiteUI: 7A.3. Display empty list
+else AdminActivityLog list is not empty
+    TrackingService -> RecipeService++: 8. Call "GetSimpleRecipesAsync" request <<gRPC>>
+    RecipeService -> MongoDB++: 9. Query data
+    RecipeService <-- MongoDB--: 10. Return response
+    RecipeService -> UserService++: 11. Call "GrpcGetSimpleUsersRequest" request <<gRPC>>
+    UserService -> Postgresql++: 12. Query basic user's data
+    UserService <-- Postgresql--: 13. Return response
+    RecipeService <-- UserService--: 14. Return response <<gRPC>>
+    TrackingService <-- RecipeService--: 15. Return response <<gRPC>>
+
+    TrackingService -> RecipeService++: 16. Call "GetCommentReportsAsync" request <<gRPC>>
+    RecipeService -> MongoDB++: 17. Query data
+    RecipeService <-- MongoDB--: 18. Return response
+    RecipeService -> UserService++: 19. Call "GrpcGetSimpleUsersRequest" request <<gRPC>>
+    UserService -> Postgresql++: 20. Query basic user's data
+    UserService <-- Postgresql--: 21. Return response
+    RecipeService <-- UserService--: 22. Return response <<gRPC>>
+    TrackingService <-- RecipeService--: 23. Return response <<gRPC>>
+
+    TrackingService -> RecipeService++: 24. Call "GetRecipeReportsAsync" request <<gRPC>>
+    RecipeService -> MongoDB++: 25. Query data
+    RecipeService <-- MongoDB--: 26. Return response
+    RecipeService -> UserService++: 27. Call "GrpcGetSimpleUsersRequest" request <<gRPC>>
+    UserService -> Postgresql++: 28. Query basic user's data
+    UserService <-- Postgresql--: 29. Return response
+    RecipeService <-- UserService--: 30. Return response <<gRPC>>
+    TrackingService <-- RecipeService--: 31. Return response <<gRPC>>
+
+    TrackingService -> RecipeService++: 32. Call "GetTagsAsync" request <<gRPC>>
+    RecipeService -> MongoDB++: 33. Query data
+    RecipeService <-- MongoDB--: 34. Return response
+    TrackingService <-- RecipeService--: 35. Return response <<gRPC>>
+
+    TrackingService -> RecipeService++: 36. Call "GrpcGetSimpleCommentRequest" request <<gRPC>>
+    RecipeService -> MongoDB++: 37. Query data
+    RecipeService <-- MongoDB--: 38. Return response
+    RecipeService -> UserService++: 39. Call "GrpcGetSimpleUsersRequest" request <<gRPC>>
+    UserService -> Postgresql++: 40. Query basic user's data
+    UserService <-- Postgresql--: 41. Return response
+    RecipeService <-- UserService--: 42. Return response <<gRPC>>
+    TrackingService <-- RecipeService--: 43. Return response <<gRPC>>
+
+    TrackingService -> UserService++: 44. Call "GetSimpleUserReportAsync" request <<gRPC>>
+    UserService -> Postgresql++: 45. Query data
+    UserService <-- Postgresql--: 46. Return response
+    TrackingService <-- UserService--: 47. Return response <<gRPC>>
+
+    TrackingService -> UserService++: 48. Call "GetSimpleUserAsync" request <<gRPC>>
+    UserService -> Postgresql++: 49. Query data
+    UserService <-- Postgresql--: 50. Return response
+    TrackingService <-- UserService--: 51. Return response <<gRPC>>
+
+    ApiGateway <-- TrackingService--: 52. Return admin's activity log
+    WebsiteUI <-- ApiGateway--: 53. Forward response
+    SuperAdmin <-- WebsiteUI--: 54. Display admin's activity log
+end alt
+
+@enduml

@@ -1,0 +1,84 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminGetRecipeReportDetail(lang : string, recipeId : Guid): async Task<IActionResult>
+}
+
+class GetRecipeReportDetailQuery {
+    +Lang : string
+    +RecipeId : Guid
+}
+
+class GetRecipeReportDetailQueryHandler {
+    -_context : IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient 
+    +GetRecipeReportDetailQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient)
+    +Handle(request: GetRecipeReportDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminReportRecipeDetailResponse>>
+}
+
+class AdminReportRecipeDetailResponse{
+    +Recipe : Recipe
+    +Tags : List<Tag>
+    +AuthorUsername : string
+    +AuthorDisplayName : string
+    +AuthorAvtUrl : string
+    +AuthorNumberOfFollower : int
+    +Reports : List<ReportRecipeResponse>
+}
+
+class ReportRecipeResponse{
+    +Id : Guid
+    +ReporterId: Guid
+    +ReporterUsername : string
+    +ReporterDisplayName : string
+    +ReporterAvtUrl : string
+    +Reasons : List<string>
+    +AdditionalDetail : string
+    +Status : string
+    +CreatedAt : DateTime
+}
+
+AdminReportRecipeDetailResponse "1" *-- "1..*" ReportRecipeResponse
+AdminReportRecipeDetailResponse "1" *-- "1..*" Tag
+AdminReportRecipeDetailResponse "1" -- "1" Recipe
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+' =========== Microservice class ===========
+together {
+    class GrpcAccountIdRequest #DarkBlue;line:white;text:white
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+AdminController --|> BaseApiController
+AdminController "1" -- "1" GetRecipeReportDetailQuery
+
+GetRecipeReportDetailQuery ..|> "IRequest<TResponse>"
+
+GetRecipeReportDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetRecipeReportDetailQueryHandler "1" -- "1" GetRecipeReportDetailQuery
+GetRecipeReportDetailQueryHandler "1" o-- "1" IApplicationDbContext
+GetRecipeReportDetailQueryHandler "1" o-- "1" GrpcUserClient
+
+GetRecipeReportDetailQueryHandler "1" -- "1" Result
+GetRecipeReportDetailQueryHandler "1" -- "1..*" GrpcGetSimpleUsersRequest
+GetRecipeReportDetailQueryHandler "1" -- "1..*" GrpcAccountIdRequest
+GetRecipeReportDetailQueryHandler "1" -- "1..*" AdminReportRecipeDetailResponse
+
+@enduml

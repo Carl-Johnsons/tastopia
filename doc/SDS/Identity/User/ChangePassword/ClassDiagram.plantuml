@@ -1,0 +1,83 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AccountController {
+    +ChangePassword(method: string, dto: ChangePasswordDTO): async Task<IActionResult>
+}
+
+class ChangePasswordCommand {
+    +Identifier: string
+    +OTP: string
+    +Password: string
+    +Method: AccountMethod 
+}
+
+class ChangePasswordCommandHandler {
+    -_userManager: UserManager<ApplicationAccount> 
+    +ChangePasswordCommandHandler(userManager: UserManager<ApplicationAccount>)
+    +Handle(request: ChangePasswordCommand, cancellationToken: CancellationToken): async Task<Result>
+}
+
+class AccountError {
+    {static} +NotFound: Error
+    {static} +InvalidAccountMethod: Error
+    {static} +InvalidOTP: Error
+    {static} +OTPExpired: Error
+    {static} +ResetPasswordFailed: Error
+}
+
+enum AccountMethod {
+    Phone
+    Email
+    Username
+    Google
+}
+
+class ChangePasswordDTO {
+    OTP: string
+    Identifier: string
+    Password: string
+}
+
+!include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml 
+remove IDisposable
+remove DbSet<T>
+remove IdentityUserLogin<T>
+remove IDbContext
+remove DbContext
+remove IApplicationDbContext
+remove ApplicationDbContext
+remove IdentityDbContext<ApplicationAccount>
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+class "UserManager<TUser>" #black;line:white;text:white
+' =========== Library class ===========
+
+AccountController --|> BaseApiController
+AccountController "1"--"1" ChangePasswordCommand
+AccountController "1"--"1" ChangePasswordDTO
+ChangePasswordCommand "1" o--"1" AccountMethod
+ChangePasswordCommand ..|> "IRequest<TResponse>"
+
+ChangePasswordCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+ChangePasswordCommandHandler "1" --"1" ChangePasswordCommand
+ChangePasswordCommandHandler "1" o--"1" "UserManager<TUser>"
+
+ChangePasswordCommandHandler "1" -- "1..*" Result
+ChangePasswordCommandHandler "1" -- "1..*" AccountError
+ChangePasswordCommandHandler "1" ---"1..*" ApplicationAccount
+Error "1..*" --o "1" AccountError
+
+@enduml

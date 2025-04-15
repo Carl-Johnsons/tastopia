@@ -1,0 +1,88 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminGetUserDetail(getUserDetailByAccountIdDTO : GetUserDetailByAccountIdDTO): async Task<IActionResult>
+}
+
+class AdminGetUserDetailQuery {
+    +AccountId : Guid
+    +CurrentAccountId : Guid
+}
+
+class AdminGetUserDetailQueryHandler {
+    -_context : IApplicationDbContext
+    -_grpcAccountClient: GrpcAccountClient 
+    +AdminGetUserDetailQueryHandler(context : IApplicationDbContext, grpcAccountClient : GrpcAccountClient)
+    +Handle(request: AdminGetUserDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminGetUserDetailResponse>>
+}
+
+class GetUserDetailByAccountIdDTO {
+    +AccountId : Guid
+}
+
+class AdminGetUserDetailResponse{
+    +AccountId : Guid
+    +DisplayName : string
+    +AvatarUrl : string
+    +Dob : DateTime
+    +Gender : string
+    +Address : string
+    +TotalFollower : int
+    +TotalFollowing : int
+    +TotalRecipe : int
+    +IsAccountActive : bool
+    +AccountUsername : string
+    +IsAdmin : bool
+    +Role : string
+    +IsCurrentUser : bool
+    +AccountEmail : string
+    +AccountPhoneNumber : string
+}
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+' =========== Microservice class ===========
+together {
+    class GrpcAccountIdRequest #DarkViolet;line:white;text:white
+    class GrpcAccountClient #DarkViolet;line:white;text:white
+}
+AdminController --|> BaseApiController
+AdminController "1"--"1" GetUserDetailByAccountIdDTO
+AdminController "1"--"1" AdminGetUserDetailQuery
+
+AdminGetUserDetailQuery ..|> "IRequest<TResponse>"
+
+AdminGetUserDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+AdminGetUserDetailQueryHandler "1" --"1" AdminGetUserDetailQuery
+AdminGetUserDetailQueryHandler "1" o--"1" IApplicationDbContext
+AdminGetUserDetailQueryHandler "1" o--"1" GrpcAccountClient
+AdminGetUserDetailQueryHandler "1" --"1" Result
+AdminGetUserDetailQueryHandler "1" --"1..*" GrpcAccountIdRequest
+AdminGetUserDetailQueryHandler "1" --"1..*" AdminGetUserDetailResponse
+AdminGetUserDetailQueryHandler "1" --"1..*" UserError
+
+Error "1..*" --o "1" UserError
+
+@enduml

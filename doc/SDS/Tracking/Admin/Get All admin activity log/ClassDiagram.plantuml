@@ -1,0 +1,103 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/Tracking/TrackingDbContext.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +GetAllAdminActivityLog(dto: PaginatedDTO): async Task<IActionResult>
+}
+
+class GetAllAdminActivityLogQuery {
+    +DTO: PaginatedDTO
+}
+
+class GetAllAdminActivityLogQueryHandler {
+    -_context: IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient
+    -_mapper: IMapper
+    -_paginateDataUtility: IPaginateDataUtility<AdminActivityLogResponse, NumberedPaginatedMetadata>
+    +GetAllAdminActivityLogQueryHandler(context: IApplicationDbContext, paginateDataUtility: IPaginateDataUtility<AdminActivityLogResponse, NumberedPaginatedMetadata>, mapper: IMapper, grpcUserClient: GrpcUserClient)
+    +Handle(request: GetAllAdminActivityLogQuery, cancellationToken: CancellationToken): async Task<Result<PaginatedAdminActivityLogListResponse>>
+}
+
+class AdminActivityLogResponse {
+    +AccountId: Guid
+    +ActivityType: ActivityType
+    +AccountUsername: string
+    +EntityId: Guid
+    +EntityType: ActivityEntityType
+    +SecondaryEntityId: Guid
+    +SecondaryEntityType: ActivityEntityType
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+}
+
+class PaginatedDTO {
+    +Skip: int
+    +SortOrder: SortType
+    +SortBy: string
+    +Keyword: string
+    +Limit: int
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
+    +CurrentPage: int
+    +TotalRow: int
+}
+
+class PaginatedAdminActivityLogListResponse {}
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
+}
+
+' =========== Microservice class ==========='
+together {
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+' =========== Microservice class ===========
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IMapper" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" GetAllAdminActivityLogQuery
+AdminController "1"--"1" PaginatedDTO
+GetAllAdminActivityLogQuery ..|> "IRequest<TResponse>"
+GetAllAdminActivityLogQuery "1" o-- "1" PaginatedDTO
+
+PaginatedAdminActivityLogListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+PaginatedAdminActivityLogListResponse "1" o-- "1..*" AdminActivityLogResponse
+PaginatedAdminActivityLogListResponse "1" o-- "1" NumberedPaginatedMetadata
+
+GetAllAdminActivityLogQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetAllAdminActivityLogQueryHandler "1" -- "1" GetAllAdminActivityLogQuery
+GetAllAdminActivityLogQueryHandler "1" o-- "1" IApplicationDbContext
+GetAllAdminActivityLogQueryHandler "1" o-- "1" IPaginateDataUtility
+GetAllAdminActivityLogQueryHandler "1" o-- "1" IMapper
+GetAllAdminActivityLogQueryHandler "1" o-- "1" GrpcUserClient
+
+GetAllAdminActivityLogQueryHandler "1" -- "1" PaginatedAdminActivityLogListResponse
+GetAllAdminActivityLogQueryHandler "1" -- "1..*" AdminActivityLogResponse
+GetAllAdminActivityLogQueryHandler "1" -- "1..*" Result
+GetAllAdminActivityLogQueryHandler "1" -- "1" GrpcGetSimpleUsersRequest
+
+@enduml

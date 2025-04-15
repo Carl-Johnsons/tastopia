@@ -1,0 +1,76 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +UserReportComment(userReportCommentDTO : UserReportCommentDTO): async Task<IActionResult>
+}
+
+class UserReportCommentCommand {
+    +ReporterId: Guid
+    +CommentId: Guid
+    +ReasonCodes : List<string>
+    +AdditionalDetails: string
+}
+
+class UserReportCommentCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +UserReportCommentCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork)
+    +Handle(request : UserReportCommentCommand, cancellationToken : CancellationToken): async Task<Result<UserReportCommentResponse>> 
+}
+
+class UserReportCommentDTO{
+    +CommentId: Guid
+    +ReasonCodes : List<string>
+    +AdditionalDetails: string
+}
+
+class UserReportCommentResponse{
+    +UserReportComment: UserReportComment
+    +IsRemoved: bool
+}
+
+UserReportCommentResponse "1" o-- "1" UserReportComment
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" UserReportCommentDTO
+RecipeController "1"--"1" UserReportCommentCommand
+
+UserReportCommentCommand ..|> "IRequest<TResponse>"
+
+UserReportCommentCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+UserReportCommentCommandHandler "1"--"1" UserReportCommentCommand
+UserReportCommentCommandHandler "1"--"1" UserReportCommentResponse
+UserReportCommentCommandHandler "1"--"1" Result
+UserReportCommentCommandHandler "1" o-- "1" IUnitOfWork
+UserReportCommentCommandHandler "1" o-- "1" IApplicationDbContext
+UserReportCommentCommandHandler "1"--"1..*" RecipeError
+
+Error "1..*" --o "1" RecipeError
+
+@enduml

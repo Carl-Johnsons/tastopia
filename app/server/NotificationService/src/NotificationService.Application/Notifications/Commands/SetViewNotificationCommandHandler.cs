@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using NotificationService.Domain.Errors;
 namespace NotificationService.Application.Notifications.Commands;
 

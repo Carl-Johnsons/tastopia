@@ -1,0 +1,76 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +GetTagDetail(adminGetTagDetailDTO : AdminGetTagDetailDTO): async Task<IActionResult>
+}
+
+class GetTagDetailQuery {
+    +TagId : Guid
+}
+
+class GetTagDetailQueryHandler {
+    -_context : IApplicationDbContext
+    +GetTagDetailQueryHandler(context : IApplicationDbContext)
+    +Handle(request: GetTagDetailQuery, cancellationToken: CancellationToken) : Task<Result<TagResponse>>
+}
+
+class AdminGetTagDetailDTO {
+    +TagId : Guid
+}
+
+class TagResponse{
+    +TagId : Guid
+    +Code : string
+    +En : string
+    +Vi : string
+    +Category : string
+    +Status : string
+    +ImageUrl : string
+    +CreatedAt : DateTime
+}
+
+class TagError {
+    {static} +NotFound: Error
+    {static} +AddTagFail: Error
+    {static} +DeleteTagFail: Error
+    {static} +UpdateTagFail: Error
+    {static} +NullParameter: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyExist: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" AdminGetTagDetailDTO
+AdminController "1"--"1" GetTagDetailQuery
+
+GetTagDetailQuery ..|> "IRequest<TResponse>"
+
+GetTagDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetTagDetailQueryHandler "1" --"1" GetTagDetailQuery
+GetTagDetailQueryHandler "1" o--"1" IApplicationDbContext
+
+GetTagDetailQueryHandler "1" --"1" Result
+GetTagDetailQueryHandler "1" --"1..*" TagResponse
+GetTagDetailQueryHandler "1" --"1..*" TagError
+
+Error "1..*" --o "1" TagError
+
+@enduml

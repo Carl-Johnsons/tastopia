@@ -1,0 +1,135 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+!include doc/SDS/CommonClassDiagram/ConsulRegistryService.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml 
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+remove IApplicationDbContext
+remove ApplicationDbContext
+remove Permission
+remove Group
+remove RoleGroupPermission
+remove IDisposable
+remove DbSet<T>
+remove IdentityUserLogin<T>
+remove IdentityRole
+remove DbContext
+remove IDbContext
+remove BaseEntity
+remove IdentityDbContext<ApplicationAccount>
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AccountController {
+    +RegisterAccount(method: string, dto: RegisterAccountDTO): async Task<IActionResult>
+}
+
+class RegisterAccountCommand {
+    +Identifier: string
+    +FullName: string
+    +Password: string
+    +Method: AccountMethod
+}
+
+class RegisterAccountCommandHandler {
+    -_userManager: UserManager<ApplicationAccount>
+    -_grpcUserClient: GrpcUserClient
+    -_serviceBus: IServiceBus
+    -_consulRegistryService: IConsulRegistryService
+    +RegisterAccountCommandHandler(userManager: UserManager<ApplicationAccount>, serviceBus: IServiceBus, grpcUserClient: GrpcUserClient, consulRegistryService: IConsulRegistryService)
+    +Handle(request: RegisterAccountCommand, cancellationToken: CancellationToken): async Task<Result<TokenResponse>>
+    -RegisterByEmail(request: RegisterAccountCommand, cancellationToken: CancellationToken): async Task<Result<TokenResponse>>
+    -RegisterByPhone(request: RegisterAccountCommand, cancellationToken: CancellationToken): async Task<Result<TokenResponse>>
+    -GenerateUsername(fullName: string): string
+    -RequestTokenAsync(username: string, password: string): async Task<TokenResponse>
+}
+
+class AccountError {
+    {static} +NotFound: Error
+    {static} +CreateAccountFailed: Error
+    {static} +EmailAlreadyExisted: Error
+    {static} +PhoneAlreadyExisted: Error
+}
+
+class OTPUtility {
+    -BASE_LENGTH: int
+    {static} +GenerateNumericOTP(): string
+    {static} +GenerateNumericOTP(length: int): string
+}
+
+enum AccountMethod {
+    Phone
+    Email
+    Username
+    Google
+}
+
+' =========== DTO class ===========
+
+class RegisterAccountDTO{
+    +Identifier: string
+    +FullName: string
+    +Password: string
+}
+
+' =========== Microservice class ===========
+together {
+    class UserRegisterEvent #Cyan;line:black;text:black
+    class GrpcCreateUserRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+class IdentityUser #black;line:white;text:white
+class TokenResponse #black;line:white;text:white
+class "UserManager<TUser>" #black;line:white;text:white
+class HttpClient #black;line:white;text:white
+class DiscoveryDocumentRequest #black;line:white;text:white
+class DiscoveryPolicy #black;line:white;text:white
+class PasswordTokenRequest #black;line:white;text:white
+class Regex #black;line:white;text:white
+class Random #black;line:white;text:white
+class Env #black;line:white;text:white
+' =========== Library class ===========
+
+AccountController --|> BaseApiController
+AccountController "1" -- "1" RegisterAccountDTO
+AccountController "1" -- "1" RegisterAccountCommand
+RegisterAccountCommand "1" o-- "1" AccountMethod
+RegisterAccountCommand ..|> "IRequest<TResponse>"
+
+RegisterAccountCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+RegisterAccountCommandHandler "1" -- "1" RegisterAccountCommand
+RegisterAccountCommandHandler "1" o-- "1" IServiceBus
+RegisterAccountCommandHandler "1" o-- "1" "UserManager<TUser>"
+RegisterAccountCommandHandler "1" o-- "1" GrpcUserClient
+RegisterAccountCommandHandler "1" o-- "1" IConsulRegistryService
+
+RegisterAccountCommandHandler "1" -- "1..*" AccountError
+RegisterAccountCommandHandler "1" -- "1..*" ApplicationAccount
+RegisterAccountCommandHandler "1" -- "1" GrpcCreateUserRequest
+RegisterAccountCommandHandler "1" -- "1" HttpClient
+RegisterAccountCommandHandler "1" -- "1" DiscoveryDocumentRequest
+RegisterAccountCommandHandler "1" -- "1" DiscoveryPolicy
+RegisterAccountCommandHandler "1" -- "1" PasswordTokenRequest
+RegisterAccountCommandHandler "1" -- "1" Env
+RegisterAccountCommandHandler "1" -- "1" Regex
+RegisterAccountCommandHandler "1" -- "1" Random
+RegisterAccountCommandHandler "1" -- "1" UserRegisterEvent
+RegisterAccountCommandHandler "1" -- "1" OTPUtility
+RegisterAccountCommandHandler "1" -- "1..*" Result
+RegisterAccountCommandHandler "1" -- "1" TokenResponse
+
+Error "1..*" --o "1" AccountError
+
+@enduml

@@ -1,0 +1,85 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminMarkReportComplete(dto : ReportDTO): async Task<IActionResult>
+}
+
+class MarkReportCompleteCommand {
+    +CurrentAccountId : Guid
+    +ReportId : Guid
+    +ReportType : ReportType
+}
+
+class MarkReportCompleteCommandHandler {
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +MarkReportCompleteCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: MarkReportCompleteCommand, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class ReportDTO {
+    +ReportId : Guid
+    +ReportType : ReportType
+}
+
+class ReportError{
+    {static} +NotFound: Error
+    {static} +AlreadyMarkComplete: Error
+    {static} +AlreadyPending: Error
+}
+
+enum ReportType
+{
+    USER
+    RECIPE
+    COMMENT
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1" -- "1" ReportDTO
+AdminController "1" -- "1" MarkReportCompleteCommand
+ReportDTO "1" o-- "1" ReportType
+
+MarkReportCompleteCommand ..|> "IRequest<TResponse>"
+MarkReportCompleteCommand "1" o-- "1" ReportType
+
+MarkReportCompleteCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+MarkReportCompleteCommandHandler "1" -- "1" MarkReportCompleteCommand
+MarkReportCompleteCommandHandler "1" o-- "1" IApplicationDbContext
+MarkReportCompleteCommandHandler "1" o-- "1" IServiceBus
+MarkReportCompleteCommandHandler "1" o-- "1" IUnitOfWork
+
+MarkReportCompleteCommandHandler "1" -- "1" Result
+MarkReportCompleteCommandHandler "1" -- "1..*" CommonReportEntity
+MarkReportCompleteCommandHandler "1" -- "1..*" UserReportRecipe
+MarkReportCompleteCommandHandler "1" -- "1..*" UserReportComment
+MarkReportCompleteCommandHandler "1" -- "1..*" AddActivityLogEvent
+MarkReportCompleteCommandHandler "1" -- "1..*" ReportError
+
+Error "1..*" --o "1" ReportError
+
+@enduml

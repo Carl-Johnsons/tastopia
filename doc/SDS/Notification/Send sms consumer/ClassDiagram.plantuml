@@ -1,0 +1,43 @@
+@startuml ClassDiagram
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class SendSMSConsumer #Cyan;line:black;text:black {
+    -_smsService: ISMSService
+    +SendSMSConsumer(_smsService: ISMSService)
+    +Consume(context: ConsumeContext<SendSMSEvent>): Task
+}
+
+class SendSMSEvent #Cyan;line:black;text:black {
+    +PhoneTo: string
+    +Message: string
+}
+
+class HttpClient #black;line:White;text:White {
+}
+
+interface ISMSService #Cyan;line:black;text:black {
+    +SendSMS(phoneTo: string, message: string): Task
+}
+
+class SMSService #Cyan;line:black;text:black implements ISMSService {
+    -SPEEDSMS_DEVICE_ID: string
+    -SPEEDSMS_API_URL: string
+    -SPEEDSMS_API_TOKEN: string
+    +SMSService()
+    +SendSMS(phoneTo: string, message: string): Task
+}
+
+interface "IConsumer<T>" #black;line:white;text:white
+' =========== Library class ===========
+
+SendSMSConsumer ..|> "IConsumer<T>"
+SendSMSConsumer "1" o-- "1" ISMSService
+SendSMSConsumer "1" o-- "1" SendSMSEvent
+
+SMSService "1" o-- "1" HttpClient
+
+@enduml

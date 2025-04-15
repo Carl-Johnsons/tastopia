@@ -1,0 +1,110 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminGetUsers(paginatedDTO : PaginatedDTO): async Task<IActionResult>
+}
+
+class AdminGetUsersQuery {
+    +AccountId : Guid
+    +PaginatedDTO : PaginatedDTO
+}
+
+class AdminGetUsersQueryHandler {
+    -_context : IApplicationDbContext
+    -_grpcAccountClient: GrpcAccountClient 
+    -_paginateDataUtility: IPaginateDataUtility<AdminGetUserResponse, NumberedPaginatedMetadata> 
+    +AdminGetUsersQueryHandler(context : IApplicationDbContext, grpcAccountClient : GrpcAccountClient, paginateDataUtility : IPaginateDataUtility<AdminGetUserResponse, NumberedPaginatedMetadata>)
+    +Handle(request: AdminGetUsersQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminGetUserListResponse>>
+}
+
+class PaginatedAdminGetUserListResponse
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
+}
+
+PaginatedAdminGetUserListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
+    +CurrentPage: int
+    +TotalRow: int
+}
+
+class PaginatedDTO {
+    +Skip : int
+    +SortOrder : SortType
+    +SortBy : string
+    +Keyword : string
+    +Limit : int
+}
+
+class AdminGetUserResponse{
+    +AccountId : Guid
+    +DisplayName : string
+    +Dob : DateTime
+    +Address : string
+    +IsAccountActive : bool
+    +AccountUsername : string
+    +AccountEmail : string
+    +AccountPhoneNumber : string
+}
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+' =========== Microservice class ===========
+together {
+    class GrpcSearchAccountRequest #DarkViolet;line:white;text:white
+    class GrpcAccountIdListRequest #DarkViolet;line:white;text:white
+    class GrpcAccountClient #DarkViolet;line:white;text:white
+}
+PaginatedAdminGetUserListResponse "1" o-- "1" AdminGetUserResponse
+PaginatedAdminGetUserListResponse "1" o-- "1..*" NumberedPaginatedMetadata
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" PaginatedDTO
+AdminController "1"--"1" AdminGetUsersQuery
+
+AdminGetUsersQuery ..|> "IRequest<TResponse>"
+
+AdminGetUsersQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+AdminGetUsersQueryHandler "1" --"1" AdminGetUsersQuery
+AdminGetUsersQueryHandler "1" o--"1" IApplicationDbContext
+AdminGetUsersQueryHandler "1" o--"1" IPaginateDataUtility
+AdminGetUsersQueryHandler "1" o--"1" GrpcAccountClient
+AdminGetUsersQueryHandler "1" --"1" Result
+AdminGetUsersQueryHandler "1" --"1..*" GrpcSearchAccountRequest
+AdminGetUsersQueryHandler "1" --"1..*" GrpcAccountIdListRequest
+AdminGetUsersQueryHandler "1" --"1..*" PaginatedAdminGetUserListResponse
+AdminGetUsersQueryHandler "1" --"1..*" UserError
+
+Error "1..*" --o "1" UserError
+
+@enduml
