@@ -1,0 +1,50 @@
+@startuml Sequence
+title "Resend OTP Sequence diagram"
+
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<coordinator>>\nApiGateWay" as ApiGateway
+participant "<<service>>\nIdentityService" as IdentityService
+participant "<<coordinator>>\nRabbitmq"  as Rabbitmq
+database Postgresql
+
+User -> MobileUI++: 1. User click resend OTP button
+MobileUI -> ApiGateway++: 2. Request resend
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Verify Access Token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> IdentityService++: 4. Forward request
+IdentityService -> Postgresql++: 5. Get account data
+IdentityService <-- Postgresql--: 6. Return response
+
+alt if account is null
+  ApiGateway <-- IdentityService: 7A.1. Return not found error
+  MobileUI <-- ApiGateway: 7A.2. Forward response
+  User <-- MobileUI: 7A.3. Display error alert
+else
+  IdentityService -> Postgresql++: 8. Update account data
+  IdentityService <-- Postgresql--: 9. Return response
+  IdentityService -> Rabbitmq: 10. Publish "UserResendOTPEvent"\n message <<Async>>
+  activate Rabbitmq
+  ref over Rabbitmq: 11. User send OTP event
+  IdentityService -[hidden]-> Rabbitmq
+  deactivate Rabbitmq
+  destroy Rabbitmq
+
+  ApiGateway <-- IdentityService--: 12. Return success status code
+  MobileUI <-- ApiGateway--: 13. Forward response
+  User <-- MobileUI--: 14. Display alert\n resend OTP successfully
+end
+
+@enduml

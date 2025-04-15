@@ -1,0 +1,77 @@
+@startuml Sequence
+title "Admin create tag"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor Admin
+boundary WebsiteUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UploadFileService" as UploadFileService
+participant "<<service>>\n Cloudinary" as Cloudinary
+participant "<<coordinator>>\nRabbitmq" as Rabbitmq
+database MongoDB
+
+Admin -> WebsiteUI++: 1. Fill the create tag form and \n click Create button
+WebsiteUI -> ApiGateway++: 2. Admin create tag
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+alt Current user is not admin
+    WebsiteUI <-- ApiGateway: 4A. Return error message
+    Admin <-- WebsiteUI: 4A.1. Display error message
+else Current user is admin
+    ApiGateway -> RecipeService++: 4. Forward request
+    RecipeService -> UploadFileService++: 5. gRPC call to upload tag's images <<gRPC>>
+    UploadFileService -> Cloudinary++: 6. Upload image to cloudinary
+    UploadFileService <-- Cloudinary--: 7. Return response
+    alt Upload to cloudinary fail
+        RecipeService <-- UploadFileService: 8A. Return upload image fail error
+        ApiGateway <-- RecipeService: 8A.1. Return upload image fail error
+        WebsiteUI <-- ApiGateway: 8A.2. Forward response
+        Admin <-- WebsiteUI: 8A.3. Display upload image fail error
+    else Upload to cloudinary success 
+        RecipeService <-- UploadFileService--: 9. Return tag's image urls list <<gRPC>>
+        RecipeService -> MongoDB++: 10. Insert data
+        RecipeService <-- MongoDB--: 11. Return response
+        alt Add tag to database fail
+            RecipeService -> RecipeService: 12A. Roll back images
+            activate RecipeService
+            RecipeService -> Rabbitmq: 12A.1. Publish "DeleteMultipleImageEvent" \n message <<Async>>
+            deactivate RecipeService
+            activate Rabbitmq
+            Rabbitmq -> UploadFileService: 12A.2. Deliver "DeleteMultipleImageEvent"\n message
+            deactivate Rabbitmq
+            activate UploadFileService
+            UploadFileService -> Cloudinary++: 12A.3. Consume message and call \n cloudinary to delete images
+            UploadFileService <-- Cloudinary--: 12A.4. Return response
+            destroy UploadFileService
+            deactivate UploadFileService
+            ApiGateway <-- RecipeService: 12A.5. Return add tag fail error
+            WebsiteUI <-- ApiGateway: 12A.6. Forward response
+            Admin <-- WebsiteUI: 12A.7. Display add tag fail error.
+        else Add tag to database success
+            RecipeService -> Rabbitmq: 13. Publish "AddActivityLogCommand" event <<Async>>
+            activate Rabbitmq
+            ref over Rabbitmq: 14. Add activity log event
+            RecipeService -[hidden]-> Rabbitmq
+            deactivate Rabbitmq
+            destroy Rabbitmq
+            ApiGateway <-- RecipeService: 15. Return add tag success message
+            WebsiteUI <-- ApiGateway: 16. Forward response
+            Admin <-- WebsiteUI: 17. Display add tag success message
+        end alt 
+    end alt 
+end alt
+
+@enduml

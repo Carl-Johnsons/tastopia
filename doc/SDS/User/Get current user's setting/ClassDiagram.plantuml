@@ -4,8 +4,8 @@
 !include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 remove UserReport
@@ -28,17 +28,15 @@ together {
 }
 
 class GetUserSettingQueryHandler {
-    - _context : IApplicationDbContext
-    + GetUserSettingQueryHandler(IApplicationDbContext context)
-    +Handle(GetUserSettingQuery request, CancellationToken cancellationToken) : Task<Result<List<UserSetting>>>
+    -_context : IApplicationDbContext
+    +GetUserSettingQueryHandler(context : IApplicationDbContext)
+    +Handle(request : GetUserSettingQuery, cancellationToken : CancellationToken) : Task<Result<List<UserSetting>>>
 }
 
 class UserError {
     {static} +NotFound: Error
     {static} +NullParameters: Error
 }
-
-
 
 ' =========== Library class ===========
 interface "IRequest<TResponse>" #black;line:white;text:white
@@ -48,15 +46,15 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 
 SettingController --|> BaseApiController
 SettingController "1"--"1" GetUserSettingQuery
-GetUserSettingQuery --|> "IRequest<TResponse>"
+GetUserSettingQuery ..|> "IRequest<TResponse>"
 
-GetUserSettingQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetUserSettingQueryHandler "1" o--"1" GetUserSettingQuery
-GetUserSettingQueryHandler "1" o--"1" UserError
+GetUserSettingQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetUserSettingQueryHandler "1" --"1" GetUserSettingQuery
 GetUserSettingQueryHandler "1" o--"1" IApplicationDbContext
-GetUserSettingQueryHandler "1" o--"1" UserSetting
-GetUserSettingQueryHandler "1" o--"1" Result
+GetUserSettingQueryHandler "1" --"1..*" UserError
+GetUserSettingQueryHandler "1" --"1..*" UserSetting
+GetUserSettingQueryHandler "1" --"1" Result
 
-Error "1" --"1" UserError
+Error "1..*" --o "1" UserError
 
 @enduml

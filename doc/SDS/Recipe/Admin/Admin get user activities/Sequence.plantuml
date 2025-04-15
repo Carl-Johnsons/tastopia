@@ -1,0 +1,51 @@
+@startuml Sequence
+title "Admin get user's activities"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor Admin
+boundary WebsiteUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UserService" as UserService
+database Postgresql
+database MongoDB
+
+Admin -> WebsiteUI++: 1. Admin enter user's profile screen
+WebsiteUI -> ApiGateway++: 2. Admin get user's activities
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+alt Current user is not admin
+    WebsiteUI <-- ApiGateway: 4A. Return error message
+    Admin <-- WebsiteUI: 4A.1. Display error message
+else Current user is admin
+ApiGateway -> RecipeService++: 5. Forward request
+RecipeService -> MongoDB++: 6. Query data
+RecipeService <-- MongoDB--: 7. Return response
+  alt Activities list is empty
+      ApiGateway <-- RecipeService: 8A. Return empty list
+      WebsiteUI <-- ApiGateway: 8A.1. Foward response
+      Admin <-- WebsiteUI: 8A.2. Display empty list
+  else Activities list is not empty
+      RecipeService -> UserService++: 9. gRPC call to get user's \n information list <<gRPC>>
+      UserService -> Postgresql++: 10. Query data
+      UserService <-- Postgresql--: 11. Return response
+      RecipeService <-- UserService--: 12. Return user's information list <<gRPC>>
+      ApiGateway <-- RecipeService--: 13. Return activities list
+      WebsiteUI <-- ApiGateway--: 14. Forward response
+      Admin <-- WebsiteUI--: 15. Display activities list
+  end alt
+end alt
+
+@enduml

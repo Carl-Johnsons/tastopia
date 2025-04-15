@@ -1,5 +1,5 @@
 @startuml Sequence
-title "Notify User Consumer"
+title "Notify User Consumer diagram"
 
 ' Style section
 <style>
@@ -13,6 +13,8 @@ title "Notify User Consumer"
 participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
 participant "<<service>>\n NotificationService" as NotificationService
 participant "<<service>>\n UserService" as UserService
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n SignalRService" as SignalRService
 participant "<<service>>\n PushNotificationWorker" as PushNotificationWorker
 participant "<<service>>\n ExpoPushService" as ExpoPushService
 
@@ -20,38 +22,47 @@ database MongoDB
 database Postgresql
 
 activate Rabbitmq
-Rabbitmq -> NotificationService: Deliver "NotifyUserEvent" message
+Rabbitmq -> NotificationService: 1. Deliver "NotifyUserEvent" message
 deactivate Rabbitmq
 activate NotificationService
-NotificationService -> MongoDB++: Query data
-NotificationService <-- MongoDB--: Return response
+NotificationService -> MongoDB++: 2. Query notification template data
+NotificationService <-- MongoDB--: 3. Return response
 
-alt if expo push token count is 0
+NotificationService -> MongoDB++: 4. Insert notification
+NotificationService <-- MongoDB--: 5. Return response
 
-else
-  NotificationService -> UserService++: request GetSimpleUserAsync <<gRPC>>
-  UserService -> Postgresql++: Query data
-  UserService <-- Postgresql--: Return response
-  NotificationService <-- UserService--: return response <<gRPC>>
-  alt GetSimpleUserAsync response is null
-    
-  else
-    NotificationService -> UserService++: request GetUserSettingAsync <<gRPC>>
-    UserService -> Postgresql++: Query data
-    UserService <-- Postgresql--: Return response
-    NotificationService <-- UserService--: return response <<gRPC>>
-    NotificationService -> Rabbitmq: Publish "PushNotificationEvent" message <<Async>>
-    deactivate NotificationService
-    activate Rabbitmq
-    Rabbitmq -> PushNotificationWorker: Deliver "PushNotificationEvent" message
-    deactivate Rabbitmq
-    activate PushNotificationWorker
-    PushNotificationWorker -> ExpoPushService: Push the notification message\n to expo push service
-    deactivate PushNotificationWorker
-    activate ExpoPushService
-  end
-end
+NotificationService -> SignalRService++: 6. Invoke "InvalidateNotification" action
+deactivate SignalRService
+destroy SignalRService
+NotificationService -> UserService++: 7. Call GetSimpleUserAsync <<gRPC>>
+UserService -> Postgresql++: 8. Query data
+UserService <-- Postgresql--: 9. Return response
+NotificationService <-- UserService--: 10. Return response <<gRPC>>
+
+NotificationService -> RecipeService++ : 11. Call GetSimpleRecipesAsync <<gRPC>> 
+RecipeService -> MongoDB++ : 12. Query data 
+RecipeService <-- MongoDB-- : 13. Return response
+NotificationService <-- RecipeService-- : 14. return response <<gRPC>> 
+
+NotificationService -> RecipeService++ : 15. Call GetSimpleCommentsAsync <<gRPC>> 
+RecipeService -> MongoDB++ : 16. Query data 
+RecipeService <-- MongoDB-- : 17. Return response
+NotificationService <-- RecipeService-- : 18. return response <<gRPC>> 
+
+NotificationService -> UserService++: 19. Call GetUserSettingAsync <<gRPC>>
+UserService -> Postgresql++: 20. Query data
+UserService <-- Postgresql--: 21. Return response
+NotificationService <-- UserService--: 22. Return response <<gRPC>>
+
+NotificationService -> Rabbitmq: 23. Publish "PushNotificationEvent" message <<Async>>
+deactivate NotificationService
+activate Rabbitmq
+Rabbitmq -> PushNotificationWorker: 24. Deliver "PushNotificationEvent" message
+deactivate Rabbitmq
+activate PushNotificationWorker
+PushNotificationWorker -> ExpoPushService: 25. Push the notification message\n to expo push service
+deactivate PushNotificationWorker
+activate ExpoPushService
 destroy ExpoPushService
-
 
 @enduml

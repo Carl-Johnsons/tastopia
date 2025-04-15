@@ -1,0 +1,80 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AccountController {
+    +CheckForgotPassword(method: string, dto: CheckForgotPasswordDTO): async Task<IActionResult>
+}
+
+class CheckForgotPasswordOTPQuery {
+    +Identifier: string
+    +OTP: string
+    +Method: AccountMethod 
+}
+
+class CheckForgotPasswordOTPQueryHandler {
+    -_userManager: UserManager<ApplicationAccount> 
+    +CheckForgotPasswordOTPQueryHandler(userManager: UserManager<ApplicationAccount>)
+    +Handle(request: CheckForgotPasswordOTPQuery, cancellationToken: CancellationToken): async Task<Result>
+}
+
+class AccountError {
+    {static} +NotFound: Error
+    {static} +InvalidAccountMethod: Error
+    {static} +InvalidOTP: Error
+    {static} +OTPExpired: Error
+}
+
+enum AccountMethod {
+    Phone
+    Email
+    Username
+    Google
+}
+
+class CheckForgotPasswordDTO {
+    OTP: string
+    Identifier: string
+}
+
+!include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml 
+remove IDisposable
+remove DbSet<T>
+remove IdentityUserLogin<T>
+remove IDbContext
+remove DbContext
+remove IApplicationDbContext
+remove ApplicationDbContext
+remove IdentityDbContext<ApplicationAccount>
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+class "UserManager<TUser>" #black;line:white;text:white
+' =========== Library class ===========
+
+AccountController --|> BaseApiController
+AccountController "1" -- "1" CheckForgotPasswordOTPQuery
+AccountController "1" -- "1" CheckForgotPasswordDTO
+CheckForgotPasswordOTPQuery "1" o--"1" AccountMethod
+CheckForgotPasswordOTPQuery ..|> "IRequest<TResponse>"
+
+CheckForgotPasswordOTPQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+CheckForgotPasswordOTPQueryHandler "1" --"1" CheckForgotPasswordOTPQuery
+CheckForgotPasswordOTPQueryHandler "1" o--"1" "UserManager<TUser>"
+
+CheckForgotPasswordOTPQueryHandler "1" --- "1..*" ApplicationAccount
+CheckForgotPasswordOTPQueryHandler "1" -- "1..*" AccountError
+CheckForgotPasswordOTPQueryHandler "1" -- "1..*" Result
+Error "1..*" --o "1" AccountError
+
+@enduml

@@ -1,0 +1,154 @@
+@startuml GrpcRecipeSerciveClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+
+hide circle
+
+class RecipeServiceConsumer #Green;line:white;text:white{
+    #_sender: ISender
+    +RequestAddTagsConsumer(context: ConsumeContext<RequestAddTagsEvent>): async Task
+    +UpdateRecipeIsActiveConsumer(context: ConsumeContext<UpdateRecipeIsActiveEvent>): async Task
+    +UpdateRecipeTagsConsumer(context: ConsumeContext<UpdateRecipeTagsEvent>): async Task
+}
+
+class RequestAddTagsCommand {
+    +Values: List<string>
+    +RecipeId: Guid
+}
+
+class UpdateRecipeIsActiveCommand {
+    +RecipeId: Guid
+    +IsActive: bool
+}
+
+class UpdateRecipeTagsCommand {
+    +RecipeId: Guid
+    +TagCodes: List<string>
+}
+
+class RequestAddTagsCommandHandler{
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +RequestAddTagsCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
+    +Handle(request: RequestAddTagsCommand): async Task<Result>
+}
+
+class UpdateRecipeIsActiveCommandHandler{
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +UpdateRecipeIsActiveCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
+    +Handle(request: UpdateRecipeIsActiveCommand): async Task<Result>
+}
+
+class UpdateRecipeTagsCommandHandler{
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +UpdateRecipeTagsCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
+    +Handle(request: UpdateRecipeTagsCommand): async Task<Result>
+}
+
+' Event DTO
+class RequestAddTagsEvent #Green;line:white;text:white{
+    +Requests: List<string>
+    +RecipeId: Guid 
+}
+
+class UpdateRecipeIsActiveEvent #Green;line:white;text:white{
+    +RecipeId: Guid
+    +IsActive: bool
+}
+
+class UpdateRecipeTagsEvent #Green;line:white;text:white{
+    +RecipeId: Guid
+    +TagCodes: List<string>
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+    {static} +AlreadyExist: Error
+    {static} +VoteFail: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyActive: Error
+    {static} +AddRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+}
+
+class TagError {
+    {static} +NotFound: Error
+    {static} +AddTagFail: Error
+    {static} +DeleteTagFail: Error
+    {static} +UpdateTagFail: Error
+    {static} +NullParameter: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyExist: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+RecipeServiceConsumer "1" -- "1" RequestAddTagsCommand
+RecipeServiceConsumer "1" -- "1..*" RequestAddTagsEvent
+
+RecipeServiceConsumer "1" -- "1" UpdateRecipeIsActiveCommand
+RecipeServiceConsumer "1" -- "1..*" UpdateRecipeIsActiveEvent
+
+RecipeServiceConsumer "1" -- "1" UpdateRecipeTagsCommand
+RecipeServiceConsumer "1" -- "1..*" UpdateRecipeTagsEvent
+
+' Command and query
+RequestAddTagsCommand ..|> "IRequest<TResponse>"
+UpdateRecipeIsActiveCommand ..|> "IRequest<TResponse>"
+UpdateRecipeTagsCommand ..|> "IRequest<TResponse>"
+
+'Handler
+RequestAddTagsCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+UpdateRecipeIsActiveCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+UpdateRecipeTagsCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+
+
+RequestAddTagsCommandHandler "1"--"1" RequestAddTagsCommand
+RequestAddTagsCommandHandler "1"----"1..*" Result
+RequestAddTagsCommandHandler "1" o---- "1" IApplicationDbContext
+RequestAddTagsCommandHandler "1" o---- "1" IUnitOfWork
+RequestAddTagsCommandHandler "1 "-- "1..*" TagError
+
+UpdateRecipeIsActiveCommandHandler "1"--"1" UpdateRecipeIsActiveCommand
+UpdateRecipeIsActiveCommandHandler "1"----"1..*" Result
+UpdateRecipeIsActiveCommandHandler "1" o---- "1" IApplicationDbContext
+UpdateRecipeIsActiveCommandHandler "1" o---- "1" IUnitOfWork
+UpdateRecipeIsActiveCommandHandler "1 "-- "1..*" RecipeError
+
+UpdateRecipeTagsCommandHandler "1"--"1" UpdateRecipeTagsCommand
+UpdateRecipeTagsCommandHandler "1"----"1..*" Result
+UpdateRecipeTagsCommandHandler "1" o---- "1" IApplicationDbContext
+UpdateRecipeTagsCommandHandler "1" o---- "1" IUnitOfWork
+UpdateRecipeTagsCommandHandler "1 "-- "1..*" RecipeError
+
+
+' =================STYLE=================
+UpdateRecipeIsActiveEvent -[hidden]up- RecipeServiceConsumer
+RequestAddTagsEvent -[hidden]up- RecipeServiceConsumer
+UpdateRecipeTagsEvent -[hidden]up- RecipeServiceConsumer
+
+RecipeServiceConsumer -[hidden]down-|> RequestAddTagsCommand
+RecipeServiceConsumer -[hidden]down-|> UpdateRecipeIsActiveCommand
+RecipeServiceConsumer -[hidden]down-|> UpdateRecipeTagsCommand
+
+RequestAddTagsCommand -[hidden]down-|> RequestAddTagsCommandHandler
+UpdateRecipeIsActiveCommand -[hidden]down-|> UpdateRecipeIsActiveCommandHandler
+UpdateRecipeTagsCommand -[hidden]down-|> UpdateRecipeTagsCommandHandler
+
+Error "1..*" --o "1" RecipeError
+Error "1..*" --o "1" TagError
+@enduml

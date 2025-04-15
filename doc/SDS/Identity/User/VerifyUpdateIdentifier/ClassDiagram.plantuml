@@ -1,0 +1,86 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AccountController {
+    +VerifyUpdateIdentifier(method: string, dto: VerifyUpdateIdentifierDTO): async Task<IActionResult>
+}
+
+class VerifyUpdateIdentifierCommand {
+    +AccountId: Guid
+    +Identifier: string
+    +OTP: string
+    +Method: AccountMethod
+}
+
+class VerifyUpdateIdentifierCommandHandler {
+    - _userManager : UserManager<ApplicationAccount>
+    + VerifyUpdateIdentifierCommandHandler(userManager: UserManager<ApplicationAccount>)
+    + Handle(request: VerifyUpdateIdentifierCommand, cancellationToken: CancellationToken) : Task<Result>
+    - VerifyUpdateEmail(request: VerifyUpdateIdentifierCommand, cancellationToken: CancellationToken) : Task<Result>
+    - VerifyUpdatePhone(request: VerifyUpdateIdentifierCommand, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class AccountError {
+    {static} +NotFound: Error
+    {static} +InvalidAccountMethod: Error
+    {static} +InvalidOTP: Error
+    {static} +OTPExpired: Error
+    {static} +VerifyFailed: Error
+}
+
+enum AccountMethod {
+    Phone
+    Email
+    Username
+    Google
+}
+
+!include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml 
+remove IDisposable
+remove DbSet<T>
+remove IdentityUserLogin<T>
+remove DbContext
+remove IDbContext
+remove IApplicationDbContext
+remove ApplicationDbContext
+remove IdentityDbContext<ApplicationAccount>
+
+' =========== DTO class ===========
+class VerifyUpdateIdentifierDTO {
+    +OTP: string
+    +Identifier: string
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+class "UserManager<TUser>" #black;line:white;text:white
+' =========== Library class ===========
+
+AccountController --|> BaseApiController
+AccountController "1" -- "1" VerifyUpdateIdentifierDTO
+AccountController "1" -- "1" VerifyUpdateIdentifierCommand
+VerifyUpdateIdentifierCommand "1" o-- "1" AccountMethod
+VerifyUpdateIdentifierCommand ..|> "IRequest<TResponse>"
+
+VerifyUpdateIdentifierCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+VerifyUpdateIdentifierCommandHandler "1" -- "1" VerifyUpdateIdentifierCommand
+VerifyUpdateIdentifierCommandHandler "1" o-- "1" "UserManager<TUser>"
+
+VerifyUpdateIdentifierCommandHandler "1" --- "1..*" ApplicationAccount
+VerifyUpdateIdentifierCommandHandler "1" -- "1..*" AccountError
+VerifyUpdateIdentifierCommandHandler "1" -- "1..*" Result
+Error "1..*" --o "1" AccountError
+
+@enduml

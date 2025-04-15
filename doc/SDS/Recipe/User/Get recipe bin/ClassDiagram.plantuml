@@ -1,0 +1,105 @@
+@startuml GetRecipeCommentClassDiagram
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +GetRecipeBins(getUserRecipeBinsDTO : GetUserRecipeBinsDTO): async Task<IActionResult>
+}
+
+class GetUserRecipeBinsQuery {
+    +AccountId: Guid
+    +Skip: int
+}
+
+class GetUserRecipeBinsQueryHandler {
+    -_context: IApplicationDbContext
+    -_mapper: IMapper
+    -_grpcUserClient: GrpcUserClient
+    -_paginateDataUtility: IPaginateDataUtility
+    +GetUserRecipeBinsQueryHandler(context : IApplicationDbContext, mapper : IMapper, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility)
+    +Handle(request : GetUserRecipeBinsQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedRecipeFeedsListResponse>> 
+}
+
+class PaginatedRecipeFeedsListResponse{
+}
+class BasePaginatedResponse{
+    +PaginatedData : IEnumerable<Type>
+    +Metadata: MetadataType
+}
+PaginatedRecipeFeedsListResponse --|> BasePaginatedResponse
+
+class RecipeFeedResponse {
+    +Id: Guid
+    +AuthorId: Guid
+    +RecipeImgUrl: string
+    +Title: string
+    +Description: string
+    +AuthorDisplayName: string
+    +AuthorAvtUrl: string
+    +VoteDiff: int
+    +NumberOfComment: int
+    +Vote: string
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
+
+class GetUserRecipeBinsDTO{
+    +Skip: int
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+together {
+    class IMapper #Black;line:white;text:white
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+PaginatedRecipeFeedsListResponse "1" o-- "1..*" RecipeFeedResponse
+PaginatedRecipeFeedsListResponse "1" o-- "1" AdvancePaginatedMetadata
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" GetUserRecipeBinsDTO
+RecipeController "1"--"1" GetUserRecipeBinsQuery
+
+GetUserRecipeBinsQuery ..|> "IRequest<TResponse>"
+
+GetUserRecipeBinsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetUserRecipeBinsQueryHandler "1"--"1" GetUserRecipeBinsQuery
+GetUserRecipeBinsQueryHandler "1"--"1" Result
+GetUserRecipeBinsQueryHandler "1"--"1" PaginatedRecipeFeedsListResponse
+GetUserRecipeBinsQueryHandler "1"--"1" GrpcGetSimpleUsersRequest
+GetUserRecipeBinsQueryHandler "1" o-- "1" IApplicationDbContext
+GetUserRecipeBinsQueryHandler "1" o-- "1" IMapper
+GetUserRecipeBinsQueryHandler "1" o-- "1" IPaginateDataUtility
+GetUserRecipeBinsQueryHandler "1" o-- "1" GrpcUserClient
+GetUserRecipeBinsQueryHandler "1"--"1..*" RecipeError
+
+Error "1..*" --o "1" RecipeError
+@enduml

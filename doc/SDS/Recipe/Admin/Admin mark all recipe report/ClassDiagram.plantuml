@@ -1,0 +1,75 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminMarkAllRecipeReport(markAllRecipeReportDTO : MarkAllRecipeReportDTO): async Task<IActionResult>
+}
+
+class MarkAllRecipeReportCommand {
+    +RecipeId : Guid
+    +IsReopened : bool
+    +CurrentAccountId : Guid
+}
+
+class MarkAllRecipeReportCommandHandler {
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +MarkAllRecipeReportCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: MarkAllRecipeReportCommand, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class MarkAllRecipeReportDTO {
+    +RecipeId : Guid
+    +IsReopened : bool
+}
+
+class ReportError {
+    {static} +NotFound: Error
+    {static} +NullParameter: Error
+    {static} +AlreadyMarkComplete: Error
+    {static} +AlreadyPending: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" MarkAllRecipeReportDTO
+AdminController "1"--"1" MarkAllRecipeReportCommand
+
+MarkAllRecipeReportCommand ..|> "IRequest<TResponse>"
+
+MarkAllRecipeReportCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+MarkAllRecipeReportCommandHandler "1" --"1" MarkAllRecipeReportCommand
+MarkAllRecipeReportCommandHandler "1" o--"1" IApplicationDbContext
+MarkAllRecipeReportCommandHandler "1" o--"1" IServiceBus
+MarkAllRecipeReportCommandHandler "1" o--"1" IUnitOfWork
+MarkAllRecipeReportCommandHandler "1" --"1" Result
+MarkAllRecipeReportCommandHandler "1" --"1..*" AddActivityLogEvent
+MarkAllRecipeReportCommandHandler "1" --"1..*" UserReportRecipe
+MarkAllRecipeReportCommandHandler "1" --"1..*" ReportError
+
+Error "1..*" --o "1" ReportError
+
+@enduml

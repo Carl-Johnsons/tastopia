@@ -1,0 +1,110 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +GetRecipeFeedByAccountId(getRecipeFeedsByAuthorIdDTO : GetRecipeFeedsByAuthorIdDTO): async Task<IActionResult>
+}
+
+class GetRecipeFeedsByAuthorIdQuery {
+    +Skip: int
+    +AuthorId: Guid
+    +AccountId: Guid
+}
+
+class GetRecipeFeedsByAuthorIdQueryHandler {
+    -_context: IApplicationDbContext
+    -_mapper: IMapper
+    -_grpcUserClient: GrpcUserClient
+    -_paginateDataUtility: IPaginateDataUtility
+    +GetRecipeFeedsByAuthorIdQueryHandler(context : IApplicationDbContext, mapper : IMapper, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility)
+    +Handle(request : GetRecipeFeedsByAuthorIdQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedRecipeFeedsListResponse>> 
+}
+
+class GetRecipeFeedsByAuthorIdDTO {
+    +Skip: int
+    +AuthorId: Guid
+}
+
+class PaginatedRecipeFeedsListResponse
+
+class "BasePaginatedResponse<Type, MetadataType>" {
+    +PaginatedData : IEnumerable<Type>
+    +Metadata: MetadataType
+}
+PaginatedRecipeFeedsListResponse --|> "BasePaginatedResponse<Type, MetadataType>"
+
+class RecipeFeedResponse {
+    +Id: Guid
+    +AuthorId: Guid
+    +RecipeImgUrl: string
+    +Title: string
+    +Description: string
+    +AuthorDisplayName: string
+    +AuthorAvtUrl: string
+    +VoteDiff: int
+    +NumberOfComment: int
+    +Vote: string
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+
+' =========== Microservice class ===========
+together {
+    class IMapper #Black;line:white;text:white
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+PaginatedRecipeFeedsListResponse "1" o-- "1..*" RecipeFeedResponse
+PaginatedRecipeFeedsListResponse "1" o-- "1" AdvancePaginatedMetadata
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" GetRecipeFeedsByAuthorIdDTO 
+RecipeController "1"--"1" GetRecipeFeedsByAuthorIdQuery
+
+GetRecipeFeedsByAuthorIdQuery ..|> "IRequest<TResponse>"
+
+GetRecipeFeedsByAuthorIdQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetRecipeFeedsByAuthorIdQueryHandler "1"--"1" GetRecipeFeedsByAuthorIdQuery
+GetRecipeFeedsByAuthorIdQueryHandler "1"--"1" Result
+GetRecipeFeedsByAuthorIdQueryHandler "1"--"1" PaginatedRecipeFeedsListResponse
+GetRecipeFeedsByAuthorIdQueryHandler "1" o-- "1" IUnitOfWork
+GetRecipeFeedsByAuthorIdQueryHandler "1" o-- "1" IApplicationDbContext
+GetRecipeFeedsByAuthorIdQueryHandler "1" o-- "1" IMapper
+GetRecipeFeedsByAuthorIdQueryHandler "1" o-- "1" GrpcUserClient
+GetRecipeFeedsByAuthorIdQueryHandler "1" o-- "1" IPaginateDataUtility
+GetRecipeFeedsByAuthorIdQueryHandler "1"--"1..*" RecipeError
+
+Error "1..*" --o "1" RecipeError
+@enduml

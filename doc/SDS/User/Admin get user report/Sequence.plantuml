@@ -1,0 +1,45 @@
+@startuml Sequence
+title "Admin get user reports"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor Admin
+boundary WebsiteUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n UserService" as UserService
+participant "<<service>>\n IdentityService" as IdentityService
+database Postgresql
+
+Admin -> WebsiteUI ++: 1. Click on user report section\n in Administer report on navigation bar
+WebsiteUI -> ApiGateway ++: 2. Admin get users
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+alt Current user is not admin
+    WebsiteUI <-- ApiGateway: 4A. Return error message
+    Admin <-- WebsiteUI: 4A.1. Display error message
+else Current user is admin
+    ApiGateway -> UserService ++: 5. Forward request
+    UserService -> Postgresql ++: 6. Query data
+    UserService <-- Postgresql--: 7. Return response
+    alt User reports list is empty
+        ApiGateway <-- UserService: 8A. Return empty list
+        WebsiteUI <-- ApiGateway: 8A.1. Foward response
+        Admin <-- WebsiteUI: 8A.2. Display empty list
+    else User reports list is not empty
+        ApiGateway <-- UserService--: 9. Return user reports list
+        WebsiteUI <-- ApiGateway--: 10. Forward response
+        Admin <-- WebsiteUI--: 11. Display user reports list
+    end alt
+end alt
+
+@enduml

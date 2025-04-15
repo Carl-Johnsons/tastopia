@@ -1,0 +1,68 @@
+@startuml Sequence
+title "Admin disable comment"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor Admin
+boundary WebsiteUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<coordinator>>\nRabbitmq" as Rabbitmq
+database MongoDB
+
+Admin -> WebsiteUI++: 1. Admin click disable button in \n comment table
+WebsiteUI -> ApiGateway++: 2. Admin disable comment
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+alt Current user is not admin
+    WebsiteUI <-- ApiGateway: 4A. Return error message
+    Admin <-- WebsiteUI: 4A.1. Display error message
+else Current user is admin
+ApiGateway -> RecipeService++: 5. Forward request
+RecipeService -> MongoDB++: 6. Query data
+RecipeService <-- MongoDB--: 7. Return response
+  alt Comment is not exist
+      ApiGateway <-- RecipeService: 8A. Return error message
+      WebsiteUI <-- ApiGateway: 8A.1. Foward response
+      Admin <-- WebsiteUI: 8A.2. Display not found error message
+  else Comment is exist
+      alt Comment status is inactive
+          ApiGateway <-- RecipeService: 9B. Return error message
+          WebsiteUI <-- ApiGateway: 9B.1. Foward response
+          Admin <-- WebsiteUI: 9B.2. Display error message
+      else Comment status is active
+          RecipeService -> MongoDB++: 10. Update data
+          RecipeService <-- MongoDB--: 11. Return response
+          ApiGateway <-- RecipeService: 12. Return recipe detail
+          WebsiteUI <-- ApiGateway--: 13. Forward response
+          Admin <-- WebsiteUI--: 14. Display success message
+          RecipeService -> Rabbitmq: 15. Publish "AddActivityLogCommand" event <<Async>>
+          activate Rabbitmq
+          ref over Rabbitmq: 16. Add activity log event
+          RecipeService -[hidden]-> Rabbitmq
+          deactivate Rabbitmq
+          destroy Rabbitmq
+
+          RecipeService -> Rabbitmq: 17. Publish "NotifyUserEvent" event <<Async>>
+          deactivate RecipeService
+          activate Rabbitmq
+          ref over Rabbitmq: 18. NotifyUserConsumer
+          RecipeService -[hidden]-> Rabbitmq
+          deactivate Rabbitmq
+          destroy Rabbitmq
+      end alt
+  end alt
+end alt
+
+@enduml

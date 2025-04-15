@@ -1,0 +1,78 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +GetAdminDetail(id : Guid): async Task<IActionResult>
+}
+
+class GetAdminDetailQuery {
+    +AccountId : Guid
+}
+
+class GetAdminDetailQueryHandler {
+    -_context : IApplicationDbContext
+    -_grpcAccountClient: GrpcAccountClient 
+    +GetAdminDetailQueryHandler(context : IApplicationDbContext, grpcAccountClient : GrpcAccountClient)
+    +Handle(request: GetAdminDetailQuery, cancellationToken: CancellationToken) : Task<Result<AdminDetailResponse>>
+}
+
+class AdminDetailResponse{
+    +AccountId : Guid
+    +DisplayName : string
+    +AvatarUrl : string
+    +Gender : string
+    +Address : string
+    +Username : string
+    +Email : string
+    +PhoneNumber : string
+    +Dob : DateTime
+    +CreatedAt : DateTime
+    +UpdatedAt : DateTime
+    +IsActive : bool
+}
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+' =========== Microservice class ===========
+together {
+    class GrpcAccountIdRequest #DarkViolet;line:white;text:white
+    class GrpcAccountClient #DarkViolet;line:white;text:white
+}
+AdminController --|> BaseApiController
+AdminController "1"--"1" GetAdminDetailQuery
+
+GetAdminDetailQuery ..|> "IRequest<TResponse>"
+
+GetAdminDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetAdminDetailQueryHandler "1" --"1" GetAdminDetailQuery
+GetAdminDetailQueryHandler "1" o--"1" IApplicationDbContext
+GetAdminDetailQueryHandler "1" o--"1" GrpcAccountClient
+GetAdminDetailQueryHandler "1" --"1" Result
+GetAdminDetailQueryHandler "1" --"1..*" GrpcAccountIdRequest
+GetAdminDetailQueryHandler "1" --"1..*" AdminDetailResponse
+GetAdminDetailQueryHandler "1" --"1..*" UserError
+
+Error "1..*" --o "1" UserError
+
+@enduml

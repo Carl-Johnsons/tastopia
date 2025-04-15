@@ -1,0 +1,78 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminBanUser(adminBanUserDTO : AdminBanUserDTO): async Task<IActionResult>
+}
+
+class AdminBanUserCommand {
+    +AccountId : Guid
+    +CurrentAccountId : Guid
+}
+
+class AdminBanUserCommandHandler {
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +AdminBanUserCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: AdminBanUserCommand, cancellationToken: CancellationToken) : Task<Result<AdminBanUserResponse>>
+}
+
+class AdminBanUserDTO {
+    +AccountId : Guid
+}
+
+class AdminBanUserResponse {
+    +AdminId : Guid
+    +UserId : Guid
+    +IsRestored : bool
+    +User : User
+}
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" AdminBanUserDTO
+AdminController "1"--"1" AdminBanUserCommand
+
+AdminBanUserCommand ..|> "IRequest<TResponse>"
+
+AdminBanUserCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+AdminBanUserCommandHandler "1" --"1" AdminBanUserCommand
+AdminBanUserCommandHandler "1" o--"1" IApplicationDbContext
+AdminBanUserCommandHandler "1" o--"1" IServiceBus
+AdminBanUserCommandHandler "1" o--"1" IUnitOfWork
+AdminBanUserCommandHandler "1" --"1" Result
+AdminBanUserCommandHandler "1" --"1..*" AdminBanUserResponse
+AdminBanUserCommandHandler "1" --"1..*" AddActivityLogEvent
+AdminBanUserCommandHandler "1" --"1..*" UserError
+
+Error "1..*" --o "1" UserError
+
+@enduml

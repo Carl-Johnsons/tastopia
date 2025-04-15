@@ -1,0 +1,57 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/Notification/NotificationDbContext.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class NotificationController {
+    +SaveExpoAndroidPushToken(dto: SaveExpoPushTokenDTO): async Task<IActionResult>
+    +SaveExpoIOSPushToken(dto: SaveExpoPushTokenDTO): async Task<IActionResult>
+}
+
+class SaveExpoPushTokenCommand {
+    +AccountId: Guid
+    +ExpoPushToken: string
+    +DeviceType: DeviceType
+}
+
+class SaveExpoPushTokenDTO {
+    +ExpoPushToken: string
+}
+
+class SaveExpoPushTokenCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +SaveExpoPushTokenCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
+    +Handle(request: SaveExpoPushTokenCommand, cancellationToken: CancellationToken): async Task<Result>
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+NotificationController --|> BaseApiController
+NotificationController "1"--"1" SaveExpoPushTokenCommand
+NotificationController "1" -- "1" SaveExpoPushTokenDTO
+SaveExpoPushTokenCommand ..|> "IRequest<TResponse>"
+SaveExpoPushTokenCommand "1" o-- "1" DeviceType
+
+SaveExpoPushTokenCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+SaveExpoPushTokenCommandHandler "1" -- "1" SaveExpoPushTokenCommand
+SaveExpoPushTokenCommandHandler "1" o-- "1" IApplicationDbContext
+SaveExpoPushTokenCommandHandler "1" o-- "1" IUnitOfWork
+
+SaveExpoPushTokenCommandHandler "1" -- "1" AccountExpoPushToken
+SaveExpoPushTokenCommandHandler "1" -- "1..*" Result
+
+@enduml

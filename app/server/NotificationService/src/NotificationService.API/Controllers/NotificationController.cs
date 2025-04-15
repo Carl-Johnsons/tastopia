@@ -96,26 +96,6 @@ public partial class NotificationController : BaseApiController
         return NoContent();
     }
 
-    [HttpPost("notify/push")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> NotifyPush([FromBody] NotifyDTO dto)
-    {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-        var result = await _sender.Send(new PushNotificationCommand
-        {
-            Message = dto.Message,
-            RecipientIds = dto.RecipientIds,
-            Data = dto.Data,
-            Title = dto.Title,
-            ChannelId = dto.ChannelId,
-        });
-        result.ThrowIfFailure();
-
-        return Ok();
-    }
-
     [HttpGet()]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedNotificationListResponse), 200)]

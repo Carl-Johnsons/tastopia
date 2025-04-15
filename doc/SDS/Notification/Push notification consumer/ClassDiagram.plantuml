@@ -1,0 +1,49 @@
+@startuml ClassDiagram
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class PushNotificationConsumer #Cyan;line:black;text:black {
+    -_pushNotificationService: IPushNotificationService
+    +PushNotificationConsumer(_pushNotificationService: IPushNotificationService)
+    +Consume(context: ConsumeContext<PushNotificationEvent>): Task
+}
+
+class PushNotificationEvent #Cyan;line:black;text:black {
+    +ExpoPushTokens: List<string>
+    +Message: string
+    +JsonData: string
+    +ChannelId: string
+    +Title: string
+}
+
+interface IPushNotificationService #Cyan;line:black;text:black {
+    +Notify(expoPushTokens: List<string>, message: string, data: string, channelId: string, title: string): Task
+}
+
+class ExpoPushNotificationService #Cyan;line:black;text:black implements IPushNotificationService {
+    -_pushApiClient: PushApiClient
+    +ExpoPushNotificationService(pushApiClient: PushApiClient)
+    +Notify(expoPushTokens: List<string>, message: string, data: string, channelId: string, title: string): Task
+}
+
+class PushTicketRequest #black;line:white;text:white {
+}
+
+class PushApiClient #black;line:white;text:white {
+}
+
+
+interface "IConsumer<T>" #black;line:white;text:white
+' =========== Library class ===========
+
+PushNotificationConsumer ..|> "IConsumer<T>"
+PushNotificationConsumer "1" o-- "1" IPushNotificationService
+PushNotificationConsumer "1" o-- "1" PushNotificationEvent
+
+ExpoPushNotificationService "1" o-- "1" PushApiClient
+ExpoPushNotificationService "1" -- "1" PushTicketRequest
+
+@enduml

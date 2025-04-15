@@ -1,0 +1,68 @@
+@startuml Sequence
+title "Create admin diagram"
+
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor "Super admin" as SuperAdmin
+boundary MobileUI
+participant "<<coordinator>>\nApiGateWay" as ApiGateway
+participant "<<service>>\nIdentityService" as IdentityService
+participant "<<service>>\nUploadService" as UploadService
+participant "<<service>>\nCloudinary" as Cloudinary
+participant "<<service>>\nUserService" as UserService
+participant "<<coordinator>>\nRabbitmq" as Rabbitmq
+database Postgresql
+
+SuperAdmin -> MobileUI ++: 1. Super admin click\n create on create admin modal
+MobileUI -> ApiGateway ++: 2. Request create admin
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Verify Access Token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> IdentityService ++: 4. Forward request
+alt if email or phone number is exist
+  ApiGateway <-- IdentityService: 5A.1. Return duplication error
+  MobileUI <-- ApiGateway: 5A.2. Forward response
+  SuperAdmin <-- MobileUI: 5A.3. Display error alert
+else
+  IdentityService -> Postgresql ++: 6. Insert admin data
+  IdentityService <-- Postgresql --: 7. Return response
+
+  IdentityService -> UploadService++: 8. Request to upload admin's avatar <<gRPC>>
+  UploadService -> Cloudinary++: 9. Request to upload image
+  UploadService <-- Cloudinary--: 10. Return image metadata
+  IdentityService <-- UploadService--: 11. Return response <<gRPC>>
+
+  IdentityService -> UserService++: 12. Request to create admin <<gRPC>>
+  UserService -> Postgresql++: 13. Insert admin basic data
+  UserService <-- Postgresql--: 14. Return response
+  IdentityService <-- UserService--: 15. Return response <<gRPC>>
+
+  IdentityService -> Rabbitmq: 16. Publish "AddActivityLogCommand" event <<Async>>
+  activate Rabbitmq
+  ref over Rabbitmq: 17. Add activity log event
+  IdentityService -[hidden]-> Rabbitmq
+  deactivate Rabbitmq
+  destroy Rabbitmq
+
+  IdentityService -> Rabbitmq: 18. Publish "UserSendOTP" event <<Async>>
+  activate Rabbitmq
+  ref over Rabbitmq: 19. User send OTP event
+  IdentityService -[hidden]-> Rabbitmq
+  deactivate Rabbitmq
+  destroy Rabbitmq
+
+  ApiGateway <-- IdentityService --: 20. Return success status code
+  MobileUI <-- ApiGateway --: 21. Forward response
+  SuperAdmin <-- MobileUI --: 22. Display alert create admin successfully
+end
+
+@enduml

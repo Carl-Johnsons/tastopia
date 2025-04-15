@@ -1,5 +1,4 @@
 ﻿using Contract.Constants;
-using IdentityService.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 namespace IdentityService.Application.Account.Commands;
 
@@ -15,19 +14,17 @@ public record VerifyUpdateIdentifierCommand : IRequest<Result>
 public class VerifyUpdateIdentifierCommandHandler : IRequestHandler<VerifyUpdateIdentifierCommand, Result>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
-    private readonly IApplicationDbContext _context;
 
-    public VerifyUpdateIdentifierCommandHandler(UserManager<ApplicationAccount> userManager, IApplicationDbContext context)
+    public VerifyUpdateIdentifierCommandHandler(UserManager<ApplicationAccount> userManager)
     {
         _userManager = userManager;
-        _context = context;
     }
 
     public async Task<Result> Handle(VerifyUpdateIdentifierCommand request, CancellationToken cancellationToken)
     {
         if (request.Method == AccountMethod.Email) return await VerifyUpdateEmail(request, cancellationToken);
         if (request.Method == AccountMethod.Phone) return await VerifyUpdatePhone(request, cancellationToken);
-        return Result.Failure(AccountError.VerifyFailed, "Wrong account method");
+        return Result.Failure(AccountError.InvalidAccountMethod, "Wrong account method");
     }
 
     private async Task<Result> VerifyUpdateEmail(VerifyUpdateIdentifierCommand request, CancellationToken cancellationToken)

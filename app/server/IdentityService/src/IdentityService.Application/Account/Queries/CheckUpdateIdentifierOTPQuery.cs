@@ -16,19 +16,17 @@ public record CheckUpdateIdentifierOTPQuery : IRequest<Result>
 public class CheckUpdateIdentifierOTPQueryHandler : IRequestHandler<CheckUpdateIdentifierOTPQuery, Result>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
-    private readonly IApplicationDbContext _context;
 
-    public CheckUpdateIdentifierOTPQueryHandler(UserManager<ApplicationAccount> userManager, IApplicationDbContext context)
+    public CheckUpdateIdentifierOTPQueryHandler(UserManager<ApplicationAccount> userManager)
     {
         _userManager = userManager;
-        _context = context;
     }
 
     public async Task<Result> Handle(CheckUpdateIdentifierOTPQuery request, CancellationToken cancellationToken)
     {
         if (request.Method == AccountMethod.Email) return await CheckUpdateEmail(request, cancellationToken);
         if (request.Method == AccountMethod.Phone) return await CheckUpdatePhone(request, cancellationToken);
-        return Result.Failure(AccountError.VerifyFailed, "Wrong account method");
+        return Result.Failure(AccountError.InvalidAccountMethod, "Wrong account method");
     }
 
     private async Task<Result> CheckUpdateEmail(CheckUpdateIdentifierOTPQuery request, CancellationToken cancellationToken)

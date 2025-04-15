@@ -1,0 +1,118 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    -_mapper: IMapper
+    +UpdateRecipe(updateRecipeDTO : UpdateRecipeDTO): async Task<IActionResult>
+}
+
+class UpdateRecipeCommand {
+    +AuthorId: Guid
+    +RecipeImage: IFormFile
+    +Title: string
+    +Description: string
+    +Serves: int
+    +CookTime: string
+    +Ingredients: List<string>
+    +Steps: List<UpdateStepDTO>
+    +TagValues: List<string>
+}
+
+class UpdateStepDTO{
+    +StepId: Guid
+    +OrdinalNumber: int
+    +Content: string
+    +Images: List<IFormFile>
+    +DeleteUrls: List<string>
+}
+UpdateRecipeCommand "1"--"1..*" UpdateStepDTO
+
+class UpdateRecipeCommandHandler{
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    -_serviceBus: IServiceBus
+    -_grpcUploadFileClient: GrpcUploadFileClient
+    +UpdateRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork, serviceBus : IServiceBus, grpcUploadFileClient : GrpcUploadFileClient)
+    +Handle(request : CommentRecipeCommand, cancellationToken : CancellationToken): async Task<Result<RecipeCommentResponse>> 
+    -GetImageIndexMap(steps : List<StepDTO>): Dictionary<string, int>
+    -GetGrpcFileStreamDTOsAsync(recipeImage : IFormFile, steps : List<StepDTO>): async Task<RepeatedField<GrpcFileStreamDTO>>
+    -GetDeleteUrls(recipe : Recipe, recipeImage : IFormFile, steps : List<UpdateStepDTO>): List<string>
+}
+
+class UpdateRecipeDTO{
+    +RecipeImage: IFormFile
+    +Title: string
+    +Description: string
+    +Serves: int
+    +CookTime: string
+    +Ingredients: List<string>
+    +Steps: List<StepDTO>
+    +TagValues: List<string>
+}
+
+UpdateRecipeDTO "1"--"1..*" UpdateStepDTO
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+' =========== Microservice class ===========
+class IMapper #Black;line:white;text:white
+class IFormFile #Black;line:white;text:white
+together {
+    class ValidateRecipeEvent #SeaGreen;line:white;text:white
+    class DeleteMultipleFileEvent #LightSalmon;line:white;text:white
+    class GrpcUploadMultipleImageRequest #LightSalmon;line:white;text:white
+    class GrpcUploadFileClient #LightSalmon;line:white;text:white
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+RecipeController --|> BaseApiController
+RecipeController "1" o-- "1" IMapper
+RecipeController "1"--"1" UpdateRecipeDTO
+RecipeController "1"--"1" UpdateRecipeCommand
+
+UpdateRecipeDTO "1" o-- "1" IFormFile
+UpdateStepDTO "1" o-- "1..*" IFormFile
+
+UpdateRecipeCommand ..|> "IRequest<TResponse>"
+UpdateRecipeCommand "1" o-- "1" IFormFile
+
+UpdateRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+UpdateRecipeCommandHandler "1"--"1" UpdateRecipeCommand
+UpdateRecipeCommandHandler "1"--"1" Result
+UpdateRecipeCommandHandler "1"--"1" Recipe
+UpdateRecipeCommandHandler "1" o-- "1" IUnitOfWork
+UpdateRecipeCommandHandler "1" o-- "1" IApplicationDbContext
+UpdateRecipeCommandHandler "1" o-- "1" IServiceBus
+UpdateRecipeCommandHandler "1" o-- "1" GrpcUploadFileClient
+UpdateRecipeCommandHandler "1"--"1..*" GrpcUploadMultipleImageRequest
+UpdateRecipeCommandHandler "1"--"1..*" DeleteMultipleFileEvent
+UpdateRecipeCommandHandler "1"--"1..*" ValidateRecipeEvent
+UpdateRecipeCommandHandler "1"--"1..*" RecipeError
+
+Error "1..*" --o "1" RecipeError
+' ====================STYLE====================
+RecipeController -[hidden]down-|> UpdateRecipeCommand
+UpdateRecipeCommand -[hidden]up-|> UpdateRecipeCommandHandler
+
+@enduml

@@ -1,0 +1,47 @@
+@startuml Sequence
+title "Get all admins' activity log diagram"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor "Super Admin" as SuperAdmin
+boundary WebsiteUI
+participant "<<coordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n TrackingService" as TrackingService
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<service>>\n UserService" as UserService
+database Postgresql
+database MongoDB
+
+SuperAdmin -> WebsiteUI++: 1. Navigate to activity log page
+
+WebsiteUI -> ApiGateway++: 2. Get all admins' activity log
+
+ref over ApiGateway: 3. Verify access token
+
+ApiGateway -> TrackingService++: 4. Forward request
+
+TrackingService -> MongoDB++: 5. Query AdminActivityLog data
+TrackingService <-- MongoDB--: 6. Return response
+
+alt AdminActivityLog list is empty
+    ApiGateway <-- TrackingService: 7A.1. Return empty list
+    WebsiteUI <-- ApiGateway: 7A.2. Forward response
+    SuperAdmin <-- WebsiteUI: 7A.3. Display empty list
+else AdminActivityLog list is not empty
+    TrackingService -> UserService++: 8. Call "GetSimpleUserAsync" request <<gRPC>>
+    UserService -> Postgresql++: 9. Query data
+    UserService <-- Postgresql--: 10. Return response
+    TrackingService <-- UserService--: 11. Return response <<gRPC>>
+
+    ApiGateway <-- TrackingService--: 12. Return all admin's activity log
+    WebsiteUI <-- ApiGateway--: 13. Forward response
+    SuperAdmin <-- WebsiteUI--: 14. Display all admins' activity log
+end alt
+
+@enduml

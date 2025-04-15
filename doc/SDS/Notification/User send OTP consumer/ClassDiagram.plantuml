@@ -1,0 +1,112 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class UserSendOTPConsumer #Cyan;line:black;text:black {
+    -_sender: ISender
+    +UserSendOTPConsumer(sender: ISender)
+    +Consume(context: ConsumeContext<UserSendOTPEvent>): Task
+    -ResendOTP(context: ConsumeContext<UserSendOTPEvent>): Task
+    -ForgotPassword(context: ConsumeContext<UserSendOTPEvent>): Task
+    -UpdateIdentifier(context: ConsumeContext<UserSendOTPEvent>): Task
+    -AdminAccountCreated(context: ConsumeContext<UserSendOTPEvent>): Task
+}
+
+class UserSendOTPEvent #Cyan;line:black;text:black {
+    +AccountId: Guid
+    +Identifier: string
+    +OTP: string
+    +Method: AccountMethod
+    +OTPMethod: OTPMethod
+}
+
+enum AccountMethod {
+    Phone
+    Email
+    Username
+    Google
+}
+
+enum OTPMethod
+{
+    Resend
+    ForgotPassword
+    UpdateIdentifier
+    AdminAccountCreated
+}
+
+class SendEmailCommand {
+    +EmailTo: string
+    +Subject: string
+    +Body: string
+    +IsHTML: bool
+}
+
+class SendEmailCommandHandler {
+    -_serviceBus: IServiceBus
+    +SendEmailCommandHandler(serviceBus: IServiceBus)
+    +Handle(request: SendEmailCommand, cancellationToken: CancellationToken): async Task<Result>
+}
+
+class SendSMSCommand {
+    +PhoneTo: string
+    +Message: string
+}
+
+class SendSMSCommandHandler {
+    -_serviceBus: IServiceBus
+    +SendSMSCommandHandler(serviceBus: IServiceBus)
+    +Handle(request: SendSMSCommand, cancellationToken: CancellationToken): async Task<Result>
+}
+
+class SendSMSEvent #Cyan;line:black;text:black {
+    +PhoneTo: string
+    +Message: string
+}
+
+class SendEmailEvent #Cyan;line:black;text:black {
+    +EmailTo: string
+    +Subject: string
+    +Body: string
+    +IsHTML: bool
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+interface "IConsumer<T>" #black;line:white;text:white
+' =========== Library class ===========
+
+UserSendOTPConsumer ..|> "IConsumer<T>"
+UserSendOTPConsumer "1" -- "1" SendEmailCommand
+UserSendOTPConsumer "1" -- "1" SendSMSCommand
+UserSendOTPConsumer "1" o-- "1" UserSendOTPEvent
+
+UserSendOTPEvent "1" o-- "1" AccountMethod
+UserSendOTPEvent "1" o-- "1" OTPMethod
+
+SendEmailCommand ..|> "IRequest<TResponse>"
+
+SendEmailCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+SendEmailCommandHandler "1" -- "1" SendEmailCommand
+SendEmailCommandHandler "1" o-- "1" IServiceBus
+
+SendEmailCommandHandler "1" -- "1..*" Result
+SendEmailCommandHandler "1" -- "1" SendEmailEvent
+
+SendSMSCommand ..|> "IRequest<TResponse>"
+
+SendSMSCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+SendSMSCommandHandler "1" -- "1" SendSMSCommand
+SendSMSCommandHandler "1" o-- "1" IServiceBus
+
+SendSMSCommandHandler "1" -- "1..*" Result
+SendSMSCommandHandler "1" -- "1" SendSMSEvent
+
+
+@enduml

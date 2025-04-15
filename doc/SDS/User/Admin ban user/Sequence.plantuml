@@ -1,0 +1,58 @@
+@startuml Sequence
+title "Admin ban user"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor Admin
+boundary WebsiteUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n UserService" as UserService
+participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
+database Postgresql
+
+Admin -> WebsiteUI ++: 1. Click on disable button \n in user profile screen
+WebsiteUI -> ApiGateway ++: 2. Admin ban user
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+alt Current user is not admin
+    WebsiteUI <-- ApiGateway: 4A. Return error message
+    Admin <-- WebsiteUI: 4A.1. Display error message
+else Current user is admin
+    ApiGateway -> UserService ++: 5. Forward request
+    UserService -> Postgresql++: 6. Query data
+    UserService <-- Postgresql--: 7. Return response
+    alt User not have banned
+      UserService -> Postgresql++: 8A. Update data
+      UserService <-- Postgresql--: 8A.1. Return response
+      ApiGateway <-- UserService: 8A.2. Return banned user
+      WebsiteUI <-- ApiGateway: 8A.3. Forward response
+      Admin <-- WebsiteUI: 8A.4. Display ban user success message
+    else User adrealy banned
+      UserService -> Postgresql++: 9. Update data
+      UserService <-- Postgresql--: 10. Return response
+      ApiGateway <-- UserService: 11. Return restored user
+      WebsiteUI <-- ApiGateway--: 12. Forward response
+      Admin <-- WebsiteUI--: 13. Display restore user success message
+    end alt
+    UserService -> Rabbitmq: 14. Publish "AddActivityLogEvent" message 
+    deactivate UserService
+    activate Rabbitmq
+    ref over Rabbitmq: 15. AddActivityLogConsumers
+    Rabbitmq -[hidden]> 
+    destroy Rabbitmq
+end alt
+
+
+@enduml
