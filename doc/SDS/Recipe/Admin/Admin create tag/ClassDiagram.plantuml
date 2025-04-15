@@ -1,0 +1,106 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 80
+skinparam ranksep 80
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +CreateTag(createTagDTO: CreateTagDTO): async Task<IActionResult>
+}
+
+class CreateTagCommand {
+    +CurrentAccountId : Guid
+    +Code : string
+    +En : string
+    +Vi : string
+    +Category : string
+    +TagImage : IFormFile
+}
+
+class CreateTagCommandHandler {
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    -_grpcUploadFileClient: GrpcUploadFileClient
+    +CreateTagCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork, grpcUploadFileClient : GrpcUploadFileClient)
+    +Handle(request: CreateTagCommand, cancellationToken: CancellationToken) : Task<Result<TagResponse>>
+}
+
+class CreateTagDTO {
+    +Code : string
+    +En : string
+    +Vi : string
+    +Category : string
+    +TagImage : IFormFile
+}
+
+class TagResponse {
+    +Id : Guid
+    +Code : string
+    +En : string
+    +Vi : string
+    +Category : string
+    +Status : string
+    +ImageUrl : string
+    +CreatedAt : DateTime
+}
+
+class TagError {
+    {static} +NotFound: Error
+    {static} +AddTagFail: Error
+    {static} +DeleteTagFail: Error
+    {static} +UpdateTagFail: Error
+    {static} +NullParameter: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyExist: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class IFormFile #Black;line:white;text:white
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+    class DeleteMultipleFileEvent #LightSalmon;line:white;text:white
+    class GrpcUploadMultipleImageRequest #LightSalmon;line:white;text:white
+    class GrpcUploadFileClient #LightSalmon;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1" -- "1" CreateTagDTO
+AdminController "1" -- "1" CreateTagCommand
+CreateTagDTO "1" o-- "1" IFormFile
+
+CreateTagCommand ..|> "IRequest<TResponse>"
+CreateTagCommand "1" o-- "1" IFormFile
+
+CreateTagCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+CreateTagCommandHandler "1" -- "1" CreateTagCommand
+CreateTagCommandHandler "1" o-- "1" IApplicationDbContext
+CreateTagCommandHandler "1" o-- "1" IServiceBus
+CreateTagCommandHandler "1" o-- "1" IUnitOfWork
+CreateTagCommandHandler "1" o-- "1" GrpcUploadFileClient
+
+CreateTagCommandHandler "1" -- "1" Result
+CreateTagCommandHandler "1" --"1..*" TagResponse
+CreateTagCommandHandler "1" --"1..*" AddActivityLogEvent
+CreateTagCommandHandler "1" --"1..*" GrpcUploadMultipleImageRequest
+CreateTagCommandHandler "1" --"1..*" DeleteMultipleFileEvent
+CreateTagCommandHandler "1" --"1..*" TagError
+
+Error "1..*" --o "1" TagError
+
+@enduml

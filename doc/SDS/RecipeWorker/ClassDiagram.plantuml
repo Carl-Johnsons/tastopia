@@ -1,0 +1,94 @@
+@startuml GrpcRecipeSerciveClassDiagram
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+
+hide circle
+
+class RecipeWorkerConsumer #Green;line:white;text:white {
+    -_recipeService: IRecipeService
+    +ValidateRecipeConsumer(context: ConsumeContext<ValidateRecipeEvent>): async Task
+}
+
+interface IRecipeService #Green;line:white;text:white {
+    +CheckRecipeAbuse(recipeId: Guid): async Task
+    +CheckRecipeTags(recipeId: Guid, tagValues: list<string>): async Task
+}
+
+class CommunityRecipeService #Green;line:white;text:white implements IRecipeService {
+    -_serviceBus: IServiceBus
+    -_textCheckerService: IOffensiveTextCheckerService
+    -_grpcRecipeClient: GrpcRecipeClient
+    +CommunityRecipeService(serviceBus: IServiceBus, textCheckerService: IOffensiveTextCheckerService, grpcRecipeClient: GrpcRecipeClient)
+    #CheckRecipeAbuse(recipeId: Guid): async Task
+    #CheckRecipeTags(recipeId: Guid, tagValues: list<string>): async Task
+}
+
+interface IOffensiveTextCheckerService #Green;line:white;text:white {
+    +CheckOffensiveText(text: string): async Task<string>
+}
+
+class OffensiveTextCheckerService #Green;line:white;text:white implements IOffensiveTextCheckerService {
+    -apiKey: string
+    -endpoint: string
+    +OffensiveTextCheckerService()
+    #CheckOffensiveText(text: string): async Task<string>
+}
+
+
+' Grpc DTO
+class GrpcEmpty #Green;line:white;text:white{
+}
+
+class GrpcRecipeIdRequest #Green;line:white;text:white{
+}
+
+' Grpc responses
+
+class GrpcTagDTO #Green;line:white;text:white{
+}
+
+class GrpcListTagDTO #Green;line:white;text:white{
+}
+
+class GrpcRecipeDetailsDTO #Green;line:white;text:white{
+}
+
+class GrpcStepDTO #Green;line:white;text:white{
+}
+
+' DTO
+
+' =========== Library class ===========
+RecipeWorkerConsumer "1" o-- "1" IRecipeService
+
+CommunityRecipeService "1" o-- "1" IServiceBus
+CommunityRecipeService "1" o-- "1" IOffensiveTextCheckerService
+CommunityRecipeService "1" o-- "1" GrpcRecipeClient 
+
+CommunityRecipeService "1" -- "1..*" GrpcRecipeIdRequest
+CommunityRecipeService "1" -- "1..*" GrpcEmpty
+
+CommunityRecipeService "1" -- "1..*" GrpcListTagDTO
+CommunityRecipeService "1" -- "1..*" GrpcTagDTO
+CommunityRecipeService "1" -- "1..*" GrpcRecipeDetailsDTO
+CommunityRecipeService "1" -- "1..*" GrpcStepDTO
+
+CommunityRecipeService "1" -- "1..*" NotifyUserEvent 
+CommunityRecipeService "1" -- "1..*" UpdateRecipeIsActiveEvent 
+CommunityRecipeService "1" -- "1..*" UpdateRecipeTagsEvent 
+CommunityRecipeService "1" -- "1..*" RequestAddTagsEvent
+
+' =================STYLE=================
+
+together {
+    class NotifyUserEvent #Cyan;line:white;text:black
+    class UpdateRecipeIsActiveEvent #Green;line:white;text:white
+    class UpdateRecipeTagsEvent #Green;line:white;text:white
+    class RequestAddTagsEvent #Green;line:white;text:white
+    class GrpcRecipeClient #Green;line:white;text:white
+}
+@enduml

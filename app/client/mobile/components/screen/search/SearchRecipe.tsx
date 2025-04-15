@@ -64,7 +64,7 @@ const ResultSection = memo(
     const { t } = useTranslation("search");
 
     return (
-      <View className='mb-[70px] mt-6'>
+      <View className='mb-[180px] mt-6'>
         <FlatList
           data={searchResults}
           keyExtractor={item => item.id}
@@ -202,7 +202,6 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   };
 
   const handleSelectSearchResult = () => {
-
     if (searchValue) {
       createSearchHistory(
         { keyword: searchValue },

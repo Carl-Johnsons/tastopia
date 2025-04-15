@@ -5,8 +5,8 @@
 !include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 together {
@@ -16,7 +16,7 @@ together {
     }
 
     class UserController {
-        +GetUserFollowing(GetUserFollowingsDTO getUserFollowingsDTO): async Task<IActionResult>
+        +GetUserFollowing(getUserFollowingsDTO : GetUserFollowingsDTO): async Task<IActionResult>
     }
 
     class GetUserFollowingsQuery {
@@ -32,28 +32,27 @@ together {
 }
 
 class GetUserFollowingsQueryHandler {
-    - _context : IApplicationDbContext
-    - _paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata> 
-    + Handle(request: GetUserFollowingsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedSimpleUserListResponse?>>
+    -_context : IApplicationDbContext
+    -_paginateDataUtility: IPaginateDataUtility<User, AdvancePaginatedMetadata> 
+    +GetUserFollowingsQueryHandler(context : IApplicationDbContext, paginateDataUtility : IPaginateDataUtility<User, AdvancePaginatedMetadata>)
+    +Handle(request: GetUserFollowingsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedSimpleUserListResponse>>
 }
 
 class PaginatedSimpleUserListResponse
 
 class "BasePaginatedResponse<Type,MetadataType>" {
-    + PaginatedData: IEnumerable<Type>
-    + Metadata: MetadataType
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
 }
 
 class CommonPaginatedMetadata {
-    + TotalPage: int
+    +TotalPage: int
 
 }
 
 class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
-    + HasNextPage: bool
+    +HasNextPage: bool
 }
-
-
 
 class UserError {
     {static} +NotFound: Error
@@ -65,12 +64,12 @@ class USER_CONSTANTS {
 }
 
 class SimpleUserResponse {
-    - Id : Guid
-    - AvtUrl : string
-    - DisplayName : string
-    - Username : string
-    - NumberOfRecipe : int
-    - IsFollowing : bool
+    +Id : Guid
+    +AvtUrl : string
+    +DisplayName : string
+    +Username : string
+    +NumberOfRecipe : int
+    +IsFollowing : bool
 }
 
 ' =========== Library class ===========
@@ -78,27 +77,28 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
+PaginatedSimpleUserListResponse "1" o-- "1..*" SimpleUserResponse
+PaginatedSimpleUserListResponse "1" o-- "1" AdvancePaginatedMetadata
+
 UserController --|> BaseApiController
 UserController "1"--"1" GetUserFollowingsQuery
-UserController "1"--"1" getUserFollowingsDTO
-GetUserFollowingsQuery --|> "IRequest<TResponse>"
+UserController "1"--"1" GetUserFollowingsDTO
+GetUserFollowingsQuery ..|> "IRequest<TResponse>"
 
-GetUserFollowingsQueryHandler --|> "IRequestHandler<TRequest, TResponse>"
-GetUserFollowingsQueryHandler "1" o--"1" GetUserFollowingsQuery
-GetUserFollowingsQueryHandler "1" o--"1" UserError
+GetUserFollowingsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetUserFollowingsQueryHandler "1" --"1" GetUserFollowingsQuery
 GetUserFollowingsQueryHandler "1" o--"1" IPaginateDataUtility
 GetUserFollowingsQueryHandler "1" o--"1" IApplicationDbContext
-GetUserFollowingsQueryHandler "1" o--"1" USER_CONSTANTS
-GetUserFollowingsQueryHandler "1" o--"1" SimpleUserResponse
-GetUserFollowingsQueryHandler "1" o--"1" Result
-GetUserFollowingsQueryHandler "1" o--"1" AdvancePaginatedMetadata
-GetUserFollowingsQueryHandler "1" o--"1" PaginatedSimpleUserListResponse
+GetUserFollowingsQueryHandler "1" --"1..*" USER_CONSTANTS
+GetUserFollowingsQueryHandler "1" --"1..*" UserError
+GetUserFollowingsQueryHandler "1" --"1" Result
+GetUserFollowingsQueryHandler "1" --"1..*" PaginatedSimpleUserListResponse
 
 "BasePaginatedResponse<Type,MetadataType>" "1" <|-up-"1" PaginatedSimpleUserListResponse
 
 ' Style
 CommonPaginatedMetadata -[hidden]up- AdvancePaginatedMetadata
 
-Error "1" --"1" UserError
+Error "1..*" --o "1" UserError
 
 @enduml

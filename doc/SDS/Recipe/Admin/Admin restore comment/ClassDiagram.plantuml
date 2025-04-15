@@ -1,0 +1,73 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminRestoreComment(recipeId : Guid, commentId : Guid): async Task<IActionResult>
+}
+
+class RestoreCommentCommand {
+    +CurrentAccountId : Guid
+    +CommentId : Guid
+    +RecipeId : Guid
+}
+
+class RestoreCommentCommandHandler {
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +RestoreCommentCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: RestoreCommentCommand, cancellationToken: CancellationToken) : Task<Result>
+}
+
+class CommentError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyActive: Error
+    {static} +AddCommentFail: Error
+    {static} +UpdateCommentFail: Error
+    {static} +DeleteCommentFail: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class NotifyUserEvent #Cyan;line:white;text:black
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1"-- "1" RestoreCommentCommand
+
+RestoreCommentCommand ..|> "IRequest<TResponse>"
+
+RestoreCommentCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+RestoreCommentCommandHandler "1" -- "1" RestoreCommentCommand
+RestoreCommentCommandHandler "1" o-- "1" IApplicationDbContext
+RestoreCommentCommandHandler "1" o-- "1" IServiceBus
+RestoreCommentCommandHandler "1" o-- "1" IUnitOfWork
+RestoreCommentCommandHandler "1" -- "1" Result
+RestoreCommentCommandHandler "1" -- "1..*" AddActivityLogEvent
+RestoreCommentCommandHandler "1" -- "1..*" NotifyUserEvent
+RestoreCommentCommandHandler "1" -- "1..*" CommentError
+
+Error "1..*" --o "1" CommentError
+
+@enduml

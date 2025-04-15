@@ -6,8 +6,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 50
+skinparam ranksep 50
 hide circle
 
 class BaseApiController {
@@ -16,7 +16,7 @@ class BaseApiController {
 }
 
 class UserController {
-    +FollowUser([FromBody] FollowUserDTO followUserDTO): async Task<IActionResult>
+    +FollowUser(followUserDTO : FollowUserDTO): async Task<IActionResult>
 }
 
 class FollowUserCommand {
@@ -25,10 +25,11 @@ class FollowUserCommand {
 }
 
 class FollowUserCommandHandler {
-    - _mapper : IMapper
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    + Handle(request: FollowUserCommand, cancellationToken: CancellationToken) : Task<Result<FollowUserResponse?>>
+    -_mapper : IMapper
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    +FollowUserCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, mapper : IMapper)
+    +Handle(request: FollowUserCommand, cancellationToken: CancellationToken) : Task<Result<FollowUserResponse>>
 }
 
 class FollowUserDTO {
@@ -36,9 +37,9 @@ class FollowUserDTO {
 }
 
 class FollowUserResponse {
-    - AccountId : Guid
-    - FollowingId : Guid
-    - IsFollowing : bool
+    +AccountId : Guid
+    +FollowingId : Guid
+    +IsFollowing : bool
 }
 
 class UserError {
@@ -51,24 +52,24 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 together {
-    class NotifyUserEvent #Cyan;line:white;text:black
+    class NotifyUserEvent #Cyan;line:black;text:black
 }
 
 UserController --|> BaseApiController
 UserController "1"--"1" FollowUserDTO
 UserController "1"--"1" FollowUserCommand
 
-FollowUserCommand --|> "IRequest<TResponse>"
+FollowUserCommand ..|> "IRequest<TResponse>"
 
-FollowUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-FollowUserCommandHandler "1" o--"1" FollowUserCommand
+FollowUserCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+FollowUserCommandHandler "1" --"1" FollowUserCommand
 FollowUserCommandHandler "1" o--"1" IApplicationDbContext
-FollowUserCommandHandler "1" o--"1" FollowUserResponse
 FollowUserCommandHandler "1" o--"1" IServiceBus
-FollowUserCommandHandler "1" o--"1" Result
+FollowUserCommandHandler "1" --"1..*" FollowUserResponse
+FollowUserCommandHandler "1" --"1" Result
 FollowUserCommandHandler "1" --"1..*" UserError
 FollowUserCommandHandler "1"--"1" NotifyUserEvent
 
-Error "1" --"1" UserError
+Error "1..*" --o "1" UserError
 
 @enduml

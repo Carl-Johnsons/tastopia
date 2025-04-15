@@ -17,7 +17,10 @@ const schema = yup.object().shape({
     .required("validation.serves.required")
     .positive("validation.serves.positive")
     .integer("validation.serves.integer"),
-  cookTime: yup.string().required("validation.cookTime"),
+  cookTime: yup
+    .string()
+    .required("validation.cookTime")
+    .max(50, "validation.cookTime.maxLength"),
   ingredients: yup.array().of(
     yup.object().shape({
       key: yup.string(),

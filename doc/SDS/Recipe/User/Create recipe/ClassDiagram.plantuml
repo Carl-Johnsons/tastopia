@@ -1,0 +1,117 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    -_mapper: IMapper
+    +CreateRecipe(createRecipeDTO : CreateRecipeDTO): async Task<IActionResult>
+}
+
+class CreateRecipeCommand {
+    +AuthorId: Guid
+    +RecipeImage: IFormFile
+    +Title: string
+    +Description: string
+    +Serves: int
+    +CookTime: string
+    +Ingredients: List<string>
+    +Steps: List<StepDTO>
+    +TagValues: List<string>
+}
+
+class StepDTO{
+    +OrdinalNumber: int
+    +Content: string
+    +Images: List<IFormFile>
+}
+CreateRecipeCommand "1"--"1..*" StepDTO
+
+class CreateRecipeCommandHandler{
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    -_serviceBus: IServiceBus
+    -_grpcUploadFileClient: GrpcUploadFileClient
+    +CreateRecipeCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork, serviceBus : IServiceBus, grpcUploadFileClient : GrpcUploadFileClient)
+    +Handle(request : CommentRecipeCommand, cancellationToken : CancellationToken): async Task<Result<RecipeCommentResponse>> 
+    -GetImageIndexMap(steps : List<StepDTO>): Dictionary<string, int>
+    -GetGrpcFileStreamDTOsAsync(recipeImage : IFormFile, steps : List<StepDTO>): async Task<RepeatedField<GrpcFileStreamDTO>>
+}
+
+class CreateRecipeDTO{
+    +RecipeImage: IFormFile
+    +Title: string
+    +Description: string
+    +Serves: int
+    +CookTime: string
+    +Ingredients: List<string>
+    +Steps: List<StepDTO>
+    +TagValues: List<string>
+}
+
+CreateRecipeDTO "1"*--"1..*" StepDTO
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+' =========== Microservice class ===========
+together {
+    class IFormFile #Black;line:white;text:white
+    class IMapper #Black;line:white;text:white
+    class ValidateRecipeEvent #SeaGreen;line:white;text:white
+    class NotifyUserEvent #Cyan;line:black;text:black
+    class DeleteMultipleFileEvent #LightSalmon;line:white;text:white
+    class GrpcUploadMultipleImageRequest #LightSalmon;line:white;text:white
+    class GrpcUploadFileClient #LightSalmon;line:white;text:white
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+
+RecipeController --|> BaseApiController
+RecipeController "1" o-- "1" IMapper
+RecipeController "1"--"1" CreateRecipeDTO
+RecipeController "1"--"1" CreateRecipeCommand
+CreateRecipeDTO "1" o-- "1" IFormFile
+StepDTO "1" o-- "1..*" IFormFile
+
+CreateRecipeCommand ..|> "IRequest<TResponse>"
+CreateRecipeCommand "1" o-- "1" IFormFile
+
+CreateRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+CreateRecipeCommandHandler "1"--"1" CreateRecipeCommand
+CreateRecipeCommandHandler "1"--"1" Result
+CreateRecipeCommandHandler "1"--"1" Recipe
+CreateRecipeCommandHandler "1" o-- "1" IUnitOfWork
+CreateRecipeCommandHandler "1" o-- "1" IApplicationDbContext
+CreateRecipeCommandHandler "1" o-- "1" IServiceBus
+CreateRecipeCommandHandler "1" o-- "1" GrpcUploadFileClient
+CreateRecipeCommandHandler "1"--"1..*" GrpcUploadMultipleImageRequest
+CreateRecipeCommandHandler "1"--"1..*" DeleteMultipleFileEvent
+CreateRecipeCommandHandler "1"--"1..*" ValidateRecipeEvent
+CreateRecipeCommandHandler "1"--"1..*" NotifyUserEvent
+CreateRecipeCommandHandler "1"--"1..*" RecipeError
+
+Error "1..*" --o "1" RecipeError
+' ====================STYLE====================
+RecipeController -[hidden]down-|> CreateRecipeCommand
+CreateRecipeCommand -[hidden]up-|> CreateRecipeCommandHandler
+
+@enduml

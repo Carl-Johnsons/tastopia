@@ -1,0 +1,61 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/Tracking/TrackingDbContext.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class GrpcTrackingService #CadetBlue;line:white;text:white extends GrpcTrackingBase {
+    -_sender: ISender
+    +GrpcTrackingService(sender: ISender)
+    +GrpcUserViewRecipeDetail(request: GrpcUserViewRecipeDetailRequest, context: ServerCallContext): async Task<GrpcEmpty>
+}
+
+class GrpcUserViewRecipeDetailRequest #CadetBlue;line:white;text:white
+class GrpcEmpty #CadetBlue;line:white;text:white
+
+class CreateUserVewRecipeDetailCommand implements "IRequest<TResponse>" {
+    +Ids: HashSet<Guid>
+}
+
+class CreateUserVewRecipeDetailCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +CreateUserVewRecipeDetailCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
+    +Handle(request: CreateUserVewRecipeDetailCommand, cancellationToken: CancellationToken): Task<Result>
+}
+
+class UserViewRecipeDetailError {
+    {static} +NotFound: Error
+    {static} +AddUserViewRecipeDetailFail: Error
+}
+
+' ========== Library class ==========
+class ServerCallContext #Black;line:White;text:White
+class GrpcTrackingBase #Black;line:White;text:White
+interface "IRequest<TResponse>" #Black;line:White;text:White
+interface "IRequestHandler<TRequest, TResponse>" #Black;line:White;text:White
+' ========== Library class ==========
+
+GrpcTrackingService "1" o-- "1" ServerCallContext
+
+GrpcTrackingService "1" -- "1" GrpcEmpty
+GrpcTrackingService "1" -- "1" GrpcUserViewRecipeDetailRequest
+
+GrpcTrackingService "1" o-- "1" CreateUserVewRecipeDetailCommand
+
+CreateUserVewRecipeDetailCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+CreateUserVewRecipeDetailCommandHandler "1" -- "1" CreateUserVewRecipeDetailCommand
+CreateUserVewRecipeDetailCommandHandler "1" o-- "1" IUnitOfWork
+CreateUserVewRecipeDetailCommandHandler "1" o-- "1" IApplicationDbContext
+
+CreateUserVewRecipeDetailCommandHandler "1" -- "1..*" UserViewRecipeDetailError
+CreateUserVewRecipeDetailCommandHandler "1" -- "1..*" UserViewRecipeDetail
+CreateUserVewRecipeDetailCommandHandler "1" -- "1..*" Result
+
+UserViewRecipeDetailError "1" o-- "1..*" Error
+
+@enduml

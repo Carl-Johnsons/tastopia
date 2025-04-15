@@ -108,7 +108,7 @@ public class TrackingController : BaseApiController
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<UserSearchRecipe>), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> DeleteUserSearchUser([FromBody] DeleteUserSearchRecipeKeywordDTO deleteUserSearchRecipeKeywordDTO)
+    public async Task<IActionResult> DeleteUserSearchRecipe([FromBody] DeleteUserSearchRecipeKeywordDTO deleteUserSearchRecipeKeywordDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;

@@ -1,0 +1,73 @@
+@startuml Sequence
+actor User
+boundary MobileUI
+participant "<<coordinator>>\nApiGateWay" as ApiGateway
+participant "<<service>>\nIdentityService" as IdentityService
+participant "<<service>>\nUserService"  as UserService
+participant "<<coordinator>>\nRabbitmq"  as Rabbitmq
+participant "<<service>>\nNotificationService" as NotificationService
+participant "<<service>>\nEmailWorker" as EmailWorker
+participant "<<service>>\nSMSWorker" as SMSWorker
+participant "<<service>>\nGmail" as Gmail
+participant "<<service>>\nSpeedSMS" as SpeedSMS
+database Postgresql
+
+User -> MobileUI++: 1. User fill the register form and \n click register button
+MobileUI -> ApiGateway++: 2. Request register account
+ApiGateway -> IdentityService++: 3. Forward request
+IdentityService -> Postgresql++: 4. Get account data
+IdentityService <-- Postgresql--: 5. Return response
+
+alt if user's identifier is already exist
+  ApiGateway <-- IdentityService: 6A.1. Return duplication error
+  MobileUI <-- ApiGateway: 6A.2. Forward response
+  User <-- MobileUI: 6A.3. Display error alert
+else
+  IdentityService -> Postgresql++: 7. Insert account data
+  IdentityService <-- Postgresql--: 8. Return response
+
+  IdentityService -> UserService++: 9. Request to create user <<gRPC>>
+  UserService -> Postgresql++: 10. Insert basic user data
+  UserService <-- Postgresql--: 11. Return response
+  IdentityService <-- UserService--: 12. Return success <<gRPC>>
+
+  IdentityService -> Rabbitmq++: 13. Publish "UserRegisterEvent" message <<Async>>
+  Rabbitmq --> NotificationService: 14. Deliver "UserRegisterEvent"\n message
+  activate NotificationService
+  deactivate Rabbitmq
+
+  alt if user identifier is email
+    NotificationService -> Rabbitmq: 15A.1. Consume event and publish \n "SendEmailEvent" message <<Async>>
+    deactivate NotificationService
+    activate Rabbitmq
+    Rabbitmq --> EmailWorker: 15A.2. Deliver "SendEmailEvent"\n message
+    deactivate Rabbitmq
+    activate EmailWorker
+    EmailWorker -> Gmail: 15A.3. Send OTP email\n to specified email
+    deactivate EmailWorker
+    activate Gmail
+  
+    ApiGateway <-- IdentityService: 15A.4. Return success status code
+    deactivate Gmail
+    destroy Gmail
+  else if user identifier is phone number
+    NotificationService -> Rabbitmq: 16. Consume event and publish \n "SendSMSEvent" message <<Async>>
+    deactivate NotificationService
+    activate Rabbitmq
+    Rabbitmq --> SMSWorker: 16. Deliver "SendSMSEvent"\n message
+    deactivate Rabbitmq
+    activate SMSWorker
+    SMSWorker -> SpeedSMS: 17. Send OTP \n to specified phone number
+    deactivate SMSWorker
+    activate SpeedSMS
+  
+    ApiGateway <-- IdentityService--: 18. Return success status code
+    deactivate SpeedSMS
+    destroy SpeedSMS
+  end
+
+  MobileUI <-- ApiGateway--: 19. Forward response
+  User <-- MobileUI--: 20. Redirect user to verify account screen
+end
+
+@enduml

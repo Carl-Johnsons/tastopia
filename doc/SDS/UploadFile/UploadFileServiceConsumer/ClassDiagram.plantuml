@@ -5,17 +5,12 @@ skinparam linetype polyline
 skinparam nodesep 50
 skinparam ranksep 50
 skinparam classAttributeIconSize 0
-skinparam classBackgroundColor LightSalmon
-skinparam classBorderColor While
-skinparam classFontColor While
-skinparam classAttributeFontColor While
 
 hide circle
 
-class UploadFileServiceConsumer {
+class UploadFileServiceConsumer #LightSalmon;line:white;text:white{
     #_sender: ISender
-    #_logger: ILogger
-    +DeleteMultipleFileConsumer(ConsumeContext<DeleteMultipleFileEvent> context): async Task
+    +DeleteMultipleFileConsumer(context: ConsumeContext<DeleteMultipleFileEvent>): async Task
 }
 
 
@@ -27,23 +22,25 @@ class DeletionResult #Black;line:white;text:white {
 
 class DeletionParams #Black;line:white;text:white{
 }
+class IFormFile #Black;line:white;text:white
+
 
 interface IFileUtility {
-    #GetFileType(string fileName): enum
-    #GetPublicIdByUrl(string url): string?
+    #GetFileType(string fileName): FileType
+    #GetPublicIdByUrl(string url): string
     #ConvertGrpcFileStreamToIFormFileAsync(List<GrpcFileStreamDTO> streams): Task<List<IFormFile>>
     #ConvertFileStreamDTOToIFormFileAsync(List<FileStreamDTO> streams): Task<List<IFormFile>>
 }
 
 class FileUtility Implements IFileUtility {
-    +GetFileType(string fileName): enum
-    +GetPublicIdByUrl(string url): string?
+    +GetFileType(string fileName): FileType
+    +GetPublicIdByUrl(string url): string
     +ConvertGrpcFileStreamToIFormFileAsync(List<GrpcFileStreamDTO> streams): Task<List<IFormFile>>
     +ConvertFileStreamDTOToIFormFileAsync(List<FileStreamDTO> streams): Task<List<IFormFile>>
 }
 
 class DeleteMultipleImageFileCommand {
-    +DeleteUrls: List<string>?
+    +DeleteUrls: List<string>
 }
 
 class DeleteMultipleImageFileCommandHandler{
@@ -52,8 +49,15 @@ class DeleteMultipleImageFileCommandHandler{
     +Handle(DeleteMultipleImageFileCommand request, CancellationToken cancellationToken): async Task<Result>
 }
 
+enum FileType {
+    INVALID
+    IMAGE
+    VIDEO
+    RAW
+} 
+
 ' Event DTO
-class DeleteMultipleFileEvent{
+class DeleteMultipleFileEvent #LightSalmon;line:white;text:white{
     +DeleteUrls: List<string>
 }
 
@@ -70,8 +74,11 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
-DeleteMultipleImageFileCommand --|> "IRequest<TResponse>"
-DeleteMultipleImageFileCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+DeleteMultipleImageFileCommand ..|> "IRequest<TResponse>"
+DeleteMultipleImageFileCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+
+FileUtility "1" o-- "1" FileType
+FileUtility "1" o-- "1..*" IFormFile
 
 UploadFileServiceConsumer "1"--"1" DeleteMultipleFileEvent
 UploadFileServiceConsumer "1"--"1" DeleteMultipleImageFileCommand
@@ -90,5 +97,5 @@ UploadFileServiceConsumer -[hidden]down-|> DeleteMultipleImageFileCommand
 
 DeleteMultipleImageFileCommand -[hidden]down-|> DeleteMultipleImageFileCommandHandler
 
-Error "1" --"1..*" CloudinaryFileError
+Error "1..*" --o "1" CloudinaryFileError
 @enduml

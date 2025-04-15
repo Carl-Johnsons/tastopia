@@ -1,0 +1,119 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/Notification/NotificationDbContext.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class NotificationController {
+    +GetNotifications(skip: int, lang: string): async Task<IActionResult>
+}
+
+class GetNotificationsQuery {
+    +AccountId: Guid
+    +Language: string
+    +Skip: int
+    +Category: NotificationCategories
+}
+
+class GetNotificationsQueryHandler {
+    -_context: IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient
+    -_grpcRecipeClient: GrpcRecipeClient
+    -_mapper: IMapper
+    -_paginateDataUtility: IPaginateDataUtility<Notification, AdvancePaginatedMetadata>
+    +GetNotificationsQueryHandler(context: IApplicationDbContext, grpcUserClient: GrpcUserClient, mapper: IMapper, paginateDataUtility: IPaginateDataUtility<Notification, AdvancePaginatedMetadata>, grpcRecipeClient: GrpcRecipeClient)
+    +Handle(request: GetNotificationsQuery, cancellationToken: CancellationToken): async Task<Result<PaginatedNotificationListResponse>>
+}
+
+class NotificationErrors {
+    {static} +NotFound: Error
+}
+
+class NotificationResponse {
+    +Id: Guid
+    +IsViewed: bool
+    +Title: string
+    +Message: string
+    +Code: string
+    +ImageUrl: string
+    +JsonData: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
+
+class NotificationListMetadata extends AdvancePaginatedMetadata {
+    +UnreadNotifications: int
+}
+
+class PaginatedNotificationListResponse {}
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
+}
+
+enum NotificationCategories {
+    ALL
+    USER
+    SYSTEM
+}
+
+' =========== Microservice class ===========
+class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+class GrpcUserClient #DarkBlue;line:white;text:white
+
+class GrpcGetSimpleRecipeRequest #Green;line:white;text:white
+class GrpcRecipeClient #Green;line:white;text:white
+' =========== Microservice class ===========
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IMapper" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+NotificationController --|> BaseApiController
+NotificationController "1"--"1" GetNotificationsQuery
+GetNotificationsQuery ..|> "IRequest<TResponse>"
+GetNotificationsQuery "1" o-- "1" NotificationCategories
+
+PaginatedNotificationListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+PaginatedNotificationListResponse "1" o-- "1..*" NotificationResponse
+PaginatedNotificationListResponse "1" o-- "1" NotificationListMetadata
+
+GetNotificationsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetNotificationsQueryHandler "1" -- "1" GetNotificationsQuery
+GetNotificationsQueryHandler "1" o-- "1" IApplicationDbContext
+GetNotificationsQueryHandler "1" o-- "1" IPaginateDataUtility
+GetNotificationsQueryHandler "1" o-- "1" IMapper
+GetNotificationsQueryHandler "1" o-- "1" GrpcUserClient
+GetNotificationsQueryHandler "1" o-- "1" GrpcRecipeClient
+
+GetNotificationsQueryHandler "1" -- "1" PaginatedNotificationListResponse
+GetNotificationsQueryHandler "1" -- "1" NotificationResponse
+GetNotificationsQueryHandler "1" -- "1..*" Result
+GetNotificationsQueryHandler "1" -- "1..*" NotificationErrors
+GetNotificationsQueryHandler "1" -- "1" GrpcGetSimpleUsersRequest
+GetNotificationsQueryHandler "1" -- "1" GrpcGetSimpleRecipeRequest
+GetNotificationsQueryHandler "1" -- "1" Notification
+GetNotificationsQueryHandler "1" -- "1" NotificationTemplate
+
+Error "1..*" --o "1" NotificationErrors
+
+@enduml

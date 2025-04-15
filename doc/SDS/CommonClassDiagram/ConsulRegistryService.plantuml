@@ -1,0 +1,15 @@
+@startuml ConsulRegistryService
+interface IConsulRegistryService {
+    +GetServiceUri(serviceName: string): Uri;
+}
+class ConsulRegistryService implements IConsulRegistryService {
+    -_consulClient: IConsulClient
+    +ConsulRegistryService(consulClient: IConsulClient)
+    +GetServiceUri(serviceName: string): Uri
+}
+
+interface "IConsulClient" #black;line:white;text:white
+
+ConsulRegistryService "1" o-- "1" IConsulClient
+
+@enduml

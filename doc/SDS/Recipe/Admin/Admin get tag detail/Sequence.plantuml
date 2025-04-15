@@ -1,0 +1,46 @@
+@startuml Sequence
+title "Admin get tag detail"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor Admin
+boundary WebsiteUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n RecipeService" as RecipeService
+database MongoDB
+
+Admin -> WebsiteUI++: 1. Admin click detail \n button in tag table
+
+WebsiteUI -> ApiGateway++: 2. Admin get tag detail
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+alt Current user is not admin
+    WebsiteUI <-- ApiGateway: 4A. Return error message
+    Admin <-- WebsiteUI: 4A.1. Display error message
+else Current user is admin
+ApiGateway -> RecipeService++: 5. Forward request
+RecipeService -> MongoDB++: 6. Query data
+RecipeService <-- MongoDB--: 7. Return response
+  alt Tag is not exist
+      ApiGateway <-- RecipeService: 8A. Return error message
+      WebsiteUI <-- ApiGateway: 8A.1. Foward response
+      Admin <-- WebsiteUI: 8A.2. Display not found error message
+  else Tag is exist
+      ApiGateway <-- RecipeService--: 9. Return tag
+      WebsiteUI <-- ApiGateway--: 10. Forward response
+      Admin <-- WebsiteUI--: 11. Display tag
+  end alt
+end alt
+
+@enduml

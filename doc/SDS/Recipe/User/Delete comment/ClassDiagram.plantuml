@@ -1,0 +1,65 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +DeleteComment(deleteCommentDTO : DeleteCommentDTO): async Task<IActionResult>
+}
+
+class DeleteCommentCommand {
+    +AccountId: Guid
+    +CommentId: Guid
+}
+
+class DeleteCommentCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +DeleteCommentCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork)
+    +Handle(request : DeleteCommentCommand, cancellationToken : CancellationToken): async Task<Result<Comment>> 
+}
+
+class DeleteCommentDTO{
+    +CommentId: Guid
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" DeleteCommentDTO
+RecipeController "1"--"1" DeleteCommentCommand
+
+DeleteCommentCommand ..|> "IRequest<TResponse>"
+
+DeleteCommentCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+DeleteCommentCommandHandler "1"--"1" DeleteCommentCommand
+DeleteCommentCommandHandler "1"--"1" Comment
+DeleteCommentCommandHandler "1"--"1" Result
+DeleteCommentCommandHandler "1" o-- "1" IUnitOfWork
+DeleteCommentCommandHandler "1" o-- "1" IApplicationDbContext
+DeleteCommentCommandHandler "1"--"1..*" RecipeError
+
+Error "1..*" --o "1" RecipeError
+
+@enduml

@@ -6,8 +6,8 @@
 !include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 remove UserSetting
@@ -29,33 +29,32 @@ together {
         +UpdateUser(UpdateUserDTO dto): async Task<IActionResult>
     }
     class UpdateUserDTO {
-        +DisplayName string
-        +Bio string
-        +Gender string
-        +Username string
-        +Avatar IFormFile
-        +Background IFormFile
+        +DisplayName: string
+        +Bio: string
+        +Gender: string
+        +Username: string
+        +Avatar: IFormFile
+        +Background: IFormFile
     }
 
     class UpdateUserCommand {
-        +Guid AccountId
-        +DisplayName string
-        +Bio string
-        +Gender string
-        +Username string
-        +Avatar IFormFile
-        +Background IFormFile
+        +AccountId: Guid 
+        +DisplayName: string
+        +Bio: string
+        +Gender: string
+        +Username: string
+        +Avatar: IFormFile
+        +Background: IFormFile
     }
 }
 
-
 class UpdateUserCommandHandler {
-    - _context : IApplicationDbContext
-    + _unitOfWork: IUnitOfWork
-    - _grpcAccountClient: GrpcAccountClient 
-    + _grpcUploadFileClient: GrpcUploadFileClient
-    + UpdateUserCommandHandler(IApplicationDbContext context, IUnitOfWork unitOfWork, GrpcUploadFile.GrpcUploadFileClient grpcUploadFileClient, GrpcAccount.GrpcAccountClient grpcAccountClient)
-    + Handle(UpdateUserCommand request, CancellationToken cancellationToken) : Task<Result>
+    -_context : IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    -_grpcAccountClient: GrpcAccountClient 
+    -_grpcUploadFileClient: GrpcUploadFileClient
+    +UpdateUserCommandHandler(context : IApplicationDbContext, unitOfWork : IUnitOfWork, grpcUploadFileClient : GrpcUploadFileClient, grpcAccountClient : GrpcAccountClient)
+    +Handle(request : UpdateUserCommand, cancellationToken : CancellationToken) : Task<Result>
 }
 
 class UserError {
@@ -69,6 +68,7 @@ enum GenderType {
 }
 
 ' =========== Microservice class ===========
+class IFormFile #Black;line:white;text:white
 together {
     class GrpcUploadFileClient #LightSalmon;line:white;text:white
     class GrpcUpdateMultipleImageRequest #LightSalmon;line:white;text:white
@@ -77,33 +77,31 @@ together {
 }
 
 ' =========== Library class ===========
-class "RepeatedField<T>" #black;line:white;text:white
 interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
-
 UserController --|> BaseApiController
 UserController "1"--"1" UpdateUserCommand
-UpdateUserCommand --|> "IRequest<TResponse>"
-UpdateUserCommand "1" o--"1" IFormFile
-UpdateUserCommand "1" o--"1" UpdateUserDTO
+UpdateUserCommand ..|> "IRequest<TResponse>"
+UpdateUserDTO "1" o-- "0..2" IFormFile
+UpdateUserCommand "1" o-- "0..2" IFormFile
+UpdateUserCommand "1" o-- "1" UpdateUserDTO
 
-UpdateUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-UpdateUserCommandHandler "1" o--"1" UpdateUserCommand
-UpdateUserCommandHandler "1" o--"1" UserError
+UpdateUserCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+UpdateUserCommandHandler "1" --"1" UpdateUserCommand
 UpdateUserCommandHandler "1" o--"1" IUnitOfWork
-UpdateUserCommandHandler "1" o--"1" IFormFile
-UpdateUserCommandHandler "1" o--"1" FileUtility
 UpdateUserCommandHandler "1" o--"1" IApplicationDbContext
 UpdateUserCommandHandler "1" o--"1" GrpcUploadFileClient
-UpdateUserCommandHandler "1" o--"1" GrpcUpdateMultipleImageRequest
-UpdateUserCommandHandler "1" o--"1" GrpcUpdateAccountRequest
 UpdateUserCommandHandler "1" o--"1" GrpcAccountClient
-UpdateUserCommandHandler "1" o--"1" "RepeatedField<T>"
-UpdateUserCommandHandler "1" o--"1" GenderType
-UpdateUserCommandHandler "1" o--"1" Result
 
-Error "1" --"1" UserError
+UpdateUserCommandHandler "1" --"1..*" UserError
+UpdateUserCommandHandler "1" --"1" FileUtility
+UpdateUserCommandHandler "1" --"1..*" GrpcUpdateMultipleImageRequest
+UpdateUserCommandHandler "1" --"1..*" GrpcUpdateAccountRequest
+UpdateUserCommandHandler "1" --"1..*" GenderType
+UpdateUserCommandHandler "1" --"1" Result
+
+Error "1..*" --o "1" UserError
 
 @enduml

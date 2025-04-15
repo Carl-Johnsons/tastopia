@@ -18,16 +18,13 @@ public class GetRecipeDetailForServerQuery : IRequest<Result<RecipeDetailsRespon
 public class GetRecipeDetailForServerQueryHandler : IRequestHandler<GetRecipeDetailForServerQuery, Result<RecipeDetailsResponse?>>
 {
     private readonly IApplicationDbContext _context;
-    private readonly IServiceBus _serviceBus;
     private readonly GrpcUser.GrpcUserClient _grpcUserClient;
 
     public GetRecipeDetailForServerQueryHandler(IApplicationDbContext context,
-                        GrpcUser.GrpcUserClient grpcUserClient,
-                        IServiceBus serviceBus)
+                        GrpcUser.GrpcUserClient grpcUserClient)
     {
         _context = context;
         _grpcUserClient = grpcUserClient;
-        _serviceBus = serviceBus;
     }
 
     public async Task<Result<RecipeDetailsResponse?>> Handle(GetRecipeDetailForServerQuery request, CancellationToken cancellationToken)

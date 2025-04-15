@@ -5,8 +5,8 @@
 
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 20
-skinparam ranksep 20
+skinparam nodesep 100
+skinparam ranksep 100
 hide circle
 
 class BaseApiController {
@@ -15,7 +15,7 @@ class BaseApiController {
 }
 
 class UserController {
-    +UserReportUser([FromBody] UserReportUserDTO userReportUserDTO): async Task<IActionResult>
+    +UserReportUser(userReportUserDTO : UserReportUserDTO): async Task<IActionResult>
 }
 
 class UserReportUserCommand {
@@ -26,9 +26,10 @@ class UserReportUserCommand {
 }
 
 class UserReportUserCommandHandler {
-    - _context : IApplicationDbContext
-    - _serviceBus: IServiceBus 
-    + Handle(request: UserReportUserCommand, cancellationToken: CancellationToken) : Task<Result<UserReportUserResponse?>>
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    +UserReportUserCommandHandler(context: IApplicationDbContext, serviceBus: IServiceBus)
+    +Handle(request: UserReportUserCommand, cancellationToken: CancellationToken) : Task<Result<UserReportUserResponse>>
 }
 
 class UserReportUserDTO {
@@ -53,18 +54,18 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
 UserController --|> BaseApiController
-UserController "1"--"1" UserReportUserDTO
-UserController "1"--"1" UserReportUserCommand
+UserController "1" -- "1" UserReportUserDTO
+UserController "1" -- "1" UserReportUserCommand
 
-UserReportUserCommand --|> "IRequest<TResponse>"
+UserReportUserCommand ..|> "IRequest<TResponse>"
 
-UserReportUserCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-UserReportUserCommandHandler "1" o--"1" UserReportUserCommand
-UserReportUserCommandHandler "1" o--"1" IApplicationDbContext
-UserReportUserCommandHandler "1" o--"1" UserReportUserResponse
-UserReportUserCommandHandler "1" o--"1" Result
-UserReportUserCommandHandler "1" --"1..*" UserError
+UserReportUserCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+UserReportUserCommandHandler "1" --"1" UserReportUserCommand
+UserReportUserCommandHandler "1" o-- "1" IApplicationDbContext
+UserReportUserCommandHandler "1" -- "1..*" UserReportUserResponse
+UserReportUserCommandHandler "1" -- "1" Result
+UserReportUserCommandHandler "1" -- "1..*" UserError
 
-Error "1" --"1" UserError
+Error "1..*" --o "1" UserError
 
 @enduml

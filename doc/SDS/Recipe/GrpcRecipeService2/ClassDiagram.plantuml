@@ -1,0 +1,239 @@
+@startuml GrpcRecipeSerciveClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+skinparam classAttributeIconSize 0
+
+hide circle
+
+class GrpcRecipeBase #Black;line:white;text:white
+
+class GrpcRecipeService #Green;line:white;text:white extends GrpcRecipeBase {
+    #_sender: ISender
+    #_logger: ILogger
+    +GetSimpleComments(request : GrpcRecipeIdRequest, context : ServerCallContext): async Task<GrpcMapSimpleComments>
+    +GetCommentReports(request : GrpcRecipeIdRequest, context : ServerCallContext): async Task<GrpcMapCommentReports>
+    +GetRecipeReports(request : GrpcRecipeIdRequest, context : ServerCallContext): async Task<GrpcMapRecipeReports>
+    +GetTags(request : GrpcEmpty, context : ServerCallContext): async Task<GrpcListTagDTO>
+}
+
+class GetCommentDetailQuery{
+    +RecipeAndCommentIdSet: HashSet<string>
+}
+class GetCommentDetailQueryHandler{
+    -_context: IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient
+    +GetCommentDetailQueryHandler(context: IApplicationDbContext, grpcUserClient: GrpcUserClient)
+    +Handle(request : GetCommentDetailQuery, cancellationToken : CancellationToken): async Task<Result<<List<SimpleRecipeResponse>>> 
+}
+
+class GetCommentReportDetailByHashSetQuery{
+    +ReportIds: HashSet<Guid>
+    +Lang: string
+}
+class GetCommentReportDetailByHashSetQueryHandler{
+    -_context: IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient
+    +GetCommentReportDetailByHashSetQueryHandler(context: IApplicationDbContext, grpcUserClient: GrpcUserClient)
+    +Handle(request : GetCommentReportDetailByHashSetQuery, cancellationToken : CancellationToken): async Task<Result<<List<SimpleRecipeResponse>>> 
+}
+
+class GetRecipeReportDetailByHashSetQuery{
+    +ReportIds: HashSet<Guid>
+    +Lang: string
+}
+class GetRecipeReportDetailByHashSetQueryHandler{
+    -_context: IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient
+    +GetRecipeReportDetailByHashSetQueryHandler(context: IApplicationDbContext, grpcUserClient: GrpcUserClient)
+    +Handle(request : GetRecipeReportDetailByHashSetQuery, cancellationToken : CancellationToken): async Task<Result<<List<SimpleRecipeResponse>>> 
+}
+
+class GetTagsByHashSetQuery{
+    +TagIds: HashSet<Guid>
+}
+class GetTagsByHashSetQueryHandler{
+    -_context: IApplicationDbContext
+    +GetTagsByHashSetQueryHandler(context: IApplicationDbContext)
+    +Handle(request : GetTagsByHashSetQuery, cancellationToken : CancellationToken): async Task<Result<<List<SimpleRecipeResponse>>> 
+}
+
+' Grpc DTO
+class GrpcGetSimpleCommentRequest #Green;line:white;text:white{
+}
+
+class GrpcGetCommentReportRequest #Green;line:white;text:white{
+}
+
+class GrpcGetRecipeReportRequest #Green;line:white;text:white{
+}
+
+class GrpcGetTagsRequest #Green;line:white;text:white{
+}
+
+' Grpc responses
+
+class GrpcTagDTO #Green;line:white;text:white{
+}
+
+class GrpcMapTagResponse #Green;line:white;text:white{
+}
+
+class GrpcMapSimpleComments #Green;line:white;text:white{
+}
+
+class GrpcCommentReportResponse #Green;line:white;text:white{
+}
+
+class GrpcMapCommentReports #Green;line:white;text:white{
+}
+
+class GrpcMapRecipeReports #Green;line:white;text:white{
+}
+
+class GrpcSimpleComment #Green;line:white;text:white
+
+class GrpcRecipeReportResponse #Green;line:white;text:white
+
+' DTO
+class RecipeDetailsResponse {
+    +Recipe: Recipe
+    +AuthorUsername: string
+    +AuthorDisplayName: string
+    +AuthorAvtUrl: string
+    +AuthorNumberOfFollower: int
+    +Vote: string
+    +IsBookmarked: bool
+    +Tags: List<Tag>
+}
+
+class CommentDetailResponse{
+    +Id: Guid
+    +AuthorId: Guid
+    +AuthorUsername: string
+    +AuthorDisplayName: string
+    +AuthorAvtUrl: string
+    +Content: string
+    +IsActive: bool
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+}
+
+class TagError {
+    {static} +NotFound: Error
+    {static} +AddTagFail: Error
+    {static} +UpdateTagFail: Error
+    {static} +DeleteTagFail: Error
+    {static} +AlreadyExist: Error
+    {static} +NullParameters: Error
+}
+
+class CommentError {
+    {static} +NotFound: Error
+    {static} +AddCommentFail: Error
+    {static} +UpdateCommentFail: Error
+    {static} +DeleteCommentFail: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyActive: Error
+}
+
+class ReportError {
+    {static} +NotFound: Error
+    {static} +AlreadyMarkComplete: Error
+    {static} +AlreadyPending: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+GetCommentDetailQuery ..|> "IRequest<TResponse>"
+GetCommentReportDetailByHashSetQuery ..|> "IRequest<TResponse>"
+GetRecipeReportDetailByHashSetQuery ..|> "IRequest<TResponse>"
+GetTagsByHashSetQuery ..|> "IRequest<TResponse>"
+
+GetCommentDetailQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetCommentReportDetailByHashSetQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetRecipeReportDetailByHashSetQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetTagsByHashSetQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+
+' Commands and queries
+GrpcRecipeService "1"--"1" GrpcGetSimpleCommentRequest
+GrpcRecipeService "1"--"1" GrpcMapSimpleComments
+GrpcRecipeService "1"--"1..*" GrpcSimpleComment
+GrpcRecipeService "1"--"1" CommentDetailResponse
+GrpcRecipeService "1"--"1" GetCommentDetailQuery
+
+GrpcRecipeService "1"--"1" GrpcGetCommentReportRequest
+GrpcRecipeService "1"--"1" GrpcMapCommentReports
+GrpcRecipeService "1"--"1..*" GrpcCommentReportResponse
+GrpcRecipeService "1"--"1" CommentDetailResponse
+GrpcRecipeService "1"--"1" GetCommentReportDetailByHashSetQuery
+
+GrpcRecipeService "1"--"1" GrpcGetRecipeReportRequest
+GrpcRecipeService "1"--"1" GrpcMapRecipeReports
+GrpcRecipeService "1"--"1..*" GrpcRecipeReportResponse
+GrpcRecipeService "1"--"1" RecipeDetailsResponse
+GrpcRecipeService "1"--"1" GetRecipeReportDetailByHashSetQuery
+
+GrpcRecipeService "1"--"1" GrpcGetTagsRequest
+GrpcRecipeService "1"--"1" GrpcMapTagResponse
+GrpcRecipeService "1"--"1..*" GrpcTagDTO
+GrpcRecipeService "1"--"1" Tag
+GrpcRecipeService "1"--"1" GetTagsByHashSetQuery
+' Handlers
+GetCommentDetailQueryHandler "1"--"1" GetCommentDetailQuery
+GetCommentDetailQueryHandler "1"--"1" CommentDetailResponse
+GetCommentDetailQueryHandler "1"---"1" Result
+GetCommentDetailQueryHandler "1"---"1" GrpcGetSimpleUsersRequest
+GetCommentDetailQueryHandler "1" o-- "1" IApplicationDbContext
+GetCommentDetailQueryHandler "1" o-- "1" GrpcUserClient
+GetCommentDetailQueryHandler "1"----"1..*" CommentError
+
+GetCommentReportDetailByHashSetQueryHandler "1"--"1" GetCommentReportDetailByHashSetQuery
+GetCommentReportDetailByHashSetQueryHandler "1"--"1" CommentDetailResponse
+GetCommentReportDetailByHashSetQueryHandler "1"---"1" Result
+GetCommentReportDetailByHashSetQueryHandler "1"---"1" GrpcGetSimpleUsersRequest
+GetCommentReportDetailByHashSetQueryHandler "1" o-- "1" IApplicationDbContext
+GetCommentReportDetailByHashSetQueryHandler "1" o-- "1" GrpcUserClient
+GetCommentReportDetailByHashSetQueryHandler "1"----"1..*" ReportError
+
+GetRecipeReportDetailByHashSetQueryHandler "1"--"1" GetRecipeReportDetailByHashSetQuery
+GetRecipeReportDetailByHashSetQueryHandler "1"--"1" RecipeDetailsResponse
+GetRecipeReportDetailByHashSetQueryHandler "1"---"1" Result
+GetRecipeReportDetailByHashSetQueryHandler "1"---"1" GrpcGetSimpleUsersRequest
+GetRecipeReportDetailByHashSetQueryHandler "1" o-- "1" IApplicationDbContext
+GetRecipeReportDetailByHashSetQueryHandler "1" o-- "1" GrpcUserClient
+GetRecipeReportDetailByHashSetQueryHandler "1"----"1..*" ReportError
+
+GetTagsByHashSetQueryHandler "1"--"1" GetTagsByHashSetQuery
+GetTagsByHashSetQueryHandler "1"--"1" Tag
+GetTagsByHashSetQueryHandler "1"---"1" Result
+GetTagsByHashSetQueryHandler "1" o-- "1" IApplicationDbContext
+GetTagsByHashSetQueryHandler "1"----"1..*" TagError
+
+' =================STYLE=================
+
+together {
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+
+GrpcRecipeService -[hidden]down-|> GetCommentDetailQuery
+GrpcRecipeService -[hidden]down-|> GetCommentReportDetailByHashSetQuery
+GrpcRecipeService -[hidden]down-|> GetRecipeReportDetailByHashSetQuery
+GrpcRecipeService -[hidden]down-|> GetTagsByHashSetQuery
+
+GetCommentDetailQuery -[hidden]down-|> GetCommentDetailQueryHandler
+GetCommentReportDetailByHashSetQuery -[hidden]down-|> GetCommentReportDetailByHashSetQueryHandler
+GetRecipeReportDetailByHashSetQuery -[hidden]down-|> GetRecipeReportDetailByHashSetQueryHandler
+GetTagsByHashSetQuery -[hidden]down-|> GetTagsByHashSetQueryHandler
+
+Error "1..*" --o "1" TagError
+Error "1..*" --o "1" CommentError
+Error "1..*" --o "1" ReportError
+@enduml

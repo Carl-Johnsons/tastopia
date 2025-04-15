@@ -1,0 +1,103 @@
+@startuml GetRecipeCommentClassDiagram
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class RecipeController {
+    +GetAccountRecipeComments(getAccountRecipeCommentsDTO : GetAccountRecipeCommentsDTO): async Task<IActionResult>
+}
+
+class GetAccountRecipeCommentsQuery {
+    +AccountId: Guid
+    +Skip: int
+}
+
+class GetAccountRecipeCommentsQueryHandler {
+    -_context: IApplicationDbContext
+    -_mapper: IMapper
+    -_grpcUserClient: GrpcUserClient
+    -_paginateDataUtility: IPaginateDataUtility
+    +GetAccountRecipeCommentsQueryHandler(context : IApplicationDbContext, mapper : IMapper, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility)
+    +Handle(request : GetAccountRecipeCommentsQuery, cancellationToken : CancellationToken): async Task<Result<PaginatedAccountRecipeCommentListResponse>> 
+}
+
+class PaginatedAccountRecipeCommentListResponse 
+class BasePaginatedResponse{
+    +PaginatedData : IEnumerable<Type>
+    +Metadata: MetadataType
+}
+PaginatedAccountRecipeCommentListResponse --|> BasePaginatedResponse
+
+class AccountRecipeCommentResponse {
+    +Id: Guid
+    +AccountId: Guid
+    +RecipeId: Guid
+    +DisplayName: string
+    +Content: string
+    +RecipeTitle: string
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+    +IsActive: bool
+}
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
+
+class GetAccountRecipeCommentsDTO{
+    +AccountId: Guid
+    +Skip: int
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +AddRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+}
+together {
+    class IMapper #Black;line:white;text:white
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+GetAccountRecipeCommentsQuery ..|> "IRequest<TResponse>"
+
+PaginatedAccountRecipeCommentListResponse "1" o-- "1..*" AccountRecipeCommentResponse
+PaginatedAccountRecipeCommentListResponse "1" o-- "1" AdvancePaginatedMetadata
+
+GetAccountRecipeCommentsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+RecipeController --|> BaseApiController
+RecipeController "1"--"1" GetAccountRecipeCommentsDTO
+RecipeController "1"--"1" GetAccountRecipeCommentsQuery
+
+GetAccountRecipeCommentsQueryHandler "1"--"1" GetAccountRecipeCommentsQuery
+GetAccountRecipeCommentsQueryHandler "1"--"1" Result
+GetAccountRecipeCommentsQueryHandler "1"--"1" PaginatedAccountRecipeCommentListResponse
+GetAccountRecipeCommentsQueryHandler "1"--"1" GrpcGetSimpleUsersRequest
+GetAccountRecipeCommentsQueryHandler "1" o-- "1" IApplicationDbContext
+GetAccountRecipeCommentsQueryHandler "1" o-- "1" IMapper
+GetAccountRecipeCommentsQueryHandler "1" o-- "1" IPaginateDataUtility
+GetAccountRecipeCommentsQueryHandler "1" o-- "1" GrpcUserClient
+GetAccountRecipeCommentsQueryHandler "1"--"1..*" RecipeError
+
+Error "1..*" --o "1" RecipeError
+@enduml

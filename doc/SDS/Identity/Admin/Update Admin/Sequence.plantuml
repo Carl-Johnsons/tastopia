@@ -1,0 +1,77 @@
+@startuml Sequence
+title "Update admin diagram"
+
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor "Super admin" as SuperAdmin
+boundary MobileUI
+participant "<<coordinator>>\nApiGateWay" as ApiGateway
+participant "<<service>>\nIdentityService" as IdentityService
+participant "<<service>>\nUploadService" as UploadService
+participant "<<service>>\nCloudinary" as Cloudinary
+participant "<<service>>\nUserService" as UserService
+participant "<<coordinator>>\nRabbitmq" as Rabbitmq
+database Postgresql
+
+SuperAdmin -> MobileUI ++: 1. Super admin click\n update on update admin modal
+MobileUI -> ApiGateway ++: 2. Request update admin
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Verify Access Token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> IdentityService ++: 4. Forward request
+
+alt if account is null
+  ApiGateway <-- IdentityService: 5A.1. Return not found error
+  MobileUI <-- ApiGateway: 5A.2. Forward response
+  SuperAdmin <-- MobileUI: 5A.3. Display error alert
+else
+  alt if email is not null and existed
+    ApiGateway <-- IdentityService: 5B.1. Return email already exist error
+    MobileUI <-- ApiGateway: 5B.2. Forward response
+    SuperAdmin <-- MobileUI: 5B.3. Display error alert
+  else
+    alt if phone is not null and existed
+      ApiGateway <-- IdentityService: 5C.1. Return phone number already exist error
+      MobileUI <-- ApiGateway: 5C.2. Forward response
+      SuperAdmin <-- MobileUI: 5C.3. Display error alert
+    else
+      opt if admin's avatar is modified
+        IdentityService -> UploadService++: 6A.1. Request to upload admin's avatar <<gRPC>>
+        UploadService -> Cloudinary++: 6A.2. Request to upload image
+        UploadService <-- Cloudinary--: 6A.3. Return image metadata
+        IdentityService <-- UploadService--: 6A.4. Return response <<gRPC>>
+      end
+
+      opt if admin's basic data is modified
+        IdentityService -> UserService++: 7A.1. Request to update admin <<gRPC>>
+        UserService -> Postgresql++: 7A.2. Update admin basic data
+        UserService <-- Postgresql--: 7A.3. Return response
+        IdentityService <-- UserService--: 7A.4. Return response <<gRPC>>
+      end
+
+      IdentityService -> Postgresql ++: 8. Update admin data
+      IdentityService <-- Postgresql --: 9. Return response
+      IdentityService -> Rabbitmq: 10. Publish "AddActivityLogCommand" event <<Async>>
+      activate Rabbitmq
+      ref over Rabbitmq: 11. Add activity log event
+      IdentityService -[hidden]-> Rabbitmq
+      deactivate Rabbitmq
+      destroy Rabbitmq
+
+      ApiGateway <-- IdentityService --: 12. Return success status code
+      MobileUI <-- ApiGateway --: 13. Forward response
+      SuperAdmin <-- MobileUI --: 14. Display alert update admin successfully
+    end
+  end
+end
+
+@enduml
