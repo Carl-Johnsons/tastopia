@@ -6,10 +6,10 @@ namespace TrackingService.Domain.Responses;
 
 public class AdminActivityLogResponse
 {
-
     public Guid AccountId { get; set; }
     [JsonConverter(typeof(StringEnumConverter))]
     public ActivityType ActivityType { get; set; }
+    public string AvatarUrl { get; set; } = null!;
     public string? AccountUsername { get; set; } = null!;
     public Guid EntityId { get; set; }
     [JsonConverter(typeof(StringEnumConverter))]

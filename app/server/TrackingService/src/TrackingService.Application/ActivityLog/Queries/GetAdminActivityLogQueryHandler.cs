@@ -188,6 +188,8 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
             .Select(aal => aal.EntityId)
             .ToList();
 
+        accountIdList.Add(request.AccountId);
+
         if (accountIdList.Count > 0)
         {
             var repeatedField = _mapper.Map<RepeatedField<string>>(accountIdList);
@@ -215,6 +217,9 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                 Ids = { repeatedField },
             }, cancellationToken: cancellationToken);
         }
+
+        var currentUser = grpcUserMap!.Users[request.AccountId.ToString()];
+
         var list = paginatedQuery.ToList()
                                  .Select(aal =>
                                  {
@@ -232,6 +237,8 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                              SecondaryEntityType = aal.SecondaryEntityType,
                                              CreatedAt = aal.CreatedAt,
                                              UpdatedAt = aal.UpdatedAt,
+                                             AccountUsername = currentUser.AccountUsername,
+                                             AvatarUrl = currentUser.AvtUrl
                                          };
                                          var recipeLogResponse = new RecipeLogResponse
                                          {
@@ -266,6 +273,8 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                              SecondaryEntityType = aal.SecondaryEntityType,
                                              CreatedAt = aal.CreatedAt,
                                              UpdatedAt = aal.UpdatedAt,
+                                             AccountUsername = currentUser.AccountUsername,
+                                             AvatarUrl = currentUser.AvtUrl
                                          };
 
                                          var recipeLogResponse = new RecipeLogResponse
@@ -315,6 +324,8 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                              SecondaryEntityType = aal.SecondaryEntityType,
                                              CreatedAt = aal.CreatedAt,
                                              UpdatedAt = aal.UpdatedAt,
+                                             AccountUsername = currentUser.AccountUsername,
+                                             AvatarUrl = currentUser.AvtUrl
                                          };
 
                                          var user = new UserLogResponse
@@ -344,6 +355,8 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                              SecondaryEntityType = aal.SecondaryEntityType,
                                              CreatedAt = aal.CreatedAt,
                                              UpdatedAt = aal.UpdatedAt,
+                                             AccountUsername = currentUser.AccountUsername,
+                                             AvatarUrl = currentUser.AvtUrl
                                          };
 
                                          var report = new ReportLogResponse
@@ -392,6 +405,8 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                              SecondaryEntityType = aal.SecondaryEntityType,
                                              CreatedAt = aal.CreatedAt,
                                              UpdatedAt = aal.UpdatedAt,
+                                             AccountUsername = currentUser.AccountUsername,
+                                             AvatarUrl = currentUser.AvtUrl
                                          };
 
                                          var report = new ReportLogResponse
@@ -461,6 +476,8 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                              SecondaryEntityType = aal.SecondaryEntityType,
                                              CreatedAt = aal.CreatedAt,
                                              UpdatedAt = aal.UpdatedAt,
+                                             AccountUsername = currentUser.AccountUsername,
+                                             AvatarUrl = currentUser.AvtUrl
                                          };
 
                                          var report = new ReportLogResponse
@@ -515,6 +532,8 @@ public class GetAdminActivityLogQueryHandler : IRequestHandler<GetAdminActivityL
                                              SecondaryEntityType = aal.SecondaryEntityType,
                                              CreatedAt = aal.CreatedAt,
                                              UpdatedAt = aal.UpdatedAt,
+                                             AccountUsername = currentUser.AccountUsername,
+                                             AvatarUrl = currentUser.AvtUrl
                                          };
 
                                          var tag = new TagLogResponse
