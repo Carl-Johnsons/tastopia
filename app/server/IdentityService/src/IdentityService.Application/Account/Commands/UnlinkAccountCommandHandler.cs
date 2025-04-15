@@ -1,5 +1,4 @@
 ﻿using Contract.Constants;
-using IdentityService.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,13 +13,10 @@ public record UnlinkAccountCommand : IRequest<Result>
 public class UnlinkAccountCommandHandler : IRequestHandler<UnlinkAccountCommand, Result>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
-    private readonly IApplicationDbContext _context;
 
-    public UnlinkAccountCommandHandler(UserManager<ApplicationAccount> userManager,
-                                       IApplicationDbContext context)
+    public UnlinkAccountCommandHandler(UserManager<ApplicationAccount> userManager)
     {
         _userManager = userManager;
-        _context = context;
     }
 
     public async Task<Result> Handle(UnlinkAccountCommand request, CancellationToken cancellationToken)
@@ -32,7 +28,7 @@ public class UnlinkAccountCommandHandler : IRequestHandler<UnlinkAccountCommand,
             case AccountMethod.Phone:
                 return await UnlinkPhone(request, cancellationToken);
             default:
-                return Result.Failure(AccountError.UnlinkAccountFailed, "Wrong account method");
+                return Result.Failure(AccountError.InvalidAccountMethod, "Wrong account method");
         }
     }
 

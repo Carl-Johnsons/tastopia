@@ -1,0 +1,116 @@
+@startuml NotificationDbContext
+
+interface IMongoDbContext extends IDisposable {
+    +Instance : DbContext
+    +GetDatabase() : IMongoDatabase
+}
+' ========= Entity class =========
+class BaseMongoDBEntity {
+    +Id : Guid
+}
+
+class BaseMongoDBAuditableEntity extends BaseMongoDBEntity {
+    +CreatedAt: DateTime
+    +UpdatedAt: DateTime
+}
+
+class AccountExpoPushToken extends BaseMongoDBAuditableEntity {
+    +AccountId: Guid
+    +ExpoPushToken: string
+    +DeviceType: DeviceType
+}
+
+class Notification extends BaseMongoDBAuditableEntity {
+    +AccountId: Guid
+    +PrimaryActors: List<Actor>
+    +SecondaryActors: List<Actor>
+    +ImageUrl: string
+    +JsonData: string
+    +Recipients: List<Recipient>
+}
+
+class Actor {
+    +ActorId: string
+    +Type: EntityType
+}
+
+class Recipient {
+    +RecipientId: Guid
+    +IsViewed: bool
+}
+
+class NotificationTemplate extends BaseMongoDBEntity {
+    +TemplateCode: NotificationTemplateCode
+    +TranslationTitles: Dictionary<string, string>
+    +TranslationMessages: Dictionary<string, string>
+}
+
+interface IApplicationDbContext extends IMongoDbContext {
+    +Notifications: DbSet<Notification>
+    +NotificationTemplates: DbSet<NotificationTemplate>
+    +AccountExpoPushTokens: DbSet<AccountExpoPushToken>
+}
+
+enum NotificationTemplateCode {
+    USER_COMMENT
+    USER_CREATE_RECIPE
+    USER_FOLLOW
+    USER_UPVOTE
+    SYSTEM_DISABLE_RECIPE
+    ADMIN_DISABLE_RECIPE
+    ADMIN_RESTORE_RECIPE
+    ADMIN_DISABLE_COMMENT
+    ADMIN_RESTORE_COMMENT
+}
+
+enum EntityType {
+    RECIPE
+    COMMENT
+    ADMIN
+    SYSTEM
+    USER
+}
+
+class ApplicationDbContext extends DbContext implements IApplicationDbContext {
+    +Notifications: DbSet<Notification>
+    +NotificationTemplates: DbSet<NotificationTemplate>
+    +AccountExpoPushTokens: DbSet<AccountExpoPushToken>
+    +Instance : DbContext
+    +ApplicationDbContext()
+    +ApplicationDbContext(options : DbContextOptions<ApplicationDbContext>)
+    +OnConfiguring(optionsBuilder : DbContextOptionsBuilder) : void
+    +OnModelCreating(modelBuilder : ModelBuilder) : void
+    +GetDatabase() : IMongoDatabase
+}
+
+enum DeviceType {
+    ANDROID
+    IOS
+}
+
+' ========= Library class =========
+interface IDisposable #black;line:white;text:white
+class "DbSet<T>" #black;line:white;text:white
+class DbContext #black;line:white;text:white
+
+IMongoDbContext "1" o-- "1..*" DbContext
+
+AccountExpoPushToken "1" *-- "1" DeviceType
+
+ApplicationDbContext "1" o-- "1..*" "DbSet<T>"
+ApplicationDbContext "1" o-- "1" "Notification"
+ApplicationDbContext "1" o-- "1" "NotificationTemplate"
+ApplicationDbContext "1" o-- "1" "AccountExpoPushToken"
+
+Notification "1" *--"0..*" Actor
+Notification "1" *--"1..*" Recipient
+NotificationTemplate "1" *-- "1" NotificationTemplateCode
+
+"Actor" "1" *-- "1" EntityType
+
+' =========== Style ==============
+ApplicationDbContext o-[hidden]down- "DbSet<T>"
+
+BaseMongoDBAuditableEntity -[hidden]right- BaseMongoDBEntity 
+
+@enduml

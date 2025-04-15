@@ -98,16 +98,17 @@ class DbContext #black;line:white;text:white
 IDbContext o-- DbContext
 
 ApplicationDbContext o-- "DbSet<T>"
-ApplicationDbContext o-- Setting
-ApplicationDbContext o-- User
-ApplicationDbContext o-- UserFollow
-ApplicationDbContext o-- UserReport
-ApplicationDbContext o-- UserSetting
+ApplicationDbContext "1" o-- "1" Setting
+ApplicationDbContext "1" o-- "1" User
+ApplicationDbContext "1" o-- "1" UserFollow
+ApplicationDbContext "1" o-- "1" UserReport
+ApplicationDbContext "1" o-- "1" UserSetting
 
-Setting *-- SettingDataType
-UserSetting *-- Setting
-UserSetting *-- User
-UserFollow *-- User
+Setting "1" *-- "1" SettingDataType 
+Setting "1" *-- "1" UserSetting
+User "1" *-- "1" UserSetting
+User "1" *-- "1" UserFollow
+User "1" *-- "1..2" UserReport
 ' =========== Style ==============
 
 ApplicationDbContext o-[hidden]down- "DbSet<T>"

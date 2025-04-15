@@ -1,0 +1,40 @@
+@startuml Sequence
+title "Find account diagram"
+
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor User
+boundary MobileUI
+participant "<<coordinator>>\nApiGateWay" as ApiGateway
+participant "<<service>>\nIdentityService" as IdentityService
+participant "<<service>>\nUserService" as UserService
+database Postgresql
+
+User -> MobileUI ++: 1. User click find account\n in forgot password screen
+MobileUI -> ApiGateway ++: 2. Request find account
+
+ApiGateway -> IdentityService ++: 3. Forward request
+IdentityService -> Postgresql ++: 4. Get account data
+IdentityService <-- Postgresql --: 5. Return response
+
+alt if account is null
+  ApiGateway <-- IdentityService: 6A.1. Return not found error
+  MobileUI <-- ApiGateway: 6A.2. Forward response
+  User <-- MobileUI: 6A.3. Display error
+else
+  IdentityService -> UserService++: 7. Request basic account data <<gRPC>>
+  UserService -> Postgresql++: 8. Get account basic data
+  UserService <-- Postgresql--: 9. Return response
+  IdentityService <-- UserService--: 10. Return data <<gRPC>>
+  ApiGateway <-- IdentityService --: 11. Return account basic data
+  MobileUI <-- ApiGateway --: 12. Forward response
+  User <-- MobileUI --: 13. Display account profile
+end
+
+@enduml

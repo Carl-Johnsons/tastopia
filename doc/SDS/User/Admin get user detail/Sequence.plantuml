@@ -1,0 +1,46 @@
+@startuml Sequence
+title "Admin get user detail"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor Admin
+boundary WebsiteUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n UserService" as UserService
+participant "<<service>>\n IdentityService" as IdentityService
+database Postgresql
+
+Admin -> WebsiteUI ++: 1. Click on Detail button\n in user table
+
+WebsiteUI -> ApiGateway ++: 2. Admin get users
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+alt Current user is not admin
+    WebsiteUI <-- ApiGateway: 4A. Return error message
+    Admin <-- WebsiteUI: 4A.1. Display error message
+else Current user is admin
+    ApiGateway -> UserService ++: 5. Forward request
+    UserService -> Postgresql ++: 6. Query data
+    UserService <-- Postgresql--: 7. Return response
+
+    UserService -> IdentityService++: 8. gRPC call to get user's account \n information <<gRPC>>
+    IdentityService -> Postgresql ++: 9. Query data
+    IdentityService <-- Postgresql --: 10. Return response
+    UserService <-- IdentityService--: 11. Return account \n information <<gRPC>>
+
+    ApiGateway <-- UserService--: 12. Return user detail
+    WebsiteUI <-- ApiGateway--: 13. Forward response
+    Admin <-- WebsiteUI--: 14. Display user detail
+end alt
+
+@enduml

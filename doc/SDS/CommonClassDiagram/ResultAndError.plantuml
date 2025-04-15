@@ -16,9 +16,9 @@ together {
     class "Result<T>" {
         +Value: T
         {static} +Success(T value): Result<T>
-        {static} +Failure(Error error): Result<T?>
-        {static} +Failure(Error err, string customMessage): Result<T?>
-        {static} +Failure(IEnumerable<Error> errs): Result<T?>
+        {static} +Failure(Error error): Result<T>
+        {static} +Failure(Error err, string customMessage): Result<T>
+        {static} +Failure(IEnumerable<Error> errs): Result<T>
     }
 
     class Error {
@@ -30,6 +30,7 @@ together {
     }
 }
 
-Result "1" --"1..*" Error
+Result "1" o-- "1..*" Error
 Result <|-- "Result<T>"
+
 @enduml

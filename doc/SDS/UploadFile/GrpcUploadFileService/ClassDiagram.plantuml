@@ -2,25 +2,19 @@
 !include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
 skinparam classAttributeIconSize 0
 skinparam linetype polyline
-skinparam nodesep 50
-skinparam ranksep 50
+skinparam nodesep 100
+skinparam ranksep 100
 skinparam classAttributeIconSize 0
-skinparam classBackgroundColor LightSalmon
-skinparam classBorderColor While
-skinparam classFontColor While
-skinparam classAttributeFontColor While
 
 hide circle
-
 class GrpcUploadFileBase #Black;line:white;text:white
 
 
-class GrpcUploadFileService extends GrpcUploadFileBase {
+class GrpcUploadFileService #LightSalmon;line:white;text:white extends GrpcUploadFileBase {
     #_sender: ISender
-    #_logger: ILogger
     #_fileUtility: IFileUtility
-    +UpdateMultipleImage(GrpcUpdateMultipleImageRequest request, ServerCallContext context): async Task<GrpcListFileDTO>
-    +UploadMultipleImage(GrpcUploadMultipleImageRequest request, ServerCallContext context): async Task<GrpcListFileDTO>
+    +UpdateMultipleImage(request: GrpcUpdateMultipleImageRequest, context: ServerCallContext): async Task<GrpcListFileDTO>
+    +UploadMultipleImage(request: GrpcUploadMultipleImageRequest, context: ServerCallContext): async Task<GrpcListFileDTO>
 }
 
 
@@ -36,72 +30,65 @@ class ImageUploadResult #Black;line:white;text:white {
 class DeletionParams #Black;line:white;text:white{
 }
 
+class IFormFile #Black;line:white;text:white
+
 interface IFileUtility {
-    #GetFileType(string fileName): enum
-    #GetPublicIdByUrl(string url): string?
+    #GetFileType(string fileName): FileType
+    #GetPublicIdByUrl(string url): string
     #ConvertGrpcFileStreamToIFormFileAsync(List<GrpcFileStreamDTO> streams): Task<List<IFormFile>>
     #ConvertFileStreamDTOToIFormFileAsync(List<FileStreamDTO> streams): Task<List<IFormFile>>
 }
 
 class FileUtility Implements IFileUtility {
-    +GetFileType(string fileName): enum
-    +GetPublicIdByUrl(string url): string?
+    +GetFileType(string fileName): FileType
+    +GetPublicIdByUrl(string url): string
     +ConvertGrpcFileStreamToIFormFileAsync(List<GrpcFileStreamDTO> streams): Task<List<IFormFile>>
     +ConvertFileStreamDTOToIFormFileAsync(List<FileStreamDTO> streams): Task<List<IFormFile>>
 }
 
 class UpdateMultipleImageFileCommand {
-    +DeleteUrls: List<string>?
-    +FormFiles: List<IFormFile>?
+    +DeleteUrls: List<string>
+    +FormFiles: List<IFormFile>
 }
 
 class UpdateMultipleImageFileCommandHandler{
     -_fileUtility: IFileUtility
     -_cloudinary: Cloudinary
-    +Handle(UpdateMultipleImageFileCommand request, CancellationToken cancellationToken): async Task<Result<List<FileResponse>?>>
-    -UploadMultipleImage(List<IFormFile> formFiles, CancellationToken cancellationToken): async Task<Result<List<FileResponse>?>>
-    -DeleteMultipleImage(List<string> urls): async Task
+    +UpdateMultipleImageFileCommandHandler(fileUtility: IFileUtility, cloudinary: Cloudinary)
+    +Handle(request: UpdateMultipleImageFileCommand, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>>>
+    -UploadMultipleImage(formFiles: List<IFormFile>, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>>>
+    -DeleteMultipleImage(urls: List<string>): async Task
 }
 
 class CreateMultipleImageFileCommand {
-    +FormFiles: List<IFormFile>?
+    +FormFiles: List<IFormFile>
 }
 
 class CreateMultipleImageFileCommandHandler{
     -_fileUtility: IFileUtility
     -_cloudinary: Cloudinary
-    +Handle(CreateMultipleImageFileCommand request, CancellationToken cancellationToken): async Task<Result<List<FileResponse>?>>
+    +CreateMultipleImageFileCommandHandler(fileUtility: IFileUtility, cloudinary: Cloudinary)
+    +Handle(request: CreateMultipleImageFileCommand, cancellationToken: CancellationToken): async Task<Result<List<FileResponse>>>
 }
 ' Grpc DTO
-class GrpcUpdateMultipleImageRequest{
-    +Files: List<GrpcFileStreamDTO>
-    +DeleteUrls: List<string>
+class GrpcUpdateMultipleImageRequest #LightSalmon;line:white;text:white{
 }
 
-class GrpcUploadMultipleImageRequest{
-    +Files: List<GrpcFileStreamDTO>
+class GrpcUploadMultipleImageRequest #LightSalmon;line:white;text:white{
 }
 
-class GrpcListFileDTO{
-    +Files: List<GrpcFileDTO>
+class GrpcListFileDTO #LightSalmon;line:white;text:white{
 }
 
-class GrpcFileDTO{
-    +Name: string
-    +PublicId: string
-    +Size: long
-    +Url: string
+class GrpcFileDTO #LightSalmon;line:white;text:white{
 }
 
-class GrpcFileStreamDTO{
-    +FileName: string
-    +ContentType: string
-    +Stream: byte[]
-}
-
-GrpcUpdateMultipleImageRequest *--"1.." GrpcFileStreamDTO
-GrpcUploadMultipleImageRequest *--"1.." GrpcFileStreamDTO
-GrpcListFileDTO *--"1.." GrpcFileDTO
+enum FileType {
+    INVALID
+    IMAGE
+    VIDEO
+    RAW
+} 
 
 ' DTO
 class FileResponse{
@@ -126,13 +113,16 @@ interface "IRequest<TResponse>" #black;line:white;text:white
 interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 
-DeleteMultipleImageCommand --|> "IRequest<TResponse>"
-UpdateMultipleImageFileCommand --|> "IRequest<TResponse>"
-CreateMultipleImageFileCommand --|> "IRequest<TResponse>"
+UpdateMultipleImageFileCommand ..|> "IRequest<TResponse>"
+UpdateMultipleImageFileCommand "1" o-- "1..*" IFormFile
+CreateMultipleImageFileCommand ..|> "IRequest<TResponse>"
+CreateMultipleImageFileCommand "1" o-- "1..*" IFormFile
 
-UpdateMultipleImageFileCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-CreateMultipleImageFileCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
-DeleteMultipleImageCommandHandler --|> "IRequestHandler<TRequest, TResponse>"
+UpdateMultipleImageFileCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+CreateMultipleImageFileCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+
+FileUtility "1" o-- "1" FileType
+FileUtility "1" o-- "1..*" IFormFile
 
 GrpcUploadFileService "1"--"1" GrpcUpdateMultipleImageRequest
 GrpcUploadFileService "1"--"1..*" GrpcListFileDTO
@@ -141,9 +131,6 @@ GrpcUploadFileService "1"--"1..*" FileResponse
 GrpcUploadFileService "1"--"1" UpdateMultipleImageFileCommand
 
 GrpcUploadFileService "1"--"1" GrpcUploadMultipleImageRequest
-GrpcUploadFileService "1"--"1..*" GrpcListFileDTO
-GrpcUploadFileService "1"--"1..*" GrpcFileDTO
-GrpcUploadFileService "1"--"1..*" FileResponse
 GrpcUploadFileService "1"--"1" CreateMultipleImageFileCommand
 
 UpdateMultipleImageFileCommandHandler "1"--"1" UpdateMultipleImageFileCommand
@@ -155,6 +142,7 @@ UpdateMultipleImageFileCommandHandler "1"--"1..*" CloudinaryFileError
 UpdateMultipleImageFileCommandHandler "1"--"1..*" ImageUploadResult
 UpdateMultipleImageFileCommandHandler "1"--"1..*" ImageUploadParams
 UpdateMultipleImageFileCommandHandler "1"--"1..*" DeletionParams
+UpdateMultipleImageFileCommandHandler "1"--"1" IFormFile
 
 CreateMultipleImageFileCommandHandler "1"--"1" CreateMultipleImageFileCommand
 CreateMultipleImageFileCommandHandler "1"--"1..*" FileResponse
@@ -164,7 +152,7 @@ CreateMultipleImageFileCommandHandler "1" o-- "1" Cloudinary
 CreateMultipleImageFileCommandHandler "1"--"1..*" CloudinaryFileError
 CreateMultipleImageFileCommandHandler "1"--"1..*" ImageUploadResult
 CreateMultipleImageFileCommandHandler "1"--"1..*" ImageUploadParams
-
+CreateMultipleImageFileCommandHandler "1"--"1" IFormFile
 
 ' =================STYLE=================
 GrpcUploadFileService -[hidden]down-|> UpdateMultipleImageFileCommand
@@ -173,6 +161,6 @@ GrpcUploadFileService -[hidden]down-|> CreateMultipleImageFileCommand
 UpdateMultipleImageFileCommand -[hidden]down-|> UpdateMultipleImageFileCommandHandler
 CreateMultipleImageFileCommand -[hidden]down-|> CreateMultipleImageFileCommandHandler
 
-Error "1" --"1..*" CloudinaryFileError
+Error "1..*" --o "1" CloudinaryFileError
 
 @enduml

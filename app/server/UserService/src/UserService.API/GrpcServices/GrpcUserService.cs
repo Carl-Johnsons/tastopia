@@ -74,7 +74,6 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         _logger.LogInformation(JsonConvert.SerializeObject(grpcResult, Formatting.Indented));
         return grpcResult;
     }
-
     public override async Task<GrpcUserDetailDTO> GetUserDetail(GrpcAccountIdRequest request, ServerCallContext context)
     {
         var response = await _sender.Send(new GetUserDetailsQuery
@@ -153,7 +152,6 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         };
         return result;
     }
-
     public override async Task<GrpcUserSetting> GetUserSetting(GrpcGetUserSettingRequest request, ServerCallContext context)
     {
         if (request.AccountId == null || request.AccountId.Count == 0)
@@ -205,7 +203,6 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
 
         return grpcResult;
     }
-
     public override async Task<GrpcListAccountIds> GetUserFollower(GrpcAccountIdRequest request, ServerCallContext context)
     {
         if (string.IsNullOrEmpty(request.AccountId))
@@ -250,7 +247,6 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
         };
         return result;
     }
-
     public override async Task<GrpcSimpleUserReport> GetSimpleUserReport(GrpcGetUserReportRequest request, ServerCallContext context)
     {
         var hashSet = request.ReportIds.Select(Guid.Parse).ToHashSet();
@@ -302,7 +298,6 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
             Reports = { mapField }
         };
     }
-
     public override async Task<GrpcEmpty> CreateAdminUser(GrpcCreateAdminRequest request, ServerCallContext context)
     {
         var result = await _sender.Send(new CreateUserCommand
@@ -330,7 +325,6 @@ public class GrpcUserService : GrpcUser.GrpcUserBase
 
         return new GrpcEmpty();
     }
-
     public override async Task<GrpcEmpty> UpdateAdminUser(GrpcUpdateAdminRequest request, ServerCallContext context)
     {
         var result = await _sender.Send(new UpdateGprcUserCommand

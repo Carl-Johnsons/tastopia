@@ -1,0 +1,97 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AccountController {
+    +FindAccount(method: string, dto: AccountIdentifierDTO): async Task<IActionResult>
+}
+
+class FindAccountQuery {
+    +Identifier: string
+    +Method: AccountMethod 
+}
+
+class FindAccountQueryHandler {
+    -_userManager: UserManager<ApplicationAccount>
+    -_grpcUserClient: GrpcUserClient
+    -_mapper: IMapper
+    +FindAccountQueryHandler(userManager: UserManager<ApplicationAccount>, grpcUserClient: GrpcUserClient, mapper: IMapper)
+    +Handle(request: FindAccountQuery, cancellationToken: CancellationToken): Task<Result<SimpleUserResponse>>
+}
+
+class AccountError {
+    {static} +NotFound: Error
+    {static} +InvalidAccountMethod: Error
+}
+
+class SimpleUserResponse
+{
+    +Id: Guid
+    +DisplayName: string
+    +AvtUrl: string
+}
+
+enum AccountMethod {
+    Phone
+    Email
+    Username
+    Google
+}
+
+class AccountIdentifierDTO {
+    Identifier: string
+}
+
+!include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml 
+remove IDisposable
+remove DbSet<T>
+remove IdentityUserLogin<T>
+remove IDbContext
+remove DbContext
+remove IApplicationDbContext
+remove ApplicationDbContext
+remove IdentityDbContext<ApplicationAccount>
+
+' =========== Microservice class ===========
+together {
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IMapper" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+class "UserManager<TUser>" #black;line:white;text:white
+' =========== Library class ===========
+
+AccountController --|> BaseApiController
+AccountController "1"--"1" FindAccountQuery
+AccountController "1"--"1" AccountIdentifierDTO
+FindAccountQuery "1" o--"1" AccountMethod
+FindAccountQuery ..|> "IRequest<TResponse>"
+
+FindAccountQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+FindAccountQueryHandler "1" -- "1" FindAccountQuery
+FindAccountQueryHandler "1" o-- "1" "UserManager<TUser>"
+FindAccountQueryHandler "1" o-- "1" GrpcUserClient
+FindAccountQueryHandler "1" o-- "1" IMapper
+
+FindAccountQueryHandler "1" --- "1..*" ApplicationAccount
+FindAccountQueryHandler "1" -- "1..*" AccountError
+FindAccountQueryHandler "1" -- "1..*" Result
+FindAccountQueryHandler "1" -- "1" GrpcGetSimpleUsersRequest
+FindAccountQueryHandler "1" -- "1..*" SimpleUserResponse
+
+Error "1..*" --o "1" AccountError
+
+@enduml

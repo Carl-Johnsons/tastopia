@@ -1,0 +1,48 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Tracking/TrackingDbContext.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+skinparam classAttributeIconSize 0
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class TrackingController {
+    +GetUserSearchRecipe(): async Task<IActionResult>
+}
+
+class GetUserSearchRecipeQuery {
+    +AccountId: Guid
+}
+
+class GetUserSearchRecipeQueryHandler {
+    -_context: IApplicationDbContext
+    +GetUserSearchRecipeQueryHandler(context: IApplicationDbContext)
+    +Handle(request: GetUserSearchRecipeQuery, cancellationToken: CancellationToken): async Task<Result<List<string>>>
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+TrackingController --|> BaseApiController
+TrackingController "1"--"1" GetUserSearchRecipeQuery
+
+GetUserSearchRecipeQuery ..|> "IRequest<TResponse>"
+
+GetUserSearchRecipeQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetUserSearchRecipeQueryHandler "1"--"1" GetUserSearchRecipeQuery
+GetUserSearchRecipeQueryHandler "1" o-- "1" IApplicationDbContext
+
+GetUserSearchRecipeQueryHandler "1"--"1..*" Result
+GetUserSearchRecipeQueryHandler "1"--"1..*" UserSearchRecipe
+' ====================STYLE====================
+
+@enduml

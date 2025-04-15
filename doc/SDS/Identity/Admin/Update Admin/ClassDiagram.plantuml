@@ -1,0 +1,113 @@
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+!include doc/SDS/CommonClassDiagram/FileUtility.plantuml
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +UpdateAdmin(dto: UpdateAdminAccountDTO): async Task<IActionResult>
+}
+
+class UpdateAdminAccountCommand {
+    +CurrentAccountId: Guid
+    +AccountId: Guid
+    +Name: string
+    +Gmail: string
+    +Phone: string
+    +Gender: string
+    +Dob: DateTime
+    +Address: string
+    +AvatarFile: IFormFile
+}
+
+class UpdateAdminAccountCommandHandler {
+    -_userManager: UserManager<ApplicationAccount>
+    -_grpcUserClient: GrpcUserClient
+    -_grpcUploadFileClient: GrpcUploadFileClient
+    -_serviceBus: IServiceBus
+    +UpdateAdminAccountCommandHandler(userManager: UserManager<ApplicationAccount>, grpcUserClient: GrpcUserClient, grpcUploadFileClient: GrpcUploadFileClient, serviceBus: IServiceBus)
+    +Handle(request: UpdateAdminAccountCommand, cancellationToken: CancellationToken): async Task<Result>
+}
+
+class AccountError {
+    {static} +NotFound: Error
+    {static} +UsernameAlreadyExisted: Error
+    {static} +EmailAlreadyExisted: Error
+    {static} +PhoneAlreadyExisted: Error
+    {static} +UpdateAccountFailed: Error
+    {static} +UpdateAccountFailed: Error
+}
+
+class UpdateAdminAccountDTO {
+    +AccountId: Guid
+    +Name: string
+    +Gmail: string
+    +Phone: string
+    +Gender: string
+    +Dob: DateTime
+    +Address: string
+    +AvatarFile: IFormFile
+}
+
+!include doc/SDS/CommonClassDiagram/Account/AccountDbContext.plantuml 
+remove IDisposable
+remove DbSet<T>
+remove IdentityUserLogin<T>
+remove IDbContext
+remove DbContext
+remove IApplicationDbContext
+remove ApplicationDbContext
+remove IdentityDbContext<ApplicationAccount>
+
+' =========== Microservice class ===========
+together {
+    class GrpcUploadMultipleImageRequest #LightSalmon;line:white;text:white
+    class GrpcUploadFileClient #LightSalmon;line:white;text:white
+}
+
+together {
+    class GrpcUpdateAdminRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+class "UserManager<TUser>" #black;line:white;text:white
+' =========== Library class ===========
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" UpdateAdminAccountCommand
+UpdateAdminAccountDTO "1" o-- IFormFile
+UpdateAdminAccountCommand ..|> "IRequest<TResponse>"
+UpdateAdminAccountCommand "1" o-- "1" IFormFile
+
+UpdateAdminAccountCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+UpdateAdminAccountCommandHandler "1" -- "1" UpdateAdminAccountCommand
+UpdateAdminAccountCommandHandler "1" o-- "1" "UserManager<TUser>"
+UpdateAdminAccountCommandHandler "1" o-- "1" GrpcUploadFileClient
+UpdateAdminAccountCommandHandler "1" o-- "1" IServiceBus
+UpdateAdminAccountCommandHandler "1" o-- "1" GrpcUserClient
+
+UpdateAdminAccountCommandHandler "1" -- "1..*" AccountError
+UpdateAdminAccountCommandHandler "1" --- "1..*" ApplicationAccount
+UpdateAdminAccountCommandHandler "1" -- "1..*" Result
+UpdateAdminAccountCommandHandler "1" -- "1" GrpcUploadMultipleImageRequest
+UpdateAdminAccountCommandHandler "1" -- "1" GrpcUpdateAdminRequest
+UpdateAdminAccountCommandHandler "1" -- "1" FileUtility
+UpdateAdminAccountCommandHandler "1" -- "1" GrpcFileStreamDTO
+UpdateAdminAccountCommandHandler "1" -- "1" AddActivityLogEvent
+
+Error "1..*" --o "1" AccountError
+
+@enduml
