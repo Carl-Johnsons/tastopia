@@ -16,7 +16,9 @@ participant "<<cordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n UserService" as UserService
 participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
+participant "<<service>>\n RecipeService" as RecipeService
 database Postgresql
+database MongoDB
 
 Admin -> WebsiteUI ++: 1. Click on disable button \n in user profile screen
 WebsiteUI -> ApiGateway ++: 2. Admin ban user
@@ -36,11 +38,15 @@ else Current user is admin
     alt User not have banned
       UserService -> Postgresql++: 8A. Update data
       UserService <-- Postgresql--: 8A.1. Return response
-      UserService -> Rabbitmq: 8A.2. Publish "BanUserEvent" message 
+      UserService -> Rabbitmq: 12A.1. Publish "BanUserEvent" \n message <<Async>>
       activate Rabbitmq
-      ref over Rabbitmq: 8A.3. BanUserConsumer
-      Rabbitmq -[hidden]> 
-      destroy Rabbitmq
+      Rabbitmq -> RecipeService: 12A.2. Deliver "BanUserEvent"\n message
+      deactivate Rabbitmq
+      activate RecipeService
+      RecipeService -> MongoDB++: 12A.3. Consume message and update \n database
+      RecipeService <-- MongoDB--: 12A.3. Return response
+      deactivate RecipeService
+      destroy RecipeService
       ApiGateway <-- UserService: 8A.4. Return banned user
       WebsiteUI <-- ApiGateway: 8A.5. Forward response
       Admin <-- WebsiteUI: 8A.6. Display ban user success message
