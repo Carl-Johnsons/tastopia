@@ -38,18 +38,18 @@ else Current user is admin
     alt User not have banned
       UserService -> Postgresql++: 8A. Update data
       UserService <-- Postgresql--: 8A.1. Return response
-      UserService -> Rabbitmq: 12A.1. Publish "BanUserEvent" \n message <<Async>>
+      UserService -> Rabbitmq: 8A.2. Publish "BanUserEvent" \n message <<Async>>
       activate Rabbitmq
-      Rabbitmq -> RecipeService: 12A.2. Deliver "BanUserEvent"\n message
+      Rabbitmq -> RecipeService: 8A.3. Deliver "BanUserEvent"\n message
       deactivate Rabbitmq
       activate RecipeService
-      RecipeService -> MongoDB++: 12A.3. Consume message and update \n database
-      RecipeService <-- MongoDB--: 12A.3. Return response
+      RecipeService -> MongoDB++: 8A.4. Consume message and update \n database
+      RecipeService <-- MongoDB--: 8A.5. Return response
       deactivate RecipeService
       destroy RecipeService
-      ApiGateway <-- UserService: 8A.4. Return banned user
-      WebsiteUI <-- ApiGateway: 8A.5. Forward response
-      Admin <-- WebsiteUI: 8A.6. Display ban user success message
+      ApiGateway <-- UserService: 8A.6. Return banned user
+      WebsiteUI <-- ApiGateway: 8A.7. Forward response
+      Admin <-- WebsiteUI: 8A.8. Display ban user success message
     else User adrealy banned
       UserService -> Postgresql++: 9. Update data
       UserService <-- Postgresql--: 10. Return response
