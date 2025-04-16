@@ -17,6 +17,7 @@ public class AdminGetUserDetailResponse
     public bool IsAccountActive { get; set; } = true;
     public string AccountUsername { get; set; } = null!;
     public string Role { get; set; } = null!;
+    public string? Bio { get; set; } 
     public bool IsCurrentUser { get; set; } = false;
     public List<UserSetting> Settings { get; set; } = []; 
     //Account
