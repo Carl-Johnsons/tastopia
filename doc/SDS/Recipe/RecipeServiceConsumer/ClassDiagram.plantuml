@@ -16,6 +16,7 @@ class RecipeServiceConsumer #Green;line:white;text:white{
     +RequestAddTagsConsumer(context: ConsumeContext<RequestAddTagsEvent>): async Task
     +UpdateRecipeIsActiveConsumer(context: ConsumeContext<UpdateRecipeIsActiveEvent>): async Task
     +UpdateRecipeTagsConsumer(context: ConsumeContext<UpdateRecipeTagsEvent>): async Task
+    +BanUserConsumer(context: ConsumeContext<BanUserEvent>): async Task
 }
 
 class RequestAddTagsCommand {
@@ -31,6 +32,10 @@ class UpdateRecipeIsActiveCommand {
 class UpdateRecipeTagsCommand {
     +RecipeId: Guid
     +TagCodes: List<string>
+}
+
+class DisableUserRecipeCommand {
+    +AccountId: Guid
 }
 
 class RequestAddTagsCommandHandler{
@@ -54,6 +59,13 @@ class UpdateRecipeTagsCommandHandler{
     +Handle(request: UpdateRecipeTagsCommand): async Task<Result>
 }
 
+class DisableUserRecipeCommandHandler{
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +DisableUserRecipeCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
+    +Handle(request: DisableUserRecipeCommand): async Task<Result>
+}
+
 ' Event DTO
 class RequestAddTagsEvent #Green;line:white;text:white{
     +Requests: List<string>
@@ -68,6 +80,10 @@ class UpdateRecipeIsActiveEvent #Green;line:white;text:white{
 class UpdateRecipeTagsEvent #Green;line:white;text:white{
     +RecipeId: Guid
     +TagCodes: List<string>
+}
+
+class BanUserEvent #Green;line:white;text:white{
+    +AccountId: Guid
 }
 
 class RecipeError {
@@ -106,16 +122,20 @@ RecipeServiceConsumer "1" -- "1..*" UpdateRecipeIsActiveEvent
 RecipeServiceConsumer "1" -- "1" UpdateRecipeTagsCommand
 RecipeServiceConsumer "1" -- "1..*" UpdateRecipeTagsEvent
 
+RecipeServiceConsumer "1" -- "1" DisableUserRecipeCommand
+RecipeServiceConsumer "1" -- "1..*" BanUserEvent
+
 ' Command and query
 RequestAddTagsCommand ..|> "IRequest<TResponse>"
 UpdateRecipeIsActiveCommand ..|> "IRequest<TResponse>"
 UpdateRecipeTagsCommand ..|> "IRequest<TResponse>"
+DisableUserRecipeCommand ..|> "IRequest<TResponse>"
 
 'Handler
 RequestAddTagsCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 UpdateRecipeIsActiveCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 UpdateRecipeTagsCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
-
+DisableUserRecipeCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
 
 RequestAddTagsCommandHandler "1"--"1" RequestAddTagsCommand
 RequestAddTagsCommandHandler "1"----"1..*" Result
@@ -135,19 +155,27 @@ UpdateRecipeTagsCommandHandler "1" o---- "1" IApplicationDbContext
 UpdateRecipeTagsCommandHandler "1" o---- "1" IUnitOfWork
 UpdateRecipeTagsCommandHandler "1 "-- "1..*" RecipeError
 
+DisableUserRecipeCommandHandler "1"--"1" DisableUserRecipeCommand
+DisableUserRecipeCommandHandler "1"----"1..*" Result
+DisableUserRecipeCommandHandler "1" o---- "1" IApplicationDbContext
+DisableUserRecipeCommandHandler "1" o---- "1" IUnitOfWork
+DisableUserRecipeCommandHandler "1 "-- "1..*" RecipeError
 
 ' =================STYLE=================
 UpdateRecipeIsActiveEvent -[hidden]up- RecipeServiceConsumer
 RequestAddTagsEvent -[hidden]up- RecipeServiceConsumer
 UpdateRecipeTagsEvent -[hidden]up- RecipeServiceConsumer
+BanUserEvent -[hidden]up- RecipeServiceConsumer
 
 RecipeServiceConsumer -[hidden]down-|> RequestAddTagsCommand
 RecipeServiceConsumer -[hidden]down-|> UpdateRecipeIsActiveCommand
 RecipeServiceConsumer -[hidden]down-|> UpdateRecipeTagsCommand
+RecipeServiceConsumer -[hidden]down-|> DisableUserRecipeCommand
 
 RequestAddTagsCommand -[hidden]down-|> RequestAddTagsCommandHandler
 UpdateRecipeIsActiveCommand -[hidden]down-|> UpdateRecipeIsActiveCommandHandler
 UpdateRecipeTagsCommand -[hidden]down-|> UpdateRecipeTagsCommandHandler
+DisableUserRecipeCommand -[hidden]down-|> DisableUserRecipeCommandHandler
 
 Error "1..*" --o "1" RecipeError
 Error "1..*" --o "1" TagError
