@@ -42,7 +42,10 @@ public class GetAccountRecipeCommentsQueryHandler : IRequestHandler<GetAccountRe
             return Result<PaginatedAccountRecipeCommentListResponse?>.Failure(RecipeError.NullParameter);
         }
 
-        var commentQuery = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable().SelectMany(r => r.Comments, (r, c) => new { Recipe = r, Comment = c }).Where(rc => rc.Comment.AccountId == accountId).OrderByDescending(rc => rc.Comment.CreatedAt).AsQueryable();
+        var commentQuery = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable()
+                           .SelectMany(r => r.Comments, (r, c) => new { Recipe = r, Comment = c })
+                           .Where(rc => rc.Comment.AccountId == accountId && rc.Recipe.IsActive == true && rc.Comment.IsActive == true)
+                           .OrderByDescending(rc => rc.Comment.CreatedAt).AsQueryable();
         var totalPage = (commentQuery.Count() + RECIPE_CONSTANTS.COMMENT_LIMIT - 1) / RECIPE_CONSTANTS.COMMENT_LIMIT;
         commentQuery = commentQuery.Skip(RECIPE_CONSTANTS.COMMENT_LIMIT * skip.Value).Take(RECIPE_CONSTANTS.COMMENT_LIMIT);
 

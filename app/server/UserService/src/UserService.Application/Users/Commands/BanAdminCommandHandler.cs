@@ -1,5 +1,6 @@
 ﻿using Contract.Event.IdentityEvent;
 using Contract.Event.TrackingEvent;
+using Contract.Event.UserEvent;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UserService.Domain.Errors;
@@ -65,6 +66,14 @@ public class AdminBanUserCommandHandler : IRequestHandler<AdminBanUserCommand, R
             EntityId = request.AccountId,
             EntityType = Contract.Constants.ActivityEntityType.USER
         });
+
+        if (!isRestored)
+        {
+            await _serviceBus.Publish(new BanUserEvent
+            {
+                AccountId = accountId,
+            });
+        }
 
         return Result<AdminBanUserResponse?>.Success(new AdminBanUserResponse
         {
