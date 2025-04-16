@@ -78,12 +78,13 @@ const TagForm = ({ type }: FormProps) => {
 
   type TagFormValues = z.infer<typeof CreateTagSchema> | z.infer<typeof UpdateTagSchema>;
 
+  const tagImageDefault = tag?.imageUrl ? [{ dataURL: tag.imageUrl }] : [];
   const defaultValues = {
     code: isUpdate ? tag?.code || "" : "",
     vi: isUpdate ? tag?.vi || "" : "",
     en: isUpdate ? tag?.en || "" : "",
     category: isUpdate ? tag?.category || "" : "",
-    tagImage: isUpdate ? [{ dataURL: tag?.imageUrl ?? "" }] : undefined,
+    tagImage: isUpdate ? tagImageDefault : undefined,
     ...(isUpdate && { status: tag?.status || "" })
   };
 
@@ -307,6 +308,7 @@ const TagForm = ({ type }: FormProps) => {
                 field={field}
                 label={t("form.image.label")}
                 isLoading={false}
+                rounded={false}
               />
             );
           }}

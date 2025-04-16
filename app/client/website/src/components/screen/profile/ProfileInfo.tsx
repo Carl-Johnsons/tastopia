@@ -8,7 +8,6 @@ import {
   LocationIcon,
   PhoneIcon,
   RecipesIcon,
-  TimeIcon,
   UserIcon
 } from "@/components/shared/icons";
 import { getTranslations } from "next-intl/server";

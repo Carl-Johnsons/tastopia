@@ -48,6 +48,7 @@ type FormInputProps = {
   placeholder?: string;
   isLoading: boolean;
   required?: boolean;
+  rounded?: boolean;
 };
 
 type SelectItemData = {
@@ -415,7 +416,7 @@ const FormDatePicker = ({
 };
 
 export const FormImageUpload = memo(
-  ({ label, field, isLoading, required }: FormImageUploadProps) => {
+  ({ label, field, isLoading, required, rounded = true }: FormImageUploadProps) => {
     const { value, onChange } = field;
 
     return (
@@ -424,7 +425,9 @@ export const FormImageUpload = memo(
           <>
             <SkeletonControl className='h-4 w-20' />
             <div className='flex-center'>
-              <SkeletonControl className='size-[200px] rounded-full' />
+              <SkeletonControl
+                className={`size-[200px] ${rounded ? "rounded-full" : "h-[300px] w-[90%] rounded-sm"}`}
+              />
             </div>
           </>
         ) : (
@@ -443,7 +446,7 @@ export const FormImageUpload = memo(
                   <Image
                     src={src}
                     alt={alt}
-                    className='h-[200px] rounded-full'
+                    className={`size-[200px] ${rounded ? "rounded-full" : "h-[300px] w-[90%] rounded-sm"}`}
                     width={200}
                     height={200}
                     wrapperClassName='flex-center'
