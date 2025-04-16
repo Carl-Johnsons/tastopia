@@ -1,6 +1,7 @@
 import { ClockIcon } from "lucide-react";
 import { IStep } from "../../../../../../mobile/generated/interfaces/recipe.interface";
 import Image from "@/components/shared/common/Image";
+import { useTranslations } from "next-intl";
 
 type IngredientProps = {
   ingredient: string[];
@@ -30,34 +31,33 @@ export default function Content({ ingredient, serves, steps, cookTime }: Content
 }
 
 const Ingredient = ({ ingredient, serves = 0 }: IngredientProps) => {
+  const t = useTranslations("administerReportRecipes.detail.content");
+
   return (
     <div className='flex flex-col gap-3'>
-      <h2 className='text-black_white text-2xl font-semibold'>Ingredient</h2>
+      <h2 className='text-black_white text-2xl font-semibold'>{t("ingredient")}</h2>
       <span className='text-sm text-gray-600'>
-        For {serves} Serving{serves > 2 && "s"}
+        {`${t("for")} ${serves} ${t(`serving${serves > 1 ? "s" : ""}`)}`}
       </span>
       {ingredient.map((item, index) => (
-        <>
+        <div key={item}>
           {index !== 0 && <div className='border-black_white border-t border-dashed' />}
-          <span
-            key={item}
-            className='text-black_white'
-          >
-            {item}
-          </span>
-        </>
+          <span className='text-black_white'>{item}</span>
+        </div>
       ))}
     </div>
   );
 };
 
 const Instruction = ({ steps, cookTime = "Not specified" }: InstructionProps) => {
+  const t = useTranslations("administerReportRecipes.detail.content");
+
   return (
     <div className='flex flex-col gap-3'>
-      <h2 className='text-black_white text-2xl font-semibold'>Instruction</h2>
+      <h2 className='text-black_white text-2xl font-semibold'>{t("instruction")}</h2>
       <div className='flex items-center gap-2'>
         <ClockIcon className='size-6 text-gray-600' />
-        <span className='text-sm text-gray-600'>Cook Time: {cookTime}</span>
+        <span className='text-sm text-gray-600'>{t("cookingTime")}: {cookTime}</span>
       </div>
       <div className='flex flex-col gap-5'>
         {steps.map(({ id, content, ordinalNumber, attachedImageUrls }) => (

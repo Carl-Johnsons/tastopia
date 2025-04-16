@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using UserProto;
 
 namespace DuendeIdentityServer.Pages.Account.ForgotPassword;
@@ -41,18 +40,14 @@ public class Index : PageModel
 
     public async Task<IActionResult> OnGet(string? identifier)
     {
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine("GET");
-        Console.WriteLine(JsonConvert.SerializeObject(Input, Formatting.Indented));
         // the user clicked the "cancel" button
         if (Input.Button == "Cancel")
         {
             return await DenyAuthorization(Input.ReturnUrl);
+        }
+        if (string.IsNullOrEmpty(Input.Identifier) && Input.IsDirty)
+        {
+            ModelState.AddModelError("Input.Identifier", Options.IdentifierRequired);
         }
 
         if (!string.IsNullOrEmpty(Input.Identifier))
@@ -68,7 +63,7 @@ public class Index : PageModel
             }
 
             var role = await _userManager.GetRolesAsync(acc);
-            if (!(role[0] == Roles.Code.ADMIN.ToString() || role[0] == Roles.Code.SUPER_ADMIN.ToString()))
+            if (role[0].ToLower() != Roles.Code.USER.ToString().ToLower())
             {
                 ModelState.AddModelError(string.Empty, Options.NotFound);
                 return Page();

@@ -1,8 +1,6 @@
-import Header from "@/components/screen/notification/Header";
 import NotificationList from "@/components/screen/notification/NotificationList";
 import { colors } from "@/constants/colors";
 import useColorizer from "@/hooks/useColorizer";
-import { StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Notification = () => {
@@ -16,12 +14,7 @@ const Notification = () => {
         height: "100%"
       }}
     >
-      <View>
-        <Header />
-      </View>
-      <View>
-        <NotificationList />
-      </View>
+      <NotificationList />
     </SafeAreaView>
   );
 };

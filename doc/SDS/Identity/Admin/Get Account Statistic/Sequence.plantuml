@@ -1,0 +1,33 @@
+@startuml Sequence
+title "Get account statistic diagram"
+
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor "Super admin" as SuperAdmin
+boundary MobileUI
+participant "<<coordinator>>\nApiGateWay" as ApiGateway
+participant "<<service>>\nIdentityService" as IdentityService
+database Postgresql
+
+SuperAdmin -> MobileUI ++: 1. Super admin\n go to the statistic page
+MobileUI -> ApiGateway ++: 2. Request get account statistic
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Verify Access Token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+ApiGateway -> IdentityService ++: 4. Forward request
+IdentityService -> Postgresql ++: 5. Get account statistic
+IdentityService <-- Postgresql --: 6. Return response
+ApiGateway <-- IdentityService --: 7. Return success status code
+MobileUI <-- ApiGateway --: 8. Forward response
+SuperAdmin <-- MobileUI --: 9. Display account statistic
+
+@enduml

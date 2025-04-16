@@ -2,171 +2,19 @@
 
 import Loader from "@/components/ui/Loader";
 import useDebounce from "@/hooks/useDebounce";
-import { format } from "date-fns";
-import Image from "next/image";
-import {
-  ChangeEvent,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
 import { ChevronRight } from "lucide-react";
 import NoRecord from "@/components/ui/NoRecord";
 import SearchBar from "../../users/SearchBar";
 import { ReportStatus } from "@/constants/reports";
-import DataTableProvider, {
-  DataTableContext,
-  DataTableContextValue,
-  OnChangeActiveFn
-} from "./Provider";
-import { CommentReportActionButtonsProps } from "@/types/report";
-import { MarkAsCompletedButton, ReopenReportButton, ViewDetailButton } from "./Button";
+import DataTableProvider, { DataTableContextValue, OnChangeActiveFn } from "./Provider";
 import { useGetCommentReports } from "@/api/comment";
 import { IAdminReportCommentResponse } from "@/generated/interfaces/recipe.interface";
-import ReportStatusText from "../common/StatusText";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
-import { useLocale } from "next-intl";
-
-const columns: TableColumn<IAdminReportCommentResponse>[] = [
-  {
-    name: "Comment Owner",
-    selector: row => row.commentOwnerUsername,
-    maxWidth: "160px",
-    hide: 952,
-    sortable: true
-  },
-  {
-    name: "Content",
-    sortable: true,
-    minWidth: "200px",
-    cell: ({ commentContent }) => <span className='py-2'>{commentContent}</span>
-  },
-  {
-    name: "Recipe Image",
-    hide: 1668,
-    width: "140px",
-    center: true,
-    cell: ({ recipeImageURL }) => (
-      <div className='p-2'>
-        <Image
-          src={recipeImageURL}
-          alt={""}
-          width={90}
-          height={50}
-          className='h-[50px] w-[90px] rounded-lg object-cover'
-        />
-      </div>
-    )
-  },
-  {
-    name: "Reporter",
-    selector: row => row.reporterUsername,
-    width: "160px",
-    hide: 1776,
-    sortable: true
-  },
-  {
-    name: "Report Reason",
-    hide: 1368,
-    selector: row => row.reportReason,
-    sortable: true,
-    wrap: true
-  },
-  {
-    name: "Created Date",
-    sortable: true,
-    width: "160px",
-    center: true,
-    hide: 1476,
-    cell: ({ createdAt }) => {
-      return (
-        <span className='text-ellipsis text-nowrap text-sm'>
-          {format(new Date(createdAt), "dd/MM/yyyy")}
-        </span>
-      );
-    }
-  },
-  {
-    name: "Status",
-    sortable: true,
-    width: "120px",
-    center: true,
-    hide: 500,
-    selector: row => row.status,
-    cell: ({ status }) => {
-      return (
-        <ReportStatusText
-          status={status as ReportStatus}
-          coloring
-        />
-      );
-    }
-  },
-  {
-    name: "Actions",
-    center: true,
-    width: "150px",
-    cell: ({ commentId, recipeId, reportId, status }) => {
-      return (
-        <ActionButtons
-          reportId={reportId}
-          recipeId={recipeId}
-          targetId={commentId}
-          status={status as ReportStatus}
-        />
-      );
-    }
-  }
-];
-
-const ActionButtons = ({
-  reportId,
-  recipeId,
-  targetId,
-  status
-}: CommentReportActionButtonsProps) => {
-  const { onChangeActive } = useContext(DataTableContext) as DataTableContextValue;
-
-  return (
-    <div className='flex gap-2'>
-      <ViewDetailButton
-        title='View detail'
-        recipeId={recipeId}
-        targetId={targetId}
-      />
-      {status === ReportStatus.Done ? (
-        <ReopenReportButton
-          title='Restore'
-          targetId={reportId}
-          onSuccess={() => {
-            onChangeActive({ reportId, value: true });
-          }}
-        />
-      ) : (
-        <MarkAsCompletedButton
-          title='Mark as completed'
-          targetId={reportId}
-          onSuccess={() => {
-            onChangeActive({ reportId, value: false });
-          }}
-        />
-      )}
-    </div>
-  );
-};
-
-export const columnFieldMap: Record<string, keyof IAdminReportCommentResponse> = {
-  "Comment Owner": "commentOwnerUsername",
-  "Recipe Image": "recipeImageURL",
-  Reporter: "reporterUsername",
-  "Report Reason": "reportReason",
-  "Created Date": "createdAt",
-  Status: "status"
-};
+import { useLocale, useTranslations } from "next-intl";
+import useReportCommentTableColumns from "@/hooks/table/useReportCommentTableColumns";
 
 export default function Table() {
   const [limit, setLimit] = useState(10);
@@ -190,6 +38,9 @@ export default function Table() {
     lang,
     keyword: debouncedValue
   });
+
+  const t = useTranslations("administerReportComments");
+  const { columns, columnFieldMap } = useReportCommentTableColumns();
 
   const totalRow = useMemo(
     () => (fetchedData?.metadata?.totalRow ? fetchedData.metadata.totalRow : 0),
@@ -218,7 +69,7 @@ export default function Table() {
       setSortBy(sortBy);
       setSortOrder(sortOrder);
     },
-    []
+    [columnFieldMap]
   );
 
   const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -261,12 +112,13 @@ export default function Table() {
         <SearchBar
           onChange={handleSearch}
           isLoading={isLoading || isFetching}
+          placeholder={t("search")}
         />
 
         <div className='flex gap-2 self-start'>
-          <span className='text-gray-500'>Administer Reports</span>
+          <span className='text-gray-500'>{t("title")}</span>
           <ChevronRight className='text-black_white' />
-          <span className='text-black_white'>Comment</span>
+          <span className='text-black_white'>{t("subtitle")}</span>
         </div>
       </div>
 

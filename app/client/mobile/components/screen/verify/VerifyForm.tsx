@@ -36,6 +36,10 @@ export const VerifyForm = (props: VerifyFormProps) => {
   const identifier = selectVerifyIdentifier() as string;
   const type = getIdentifierType(identifier) as IDENTIFIER_TYPE;
   const { primary } = colors;
+
+  const [isHandlingKeyPress, setIsHandlingKeyPress] = useState(false);
+  const [isHandlingKeyPressSuccessfully, setIsHandlingKeyPressSuccessfully] =
+    useState(false);
   const [formValues, setFormValues] = useState<VerifyFormFields>([
     "",
     "",
@@ -86,6 +90,13 @@ export const VerifyForm = (props: VerifyFormProps) => {
 
     if (value.length > 0 && index < inputRefs.length - 1) {
       inputRefs[index + 1].current?.focus();
+    } else if (
+      value.length === 0 &&
+      index > 0 &&
+      !isHandlingKeyPress &&
+      !isHandlingKeyPressSuccessfully
+    ) {
+      inputRefs[index - 1].current?.focus();
     }
   };
 
@@ -93,9 +104,18 @@ export const VerifyForm = (props: VerifyFormProps) => {
     e: NativeSyntheticEvent<TextInputKeyPressEventData>,
     index: number
   ) => {
-    if (index === 0) return;
-    if (e.nativeEvent.key === "Backspace") {
-      inputRefs[index - 1].current?.focus();
+    setIsHandlingKeyPress(true);
+    setIsHandlingKeyPressSuccessfully(false);
+
+    try {
+      if (index === 0) return;
+      if (e.nativeEvent.key === "Backspace") {
+        inputRefs[index - 1].current?.focus();
+      }
+
+      setIsHandlingKeyPressSuccessfully(true);
+    } finally {
+      setIsHandlingKeyPress(false);
     }
   };
 

@@ -50,13 +50,10 @@ internal class NotificationMockup
                 list.Add(new Notification
                 {
                     PrimaryActors = [new Actor {
-                    ActorId = Guid.Parse( UserIds[userIdIndex]),
+                    ActorId = UserIds[userIdIndex],
                     Type = EntityType.USER
                 }],
-                    SecondaryActors = [new Actor {
-                    ActorId = Guid.Parse( recipientId),
-                    Type = EntityType.USER
-                }],
+                    SecondaryActors = [],
                     TemplateId = Guid.Parse(TemplateIds[templateIdIndex]),
                     JsonData = "{\"redirectUri\":\"" + CLIENT_URI.MOBILE.NOTIFICATION + "\"}",
                     Recipients = [new Recipient { RecipientId = Guid.Parse(recipientId), IsViewed = false }]

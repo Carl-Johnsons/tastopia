@@ -1,13 +1,14 @@
 "use client";
 
 import { Link } from "@/i18n/navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DownvoteIcon, UpvoteIcon } from "@/components/shared/icons";
 import { useState } from "react";
 import { DisableRecipeButton, RestoreRecipeButton } from "./Button";
 import { IAdminGetUserDetailResponse } from "@/generated/interfaces/user.interface";
 import { ItemStatusText } from "../common/StatusText";
 import Image from "@/components/shared/common/Image";
+import Avatar from "@/components/shared/common/Avatar";
+import { useTranslations } from "next-intl";
 
 type HeaderProps = {
   recipeId: string;
@@ -30,6 +31,7 @@ const Header = ({
 }: HeaderProps) => {
   const { accountId, avatarUrl, displayName, accountUsername, totalFollower } = author;
   const [isActive, setIsActive] = useState(props.isActive);
+  const t = useTranslations("administerReportRecipes.detail.header");
 
   return (
     <div className='grid gap-6 lg:grid-cols-[300px_1fr]'>
@@ -58,10 +60,11 @@ const Header = ({
         <div className='flex items-center justify-between'>
           <div className='flex items-center gap-2'>
             <Link href={`/users/${accountId}`}>
-              <Avatar>
-                <AvatarImage src={avatarUrl} />
-                <AvatarFallback>{accountUsername.substring(0, 1)}</AvatarFallback>
-              </Avatar>
+              <Avatar
+                src={avatarUrl}
+                alt={accountUsername.substring(0, 1)}
+                className='size-10'
+              />
             </Link>
             <div className='flex flex-col'>
               <Link href={`/users/${accountId}`}>
@@ -71,8 +74,8 @@ const Header = ({
                 </div>
               </Link>
               <span className='text-sm text-gray-700'>
-                {totalFollower || 0} follower
-                {!!totalFollower && totalFollower > 2 && "s"}
+                {totalFollower || 0}{" "}
+                {t(`follower${!!totalFollower && totalFollower > 2 ? "s" : ""}`)}
               </span>
             </div>
           </div>

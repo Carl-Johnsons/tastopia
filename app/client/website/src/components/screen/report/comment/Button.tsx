@@ -2,6 +2,7 @@
 
 import {
   useDisableComment,
+  useMarkAllReport,
   useMarkReportAsCompleted,
   useReopenReport,
   useRestoreComment
@@ -9,16 +10,17 @@ import {
 import InteractiveButton, { DataTableButton } from "@/components/shared/common/Button";
 import { BanIcon } from "@/components/shared/icons";
 import { ReportType } from "@/constants/reports";
+import { useErrorHandler } from "@/hooks/error/useErrorHanler";
 import { useInvalidateAdmin } from "@/hooks/query";
 import { Link, useRouter } from "@/i18n/navigation";
 import { CommentDataTableButtonProps, DataTableButtonProps } from "@/types/report";
 import { useQueryClient } from "@tanstack/react-query";
 import { Check, RotateCw, Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 
 export const ViewDetailButton = ({
-  title,
   onSuccess,
   onFailure,
   recipeId,
@@ -31,6 +33,8 @@ export const ViewDetailButton = ({
     () => `/reports/comments/detail/recipe/${recipeId}/comment/${targetId}`,
     [recipeId, targetId]
   );
+
+  const t = useTranslations("administerReportComments.tooltip");
 
   const handleClick = useCallback(() => {
     setIsLoading(true);
@@ -49,7 +53,7 @@ export const ViewDetailButton = ({
   return (
     <Link href={url}>
       <DataTableButton
-        title={title}
+        title={t("viewDetail")}
         icon={<Search className='text-white_black' />}
         isLoading={isLoading}
         onClick={handleClick}
@@ -65,14 +69,18 @@ export const ViewDetailButton = ({
 export const ReopenReportButton = ({
   title,
   targetId,
+  commentId,
   onSuccess,
   onFailure,
   className,
+  disabled,
   ...props
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useReopenReport();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("report");
+  const {handleError} = useErrorHandler();
 
   const handleClick = useCallback(() => {
     mutate(
@@ -82,24 +90,97 @@ export const ReopenReportButton = ({
       },
       {
         onSuccess: async () => {
-          toast.success("Report reopened successfully.");
-          await queryClient.invalidateQueries({ queryKey: ["commentReport", targetId] });
+          toast.success(t("reopenSuccess"));
+          await queryClient.invalidateQueries({ queryKey: ["commentReport", commentId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
-        onError: ({ message }) => {
-          toast.error(message);
+        onError: error => {
+          handleError(error);
           onFailure && onFailure();
         }
       }
     );
-  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    t,
+    handleError,
+    commentId,
+    onSuccess,
+    onFailure,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <DataTableButton
       title={title}
       icon={<RotateCw className='text-white_black' />}
       isLoading={isPending}
+      disabled={isPending || disabled}
+      onClick={handleClick}
+      className={`bg-green-400 hover:bg-green-500 ${className}`}
+      {...props}
+    />
+  );
+};
+
+/**
+ * Reopen all reports for a comment.
+ */
+export const ReopenAllReportsButton = ({
+  title,
+  targetId,
+  recipeId,
+  commentId,
+  onSuccess,
+  onFailure,
+  className,
+  disabled,
+  ...props
+}: DataTableButtonProps) => {
+  const { mutate, isPending } = useMarkAllReport();
+  const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("report");
+  const { handleError } = useErrorHandler();
+
+  const handleClick = useCallback(async () => {
+    mutate(
+      { commentId: targetId, recipeId: recipeId as string, isReopened: true },
+      {
+        onSuccess: async () => {
+          toast.success(t("reopenAllSuccess"));
+          await queryClient.invalidateQueries({ queryKey: ["commentReport", commentId] });
+          invalidateCurrentAdminActivities();
+          onSuccess && onSuccess();
+        },
+        onError: error => {
+          handleError(error);
+          onFailure && onFailure();
+        }
+      }
+    );
+  }, [
+    t,
+    handleError,
+    commentId,
+    onSuccess,
+    onFailure,
+    targetId,
+    recipeId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
+
+  return (
+    <DataTableButton
+      title={title}
+      icon={<RotateCw className='text-white_black' />}
+      isLoading={isPending}
+      disabled={isPending || disabled}
       onClick={handleClick}
       className={`bg-green-400 hover:bg-green-500 ${className}`}
       {...props}
@@ -113,38 +194,113 @@ export const ReopenReportButton = ({
 export const MarkAsCompletedButton = ({
   title,
   targetId,
+  commentId,
   onSuccess,
   onFailure,
   className,
+  disabled,
   ...props
 }: DataTableButtonProps) => {
   const { mutate, isPending } = useMarkReportAsCompleted();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("report");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(async () => {
     mutate(
       { reportId: targetId, reportType: ReportType.COMMENT },
       {
         onSuccess: async () => {
-          toast.success("Report marked as completed successfully.");
-          await queryClient.invalidateQueries({ queryKey: ["commentReport", targetId] });
+          toast.success(t("resolveSuccess"));
+          await queryClient.invalidateQueries({ queryKey: ["commentReport", commentId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
-        onError: ({ message }) => {
-          toast.error(message);
+        onError: error => {
+          handleError(error);
           onFailure && onFailure();
         }
       }
     );
-  }, [onSuccess, onFailure, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    t,
+    handleError,
+    commentId,
+    onSuccess,
+    onFailure,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <DataTableButton
       title={title}
       icon={<Check className='text-white_black' />}
       isLoading={isPending}
+      disabled={isPending || disabled}
+      onClick={handleClick}
+      className={`bg-purple-400 hover:bg-purple-500 ${className}`}
+      {...props}
+    />
+  );
+};
+
+/**
+ * Mark all reports as completed.
+ */
+export const MarkAllAsCompletedButton = ({
+  title,
+  targetId,
+  recipeId,
+  onSuccess,
+  onFailure,
+  className,
+  disabled,
+  ...props
+}: DataTableButtonProps) => {
+  const { mutate, isPending } = useMarkAllReport();
+  const queryClient = useQueryClient();
+  const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("report");
+  const { handleError } = useErrorHandler();
+
+  const handleClick = useCallback(async () => {
+    mutate(
+      { commentId: targetId, recipeId: recipeId as string, isReopened: false },
+      {
+        onSuccess: async () => {
+          toast.success(t("resolveAllSuccess"));
+          await queryClient.invalidateQueries({ queryKey: ["commentReport", targetId] });
+          invalidateCurrentAdminActivities();
+          onSuccess && onSuccess();
+        },
+        onError: error => {
+          handleError(error);
+          onFailure && onFailure();
+        }
+      }
+    );
+  }, [
+    t,
+    handleError,
+    onSuccess,
+    onFailure,
+    targetId,
+    recipeId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
+
+  return (
+    <DataTableButton
+      title={title}
+      icon={<Check className='text-white_black' />}
+      isLoading={isPending}
+      disabled={isPending || disabled}
       onClick={handleClick}
       className={`bg-purple-400 hover:bg-purple-500 ${className}`}
       {...props}
@@ -156,7 +312,6 @@ export const MarkAsCompletedButton = ({
  * Disable a comment.
  */
 export const DisableCommentButton = ({
-  title,
   targetId,
   recipeId,
   onSuccess,
@@ -166,28 +321,41 @@ export const DisableCommentButton = ({
   const { mutate, isPending } = useDisableComment();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("administerReportComments.notifications");
+  const tButton = useTranslations("administerReportComments.actions");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(async () => {
     mutate(
       { recipeId, commentId: targetId },
       {
         onSuccess: async () => {
-          toast.success("Comment disabled successfully.");
+          toast.success(t("disableSuccess"));
           await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
-        onError: ({ message }) => {
-          toast.error(message);
+        onError: error => {
+          handleError(error);
           onFailure && onFailure();
         }
       }
     );
-  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    t,
+    handleError,
+    onSuccess,
+    onFailure,
+    recipeId,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <InteractiveButton
-      title={title}
+      title={tButton("disable")}
       icon={<BanIcon className='text-white_black' />}
       isLoading={isPending}
       onClick={handleClick}
@@ -200,7 +368,6 @@ export const DisableCommentButton = ({
  * Restore a comment.
  */
 export const RestoreCommentButton = ({
-  title,
   targetId,
   recipeId,
   onSuccess,
@@ -210,28 +377,40 @@ export const RestoreCommentButton = ({
   const { mutate, isPending } = useRestoreComment();
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
+  const t = useTranslations("administerReportComments.notifications");
+  const tButton = useTranslations("administerReportComments.actions");
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(async () => {
     mutate(
       { recipeId, commentId: targetId },
       {
         onSuccess: async () => {
-          toast.success("Comment restored successfully.");
+          toast.success(t("restoreSuccess"));
           await queryClient.invalidateQueries({ queryKey: ["comment", targetId] });
           invalidateCurrentAdminActivities();
           onSuccess && onSuccess();
         },
-        onError: ({ message }) => {
-          toast.error(message);
+        onError: error => {
+          handleError(error);
           onFailure && onFailure();
         }
       }
     );
-  }, [onSuccess, onFailure, recipeId, targetId, mutate, queryClient, invalidateCurrentAdminActivities]);
+  }, [
+    t,
+    onSuccess,
+    onFailure,
+    recipeId,
+    targetId,
+    mutate,
+    queryClient,
+    invalidateCurrentAdminActivities
+  ]);
 
   return (
     <InteractiveButton
-      title={title}
+      title={tButton("restore")}
       icon={<RotateCw className='text-white_black' />}
       isLoading={isPending}
       onClick={handleClick}

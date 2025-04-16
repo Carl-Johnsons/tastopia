@@ -9,6 +9,7 @@ import {
 } from "@/actions/admin.action";
 import { IPaginatedAdminActivityLogListResponse } from "@/generated/interfaces/tracking.interface";
 import { IAdminDetailResponse } from "@/generated/interfaces/user.interface";
+import { useErrorHandler } from "@/hooks/error/useErrorHanler";
 import { PaginatedQueryParams } from "@/types/common";
 import {
   InfiniteData,
@@ -28,24 +29,32 @@ export const useGetAdmins = ({
   lang,
   keyword
 }: PaginatedQueryParams) => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useQuery({
     queryKey: ["admins", skip, sortBy, sortOrder, lang, keyword, limit],
     queryFn: () =>
-      getAdmins({
-        limit,
-        skip,
-        sortBy,
-        sortOrder,
-        lang,
-        keyword
-      })
+      withErrorProcessor(() =>
+        getAdmins({
+          limit,
+          skip,
+          sortBy,
+          sortOrder,
+          lang,
+          keyword
+        })
+      )
   });
 };
 
 export const useGetAdminById = (id: string, self?: boolean) => {
+  const { withErrorProcessor } = useErrorHandler();
+
+  console.log("queryKey", self ? ["currentAdmin"] : ["admin", id]);
   return useQuery({
     queryKey: self ? ["currentAdmin"] : ["admin", id],
-    queryFn: () => (self ? getCurrentAdminDetail() : getAdminById(id))
+    queryFn: () =>
+      withErrorProcessor(() => (self ? getCurrentAdminDetail() : getAdminById(id)))
   });
 };
 
@@ -60,22 +69,28 @@ export const useGetCurrentAdminDetail = (
     "queryKey" | "queryFn" | "initialData"
   > = {}
 ) => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useQuery({
     ...queryOptions,
     queryKey: ["currentAdmin"],
-    queryFn: () => getCurrentAdminDetail()
+    queryFn: () => withErrorProcessor(() => getCurrentAdminDetail())
   });
 };
 
 export const useDisableAdmin = () => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useMutation<void, Error, string>({
-    mutationFn: id => disableAdmin(id)
+    mutationFn: id => withErrorProcessor(() => disableAdmin(id))
   });
 };
 
 export const useRestoreAdmin = () => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useMutation<void, Error, string>({
-    mutationFn: id => restoreAdmin(id)
+    mutationFn: id => withErrorProcessor(() => restoreAdmin(id))
   });
 };
 
@@ -84,6 +99,7 @@ export const useGetAdminActivities = (
   { lang, self }: Pick<PaginatedQueryParams, "lang"> & { self?: boolean }
 ) => {
   const queryKey = self ? ["currentAdminActivities"] : ["adminActivities", accountId];
+  const { withErrorProcessor } = useErrorHandler();
 
   return useInfiniteQuery<
     IPaginatedAdminActivityLogListResponse,
@@ -100,11 +116,9 @@ export const useGetAdminActivities = (
         lang
       };
 
-      if (self) {
-        return getCurrentAdminActivies(params);
-      }
-
-      return getAdminActivies(accountId, params);
+      return withErrorProcessor(() =>
+        self ? getCurrentAdminActivies(params) : getAdminActivies(accountId, params)
+      );
     },
     getNextPageParam: (lastPage, allPages) => {
       const totalPage = lastPage.metadata?.totalPage;

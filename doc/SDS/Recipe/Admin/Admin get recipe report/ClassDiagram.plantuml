@@ -1,0 +1,108 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminGetRecipeReports(lang : string, paginatedDTO : PaginatedDTO): async Task<IActionResult>
+}
+
+class GetRecipeReportsQuery {
+    +Lang : string
+    +PaginatedDTO : PaginatedDTO
+}
+
+class GetRecipeReportQueryHandler {
+    -_context : IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient 
+    -_paginateDataUtility: IPaginateDataUtility<AdminReportRecipeResponse, NumberedPaginatedMetadata> 
+    +GetRecipeReportQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient, paginateDataUtility : IPaginateDataUtility<AdminReportRecipeResponse, NumberedPaginatedMetadata>)
+    +Handle(request: GetRecipeReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminReportRecipeListResponse>>
+}
+
+class PaginatedAdminReportRecipeListResponse
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
+}
+
+PaginatedAdminReportRecipeListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
+    +CurrentPage: int
+    +TotalRow: int
+}
+
+PaginatedAdminReportRecipeListResponse "1" o-- "1" NumberedPaginatedMetadata
+PaginatedAdminReportRecipeListResponse "1" o-- "1..*" AdminReportRecipeResponse
+
+class PaginatedDTO {
+    +Skip : int
+    +SortOrder : SortType
+    +SortBy : string
+    +Keyword : string
+    +Limit : int
+}
+
+class AdminReportRecipeResponse{
+    +ReportId : Guid
+    +RecipeId : Guid
+    +RecipeTitle : string
+    +RecipeOwnerUsername : string
+    +RecipeImageURL : string
+    +ReporterUsername : string
+    +ReportReason : string
+    +CreatedAt : DateTime
+    +Status : string
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+' =========== Microservice class ===========
+together {
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcSearchUserRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+AdminController --|> BaseApiController
+AdminController "1" -- "1" PaginatedDTO
+AdminController "1" -- "1" GetRecipeReportsQuery
+
+GetRecipeReportsQuery ..|> "IRequest<TResponse>"
+GetRecipeReportsQuery "1" o-- "1" PaginatedDTO
+
+GetRecipeReportQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetRecipeReportQueryHandler "1" -- "1" GetRecipeReportsQuery
+GetRecipeReportQueryHandler "1" o-- "1" IApplicationDbContext
+GetRecipeReportQueryHandler "1" o-- "1" IPaginateDataUtility
+GetRecipeReportQueryHandler "1" o-- "1" GrpcUserClient
+
+GetRecipeReportQueryHandler "1" -- "1" Result
+GetRecipeReportQueryHandler "1" -- "1..*" GrpcSearchUserRequest
+GetRecipeReportQueryHandler "1" -- "1..*" GrpcGetSimpleUsersRequest
+GetRecipeReportQueryHandler "1" -- "1..*" PaginatedAdminReportRecipeListResponse
+GetRecipeReportQueryHandler "1" -- "1..*" NumberedPaginatedMetadata
+GetRecipeReportQueryHandler "1" -- "1..*" AdminReportRecipeResponse
+
+
+@enduml

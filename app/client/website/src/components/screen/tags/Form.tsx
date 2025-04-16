@@ -12,24 +12,11 @@ import {
   FormMessage
 } from "@/components/ui/form";
 import { z } from "zod";
-import Image from "next/image";
-import { getTagSchema } from "@/schemas/tag";
+import { getTagSchema, validVietnameseCategories } from "@/schemas/tag";
 import { FORM_TYPE } from "@/constants/form";
 import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
-import ImageUploading from "react-images-uploading";
 import { Input } from "@/components/ui/input";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from "@/components/ui/alert-dialog";
 import {
   Select,
   SelectContent,
@@ -40,11 +27,31 @@ import {
 import { Plus } from "lucide-react";
 import { createTag, updateTag } from "@/actions/tag.action";
 import { useTags } from "./TagsContext";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useInvalidateAdmin } from "@/hooks/query";
+import { useErrorHandler } from "@/hooks/error/useErrorHanler";
+import { Tag } from "@/types/tag";
+import { FormImageUpload } from "../admins/Form";
+import { ImageFieldType } from "@/types/admin";
 
 type FormProps = {
   type: string;
+};
+
+const mapCategoryByLocale = (category: string, language: string) => {
+  const viMap: Record<string, string> = {
+    "Tất cả": "All",
+    "Loại món ăn": "DishType",
+    "Nguyên liệu": "Ingredient"
+  };
+
+  const enMap: Record<string, string> = {
+    All: "Tất cả",
+    DishType: "Loại món ăn",
+    Ingredient: "Nguyên liệu"
+  };
+
+  return language === "vi" ? viMap[category] : enMap[category];
 };
 
 const TagForm = ({ type }: FormProps) => {
@@ -55,6 +62,7 @@ const TagForm = ({ type }: FormProps) => {
     setOpenUpdateDialog,
     getTagToUpdate
   } = useTags();
+  const currentLanguage = useLocale();
   const t = useTranslations("administerTags");
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
@@ -62,78 +70,87 @@ const TagForm = ({ type }: FormProps) => {
   const isUpdate = type === FORM_TYPE.UPDATE;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [image, setImage] = useState<any>(isUpdate ? [tag?.imageUrl] : undefined);
-  const [isImageModified, setIsImageModified] = useState(false);
 
-  const { CreateTagSchema, UpdateTagSchema } = getTagSchema(t);
+  const { withBareErrorHandler } = useErrorHandler();
+
+  const { CreateTagSchema, UpdateTagSchema } = getTagSchema(t, currentLanguage);
   const schema = isUpdate ? UpdateTagSchema : CreateTagSchema;
 
   type TagFormValues = z.infer<typeof CreateTagSchema> | z.infer<typeof UpdateTagSchema>;
 
+  const tagImageDefault = tag?.imageUrl ? [{ dataURL: tag.imageUrl }] : [];
   const defaultValues = {
     code: isUpdate ? tag?.code || "" : "",
     vi: isUpdate ? tag?.vi || "" : "",
     en: isUpdate ? tag?.en || "" : "",
     category: isUpdate ? tag?.category || "" : "",
-    tagImage: isUpdate ? tag?.imageUrl || "" : "",
+    tagImage: isUpdate ? tagImageDefault : undefined,
     ...(isUpdate && { status: tag?.status || "" })
   };
 
   const form = useForm<TagFormValues>({
     resolver: zodResolver(schema),
-    defaultValues: defaultValues as TagFormValues
+    defaultValues: defaultValues as any
   });
 
-  const handleUploadImage = (imageList: any) => {
-    setImage(imageList);
-    setIsImageModified(true);
-  };
-
   async function onSubmit(values: TagFormValues) {
-    if (image === undefined || image?.length === 0) {
-      toast.error(t("form.image.required"));
-      return;
-    }
-
     setIsSubmitting(true);
 
-    try {
-      const formData = new FormData();
+    const formData = new FormData();
 
-      formData.append("code", values.code);
-      formData.append("vi", values.vi);
-      formData.append("en", values.en);
-      formData.append("category", values.category);
+    Object.entries(values).forEach(([key, value]) => {
+      const isValueExists = !!value;
+      if (!isValueExists) return;
 
-      if (isImageModified || !isUpdate) {
-        console.log("image", image);
-        formData.append("tagImage", image[0].file);
+      if (key === "tagImage") {
+        formData.append(key, (value as ImageFieldType)?.at(0)?.file as Blob);
       }
 
-      if (isUpdate) {
-        formData.append("tagId", tag?.id ?? "");
-        if ("status" in values) {
-          formData.append("status", values.status);
-        }
-
-        const data = await updateTag(formData);
-        updateTagInContext(data);
-        setOpenUpdateDialog(false);
-        toast.success(t("notifications.updateSuccess"));
+      if (key === "category") {
+        formData.append(
+          "category",
+          validVietnameseCategories.includes(values.category)
+            ? mapCategoryByLocale(values.category, "vi")
+            : values.category
+        );
       } else {
-        const data = await createTag(formData);
-        createTagInContext(data);
-        setOpenCreateDialog(false);
-        toast.success(t("notifications.createSuccess"));
+        formData.append(key, value as string);
+      }
+    });
+
+    if (isUpdate) {
+      formData.append("tagId", tag?.id ?? "");
+      if ("status" in values) {
+        formData.append("status", values.status);
       }
 
-      invalidateCurrentAdminActivities();
-    } catch (error) {
-      console.error(error);
-      toast.error(t("notifications.error"));
-    } finally {
-      setIsSubmitting(false);
+      await withBareErrorHandler<Tag>(() => updateTag(formData), {
+        onSuccess: data => {
+          /** Need to map to Vietnamese because data return is English */
+          updateTagInContext({
+            ...data,
+            category:
+              currentLanguage === "vi"
+                ? mapCategoryByLocale(data.category, "en")
+                : data.category
+          });
+          setOpenUpdateDialog(false);
+          toast.success(t("notifications.updateSuccess"));
+          invalidateCurrentAdminActivities();
+        }
+      });
+    } else {
+      await withBareErrorHandler<Tag>(() => createTag(formData), {
+        onSuccess: data => {
+          createTagInContext(data);
+          setOpenCreateDialog(false);
+          toast.success(t("notifications.createSuccess"));
+          invalidateCurrentAdminActivities();
+        }
+      });
     }
+
+    setIsSubmitting(false);
   }
 
   return (
@@ -152,6 +169,7 @@ const TagForm = ({ type }: FormProps) => {
               </FormLabel>
               <FormControl>
                 <Input
+                  placeholder={t("form.code.placeholder")}
                   className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
                   {...field}
                 />
@@ -171,6 +189,7 @@ const TagForm = ({ type }: FormProps) => {
               </FormLabel>
               <FormControl>
                 <Input
+                  placeholder={t("form.valueVi.placeholder")}
                   className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
                   {...field}
                 />
@@ -190,6 +209,7 @@ const TagForm = ({ type }: FormProps) => {
               </FormLabel>
               <FormControl>
                 <Input
+                  placeholder={t("form.valueEn.placeholder")}
                   className='no-focus paragraph-regular light-border text-black_white min-h-[36px] border'
                   {...field}
                 />
@@ -211,11 +231,15 @@ const TagForm = ({ type }: FormProps) => {
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={
+                      currentLanguage === "en"
+                        ? field.value
+                        : mapCategoryByLocale(field.value, currentLanguage)
+                    }
                   >
                     <FormControl>
                       <SelectTrigger className='bg-white_black100 text-black_white'>
-                        <SelectValue placeholder='Select a category' />
+                        <SelectValue placeholder={t("form.category.placeholder")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className='bg-white_black100 text-black_white'>
@@ -275,155 +299,20 @@ const TagForm = ({ type }: FormProps) => {
           )}
         </div>
 
-        <FormItem className='relative flex w-full flex-col'>
-          <FormLabel className='paragraph-semibold text-black_white'>
-            {t("form.image.label")} <span className='text-red-600'>*</span>
-          </FormLabel>
-          <FormControl className='mt-3.5'>
-            <ImageUploading
-              multiple={false}
-              value={image}
-              onChange={handleUploadImage}
-              maxNumber={1}
-              dataURLKey='data_url'
-              maxFileSize={15242880}
-              acceptType={["jpg", "jpeg", "png", "webp"]}
-            >
-              {({
-                imageList,
-                onImageUpload,
-                onImageRemoveAll,
-                isDragging,
-                dragProps,
-                errors
-              }) => (
-                <>
-                  <div
-                    className={`flex flex-col items-center rounded-2xl ${isDragging ? "bg-gray-400" : ""}`}
-                  >
-                    {imageList.length === 0 ? (
-                      <button
-                        className='w-full rounded-md px-1 py-2'
-                        onClick={onImageUpload}
-                        {...dragProps}
-                        type='button'
-                      >
-                        <div className='flex w-full items-center justify-center'>
-                          <div className='flex flex-col items-center justify-center pb-6 pt-5'>
-                            <svg
-                              className='mb-4 size-8 text-gray-500 dark:text-gray-400'
-                              aria-hidden='true'
-                              xmlns='http://www.w3.org/2000/svg'
-                              fill='none'
-                              viewBox='0 0 20 16'
-                            >
-                              <path
-                                stroke='currentColor'
-                                strokeLinecap='round'
-                                strokeLinejoin='round'
-                                strokeWidth='2'
-                                d='M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2'
-                              />
-                            </svg>
-                            <p className='mb-2 text-sm text-gray-500 dark:text-gray-400'>
-                              <span className='font-semibold'>
-                                {t("form.image.upload.clickToUpload")}
-                              </span>{" "}
-                              {t("form.image.upload.dragAndDrop")}
-                            </p>
-                            <p className='text-xs text-gray-500 dark:text-gray-400'>
-                              {t("form.image.upload.fileTypes")}
-                            </p>
-                          </div>
-                        </div>
-                      </button>
-                    ) : (
-                      <>
-                        <div className='flex w-full flex-col items-center justify-center gap-4'>
-                          {imageList.map((image, index) => (
-                            <div
-                              className='flex w-full items-center justify-center gap-4'
-                              key={index}
-                            >
-                              <Image
-                                src={isUpdate && !image.data_url ? image : image.data_url}
-                                alt='uploaded image'
-                                width={400}
-                                height={400}
-                                className='max-h-[400px] w-auto rounded-3xl'
-                              />
-                            </div>
-                          ))}
-
-                          <AlertDialog>
-                            <AlertDialogTrigger>
-                              <Button
-                                type='button'
-                                className='text-white_black w-fit cursor-pointer bg-primary hover:bg-secondary focus:ring'
-                              >
-                                {t("form.image.upload.removeImage")}
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent className='bg-white_black'>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle className='text-black_white'>
-                                  {t("form.image.upload.confirmDelete.title")}
-                                </AlertDialogTitle>
-                                <AlertDialogDescription className='text-black_white'>
-                                  {t("form.image.upload.confirmDelete.description")}
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel className='bg-white_black text-black_white hover:bg-gray-100 dark:hover:bg-black-100'>
-                                  {t("form.image.upload.confirmDelete.cancel")}
-                                </AlertDialogCancel>
-                                <AlertDialogAction
-                                  className='text-black_white border-none bg-primary hover:bg-secondary'
-                                  onClick={() => {
-                                    onImageRemoveAll();
-                                    setIsImageModified(true);
-                                  }}
-                                >
-                                  {t("form.image.upload.confirmDelete.confirm")}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  {!errors && image?.length === 0 && (
-                    <span className='body-medium text-red-600'>
-                      {t("form.image.required")}
-                    </span>
-                  )}
-
-                  {errors && (
-                    <div>
-                      {errors.maxNumber && (
-                        <span className='body-medium text-red-600'>
-                          {t("form.image.errors.maxNumber")}
-                        </span>
-                      )}
-                      {errors.acceptType && (
-                        <span className='body-medium text-red-600'>
-                          {t("form.image.errors.acceptType")}
-                        </span>
-                      )}
-                      {errors.maxFileSize && (
-                        <span className='body-medium text-red-600'>
-                          {t("form.image.errors.maxFileSize")}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </>
-              )}
-            </ImageUploading>
-          </FormControl>
-        </FormItem>
+        <FormField
+          control={form.control}
+          name='tagImage'
+          render={({ field }) => {
+            return (
+              <FormImageUpload
+                field={field}
+                label={t("form.image.label")}
+                isLoading={false}
+                rounded={false}
+              />
+            );
+          }}
+        />
 
         <div className='flex justify-end'>
           <Button

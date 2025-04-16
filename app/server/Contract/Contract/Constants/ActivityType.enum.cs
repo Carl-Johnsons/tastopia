@@ -16,6 +16,7 @@ public enum ActivityEntityType
     COMMENT,
     TAG,
     USER,
+    ADMIN,
     REPORT_RECIPE,
     REPORT_COMMENT,
     REPORT_USER

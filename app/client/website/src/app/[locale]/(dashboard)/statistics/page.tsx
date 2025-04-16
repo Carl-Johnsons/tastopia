@@ -21,12 +21,31 @@ import { AxiosError } from "axios";
 export default async function System() {
   try {
     const t = await getTranslations("statistic");
-    const totalRecipe = await getTotalRecipes();
-    const totalUser = await getTotalUsers();
-    const recipeRankingList = await getRecipeRanking();
-    const tagRankingList = await getTagRanking();
-    const recipeStatistic = await getRecipeStatistic();
-    const accountStatistic = await getAccountStatistic();
+
+    const totalRecipeResponse = await getTotalRecipes();
+    const recipeRankingListResponse = await getRecipeRanking();
+    const recipeStatisticResponse = await getRecipeStatistic();
+    const totalUserResponse = await getTotalUsers();
+    const tagRankingResponse = await getTagRanking();
+    const accountStatisticResponse = await getAccountStatistic();
+
+    if (
+      !totalRecipeResponse.ok ||
+      !recipeRankingListResponse.ok ||
+      !recipeStatisticResponse.ok ||
+      !totalUserResponse.ok ||
+      !tagRankingResponse.ok ||
+      !accountStatisticResponse.ok
+    ) {
+      throw new Error("Failed to fetch data");
+    }
+
+    const totalRecipe = totalRecipeResponse.data;
+    const recipeRankingList = recipeRankingListResponse.data;
+    const recipeStatistic = recipeStatisticResponse.data;
+    const totalUser = totalUserResponse.data;
+    const tagRankingList = tagRankingResponse.data;
+    const accountStatistic = accountStatisticResponse.data;
 
     return (
       <div className='flex size-full flex-col justify-center gap-4'>

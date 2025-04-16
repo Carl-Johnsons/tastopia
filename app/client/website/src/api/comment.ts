@@ -1,16 +1,18 @@
 import {
   disableComment,
+  getCommentReportById,
   getCommentReports,
+  MarkAllCommentReportsParams,
+  markAllReports,
   markReportAsCompleted,
   reopenReport,
   restoreComment
 } from "@/actions/comment.action";
-import {
-  IPaginatedAdminReportCommentListResponse,
-  IReportDTO
-} from "@/generated/interfaces/recipe.interface";
+import { IReportDTO } from "@/generated/interfaces/recipe.interface";
+import { useErrorHandler } from "@/hooks/error/useErrorHanler";
+import { ApiError } from "@/lib/error/errorHanler";
 import { ChangeCommentStateDTO } from "@/types/comment";
-import { GetReportsParams } from "@/types/report";
+import { GetCommentReportDetailParams, GetReportsParams } from "@/types/report";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetCommentReports = ({
@@ -21,40 +23,71 @@ export const useGetCommentReports = ({
   lang,
   keyword
 }: GetReportsParams) => {
-  return useQuery<IPaginatedAdminReportCommentListResponse>({
+  const { withErrorProcessor } = useErrorHandler();
+
+  return useQuery({
     queryKey: ["commentReports", skip, sortBy, sortOrder, lang, keyword, limit],
     queryFn: () =>
-      getCommentReports({
-        limit,
-        skip,
-        sortBy,
-        sortOrder,
-        lang,
-        keyword
-      })
+      withErrorProcessor(() =>
+        getCommentReports({
+          limit,
+          skip,
+          sortBy,
+          sortOrder,
+          lang,
+          keyword
+        })
+      )
   });
 };
 
 export const useReopenReport = () => {
-  return useMutation<void, Error, IReportDTO>({
-    mutationFn: params => reopenReport(params)
+  const { withErrorProcessor } = useErrorHandler();
+
+  return useMutation<void, ApiError, IReportDTO>({
+    mutationFn: params => withErrorProcessor(() => reopenReport(params))
   });
 };
 
 export const useMarkReportAsCompleted = () => {
-  return useMutation<void, Error, IReportDTO>({
-    mutationFn: params => markReportAsCompleted(params)
+  const { withErrorProcessor } = useErrorHandler();
+
+  return useMutation<void, ApiError, IReportDTO>({
+    mutationFn: params => withErrorProcessor(() => markReportAsCompleted(params))
   });
 };
 
 export const useDisableComment = () => {
-  return useMutation<void, Error, ChangeCommentStateDTO>({
-    mutationFn: params => disableComment(params)
+  const { withErrorProcessor } = useErrorHandler();
+
+  return useMutation<void, ApiError, ChangeCommentStateDTO>({
+    mutationFn: params => withErrorProcessor(() => disableComment(params))
   });
 };
 
 export const useRestoreComment = () => {
-  return useMutation<void, Error, ChangeCommentStateDTO>({
-    mutationFn: params => restoreComment(params)
+  const { withErrorProcessor } = useErrorHandler();
+
+  return useMutation<void, ApiError, ChangeCommentStateDTO>({
+    mutationFn: params => withErrorProcessor(() => restoreComment(params))
+  });
+};
+
+export const useGetCommentReport = (params: GetCommentReportDetailParams) => {
+  const { withErrorProcessor } = useErrorHandler();
+  const { options } = params;
+  const { lang } = options || {};
+
+  return useQuery({
+    queryKey: ["commentReport", params.commentId, lang],
+    queryFn: () => withErrorProcessor(() => getCommentReportById(params))
+  });
+};
+
+export const useMarkAllReport = () => {
+  const { withErrorProcessor } = useErrorHandler();
+
+  return useMutation<void, ApiError, MarkAllCommentReportsParams>({
+    mutationFn: params => withErrorProcessor(() => markAllReports(params))
   });
 };

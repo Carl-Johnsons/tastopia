@@ -35,10 +35,11 @@ export interface IAdminReportCommentResponse {
 
 export type DataTableButtonProps = Pick<
   InteractiveButtonProps,
-  "noTruncateText" | "noText" | "toolTip"
+  "noTruncateText" | "noText" | "toolTip" | "disabled"
 > & {
   title: string;
   recipeId?: string;
+  commentId?: string;
   targetId: string;
   /** Callback to override the component's internal click hanlder. */
   onClick?: () => void;
@@ -47,7 +48,7 @@ export type DataTableButtonProps = Pick<
   className?: string;
 };
 
-export type CommentDataTableButtonProps = DataTableButtonProps & {
+export type CommentDataTableButtonProps = Omit<DataTableButtonProps, "title"> & {
   recipeId: string;
 };
 

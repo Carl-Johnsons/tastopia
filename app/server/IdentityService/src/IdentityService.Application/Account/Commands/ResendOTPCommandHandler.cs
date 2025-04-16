@@ -32,7 +32,7 @@ public class ResendOTPCommandHandler : IRequestHandler<ResendOTPCommand, Result>
             case AccountMethod.Phone:
                 return await ResendPhoneOTP(request, cancellationToken);
             default:
-                return Result.Failure(AccountError.CreateAccountFailed, "Wrong account method");
+                return Result.Failure(AccountError.InvalidAccountMethod, "Wrong account method");
         }
     }
 
@@ -59,7 +59,7 @@ public class ResendOTPCommandHandler : IRequestHandler<ResendOTPCommand, Result>
 
         if (!result.Succeeded)
         {
-            return Result.Failure(AccountError.CreateAccountFailed);
+            return Result.Failure(AccountError.ResendOTPFailed);
         }
 
         await _serviceBus.Publish(new UserSendOTPEvent
@@ -96,7 +96,7 @@ public class ResendOTPCommandHandler : IRequestHandler<ResendOTPCommand, Result>
 
         if (!result.Succeeded)
         {
-            return Result.Failure(AccountError.CreateAccountFailed);
+            return Result.Failure(AccountError.ResendOTPFailed);
         }
 
         await _serviceBus.Publish(new UserSendOTPEvent

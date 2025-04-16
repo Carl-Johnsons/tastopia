@@ -107,7 +107,7 @@ const DataTable = () => {
               ...column,
               cell: (user: IAdminGetUserResponse) => (
                 <ActionButtons
-                  key={user.accountId}
+                  key={user.accountId + user.isAccountActive}
                   accountId={user.accountId}
                   isActive={user.isAccountActive}
                   onStatusUpdate={handleStatusUpdate}

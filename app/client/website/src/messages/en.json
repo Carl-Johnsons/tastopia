@@ -64,7 +64,7 @@
         "back": "Back to Users",
         "disable": "Disable User",
         "restore": "Restore User",
-        "edit": "Edit Profile"
+        "edit": "Update Profile"
       }
     },
     "info": {
@@ -105,10 +105,40 @@
       "error": "An error occurred. Please try again."
     }
   },
+  "administerRecipes": {
+    "title": "Administer Recipes",
+    "subtitle": "Recipe",
+    "search": "Search by recipe name, ingredients, ...",
+    "columns": {
+      "recipeName": "Recipe Name",
+      "ingredients": "Ingredients",
+      "username": "Username",
+      "name": "Name",
+      "createdDate": "Created Date",
+      "status": "Status",
+      "recipeImage": "Image",
+      "actions": "Actions"
+    },
+    "actions": {
+      "viewDetail": "View detail",
+      "disable": "Disable",
+      "restore": "Restore"
+    },
+    "tooltip": {
+      "viewDetail": "View detail",
+      "disable": "Disable recipe",
+      "restore": "Restore recipe"
+    },
+    "notifications": {
+      "restoreSuccess": "Restore recipe successfully!",
+      "disableSuccess": "Disable recipe successfully!",
+      "error": "Something went wrong!"
+    }
+  },
   "administerReportRecipes": {
     "title": "Administer Reports",
     "subtitle": "Recipe",
-    "search": "Search by username, name, gmail,...",
+    "search": "Search by recipe name, recipe owner, ...",
     "columns": {
       "recipeName": "Recipe name",
       "recipeOwner": "Recipe owner",
@@ -118,6 +148,11 @@
       "createdDate": "Created date",
       "status": "Status",
       "action": "Actions"
+    },
+    "actions": {
+      "detail": "Detail",
+      "disable": "Disable",
+      "restore": "Restore"
     },
     "tooltip": {
       "viewDetail": "Report detail",
@@ -134,7 +169,54 @@
       "error": "Something went wrong!"
     },
     "detail": {
-      "loadMore": "Load more"
+      "header": {
+        "followers": "followers",
+        "follower": "follower"
+      },
+      "content": {
+        "ingredient": "Ingredient",
+        "for": "For",
+        "servings": "servings",
+        "serving": "serving",
+        "instruction": "Instruction",
+        "cookingTime": "Cook time"
+      },
+      "comments": {
+        "title": "Comments",
+        "loadMore": "Load more"
+      }
+    }
+  },
+  "administerReportComments": {
+    "title": "Administer Reports",
+    "subtitle": "Comment",
+    "search": "Search by comment owner, content,...",
+    "columns": {
+      "commentOwner": "Comment Owner",
+      "content": "Content",
+      "recipeImage": "Recipe Image",
+      "reporter": "Reporter",
+      "reportReason": "Report Reason",
+      "createdDate": "Created Date",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "actions": {
+      "disable": "Disable",
+      "restore": "Restore"
+    },
+    "tooltip": {
+      "viewDetail": "View detail",
+      "markAsCompleted": "Mark as completed",
+      "restoreReport": "Restore report"
+    },
+    "notifications": {
+      "restoreSuccess": "Restore comment successfully!",
+      "disableSuccess": "Disable comment successfully!",
+      "error": "Something went wrong!"
+    },
+    "detail": {
+      "detail": "Detail"
     }
   },
   "administerReportUsers": {
@@ -167,12 +249,14 @@
       "disableUserSuccess": "Disable user successfully!",
       "restoreReportSuccess": "Restore report successfully!",
       "completeReportSuccess": "Mark report as completed successfully!",
+      "restoreAllReportsSuccess": "Restore all reports successfully!",
+      "completeAllReportsSuccess": "Mark all reports as completed successfully!",
       "error": "Something went wrong!"
     }
   },
   "administerAdmins": {
     "title": "Administer Admins",
-    "search": "Search by username, name ,gmail, ...",
+    "search": "Search by username, display name, ...",
     "columns": {
       "username": "Username",
       "displayName": "Display Name",
@@ -219,11 +303,11 @@
         }
       },
       "gmail": {
-        "label": "Gmail",
-        "placeholder": "Ex. johndoe@gmail.com",
+        "label": "Email",
+        "placeholder": "Ex. johndoe@email.com",
         "errors": {
-          "required": "Gmail is required",
-          "invalid": "Invalid gmail address"
+          "required": "Email is required",
+          "invalid": "Invalid email address"
         }
       },
       "phone": {
@@ -313,7 +397,7 @@
         "signOut": "Sign out",
         "roles": {
           "ADMIN": "Admin",
-          "SUPER ADMIN": "Super Admin"
+          "SUPER_ADMIN": "Super Admin"
         }
       },
       "info": {
@@ -348,6 +432,7 @@
           "recipe": "Recipe",
           "comment": "Comment",
           "user": "User",
+          "admin": "Admin",
           "tag": "Tag",
           "reportUser": "User Report",
           "reportRecipe": "Recipe Report",
@@ -405,11 +490,11 @@
       },
       "image": {
         "label": "Image",
-        "required": "Tag image is required",
         "errors": {
+          "required": "Tag image is required",
           "maxNumber": "Number of selected images exceed 1",
           "acceptType": "Your selected file type is not allowed",
-          "maxFileSize": "Selected file size exceeds max file size (15MB)"
+          "maxSize": "Selected file size exceeds max file size (15MB)"
         },
         "upload": {
           "clickToUpload": "Click to upload",
@@ -515,5 +600,114 @@
       "createdDate": "Created Date"
     },
     "search": "Search by username, command, entity..."
+  },
+  "report": {
+    "reportList": "Report list",
+    "resolveAll": "Mark all reports as completed",
+    "resolve": "Mark as completed",
+    "reopenAll": "Reopen all reports",
+    "reopen": "Reopen report",
+    "resolveAllSuccess": "Mark all reports as completed successfully!",
+    "reopenAllSuccess": "Reopen all reports successfully!",
+    "resolveSuccess": "Mark report as completed successfully!",
+    "reopenSuccess": "Reopen report successfully!"
+  },
+  "noRecords": {
+    "content": "No records found"
+  },
+  "error": {
+    "AccountError": {
+      "NotFound": "Account not found",
+      "EmailNotFound": "Email not found",
+      "PhoneNotFound": "Phone number not found",
+      "EmailAlreadyExisted": "Email already exists",
+      "PhoneAlreadyExisted": "Phone number already exists",
+      "CreateAccountFailed": "Failed to create account",
+      "InvalidOTP": "Invalid OTP",
+      "OTPExpired": "OTP has expired",
+      "VerifyFailed": "Verification failed",
+      "EmailAlreadyConfirmed": "Email already confirmed",
+      "EmailNotConfirmed": "Email not confirmed",
+      "PhoneAlreadyConfirmed": "Phone number already confirmed",
+      "PhoneNotConfirmed": "Phone number not confirmed",
+      "ResendOTPFailed": "Failed to resend OTP",
+      "LinkAccountFailed": "Failed to link account",
+      "UnlinkAccountFailed": "Failed to unlink account",
+      "UsernameAlreadyExisted": "Username already exists",
+      "UpdateAccountFailed": "Failed to update account",
+      "InvalidAccountMethod": "Invalid account method",
+      "ResetPasswordFailed": "Failed to reset password",
+      "OnlyExistOneIdentifier": "Cannot unlink when the account only has one identifier",
+      "NullParameter": "Missing or null parameter"
+    },
+    "NotificationErrors": {
+      "NotFound": "Notification not found",
+      "TemplateNotFound": "Notification template not found",
+      "ExpoPushTokenNotFound": "Expo push token not found",
+      "UpdateNotificationFail": "Failed to update notification"
+    },
+    "CommentError": {
+      "NotFound": "Comment not found",
+      "AddCommentFail": "Failed to add comment",
+      "DeleteCommentFail": "Failed to delete comment",
+      "UpdateCommentFail": "Failed to update comment",
+      "AlreadyInactive": "Comment is already inactive",
+      "AlreadyActive": "Comment is already active"
+    },
+    "RecipeError": {
+      "NotFound": "Recipe not found",
+      "AddRecipeFail": "Failed to add recipe",
+      "DeleteRecipeFail": "Failed to delete recipe",
+      "UpdateRecipeFail": "Failed to update recipe",
+      "VoteFail": "Failed to vote",
+      "NullParameter": "Missing or null parameter",
+      "PermissionDeny": "Permission denied",
+      "AlreadyInactive": "Recipe is already inactive",
+      "AlreadyActive": "Recipe is already active"
+    },
+    "TagError": {
+      "NotFound": "Tag not found",
+      "AddTagFail": "Failed to add tag",
+      "DeleteTagFail": "Failed to delete tag",
+      "UpdateTagFail": "Failed to update tag",
+      "NullParameter": "Missing or null parameter",
+      "PermissionDeny": "Permission denied",
+      "AlreadyInactive": "Tag is already inactive",
+      "AlreadyExist": "Tag already exists"
+    },
+    "SettingError": {
+      "NotFound": "Setting not found",
+      "InvalidSettingKey": "Invalid setting key",
+      "InvalidSettingValue": "Invalid setting value"
+    },
+    "UserError": {
+      "NotFound": "User not found",
+      "AlreadyExistUser": "User already exists",
+      "NullParameters": "Missing or null parameters",
+      "FollowFail": "Failed to follow user",
+      "PermissionDenied": "Permission denied",
+      "UpdateUserFail": "Failed to update user"
+    },
+    "ReportError": {
+      "NotFound": "Report not found",
+      "AddReportFail": "Failed to add report",
+      "DeleteReportFail": "Failed to delete report",
+      "UpdateReportFail": "Failed to update report",
+      "NullParameter": "Missing or null parameter",
+      "AlreadyMarkComplete": "Report is already marked as complete",
+      "AlreadyPending": "Report is already pending"
+    },
+    "UserReportError": {
+      "NotFound": "User report not found",
+      "AddUserReportFail": "Failed to add user report",
+      "DeleteUserReportFail": "Failed to delete user report",
+      "UpdateUserReportFail": "Failed to update user report",
+      "NullParameter": "Missing or null parameter",
+      "AlreadyMarkComplete": "User report is already marked as complete",
+      "AlreadyPending": "User report is already pending"
+    },
+    "General": "An error has occurred. Please try again later",
+    "GENERAL": "An error has occurred. Please try again later",
+    "ValidationError": "Invalid request data. Please try again later"
   }
 }

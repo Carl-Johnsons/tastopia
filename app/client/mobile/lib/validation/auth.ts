@@ -1,6 +1,9 @@
 import { IDENTIFIER_TYPE } from "@/api/user";
 import { lazy, object, ref, string } from "yup";
 
+export const EMAIL_REGEX = /[@]/;
+export const PHONE_REGEX = /^0(3|5|7|8|9)+([0-9]{8})$/;
+
 export const passwordSchema = string()
   .required("Please enter password.")
   .min(6, "Password must be at least 6 characters long.")
@@ -16,23 +19,15 @@ export const loginSchema = object({
 
 export const forgotPasswordSchema = object({
   identifier: lazy(value => {
-    const emailRegex = /[a-zA-Z@]/;
     const phoneNumberRegex = /^\d+$/;
 
     if (typeof value !== "string") {
       return string().required("Please enter email or phone number.");
-    }
-
-    if (emailRegex.test(value)) {
-      return string().email("Please enter a valid email address.");
     } else if (phoneNumberRegex.test(value)) {
-      return string().matches(
-        /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/,
-        "Please enter a valid phone number."
-      );
+      return string().matches(PHONE_REGEX, "Please enter a valid phone number.");
     }
 
-    return string().required("Please enter email or phone number.");
+    return string().email("Please enter a valid email address.");
   })
 });
 
@@ -56,10 +51,7 @@ export const registerSchema = object({
     if (emailRegex.test(value)) {
       return string().email("Please enter a valid email address.");
     } else if (phoneNumberRegex.test(value)) {
-      return string().matches(
-        /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/,
-        "Please enter a valid phone number."
-      );
+      return string().matches(PHONE_REGEX, "Please enter a valid phone number.");
     }
 
     return string().required("Please enter email or phone number.");
@@ -88,10 +80,7 @@ export const getVerifyIdentifierUpdateSchema = (type: IDENTIFIER_TYPE) =>
         case IDENTIFIER_TYPE.EMAIL:
           return string().email("Please enter a valid email address.");
         case IDENTIFIER_TYPE.PHONE_NUMBER:
-          return string().matches(
-            /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/,
-            "Please enter a valid phone number."
-          );
+          return string().matches(PHONE_REGEX, "Please enter a valid phone number.");
       }
     })
   });

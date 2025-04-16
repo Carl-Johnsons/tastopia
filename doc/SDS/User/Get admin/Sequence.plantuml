@@ -1,0 +1,54 @@
+@startuml Sequence
+title "Get admin"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor "Super Admin" as SuperAdmin
+boundary WebsiteUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n UserService" as UserService
+participant "<<service>>\n IdentityService" as IdentityService
+database Postgresql
+
+SuperAdmin -> WebsiteUI ++: 1. Click on Administer admin\n in navigation bar
+
+WebsiteUI -> ApiGateway ++: 2. Super admin get admins
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+alt Current user is not super admin
+    WebsiteUI <-- ApiGateway: 4A. Return error message
+    SuperAdmin <-- WebsiteUI: 4A.1. Display error message
+else Current user is super admin
+    ApiGateway -> UserService ++: 5. Forward request
+    UserService -> IdentityService++: 6. gRPC call to search admin's \n information list <<gRPC>>
+    IdentityService -> Postgresql++: 7. Query data
+    IdentityService <-- Postgresql--: 8. Return response
+    UserService <-- IdentityService--: 9. Return admin's id list <<gRPC>>
+    UserService -> Postgresql ++: 10. Query data
+    UserService <-- Postgresql--: 11. Return response
+    alt Admins list is empty
+        ApiGateway <-- UserService: 12A. Return empty list
+        WebsiteUI <-- ApiGateway: 12A.1. Foward response
+        SuperAdmin <-- WebsiteUI: 12A.2. Display empty list
+    else Admins list is not empty
+        UserService -> IdentityService++: 6. gRPC call to get admin's \n information list <<gRPC>>
+        IdentityService -> Postgresql++: 7. Query data
+        IdentityService <-- Postgresql--: 8. Return response
+        UserService <-- IdentityService--: 9. Return admin's information list <<gRPC>>
+        ApiGateway <-- UserService--: 13. Return admins list
+        WebsiteUI <-- ApiGateway--: 14. Forward response
+        SuperAdmin <-- WebsiteUI--: 15. Display admins list
+    end alt
+end alt
+
+@enduml

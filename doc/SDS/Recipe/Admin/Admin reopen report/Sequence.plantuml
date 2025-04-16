@@ -1,0 +1,52 @@
+@startuml Sequence
+title "Admin reopen report"
+
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor Admin
+boundary WebsiteUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n RecipeService" as RecipeService
+participant "<<coordinator>>\nRabbitmq" as Rabbitmq
+database MongoDB
+
+Admin -> WebsiteUI ++: 1. Click on reopen button in \n recipe or comment report screen
+WebsiteUI -> ApiGateway ++: 2. Admin reopen report
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+alt Current user is not admin
+    WebsiteUI <-- ApiGateway: 4A. Return error message
+    Admin <-- WebsiteUI: 4A.1. Display error message
+else Current user is admin
+    alt Report is already pending
+        WebsiteUI <-- ApiGateway: 4B. Return error message
+        Admin <-- WebsiteUI: 4B.1. Display error message
+    else Report is not pending
+        ApiGateway -> RecipeService ++: 5. Forward request
+        RecipeService -> MongoDB++: 6. Update data
+        RecipeService <-- MongoDB--: 7. Return response
+        ApiGateway <-- RecipeService: 8. Return report
+        WebsiteUI <-- ApiGateway--: 9. Forward response
+        Admin <-- WebsiteUI--: 10. Display reopen report success message
+        RecipeService -> Rabbitmq: 11. Publish "AddActivityLogCommand" event <<Async>>
+        activate Rabbitmq
+        ref over Rabbitmq: 12. Add activity log event
+        RecipeService -[hidden]-> Rabbitmq
+        deactivate Rabbitmq
+        destroy Rabbitmq
+        deactivate RecipeService
+    end alt
+end alt
+@enduml

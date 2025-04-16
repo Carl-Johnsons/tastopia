@@ -24,7 +24,7 @@ export default function useReportRecipeTableColumns() {
       name: t("recipeName"),
       selector: row => row.recipeTitle,
       sortable: true,
-      grow: 3
+      grow: 2
     },
     {
       name: t("recipeOwner"),
@@ -72,7 +72,6 @@ export default function useReportRecipeTableColumns() {
       name: t("createdDate"),
       sortable: true,
       width: "140px",
-      center: true,
       hide: 1476,
       cell: ({ createdAt }) => {
         return (
@@ -85,7 +84,6 @@ export default function useReportRecipeTableColumns() {
     {
       name: t("status"),
       sortable: true,
-      center: true,
       width: "130px",
       hide: 500,
       selector: row => row.status,

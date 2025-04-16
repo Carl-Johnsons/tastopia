@@ -35,7 +35,7 @@ export const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
     <View className={`gap-[2vh] ${props.className}`}>
       <View>
         <Text className='mb-3 font-sans text-lg text-gray-600'>
-          E-mail, phone number or username
+          E-mail or phone number
         </Text>
         <Controller
           name='identifier'
@@ -45,7 +45,7 @@ export const ForgotPasswordForm = (props: ForgotPasswordFormProps) => {
               value={value}
               onBlur={onBlur}
               onChangeText={onChange}
-              placeholder='Your email, phone number or username'
+              placeholder='Your email or phone number'
             />
           )}
         />

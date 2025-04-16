@@ -187,8 +187,9 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
 
         {/* Result section */}
         {searchValue !== "" && (
-          <View className='mt-3 pb-[200px]'>
+          <View className='mt-3 pb-[100px]'>
             <FlatList
+              scrollEnabled={false}
               data={searchResults}
               keyExtractor={item => item.id}
               refreshControl={

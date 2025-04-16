@@ -46,12 +46,11 @@ export default function useAdminTableColumns() {
         name: t("dateOfBirth"),
         sortable: true,
         width: "160px",
-        center: true,
         hide: 1476,
         cell: ({ dob }) => {
           return (
             <span className='text-ellipsis text-nowrap text-sm'>
-              {dob ? format(new Date(dob as string), "dd/MM/yyyy") : "-"}
+              {dob ? format(new Date(dob as string), "dd/MM/yyyy") : ""}
             </span>
           );
         }
@@ -60,7 +59,6 @@ export default function useAdminTableColumns() {
         name: t("createdDate"),
         sortable: true,
         width: "160px",
-        center: true,
         hide: 1476,
         cell: ({ createdAt }) => {
           return (

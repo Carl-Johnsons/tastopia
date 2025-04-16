@@ -1,0 +1,39 @@
+@startuml Sequence
+title "Admin get tag ranking by popular"
+' Style section
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+actor Admin
+boundary WebsiteUI
+participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<service>>\n IdentityService" as IdentityService
+participant "<<service>>\n RecipeService" as RecipeService
+database MongoDB
+
+Admin -> WebsiteUI++: 1. Admin enter statistic screen
+WebsiteUI -> ApiGateway++: 2. Admin get tag ranking by popular
+
+activate IdentityService
+ref over ApiGateway, IdentityService: 3. Get access token
+ApiGateway -[hidden]-> IdentityService
+deactivate IdentityService
+
+alt Current user is not admin
+    WebsiteUI <-- ApiGateway: 4A. Return error message
+    Admin <-- WebsiteUI: 4A.1. Display error message
+else Current user is admin
+    ApiGateway -> RecipeService++: 5. Forward request
+    RecipeService -> MongoDB++: 6. Query data
+    RecipeService <-- MongoDB--: 7. Return response
+    ApiGateway <-- RecipeService--: 8. Return tag ranking list
+    WebsiteUI <-- ApiGateway--: 9. Forward response
+    Admin <-- WebsiteUI--: 10. Display tag ranking list
+end alt
+
+@enduml

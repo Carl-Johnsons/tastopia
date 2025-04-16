@@ -3,166 +3,16 @@
 import Loader from "@/components/ui/Loader";
 import { IAdminRecipeResponse } from "@/generated/interfaces/recipe.interface";
 import useDebounce from "@/hooks/useDebounce";
-import { format } from "date-fns";
-import {
-  ChangeEvent,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState
-} from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import DataTable, { SortOrder, TableColumn } from "react-data-table-component";
-import { DisableRecipeButton, RestoreRecipeButton, ViewDetailButton } from "./Button";
 import NoRecord from "@/components/ui/NoRecord";
-import DataTableProvider, {
-  DataTableContext,
-  DataTableContextValue,
-  OnChangeActiveFn
-} from "./Provider";
-import { ItemStatusText } from "../report/common/StatusText";
+import DataTableProvider, { OnChangeActiveFn } from "./Provider";
 import { useGetRecipes } from "@/api/recipe";
 import SearchBar from "../users/SearchBar";
-import Image from "@/components/shared/common/Image";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
-import { useLocale } from "next-intl";
-
-const columns: TableColumn<IAdminRecipeResponse>[] = [
-  {
-    name: "Recipe Name",
-    selector: row => row.title,
-    sortable: true,
-    maxWidth: "200px"
-  },
-  {
-    name: "Ingredients",
-    hide: 1368,
-    sortable: true,
-    wrap: true,
-    grow: 3,
-    cell: ({ ingredients }) => <span className='py-2'>{ingredients}</span>
-  },
-  {
-    name: "Username",
-    selector: row => row.authorUsername,
-    hide: 1576,
-    sortable: true
-  },
-  {
-    name: "Name",
-    selector: row => row.authorDisplayName,
-    hide: 1576,
-    sortable: true
-  },
-  {
-    name: "Created Date",
-    sortable: true,
-    width: "160px",
-    center: true,
-    hide: 1476,
-    cell: ({ createdAt }) => {
-      return (
-        <span className='text-ellipsis text-nowrap text-sm'>
-          {format(new Date(createdAt), "dd/MM/yyyy")}
-        </span>
-      );
-    }
-  },
-  {
-    name: "Status",
-    sortable: true,
-    center: true,
-    hide: 520,
-    cell: ({ isActive }) => {
-      return (
-        <ItemStatusText
-          isActive={isActive}
-          coloring
-        />
-      );
-    }
-  },
-  {
-    name: "Recipe Image",
-    hide: 1368,
-    width: "140px",
-    center: true,
-    cell: ({ recipeImageUrl }) => (
-      <div className='p-2'>
-        <Image
-          src={recipeImageUrl}
-          alt={"Recipe image figure"}
-          width={90}
-          height={50}
-          className='h-[50px] w-[90px] rounded-lg object-cover'
-        />
-      </div>
-    )
-  },
-  {
-    name: "Actions",
-    center: true,
-    width: "150px",
-    cell: ({ id, isActive }) => {
-      return (
-        <ActionButtons
-          recipeId={id}
-          isActive={isActive}
-        />
-      );
-    }
-  }
-];
-
-type ActionButtonsProps = {
-  recipeId: string;
-  isActive: boolean;
-};
-
-const ActionButtons = ({ recipeId, isActive }: ActionButtonsProps) => {
-  const { onChangeActive } = useContext(DataTableContext) as DataTableContextValue;
-
-  return (
-    <div className='flex gap-2'>
-      <ViewDetailButton
-        title='View detail'
-        targetId={recipeId}
-      />
-      {!isActive ? (
-        <RestoreRecipeButton
-          title='Restore'
-          targetId={recipeId}
-          noText
-          toolTip
-          onSuccess={() => {
-            onChangeActive({ recipeId, value: true });
-          }}
-        />
-      ) : (
-        <DisableRecipeButton
-          title='Disable'
-          targetId={recipeId}
-          noText
-          toolTip
-          onSuccess={() => {
-            onChangeActive({ recipeId, value: false });
-          }}
-        />
-      )}
-    </div>
-  );
-};
-
-export const columnFieldMap: Record<string, keyof IAdminRecipeResponse> = {
-  "Recipe Name": "title",
-  Ingredients: "ingredients",
-  Username: "authorUsername",
-  Name: "authorDisplayName",
-  "Created Date": "createdAt",
-  Status: "isActive",
-  "Recipe Image": "recipeImageUrl"
-};
+import { useLocale, useTranslations } from "next-intl";
+import useRecipeTableColumns from "@/hooks/table/useRecipeTableColumns";
 
 export default function Table() {
   const [limit, setLimit] = useState(10);
@@ -172,6 +22,9 @@ export default function Table() {
   const lang = useLocale();
   const [keyword, setKeyword] = useState("");
   const debouncedValue = useDebounce(keyword, 800);
+  const t = useTranslations("administerRecipes");
+
+  const { columns, columnFieldMap } = useRecipeTableColumns();
 
   const {
     data: fetchedData,
@@ -212,7 +65,7 @@ export default function Table() {
       setSortBy(sortBy);
       setSortOrder(sortOrder);
     },
-    []
+    [columnFieldMap]
   );
 
   const handleSearch = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -255,10 +108,11 @@ export default function Table() {
         <SearchBar
           onChange={handleSearch}
           isLoading={isLoading || isFetching}
+          placeholder={t("search")}
         />
-        <div className='flex gap-2 self-start'>
-          <span className='text-black_white'>Administer Recipes</span>
-        </div>
+        <p className='text-black_white base-medium flex w-full flex-col gap-4'>
+          {t("title")}
+        </p>
       </div>
 
       <DataTableProvider value={contextValue}>

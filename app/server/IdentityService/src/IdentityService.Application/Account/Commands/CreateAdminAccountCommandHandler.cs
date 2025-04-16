@@ -114,7 +114,7 @@ public class CreateAdminAccountCommandHandler : IRequestHandler<CreateAdminAccou
             AccountId = request.CurrentAccountId,
             EntityId = Guid.Parse(acc.Id),
             ActivityType = ActivityType.CREATE,
-            EntityType = ActivityEntityType.USER,
+            EntityType = ActivityEntityType.ADMIN,
         });
 
         await _serviceBus.Publish(new UserSendOTPEvent

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using NotificationService.API.DTOs;
 using NotificationService.Application.Notifications.Commands;
 using NotificationService.Application.Notifications.Queries;
+using NotificationService.Domain.Constants;
 using NotificationService.Domain.Entities;
 using NotificationService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
@@ -95,39 +96,26 @@ public partial class NotificationController : BaseApiController
         return NoContent();
     }
 
-    [HttpPost("notify/push")]
-    [ProducesResponseType(200)]
-    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> NotifyPush([FromBody] NotifyDTO dto)
-    {
-        var claims = _httpContextAccessor.HttpContext?.User.Claims;
-        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
-        var result = await _sender.Send(new PushNotificationCommand
-        {
-            Message = dto.Message,
-            RecipientIds = dto.RecipientIds,
-            Data = dto.Data,
-            Title = dto.Title,
-            ChannelId = dto.ChannelId,
-        });
-        result.ThrowIfFailure();
-
-        return Ok();
-    }
-
     [HttpGet()]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedNotificationListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> GetNotifications(int? skip, string? lang)
+    public async Task<IActionResult> GetNotifications(int? skip, string? lang, string? type)
     {
+        type ??= NotificationCategories.ALL.ToString();
+        if (!Enum.TryParse(typeof(NotificationCategories), type, out var category))
+        {
+            return BadRequest("The type must be ALL, USER, SYSTEM");
+        }
+
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
         var result = await _sender.Send(new GetNotificationsQuery
         {
             AccountId = Guid.Parse(subjectId!),
             Skip = skip,
-            Language = lang ?? "en"
+            Language = lang ?? "en",
+            Category = (NotificationCategories)category
         });
 
         result.ThrowIfFailure();

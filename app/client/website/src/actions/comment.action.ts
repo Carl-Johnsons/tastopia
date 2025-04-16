@@ -9,9 +9,12 @@ import {
 import { withErrorProcessor } from "@/utils/errorHanlder";
 import { GetCommentReportDetailParams } from "@/types/report";
 import { ChangeCommentStateDTO } from "@/types/comment";
-import { PaginatedQueryParams } from "@/types/common";
+import { PaginatedQueryParams, Response } from "@/types/common";
+import { AxiosError } from "axios";
 
-export async function getCommentReports(options?: PaginatedQueryParams) {
+export async function getCommentReports(
+  options?: PaginatedQueryParams
+): Promise<Response<IPaginatedAdminReportCommentListResponse>> {
   const url = "/api/admin/recipe/comment/reports/all";
   const {
     limit = 10,
@@ -34,10 +37,12 @@ export async function getCommentReports(options?: PaginatedQueryParams) {
         }
       });
 
-    return data;
+    return {
+      ok: true,
+      data
+    };
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
@@ -45,7 +50,7 @@ export async function getCommentReportById({
   recipeId,
   commentId,
   options
-}: GetCommentReportDetailParams) {
+}: GetCommentReportDetailParams): Promise<Response<IAdminReportCommentDetailResponse>> {
   const url = "/api/admin/recipe/comment/reports";
   const { lang } = options || {};
 
@@ -61,57 +66,105 @@ export async function getCommentReportById({
       }
     );
 
-    return data;
+    return {
+      ok: true,
+      data
+    };
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 }
 
-export const markReportAsCompleted = async ({ reportId, reportType }: IReportDTO) => {
+export const markReportAsCompleted = async ({
+  reportId,
+  reportType
+}: IReportDTO): Promise<Response<undefined>> => {
   const url = "/api/admin/recipe/mark-report-complete";
 
   try {
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
+    return {
+      ok: true,
+      data: undefined
+    };
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 };
 
-export const reopenReport = async ({ reportId, reportType }: IReportDTO) => {
+export const reopenReport = async ({
+  reportId,
+  reportType
+}: IReportDTO): Promise<Response<undefined>> => {
   const url = "/api/admin/recipe/reopen-report";
 
   try {
     await protectedAxiosInstance.post<undefined>(url, { reportId, reportType });
+    return {
+      ok: true,
+      data: undefined
+    };
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 };
 
-export const disableComment = async ({ recipeId, commentId }: ChangeCommentStateDTO) => {
+export const disableComment = async ({
+  recipeId,
+  commentId
+}: ChangeCommentStateDTO): Promise<Response<undefined>> => {
   const url = "/api/admin/recipe/comment";
 
   try {
     await protectedAxiosInstance.delete<undefined>(url, {
       params: { recipeId, commentId }
     });
+    return {
+      ok: true,
+      data: undefined
+    };
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
   }
 };
 
-export const restoreComment = async ({ recipeId, commentId }: ChangeCommentStateDTO) => {
+export const restoreComment = async ({
+  recipeId,
+  commentId
+}: ChangeCommentStateDTO): Promise<Response<undefined>> => {
   const url = "/api/admin/recipe/comment/restore";
 
   try {
     await protectedAxiosInstance.put<undefined>(url, undefined, {
       params: { recipeId, commentId }
     });
+    return {
+      ok: true,
+      data: undefined
+    };
   } catch (error) {
-    withErrorProcessor(error);
-    throw error;
+    return withErrorProcessor(error as AxiosError);
+  }
+};
+
+export type MarkAllCommentReportsParams = {
+  recipeId: string;
+  commentId: string;
+  isReopened: boolean;
+};
+
+export const markAllReports = async (
+  params: MarkAllCommentReportsParams
+): Promise<Response<undefined>> => {
+  const url = "/api/admin/recipe/mark-all-comment-report";
+
+  try {
+    const { data } = await protectedAxiosInstance.post(url, params);
+    return {
+      ok: true,
+      data
+    };
+  } catch (error) {
+    return withErrorProcessor(error as AxiosError);
   }
 };

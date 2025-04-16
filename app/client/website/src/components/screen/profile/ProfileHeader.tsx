@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Status from "@/components/ui/Status";
 import { IAdminGetUserDetailResponse } from "@/generated/interfaces/user.interface";
 import { adminBanUser } from "@/actions/user.action";
@@ -9,6 +8,8 @@ import { toast } from "react-toastify";
 import { Button } from "@/components/ui/button";
 import { Ban, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
+import Avatar from "@/components/shared/common/Avatar";
+import { useQueryClient } from "@tanstack/react-query";
 
 type ProfileHeaderProps = {
   user: IAdminGetUserDetailResponse;
@@ -21,18 +22,20 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
   const [active, setActive] = useState<boolean>(user.isAccountActive);
 
   const handleToggleStatus = async () => {
-    const result = await adminBanUser(user.accountId);
-    if (result.userId) {
-      const newStatus = result.isRestored;
-      setActive(newStatus);
+    const { ok, data: result } = await adminBanUser(user.accountId);
 
-      if (result.isRestored) {
-        toast.success(t("notifications.userRestored"));
-      } else {
-        toast.success(t("notifications.userDisabled"));
-      }
-    } else {
+    if (!ok || !result?.userId) {
       toast.error(t("notifications.error"));
+      return;
+    }
+
+    const newStatus = result.isRestored;
+    setActive(newStatus);
+
+    if (result.isRestored) {
+      toast.success(t("notifications.userRestored"));
+    } else {
+      toast.success(t("notifications.userDisabled"));
     }
   };
   return (
@@ -41,11 +44,10 @@ export default function ProfileHeader({ user }: ProfileHeaderProps) {
         <div className='flex items-center gap-5'>
           <div className='relative size-24 overflow-hidden rounded-full bg-orange-100'>
             {user.avatarUrl ? (
-              <Image
+              <Avatar
                 src={user.avatarUrl}
                 alt={user.accountUsername}
-                fill
-                className='object-cover'
+                className='size-full object-cover'
               />
             ) : (
               <div className='flex size-full items-center justify-center bg-orange-200 text-3xl font-bold text-orange-600'>

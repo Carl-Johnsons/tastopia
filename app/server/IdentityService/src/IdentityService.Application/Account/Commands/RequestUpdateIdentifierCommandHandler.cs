@@ -1,5 +1,4 @@
 ﻿using Contract.Constants;
-using IdentityService.Domain.Interfaces;
 using IdentityService.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -16,15 +15,12 @@ public record RequestUpdateIdentifierCommand : IRequest<Result>
 public class RequestUpdateIdentifierCommandHandler : IRequestHandler<RequestUpdateIdentifierCommand, Result>
 {
     private readonly UserManager<ApplicationAccount> _userManager;
-    private readonly IApplicationDbContext _context;
     private readonly IServiceBus _serviceBus;
 
     public RequestUpdateIdentifierCommandHandler(UserManager<ApplicationAccount> userManager,
-                                       IApplicationDbContext context,
                                        IServiceBus serviceBus)
     {
         _userManager = userManager;
-        _context = context;
         _serviceBus = serviceBus;
     }
 
@@ -37,7 +33,7 @@ public class RequestUpdateIdentifierCommandHandler : IRequestHandler<RequestUpda
             case AccountMethod.Phone:
                 return await RequestUpdatePhone(request, cancellationToken);
             default:
-                return Result.Failure(AccountError.UnlinkAccountFailed, "Wrong account method");
+                return Result.Failure(AccountError.InvalidAccountMethod, "Wrong account method");
         }
     }
 

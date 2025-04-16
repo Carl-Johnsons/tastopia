@@ -1,4 +1,7 @@
-﻿using Contract.Event.TrackingEvent;
+﻿using Contract.Constants;
+using Contract.Event.NotificationEvent;
+using Contract.Event.TrackingEvent;
+using Newtonsoft.Json;
 using RecipeService.Domain.Errors;
 
 namespace RecipeService.Application.Reports.Commands;
@@ -48,9 +51,28 @@ public class RestoreRecipeCommandHandler : IRequestHandler<RestoreRecipeCommand,
         await _serviceBus.Publish(new AddActivityLogEvent
         {
             AccountId = request.CurrentAccountId,
-            ActivityType = Contract.Constants.ActivityType.RESTORE,
+            ActivityType = ActivityType.RESTORE,
             EntityId = request.Id,
-            EntityType = Contract.Constants.ActivityEntityType.RECIPE
+            EntityType = ActivityEntityType.RECIPE
+        });
+
+        await _serviceBus.Publish(new NotifyUserEvent
+        {
+            PrimaryActors = [
+                new ActorDTO
+                {
+                    ActorId = recipe.Id.ToString(),
+                    Type = EntityType.RECIPE
+                }],
+            SecondaryActors = [],
+            TemplateCode = NotificationTemplateCode.ADMIN_RESTORE_RECIPE,
+            Channels = [NOTIFICATION_CHANNEL.DEFAULT],
+            JsonData = JsonConvert.SerializeObject(new
+            {
+                redirectUri = $"{CLIENT_URI.MOBILE.COMMUNITY}/{recipe.Id}"
+            }),
+            ImageUrl = recipe.ImageUrl,
+            RecipientIds = [recipe.AuthorId]
         });
 
         return Result.Success();

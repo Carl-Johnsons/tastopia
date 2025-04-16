@@ -1,0 +1,138 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/Recipe/RecipeDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminGetUserActivities(adminGetUserActivityDTO : AdminGetUserActivityDTO): async Task<IActionResult>
+}
+
+class AdminGetUserActivityQuery {
+    +Language : string
+    +Skip : int
+    +AccountId : Guid
+}
+
+class AdminGetUserActivityQueryHandler {
+    -_context : IApplicationDbContext
+    -_grpcUserClient: GrpcUserClient 
+    +AdminGetUserActivityQueryHandler(context : IApplicationDbContext, grpcUserClient : GrpcUserClient)
+    +Handle(request: AdminGetUserActivityQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedUserActivityListResponse>>
+}
+
+class AdminGetUserActivityDTO{
+    +Language : string
+    +Skip : int
+    +AccountId : Guid
+}
+
+class PaginatedUserActivityListResponse
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
+}
+
+PaginatedUserActivityListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class AdvancePaginatedMetadata extends CommonPaginatedMetadata {
+    +HasNextPage: bool
+}
+
+PaginatedUserActivityListResponse "1" o-- "1" AdvancePaginatedMetadata
+PaginatedUserActivityListResponse "1" o-- "1..*" UserActivityResponse
+
+class UserActivityResponse {
+    +Type : UserActivityType
+    +Title : string
+    +Description : string
+    +TimeAgo : string
+    +Time : DateTime
+    +Username : string
+    +AccountId : Guid
+    +AvtImageUrl : string
+    +RecipeId : Guid
+    +RecipeTitle : string
+    +RecipeAuthorUsername : string
+    +RecipeAuthorId : Guid
+    +RecipeImageUrl : string
+    +RecipeTimeAgo : string
+    +RecipeTime : DateTime
+    +RecipeVoteDiff : int
+    +CommentId : Guid
+    +CommentContent : string
+}
+
+class RecipeError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+    {static} +AlreadyExist: Error
+    {static} +VoteFail: Error
+    {static} +AlreadyInactive: Error
+    {static} +AlreadyActive: Error
+    {static} +AddRecipeFail: Error
+    {static} +UpdateRecipeFail: Error
+    {static} +DeleteRecipeFail: Error
+}
+
+enum UserActivityType {
+    CreateRecipe
+    CommentRecipe
+    UpvoteRecipe
+    DownvoteRecipe
+    Banned
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+' =========== Microservice class ===========
+together {
+    class GrpcAccountIdRequest #DarkBlue;line:white;text:white
+    class GrpcGetSimpleUsersRequest #DarkBlue;line:white;text:white
+    class GrpcUserClient #DarkBlue;line:white;text:white
+}
+AdminController --|> BaseApiController
+AdminController "1"--"1" AdminGetUserActivityDTO
+AdminController "1"--"1" AdminGetUserActivityQuery
+
+UserActivityResponse "1" *-- "1" UserActivityType
+
+AdminGetUserActivityQuery ..|> "IRequest<TResponse>"
+
+AdminGetUserActivityQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+AdminGetUserActivityQueryHandler "1" -- "1" AdminGetUserActivityQuery
+
+AdminGetUserActivityQueryHandler "1" o-- "1" IApplicationDbContext
+AdminGetUserActivityQueryHandler "1" o-- "1" GrpcUserClient
+
+AdminGetUserActivityQueryHandler "1" --"1" Result
+AdminGetUserActivityQueryHandler "1" --"1..*" GrpcGetSimpleUsersRequest
+AdminGetUserActivityQueryHandler "1" --"1..*" GrpcAccountIdRequest
+AdminGetUserActivityQueryHandler "1" --"1..*" PaginatedUserActivityListResponse
+AdminGetUserActivityQueryHandler "1" --"1..*" AdvancePaginatedMetadata
+AdminGetUserActivityQueryHandler "1" --"1..*" Recipe
+AdminGetUserActivityQueryHandler "1" --"1..*" Comment
+AdminGetUserActivityQueryHandler "1" --"1..*" UserActivityResponse
+AdminGetUserActivityQueryHandler "1" --"1..*" RecipeError
+
+Error "1..*" --o "1" RecipeError
+
+@enduml

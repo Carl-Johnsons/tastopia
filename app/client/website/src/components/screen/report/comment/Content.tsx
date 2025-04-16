@@ -7,6 +7,7 @@ import { IAdminGetUserDetailResponse } from "@/generated/interfaces/user.interfa
 import { DisableCommentButton, RestoreCommentButton } from "./Button";
 import { formatRelative } from "date-fns";
 import { ItemStatusText } from "../common/StatusText";
+import { useTranslations } from "next-intl";
 
 type Props = {
   commentId: string;
@@ -25,6 +26,9 @@ const Content = ({ commentId, recipeId, content, author, ...props }: Props) => {
     () => formatRelative(new Date(props.createdAt), new Date()),
     [props.createdAt]
   );
+
+  const t = useTranslations("administerReportComments");
+  const tFollow = useTranslations("administerReportRecipes.detail.header");
 
   return (
     <div className='flex min-w-[320px] flex-col gap-3'>
@@ -57,15 +61,14 @@ const Content = ({ commentId, recipeId, content, author, ...props }: Props) => {
               </div>
             </Link>
             <span className='text-sm text-gray-700 dark:text-gray-500'>
-              {totalFollower || 0} follower
-              {!!totalFollower && totalFollower > 2 && "s"}
+              {totalFollower || 0}{" "}
+              {tFollow(`follower${!!totalFollower && totalFollower > 2 ? "s" : ""}`)}
             </span>
           </div>
         </div>
 
         {isActive ? (
           <DisableCommentButton
-            title='Disable'
             onSuccess={() => setIsActive(false)}
             targetId={commentId}
             recipeId={recipeId}
@@ -73,7 +76,6 @@ const Content = ({ commentId, recipeId, content, author, ...props }: Props) => {
           />
         ) : (
           <RestoreCommentButton
-            title='Restore'
             onSuccess={() => setIsActive(true)}
             targetId={commentId}
             recipeId={recipeId}

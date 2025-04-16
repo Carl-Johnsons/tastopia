@@ -61,6 +61,9 @@ internal class MockupData
 
         var seedAccountFile = File.ReadAllText(Path.Combine(SeedDataPath, "accounts.json"));
         var seedAccounts = JsonConvert.DeserializeObject<List<SeedAccount>>(seedAccountFile) ?? new List<SeedAccount>();
+        var adminAccounts = seedAccounts.Where(sa => sa.RoleCode == Roles.Code.ADMIN.ToString() 
+                                                 || sa.RoleCode == Roles.Code.SUPER_ADMIN.ToString()).ToList();
+
         seedAccounts = seedAccounts.Where(sa => sa.RoleCode == "USER").ToList();
 
         var mapRecipeTagsCode = new Dictionary<Guid, List<string>>();
@@ -78,6 +81,7 @@ internal class MockupData
         foreach (var seedWrongRecipe in seedWrongRecipes)
         {
             var recipe = CreateRecipe(seedWrongRecipe, seedAccounts, random);
+            recipe.IsActive = false;
             _context.Recipes.Add(recipe);
             AddUserReports(recipe, seedWrongRecipe, seedAccounts, random);
             mapRecipeTagsCode.Add(recipe.Id, seedWrongRecipe.TagsCode);
@@ -99,7 +103,7 @@ internal class MockupData
                 tags.Add(new Tag
                 {
                     Code = seedTag.Code,
-                    Value = new TagValue { En = seedTag.En, Vi = seedTag.Vi},
+                    Value = new TagValue { En = seedTag.En, Vi = seedTag.Vi },
                     Category = Enum.Parse<TagCategory>(seedTag.Category),
                     ImageUrl = seedTag.ImageUrl,
                     Status = TagStatus.Active
@@ -118,7 +122,7 @@ internal class MockupData
                 {
                     Id = Guid.NewGuid(),
                     Code = "",
-                    Value = new TagValue { En = seedTag.En, Vi = seedTag.Vi },
+                    Value = new TagValue { En = seedTag.En, Vi = seedTag.En },
                     Category = Enum.Parse<TagCategory>(seedTag.Category),
                     ImageUrl = "",
                     Status = TagStatus.Pending
@@ -281,7 +285,7 @@ internal class MockupData
                     Content = wrongComment.Content,
                     CreatedAt = time,
                     UpdatedAt = time,
-                    IsActive = true,
+                    IsActive = false,
                 };
             }
             else
@@ -343,7 +347,7 @@ internal class MockupData
                 AdditionalDetails = seedWrongRecipe.AdditionalDetails,
                 ReasonCodes = reasonCodesSubset,
                 EntityId = recipe.Id,
-                Status = ReportStatus.Pending,
+                Status = ReportStatus.Done,
                 AccountId = Guid.Parse(reportingAccounts[idx].Id)
             });
         }
@@ -406,7 +410,7 @@ internal class MockupData
         Random random = new Random();
         DateTime today = DateTime.Today;
         int daysRange = 365;
-        int randomDays = random.Next(0, daysRange + 1); 
+        int randomDays = random.Next(0, daysRange + 1);
         return today.AddDays(-randomDays);
     }
 

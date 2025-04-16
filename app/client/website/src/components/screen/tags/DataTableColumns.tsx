@@ -41,7 +41,6 @@ export const tagsColumns = (t: any, currentLanguage: string) => [
     name: t("columns.image"),
     hide: 1368,
     width: "160px",
-    center: true,
     cell: (tag: Tag) => (
       <div className='p-2'>
         <Image

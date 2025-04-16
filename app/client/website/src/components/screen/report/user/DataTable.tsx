@@ -116,7 +116,6 @@ const DataTable = () => {
                   reportId={report.reportId}
                   reportedId={report.reportedId}
                   status={report.status as ReportStatus}
-                  reportedIsActive={report.reportedIsActive}
                   onStatusUpdate={handleStatusUpdate}
                 />
               )

@@ -1,16 +1,18 @@
 import {
   getAdminUsers,
-  getCurrentUserDetails,
   getUserById,
   getUserDetailReports,
-  getUserReports
+  getUserReports,
+  markAllReports,
+  MarkAllUserReportsParams
 } from "@/actions/user.action";
 import {
   IPaginatedAdminGetUserListResponse,
   IPaginatedAdminUserReportListResponse
 } from "@/generated/interfaces/user.interface";
+import { useErrorHandler } from "@/hooks/error/useErrorHanler";
 import { IInfiniteAdminUserReportListResponse } from "@/types/user";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useLocale } from "next-intl";
 
 export const useGetAdminUsers = (
@@ -20,16 +22,21 @@ export const useGetAdminUsers = (
   keyword = "",
   limit = 6
 ) => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useQuery<IPaginatedAdminGetUserListResponse>({
     queryKey: ["users", skip, sortBy, sortOrder, keyword, limit],
-    queryFn: () => getAdminUsers(skip, sortBy, sortOrder, keyword, limit)
+    queryFn: () =>
+      withErrorProcessor(() => getAdminUsers(skip, sortBy, sortOrder, keyword, limit))
   });
 };
 
 export const useGetUserById = (userId: string) => {
+  const { withErrorProcessor } = useErrorHandler();
+
   return useQuery({
     queryKey: ["user", userId],
-    queryFn: () => getUserById(userId)
+    queryFn: () => withErrorProcessor(() => getUserById(userId))
   });
 };
 
@@ -42,6 +49,7 @@ export const useGetUserReports = (
   language = ""
 ) => {
   const currentLanguage = useLocale();
+  const { withErrorProcessor } = useErrorHandler();
 
   return useQuery<IPaginatedAdminUserReportListResponse>({
     queryKey: [
@@ -54,20 +62,28 @@ export const useGetUserReports = (
       language || currentLanguage
     ],
     queryFn: () =>
-      getUserReports(skip, sortBy, sortOrder, keyword, limit, language || currentLanguage)
+      withErrorProcessor(() =>
+        getUserReports(
+          skip,
+          sortBy,
+          sortOrder,
+          keyword,
+          limit,
+          language || currentLanguage
+        )
+      )
   });
 };
 
 export const useGetUserDetailReports = (accountId: string, language?: string) => {
   const currentLanguage = useLocale();
+  const { withErrorProcessor } = useErrorHandler();
 
   return useInfiniteQuery<IInfiniteAdminUserReportListResponse>({
     queryKey: ["userReports", accountId, language || currentLanguage],
     queryFn: async ({ pageParam = 0 }) => {
-      return await getUserDetailReports(
-        accountId,
-        language || currentLanguage,
-        pageParam as number
+      return await withErrorProcessor(() =>
+        getUserDetailReports(accountId, language || currentLanguage, pageParam as number)
       );
     },
     initialPageParam: 0,
@@ -77,5 +93,13 @@ export const useGetUserDetailReports = (accountId: string, language?: string) =>
       }
       return pages.length;
     }
+  });
+};
+
+export const useMarkAllReports = () => {
+  const { withErrorProcessor } = useErrorHandler();
+
+  return useMutation<void, Error, MarkAllUserReportsParams>({
+    mutationFn: params => withErrorProcessor(() => markAllReports(params))
   });
 };

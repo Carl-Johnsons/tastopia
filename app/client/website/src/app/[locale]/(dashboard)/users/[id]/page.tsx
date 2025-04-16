@@ -9,12 +9,22 @@ import { getLocale } from "next-intl/server";
 export default async function UserProfile({ params }: ParamsProps) {
   try {
     const currentLanguage = await getLocale();
-    const currentUser = await getUserById(params.id);
-    const currentUserActivities = await getUserActivitiesById(params.id, currentLanguage);
+    const currentUserResponse = await getUserById(params.id);
+    const currentUserActivitiesResponse = await getUserActivitiesById(
+      params.id,
+      currentLanguage
+    );
+
+    if (!currentUserResponse.ok || !currentUserActivitiesResponse.ok) {
+      throw new Error("Failed to fetch data");
+    }
+
+    const currentUser = currentUserResponse.data;
+    const currentUserActivities = currentUserActivitiesResponse.data;
 
     return (
-      <div className='min-h-screen rounded-lg p-2'>
-        <div className='mx-auto max-w-[96]'>
+      <div className='container min-h-screen rounded-lg p-2'>
+        <div>
           <ProfileHeader user={currentUser} />
 
           <div className='mt-6 flex flex-col-reverse gap-6 lg:flex-row'>
@@ -26,14 +36,12 @@ export default async function UserProfile({ params }: ParamsProps) {
 
             <div className='flex flex-col space-y-6 lg:w-1/3'>
               <ProfileInfo user={currentUser} />
-              {/* <ProfileSettings /> */}
             </div>
           </div>
         </div>
       </div>
     );
   } catch (error) {
-    console.log(error);
     return <SomeThingWentWrong />;
   }
 }

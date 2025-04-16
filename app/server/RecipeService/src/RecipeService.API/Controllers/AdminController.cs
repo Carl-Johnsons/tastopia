@@ -110,6 +110,47 @@ public class AdminController : BaseApiController
         return NoContent();
     }
 
+    [HttpPost("mark-all-recipe-report")]
+    [Produces("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminMarkAllRecipeReport([FromBody] MarkAllRecipeReportDTO markAllRecipeReportDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new MarkAllRecipeReportCommand
+        {
+            RecipeId = markAllRecipeReportDTO.RecipeId,
+            IsReopened = markAllRecipeReportDTO.IsReopened,
+            CurrentAccountId = Guid.Parse(subjectId!)
+        });
+
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
+    [HttpPost("mark-all-comment-report")]
+    [Produces("application/json")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
+    public async Task<IActionResult> AdminMarkAllCommentReport([FromBody] MarkAllCommentReportDTO markAllCommentReportDTO)
+    {
+        var claims = _httpContextAccessor.HttpContext?.User.Claims;
+        var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+        var result = await _sender.Send(new MarkAllCommentReportCommand
+        {
+            RecipeId = markAllCommentReportDTO.RecipeId,
+            CommentId = markAllCommentReportDTO.CommentId,
+            IsReopened = markAllCommentReportDTO.IsReopened,
+            CurrentAccountId = Guid.Parse(subjectId!)
+        });
+
+        result.ThrowIfFailure();
+        return NoContent();
+    }
+
     [HttpDelete()]
     [Produces("application/json")]
     [ProducesResponseType(204)]
@@ -239,15 +280,16 @@ public class AdminController : BaseApiController
     }
 
     //Tag
-    [HttpGet("get-tags")]
+    [HttpPost("get-tags")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedAdminTagListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> AdminGetTag([FromQuery] PaginatedDTO paginatedDTO)
+    public async Task<IActionResult> AdminGetTag([FromBody] AdminGetTagDTO adminGetTagDTO, [FromQuery] PaginatedDTO paginatedDTO)
     {
         var result = await _sender.Send(new AdminGetTagsQuery
         {
             PaginatedDTO = paginatedDTO,
+            Lang = adminGetTagDTO.Language,
         });
         result.ThrowIfFailure();
         return Ok(result.Value);

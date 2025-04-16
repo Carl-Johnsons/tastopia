@@ -61,7 +61,7 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
                 return Result<TagResponse?>.Failure(TagError.NotFound, "Not found tag.");
             }
 
-            var existTag = await _context.Tags.Where(t => t.Id != request.TagId && t.Code == request.Code).SingleOrDefaultAsync();
+            var existTag = await _context.Tags.Where(t => t.Id != request.TagId && (t.Code == request.Code || t.Value.En == request.En || t.Value.En == request.Vi || t.Value.Vi == request.Vi || t.Value.Vi == request.En)).SingleOrDefaultAsync();
             if (existTag != null)
             {
                 return Result<TagResponse?>.Failure(TagError.AlreadyExist, $"Tag code : {request.Code} is already exist");

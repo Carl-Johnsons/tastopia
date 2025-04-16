@@ -1,5 +1,6 @@
 ﻿using Contract.Constants;
 using Contract.Extension;
+using NotificationService.Domain.Constants;
 using NotificationService.Domain.Errors;
 using NotificationService.Domain.Responses;
 using Reinforced.Typings.Fluent;
@@ -37,7 +38,8 @@ public static class ReinforcedTypingsExtension
 
         builder.ExportAsEnums(
         [
-            typeof(NotificationTemplateCode)
+            typeof(NotificationTemplateCode),
+            typeof(NotificationCategories)
         ], config =>
         {
             config.FlattenHierarchy()

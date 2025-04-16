@@ -1,0 +1,107 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/PaginateData.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml 
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminGetUserReports(getReportReasonsDTO : GetReportReasonsDTO, paginatedDTO : PaginatedDTO): async Task<IActionResult>
+}
+
+class GetUserReportsQuery {
+    +Lang : string
+    +PaginatedDTO : PaginatedDTO
+}
+
+class PaginatedDTO{
+    +Skip : int
+    +SortOrder : SortType
+    +SortBy : string
+    +Keyword : string
+    +Limit : int
+}
+
+class GetReportReasonsDTO {
+    +Lang : string
+}
+
+class GetUserReportsQueryHandler {
+    -_context : IApplicationDbContext
+    -_paginateDataUtility: IPaginateDataUtility<AdminUserReportResponse, NumberedPaginatedMetadata> 
+    +GetUserReportsQueryHandler(context : IApplicationDbContext, paginateDataUtility : IPaginateDataUtility<AdminUserReportResponse, NumberedPaginatedMetadata>)
+    +Handle(request: GetUserReportsQuery, cancellationToken: CancellationToken) : Task<Result<PaginatedAdminUserReportListResponse>>
+}
+
+class PaginatedAdminUserReportListResponse
+
+class "BasePaginatedResponse<Type,MetadataType>" {
+    +PaginatedData: IEnumerable<Type>
+    +Metadata: MetadataType
+}
+
+PaginatedAdminUserReportListResponse --|> "BasePaginatedResponse<Type,MetadataType>"
+
+class CommonPaginatedMetadata {
+    +TotalPage: int
+}
+
+class NumberedPaginatedMetadata extends CommonPaginatedMetadata {
+    +CurrentPage: int
+    +TotalRow: int
+}
+
+class AdminUserReportResponse{
+    +ReportId : Guid
+    +ReportedId : Guid
+    +ReportedUsername : string
+    +ReportedDisplayName : string
+    +ReportedIsActive : bool
+    +ReporterAccountId : Guid
+    +ReporterDisplayName : string
+    +ReportReason : string
+    +CreatedAt : DateTime
+    +Status : string
+}
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +NullParameters: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" PaginatedDTO
+AdminController "1"--"1" GetReportReasonsDTO
+AdminController "1"--"1" GetUserReportsQuery
+
+PaginatedAdminUserReportListResponse "1" o-- "1..*" AdminUserReportResponse
+PaginatedAdminUserReportListResponse "1" o-- "1" NumberedPaginatedMetadata
+
+GetUserReportsQuery ..|> "IRequest<TResponse>"
+
+GetUserReportsQueryHandler ..|> "IRequestHandler<TRequest, TResponse>"
+GetUserReportsQueryHandler "1" --"1" GetUserReportsQuery
+GetUserReportsQueryHandler "1" o--"1" IApplicationDbContext
+GetUserReportsQueryHandler "1" o--"1" IPaginateDataUtility
+GetUserReportsQueryHandler "1" --"1" Result
+GetUserReportsQueryHandler "1" --"1..*" PaginatedAdminUserReportListResponse
+GetUserReportsQueryHandler "1" --"1..*" UserError
+
+Error "1..*" --o "1" UserError
+
+@enduml

@@ -6,11 +6,13 @@ const useReceiveOnlineUserNumberSubscription = () => {
   const [onlineUserCount, setOnlineUserCount] = useState(0);
 
   const subscribeReceiveOnlineUserNumberEvent = useCallback(
-    (connection?: HubConnection) => {
+    async (connection?: HubConnection) => {
       if (!connection) {
         return;
       }
-      connection.on(SignalREvent.RECEIVE_ONLINE_USER_NUMBER, (number: number) => {
+      const onlineUsersInitial = await connection.invoke("GetOnlineUserNumber");
+      setOnlineUserCount(onlineUsersInitial);
+      connection.on(SignalREvent.RECEIVE_ONLINE_USER_NUMBER, async (number: number) => {
         console.log("SignalR: Receive online connection:", connection);
         if (!connection) {
           return;

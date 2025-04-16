@@ -1,0 +1,56 @@
+@startuml ClassDiagram
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+hide circle
+
+class SendEmailConsumer #Cyan;line:black;text:black {
+    -_emailService: IEmailService
+    +SendEmailConsumer(_emailService: IEmailService)
+    +Consume(context: ConsumeContext<SendEmailEvent>): Task
+}
+
+class SendEmailEvent #Cyan;line:black;text:black {
+    +EmailTo: string
+    +Subject: string
+    +Body: string
+    +IsHTML: bool
+}
+
+class GmailService #black;line:White;text:White {
+}
+
+class UserCredential #black;line:White;text:White {
+}
+
+class MimeMessage #black;line:White;text:White {
+}
+
+interface IEmailService #Cyan;line:black;text:black {
+    +SendEmail(emailTo: string, subject: string, body: string, isHtml: bool): Task
+}
+
+class GmailEmailService #Cyan;line:black;text:black implements IEmailService {
+    -Scopes: string[]
+    -APPLICATION_NAME: string
+    -EMAIL_ADDRESS: string
+    +GmailEmailService()
+    +SendEmail(emailTo: string, subject: string, body: string, isHtml: bool): Task
+    -GetUserCredentialAsync(): Task<UserCredential>
+    -CreateEmailMessage(to :string, subject: string, body: string, isHtml: bool): Message
+    -Base64UrlEncode(input: string): string
+}
+
+interface "IConsumer<T>" #black;line:white;text:white
+' =========== Library class ===========
+
+SendEmailConsumer ..|> "IConsumer<T>"
+SendEmailConsumer "1" o-- "1" IEmailService
+SendEmailConsumer "1" o-- "1" SendEmailEvent
+
+GmailEmailService "1" o-- "1" GmailService
+GmailEmailService "1" o-- "1" UserCredential
+GmailEmailService "1" o-- "1" MimeMessage
+
+@enduml

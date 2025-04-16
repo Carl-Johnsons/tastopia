@@ -4,11 +4,11 @@
     "action": "Create"
   },
   "formTitle": {
-    "serves": "Serves",
-    "cookTime": "Cook Time",
-    "ingredients": "Ingredients",
-    "method": "Method",
-    "step": "Step",
+    "serves": "Serves*",
+    "cookTime": "Cook Time*",
+    "ingredients": "Ingredients*",
+    "method": "Method*",
+    "step": "Step*",
     "tag": "Tag",
     "createSuccessfully": "Create recipe successfully",
     "createError": "Create recipe fail"
@@ -17,7 +17,7 @@
     "title": "Enter recipe title...",
     "description": "Write your recipe description...",
     "serves": "How many people can eat?",
-    "cookTime": "How long to cook? (in minutes)",
+    "cookTime": "How long to cook?",
     "ingredients": "Add ingredients...",
     "steps": "Write your cooking step..."
   },
@@ -33,6 +33,7 @@
       "integer": "Recipe serves must be a whole number"
     },
     "cookTime": "Please enter recipe cook time",
+    "cookTime.maxLength": "Cook time cannot exceed 50 characters",
     "image": "Please upload recipe image",
     "step": "Please enter cooking step",
     "stepRequired": "Recipe must have at least one step",

@@ -4,11 +4,11 @@
     "action": "Cập nhật"
   },
   "formTitle": {
-    "serves": "Khẩu phần",
-    "cookTime": "Thời gian nấu",
-    "ingredients": "Nguyên Liệu",
-    "method": "Cách Làm",
-    "step": "Bước Làm",
+    "serves": "Khẩu phần*",
+    "cookTime": "Thời gian nấu*",
+    "ingredients": "Nguyên Liệu*",
+    "method": "Cách Làm*",
+    "step": "Bước Làm*",
     "tag": "Nhãn",
     "updateSuccessfully": "Cập nhật công thức thành công",
     "updateError": "Cập nhật công thức thất bại"
@@ -27,6 +27,7 @@
     "description": "Vui lòng nhập mô tả công thức",
     "description.maxLength": "Mô tả không được vượt quá 500 ký tự",
     "cookTime": "Vui lòng nhập thời gian nấu",
+    "cookTime.maxLength": "Thời gian nấu không được vượt quá 50 ký tự",
     "image": "Vui tải lên ảnh món ăn",
     "step": "Vui lòng nhập bước nấu ăn",
     "stepRequired": "Công thức phải có ít nhất một bước nấu ăn",

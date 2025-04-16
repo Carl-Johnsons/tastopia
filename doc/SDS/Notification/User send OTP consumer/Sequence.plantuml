@@ -1,0 +1,52 @@
+@startuml Sequence
+title "User send OTP consumer diagram"
+
+<style>
+  sequenceDiagram {
+    reference {
+      BackGroundColor white
+    }
+}
+</style>
+
+participant "<<coordinator>>\nRabbitmq" as Rabbitmq
+participant "<<service>>\nNotificationService" as NotificationService
+participant "<<service>>\nEmailWorker" as EmailWorker
+participant "<<service>>\nSMSWorker" as SMSWorker
+participant "<<service>>\nGmail" as Gmail
+participant "<<service>>\nSpeedSMS" as SpeedSMS
+
+activate Rabbitmq
+Rabbitmq --> NotificationService: 1. Deliver "UserSendOTPEvent"\n message
+deactivate Rabbitmq
+activate NotificationService
+
+alt if user identifier is email
+  NotificationService -> Rabbitmq: 2A.1. Consume event and publish \n "SendEmailEvent" message <<Async>>
+  activate Rabbitmq
+  Rabbitmq --> EmailWorker: 2A.2. Deliver "SendEmailEvent"\n message
+  deactivate Rabbitmq
+  activate EmailWorker
+  EmailWorker -> Gmail: 2A.3. Send OTP email\n to specified email
+  deactivate EmailWorker
+  activate Gmail
+
+  Rabbitmq -[hidden]-> Gmail
+  deactivate Gmail
+  destroy Gmail
+else if user identifier is phone number
+  NotificationService -> Rabbitmq: 3. Consume event and publish \n "SendSMSEvent" message <<Async>>
+  deactivate NotificationService
+  activate Rabbitmq
+  Rabbitmq --> SMSWorker: 4. Deliver "SendSMSEvent"\n message
+  deactivate Rabbitmq
+  activate SMSWorker
+  SMSWorker -> SpeedSMS: 5. Send OTP \n to specified phone number
+  deactivate SMSWorker
+  activate SpeedSMS
+  Rabbitmq -[hidden]-> SpeedSMS
+
+  deactivate SpeedSMS
+  destroy SpeedSMS
+end
+@enduml

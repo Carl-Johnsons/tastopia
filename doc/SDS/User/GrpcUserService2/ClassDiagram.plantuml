@@ -1,0 +1,211 @@
+@startuml GrpcUserSerciveClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 100
+skinparam ranksep 100
+skinparam classAttributeIconSize 0
+
+hide circle
+
+class GrpcUserService #DarkBlue;line:white;text:white extends GrpcUserBase{
+    #_sender: ISender
+    +GetUserFollower(request: GrpcAccountIdRequest, context: ServerCallContext): async Task<GrpcListAccountIds>
+    +GetUserFollowing(request: GrpcAccountIdRequest, context: ServerCallContext): async Task<GrpcListAccountIds>
+    +GetSimpleUserReport(request: GrpcGetUserReportRequest, context: ServerCallContext): async Task<GrpcSimpleUserReport>
+    +CreateAdminUser(request: GrpcCreateAdminRequest, context: ServerCallContext): async Task<GrpcEmpty>
+    +UpdateAdminUser(request: GrpcUpdateAdminRequest, context: ServerCallContext): async Task<GrpcEmpty>
+}
+
+class GetUserFollowerIdsQuery {
+    +AccountId: Guid
+}
+
+class GetUserFollowingIdsQuery {
+    +AccountId: Guid
+}
+
+class GetUserReportQueryByHashSet {
+    +Lang: string
+    +ReportIds: HashSet<Guid>
+}
+
+class CreateUserCommand{
+    +User: User
+}
+
+class UpdateGprcUserCommand {
+    +AccountId: Guid
+    +DisplayName: string
+    +Gender: string
+    +Username: string
+    +Dob: DateTime
+    +AvatarUrl: string
+    +Address: string
+    +IsDobUpdate: bool
+}
+
+class GetUserFollowerIdsQueryHandler {
+    -_context: IApplicationDbContext
+    +GetUserFollowerIdsQueryHandler(context: IApplicationDbContext)
+    +Handle(request: GetUserFollowerIdsQuery, cancellationToken: CancellationToken): async Task<Result<<List<Guid>>> 
+}
+
+class GetUserFollowingIdsQueryHandler {
+    -_context: IApplicationDbContext
+    +GetUserFollowerIdsQueryHandler(context: IApplicationDbContext)
+    +Handle(request: GetUserFollowingIdsQuery, cancellationToken: CancellationToken): async Task<Result<Guid>> 
+}
+
+class GetUserReportQueryByHashSetHandler {
+    -_context: IApplicationDbContext
+    +GetUserReportQueryByHashSetHandler(context: IApplicationDbContext)
+    +Handle(request: GetUserReportQueryByHashSet, cancellationToken: CancellationToken): async Task<Result<Dictionary<Guid, List<UserReport>>>>
+}
+
+class CreateUserCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +CreateUserCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
+    +Handle(request: CreateUserCommand, cancellationToken: CancellationToken): async Task<Result<User>> 
+}
+
+class UpdateGprcUserCommandHandler {
+    -_context: IApplicationDbContext
+    -_unitOfWork: IUnitOfWork
+    +UpdateGprcUserCommandHandler(context: IApplicationDbContext, unitOfWork: IUnitOfWork)
+    +Handle(request: UpdateGprcUserCommand, cancellationToken: CancellationToken): async Task<Result<User>> 
+}
+' Grpc DTO
+class GrpcAccountIdRequest #DarkBlue;line:white;text:white{
+}
+
+class GrpcGetUserReportRequest #DarkBlue;line:white;text:white{
+}
+
+class GrpcCreateAdminRequest #DarkBlue;line:white;text:white{
+}
+
+class GrpcUpdateAdminRequest #DarkBlue;line:white;text:white{
+}
+
+class GrpcListAccountIds #DarkBlue;line:white;text:white{
+}
+
+class GrpcSimpleUserReport #DarkBlue;line:white;text:white{
+} 
+
+class GrpcEmpty #DarkBlue;line:white;text:white{
+}
+
+' DTO
+class AdminGrpcUserReportResponse{
+    +User: SimpleUser
+    +Reporter: SimpleUser
+    +Report: AdminGrpcReportResponse
+}
+
+class SimpleUser{
+    +AccountId: Guid
+    +AvtUrl: string
+    +DisplayName: string
+    +AccountUsername: string
+}
+
+class AdminGrpcReportResponse{
+    +Id : Guid
+    +ReporterAccountId : Guid
+    +Reasons : List<string>
+    +AdditionalDetail : string
+    +Status : string
+    +CreatedAt : DateTime
+}
+
+AdminGrpcUserReportResponse "1" -- "1" SimpleUser
+AdminGrpcUserReportResponse "1" -- "1" AdminGrpcReportResponse
+
+class UserError {
+    {static} +NotFound: Error
+    {static} +AlreadyExistUser: Error
+    {static} +NullParameters: Error
+    {static} +AddUserFail: Error
+    {static} +UpdateUserFail: Error
+    {static} +DeleteUserFail: Error
+}
+
+together {
+    class GrpcUserBase #Black;line:white;text:white
+    class GrpcAccountIdRequest #DarkBlue;line:white;text:white
+}
+
+GrpcUserService -[hidden]down-|> GetUserFollowerIdsQuery
+GrpcUserService -[hidden]down-|> GetUserFollowingIdsQuery
+GrpcUserService -[hidden]down-|> GetUserReportQueryByHashSet
+GrpcUserService -[hidden]down-|> CreateUserCommand
+GrpcUserService -[hidden]down-|> UpdateGprcUserCommand
+
+GetUserFollowerIdsQuery -[hidden]down-|> GetUserFollowerIdsQueryHandler
+GetUserFollowingIdsQuery -[hidden]down-|> GetUserFollowingIdsQueryHandler
+GetUserReportQueryByHashSet -[hidden]down-|> GetUserReportQueryByHashSetHandler
+CreateUserCommand -[hidden]down-|> CreateUserCommandHandler
+UpdateGprcUserCommand -[hidden]down-|> UpdateGprcUserCommandHandler
+
+GrpcUserService "1"--"1" GrpcListAccountIds
+GrpcUserService "1"--"1" GrpcAccountIdRequest
+GrpcUserService "1"--"1" GetUserFollowerIdsQuery
+
+GrpcUserService "1"--"1" GetUserFollowingIdsQuery
+
+GrpcUserService "1"--"1" GrpcSimpleUserReport
+GrpcUserService "1"--"1" GrpcGetUserReportRequest
+GrpcUserService "1"--"1" GetUserReportQueryByHashSet
+GrpcUserService "1"--"1..*" AdminGrpcUserReportResponse
+
+GrpcUserService "1"--"1" GrpcEmpty
+GrpcUserService "1"--"1" GrpcCreateAdminRequest
+GrpcUserService "1"--"1" CreateUserCommand
+GrpcUserService "1"--"1..*" User
+
+GrpcUserService "1"--"1" GrpcUpdateAdminRequest
+GrpcUserService "1"--"1" UpdateGprcUserCommand
+
+GetUserFollowerIdsQueryHandler "1"--"1" GetUserFollowerIdsQuery
+GetUserFollowerIdsQueryHandler "1" o-- "1" IApplicationDbContext
+GetUserFollowerIdsQueryHandler "1"--"1..*" UserFollows
+GetUserFollowerIdsQueryHandler "1"----"1" Result
+GetUserFollowerIdsQueryHandler "1"--"1" UserError
+
+GetUserFollowingIdsQueryHandler "1"--"1" GetUserFollowingIdsQuery
+GetUserFollowingIdsQueryHandler "1" o-- "1" IApplicationDbContext
+GetUserFollowingIdsQueryHandler "1"--"1..*" UserFollows
+GetUserFollowingIdsQueryHandler "1"----"1" Result
+GetUserFollowingIdsQueryHandler "1"--"1" UserError
+
+GetUserReportQueryByHashSetHandler "1"--"1" GetUserReportQueryByHashSet
+GetUserReportQueryByHashSetHandler "1"----"1" Result
+GetUserReportQueryByHashSetHandler "1" o-- "1" IApplicationDbContext
+GetUserReportQueryByHashSetHandler "1"--"1..*" UserReport
+GetUserReportQueryByHashSetHandler "1"--"1..*" SimpleUser
+GetUserReportQueryByHashSetHandler "1"--"1..*" AdminGrpcReportResponse
+GetUserReportQueryByHashSetHandler "1"--"1..*" AdminGrpcUserReportResponse
+
+CreateUserCommandHandler "1"--"1" CreateUserCommand
+CreateUserCommandHandler "1"----"1" Result
+CreateUserCommandHandler "1" o-- "1" IApplicationDbContext
+CreateUserCommandHandler "1" o-- "1" IUnitOfWork
+CreateUserCommandHandler "1"--"1" User
+CreateUserCommandHandler "1"--"1" UserError
+
+UpdateGprcUserCommandHandler "1"--"1" UpdateGprcUserCommand
+UpdateGprcUserCommandHandler "1"--"1..*" User
+UpdateGprcUserCommandHandler "1"----"1" Result
+UpdateGprcUserCommandHandler "1" o-- "1" IApplicationDbContext
+UpdateGprcUserCommandHandler "1" o-- "1" IUnitOfWork
+UpdateGprcUserCommandHandler "1"--"1" UserError
+
+Error "1..*" --o "1" UserError
+Error "1..*" --o "1" SettingError
+@enduml

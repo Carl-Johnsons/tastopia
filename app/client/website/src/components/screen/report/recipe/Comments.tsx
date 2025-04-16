@@ -7,9 +7,10 @@ import Loader from "@/components/ui/Loader";
 import { IRecipeCommentResponse } from "@/generated/interfaces/recipe.interface";
 import { formatRelative } from "date-fns";
 import { Link } from "@/i18n/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SmallDisableCommentButton, SmallRestoreCommentButton } from "./Button";
 import { useTranslations } from "next-intl";
+import NoRecord from "@/components/ui/NoRecord";
 
 type Props = {
   recipeId: string;
@@ -17,7 +18,7 @@ type Props = {
 
 export default function Comments({ recipeId }: Props) {
   const { data, isLoading, hasNextPage, fetchNextPage } = useGetRecipeComments(recipeId);
-  const t = useTranslations("administerReportRecipes.detail");
+  const t = useTranslations("administerReportRecipes.detail.comments");
 
   if (isLoading) {
     return <Loader />;
@@ -26,14 +27,14 @@ export default function Comments({ recipeId }: Props) {
   if (data?.pages[0].paginatedData.length === 0) {
     return (
       <div className='flex-center flex h-[100px] w-full'>
-        <span className='text-black_white'>This recipe does not have any comment.</span>
+        <NoRecord />
       </div>
     );
   }
 
   return (
     <div className='flex flex-col gap-3'>
-      <h2 className='text-black_white text-2xl font-semibold'>Comments</h2>
+      <h2 className='text-black_white text-2xl font-semibold'>{t("title")}</h2>
 
       {data?.pages.map(page =>
         page.paginatedData.map(comment => (
@@ -73,6 +74,16 @@ function Comment({ comment, recipeId }: CommentProps) {
 
   const [isActive, setIsActive] = useState(comment.isActive);
   const lowOpacityOnInactive = useMemo(() => (isActive ? "" : "opacity-50"), [isActive]);
+
+  useEffect(() => {
+    const newStatus = comment.isActive;
+
+    if (newStatus !== isActive) {
+      setIsActive(newStatus);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [comment.isActive]);
 
   return (
     <div className={`grid grid-cols-[auto_1fr] items-center gap-x-2`}>

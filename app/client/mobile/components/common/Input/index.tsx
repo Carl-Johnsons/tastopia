@@ -77,6 +77,7 @@ const Input = ({
   onFocus,
   onBlur,
   value,
+  multiline = false,
   ...restProps
 }: InputTypes) => {
   const { c } = useColorizer();
@@ -128,7 +129,8 @@ const Input = ({
       isPassword && styles.inputPassword,
       {
         backgroundColor: disabled ? "#e9ecef" : globalStyles.color.light,
-        color: `${c(black.DEFAULT, white.DEFAULT)}`
+        color: `${c(black.DEFAULT, white.DEFAULT)}`,
+        minHeight: 40
       }
     ];
 
@@ -190,8 +192,8 @@ const Input = ({
                       selectTextOnFocus={false}
                       selectionColor={globalStyles.color.primary}
                       cursorColor={globalStyles.color.primary}
-                      multiline={false}
-                      numberOfLines={1}
+                      multiline={multiline}
+                      numberOfLines={multiline ? 10 : 1}
                       {...restProps}
                       {...customProps}
                       onChangeText={value => {

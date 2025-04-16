@@ -1,0 +1,82 @@
+
+@startuml ClassDiagram
+!include doc/SDS/CommonClassDiagram/ResultAndError.plantuml
+!include doc/SDS/CommonClassDiagram/User/UserDbContext.plantuml 
+!include doc/SDS/CommonClassDiagram/UnitOfWork.plantuml
+!include doc/SDS/CommonClassDiagram/ServiceBus.plantuml
+
+skinparam classAttributeIconSize 0
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+hide circle
+
+class BaseApiController {
+    #_sender: ISender
+    #_httpContextAccessor: HttpContextAccessor
+}
+
+class AdminController {
+    +AdminMarkReport(dto : ReportDTO): async Task<IActionResult>
+}
+
+class MarkReportCommand {
+    +ReportId : Guid
+    +CurrentAccountId : Guid
+}
+
+class MarkReportCommandHandler {
+    -_context : IApplicationDbContext
+    -_serviceBus: IServiceBus 
+    -_unitOfWork: IUnitOfWork 
+    +MarkReportCommandHandler(context : IApplicationDbContext, serviceBus : IServiceBus, unitOfWork : IUnitOfWork)
+    +Handle(request: MarkReportCommand, cancellationToken: CancellationToken) : Task<Result<AdminMarkReportResponse>>
+}
+
+class ReportDTO {
+    +ReportId : Guid
+}
+
+class AdminMarkReportResponse {
+    +UserReport : UserReport
+    +IsReopened : bool
+}
+
+class UserReportError {
+    {static} +NotFound: Error
+    {static} +AddUserReportFail: Error
+    {static} +DeleteUserReportFail: Error
+    {static} +UpdateUserReportFail: Error
+    {static} +NullParameter: Error
+    {static} +AlreadyMarkComplete: Error
+    {static} +AlreadyPending: Error
+}
+
+' =========== Library class ===========
+interface "IRequest<TResponse>" #black;line:white;text:white
+interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
+' =========== Library class ===========
+together {
+    class AddActivityLogEvent #CadetBlue;line:white;text:white
+}
+
+AdminController --|> BaseApiController
+AdminController "1"--"1" ReportDTO
+AdminController "1"--"1" MarkReportCommand
+
+MarkReportCommand ..|> "IRequest<TResponse>"
+
+MarkReportCommandHandler ..|> "IRequestHandler<TRequest, TResponse>"
+MarkReportCommandHandler "1" --"1" MarkReportCommand
+MarkReportCommandHandler "1" o--"1" IApplicationDbContext
+MarkReportCommandHandler "1" o--"1" IServiceBus
+MarkReportCommandHandler "1" o--"1" IUnitOfWork
+MarkReportCommandHandler "1" --"1" Result
+MarkReportCommandHandler "1" --"1..*" AdminMarkReportResponse
+MarkReportCommandHandler "1" --"1..*" AddActivityLogEvent
+MarkReportCommandHandler "1" --"1..*" UserReport
+MarkReportCommandHandler "1" --"1..*" UserReportError
+
+Error "1..*" --o "1" UserReportError
+
+@enduml

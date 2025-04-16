@@ -31,7 +31,7 @@
   },
   "administerUsers": {
     "title": "Quản lý người dùng",
-    "search": "Tìm kiếm bằng tên tài khoản, tên, gmail,...",
+    "search": "Tìm kiếm bằng tên đăng nhập, tên, gmail,...",
     "columns": {
       "username": "Tên đăng nhập",
       "name": "Họ tên",
@@ -105,10 +105,30 @@
       "error": "Đã xảy ra lỗi. Vui lòng thử lại."
     }
   },
+  "administerRecipes": {
+    "title": "Quản lý công thức",
+    "subtitle": "Công thức",
+    "search": "Tìm kiếm theo tên công thức, nguyên liệu, ...",
+    "columns": {
+      "recipeName": "Tên Công thức",
+      "ingredients": "Nguyên liệu",
+      "username": "Tên người dùng",
+      "name": "Họ tên",
+      "createdDate": "Ngày tạo",
+      "status": "Trạng thái",
+      "recipeImage": "Hình ảnh",
+      "actions": "Hành động"
+    },
+    "actions": {
+      "viewDetail": "Xem chi tiết",
+      "disable": "Vô hiệu hóa",
+      "restore": "Khôi phục"
+    }
+  },
   "administerReportRecipes": {
     "title": "Quản lý báo cáo",
     "subtitle": "Công thức",
-    "search": "Tìm kiếm bằng tên người dùng, tên hiển thị, gmail...",
+    "search": "Tìm kiếm theo tên công thức, người tạo công thức, ...",
     "columns": {
       "recipeName": "Tên công thức",
       "recipeOwner": "Người tạo",
@@ -139,13 +159,60 @@
       "error": "Đã xảy ra lỗi!"
     },
     "detail": {
-      "loadMore": "Xem thêm"
+      "header": {
+        "followers": "người theo dõi",
+        "follower": "người theo dõi"
+      },
+      "content": {
+        "ingredient": "Nguyên liệu",
+        "for": "Cho",
+        "servings": "khẩu phần",
+        "serving": "khẩu phần",
+        "instruction": "Hướng dẫn",
+        "cookingTime": "Thời gian nấu"
+      },
+      "comments": {
+        "title": "Bình luận",
+        "loadMore": "Tải thêm"
+      }
+    }
+  },
+  "administerReportComments": {
+    "title": "Quản lý báo cáo",
+    "subtitle": "Bình luận",
+    "search": "Tìm kiếm theo chủ bình luận, nội dung,...",
+    "columns": {
+      "commentOwner": "Chủ bình luận",
+      "content": "Nội dung",
+      "recipeImage": "Ảnh công thức",
+      "reporter": "Người báo cáo",
+      "reportReason": "Lý do báo cáo",
+      "createdDate": "Ngày tạo",
+      "status": "Trạng thái",
+      "actions": "Hành động"
+    },
+    "actions": {
+      "disable": "Vô hiệu hóa",
+      "restore": "Khôi phục"
+    },
+    "tooltip": {
+      "viewDetail": "Xem chi tiết",
+      "markAsCompleted": "Đánh dấu hoàn tất",
+      "restoreReport": "Khôi phục báo cáo"
+    },
+    "notifications": {
+      "restoreSuccess": "Khôi phục bình luận thành công!",
+      "disableSuccess": "Vô hiệu hóa bình luận thành công!",
+      "error": "Đã xảy ra lỗi!"
+    },
+    "detail": {
+      "detail": "Chi tiết"
     }
   },
   "administerReportUsers": {
     "title": "Quản lý báo cáo",
     "subtitle": "Người dùng",
-    "search": "Tìm kiếm bằng tên tài khoản, tên,...",
+    "search": "Tìm kiếm bằng tên đăng nhập, tên,...",
     "columns": {
       "username": "Tên đăng nhập",
       "name": "Họ tên",
@@ -171,13 +238,15 @@
       "restoreUserSuccess": "Khôi phục người dùng thành công!",
       "disableUserSuccess": "Vô hiệu hóa người dùng thành công!",
       "restoreReportSuccess": "Khôi phục báo cáo thành công!",
-      "completeReportSuccess": "Đánh dấu báo cáo hoàn thành!",
+      "completeReportSuccess": "Đánh dấu báo cáo là đã hoàn thành thành công!",
+      "restoreAllReportsSuccess": "Khôi phục tất cả báo cáo thành công!",
+      "completeAllReportsSuccess": "Đánh dấu tất cả báo cáo là đã hoàn thành thành công!",
       "error": "Đã xảy ra lỗi!"
     }
   },
   "administerAdmins": {
     "title": "Quản lý quản trị viên",
-    "search": "Tìm kiếm theo tên người dùng, họ tên, Gmail, ...",
+    "search": "Tìm kiếm theo tên đăng nhập, tên hiển thị, ...",
     "columns": {
       "username": "Tên đăng nhập",
       "displayName": "Tên hiển thị",
@@ -224,11 +293,11 @@
         }
       },
       "gmail": {
-        "label": "Gmail",
-        "placeholder": "Ví dụ: nguyenvana@gmail.com",
+        "label": "Email",
+        "placeholder": "Ví dụ: nguyenvana@email.com",
         "errors": {
-          "required": "Vui lòng nhập Gmail",
-          "invalid": "Địa chỉ Gmail không hợp lệ"
+          "required": "Vui lòng nhập Email",
+          "invalid": "Địa chỉ Email không hợp lệ"
         }
       },
       "phone": {
@@ -318,7 +387,7 @@
         "signOut": "Đăng xuất",
         "roles": {
           "ADMIN": "Quản trị viên",
-          "SUPER ADMIN": "Quản trị viên cấp cao"
+          "SUPER_ADMIN": "Quản trị viên cấp cao"
         }
       },
       "info": {
@@ -353,6 +422,7 @@
           "recipe": "Công thức",
           "comment": "Bình luận",
           "user": "Người dùng",
+          "admin": "Quản trị viên",
           "tag": "Thẻ",
           "reportUser": "Báo cáo người dùng",
           "reportRecipe": "Báo cáo công thức",
@@ -395,7 +465,7 @@
         "placeholder": "Chọn danh mục",
         "options": {
           "all": "Tất cả",
-          "dishType": "Loại món",
+          "dishType": "Loại món ăn",
           "ingredient": "Nguyên liệu"
         }
       },
@@ -410,11 +480,11 @@
       },
       "image": {
         "label": "Hình ảnh",
-        "required": "Hình ảnh thẻ là bắt buộc",
         "errors": {
+          "required": "Hình ảnh thẻ là bắt buộc",
           "maxNumber": "Số lượng hình ảnh đã vượt quá 1",
           "acceptType": "Loại tệp đã chọn không được phép",
-          "maxFileSize": "Kích thước tệp đã chọn vượt quá kích thước tối đa (15MB)"
+          "maxSize": "Kích thước tệp đã chọn vượt quá kích thước tối đa (15MB)"
         },
         "upload": {
           "clickToUpload": "Nhấn để tải lên",
@@ -447,7 +517,7 @@
     },
     "columns": {
       "code": "Mã",
-      "value": "Giá trị",
+      "value": "Nguyên liệu",
       "category": "Danh mục",
       "createDate": "Ngày tạo",
       "status": "Trạng thái",
@@ -520,5 +590,114 @@
       "createdDate": "Ngày tạo"
     },
     "search": "Tìm kiếm theo tên người dùng, lệnh, thực thể..."
+  },
+  "report": {
+    "reportList": "Danh sách báo cáo",
+    "resolveAll": "Đánh dấu tất cả báo cáo là đã hoàn thành",
+    "resolve": "Đánh dấu là đã hoàn thành",
+    "reopenAll": "Mở lại tất cả báo cáo",
+    "reopen": "Mở lại báo cáo",
+    "resolveAllSuccess": "Đánh dấu tất cả báo cáo là đã hoàn thành thành công!",
+    "reopenAllSuccess": "Mở lại tất cả báo cáo thành công!",
+    "resolveSuccess": "Đánh dấu báo cáo là đã hoàn thành thành công!",
+    "reopenSuccess": "Mở lại báo cáo thành công!"
+  },
+  "noRecords": {
+    "content": "Không có bản ghi nào"
+  },
+  "error": {
+    "AccountError": {
+      "NotFound": "Không tìm thấy tài khoản",
+      "EmailNotFound": "Không tìm thấy email",
+      "PhoneNotFound": "Không tìm thấy số điện thoại",
+      "EmailAlreadyExisted": "Email đã tồn tại",
+      "PhoneAlreadyExisted": "Số điện thoại đã tồn tại",
+      "CreateAccountFailed": "Tạo tài khoản thất bại",
+      "InvalidOTP": "Mã OTP không hợp lệ",
+      "OTPExpired": "Mã OTP đã hết hạn",
+      "VerifyFailed": "Xác thực thất bại",
+      "EmailAlreadyConfirmed": "Email đã được xác nhận",
+      "EmailNotConfirmed": "Email chưa được xác nhận",
+      "PhoneAlreadyConfirmed": "Số điện thoại đã được xác nhận",
+      "PhoneNotConfirmed": "Số điện thoại chưa được xác nhận",
+      "ResendOTPFailed": "Gửi lại mã OTP thất bại",
+      "LinkAccountFailed": "Liên kết tài khoản thất bại",
+      "UnlinkAccountFailed": "Hủy liên kết tài khoản thất bại",
+      "UsernameAlreadyExisted": "Tên người dùng đã tồn tại",
+      "UpdateAccountFailed": "Cập nhật tài khoản thất bại",
+      "InvalidAccountMethod": "Phương thức tài khoản không hợp lệ",
+      "ResetPasswordFailed": "Đặt lại mật khẩu thất bại",
+      "OnlyExistOneIdentifier": "Không thể hủy liên kết khi tài khoản chỉ có một phương thức đăng nhập",
+      "NullParameter": "Thiếu thông tin hoặc thông tin trống"
+    },
+    "NotificationErrors": {
+      "NotFound": "Không tìm thấy thông báo",
+      "TemplateNotFound": "Không tìm thấy mẫu thông báo",
+      "ExpoPushTokenNotFound": "Không tìm thấy token Expo Push",
+      "UpdateNotificationFail": "Cập nhật thông báo thất bại"
+    },
+    "CommentError": {
+      "NotFound": "Không tìm thấy bình luận",
+      "AddCommentFail": "Thêm bình luận thất bại",
+      "DeleteCommentFail": "Xóa bình luận thất bại",
+      "UpdateCommentFail": "Cập nhật bình luận thất bại",
+      "AlreadyInactive": "Bình luận đã bị vô hiệu hóa",
+      "AlreadyActive": "Bình luận đã hoạt động"
+    },
+    "RecipeError": {
+      "NotFound": "Không tìm thấy công thức",
+      "AddRecipeFail": "Thêm công thức thất bại",
+      "DeleteRecipeFail": "Xóa công thức thất bại",
+      "UpdateRecipeFail": "Cập nhật công thức thất bại",
+      "VoteFail": "Bình chọn thất bại",
+      "NullParameter": "Thiếu thông tin hoặc thông tin trống",
+      "PermissionDeny": "Quyền truy cập bị từ chối",
+      "AlreadyInactive": "Công thức đã bị vô hiệu hóa",
+      "AlreadyActive": "Công thức đã hoạt động"
+    },
+    "TagError": {
+      "NotFound": "Không tìm thấy thẻ",
+      "AddTagFail": "Thêm thẻ thất bại",
+      "DeleteTagFail": "Xóa thẻ thất bại",
+      "UpdateTagFail": "Cập nhật thẻ thất bại",
+      "NullParameter": "Thiếu thông tin hoặc thông tin trống",
+      "PermissionDeny": "Quyền truy cập bị từ chối",
+      "AlreadyInactive": "Thẻ đã bị vô hiệu hóa",
+      "AlreadyExist": "Thẻ đã tồn tại"
+    },
+    "SettingError": {
+      "NotFound": "Không tìm thấy cài đặt",
+      "InvalidSettingKey": "Khóa cài đặt không hợp lệ",
+      "InvalidSettingValue": "Giá trị cài đặt không hợp lệ"
+    },
+    "UserError": {
+      "NotFound": "Không tìm thấy người dùng",
+      "AlreadyExistUser": "Người dùng đã tồn tại",
+      "NullParameters": "Thiếu thông tin hoặc thông tin trống",
+      "FollowFail": "Theo dõi người dùng thất bại",
+      "PermissionDenied": "Quyền truy cập bị từ chối",
+      "UpdateUserFail": "Cập nhật người dùng thất bại"
+    },
+    "ReportError": {
+      "NotFound": "Không tìm thấy báo cáo",
+      "AddReportFail": "Thêm báo cáo thất bại",
+      "DeleteReportFail": "Xóa báo cáo thất bại",
+      "UpdateReportFail": "Cập nhật báo cáo thất bại",
+      "NullParameter": "Thiếu thông tin hoặc thông tin trống",
+      "AlreadyMarkComplete": "Báo cáo đã được đánh dấu hoàn thành",
+      "AlreadyPending": "Báo cáo đã ở trạng thái chờ xử lý"
+    },
+    "UserReportError": {
+      "NotFound": "Không tìm thấy báo cáo người dùng",
+      "AddUserReportFail": "Thêm báo cáo người dùng thất bại",
+      "DeleteUserReportFail": "Xóa báo cáo người dùng thất bại",
+      "UpdateUserReportFail": "Cập nhật báo cáo người dùng thất bại",
+      "NullParameter": "Thiếu thông tin hoặc thông tin trống",
+      "AlreadyMarkComplete": "Báo cáo người dùng đã được đánh dấu hoàn thành",
+      "AlreadyPending": "Báo cáo người dùng đã ở trạng thái chờ xử lý"
+    },
+    "General": "Đã xảy ra lỗi. Vui lòng thử lại sau",
+    "GENERAL": "Đã xảy ra lỗi. Vui lòng thử lại sau",
+    "ValidationError": "Dữ liệu không hợp lệ. Vui lòng thử lại sau"
   }
 }

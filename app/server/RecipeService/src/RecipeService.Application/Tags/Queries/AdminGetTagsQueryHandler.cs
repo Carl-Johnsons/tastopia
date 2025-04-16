@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Contract.DTOs;
-using Microsoft.EntityFrameworkCore;
+﻿using Contract.DTOs;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 namespace RecipeService.Application.Tags.Queries;
@@ -8,33 +6,34 @@ namespace RecipeService.Application.Tags.Queries;
 public class AdminGetTagsQuery: IRequest<Result<PaginatedAdminTagListResponse?>>
 {
     public PaginatedDTO PaginatedDTO { get; set; } = null!;
+    public string Lang { get; set; } = null!;
 }
 
 public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Result<PaginatedAdminTagListResponse?>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IPaginateDataUtility<AdminTagResponse, AdvancePaginatedMetadata> _paginateDataUtility;
-    private readonly IMapper _mapper;
-    public AdminGetTagsQueryHandler(IApplicationDbContext context, IPaginateDataUtility<AdminTagResponse, AdvancePaginatedMetadata> paginateDataUtility, IMapper mapper)
+    public AdminGetTagsQueryHandler(IApplicationDbContext context, IPaginateDataUtility<AdminTagResponse, AdvancePaginatedMetadata> paginateDataUtility)
     {
         _context = context;
         _paginateDataUtility = paginateDataUtility;
-        _mapper = mapper;
     }
 
-    public async Task<Result<PaginatedAdminTagListResponse?>> Handle(AdminGetTagsQuery request, CancellationToken cancellationToken)
+    public Task<Result<PaginatedAdminTagListResponse?>> Handle(AdminGetTagsQuery request, CancellationToken cancellationToken)
     {
         var paginatedDto = request.PaginatedDTO;
+        var lang = request.Lang;
 
-        if(paginatedDto.Skip == null)
+        if(paginatedDto.Skip == null || string.IsNullOrEmpty(lang))
         {
-            return Result<PaginatedAdminTagListResponse?>.Failure(TagError.NullParameter, "Skip is null.");
+            return Task.FromResult(Result<PaginatedAdminTagListResponse?>.Failure(TagError.NullParameter, "Skip or Language is null."));
         }
 
-        var tagsQuery = _context.Tags.Select(t => new AdminTagResponse
+        var tagsQuery = _context.Tags.AsEnumerable().Select(t => 
+        new AdminTagResponse
         {
             Id = t.Id,
-            Category = t.Category.ToString(),
+            Category = TAG_CONSTANTS.GetTagCategoryTranslate(t.Category, lang),
             Code = t.Code,
             CreatedAt = t.CreatedAt,
             En = t.Value.En,
@@ -48,7 +47,7 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
             var keyword = paginatedDto.Keyword.ToLower();
             tagsQuery = tagsQuery.Where(t => t.En.ToLower().Contains(keyword) || t.Vi.ToLower().Contains(keyword));
         }
-        var totalRow = await tagsQuery.CountAsync();
+        var totalRow = tagsQuery.Count();
 
         var limit = paginatedDto.Limit;
         if(limit == null)
@@ -65,11 +64,11 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
             SortOrder = paginatedDto.SortOrder ?? SortType.DESC,
         });
 
-        var tagList = await tagsQuery.ToListAsync();
+        var tagList = tagsQuery.ToList();
 
         if (tagList == null || !tagList.Any())
         {
-            return Result<PaginatedAdminTagListResponse?>.Success(new PaginatedAdminTagListResponse
+            return Task.FromResult(Result<PaginatedAdminTagListResponse?>.Success(new PaginatedAdminTagListResponse
             {
                 PaginatedData = [],
                 Metadata = new NumberedPaginatedMetadata
@@ -78,10 +77,9 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
                     TotalRow = 0,
                     CurrentPage = paginatedDto.Skip!.Value + 1
                 }
-            });
+            }));
 
         }
-
         var paginatedResponse = new PaginatedAdminTagListResponse
         {
             PaginatedData = tagList,
@@ -92,6 +90,6 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
                 CurrentPage = paginatedDto.Skip!.Value + 1
             }
         };
-        return Result<PaginatedAdminTagListResponse?>.Success(paginatedResponse);
+        return Task.FromResult(Result<PaginatedAdminTagListResponse?>.Success(paginatedResponse));
     }
 }

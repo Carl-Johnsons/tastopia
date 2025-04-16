@@ -33,7 +33,7 @@ const AdminDialog = ({
   hideTriggerButton,
   ...props
 }: Props) => {
-  const { formType, isFormOpen } = useSelectAdmin();
+  const { formType, isFormOpen, isFormSubmiting } = useSelectAdmin();
   const ref = useRef<AdminFormRef>(null);
   const { height } = useWindowDimensions();
   const dispatch = useAppDispatch();
@@ -51,9 +51,6 @@ const AdminDialog = ({
     },
     [dispatch]
   );
-
-  const isSubmitting = useMemo(() => ref.current?.isSubmitting ?? false, [ref]);
-  const isSubmitDisabled = useMemo(() => ref.current?.isSubmitDisabled ?? false, [ref]);
 
   return (
     <Dialog
@@ -102,9 +99,11 @@ const AdminDialog = ({
                 <Edit className='text-white_black' />
               )
             }
-            onClick={() => ref.current?.submitForm()}
-            isLoading={isSubmitting}
-            disabled={isSubmitDisabled}
+            onClick={() => {
+              ref.current?.submitForm();
+            }}
+            isLoading={isFormSubmiting}
+            disabled={isFormSubmiting}
             className='text-white_black rounded-full bg-primary hover:bg-secondary'
           />
         </DialogFooter>

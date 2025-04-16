@@ -68,13 +68,14 @@ export const RestoreAdminButton = ({
   const handleClick = useCallback(async () => {
     mutate(targetId, {
       onSuccess: async () => {
+        onSuccess && onSuccess();
         toast.success(t("restoreSuccess"));
         await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
-        onSuccess && onSuccess();
+        console.log("invalidateQueries", ["admin", targetId]);
       },
       onError: () => {
-        toast.error(t("error"));
         onFailure && onFailure();
+        toast.error(t("error"));
       }
     });
   }, [t, onSuccess, onFailure, targetId, mutate, queryClient]);
@@ -106,13 +107,14 @@ export const DisableAdminButton = ({
   const handleClick = useCallback(async () => {
     mutate(targetId, {
       onSuccess: async () => {
+        onSuccess && onSuccess();
         toast.success(t("disableSuccess"));
         await queryClient.invalidateQueries({ queryKey: ["admin", targetId] });
-        onSuccess && onSuccess();
+        console.log("invalidateQueries", ["admin", targetId]);
       },
       onError: () => {
-        toast.error(t("error"));
         onFailure && onFailure();
+        toast.error(t("error"));
       }
     });
   }, [t, onSuccess, onFailure, targetId, mutate, queryClient]);

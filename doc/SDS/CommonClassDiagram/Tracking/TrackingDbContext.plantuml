@@ -19,11 +19,58 @@ class UserViewRecipeDetail extends BaseMongoDBAuditableEntity {
     +RecipeId: Guid
 }
 
+class UserSearchRecipe extends BaseMongoDBAuditableEntity {
+    +AccountId: Guid
+    +Keyword: string
+}
+
+class UserSearchUser extends BaseMongoDBAuditableEntity {
+    +AccountId: Guid
+    +Keyword: string 
+}
+
+class AdminActivityLog extends BaseMongoDBAuditableEntity {
+    +AccountId: Guid
+    +ActivityType: ActivityType
+    +EntityId: Guid
+    +EntityType: ActivityEntityType
+    +SecondaryEntityId: Guid
+    +SecondaryEntityType: ActivityEntityType
+}
+
+enum ActivityType
+{
+    CREATE
+    UPDATE
+    DISABLE
+    RESTORE
+    MARK_COMPLETE
+    REOPEN
+}
+
+enum ActivityEntityType
+{
+    RECIPE
+    COMMENT
+    TAG
+    USER
+    ADMIN
+    REPORT_RECIPE
+    REPORT_COMMENT
+    REPORT_USER
+}
+
 interface IApplicationDbContext extends IMongoDbContext {
-    + UserViewRecipeDetails : DbSet<UserViewRecipeDetail>
+    +UserViewRecipeDetails: DbSet<UserViewRecipeDetail>
+    +UserSearchRecipes: DbSet<UserSearchRecipe>
+    +UserSearchUsers: DbSet<UserSearchUser>
+    +AdminActivityLogs: DbSet<AdminActivityLog>
 }
 class ApplicationDbContext extends DbContext implements IApplicationDbContext {
-    +DbSet<UserViewRecipeDetail> UserViewRecipeDetails
+    +UserViewRecipeDetails: DbSet<UserViewRecipeDetail>
+    +UserSearchRecipes: DbSet<UserSearchRecipe>
+    +UserSearchUsers: DbSet<UserSearchUser>
+    +AdminActivityLogs: DbSet<AdminActivityLog>
     +Instance : DbContext
     +ApplicationDbContext()
     +ApplicationDbContext(options : DbContextOptions<ApplicationDbContext>)
@@ -37,18 +84,16 @@ interface IDisposable #black;line:white;text:white
 class "DbSet<T>" #black;line:white;text:white
 class DbContext #black;line:white;text:white
 
+AdminActivityLog "1" *-- "1" ActivityType
+AdminActivityLog "1" *-- "1..2" ActivityEntityType
+
 IMongoDbContext o-- DbContext
 
-' IApplicationDbContext o-- "DbSet<T>"
-' IApplicationDbContext o-- Recipe
-' IApplicationDbContext o-- Tag
-' IApplicationDbContext o-- RecipeTag
-' IApplicationDbContext o-- UserBookmarkRecipe
-' IApplicationDbContext o-- UserReportRecipe
-' IApplicationDbContext o-- UserReportComment
-
-ApplicationDbContext o-- "DbSet<T>"
-ApplicationDbContext o-- UserViewRecipeDetail
+ApplicationDbContext "1" o-- "1..*" "DbSet<T>"
+ApplicationDbContext "1" o-- "1" UserViewRecipeDetail
+ApplicationDbContext "1" o-- "1" UserSearchRecipe
+ApplicationDbContext "1" o-- "1" UserSearchUser
+ApplicationDbContext "1" o-- "1" AdminActivityLog
 
 ' =========== Style ==============
 

@@ -17,6 +17,6 @@ public class NotifyUserEvent
 
 public class ActorDTO
 {
-    public Guid ActorId { get; set; }
+    public string ActorId { get; set; } = null!;
     public EntityType Type { get; set; }
 }

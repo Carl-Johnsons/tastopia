@@ -8,6 +8,7 @@ using TrackingProto;
 using Contract.Constants;
 using Grpc.Net.Compression;
 using System.IO.Compression;
+using RecipeProto;
 
 namespace RecipeService.Application;
 

@@ -65,61 +65,42 @@ type ActionButtonsProps = {
   reportId: string;
   reportedId: string;
   status: ReportStatus;
-  reportedIsActive: boolean;
   onStatusUpdate: (reportId: string, status: ReportStatus) => void;
 };
 export const ActionButtons = ({
   reportId,
   reportedId,
   status,
-  reportedIsActive,
   onStatusUpdate
 }: ActionButtonsProps) => {
   const t = useTranslations("administerReportUsers");
   const router = useRouter();
   const [reportStatus, setReportStatus] = useState<ReportStatus>(status);
-  const [reportedStatus, setReportedStatus] = useState<boolean>(reportedIsActive);
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
 
   const handleDetailClick = () => {
     router.push(`/reports/users/detail/${reportedId}`);
   };
 
-  const handleBanUser = async () => {
-    const result = await adminBanUser(reportedId);
-    if (result.userId) {
-      const newStatus = result.isRestored;
-      setReportedStatus(newStatus);
-
-      if (result.isRestored) {
-        toast.success(t("notifications.restoreUserSuccess"));
-      } else {
-        toast.success(t("notifications.disableUserSuccess"));
-      }
-
-      invalidateCurrentAdminActivities();
-    } else {
-      toast.error(t("notifications.error"));
-    }
-  };
-
   const handleMarkReport = async () => {
-    const result = await markUserReport(reportId);
-    if (result.userReport.reportedId) {
-      const newStatus = result.userReport.status;
-      setReportStatus(newStatus);
-      onStatusUpdate(reportId, newStatus);
+    const { ok, data: result } = await markUserReport(reportId);
 
-      if (result.isReopened) {
-        toast.success(t("notifications.restoreReportSuccess"));
-      } else {
-        toast.success(t("notifications.completeReportSuccess"));
-      }
-
-      invalidateCurrentAdminActivities();
-    } else {
+    if (!ok || !result?.userReport.reportedId) {
       toast.error(t("notifications.error"));
+      return;
     }
+
+    const newStatus = result.userReport.status as unknown as ReportStatus;
+    setReportStatus(newStatus);
+    onStatusUpdate(reportId, newStatus);
+
+    if (result.isReopened) {
+      toast.success(t("notifications.restoreReportSuccess"));
+    } else {
+      toast.success(t("notifications.completeReportSuccess"));
+    }
+
+    invalidateCurrentAdminActivities();
   };
 
   return (
@@ -130,23 +111,6 @@ export const ActionButtons = ({
         onClick={handleDetailClick}
         className='bg-primary hover:bg-secondary'
       />
-
-      {/* Ban */}
-      {reportedStatus ? (
-        <TooltipButton
-          title={t("tooltip.disableUser")}
-          icon={<Ban className='text-white_black' />}
-          onClick={handleBanUser}
-          className='bg-red hover:bg-red-600'
-        />
-      ) : (
-        <TooltipButton
-          title={t("tooltip.restoreUser")}
-          icon={<RotateCcw className='text-white_black' />}
-          onClick={handleBanUser}
-          className='bg-green-400 hover:bg-green-500'
-        />
-      )}
 
       {/* Mark report */}
       {reportStatus === ReportStatus.Pending ? (

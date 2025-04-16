@@ -2,31 +2,32 @@ import { Gender } from "@/constants/gender";
 import { isValid, parse } from "date-fns";
 import * as z from "zod";
 
-const MAX_FILE_SIZE = 15000000;
-const PHONE_REGEX = /^(?:(?:\+|00)84|0)(3[2-9]|5[2|5-9]|7[0|6-9]|8[1-9]|9[0-9])[0-9]{7}$/;
+export const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
+export const PHONE_REGEX = /^0(3|5|7|8|9)+([0-9]{8})$/;
 const DATE_REGEX = /\d{1,2}\/\d{1,2}\/\d\d\d\d/;
 const GENDER: Array<string> = [Gender.Male, Gender.Female];
-const STATUS: Array<string> = ["Active", "Inactive"];
-const IMAGE_TYPE = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
+export const IMAGE_TYPE = ["image/jpg", "image/jpeg", "image/png", "image/webp"];
 
-const imageSchemma = (t: (key: string) => string) =>
-  z.array(
-    z.object({
-      dataURL: z.string().optional(),
-      file: z
-        .any()
-        .refine(image => image?.size <= MAX_FILE_SIZE, {
-          message: t("image.errors.maxSize")
-        })
-        .refine(image => IMAGE_TYPE.includes(image?.type), {
-          message: t("image.errors.acceptType")
-        })
-        .optional()
-    }),
-    {
-      required_error: t("image.errors.required")
-    }
-  );
+export const imageSchemma = (t: (key: string) => string) =>
+  z
+    .array(
+      z.object({
+        dataURL: z.string().optional(),
+        file: z
+          .any()
+          .refine(image => image?.size <= MAX_FILE_SIZE, {
+            message: t("image.errors.maxSize")
+          })
+          .refine(image => IMAGE_TYPE.includes(image?.type), {
+            message: t("image.errors.acceptType")
+          })
+          .optional()
+      }),
+      {
+        required_error: t("image.errors.required")
+      }
+    )
+    .min(1, t("image.errors.required"));
 
 export const getCreateAdminSchema = (t: (key: string) => string) =>
   z.object({
@@ -57,13 +58,16 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
         message: t("phone.errors.invalid")
       }),
     gender: z
-      .string()
+      .string({
+        required_error: t("gender.errors.required")
+      })
       .refine(val => GENDER.includes(val), {
         message: t("gender.errors.invalid")
-      })
-      .optional(),
+      }),
     dob: z
-      .string()
+      .string({
+        required_error: t("dateOfBirth.errors.required")
+      })
       .regex(DATE_REGEX, {
         message: t("dateOfBirth.errors.invalid")
       })
@@ -93,8 +97,7 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
         {
           message: t("dateOfBirth.errors.max")
         }
-      )
-      .optional(),
+      ),
     address: z
       .string({
         required_error: t("address.errors.required")
@@ -106,14 +109,5 @@ export const getCreateAdminSchema = (t: (key: string) => string) =>
   });
 
 export const getUpdateAdminSchema = (t: (key: string) => string) => {
-  return getCreateAdminSchema(t)
-    .extend({
-      status: z
-        .string({
-          required_error: t("status.errors.required")
-        })
-        .refine(val => STATUS.includes(val), {
-          message: t("status.errors.invalid")
-        })
-    });
+  return getCreateAdminSchema(t);
 };
