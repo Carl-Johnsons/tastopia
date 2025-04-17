@@ -1,6 +1,7 @@
 ﻿using Contract.Constants;
 using Contract.Event.NotificationEvent;
 using Contract.Event.TrackingEvent;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RecipeService.Domain.Errors;
 
@@ -35,6 +36,13 @@ public class DisableRecipeCommandHandler : IRequestHandler<DisableRecipeCommand,
         if (recipe == null)
         {
             return Result.Failure(RecipeError.NotFound);
+        }
+
+        var bin = await _context.UserRecipeBins.SingleOrDefaultAsync(b => b.RecipeId == recipe.Id && b.AccountId == recipe.AuthorId);
+        if (bin != null)
+        {
+            _context.UserRecipeBins.Remove(bin);
+            await _unitOfWork.SaveChangeAsync(cancellationToken);
         }
 
         if (!recipe.IsActive)
