@@ -63,7 +63,7 @@ public class Index : PageModel
             }
 
             var role = await _userManager.GetRolesAsync(acc);
-            if (role[0].ToLower() != Roles.Code.USER.ToString().ToLower())
+            if (role[0].ToLower() == Roles.Code.USER.ToString().ToLower())
             {
                 ModelState.AddModelError(string.Empty, Options.NotFound);
                 return Page();
