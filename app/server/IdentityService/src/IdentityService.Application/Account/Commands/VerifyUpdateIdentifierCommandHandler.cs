@@ -1,5 +1,6 @@
 ﻿using Contract.Constants;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 namespace IdentityService.Application.Account.Commands;
 
 public record VerifyUpdateIdentifierCommand : IRequest<Result>
@@ -45,6 +46,12 @@ public class VerifyUpdateIdentifierCommandHandler : IRequestHandler<VerifyUpdate
         {
             return Result.Failure(AccountError.OTPExpired);
         }
+        var isExistEmail = await _userManager.Users.AnyAsync(a => (a.Email ?? "").ToLower() == request.Identifier.ToLower() && a.Id != user.Id);
+        if (isExistEmail)
+        {
+            return Result.Failure(AccountError.EmailAlreadyExisted);
+        }
+
         user.Email = request.Identifier;
         user.EmailConfirmed = true;
         user.EmailOTP = null;
@@ -77,6 +84,12 @@ public class VerifyUpdateIdentifierCommandHandler : IRequestHandler<VerifyUpdate
         {
             return Result.Failure(AccountError.OTPExpired);
         }
+        var isExistPhoneNumber = await _userManager.Users.AnyAsync(a => a.PhoneNumber == request.Identifier.ToLower() && a.Id != user.Id);
+        if (isExistPhoneNumber)
+        {
+            return Result.Failure(AccountError.PhoneAlreadyExisted);
+        }
+
         user.PhoneNumber = request.Identifier;
         user.PhoneNumberConfirmed = true;
         user.PhoneOTP = null;
