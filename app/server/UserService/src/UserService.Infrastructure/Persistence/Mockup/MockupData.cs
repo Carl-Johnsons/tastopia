@@ -76,6 +76,7 @@ internal class MockupData
             BackgroundUrl = backgroundUrl,
             Address = seedAddresses[random.Next(seedAddresses.Count)],
             Bio = seedBios[random.Next(seedBios.Count)],
+            TotalRecipe = random.Next(6, 8)
         });
 
         var wrongUsers = seedWrongUsers.Select(u => new User
@@ -90,6 +91,7 @@ internal class MockupData
             BackgroundUrl = backgroundUrl,
             Address = seedAddresses[random.Next(seedAddresses.Count)],
             Bio = seedToxicBios[random.Next(seedToxicBios.Count)],
+            TotalRecipe = 0
         });
         var adminUsers = seedAdminUsers.Select(u => new User
         {
