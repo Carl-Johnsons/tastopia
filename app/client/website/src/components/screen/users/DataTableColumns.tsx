@@ -34,12 +34,6 @@ export const usersColumns = (t: any) => [
     sortable: true
   },
   {
-    name: t("columns.dateOfBirth"),
-    selector: (user: IAdminGetUserResponse) => user?.dob ?? "",
-    hide: 1612,
-    sortable: true
-  },
-  {
     name: t("columns.status"),
     hide: 600,
     sortable: true,

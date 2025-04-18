@@ -1,5 +1,4 @@
 import {
-  CalendarIcon,
   EmailIcon,
   FollowersIcon,
   FollowingIcon,
@@ -19,7 +18,6 @@ export default async function ProfileInfo({ user }: any) {
     { icon: "user", label: t("fields.username"), value: user.accountUsername },
     { icon: "email", label: t("fields.gmail"), value: user.accountEmail },
     { icon: "phone", label: t("fields.phoneNumber"), value: user.accountPhoneNumber },
-    { icon: "calendar", label: t("fields.dob"), value: user.dob },
     { icon: "location", label: t("fields.address"), value: user.address },
     { icon: "bio", label: t("fields.bio"), value: user.bio },
     { icon: "followers", label: t("fields.followers"), value: user.totalFollower },
@@ -37,8 +35,6 @@ export default async function ProfileInfo({ user }: any) {
         return <PhoneIcon />;
       case "gender":
         return <GenderIcon />;
-      case "calendar":
-        return <CalendarIcon />;
       case "location":
         return <LocationIcon />;
       case "followers":
