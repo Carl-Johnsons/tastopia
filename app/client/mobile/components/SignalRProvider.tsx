@@ -63,7 +63,9 @@ const SignalRHubProvider = ({ children }: Props) => {
         accessTokenFactory: () => accessToken ?? ""
       })
       .withAutomaticReconnect()
-      .configureLogging(LogLevel.Information)
+      .configureLogging(
+        process.env.NODE_ENV === "production" ? LogLevel.None : LogLevel.Information
+      )
       .build();
 
     startConnection();
