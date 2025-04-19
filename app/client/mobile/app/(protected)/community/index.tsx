@@ -9,7 +9,8 @@ import {
   FlatList,
   Appearance,
   StatusBar,
-  Alert
+  Alert,
+  ActivityIndicator
 } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { router } from "expo-router";
@@ -51,6 +52,9 @@ const Community = () => {
     isRefetching,
     isLoading
   } = useRecipesFeed(filterSelected);
+
+  console.log("isLoading", isLoading);
+  console.log("data", data?.pages.length);
 
   const handleCreateRecipe = () => {
     router.push("/(protected)/community/create-recipe");
@@ -172,14 +176,23 @@ const Community = () => {
           ),
           [isRefetching, handleFilter, filterSelected, handleCreateRecipe]
         )}
-        ListEmptyComponent={useMemo(
-          () => (
-            <View className='h-[70%]'>
-              <Empty />
+        ListEmptyComponent={useMemo(() => {
+          if (!isLoading && (data?.pages === undefined || data.pages.length === 0)) {
+            return (
+              <View className='h-[70%]'>
+                <Empty />
+              </View>
+            );
+          }
+          return (
+            <View className='flex-center h-[20%]'>
+              <ActivityIndicator
+                size='large'
+                color={colors.primary}
+              />
             </View>
-          ),
-          []
-        )}
+          );
+        }, [isLoading])}
       />
 
       <SettingRecipe
