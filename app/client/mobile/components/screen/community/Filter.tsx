@@ -1,27 +1,27 @@
 import { Image } from "expo-image";
 import { memo } from "react";
-import { Platform, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Text, TouchableWithoutFeedback, View } from "react-native";
 
 const filterData = [
   {
     value: "All",
-    imageUrl: require("../../../../mobile/assets/images/all.png")
+    imageUrl: require("../../../../mobile/assets/images/all.webp")
   },
   {
     value: "Noodles",
-    imageUrl: require("../../../../mobile/assets/images/noodles.png")
+    imageUrl: require("../../../../mobile/assets/images/noodles.webp")
   },
   {
     value: "Spice",
-    imageUrl: require("../../../../mobile/assets/images/spice.png")
+    imageUrl: require("../../../../mobile/assets/images/spice.webp")
   },
   {
     value: "BBQ",
-    imageUrl: require("../../../../mobile/assets/images/bbq.png")
+    imageUrl: require("../../../../mobile/assets/images/bbq.webp")
   },
   {
     value: "Seafood",
-    imageUrl: require("../../../../mobile/assets/images/seafood.png")
+    imageUrl: require("../../../../mobile/assets/images/seafood.webp")
   }
 ];
 
@@ -50,6 +50,8 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
                   source={item.imageUrl}
                   style={[{ width: 50, height: 50, borderRadius: 50 }]}
                   cachePolicy={"disk"}
+                  contentFit='cover'
+                  transition={200}
                 />
               </View>
               <Text
