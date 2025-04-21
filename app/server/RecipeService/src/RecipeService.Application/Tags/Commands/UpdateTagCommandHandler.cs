@@ -87,7 +87,7 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
                 activityType = requestStatus == TagStatus.Inactive ? ActivityType.DISABLE : ActivityType.RESTORE;
             }
 
-            var activeTagCounts = await _context.Tags.Where(t => (t.Category.ToString() == TagCategory.DishType.ToString()
+            var activeTagCounts = await _context.Tags.Where(t => t.Id != request.TagId && (t.Category.ToString() == TagCategory.DishType.ToString()
                                                                 || t.Category.ToString() == TagCategory.All.ToString())
                                                                 && t.Status.ToString() == TagStatus.Active.ToString()).CountAsync();
 
