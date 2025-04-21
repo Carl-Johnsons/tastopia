@@ -91,8 +91,9 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
                                                                 || t.Category.ToString() == TagCategory.All.ToString())
                                                                 && t.Status.ToString() == TagStatus.Active.ToString()).CountAsync();
 
-            if (request.Category.ToString() == TagCategory.DishType.ToString() 
-                && tag.Status == TagStatus.Active 
+            if ((request.Category.ToString() == TagCategory.DishType.ToString()
+               || request.Category.ToString() == TagCategory.All.ToString())
+                && request.Status == TagStatus.Active.ToString()
                 && activeTagCounts >= tagLimit)
             {
                 return Result<TagResponse?>.Failure(TagError.ExceedLimitDishTypeTag);

@@ -69,6 +69,12 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
             {
                 return Result<TagResponse?>.Failure(TagError.ExceedLimitDishTypeTag);
             }
+            if ((request.Category.ToString() == TagCategory.DishType.ToString()
+               || request.Category.ToString() == TagCategory.All.ToString())
+                && activeTagCounts >= tagLimit)
+            {
+                return Result<TagResponse?>.Failure(TagError.ExceedLimitDishTypeTag);
+            }
 
             rollbackUrl.Add(tagImageUrl);
 
