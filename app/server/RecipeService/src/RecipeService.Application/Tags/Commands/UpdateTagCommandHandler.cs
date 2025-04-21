@@ -44,6 +44,8 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
     }
     public async Task<Result<TagResponse?>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
     {
+        var tagLimit = 5;
+
         var rollbackUrl = new List<string>();
         try
         {
@@ -85,8 +87,19 @@ public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<
                 activityType = requestStatus == TagStatus.Inactive ? ActivityType.DISABLE : ActivityType.RESTORE;
             }
 
+            var activeTagCounts = await _context.Tags.Where(t => (t.Category.ToString() == TagCategory.DishType.ToString()
+                                                                || t.Category.ToString() == TagCategory.All.ToString())
+                                                                && t.Status.ToString() == TagStatus.Active.ToString()).CountAsync();
+
+            if (request.Category.ToString() == TagCategory.DishType.ToString() 
+                && tag.Status == TagStatus.Active 
+                && activeTagCounts >= tagLimit)
+            {
+                return Result<TagResponse?>.Failure(TagError.ExceedLimitDishTypeTag);
+            }
+
             tag.Code = request.Code;
-            tag.Value = new TagValue { En = request.En, Vi = request.Vi};
+            tag.Value = new TagValue { En = request.En, Vi = request.Vi };
             tag.UpdatedAt = DateTime.UtcNow;
             tag.Status = Enum.Parse<TagStatus>(request.Status);
             tag.Category = Enum.Parse<TagCategory>(request.Category);
