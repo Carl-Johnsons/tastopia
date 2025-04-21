@@ -38,6 +38,7 @@ type Props = {
   prediction: IngredientStreamResponse | undefined;
   setPrediction: Dispatch<SetStateAction<IngredientStreamResponse | undefined>>;
   isPredictLoading: boolean;
+  showBoundingBoxes?: boolean;
 };
 
 const PreviewView = ({
@@ -47,7 +48,8 @@ const PreviewView = ({
   setIsSearching,
   prediction,
   setPrediction,
-  isPredictLoading
+  isPredictLoading,
+  showBoundingBoxes
 }: Props) => {
   const { t } = useTranslation("capture");
 
@@ -109,53 +111,55 @@ const PreviewView = ({
             style={{ flex: 1, resizeMode: "contain" }}
           />
         </View>
-        <Canvas
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0
-          }}
-        >
-          {(prediction?.boxes ?? []).map((box, index) => {
-            const scaleFactor = Math.min(
-              imageContainerDimension.width / photo.width,
-              imageContainerDimension.height / photo.height
-            );
+        {showBoundingBoxes && (
+          <Canvas
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0
+            }}
+          >
+            {(prediction?.boxes ?? []).map((box, index) => {
+              const scaleFactor = Math.min(
+                imageContainerDimension.width / photo.width,
+                imageContainerDimension.height / photo.height
+              );
 
-            const displayWidth = photo.width * scaleFactor;
-            const displayHeight = photo.height * scaleFactor;
-            const offsetY = (imageContainerDimension.height - displayHeight) / 2;
+              const displayWidth = photo.width * scaleFactor;
+              const displayHeight = photo.height * scaleFactor;
+              const offsetY = (imageContainerDimension.height - displayHeight) / 2;
 
-            const x1 = box[0] * displayWidth;
-            const y1 = offsetY + box[1] * displayHeight;
-            const x2 = box[2] * displayWidth;
-            const y2 = offsetY + box[3] * displayHeight;
-            const boxWidth = x2 - x1;
-            const boxHeight = y2 - y1;
-            const line_width = 2;
-            const outer = rrect(rect(x1, y1, boxWidth, boxHeight), 0, 0);
-            const inner = rrect(
-              rect(
-                x1 + line_width,
-                y1 + line_width,
-                boxWidth - line_width * 2,
-                boxHeight - line_width * 2
-              ),
-              0,
-              0
-            );
-            return (
-              <DiffRect
-                key={index}
-                outer={outer}
-                inner={inner}
-                color='red'
-              />
-            );
-          })}
-        </Canvas>
+              const x1 = box[0] * displayWidth;
+              const y1 = offsetY + box[1] * displayHeight;
+              const x2 = box[2] * displayWidth;
+              const y2 = offsetY + box[3] * displayHeight;
+              const boxWidth = x2 - x1;
+              const boxHeight = y2 - y1;
+              const line_width = 2;
+              const outer = rrect(rect(x1, y1, boxWidth, boxHeight), 0, 0);
+              const inner = rrect(
+                rect(
+                  x1 + line_width,
+                  y1 + line_width,
+                  boxWidth - line_width * 2,
+                  boxHeight - line_width * 2
+                ),
+                0,
+                0
+              );
+              return (
+                <DiffRect
+                  key={index}
+                  outer={outer}
+                  inner={inner}
+                  color='red'
+                />
+              );
+            })}
+          </Canvas>
+        )}
         <View className='flex-1 items-center justify-center gap-4'>
           {isPredictLoading ? (
             <>

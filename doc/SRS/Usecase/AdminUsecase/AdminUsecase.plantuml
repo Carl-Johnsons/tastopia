@@ -7,17 +7,20 @@ left to right direction
 actor "Admin" as admin
 actor "Cloudinary" as cl
 actor "SpeedSMS      " as sms
-rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>dashboard<U+0020>website {
-    usecase "UC-2: Login" as ucLogin
-    usecase "UC-4: Forgot password" as ucForgotPassword
-    usecase "UC-8: Logout" as ucLogout
-    usecase "UC-10: Manage settings" as ucManageSetting
-    usecase "UC-11: Manage profile" as ucManageProfile
+actor "Gmail      " as gmail
 
-    usecase "UC-24: Administer users" as ucAdmUser
-    usecase "UC-25: Administer tags" as ucAdmTags
-    usecase "UC-26: Administer recipes" as ucAdmRecipe
-    usecase "UC-28: Administer reports" as ucAdmReport
+rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>dashboard<U+0020>website {
+    usecase "UC-3: Login (Dashboard)" as ucLogin
+    usecase "UC-6: Forgot password (Dashboard)" as ucForgotPassword
+    usecase "UC-12: Logout" as ucLogout
+    usecase "UC-14: Manage settings (Dashboard)" as ucManageSetting
+    usecase "UC-16: Manage profile (Dashboard)" as ucManageProfile
+
+    usecase "UC-31: Administer users" as ucAdmUser
+    usecase "UC-32: Administer tags" as ucAdmTags
+    usecase "UC-33: Administer recipes" as ucAdmRecipe
+    usecase "UC-35: Administer reports" as ucAdmReport
+
 
     note "Read/Delete/Restore" as noteAdmUser
     note "Read/Delete/Restore" as noteAdmRecipe
@@ -48,7 +51,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>dashboard<U+
     cl --up-> ucManageProfile
     cl --up-> ucAdmTags
     sms --up-> ucForgotPassword
-    
+    gmail --up-> ucForgotPassword
 }
 
 @enduml

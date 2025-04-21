@@ -91,6 +91,7 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
 
   const handleSearch = useCallback((text: string) => {
     setSearchValue(text);
+    setSearchResults(undefined);
   }, []);
 
   const onRefresh = useCallback(async () => {
@@ -221,7 +222,11 @@ const SearchUser = ({ onFocus, setOnFocus }: SearchUserProps) => {
               />
             }
             onEndReached={handleLoadMore}
-            onEndReachedThreshold={0.1}
+            onEndReachedThreshold={0.5}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={11}
+            removeClippedSubviews
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 120 }}
             ListHeaderComponent={() => {

@@ -63,6 +63,7 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                 usersQuery = usersQuery.Where(u => u.AccountUsername.ToLower().Contains(keyword) ||
                                                    u.DisplayName.ToLower().Contains(keyword) ||
                                                    u.Address!.ToLower().Contains(keyword) ||
+                                                   u.Gender!.ToLower().Contains(keyword) ||
                                                    searchAuthorIds.Contains(u.AccountId.ToString())
                 );
             }
@@ -74,6 +75,7 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
                 Address = u.Address,
                 DisplayName = u.DisplayName,
                 Dob = u.Dob,
+                Gender = u.Gender,
                 IsAccountActive = u.IsAccountActive,
             }).ToListAsync();
 

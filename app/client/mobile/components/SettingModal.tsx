@@ -175,41 +175,36 @@ const SettingModal = forwardRef<BottomSheetModal, SettingModalProps>((_props, re
       }
     >
       <BottomSheetView>
-        <Animated.View
-          //layout={transition}
-          className='w-full rounded-t-lg bg-white dark:bg-black-100'
-        >
-          {/* Header */}
-          <View className='relative flex-row items-center justify-center px-5 pb-4'>
-            <View className='absolute left-5 top-1'>
-              {currentSetting === "initial" ? (
-                <Button onPress={closeModal}>
-                  <CloseIcon
-                    color={c(black.DEFAULT, white.DEFAULT)}
-                    width={22}
-                    height={22}
-                  />
-                </Button>
-              ) : (
-                <Button onPress={() => changeSetting("initial")}>
-                  <ArrowBackIcon
-                    color={c(black.DEFAULT, white.DEFAULT)}
-                    width={22}
-                    height={22}
-                  />
-                </Button>
-              )}
-            </View>
-            <Text className='text-black_white font-semibold text-2xl'>{t(title)}</Text>
-            <View />
+        {/* Header */}
+        <View className='relative flex-row items-center justify-center px-5 pb-4'>
+          <View className='absolute left-5 top-1'>
+            {currentSetting === "initial" ? (
+              <Button onPress={closeModal}>
+                <CloseIcon
+                  color={c(black.DEFAULT, white.DEFAULT)}
+                  width={22}
+                  height={22}
+                />
+              </Button>
+            ) : (
+              <Button onPress={() => changeSetting("initial")}>
+                <ArrowBackIcon
+                  color={c(black.DEFAULT, white.DEFAULT)}
+                  width={22}
+                  height={22}
+                />
+              </Button>
+            )}
           </View>
+          <Text className='text-black_white font-semibold text-2xl'>{t(title)}</Text>
+          <View />
+        </View>
 
-          {/* State */}
-          {currentSetting === "initial" && <Main changeSetting={changeSetting} />}
-          {currentSetting === Settings.ACCOUNT && <AccountSetting />}
-          {currentSetting === Settings.LANGUAGE && <LanguageSetting />}
-          {currentSetting === Settings.NOTIFICATION && <NotificationSetting />}
-        </Animated.View>
+        {/* State */}
+        {currentSetting === "initial" && <Main changeSetting={changeSetting} />}
+        {currentSetting === Settings.ACCOUNT && <AccountSetting />}
+        {currentSetting === Settings.LANGUAGE && <LanguageSetting />}
+        {currentSetting === Settings.NOTIFICATION && <NotificationSetting />}
       </BottomSheetView>
     </BottomSheetModal>
   );

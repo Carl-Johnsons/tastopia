@@ -8,6 +8,7 @@ public class AdminGetUserResponse
     public string? Address { get; set; }
     public bool IsAccountActive { get; set; } = true;
     public string AccountUsername { get; set; } = null!;
+    public string? Gender { get; set; } 
     //Account
     public string? AccountEmail { get; set; }
     public string? AccountPhoneNumber { get; set; }

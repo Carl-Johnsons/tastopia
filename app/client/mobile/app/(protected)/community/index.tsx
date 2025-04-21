@@ -1,5 +1,5 @@
 import Recipe from "@/components/common/Recipe";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Empty from "@/components/screen/community/Empty";
 import Header from "@/components/screen/community/Header";
 import {
@@ -9,7 +9,8 @@ import {
   FlatList,
   Appearance,
   StatusBar,
-  Alert
+  Alert,
+  ActivityIndicator
 } from "react-native";
 import { filterUniqueItems } from "@/utils/dataFilter";
 import { router } from "expo-router";
@@ -51,6 +52,9 @@ const Community = () => {
     isRefetching,
     isLoading
   } = useRecipesFeed(filterSelected);
+
+  console.log("isLoading", isLoading);
+  console.log("data", data?.pages.length);
 
   const handleCreateRecipe = () => {
     router.push("/(protected)/community/create-recipe");
@@ -106,8 +110,13 @@ const Community = () => {
     }
   }, [role]);
 
+  const renderSeparator = useCallback(
+    () => <View className='my-4 h-[1px] w-full bg-gray-300 px-4' />,
+    []
+  );
+
   const renderItem = useCallback(
-    ({ item, index }: { item: RecipeType; index: number }) => (
+    ({ item }: { item: RecipeType }) => (
       <View
         className='px-4'
         testID='recipe'
@@ -118,12 +127,9 @@ const Community = () => {
           setCurrentAuthorId={setCurrentAuthorId}
           bottomSheetRef={bottomSheetRef}
         />
-        {index !== recipes.length - 1 && (
-          <View className='my-4 h-[1px] w-full bg-gray-300' />
-        )}
       </View>
     ),
-    [recipes.length]
+    []
   );
 
   const keyExtractor = useCallback((item: RecipeType) => item.id.toString(), []);
@@ -141,9 +147,17 @@ const Community = () => {
     >
       <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
       <FlatList
-        removeClippedSubviews
         data={recipes}
+        renderItem={renderItem}
+        ItemSeparatorComponent={renderSeparator}
         keyExtractor={keyExtractor}
+        onEndReached={handleReachEnd}
+        onEndReachedThreshold={0.5}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={11}
+        removeClippedSubviews
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={isRefetching}
@@ -151,20 +165,34 @@ const Community = () => {
             onRefresh={onRefresh}
           />
         }
-        onEndReached={handleReachEnd}
-        onEndReachedThreshold={0.1}
-        ListHeaderComponent={Header({
-          isRefreshing: isRefetching,
-          handleFilter,
-          filterSelected,
-          handleCreateRecipe
-        })}
-        renderItem={renderItem}
-        ListEmptyComponent={() => (
-          <View className='h-[70%]'>
-            <Empty />
-          </View>
+        ListHeaderComponent={useMemo(
+          () => (
+            <Header
+              isRefreshing={isRefetching}
+              handleFilter={handleFilter}
+              filterSelected={filterSelected}
+              handleCreateRecipe={handleCreateRecipe}
+            />
+          ),
+          [isRefetching, handleFilter, filterSelected, handleCreateRecipe]
         )}
+        ListEmptyComponent={useMemo(() => {
+          if (!isLoading && (data?.pages === undefined || data.pages.length === 0)) {
+            return (
+              <View className='h-[70%]'>
+                <Empty />
+              </View>
+            );
+          }
+          return (
+            <View className='flex-center h-[20%]'>
+              <ActivityIndicator
+                size='large'
+                color={colors.primary}
+              />
+            </View>
+          );
+        }, [isLoading])}
       />
 
       <SettingRecipe

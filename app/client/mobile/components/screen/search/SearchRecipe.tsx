@@ -77,6 +77,10 @@ const ResultSection = memo(
           }
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.1}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={11}
+          removeClippedSubviews
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 160 }}
           ListHeaderComponent={() => {
@@ -183,6 +187,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
   const handleSearch = useCallback(
     (text: string) => {
       setSearchValue(text);
+      setSearchResults(undefined);
     },
     [dispatch]
   );
