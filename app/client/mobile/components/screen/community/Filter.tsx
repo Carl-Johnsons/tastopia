@@ -1,4 +1,4 @@
-import { useSearchTags } from "@/api/search";
+import { useSearchTagsCommunity } from "@/api/search";
 import { SETTING_VALUE } from "@/constants/settings";
 import { selectLanguageSetting } from "@/slices/setting.slice";
 import { Image } from "expo-image";
@@ -42,7 +42,7 @@ const sortAndLimitTags = (tags?: any[]) => {
 const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
   const language = selectLanguageSetting();
   const currentLanguage = language === SETTING_VALUE.LANGUAGE.VIETNAMESE ? "vi" : "en";
-  const { data, isLoading, refetch } = useSearchTags("", ["ALL"], "DishType");
+  const { data, isLoading, refetch } = useSearchTagsCommunity("", ["ALL"], "DishType");
 
   const sortedTags = useMemo(() => {
     return sortAndLimitTags(data?.pages[0]?.paginatedData);
