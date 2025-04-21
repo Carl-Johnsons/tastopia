@@ -49,6 +49,16 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
             {
                 return Result<TagResponse?>.Failure(TagError.AlreadyExist, $"Tag code : {request.Code} is already exist");
             }
+            
+            var activeTagCounts = await _context.Tags.Where(t => (t.Category.ToString() == TagCategory.DishType.ToString()
+                                                                || t.Category.ToString() == TagCategory.All.ToString())
+                                                                && t.Status.ToString() == TagStatus.Active.ToString()).CountAsync();
+
+            if (request.Category.ToString() == TagCategory.DishType.ToString() && activeTagCounts >= tagLimit)
+            {
+                return Result<TagResponse?>.Failure(TagError.ExceedLimitDishTypeTag);
+            }
+
             if (request.TagImage == null)
             {
                 return Result<TagResponse?>.Failure(TagError.AddTagFail, "Tag image is null.");
@@ -61,14 +71,6 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
                 return Result<TagResponse?>.Failure(TagError.AddTagFail, "Upload tag image fail.");
             }
 
-            var activeTagCounts = await _context.Tags.Where(t => (t.Category.ToString() == TagCategory.DishType.ToString()
-                                                                || t.Category.ToString() == TagCategory.All.ToString())
-                                                                && t.Status.ToString() == TagStatus.Active.ToString()).CountAsync();
-
-            if (request.Category.ToString() == TagCategory.DishType.ToString() && activeTagCounts >= tagLimit)
-            {
-                return Result<TagResponse?>.Failure(TagError.ExceedLimitDishTypeTag);
-            }
             if ((request.Category.ToString() == TagCategory.DishType.ToString()
                || request.Category.ToString() == TagCategory.All.ToString())
                 && activeTagCounts >= tagLimit)
