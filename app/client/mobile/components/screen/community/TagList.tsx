@@ -64,7 +64,7 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
     isLoading: isSearching,
     refetch,
     fetchNextPage
-  } = useSearchTags(debouncedValue, ["ALL"], "Ingredient");
+  } = useSearchTags(debouncedValue, ["ALL"], "All");
 
   const isDoneSearching =
     searchValue !== "" &&
@@ -120,7 +120,8 @@ const TagList = ({ selectedTags, setSelectedTags }: TagListProps) => {
   useEffect(() => {
     if (data?.pages) {
       const uniqueData = filterUniqueItems(data.pages);
-      setSearchResults(uniqueData);
+      const filteredData = uniqueData.filter(item => item.en !== "All");
+      setSearchResults(filteredData.slice(0, 8));
     }
   }, [data]);
 
