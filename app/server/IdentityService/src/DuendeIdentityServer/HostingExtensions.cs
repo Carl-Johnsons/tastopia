@@ -65,7 +65,6 @@ internal static class HostingExtensions
                 options.KeyManagement.PropagationTime = TimeSpan.FromDays(2);
                 //   keep old key for 7 days in discovery for validation of tokens
                 options.KeyManagement.RetentionDuration = TimeSpan.FromDays(7);
-
             })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
@@ -102,6 +101,12 @@ internal static class HostingExtensions
             });
 
         services.AddLocalApiAuthentication();
+        
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.ExpireTimeSpan = TimeSpan.FromSeconds(60);
+            options.SlidingExpiration = false;
+        });
 
         services.AddScoped<IAuthorizeInteractionResponseGenerator, CustomAuthorizeInteractionResponseGenerator>();
 
