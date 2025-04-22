@@ -18,15 +18,19 @@ export const LogoutButton = () => {
   const logout = async () => {
     animate();
 
-    if (role !== ROLE.GUEST && pushNotificationToken) {
-      if (Platform.OS === "android")
-        await protectedAxiosInstance.delete("api/notification/expo-push-token/android");
-      else if (Platform.OS === "ios")
-        await protectedAxiosInstance.delete("api/notification/expo-push-token/ios");
+    try {
+      if (role !== ROLE.GUEST && pushNotificationToken) {
+        if (Platform.OS === "android")
+          await protectedAxiosInstance.delete("api/notification/expo-push-token/android");
+        else if (Platform.OS === "ios")
+          await protectedAxiosInstance.delete("api/notification/expo-push-token/ios");
+      }
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      await persistor.purge();
+      router.replace("/welcome");
     }
-
-    await persistor.purge();
-    router.replace("/welcome");
   };
 
   return (
