@@ -25,6 +25,7 @@ internal static class HostingExtensions
 
         builder.ConfigureCommonAPIServices();
 
+
         services.AddInfrastructureServices();
         services.AddApplicationServices();
         services.AddErrorValidation();
@@ -71,8 +72,7 @@ internal static class HostingExtensions
             .AddInMemoryClients(Config.Clients)
             .AddAspNetIdentity<ApplicationAccount>()
             .AddProfileService<ProfileService>()
-            .AddResourceOwnerValidator<CustomResourceOwnerPasswordValidator>()
-            .AddCustomAuthorizeRequestValidator<CustomAuthorizeRequestValidator>();
+            .AddResourceOwnerValidator<CustomResourceOwnerPasswordValidator>();
 
         //  .AddDeveloperSigningCredential(); // not recommended for production
 
