@@ -3,12 +3,10 @@ using Duende.IdentityServer.Configuration;
 using Duende.IdentityServer.ResponseHandling;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Validation;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.WebUtilities;
 using Serilog;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 
 namespace DuendeIdentityServer.Services;
 

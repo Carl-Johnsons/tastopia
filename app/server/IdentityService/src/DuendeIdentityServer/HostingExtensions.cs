@@ -71,7 +71,8 @@ internal static class HostingExtensions
             .AddInMemoryClients(Config.Clients)
             .AddAspNetIdentity<ApplicationAccount>()
             .AddProfileService<ProfileService>()
-            .AddResourceOwnerValidator<CustomResourceOwnerPasswordValidator>();
+            .AddResourceOwnerValidator<CustomResourceOwnerPasswordValidator>()
+            .AddCustomAuthorizeRequestValidator<CustomAuthorizeRequestValidator>();
 
         //  .AddDeveloperSigningCredential(); // not recommended for production
 
@@ -101,12 +102,6 @@ internal static class HostingExtensions
             });
 
         services.AddLocalApiAuthentication();
-        
-        services.ConfigureApplicationCookie(options =>
-        {
-            options.ExpireTimeSpan = TimeSpan.FromSeconds(60);
-            options.SlidingExpiration = false;
-        });
 
         services.AddScoped<IAuthorizeInteractionResponseGenerator, CustomAuthorizeInteractionResponseGenerator>();
 
