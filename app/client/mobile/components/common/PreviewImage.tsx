@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { ImageProps, TouchableWithoutFeedback, View, Image } from "react-native";
 import ImageView from "react-native-image-viewing";
 import { filterImageSource } from "@/utils/dataFilter";
+import { Skeleton } from "./Skeleton";
 
 type PreviewImageProps = {
   imgUrl: string;
@@ -23,6 +24,7 @@ const PreviewImage = (props: PreviewImageProps) => {
 
   const [visible, setIsVisible] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleToggle = () => {
     setIsVisible(pre => !pre);
@@ -30,12 +32,18 @@ const PreviewImage = (props: PreviewImageProps) => {
 
   return (
     <View>
+      {isLoading ? (
+        <Skeleton className='absolute h-[200px] w-[100%] rounded-lg' />
+      ) : undefined}
+
       <TouchableWithoutFeedback onPress={handleToggle}>
         <Image
           source={isError || !imgUrl ? props.defaultImage : { uri: imgUrl }}
           className={className}
           style={{ width: props.isFill ? "100%" : width, height }}
           onError={() => setIsError(true)}
+          onLoadStart={() => setIsLoading(true)}
+          onLoadEnd={() => setIsLoading(false)}
         />
       </TouchableWithoutFeedback>
       {!isError ? (

@@ -38,6 +38,7 @@
       "gmail": "Gmail",
       "phoneNumber": "Phone number",
       "dateOfBirth": "Date of birth",
+      "gender": "Gender",
       "status": "Status",
       "address": "Address",
       "action": "Action"
@@ -78,6 +79,7 @@
         "gmail": "Gmail",
         "phoneNumber": "Phone Number",
         "dob": "Date of Birth",
+        "gender": "Gender",
         "address": "Address",
         "bio": "Biography",
         "activeTime": "Active time",
@@ -673,7 +675,8 @@
       "NullParameter": "Missing or null parameter",
       "PermissionDeny": "Permission denied",
       "AlreadyInactive": "Tag is already inactive",
-      "AlreadyExist": "Tag already exists"
+      "AlreadyExist": "Tag already exists",
+      "ExceedLimitDishTypeTag": "Cannot have more than 5 dish types active at the same time"
     },
     "SettingError": {
       "NotFound": "Setting not found",

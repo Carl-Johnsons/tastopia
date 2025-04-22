@@ -299,7 +299,7 @@ async def predict(file: UploadFile = File(...)):
     return {"classifications": classifications, "boxes": []}
 
 @app.post("/api/ingredient-predict-v2")
-async def predict(file: UploadFile = File(...)):
+async def predict_v2(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
     image = image.convert("RGB")
     # Apply exif metadata if exist
@@ -347,6 +347,13 @@ async def predict(file: UploadFile = File(...)):
 
     # results = box_model(image, verbose=False)
     return {"classifications": classifications, "boxes": []}
+
+@app.get("/api/tags")
+async def get_tags():
+    ans = []
+    for tag in tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list():
+        ans.append([tag['Code'], tag['Value']['En'], tag['Value']['Vi']])
+    return ans
 
 @app.get("/")
 async def root():

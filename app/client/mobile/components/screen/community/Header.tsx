@@ -6,7 +6,7 @@ import { selectUser } from "@/slices/user.slice";
 import Protected from "@/components/Protected";
 import { ROLE } from "@/slices/auth.slice";
 import { useTranslation } from "react-i18next";
-import { useCallback } from "react";
+import { memo, useCallback } from "react";
 import { router } from "expo-router";
 
 type HeaderProps = {
@@ -86,4 +86,4 @@ function Header({
   );
 }
 
-export default Header;
+export default memo(Header);
