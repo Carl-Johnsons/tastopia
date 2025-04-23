@@ -11,3 +11,9 @@ export enum NotificationTemplateCode {
 	ADMIN_DISABLE_COMMENT = "ADMIN_DISABLE_COMMENT",
 	ADMIN_RESTORE_COMMENT = "ADMIN_RESTORE_COMMENT"
 }
+
+export enum NotificationCategories {
+	ALL = "ALL",
+	USER = "USER",
+	SYSTEM = "SYSTEM"
+}

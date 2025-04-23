@@ -6,7 +6,7 @@ import { selectSetting } from "@/slices/setting.slice";
 import { useInfiniteQuery, useMutation } from "react-query";
 import { IErrorResponseDTO } from "@/generated/interfaces/common.interface";
 import { useErrorHandler } from "@/hooks/useErrorHandler";
-import { NotificationCategories } from "@/generated/enums/notification.enum";
+import { NotificationCategories } from "@/constants/notifications";
 
 export const useGetNotification = (type: NotificationCategories) => {
   const accessToken = selectAccessToken();
