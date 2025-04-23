@@ -5,16 +5,16 @@ skinparam linetype polyline
 skinparam defaultFontSize 12
 left to right direction
 actor "Guest" as guest
-actor "Gmail" as gmail
-actor "Twilio"as twilio
+actor "Gmail   " as gmail
+actor "SpeedSMS   "as SpeedSMS
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
     usecase "UC-1: View welcome screen" as ucViewWelcome
-    usecase "UC-2: Login" as ucLogin
-    usecase "UC-3: Register" as ucRegister
-    usecase "UC-4: Forgot password" as ucForgotPassword
-    usecase "UC-6: Browse recipes" as ucBrowseRecipes
-    usecase "UC-7: View other users' profiles" as ucViewUSProfile
+    usecase "UC-2: Login (Mobile)" as ucLogin
+    usecase "UC-4: Register" as ucRegister
+    usecase "UC-5: Forgot password (Mobile)" as ucForgotPassword
+    usecase "UC-8: Browse recipes" as ucBrowseRecipes
+    usecase "UC-9: View other users profiles (Guest)" as ucViewUSProfile
 }
 
 guest --> ucViewWelcome
@@ -25,8 +25,8 @@ guest --> ucViewWelcome
         ucBrowseRecipes <.. ucViewUSProfile : <<extend>>
 
 gmail -up-> ucLogin
-twilio -up-> ucForgotPassword
+SpeedSMS -up-> ucForgotPassword
 gmail -up-> ucForgotPassword
-twilio -up-> ucRegister
+SpeedSMS -up-> ucRegister
 gmail -up-> ucRegister
 @enduml

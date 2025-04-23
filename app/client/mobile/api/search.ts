@@ -56,7 +56,37 @@ const useSearchTags = (keyword: string, tagCodes: string[], category: string) =>
   const finalTagCodes = tagCodes.length > 0 ? tagCodes : ["ALL"];
   return useInfiniteQuery<SearchTagResponse>({
     queryKey: ["searchTags", keyword],
-    enabled: keyword.length > 0,
+    enabled: true,
+    queryFn: async ({ pageParam = 0 }) => {
+      const { data } = await protectedAxiosInstance.post<SearchTagResponse>(
+        "/api/recipe/get-tag",
+        {
+          keyword,
+          tagCodes: finalTagCodes,
+          category,
+          skip: pageParam.toString()
+        }
+      );
+      return data;
+    },
+    getNextPageParam: (lastPage, pages) => {
+      if (!lastPage.metadata.hasNextPage) {
+        return undefined;
+      }
+      return pages.length;
+    }
+  });
+};
+
+const useSearchTagsCommunity = (
+  keyword: string,
+  tagCodes: string[],
+  category: string
+) => {
+  const finalTagCodes = tagCodes.length > 0 ? tagCodes : ["ALL"];
+  return useInfiniteQuery<SearchTagResponse>({
+    queryKey: ["searchTagsCommunity", keyword],
+    enabled: true,
     queryFn: async ({ pageParam = 0 }) => {
       const { data } = await protectedAxiosInstance.post<SearchTagResponse>(
         "/api/recipe/get-tag",
@@ -172,6 +202,7 @@ export {
   useSearchUsers,
   useSearchRecipes,
   useSearchTags,
+  useSearchTagsCommunity,
   useSearchRecipeHistory,
   useSearchUserHistory,
   createUserSearchRecipeKeyword,

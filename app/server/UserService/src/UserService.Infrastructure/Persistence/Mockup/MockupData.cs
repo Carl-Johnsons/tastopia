@@ -1,5 +1,6 @@
 ﻿using Contract.Utilities;
 using Newtonsoft.Json;
+using System;
 using UserService.Domain.Entities;
 using UserService.Infrastructure.Persistence.Mockup.Data;
 namespace UserService.Infrastructure.Persistence.Mockup;
@@ -75,6 +76,7 @@ internal class MockupData
             BackgroundUrl = backgroundUrl,
             Address = seedAddresses[random.Next(seedAddresses.Count)],
             Bio = seedBios[random.Next(seedBios.Count)],
+            TotalRecipe = random.Next(6, 8)
         });
 
         var wrongUsers = seedWrongUsers.Select(u => new User
@@ -89,8 +91,8 @@ internal class MockupData
             BackgroundUrl = backgroundUrl,
             Address = seedAddresses[random.Next(seedAddresses.Count)],
             Bio = seedToxicBios[random.Next(seedToxicBios.Count)],
+            TotalRecipe = 0
         });
-
         var adminUsers = seedAdminUsers.Select(u => new User
         {
             AccountId = Guid.Parse(u.Id),
@@ -98,14 +100,16 @@ internal class MockupData
             DisplayName = u.DisplayName,
             IsAdmin = true,
             IsAccountActive = true,
+            Gender = u.Gender,
             AvatarUrl = u.Gender == "Male" ? maleAvtUrl : femaleAvtUrl,
             BackgroundUrl = backgroundUrl,
             Address = seedAddresses[random.Next(seedAddresses.Count)],
+            Dob = GenerateRandomBirthDate(random)
         });
         _context.Users.AddRange(users);
         _context.Users.AddRange(wrongUsers);
         _context.Users.AddRange(adminUsers);
-        await _unitOfWork.SaveChangeAsync();
+        await _context.SaveChangesAsync();
     }
    
 
@@ -195,5 +199,14 @@ internal class MockupData
         public string Gender { get; set; } = null!;
         public List<string> ReasonCodes { get; set; } = [];
         public string AdditionalDetails { get; set; } = null!;
+    }
+
+    private static DateTime GenerateRandomBirthDate(Random random)
+    {
+        DateTime today = DateTime.Today;
+        DateTime maxDate = today.AddYears(-19);
+        DateTime minDate = today.AddYears(-30);
+        int range = (maxDate - minDate).Days;
+        return minDate.AddDays(random.Next(range + 1)).ToUniversalTime();
     }
 }

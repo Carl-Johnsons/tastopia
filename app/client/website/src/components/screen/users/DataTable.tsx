@@ -31,7 +31,7 @@ const DataTable = () => {
     [t("columns.name")]: "displayName",
     [t("columns.gmail")]: "accountEmail",
     [t("columns.phoneNumber")]: "accountPhoneNumber",
-    [t("columns.dateOfBirth")]: "dob",
+    [t("columns.gender")]: "gender",
     [t("columns.status")]: "isAccountActive",
     [t("columns.address")]: "address"
   };

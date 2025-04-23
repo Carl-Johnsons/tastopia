@@ -245,7 +245,7 @@ const RecipeDetail = () => {
                     className='h-[200] rounded-lg'
                     height={200}
                     isFill={true}
-                    defaultImage={require("../../../assets/images/avatar.png")}
+                    defaultImage={require("../../../assets/images/photo.png")}
                   />
                 </View>
 

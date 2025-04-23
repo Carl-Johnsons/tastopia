@@ -64,6 +64,11 @@ const Capture = () => {
   };
 
   useEffect(() => {
+    const permissionStatus = Camera.getCameraPermissionStatus();
+    setPermission(permissionStatus);
+  }, []);
+
+  useEffect(() => {
     if (deviceCode) {
       setDevice(getCameraDevice(devices, deviceCode));
     }

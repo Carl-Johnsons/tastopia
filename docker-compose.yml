@@ -10,8 +10,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "7000:7000"
-      - "7001:7001"
+      - "2053:2053"
+      - "2083:2083"
     depends_on:
       - identity-api
       - api-gateway

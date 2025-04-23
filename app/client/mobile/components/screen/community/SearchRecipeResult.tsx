@@ -1,3 +1,5 @@
+import LoadingImage from "@/components/common/LoadingImage";
+import { RecipeType } from "@/types/recipe";
 import { useRouter } from "expo-router";
 import { View, Text, Image, TouchableWithoutFeedback } from "react-native";
 
@@ -47,8 +49,8 @@ const SearchRecipeResult = ({
           )}
         </View>
         <View className='flex gap-3'>
-          <Image
-            source={{ uri: recipeImgUrl }}
+          <LoadingImage
+            source={recipeImgUrl}
             style={{ width: "100%", height: 240, borderRadius: 10 }}
           />
 

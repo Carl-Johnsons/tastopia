@@ -7,6 +7,7 @@ import InteractionSection from "./InteractionSection";
 import { RefObject } from "react";
 import { BottomSheetMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
 import { RecipeType } from "@/types/recipe";
+import LoadingImage from "./LoadingImage";
 
 const Recipe = ({
   bottomSheetRef,
@@ -78,8 +79,13 @@ const Recipe = ({
           </TouchableWithoutFeedback>
         </View>
         <View className='flex gap-3'>
-          <Image
+          {/* <Image
             source={{ uri: recipeImgUrl }}
+            style={{ width: "100%", height: 240, borderRadius: 10 }}
+          /> */}
+
+          <LoadingImage
+            source={recipeImgUrl}
             style={{ width: "100%", height: 240, borderRadius: 10 }}
           />
 

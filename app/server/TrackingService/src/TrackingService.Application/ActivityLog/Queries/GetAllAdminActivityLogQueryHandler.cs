@@ -79,8 +79,14 @@ public class GetAllAdminActivityLogQueryHandler : IRequestHandler<GetAllAdminAct
         if (!string.IsNullOrEmpty(keyword))
         {
             keyword = keyword.ToLower();
-            formatQuery = formatQuery.Where(aal => aal.AccountUsername!.ToLower().Contains(keyword)
-                                                || aal.EntityType.ToString().ToLower().Contains(keyword));
+            formatQuery = formatQuery.AsEnumerable().Where(aal => aal.AccountUsername!.ToLower().Contains(keyword)
+                                                || ActivityLogConstant.GetActivityEntityTypeEn(aal.EntityType).Contains(keyword)
+                                                || ActivityLogConstant.GetActivityEntityTypeVi(aal.EntityType).Contains(keyword)
+                                                || ActivityLogConstant.GetActivityTypeEn(aal.ActivityType).Contains(keyword)
+                                                || ActivityLogConstant.GetActivityTypeVi(aal.ActivityType).Contains(keyword)
+                                                || ActivityLogConstant.GetActivityEnDescription(aal.ActivityType, aal.EntityType).Contains(keyword)
+                                                || ActivityLogConstant.GetActivityViDescription(aal.ActivityType, aal.EntityType).Contains(keyword)
+                                                ).AsQueryable();
         }
 
         var totalRow = query.Count();

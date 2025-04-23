@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 using UserService.Domain.Entities;
 using UserService.Domain.Errors;
@@ -32,6 +33,11 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Resul
         if (request.User.Gender != null && !Enum.IsDefined(typeof(GenderType), request.User.Gender))
         {
             return Result<User?>.Failure(UserError.NullParameters, "Gender must be MALE or FEMALE");
+        }
+        var existUser = await _context.Users.SingleOrDefaultAsync(u => u.AccountUsername == request.User.AccountUsername);
+        if (existUser != null)
+        {
+            return Result<User?>.Failure(UserError.AlreadyExistUser, "Already exist user");
         }
 
         user = new User
