@@ -31,20 +31,20 @@ NotificationService -> MongoDB++: 5. Query notifications data
 NotificationService <-- MongoDB--: 6. Return response
 
 alt Notification not found
-  ApiGateway <-- NotificationService: 7A.1. Return NotFound error
-  MobileUI <-- ApiGateway: 7A.2. Forward response
-  User <-- MobileUI: 7A.3. Display error message
+  ApiGateway <-- NotificationService: 7A. Return NotFound error
+  MobileUI <-- ApiGateway: 7A.1. Forward response
+  User <-- MobileUI: 7A.2. Display error message
 else
   alt Recipient not found
-    ApiGateway <-- NotificationService: 7B.1. Return NotFound error
-    MobileUI <-- ApiGateway: 7B.2. Forward response
-    User <-- MobileUI: 7B.3. Display error message
+    ApiGateway <-- NotificationService: 8A. Return NotFound error
+    MobileUI <-- ApiGateway: 8A.1. Forward response
+    User <-- MobileUI: 8A.2. Display error message
   else
-    NotificationService -> MongoDB++: 8. Update view status
-    NotificationService <-- MongoDB--: 9. Return response
-    ApiGateway <-- NotificationService--: 10. Return success
-    MobileUI <-- ApiGateway--: 11. Forward response
-    User <-- MobileUI--: 12. Display notification list
+    NotificationService -> MongoDB++: 9. Update view status
+    NotificationService <-- MongoDB--: 10. Return response
+    ApiGateway <-- NotificationService--: 11. Return success
+    MobileUI <-- ApiGateway--: 12. Forward response
+    User <-- MobileUI--: 13. Display notification list
   end
 end
 

@@ -31,9 +31,9 @@ NotificationService -> MongoDB++: 5. Query data
 NotificationService <-- MongoDB--: 6. Return response
 
 alt expoPushToken not found
-  ApiGateway <-- NotificationService: 10. Return ExpoPushTokenNotFound error
-  MobileUI <-- ApiGateway: 11. Forward response
-  User <-- MobileUI: 12. Display error message
+  ApiGateway <-- NotificationService: 7. Return ExpoPushTokenNotFound error
+  MobileUI <-- ApiGateway: 7A.1. Forward response
+  User <-- MobileUI: 7A.2. Display error message
 else
   NotificationService -> MongoDB++: 8. Delete existing push notification token
   NotificationService <-- MongoDB--: 9. Return response

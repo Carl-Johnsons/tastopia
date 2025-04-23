@@ -30,19 +30,19 @@ UserService -> Postgresql ++: 5. Query data
 UserService <-- Postgresql--: 6. Return response
 
 alt if setting key is invalid 
-  ApiGateway <-- UserService: 7A.1. Return InvalidSettingKey Error
-  MobileUI <-- ApiGateway: 7A.2. Forward error
-  User <-- MobileUI: 7A.3. Display error
+  ApiGateway <-- UserService: 7A. Return InvalidSettingKey Error
+  MobileUI <-- ApiGateway: 7A.1. Forward error
+  User <-- MobileUI: 7A.2. Display error
 else if setting value is invalid 
-  ApiGateway <-- UserService: 7B.2. Return InvalidSettingValue
-  MobileUI <-- ApiGateway: 7B.3. Forward error
-  User <-- MobileUI: 7C.4. Display error
+  ApiGateway <-- UserService: 8A. Return InvalidSettingValue
+  MobileUI <-- ApiGateway: 8A.1. Forward error
+  User <-- MobileUI: 8A.2. Display error
 else
-  UserService --> Postgresql++: 8. Insert user's setting data
-  UserService <-- Postgresql--: 9. return response
-  ApiGateway <-- UserService--: 10. Return success status code
-  MobileUI <-- ApiGateway--: 11. Forward response
-  User <-- MobileUI--: 12. Display update setting successfully
+  UserService --> Postgresql++: 9. Insert user's setting data
+  UserService <-- Postgresql--: 10. return response
+  ApiGateway <-- UserService--: 11. Return success status code
+  MobileUI <-- ApiGateway--: 12. Forward response
+  User <-- MobileUI--: 13. Display update setting successfully
 end
 
 @enduml

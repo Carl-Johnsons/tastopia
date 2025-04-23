@@ -28,23 +28,23 @@ IdentityService -> Postgresql ++: 5. Get account data
 IdentityService <-- Postgresql --: 6. Return response
 
 alt if account is null
-  ApiGateway <-- IdentityService: 7A.1. Return not found error
-  MobileUI <-- ApiGateway: 7A.2. Forward response
-  User <-- MobileUI: 7A.3. Display error alert
+  ApiGateway <-- IdentityService: 7A. Return not found error
+  MobileUI <-- ApiGateway: 7A.1. Forward response
+  User <-- MobileUI: 7A.2. Display error alert
 else
   alt if the update identifier's OTP is invalid
-    ApiGateway <-- IdentityService: 7B.1. Return OTP invalid error
-    MobileUI <-- ApiGateway: 7B.2. Forward response
-    User <-- MobileUI: 7B.3. Display error alert
+    ApiGateway <-- IdentityService: 8A. Return OTP invalid error
+    MobileUI <-- ApiGateway: 8A.1. Forward response
+    User <-- MobileUI: 8A.2. Display error alert
   else
     alt if the update identifier's OTP is expired
-      ApiGateway <-- IdentityService: 7C.1. Return OTP expired error
-      MobileUI <-- ApiGateway: 7C.2. Forward response
-      User <-- MobileUI: 7C.3. Display error alert
+      ApiGateway <-- IdentityService: 9A. Return OTP expired error
+      MobileUI <-- ApiGateway: 9A.1. Forward response
+      User <-- MobileUI: 9A.2. Display error alert
     else
-      ApiGateway <-- IdentityService --: 8. Return success status code
-      MobileUI <-- ApiGateway --: 9. Forward response
-      User <-- MobileUI --: 10. Display alert update identifier successfully
+      ApiGateway <-- IdentityService --: 10. Return success status code
+      MobileUI <-- ApiGateway --: 11. Forward response
+      User <-- MobileUI --: 12. Display alert update identifier successfully
     end
   end
 end

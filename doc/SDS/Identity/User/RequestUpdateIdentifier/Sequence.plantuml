@@ -29,22 +29,22 @@ IdentityService -> Postgresql ++: 5. Get account data
 IdentityService <-- Postgresql --: 6. Return response
 
 alt if account is null
-  ApiGateway <-- IdentityService: 7A.1. Return not found error
-  MobileUI <-- ApiGateway: 7A.2. Forward response
-  User <-- MobileUI: 7A.3. Display error
+  ApiGateway <-- IdentityService: 7A. Return not found error
+  MobileUI <-- ApiGateway: 7A.1. Forward response
+  User <-- MobileUI: 7A.2. Display error
 else
   IdentityService -> Postgresql ++: 8. Update Account
   IdentityService <-- Postgresql --: 9. Return response
   IdentityService --> Rabbitmq ++: 10. Publish "UserSendOTPEvent" event <<Async>>
   activate Rabbitmq
-  ref over Rabbitmq: 10. User send OTP event
+  ref over Rabbitmq: 11. User send OTP event
   IdentityService -[hidden]-> Rabbitmq
   deactivate Rabbitmq
   destroy Rabbitmq
 
-  ApiGateway <-- IdentityService--: 11. return success status code
-  MobileUI <-- ApiGateway --: 12. Forward response
-  User <-- MobileUI --: 13. Redirect user to verify OTP screen
+  ApiGateway <-- IdentityService--: 12. return success status code
+  MobileUI <-- ApiGateway --: 13. Forward response
+  User <-- MobileUI --: 14. Redirect user to verify OTP screen
 end
 
 @enduml
