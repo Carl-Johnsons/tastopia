@@ -10,7 +10,7 @@ import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet, Keyboard, ActivityIndicator, Platform } from "react-native";
 import useColorizer from "@/hooks/useColorizer";
-import { NotificationCategories } from "@/generated/enums/notification.enum";
+import { NotificationCategories } from "@/constants/notifications";
 
 const isAndroid = Platform.OS === "android";
 

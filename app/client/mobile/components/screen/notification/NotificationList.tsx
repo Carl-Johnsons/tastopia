@@ -13,9 +13,7 @@ import { formatDistanceToNow } from "date-fns";
 import { INotificationsResponse } from "@/generated/interfaces/notification.interface";
 import { Pressable, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { router, useFocusEffect, usePathname } from "expo-router";
-import { saveNotificationData } from "@/slices/notification.slice";
-import { useAppDispatch } from "@/store/hooks";
-import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
+import { ReactElement, useCallback, useMemo, useState } from "react";
 import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
 import Empty from "../community/Empty";
@@ -25,8 +23,7 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 import CustomTab, { ItemProps } from "@/components/common/Tab";
 import { TabView } from "@rneui/themed";
 import Header from "./Header";
-import { NotificationCategories } from "@/generated/enums/notification.enum";
-import { NotificationTemplateCode } from "@/constants/notifications";
+import { NotificationCategories, NotificationTemplateCode } from "@/constants/notifications";
 import { AntDesign, Feather } from "@expo/vector-icons";
 
 export default function NotificationList() {
