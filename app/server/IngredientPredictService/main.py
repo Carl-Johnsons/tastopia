@@ -28,11 +28,9 @@ logging.config.dictConfig(log_config)
 logging.addLevelName(logging.INFO, "Information")
 logging.addLevelName(logging.WARNING, "Warning")
 
-# Load the YOLO model
-# model = YOLO("./model/best_filtered.pt")
-# convnext_model = tf.keras.models.load_model('model/convnext_224_f.model.keras')
-yolo_model = YOLO("./model/yolo_best_f.pt")
-# box_model = YOLO('./model/bestv13.pt')
+# Load the CNN model
+convnext_model = tf.keras.models.load_model('model/convnext_224_f.model.keras')
+# yolo_model = YOLO("./model/yolo_best_f.pt")
 clip_model, preprocess = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-ViT-H-14')
 tokenizer = get_tokenizer('ViT-H-14')
 
@@ -253,8 +251,8 @@ def get_raw_clip_text_predict(image_features):
         return indexs, probs
     return [], []
 
-@app.post("/api/ingredient-predict")
-async def predict(file: UploadFile = File(...)):
+@app.post("/api/ingredient-predict-v2")
+async def predict_v2(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
     image = image.convert("RGB")
     # Apply exif metadata if exist
@@ -298,8 +296,8 @@ async def predict(file: UploadFile = File(...)):
     # results = box_model(image, verbose=False)
     return {"classifications": classifications, "boxes": []}
 
-@app.post("/api/ingredient-predict-v2")
-async def predict_v2(file: UploadFile = File(...)):
+@app.post("/api/ingredient-predict")
+async def predict(file: UploadFile = File(...)):
     image = Image.open(io.BytesIO(await file.read()))
     image = image.convert("RGB")
     # Apply exif metadata if exist
