@@ -5,28 +5,33 @@ import { Image } from "expo-image";
 import { memo, useEffect, useMemo } from "react";
 import { Text, TouchableWithoutFeedback, View } from "react-native";
 
-// const filterData = [
-//   {
-//     value: "All",
-//     imageUrl: require("../../../../mobile/assets/images/all.webp")
-//   },
-//   {
-//     value: "Noodles",
-//     imageUrl: require("../../../../mobile/assets/images/noodles.webp")
-//   },
-//   {
-//     value: "Spice",
-//     imageUrl: require("../../../../mobile/assets/images/spice.webp")
-//   },
-//   {
-//     value: "BBQ",
-//     imageUrl: require("../../../../mobile/assets/images/bbq.webp")
-//   },
-//   {
-//     value: "Seafood",
-//     imageUrl: require("../../../../mobile/assets/images/seafood.webp")
-//   }
-// ];
+const defaultFilterData = [
+  {
+    en: "All",
+    vi: "Tất cả",
+    imageUrl: require("../../../../mobile/assets/images/all.webp")
+  },
+  {
+    en: "Noodles",
+    vi: "Mì",
+    imageUrl: require("../../../../mobile/assets/images/noodles.webp")
+  },
+  {
+    en: "Spice",
+    vi: "Món cay",
+    imageUrl: require("../../../../mobile/assets/images/spice.webp")
+  },
+  {
+    en: "BBQ",
+    vi: "Nướng",
+    imageUrl: require("../../../../mobile/assets/images/bbq.webp")
+  },
+  {
+    en: "Seafood",
+    vi: "Hải sản",
+    imageUrl: require("../../../../mobile/assets/images/seafood.webp")
+  }
+] as TagType[];
 
 type FilterProps = { filterSelected: string; handleSelect: (key: string) => void };
 
@@ -43,9 +48,12 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
   const language = selectLanguageSetting();
   const currentLanguage = language === SETTING_VALUE.LANGUAGE.VIETNAMESE ? "vi" : "en";
   const { data, isLoading, refetch } = useSearchTagsCommunity("", ["ALL"], "DishType");
+  const filterData = data?.pages[0]?.paginatedData;
 
   const sortedTags = useMemo(() => {
-    return sortAndLimitTags(data?.pages[0]?.paginatedData);
+    return (filterData?.length ?? 0) > 0
+      ? sortAndLimitTags(filterData)
+      : defaultFilterData;
   }, [data?.pages]);
 
   const handleSelectItem = (value: string) => {
