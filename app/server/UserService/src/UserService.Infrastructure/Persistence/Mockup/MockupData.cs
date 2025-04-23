@@ -100,6 +100,7 @@ internal class MockupData
             DisplayName = u.DisplayName,
             IsAdmin = true,
             IsAccountActive = true,
+            Gender = u.Gender,
             AvatarUrl = u.Gender == "Male" ? maleAvtUrl : femaleAvtUrl,
             BackgroundUrl = backgroundUrl,
             Address = seedAddresses[random.Next(seedAddresses.Count)],

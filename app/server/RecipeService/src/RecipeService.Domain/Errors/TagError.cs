@@ -37,5 +37,8 @@ public class TagError
             new("TagError.AlreadyExist",
             Message: "Tag already exist",
             StatusCode: (int)HttpStatusCode.BadRequest);
-
+    public static Error ExceedLimitDishTypeTag =>
+            new("TagError.ExceedLimitDishTypeTag",
+            Message: "Exceed limit dish type tag",
+            StatusCode: (int)HttpStatusCode.BadRequest);
 }
