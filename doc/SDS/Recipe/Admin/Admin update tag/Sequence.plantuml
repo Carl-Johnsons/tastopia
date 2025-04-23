@@ -49,6 +49,7 @@ else Current user is admin
             ApiGateway <-- RecipeService: 6A.1. Return exceed limit dishtype tag error
             WebsiteUI <-- ApiGateway: 6A.2. Forward response
             Admin <-- WebsiteUI: 6A.3. Display exceed limit dishtype tag error
+    end opt
     RecipeService -> MongoDB++: 7. Insert data
     RecipeService <-- MongoDB--: 8. Return response
     alt Update tag to database fail

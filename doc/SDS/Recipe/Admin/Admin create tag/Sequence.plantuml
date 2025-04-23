@@ -48,6 +48,7 @@ else Current user is admin
             ApiGateway <-- RecipeService: 12A.1. Return exceed limit dishtype tag error
             WebsiteUI <-- ApiGateway: 12A.2. Forward response
             Admin <-- WebsiteUI: 12A.3. Display exceed limit dishtype tag error
+        end opt
         alt Add tag to database fail
             RecipeService -> RecipeService: 13A. Roll back images
             activate RecipeService
