@@ -261,6 +261,9 @@ def get_raw_clip_text_predict(image_features):
             max_pretrained = probs[i]
             break
 
+    if probs[0] < 0.6:
+        return indexs[:1], probs[:1]
+
     if probs[0] > max_pretrained * 1.2 and not tag_dict.get(tag_codes[indexs[0]])['Pretrained']:
         return indexs, probs
     return [], []
@@ -290,17 +293,20 @@ async def predict_local(image_bytes: bytes):
         image_features = await asyncio.to_thread(encode_image_by_clip, image)
         indexs, probs = await asyncio.to_thread(get_raw_clip_text_predict, image_features)
         if len(indexs) > 0:
-            for class_index, conf in zip(indexs[:5], probs[:5]):
-                class_label = '0'
-                classifications.append({
-                    "class": class_label,
-                    "confidence": float(conf),
-                    "name": {
-                        'en': tag_dict.get(tag_codes[class_index])['En'],
-                        'vi': tag_dict.get(tag_codes[class_index])['Vi']
-                    },
-                    "code": tag_codes[class_index],
-                })
+            if (len(indexs) == 1 and probs[0] < 0.6):
+                pass
+            else:
+                for class_index, conf in zip(indexs[:5], probs[:5]):
+                    class_label = '0'
+                    classifications.append({
+                        "class": class_label,
+                        "confidence": float(conf),
+                        "name": {
+                            'en': tag_dict.get(tag_codes[class_index])['En'],
+                            'vi': tag_dict.get(tag_codes[class_index])['Vi']
+                        },
+                        "code": tag_codes[class_index],
+                    })
         else:
             # Predict with pretrained class
             clip_task = asyncio.to_thread(get_raw_clip_predict, image_features, 50)
