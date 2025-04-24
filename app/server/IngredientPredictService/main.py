@@ -19,6 +19,8 @@ import cv2
 import faiss
 from apscheduler.schedulers.background import BackgroundScheduler  # runs tasks in the background
 from apscheduler.triggers.cron import CronTrigger  # allows us to specify a recurring time for execution
+import asyncio
+import aiohttp
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
@@ -251,50 +253,91 @@ def get_raw_clip_text_predict(image_features):
         return indexs, probs
     return [], []
 
+ai_kaggle_server_url = 'https://fca8-34-90-25-47.ngrok-free.app'
+
+async def predict_server(image_bytes: bytes):
+    try:
+        async with aiohttp.ClientSession() as session:
+            data = aiohttp.FormData()
+            data.add_field('file', image_bytes, filename="image.jpg", content_type="image/jpeg")
+
+            async with session.post(ai_kaggle_server_url + '/api/ingredient-predict', data=data, timeout=30) as resp:
+                if resp.status == 200:
+                    return await resp.json()
+    except Exception as e:
+        print(f"[Server Error] {e}")
+    return None
+
+async def predict_local(image_bytes: bytes):
+    try:
+        image = await asyncio.to_thread(Image.open, io.BytesIO(image_bytes))
+        image = await asyncio.to_thread(image.convert, "RGB")
+        image = await asyncio.to_thread(ImageOps.exif_transpose, image)
+
+        classifications = []
+
+        # Predict with pretrained and not pretrained text
+        image_features = await asyncio.to_thread(encode_image_by_clip, image)
+        indexs, probs = await asyncio.to_thread(get_raw_clip_text_predict, image_features)
+        if len(indexs) > 0:
+            for class_index, conf in zip(indexs[:5], probs[:5]):
+                class_label = '0'
+                classifications.append({
+                    "class": class_label,
+                    "confidence": float(conf),
+                    "name": {
+                        'en': tag_dict.get(tag_codes[class_index])['En'],
+                        'vi': tag_dict.get(tag_codes[class_index])['Vi']
+                    },
+                    "code": tag_codes[class_index],
+                })
+        else:
+            # Predict with pretrained class
+            clip_task = asyncio.to_thread(get_raw_clip_predict, image_features, 50)
+            convnext_task = asyncio.to_thread(get_raw_convnext_predict, image)
+
+            clip_pred_raw, convnext_pred_raw = await asyncio.gather(clip_task, convnext_task)
+            indexs, probs = await asyncio.to_thread(cal_mix_clip_cnn, clip_pred_raw[0], convnext_pred_raw[0])
+
+            for class_index, conf in zip(indexs[:5], probs[:5]):
+                class_label = str(class_index + 1).zfill(3)
+                classifications.append({
+                    "class": class_label,
+                    "confidence": float(conf),
+                    "name": {
+                        'en': names[class_label][0],
+                        'vi': names[class_label][1]
+                    },
+                    "code": '_'.join(names[class_label][0].split(' ')).upper(),
+                })
+
+        # results = box_model(image, verbose=False)
+        return {"classifications": classifications, "boxes": []}
+    except Exception as e:
+        print(f"[Server Error] {e}")
+    return None
+    
+
 @app.post("/api/ingredient-predict-v2")
 async def predict_v2(file: UploadFile = File(...)):
-    image = Image.open(io.BytesIO(await file.read()))
-    image = image.convert("RGB")
-    # Apply exif metadata if exist
-    image = ImageOps.exif_transpose(image)
+    image_bytes = await file.read()
 
-    classifications = []
+    task_server = asyncio.create_task(predict_server(image_bytes))
+    task_local = asyncio.create_task(predict_local(image_bytes))
+    
 
-    # Predict with pretrained and not pretrained text
-    image_features = encode_image_by_clip(image)
-    indexs, probs = get_raw_clip_text_predict(image_features)
-    if len(indexs) > 0:
-        for class_index, conf in zip(indexs[:5], probs[:5]):
-            class_label = '0'
-            classifications.append({
-                "class": class_label,
-                "confidence": float(conf),
-                "name": {
-                    'en': tag_dict.get(tag_codes[class_index])['En'],
-                    'vi': tag_dict.get(tag_codes[class_index])['Vi']
-                },
-                "code": tag_codes[class_index],
-            })
-    else:
-        # Predict with pretrained class
-        clip_pred_raw = get_raw_clip_predict(image_features, 50)
-        convnext_pred_raw = get_raw_convnext_predict(image)
-        indexs, probs = cal_mix_clip_cnn(clip_pred_raw[0], convnext_pred_raw[0])
+    done, pending = await asyncio.wait(
+        [task_server, task_local], return_when=asyncio.FIRST_COMPLETED
+    )
 
-        for class_index, conf in zip(indexs[:5], probs[:5]):
-            class_label = str(class_index + 1).zfill(3)
-            classifications.append({
-                "class": class_label,
-                "confidence": float(conf),
-                "name": {
-                    'en': names[class_label][0],
-                    'vi': names[class_label][1]
-                },
-                "code": '_'.join(names[class_label][0].split(' ')).upper(),
-            })
+    if not list(done)[0].result():
+        return await list(pending)[0]
 
-    # results = box_model(image, verbose=False)
-    return {"classifications": classifications, "boxes": []}
+    for task in pending:
+        task.cancel()
+
+    result = list(done)[0].result()
+    return result
 
 @app.post("/api/ingredient-predict")
 async def predict(file: UploadFile = File(...)):
