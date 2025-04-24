@@ -78,6 +78,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     cl --up-> ucManageRecipe
     gemma -up-> ucManageRecipe
     sms --up-> ucForgotPassword
+    gmail ---> ucForgotPassword
 
     ucSearch .....> ucLogin : <<include>>
     ucBrowseRecipes .....> ucLogin : <<include>>

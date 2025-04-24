@@ -35,7 +35,9 @@ const protectedAxiosInstance = axios.create({
   baseURL: API_URI,
   withCredentials: true,
   headers: defaultHeaders,
-  timeout: 10000
+  timeout: 50000,
+  maxContentLength: Infinity,
+  maxBodyLength: Infinity
 });
 
 protectedAxiosInstance.interceptors.request.use(

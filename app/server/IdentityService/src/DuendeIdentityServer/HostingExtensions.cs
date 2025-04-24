@@ -25,6 +25,7 @@ internal static class HostingExtensions
 
         builder.ConfigureCommonAPIServices();
 
+
         services.AddInfrastructureServices();
         services.AddApplicationServices();
         services.AddErrorValidation();
@@ -65,7 +66,6 @@ internal static class HostingExtensions
                 options.KeyManagement.PropagationTime = TimeSpan.FromDays(2);
                 //   keep old key for 7 days in discovery for validation of tokens
                 options.KeyManagement.RetentionDuration = TimeSpan.FromDays(7);
-
             })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)

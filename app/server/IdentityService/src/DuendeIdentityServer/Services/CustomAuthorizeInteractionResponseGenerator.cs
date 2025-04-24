@@ -3,11 +3,10 @@ using Duende.IdentityServer.Configuration;
 using Duende.IdentityServer.ResponseHandling;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Validation;
-using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.WebUtilities;
 using Serilog;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 
 namespace DuendeIdentityServer.Services;
 
@@ -32,31 +31,35 @@ public class CustomAuthorizeInteractionResponseGenerator : AuthorizeInteractionR
             Log.Information("Authorize request details: ClientId={ClientId}, RedirectUri={RedirectUri}, ResponseType={ResponseType}, State={State}, RequestedScopes={RequestedScopes}",
                            request.ClientId, request.RedirectUri, request.ResponseType, request.State, string.Join(", ", request.RequestedScopes));
 
-
-            var returnUrl = new StringBuilder("/connect/authorize/callback?");
-            returnUrl.Append($"response_type={HttpUtility.UrlEncode(request.ResponseType)}");
-            returnUrl.Append($"&client_id={HttpUtility.UrlEncode(request.ClientId)}");
-            returnUrl.Append($"&state={HttpUtility.UrlEncode(request.State)}");
-            returnUrl.Append($"&scope={HttpUtility.UrlEncode(string.Join(" ", request.RequestedScopes))}");
-            returnUrl.Append($"&redirect_uri={HttpUtility.UrlEncode(request.RedirectUri)}");
-
-            if (!string.IsNullOrEmpty(codeChallenge))
+            var callbackPath = "/connect/authorize/callback";
+            var qsParams = new Dictionary<string, string?>
             {
-                returnUrl.Append($"&code_challenge={HttpUtility.UrlEncode(codeChallenge)}");
-                returnUrl.Append($"&code_challenge_method={HttpUtility.UrlEncode(codeChallengeMethod)}");
-            }
+                ["response_type"] = request.ResponseType,
+                ["client_id"] = request.ClientId,
+                ["state"] = request.State,
+                ["scope"] = string.Join(" ", request.RequestedScopes),
+                ["redirect_uri"] = request.RedirectUri,
+                ["code_challenge"] = request.Raw.Get("code_challenge"),
+                ["code_challenge_method"] = request.Raw.Get("code_challenge_method")
+            };
+            
+            var returnUrl = QueryHelpers.AddQueryString(callbackPath, qsParams);
 
             Log.Information("Constructed Return URL: {ReturnUrl}", returnUrl.ToString());
 
-            //var returnUrl = $"%2Fconnect%2Fauthorize%2Fcallback%3Fresponse_type%3Dcode%26client_id%3Dreact.native%26state%3Df%26scope%3DIdentityServerApi%2520openid%2520profile%26redirect_uri%3Dhttps%253A%252F%252Fwww.getpostman.com%252Foauth2%252Fcallback%26code_challenge%3D{codeChallenge}%26code_challenge_method%3D{codeChallengeMethod}";
-            var redirectUrl = HttpUtility.UrlPathEncode($"/ExternalLogin/Challenge?scheme={externalProvider}&returnUrl={HttpUtility.UrlEncode(returnUrl.ToString())}");
+            var externalParams = new Dictionary<string, string?>
+            {
+                ["scheme"] = externalProvider,
+                ["returnUrl"] = returnUrl
+            };
+            var redirectUrl = QueryHelpers.AddQueryString("/ExternalLogin/Challenge", externalParams);
             Log.Information("Constructed redirect Url: " + redirectUrl);
 
             // Redirect to the external provider
             return new InteractionResponse
             {
                 IsLogin = false,
-                RedirectUrl = $"/ExternalLogin/Challenge?scheme={externalProvider}",
+                RedirectUrl = redirectUrl,
             };
         }
 
