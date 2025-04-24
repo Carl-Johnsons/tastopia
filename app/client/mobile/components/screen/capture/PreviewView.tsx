@@ -170,22 +170,49 @@ const PreviewView = ({
             </>
           ) : (
             <>
-              <Text className='font-bold text-3xl text-primary'>{ingredientPredict}</Text>
-              <Button
-                onPress={handleSearch}
-                style={animatedSearchBtnStyles}
-                className='rounded-full bg-primary p-3'
-              >
-                <View className='flex-row items-center'>
-                  <FontAwesome
-                    name='search'
-                    size={24}
-                    color='black'
-                    className='pr-4'
-                  />
-                  <Text className='font-bold text-xl'>{t("searchForRecipes")}</Text>
-                </View>
-              </Button>
+              {ingredientPredict !== "" ? (
+                <>
+                  <Text className='font-bold text-3xl text-primary'>
+                    {ingredientPredict}
+                  </Text>
+                  <Button
+                    onPress={handleSearch}
+                    style={animatedSearchBtnStyles}
+                    className='rounded-full bg-primary p-3'
+                  >
+                    <View className='flex-row items-center'>
+                      <FontAwesome
+                        name='search'
+                        size={24}
+                        color='black'
+                        className='pr-4'
+                      />
+                      <Text className='font-bold text-xl'>{t("searchForRecipes")}</Text>
+                    </View>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Text className='font-bold text-3xl text-primary'>
+                    {t("invalidIngredient")}
+                  </Text>
+                  <Button
+                    onPress={handleBackInPreview}
+                    style={animatedSearchBtnStyles}
+                    className='rounded-full bg-primary p-3'
+                  >
+                    <View className='flex-row items-center'>
+                      <FontAwesome
+                        name='search'
+                        size={24}
+                        color='black'
+                        className='pr-4'
+                      />
+                      <Text className='font-bold text-xl'>{t("tryAgain")}</Text>
+                    </View>
+                  </Button>
+                </>
+              )}
             </>
           )}
         </View>
