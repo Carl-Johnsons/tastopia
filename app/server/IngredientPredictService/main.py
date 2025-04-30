@@ -1,8 +1,8 @@
 from contextlib import asynccontextmanager
 from EnvUtility import EnvUtility
-from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, File, UploadFile
 from PIL import Image, ImageOps
-from ultralytics import YOLO
+# from ultralytics import YOLO
 import httpx
 import pymongo
 import io
@@ -21,6 +21,7 @@ from apscheduler.schedulers.background import BackgroundScheduler  # runs tasks 
 from apscheduler.triggers.cron import CronTrigger  # allows us to specify a recurring time for execution
 import asyncio
 import aiohttp
+import requests
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
@@ -46,11 +47,19 @@ envUtil.load_env()
 service_host = os.getenv("SERVICE_HOST")
 service_port = int(os.getenv("PORT"))
 
+ai_kaggle_server_url = ''
+
 # Load tag from MongoDB
 mongo_client = pymongo.MongoClient(envUtil.get_mongodb_connection_string())
 print(mongo_client.list_database_names())
 recipe_db = mongo_client["RecipeDB"]
 tag_collection = recipe_db["Tag"]
+
+def sync_ai_kaggle_server_url():
+    global ai_kaggle_server_url
+    ai_kaggle_server_url = requests.get('https://script.google.com/macros/s/AKfycbyVK0wd-G_kuZXrQ0dGDC86xBkhfuHFTm5bXXe0hyL39IND815GSHpli4_v99Cb2KeZFg/exec').text
+    
+    print(f"AI Kaggle Server URL: {ai_kaggle_server_url}")
 
 def load_clip_features(names: dict, tag_dict: dict):
     # Load feature
@@ -113,6 +122,7 @@ def sync_tags_and_load_faiss():
 
 # Initialize the index, tags and load features
 sync_tags_and_load_faiss()
+sync_ai_kaggle_server_url()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -163,6 +173,8 @@ async def lifespan(app: FastAPI):
 scheduler = BackgroundScheduler()
 trigger = CronTrigger(hour=0, minute=0)  # midnight every day
 scheduler.add_job(sync_tags_and_load_faiss, trigger)
+sync_ai_url_trigger = CronTrigger(minute='*/10')  # every 10 minutes
+scheduler.add_job(sync_ai_kaggle_server_url, sync_ai_url_trigger)
 scheduler.start()
 
 app = FastAPI(lifespan=lifespan, redirect_slashes=False)
@@ -252,8 +264,6 @@ def get_raw_clip_text_predict(image_features):
     if probs[0] > max_pretrained * 1.2 and not tag_dict.get(tag_codes[indexs[0]])['Pretrained']:
         return indexs, probs
     return [], []
-
-ai_kaggle_server_url = 'https://fca8-34-90-25-47.ngrok-free.app'
 
 async def predict_server(image_bytes: bytes):
     try:
