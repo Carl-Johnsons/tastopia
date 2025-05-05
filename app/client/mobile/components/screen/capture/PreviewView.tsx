@@ -63,9 +63,9 @@ const PreviewView = ({
   const router = useRouter();
   const ingredientPredict =
     (language === SETTING_VALUE.LANGUAGE.VIETNAMESE
-      ? prediction?.classifications?.[0].name.vi
-      : prediction?.classifications?.[0].name.en) ?? "";
-  const ingredientPredictCode = prediction?.classifications?.[0].code ?? "";
+      ? prediction?.classifications?.[0]?.name?.vi
+      : prediction?.classifications?.[0]?.name?.en) ?? "";
+  const ingredientPredictCode = prediction?.classifications?.[0]?.code ?? "";
 
   // === Style ===
   const { animate: animatedSearchBtn, animatedStyles: animatedSearchBtnStyles } =
