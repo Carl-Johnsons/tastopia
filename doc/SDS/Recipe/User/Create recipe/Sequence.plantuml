@@ -92,10 +92,13 @@ else Upload to cloudinary success
             activate RecipeService
             RecipeService -> MongoDB++: 27A.2. Consume message and update data
             RecipeService <-- MongoDB--: 27A.3. Return response
-            RecipeService -> Rabbitmq++: 27.A.4. Publish "NotifyUserEvent" message
-            ref over Rabbitmq: 27.A.5. NotifyUserConsumer
-            destroy RecipeService
+            RecipeService -> Rabbitmq: 27.A.4. Publish "NotifyUserEvent" message
             deactivate RecipeService
+            activate Rabbitmq
+            ref over Rabbitmq: 27.A.5. NotifyUserConsumer
+            RecipeService -[hidden]> Rabbitmq
+            deactivate Rabbitmq
+            destroy Rabbitmq
         end opt
 
         RecipeWorker -> RecipeWorker++: 28. Call CheckRecipeTags function
