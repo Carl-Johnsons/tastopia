@@ -26,9 +26,9 @@ ApiGateway -> TrackingService++: 4. Forward request
 TrackingService -> MongoDB++: 5. Query search keyword data
 TrackingService <-- MongoDB--: 6. Return response
 alt if keyword is not found
-  ApiGateway <-- TrackingService: 7A.1. Return not found error
-  MobileUI <-- ApiGateway: 7A.2. Forward response
-  User <-- MobileUI: 7A.3. Display error alert
+  ApiGateway <-- TrackingService: 7A. Return not found error
+  MobileUI <-- ApiGateway: 7A.1. Forward response
+  User <-- MobileUI: 7A.2. Display error alert
 else
   TrackingService -> MongoDB ++: 8. Delete data
   TrackingService <-- MongoDB --: 9. Return response

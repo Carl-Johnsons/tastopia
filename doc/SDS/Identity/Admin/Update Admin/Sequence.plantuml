@@ -30,46 +30,46 @@ deactivate IdentityService
 ApiGateway -> IdentityService ++: 4. Forward request
 
 alt if account is null
-  ApiGateway <-- IdentityService: 5A.1. Return not found error
-  MobileUI <-- ApiGateway: 5A.2. Forward response
-  SuperAdmin <-- MobileUI: 5A.3. Display error alert
+  ApiGateway <-- IdentityService: 5A. Return not found error
+  MobileUI <-- ApiGateway: 5A.1. Forward response
+  SuperAdmin <-- MobileUI: 5A.2. Display error alert
 else
   alt if email is not null and existed
-    ApiGateway <-- IdentityService: 5B.1. Return email already exist error
-    MobileUI <-- ApiGateway: 5B.2. Forward response
-    SuperAdmin <-- MobileUI: 5B.3. Display error alert
+    ApiGateway <-- IdentityService: 6A. Return email already exist error
+    MobileUI <-- ApiGateway: 6A.1. Forward response
+    SuperAdmin <-- MobileUI: 6A.2. Display error alert
   else
     alt if phone is not null and existed
-      ApiGateway <-- IdentityService: 5C.1. Return phone number already exist error
-      MobileUI <-- ApiGateway: 5C.2. Forward response
-      SuperAdmin <-- MobileUI: 5C.3. Display error alert
+      ApiGateway <-- IdentityService: 7A. Return phone number already exist error
+      MobileUI <-- ApiGateway: 7A.1. Forward response
+      SuperAdmin <-- MobileUI: 7A.2. Display error alert
     else
       opt if admin's avatar is modified
-        IdentityService -> UploadService++: 6A.1. Request to upload admin's avatar <<gRPC>>
-        UploadService -> Cloudinary++: 6A.2. Request to upload image
-        UploadService <-- Cloudinary--: 6A.3. Return image metadata
-        IdentityService <-- UploadService--: 6A.4. Return response <<gRPC>>
+        IdentityService -> UploadService++: 8A. Request to upload admin's avatar <<gRPC>>
+        UploadService -> Cloudinary++: 8A.1. Request to upload image
+        UploadService <-- Cloudinary--: 8A.2. Return image metadata
+        IdentityService <-- UploadService--: 8A.3. Return response <<gRPC>>
       end
 
       opt if admin's basic data is modified
-        IdentityService -> UserService++: 7A.1. Request to update admin <<gRPC>>
-        UserService -> Postgresql++: 7A.2. Update admin basic data
-        UserService <-- Postgresql--: 7A.3. Return response
-        IdentityService <-- UserService--: 7A.4. Return response <<gRPC>>
+        IdentityService -> UserService++: 9A. Request to update admin <<gRPC>>
+        UserService -> Postgresql++: 9A.1. Update admin basic data
+        UserService <-- Postgresql--: 9A.2. Return response
+        IdentityService <-- UserService--: 9A.3. Return response <<gRPC>>
       end
 
-      IdentityService -> Postgresql ++: 8. Update admin data
-      IdentityService <-- Postgresql --: 9. Return response
-      IdentityService -> Rabbitmq: 10. Publish "AddActivityLogCommand" event <<Async>>
+      IdentityService -> Postgresql ++: 10. Update admin data
+      IdentityService <-- Postgresql --: 11. Return response
+      IdentityService -> Rabbitmq: 12. Publish "AddActivityLogCommand" event <<Async>>
       activate Rabbitmq
-      ref over Rabbitmq: 11. Add activity log event
+      ref over Rabbitmq: 13. Add activity log event
       IdentityService -[hidden]-> Rabbitmq
       deactivate Rabbitmq
       destroy Rabbitmq
 
-      ApiGateway <-- IdentityService --: 12. Return success status code
-      MobileUI <-- ApiGateway --: 13. Forward response
-      SuperAdmin <-- MobileUI --: 14. Display alert update admin successfully
+      ApiGateway <-- IdentityService --: 14. Return success status code
+      MobileUI <-- ApiGateway --: 15. Forward response
+      SuperAdmin <-- MobileUI --: 16. Display alert update admin successfully
     end
   end
 end

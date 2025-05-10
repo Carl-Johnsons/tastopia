@@ -24,9 +24,9 @@ IdentityService -> Postgresql ++: 4. Get account data
 IdentityService <-- Postgresql --: 5. Return response
 
 alt if account is null
-  ApiGateway <-- IdentityService: 6A.1. Return not found error
-  MobileUI <-- ApiGateway: 6A.2. Forward response
-  User <-- MobileUI: 6A.3. Display error
+  ApiGateway <-- IdentityService: 6A. Return not found error
+  MobileUI <-- ApiGateway: 6A.1. Forward response
+  User <-- MobileUI: 6A.2. Display error
 else
   IdentityService -> UserService++: 7. Request basic account data <<gRPC>>
   UserService -> Postgresql++: 8. Get account basic data

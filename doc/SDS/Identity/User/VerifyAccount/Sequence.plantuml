@@ -28,9 +28,9 @@ IdentityService -> Postgresql ++: 5. Get account data
 IdentityService <-- Postgresql --: 6. Return response
 
 alt if user's OTP is invalid
-    ApiGateway <-- IdentityService: 7A.1. Return invalid otp error
-    MobileUI <-- ApiGateway: 7A.2. Forward response
-    User <-- MobileUI: 7A.3. Display error alert
+    ApiGateway <-- IdentityService: 7A. Return invalid otp error
+    MobileUI <-- ApiGateway: 7A.1. Forward response
+    User <-- MobileUI: 7A.2. Display error alert
 else
     IdentityService -> Postgresql ++: 8. Update account status
     IdentityService <-- Postgresql --: 9. Return response

@@ -31,8 +31,8 @@ NotificationService -> MongoDB++: 5. Query data
 NotificationService <-- MongoDB--: 6. Return response
 
 alt accountPushToken not found
-  NotificationService -> MongoDB++: 7A.1 Add new push notification token
-  NotificationService <-- MongoDB--: 7A.2 Return response
+  NotificationService -> MongoDB++: 7A. Add new push notification token
+  NotificationService <-- MongoDB--: 7A.1. Return response
 else
   NotificationService -> MongoDB++: 8. Replace existing push notification token
   NotificationService <-- MongoDB--: 9. Return response

@@ -14,13 +14,13 @@ IdentityService -> Postgresql++: 4. Query to check password
 IdentityService <-- Postgresql--: 5. return response
 
 alt if the password or email or phone not correct
-    ApiGateway <-- IdentityService: 6A.1. Return login failed error
-    MobileUI <-- ApiGateway: 6A.2. Forward response
-    User <-- MobileUI: 6A.3. Display error
+    ApiGateway <-- IdentityService: 6A. Return login failed error
+    MobileUI <-- ApiGateway: 6A.1. Forward response
+    User <-- MobileUI: 6A.2. Display error
 else 
-    ApiGateway <-- IdentityService--: 6. return success status code
-    MobileUI <-- ApiGateway--: 7. Forward response
-    User <-- MobileUI--: 8. Return access token\n and redirect user to\n community screen
+    ApiGateway <-- IdentityService--: 7. return success status code
+    MobileUI <-- ApiGateway--: 8. Forward response
+    User <-- MobileUI--: 9. Return access token\n and redirect user to\n community screen
 end
 
 @enduml

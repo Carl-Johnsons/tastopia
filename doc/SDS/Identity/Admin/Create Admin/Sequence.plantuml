@@ -29,9 +29,9 @@ deactivate IdentityService
 
 ApiGateway -> IdentityService ++: 4. Forward request
 alt if email or phone number is exist
-  ApiGateway <-- IdentityService: 5A.1. Return duplication error
-  MobileUI <-- ApiGateway: 5A.2. Forward response
-  SuperAdmin <-- MobileUI: 5A.3. Display error alert
+  ApiGateway <-- IdentityService: 5A. Return duplication error
+  MobileUI <-- ApiGateway: 5A.1. Forward response
+  SuperAdmin <-- MobileUI: 5A.2. Display error alert
 else
   IdentityService -> Postgresql ++: 6. Insert admin data
   IdentityService <-- Postgresql --: 7. Return response
