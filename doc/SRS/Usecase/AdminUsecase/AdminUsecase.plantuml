@@ -13,7 +13,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>dashboard<U+
     usecase "UC-3: Login (Dashboard)" as ucLogin
     usecase "UC-6: Forgot password (Dashboard)" as ucForgotPassword
     usecase "UC-12: Logout" as ucLogout
-    usecase "UC-14: Manage settings (Dashboard)" as ucManageSetting
+    usecase "UC-14: Change settings (Dashboard)" as ucManageSetting
     usecase "UC-16: Manage profile (Dashboard)" as ucManageProfile
 
     usecase "UC-31: Administer users" as ucAdmUser
@@ -27,17 +27,17 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>dashboard<U+
     note "Read/Create/Update/Delete/Restore" as noteAdmTag
     note "Read/Delete/Restore" as noteAdmReport
 
-    admin --> ucAdmUser
+    admin -- ucAdmUser
         ucAdmUser .. noteAdmUser
-    admin --> ucAdmRecipe
+    admin -- ucAdmRecipe
         ucAdmRecipe .. noteAdmRecipe
-    admin --> ucAdmReport
+    admin -- ucAdmReport
         ucAdmReport .. noteAdmReport
-    admin --> ucAdmTags
+    admin -- ucAdmTags
         ucAdmTags .. noteAdmTag
-    admin --> ucManageProfile
-    admin --> ucManageSetting
-    admin --> ucLogout
+    admin -- ucManageProfile
+    admin -- ucManageSetting
+    admin -- ucLogout
 
     ucLogout .....> ucLogin : <<include>>
     ucAdmUser .....> ucLogin : <<include>>
