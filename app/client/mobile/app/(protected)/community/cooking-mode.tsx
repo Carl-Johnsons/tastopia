@@ -61,6 +61,9 @@ const CookingMode = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [totalSpeak, setTotalSpeak] = useState<number>(0);
 
+  const currentTranscript = useRef<string>("");
+  const processedIndex = useRef<number>(0);
+
   const sortedSteps = useMemo(() => {
     return data?.sort((a, b) => a.ordinalNumber - b.ordinalNumber);
   }, [data]);
@@ -233,7 +236,7 @@ const CookingMode = () => {
               : EN_VOICE.identifier,
           rate: Platform.select({
             ios: 0.5,
-            android: 0.4
+            android: 0.8
           }),
           onDone: () => {
             if (isActiveSpeakingRef.current && isMounted) {
@@ -274,16 +277,85 @@ const CookingMode = () => {
   useEffect(() => {
     const handleVoiceCommands = async () => {
       console.log("transcript", transcript);
+
+      const command = [t("back"), t("stop"), t("next"), t("net")];
+      for (let i = 0; i < command.length; i++) {
+        command[i] = command[i].toLowerCase();
+      }
+      if (command[2] == command[3]) {
+        command.pop();
+      }
+
       if (
-        transcript.toLowerCase().includes(t("next").toLowerCase()) ||
-        transcript.toLowerCase().includes(t("net").toLowerCase())
+        transcript.startsWith(currentTranscript.current) &&
+        transcript.length > currentTranscript.current.length
       ) {
-        handleNext();
-      } else if (transcript.toLowerCase().includes(t("back").toLowerCase())) {
-        handleBack();
-      } else if (transcript.toLowerCase().includes(t("stop").toLowerCase())) {
-        ExpoSpeechRecognitionModule.stop();
-        setIsActiveVoiceCommand(false);
+        const newTranscript = transcript.substring(processedIndex.current).toLowerCase();
+
+        let maxPosition = 0;
+        let inTextCommand: number[] = [];
+        command.forEach((item, index) => {
+          const position = newTranscript.indexOf(item);
+          if (position > maxPosition) {
+            maxPosition = position;
+          }
+          if (position != -1) {
+            inTextCommand.push(index);
+          }
+        });
+
+        console.log(inTextCommand, "inTextCommand");
+        console.log(transcript, "transcript");
+        console.log(newTranscript, "newTranscript");
+
+        for (let i = 0; i < inTextCommand.length; i++) {
+          if (inTextCommand[i] == 2) {
+            handleNext();
+          } else if (inTextCommand[i] == 3) {
+            handleNext();
+          } else if (inTextCommand[i] == 0) {
+            handleBack();
+          } else if (inTextCommand[i] == 1) {
+            ExpoSpeechRecognitionModule.stop();
+            setIsActiveVoiceCommand(false);
+          }
+        }
+
+        processedIndex.current = maxPosition + currentTranscript.current.length;
+        currentTranscript.current = transcript;
+      } else {
+        currentTranscript.current = transcript;
+        processedIndex.current = 0;
+        const newTranscript = transcript.toLowerCase();
+
+        let maxPosition = -1;
+        let inTextCommand: number[] = [];
+        command.forEach((item, index) => {
+          const position = newTranscript.indexOf(item);
+          if (position > maxPosition) {
+            maxPosition = position;
+            inTextCommand.push(index);
+          }
+        });
+
+        console.log(inTextCommand, "inTextCommand");
+        console.log(newTranscript, "newTranscript");
+
+        for (let i = 0; i < inTextCommand.length; i++) {
+          if (inTextCommand[i] == 2) {
+            handleNext();
+          } else if (inTextCommand[i] == 3) {
+            handleNext();
+          } else if (inTextCommand[i] == 0) {
+            handleBack();
+          } else if (inTextCommand[i] == 1) {
+            ExpoSpeechRecognitionModule.stop();
+            setIsActiveVoiceCommand(false);
+          }
+        }
+
+        processedIndex.current = maxPosition;
+        currentTranscript.current = transcript;
       }
     };
 
