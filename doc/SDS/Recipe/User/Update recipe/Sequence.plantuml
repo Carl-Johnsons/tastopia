@@ -17,7 +17,7 @@ participant "<<cordinator>>\n Rabbitmq" as Rabbitmq
 participant "<<service>>\n UploadFileService" as UploadFileService
 participant "<<service>>\n Cloudinary" as Cloudinary
 participant "<<service>>\n RecipeWorker" as RecipeWorker
-participant "<<service>>\n GerminiAPI" as GerminiAPI
+participant "<<service>>\n GemmaAPI" as GemmaAPI
 database MongoDB
 
 User -> MobileUI++: 1. Fill the update recipe form and \n touch Update button
@@ -68,8 +68,8 @@ else Upload to cloudinary success
 
         RecipeWorker -> RecipeWorker: 23. Consume message and call \n CheckRecipeAbuse function
         activate RecipeWorker
-        RecipeWorker -> GerminiAPI++: 24. Call API to check abuse
-        RecipeWorker <-- GerminiAPI--: 25. Return response
+        RecipeWorker -> GemmaAPI++: 24. Call API to check abuse
+        RecipeWorker <-- GemmaAPI--: 25. Return response
 
         opt recipe has abusive word
             RecipeWorker -> Rabbitmq++: 26A. Publish "AbusiveRecipeEvent" \n message <<Async>>

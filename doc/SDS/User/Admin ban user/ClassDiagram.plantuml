@@ -55,6 +55,7 @@ interface "IRequestHandler<TRequest, TResponse>" #black;line:white;text:white
 ' =========== Library class ===========
 together {
     class AddActivityLogEvent #CadetBlue;line:white;text:white
+    class BanUserEvent #Green;line:white;text:white
 }
 
 AdminController --|> BaseApiController
@@ -71,6 +72,7 @@ AdminBanUserCommandHandler "1" o--"1" IUnitOfWork
 AdminBanUserCommandHandler "1" --"1" Result
 AdminBanUserCommandHandler "1" --"1..*" AdminBanUserResponse
 AdminBanUserCommandHandler "1" --"1..*" AddActivityLogEvent
+AdminBanUserCommandHandler "1" --"1..*" BanUserEvent
 AdminBanUserCommandHandler "1" --"1..*" UserError
 
 Error "1..*" --o "1" UserError

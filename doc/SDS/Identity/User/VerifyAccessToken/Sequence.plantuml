@@ -20,14 +20,14 @@ activate ApiGateway
 activate IdentityService
 
 alt if the token is invalid
-  ApiGateway <-- IdentityService: 2A.1. Validate token failed
-  ref over ApiGateway: 2A.2. Login
+  ApiGateway <-- IdentityService: 2A. Validate token failed
+  ref over ApiGateway: 2A.1. Login
 else if the token is valid
   alt if the user's role is not in allowed roles
-    ApiGateway <-- IdentityService: 2B.1 Return forbidden error
-    ref over ApiGateway: 2B.2. Login
+    ApiGateway <-- IdentityService: 3A. Return forbidden error
+    ref over ApiGateway: 3A.1. Login
   else
-    ApiGateway <-- IdentityService: 3. Validate success
+    ApiGateway <-- IdentityService: 4. Validate success
   end
 end
 @enduml

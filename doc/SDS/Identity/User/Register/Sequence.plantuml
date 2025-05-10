@@ -19,9 +19,9 @@ IdentityService -> Postgresql++: 4. Get account data
 IdentityService <-- Postgresql--: 5. Return response
 
 alt if user's identifier is already exist
-  ApiGateway <-- IdentityService: 6A.1. Return duplication error
-  MobileUI <-- ApiGateway: 6A.2. Forward response
-  User <-- MobileUI: 6A.3. Display error alert
+  ApiGateway <-- IdentityService: 6A. Return duplication error
+  MobileUI <-- ApiGateway: 6A.1. Forward response
+  User <-- MobileUI: 6A.2. Display error alert
 else
   IdentityService -> Postgresql++: 7. Insert account data
   IdentityService <-- Postgresql--: 8. Return response
@@ -37,17 +37,17 @@ else
   deactivate Rabbitmq
 
   alt if user identifier is email
-    NotificationService -> Rabbitmq: 15A.1. Consume event and publish \n "SendEmailEvent" message <<Async>>
+    NotificationService -> Rabbitmq: 15A. Consume event and publish \n "SendEmailEvent" message <<Async>>
     deactivate NotificationService
     activate Rabbitmq
-    Rabbitmq --> EmailWorker: 15A.2. Deliver "SendEmailEvent"\n message
+    Rabbitmq --> EmailWorker: 15A.1. Deliver "SendEmailEvent"\n message
     deactivate Rabbitmq
     activate EmailWorker
-    EmailWorker -> Gmail: 15A.3. Send OTP email\n to specified email
+    EmailWorker -> Gmail: 15A.2. Send OTP email\n to specified email
     deactivate EmailWorker
     activate Gmail
   
-    ApiGateway <-- IdentityService: 15A.4. Return success status code
+    ApiGateway <-- IdentityService: 15A.3. Return success status code
     deactivate Gmail
     destroy Gmail
   else if user identifier is phone number

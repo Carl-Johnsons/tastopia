@@ -16,7 +16,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     usecase "UC-5: Forgot password (Mobile)" as ucForgotPassword
     usecase "UC-11 Report users" as ucReportUser
     usecase "UC-12 Logout" as ucLogout
-    usecase "UC-13: Manage settings (Mobile)" as ucManageSetting
+    usecase "UC-13: Change settings (Mobile)" as ucManageSetting
     usecase "UC-15: Manage profile (Mobile)" as ucManageProfile
 
     usecase "UC-7: Search" as ucSearch
@@ -44,9 +44,9 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     note "Create/Read/\nUpdate/Delete" as noteBookmarkRecipe
     note "{Follow/Unfollow}" as noteViewUSProfile
 
-    user --> ucSearch
+    user -- ucSearch
 
-    user --> ucBrowseRecipes
+    user -- ucBrowseRecipes
         ucBrowseRecipes <.. ucVoteRecipe : <<extend>>
             ucVoteRecipe . noteVoteRecipe
         ucBrowseRecipes <.. ucReportRecipe : <<extend>>
@@ -61,7 +61,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
             ucViewUSProfile . noteViewUSProfile
             ucViewUSProfile <.. ucReportUser : <<extend>>
 
-    user --> ucViewMenu
+    user -- ucViewMenu
         ucViewMenu <.. ucManageProfile : <<extend>>
             ucManageProfile . noteManageProfile
             ucManageProfile <.. ucManageRecipe : <<extend>>
@@ -71,7 +71,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
         ucViewMenu <.. ucViewRecentRecipes : <<extend>>
         ucViewMenu <.. ucLogout : <<extend>>
 
-    user --> ucViewNotif
+    user -- ucViewNotif
     
     gmail -up-> ucLogin
     cl --up-> ucManageProfile
@@ -91,7 +91,7 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
 
     speech --up-> ucCommandVoiceCCM
 
-    user --> ucRecognizeIngre
+    user -- ucRecognizeIngre
     ucGuidedCCM <.. ucCommandVoiceCCM : <<extend>>
 
     ucRecognizeIngre .....> ucLogin : <<include>>

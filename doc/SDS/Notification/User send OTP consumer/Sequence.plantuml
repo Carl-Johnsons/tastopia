@@ -22,12 +22,12 @@ deactivate Rabbitmq
 activate NotificationService
 
 alt if user identifier is email
-  NotificationService -> Rabbitmq: 2A.1. Consume event and publish \n "SendEmailEvent" message <<Async>>
+  NotificationService -> Rabbitmq: 2A. Consume event and publish \n "SendEmailEvent" message <<Async>>
   activate Rabbitmq
-  Rabbitmq --> EmailWorker: 2A.2. Deliver "SendEmailEvent"\n message
+  Rabbitmq --> EmailWorker: 2A.1. Deliver "SendEmailEvent"\n message
   deactivate Rabbitmq
   activate EmailWorker
-  EmailWorker -> Gmail: 2A.3. Send OTP email\n to specified email
+  EmailWorker -> Gmail: 2A.2. Send OTP email\n to specified email
   deactivate EmailWorker
   activate Gmail
 

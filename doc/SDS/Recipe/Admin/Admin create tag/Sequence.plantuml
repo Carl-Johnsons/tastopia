@@ -44,32 +44,37 @@ else Current user is admin
         RecipeService <-- UploadFileService--: 9. Return tag's image urls list <<gRPC>>
         RecipeService -> MongoDB++: 10. Insert data
         RecipeService <-- MongoDB--: 11. Return response
+        opt Tag dishtype category limit reached
+            ApiGateway <-- RecipeService: 12A.1. Return exceed limit dishtype tag error
+            WebsiteUI <-- ApiGateway: 12A.2. Forward response
+            Admin <-- WebsiteUI: 12A.3. Display exceed limit dishtype tag error
+        end opt
         alt Add tag to database fail
-            RecipeService -> RecipeService: 12A. Roll back images
+            RecipeService -> RecipeService: 13A. Roll back images
             activate RecipeService
-            RecipeService -> Rabbitmq: 12A.1. Publish "DeleteMultipleImageEvent" \n message <<Async>>
+            RecipeService -> Rabbitmq: 13A.1. Publish "DeleteMultipleImageEvent" \n message <<Async>>
             deactivate RecipeService
             activate Rabbitmq
-            Rabbitmq -> UploadFileService: 12A.2. Deliver "DeleteMultipleImageEvent"\n message
+            Rabbitmq -> UploadFileService: 13A.2. Deliver "DeleteMultipleImageEvent"\n message
             deactivate Rabbitmq
             activate UploadFileService
-            UploadFileService -> Cloudinary++: 12A.3. Consume message and call \n cloudinary to delete images
+            UploadFileService -> Cloudinary++: 13A.3. Consume message and call \n cloudinary to delete images
             UploadFileService <-- Cloudinary--: 12A.4. Return response
             destroy UploadFileService
             deactivate UploadFileService
-            ApiGateway <-- RecipeService: 12A.5. Return add tag fail error
-            WebsiteUI <-- ApiGateway: 12A.6. Forward response
-            Admin <-- WebsiteUI: 12A.7. Display add tag fail error.
+            ApiGateway <-- RecipeService: 13A.5. Return add tag fail error
+            WebsiteUI <-- ApiGateway: 13A.6. Forward response
+            Admin <-- WebsiteUI: 13A.7. Display add tag fail error.
         else Add tag to database success
-            RecipeService -> Rabbitmq: 13. Publish "AddActivityLogCommand" event <<Async>>
+            RecipeService -> Rabbitmq: 14. Publish "AddActivityLogCommand" event <<Async>>
             activate Rabbitmq
-            ref over Rabbitmq: 14. Add activity log event
+            ref over Rabbitmq: 15. Add activity log event
             RecipeService -[hidden]-> Rabbitmq
             deactivate Rabbitmq
             destroy Rabbitmq
-            ApiGateway <-- RecipeService: 15. Return add tag success message
-            WebsiteUI <-- ApiGateway: 16. Forward response
-            Admin <-- WebsiteUI: 17. Display add tag success message
+            ApiGateway <-- RecipeService: 16. Return add tag success message
+            WebsiteUI <-- ApiGateway: 17. Forward response
+            Admin <-- WebsiteUI: 18. Display add tag success message
         end alt 
     end alt 
 end alt
