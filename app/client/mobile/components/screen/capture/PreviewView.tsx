@@ -63,9 +63,9 @@ const PreviewView = ({
   const router = useRouter();
   const ingredientPredict =
     (language === SETTING_VALUE.LANGUAGE.VIETNAMESE
-      ? prediction?.classifications?.[0].name.vi
-      : prediction?.classifications?.[0].name.en) ?? "";
-  const ingredientPredictCode = prediction?.classifications?.[0].code ?? "";
+      ? prediction?.classifications?.[0]?.name?.vi
+      : prediction?.classifications?.[0]?.name?.en) ?? "";
+  const ingredientPredictCode = prediction?.classifications?.[0]?.code ?? "";
 
   // === Style ===
   const { animate: animatedSearchBtn, animatedStyles: animatedSearchBtnStyles } =
@@ -170,22 +170,49 @@ const PreviewView = ({
             </>
           ) : (
             <>
-              <Text className='font-bold text-3xl text-primary'>{ingredientPredict}</Text>
-              <Button
-                onPress={handleSearch}
-                style={animatedSearchBtnStyles}
-                className='rounded-full bg-primary p-3'
-              >
-                <View className='flex-row items-center'>
-                  <FontAwesome
-                    name='search'
-                    size={24}
-                    color='black'
-                    className='pr-4'
-                  />
-                  <Text className='font-bold text-xl'>{t("searchForRecipes")}</Text>
-                </View>
-              </Button>
+              {ingredientPredict !== "" ? (
+                <>
+                  <Text className='font-bold text-3xl text-primary'>
+                    {ingredientPredict}
+                  </Text>
+                  <Button
+                    onPress={handleSearch}
+                    style={animatedSearchBtnStyles}
+                    className='rounded-full bg-primary p-3'
+                  >
+                    <View className='flex-row items-center'>
+                      <FontAwesome
+                        name='search'
+                        size={24}
+                        color='black'
+                        className='pr-4'
+                      />
+                      <Text className='font-bold text-xl'>{t("searchForRecipes")}</Text>
+                    </View>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Text className='font-bold text-xl text-center text-primary'>
+                    {t("invalidIngredient")}
+                  </Text>
+                  <Button
+                    onPress={handleBackInPreview}
+                    style={animatedSearchBtnStyles}
+                    className='rounded-full bg-primary p-3'
+                  >
+                    <View className='flex-row items-center'>
+                      <FontAwesome
+                        name='search'
+                        size={24}
+                        color='black'
+                        className='pr-4'
+                      />
+                      <Text className='font-bold text-xl'>{t("tryAgain")}</Text>
+                    </View>
+                  </Button>
+                </>
+              )}
             </>
           )}
         </View>

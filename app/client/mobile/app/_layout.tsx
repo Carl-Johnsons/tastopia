@@ -18,6 +18,9 @@ import { colors } from "@/constants/colors";
 import { FONTS } from "@/constants/fonts";
 import useColorizer from "@/hooks/useColorizer";
 import { SignalRHubProvider } from "@/components/SignalRProvider";
+import { LogBox } from "react-native";
+
+LogBox.ignoreAllLogs();
 
 import("../global.css");
 
