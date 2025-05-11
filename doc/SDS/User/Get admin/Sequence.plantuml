@@ -50,6 +50,7 @@ else Current user is super admin
         ApiGateway <-- UserService--: 13. Return admins list
         WebsiteUI <-- ApiGateway--: 14. Forward response
         SuperAdmin <-- WebsiteUI--: 15. Display admins list
+        deactivate SuperAdmin
     end alt
 end alt
 

@@ -37,6 +37,7 @@ else Current user is admin
     ApiGateway <-- UserService: 8. Return report
     WebsiteUI <-- ApiGateway--: 9. Forward response
     Admin <-- WebsiteUI--: 10. Display marked report success message
+    deactivate Admin
     UserService -> Rabbitmq: 11. Publish "AddActivityLogEvent" event <<Async>> 
     deactivate UserService
     activate Rabbitmq

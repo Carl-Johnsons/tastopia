@@ -58,6 +58,7 @@ else Current user is admin
       ApiGateway <-- UserService: 11. Return restored user
       WebsiteUI <-- ApiGateway--: 12. Forward response
       Admin <-- WebsiteUI--: 13. Display restore user success message
+      deactivate Admin
     end alt
     UserService -> Rabbitmq: 14. Publish "AddActivityLogEvent" event <<Async>>
     deactivate UserService

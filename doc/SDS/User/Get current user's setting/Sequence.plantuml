@@ -34,5 +34,6 @@ UserService <-- Postgresql--: 6. Return response
 ApiGateway <-- UserService--: 7. Return user setting
 MobileUI <-- ApiGateway--: 8. Forward response
 User <-- MobileUI--: 9. Save user setting\n to async storage
+deactivate User
 
 @enduml

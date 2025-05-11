@@ -42,6 +42,7 @@ else Current user is admin
         ApiGateway <-- UserService--: 9. Return users list
         WebsiteUI <-- ApiGateway--: 10. Forward response
         Admin <-- WebsiteUI--: 11. Display users list
+        deactivate Admin
     end alt
 end alt
 

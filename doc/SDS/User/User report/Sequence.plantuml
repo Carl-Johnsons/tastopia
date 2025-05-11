@@ -43,5 +43,6 @@ else User adrealy reported
   ApiGateway <-- UserService--: 10. Return user report
   MobileUI <-- ApiGateway--: 11. Forward response
   User <-- MobileUI--: 12. Display remove report success message
+  deactivate User
 end alt
 @enduml

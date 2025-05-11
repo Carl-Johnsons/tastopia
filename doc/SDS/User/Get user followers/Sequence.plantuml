@@ -32,6 +32,7 @@ else Users list is not empty
     ApiGateway <-- UserService--: 7. Return users list
     MobileUI <-- ApiGateway--: 8. Forward response
     User <-- MobileUI--: 9. Display users list
+    deactivate User
 end alt
 
 @enduml

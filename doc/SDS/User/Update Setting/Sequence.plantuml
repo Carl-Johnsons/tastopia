@@ -45,6 +45,7 @@ else
   ApiGateway <-- UserService--: 11. Return success status code
   MobileUI <-- ApiGateway--: 12. Forward response
   User <-- MobileUI--: 13. Display update setting successfully
+  deactivate User
 end
 
 @enduml

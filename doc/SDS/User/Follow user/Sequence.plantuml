@@ -48,5 +48,6 @@ else User adrealy followed
   ApiGateway <-- UserService--: 10. Return user follow
   MobileUI <-- ApiGateway--: 11. Forward response
   User <-- MobileUI--: 12. Display unfollow success message
+  deactivate User
 end alt
 @enduml

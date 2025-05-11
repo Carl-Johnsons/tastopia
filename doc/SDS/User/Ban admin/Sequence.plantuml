@@ -46,6 +46,7 @@ else Current user is super admin
       ApiGateway <-- UserService: 11. Return restored admin
       WebsiteUI <-- ApiGateway--: 12. Forward response
       SuperAdmin <-- WebsiteUI--: 13. Display restore admin success message
+      deactivate SuperAdmin
     end 
     UserService -> Rabbitmq: 11. Publish "AddActivityLogEvent" event <<Async>> 
     deactivate UserService

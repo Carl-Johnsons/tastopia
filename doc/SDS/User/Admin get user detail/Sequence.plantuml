@@ -43,6 +43,7 @@ else Current user is admin
     ApiGateway <-- UserService--: 12. Return user detail
     WebsiteUI <-- ApiGateway--: 13. Forward response
     Admin <-- WebsiteUI--: 14. Display user detail
+    deactivate Admin
 end alt
 
 @enduml
