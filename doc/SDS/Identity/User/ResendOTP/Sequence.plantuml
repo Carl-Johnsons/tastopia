@@ -10,6 +10,7 @@ title "Resend OTP Sequence diagram"
 </style>
 
 actor User
+activate User
 boundary MobileUI
 participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService

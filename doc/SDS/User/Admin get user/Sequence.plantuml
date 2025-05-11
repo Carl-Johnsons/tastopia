@@ -10,6 +10,8 @@ title "Admin get users"
 </style>
 
 actor Admin
+activate Admin
+
 boundary WebsiteUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n UserService" as UserService

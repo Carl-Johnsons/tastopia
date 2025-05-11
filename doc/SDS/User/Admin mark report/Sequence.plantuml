@@ -11,6 +11,8 @@ title "Admin mark report"
 </style>
 
 actor Admin
+activate Admin
+
 boundary WebsiteUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService

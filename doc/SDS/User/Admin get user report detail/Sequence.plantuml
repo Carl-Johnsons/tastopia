@@ -11,6 +11,8 @@ title "Get user's report detail"
 </style>
 
 actor Admin
+activate Admin
+
 boundary WebsiteUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n UserService" as UserService

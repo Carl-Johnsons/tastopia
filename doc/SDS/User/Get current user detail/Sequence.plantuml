@@ -11,6 +11,8 @@ title "Get current user detail"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n UserService" as UserService

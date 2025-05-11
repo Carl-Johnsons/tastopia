@@ -11,6 +11,8 @@ title "Remove expo push token"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService

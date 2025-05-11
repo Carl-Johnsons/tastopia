@@ -9,12 +9,12 @@ actor "Gmail   " as gmail
 actor "SpeedSMS   "as SpeedSMS
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
-    usecase "UC-1: View welcome screen" as ucViewWelcome
-    usecase "UC-4: Register" as ucRegister
-    usecase "UC-8: Browse recipes" as ucBrowseRecipes
-    usecase "UC-9: View other users profiles (Guest)" as ucViewUSProfile
-    usecase "UC-13: Change settings (Mobile)" as ucManageSetting
-    usecase "UC-24: View menu" as ucViewMenu
+    usecase "UC-M-01: View welcome screen" as ucViewWelcome
+    usecase "UC-M-03: Register" as ucRegister
+    usecase "UC-M-06: Browse recipes" as ucBrowseRecipes
+    usecase "UC-M-07: View other users profiles" as ucViewUSProfile
+    usecase "UC-M-10: Change settings" as ucManageSetting
+    usecase "UC-M-19: View menu" as ucViewMenu
 }
 
 guest -- ucViewWelcome

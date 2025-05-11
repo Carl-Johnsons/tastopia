@@ -11,6 +11,8 @@ title "Ban admin"
 </style>
 
 actor "Super Admin" as SuperAdmin
+activate SuperAdmin
+
 boundary WebsiteUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService

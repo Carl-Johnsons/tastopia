@@ -10,6 +10,9 @@ title "Update admin diagram"
 </style>
 
 actor "Super admin" as SuperAdmin
+
+activate SuperAdmin
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService

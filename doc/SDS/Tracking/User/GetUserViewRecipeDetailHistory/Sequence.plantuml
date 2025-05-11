@@ -10,6 +10,8 @@ title "Get user view recipe detail history"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n TrackingService" as TrackingService

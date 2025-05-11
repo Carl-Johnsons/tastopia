@@ -10,6 +10,8 @@ title "Delete user search recipe diagram"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\nTrackingService" as TrackingService

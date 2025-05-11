@@ -10,6 +10,8 @@ title "Get all admins' activity log diagram"
 </style>
 
 actor "Super Admin" as SuperAdmin
+activate SuperAdmin
+
 boundary WebsiteUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n TrackingService" as TrackingService

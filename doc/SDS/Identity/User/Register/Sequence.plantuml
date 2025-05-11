@@ -1,5 +1,7 @@
 @startuml Sequence
 actor User
+activate User
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
