@@ -49,6 +49,7 @@ else
       ApiGateway <-- IdentityService --: 12. Return success status code
       MobileUI <-- ApiGateway --: 13. Forward response
       User <-- MobileUI --: 14. Display alert\n update identifier successfully
+      deactivate User
     end
   end
 end

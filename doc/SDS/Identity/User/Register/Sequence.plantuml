@@ -70,6 +70,7 @@ else
 
   MobileUI <-- ApiGateway--: 19. Forward response
   User <-- MobileUI--: 20. Redirect user to verify account screen
+  deactivate User
 end
 
 @enduml

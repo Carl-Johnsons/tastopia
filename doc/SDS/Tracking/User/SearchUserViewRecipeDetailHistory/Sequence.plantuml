@@ -50,6 +50,7 @@ else View list is not empty
     ApiGateway <-- TrackingService--: 16. Return recipes list
     MobileUI <-- ApiGateway--: 17. Forward response
     User <-- MobileUI--: 18. Display recipes list
-end alt
+    deactivate User
+end
 
 @enduml

@@ -73,6 +73,7 @@ else
       ApiGateway <-- IdentityService --: 14. Return success status code
       MobileUI <-- ApiGateway --: 15. Forward response
       SuperAdmin <-- MobileUI --: 16. Display alert update admin successfully
+      deactivate SuperAdmin
     end
   end
 end

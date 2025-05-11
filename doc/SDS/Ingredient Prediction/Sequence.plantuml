@@ -31,5 +31,5 @@ ApiGateway -> IngredientPredictService++: 4. Forward request
 ApiGateway <-- IngredientPredictService--: 5. return response
 MobileUI <-- ApiGateway--: 6. Forward response
 User <-- MobileUI--: 7. Display ingredient prediction result
-
+deactivate User
 @enduml

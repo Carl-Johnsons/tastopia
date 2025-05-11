@@ -47,6 +47,7 @@ else
   ApiGateway <-- IdentityService--: 12. return success status code
   MobileUI <-- ApiGateway --: 13. Forward response
   User <-- MobileUI --: 14. Redirect user to verify OTP screen
+  deactivate User
 end
 
 @enduml

@@ -47,6 +47,7 @@ else
     ApiGateway <-- NotificationService--: 11. Return success
     MobileUI <-- ApiGateway--: 12. Forward response
     User <-- MobileUI--: 13. Display notification list
+    deactivate User
   end
 end
 

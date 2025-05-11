@@ -44,6 +44,7 @@ else AdminActivityLog list is not empty
     ApiGateway <-- TrackingService--: 12. Return all admin's activity log
     WebsiteUI <-- ApiGateway--: 13. Forward response
     SuperAdmin <-- WebsiteUI--: 14. Display all admins' activity log
-end alt
+    deactivate SuperAdmin
+end
 
 @enduml
