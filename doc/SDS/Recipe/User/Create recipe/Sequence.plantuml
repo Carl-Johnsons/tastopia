@@ -11,10 +11,10 @@ title "Create recipe"
 
 actor User
 boundary MobileUI 
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UserService" as UserService
-participant "<<cordinator>>\n Rabbitmq" as Rabbitmq
+participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
 participant "<<service>>\n UploadFileService" as UploadFileService
 participant "<<service>>\n Cloudinary" as Cloudinary
 participant "<<service>>\n RecipeWorker" as RecipeWorker
@@ -65,9 +65,9 @@ else Upload to cloudinary success
         UserService <-- Postgresql--: 15. Return response
         RecipeService <-- UserService--: 16. return response <<gRPC>>
 
-        RecipeService -> Rabbitmq++: 17. Publish "NotifyUserEvent" message
+        RecipeService -> Rabbitmq++: 17. Publish "NotifyUserEvent" message <<Async>>
         ref over Rabbitmq: 18. NotifyUserConsumer
-        RecipeService -[hidden]> Rabbitmq
+        RecipeService -[hidden]-> Rabbitmq
         deactivate Rabbitmq
         destroy Rabbitmq
 
@@ -75,7 +75,7 @@ else Upload to cloudinary success
         Rabbitmq -> RecipeWorker: 20. Deliver "ValidateRecipeEvent"\n message
         deactivate Rabbitmq
         activate RecipeWorker
-        ApiGateway <-- RecipeService--: 21. Retrun add recipe success
+        ApiGateway <-- RecipeService--: 21. Return add recipe success
         MobileUI <-- ApiGateway--: 22. Forward response
         User <-- MobileUI--: 23. Display add recipe success\n and redirect user to community screen
 
@@ -85,20 +85,21 @@ else Upload to cloudinary success
         RecipeWorker <-- GemmaAPI--: 26. Return response
 
         opt recipe has abusive word
-            RecipeWorker -> Rabbitmq++: 27A. Publish "AbusiveRecipeEvent" \n message <<Async>>
+            RecipeWorker -> Rabbitmq: 27A. Publish "AbusiveRecipeEvent" \n message <<Async>>
             deactivate RecipeWorker
+            activate Rabbitmq
             Rabbitmq -> RecipeService: 27A.1. Deliver "AbusiveRecipeEvent"\n message
             deactivate Rabbitmq
             activate RecipeService
             RecipeService -> MongoDB++: 27A.2. Consume message and update data
             RecipeService <-- MongoDB--: 27A.3. Return response
-            RecipeService -> Rabbitmq: 27.A.4. Publish "NotifyUserEvent" message
+            RecipeService -> Rabbitmq: 27.A.4. Publish "NotifyUserEvent" message <<Async>>
+            ref over Rabbitmq: 27.A.5. NotifyUserConsumer
             deactivate RecipeService
             activate Rabbitmq
-            ref over Rabbitmq: 27.A.5. NotifyUserConsumer
-            RecipeService -[hidden]> Rabbitmq
-            deactivate Rabbitmq
+            RecipeWorker -[hidden]-> Rabbitmq
             destroy Rabbitmq
+            deactivate Rabbitmq
         end opt
 
         RecipeWorker -> RecipeWorker++: 28. Call CheckRecipeTags function
@@ -113,14 +114,18 @@ else Upload to cloudinary success
             activate RecipeService
             RecipeService -> MongoDB++: 33A.2. Consume message and update data
             RecipeService <-- MongoDB--: 33A.3. Return response
-            destroy RecipeService
+            deactivate Rabbitmq
 
             deactivate RecipeService
         end opt
 
         opt recipe has tags not existed in database
-            RecipeWorker -> Rabbitmq++: 34A. Publish "RequestAddTagEvent" \n message <<Async>>
+            RecipeWorker -> Rabbitmq: 34A. Publish "RequestAddTagEvent" \n message <<Async>>
+            deactivate RecipeWorker
+            deactivate RecipeWorker
+            activate Rabbitmq
             Rabbitmq -> RecipeService: 34A.1. Deliver "RequestAddTagEvent"\n message
+            deactivate Rabbitmq
             deactivate Rabbitmq
             activate RecipeService
             RecipeService -> MongoDB++: 34A.2. Consume message and insert data
@@ -128,9 +133,6 @@ else Upload to cloudinary success
             destroy RecipeService
             deactivate RecipeService
         end opt
-        deactivate Rabbitmq
-        deactivate RecipeWorker
-        deactivate RecipeWorker
     end alt
 end alt
 
