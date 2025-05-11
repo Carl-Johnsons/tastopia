@@ -52,5 +52,6 @@ NotificationService <-- RecipeService-- : 18. Return response <<gRPC>>
 ApiGateway <-- NotificationService--: 19. Return notification list
 MobileUI <-- ApiGateway--: 20. Forward response
 User <-- MobileUI--: 21. Display notification list
+deactivate User
 
 @enduml

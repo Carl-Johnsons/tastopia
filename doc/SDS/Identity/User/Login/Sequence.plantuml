@@ -23,6 +23,7 @@ else
     ApiGateway <-- IdentityService--: 7. Return success status code
     MobileUI <-- ApiGateway--: 8. Forward response
     User <-- MobileUI--: 9. Return access token\n and redirect user to\n community screen
+    deactivate User
 end
 
 @enduml

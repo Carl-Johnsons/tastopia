@@ -66,6 +66,7 @@ else
   ApiGateway <-- IdentityService --: 20. Return success status code
   MobileUI <-- ApiGateway --: 21. Forward response
   SuperAdmin <-- MobileUI --: 22. Display alert create admin successfully
+  deactivate SuperAdmin
 end
 
 @enduml

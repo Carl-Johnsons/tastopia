@@ -44,6 +44,7 @@ else
       ApiGateway <-- IdentityService --: 11. Return success status code
       MobileUI <-- ApiGateway --: 12. Forward response
       User <-- MobileUI --: 13. Display alert\n unlink account successfully
+      deactivate User
     end
 end
 
