@@ -19,7 +19,7 @@ participant "<<service>>\n TrackingService" as TrackingService
 database MongoDB
 database Postgresql
 
-
+activate User
 User -> MobileUI++: 1. Touch a recipe feed
 
 MobileUI -> ApiGateway++: 2. Get recipe detail
@@ -53,6 +53,7 @@ else Recipe is existed
     ApiGateway <-- RecipeService--: 16. return recipe detail
     MobileUI <-- ApiGateway--: 17. Forward response
     User <-- MobileUI--: 18. Display recipe detail
+    deactivate User
 end alt
 
 

@@ -16,6 +16,7 @@ participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n RecipeService" as RecipeService
 database MongoDB
 
+activate Admin
 Admin -> WebsiteUI++: 1. Admin click administer tag\n in navigation bar
 
 WebsiteUI -> ApiGateway++: 2. Admin get tag
@@ -40,6 +41,7 @@ RecipeService <-- MongoDB--: 7. Return response
       ApiGateway <-- RecipeService--: 9. Return tag list
       WebsiteUI <-- ApiGateway--: 10. Forward response
       Admin <-- WebsiteUI--: 11. Display tag list
+      deactivate Admin
   end alt
 end alt
 

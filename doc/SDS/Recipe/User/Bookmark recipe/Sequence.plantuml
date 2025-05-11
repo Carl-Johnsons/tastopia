@@ -14,6 +14,7 @@ participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Touch on bookmark icon \n in a recipe feed or recipe detail screen
 
 MobileUI -> ApiGateway++: 2. Bookmark recipe
@@ -37,6 +38,7 @@ else Recipe is bookmarked
   ApiGateway <-- RecipeService--: 10. Return recipe bookmark
   MobileUI <-- ApiGateway--: 11. Forward response
   User <-- MobileUI--: 12. Display unbookmark recipe success message
+  deactivate User
 end alt
 
 

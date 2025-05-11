@@ -19,6 +19,7 @@ participant "<<service>>\n Cloudinary" as Cloudinary
 participant "<<coordinator>>\nRabbitmq" as Rabbitmq
 database MongoDB
 
+activate Admin
 Admin -> WebsiteUI++: 1. Fill the update tag form and \n click Update button
 WebsiteUI -> ApiGateway++: 2. Admin update tag
 
@@ -73,8 +74,12 @@ else Current user is admin
     else Update tag to database success
         ApiGateway <-- RecipeService: 11. Return update tag success message
         WebsiteUI <-- ApiGateway: 12. Forward response
+        deactivate ApiGateway
         Admin <-- WebsiteUI: 13. Display update tag success message
+        deactivate WebsiteUI
+        deactivate Admin
         RecipeService -> Rabbitmq: 14. Publish "AddActivityLogCommand" event <<Async>>
+        deactivate RecipeService
         activate Rabbitmq
         ref over Rabbitmq: 15. Add activity log event
         RecipeService -[hidden]-> Rabbitmq

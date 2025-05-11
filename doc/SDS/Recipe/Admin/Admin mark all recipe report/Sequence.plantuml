@@ -17,6 +17,7 @@ participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n UserService" as UserService
 database Postgresql
 
+activate Admin
 Admin -> WebsiteUI ++: 1. Click on mark all complete or \n reopen all button in recipe report screen
 WebsiteUI -> ApiGateway ++: 2. Admin mark all recipe report
 
@@ -35,6 +36,7 @@ else Current user is admin
     ApiGateway <-- UserService: 8. Return report
     WebsiteUI <-- ApiGateway--: 9. Forward response
     Admin <-- WebsiteUI--: 10. Display marked all recipe report success message
+    deactivate Admin
     UserService -> Rabbitmq: 11. Publish "AddActivityLogEvent" event <<Async>>
     deactivate UserService
     activate Rabbitmq

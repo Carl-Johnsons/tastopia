@@ -15,6 +15,7 @@ participant "<<coordinator>>\n ApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Enter recipe community \n or search recipe srceen
 
 MobileUI -> ApiGateway++: 2. Get recipe tags
@@ -29,5 +30,6 @@ RecipeService <-- MongoDB--: 6. Return response
 ApiGateway <-- RecipeService--: 7. Return recipe tags list
 MobileUI <-- ApiGateway--: 8. Forward response
 User <-- MobileUI--: 9. Display recipe tags list
+deactivate User
 
 @enduml

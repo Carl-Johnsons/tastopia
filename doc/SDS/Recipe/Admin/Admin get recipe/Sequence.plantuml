@@ -18,6 +18,7 @@ participant "<<service>>\n UserService" as UserService
 database Postgresql
 database MongoDB
 
+activate Admin
 Admin -> WebsiteUI++: 1. Admin click administer recipe\n in navigation bar
 
 WebsiteUI -> ApiGateway++: 2. Admin get recipe
@@ -46,6 +47,7 @@ RecipeService <-- MongoDB--: 7. Return response
       ApiGateway <-- RecipeService--: 13. Return recipe list
       WebsiteUI <-- ApiGateway--: 14. Forward response
       Admin <-- WebsiteUI--: 15. Display recipe list
+      deactivate Admin
   end alt
 end alt
 

@@ -16,6 +16,7 @@ participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n RecipeService" as RecipeService
 database MongoDB
 
+activate Admin
 Admin -> WebsiteUI++: 1. Admin enter statistic screen
 WebsiteUI -> ApiGateway++: 2. Admin get tag ranking by popular
 
@@ -34,6 +35,7 @@ else Current user is admin
     ApiGateway <-- RecipeService--: 8. Return tag ranking list
     WebsiteUI <-- ApiGateway--: 9. Forward response
     Admin <-- WebsiteUI--: 10. Display tag ranking list
+    deactivate Admin
 end alt
 
 @enduml
