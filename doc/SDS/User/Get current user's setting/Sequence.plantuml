@@ -12,7 +12,7 @@ title "Get user setting"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n UserService" as UserService
 database Postgresql

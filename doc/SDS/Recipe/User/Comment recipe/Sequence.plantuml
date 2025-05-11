@@ -10,7 +10,7 @@ title "Comment recipe"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UserService" as UserService
 database MongoDB
@@ -32,7 +32,7 @@ UserService -> Postgresql++: 8. Query data
 UserService <-- Postgresql--: 9. Return response
 RecipeService <-- UserService--: 10. Return user's information <<gRPC>>
 
-RecipeService -> Rabbitmq++: 11. Publish "NotifyUserEvent" message <<Async>>
+RecipeService -> Rabbitmq++: 11. Publish "NotifyUserEvent" event <<Async>>
 ref over Rabbitmq: 12. NotifyUserConsumer
 ApiGateway <-- RecipeService--: 13. Return recipe comment
 deactivate Rabbitmq

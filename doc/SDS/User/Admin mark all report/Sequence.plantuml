@@ -12,7 +12,7 @@ title "Admin mark all report"
 
 actor Admin
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n UserService" as UserService
 database Postgresql
@@ -35,7 +35,7 @@ else Current user is admin
     ApiGateway <-- UserService: 8. Return report
     WebsiteUI <-- ApiGateway--: 9. Forward response
     Admin <-- WebsiteUI--: 10. Display marked all report success message
-    UserService -> Rabbitmq: 11. Publish "AddActivityLogEvent" message 
+    UserService -> Rabbitmq: 11. Publish "AddActivityLogEvent" event <<Async>>
     deactivate UserService
     activate Rabbitmq
     ref over Rabbitmq: 12. AddActivityLogConsumers

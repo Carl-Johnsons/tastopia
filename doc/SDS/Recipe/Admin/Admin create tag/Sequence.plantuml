@@ -11,7 +11,7 @@ title "Admin create tag"
 
 actor Admin
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UploadFileService" as UploadFileService
@@ -52,7 +52,7 @@ else Current user is admin
         alt Add tag to database fail
             RecipeService -> RecipeService: 13A. Roll back images
             activate RecipeService
-            RecipeService -> Rabbitmq: 13A.1. Publish "DeleteMultipleImageEvent" \n message <<Async>>
+            RecipeService -> Rabbitmq: 13A.1. Publish "DeleteMultipleImageEvent" \n event <<Async>>
             deactivate RecipeService
             activate Rabbitmq
             Rabbitmq -> UploadFileService: 13A.2. Deliver "DeleteMultipleImageEvent"\n message

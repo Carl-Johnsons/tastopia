@@ -10,10 +10,10 @@ title "Search recipe"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\n ApiGateway" as ApiGateway
+participant "<<coordinator>>\n ApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UserService" as UserService
-participant "<<cordinator>>\n Rabbitmq" as Rabbitmq
+participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
 participant "<<service>>\n TrackingService" as TrackingService
 database MongoDB
 database Postgresql
@@ -26,7 +26,7 @@ ref over ApiGateway: 3. Verify access token
 
 ApiGateway -> RecipeService++: 4. Forward request
 
-RecipeService -> Rabbitmq++: 5. Publish "UserSearchRecipeEvent" \n message <<Async>>
+RecipeService -> Rabbitmq++: 5. Publish "UserSearchRecipeEvent" \n event <<Async>>
 
 RecipeService -> MongoDB++: 6. Query data
 RecipeService <-- MongoDB--: 7. Return response

@@ -12,7 +12,7 @@ title "Set view notification diagram"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n NotificationService" as NotificationService
 database MongoDB

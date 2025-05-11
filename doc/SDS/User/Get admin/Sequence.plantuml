@@ -11,7 +11,7 @@ title "Get admin"
 
 actor "Super Admin" as SuperAdmin
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n UserService" as UserService
 participant "<<service>>\n IdentityService" as IdentityService
 database Postgresql

@@ -11,7 +11,7 @@ title "Get recipe comment"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\n ApiGateway" as ApiGateway
+participant "<<coordinator>>\n ApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UserService" as UserService
 database Postgresql

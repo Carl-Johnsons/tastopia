@@ -46,7 +46,7 @@ else Upload to cloudinary success
     alt Add recipe to database fail
         RecipeService -> RecipeService: 12A. Roll back images
         activate RecipeService
-        RecipeService -> Rabbitmq: 12A.1. Publish "DeleteMultipleImageEvent" \n message <<Async>>
+        RecipeService -> Rabbitmq: 12A.1. Publish "DeleteMultipleImageEvent" \n event <<Async>>
         deactivate RecipeService
         activate Rabbitmq
         Rabbitmq -> UploadFileService: 12A.2. Deliver "DeleteMultipleImageEvent"\n message
@@ -65,13 +65,13 @@ else Upload to cloudinary success
         UserService <-- Postgresql--: 15. Return response
         RecipeService <-- UserService--: 16. return response <<gRPC>>
 
-        RecipeService -> Rabbitmq++: 17. Publish "NotifyUserEvent" message <<Async>>
+        RecipeService -> Rabbitmq++: 17. Publish "NotifyUserEvent" event <<Async>>
         ref over Rabbitmq: 18. NotifyUserConsumer
         RecipeService -[hidden]-> Rabbitmq
         deactivate Rabbitmq
         destroy Rabbitmq
 
-        RecipeService -> Rabbitmq++: 19. Publish "ValidateRecipeEvent" \n message <<Async>>
+        RecipeService -> Rabbitmq++: 19. Publish "ValidateRecipeEvent" \n event <<Async>>
         Rabbitmq -> RecipeWorker: 20. Deliver "ValidateRecipeEvent"\n message
         deactivate Rabbitmq
         activate RecipeWorker
@@ -85,7 +85,7 @@ else Upload to cloudinary success
         RecipeWorker <-- GemmaAPI--: 26. Return response
 
         opt recipe has abusive word
-            RecipeWorker -> Rabbitmq: 27A. Publish "AbusiveRecipeEvent" \n message <<Async>>
+            RecipeWorker -> Rabbitmq: 27A. Publish "AbusiveRecipeEvent" \n event <<Async>>
             deactivate RecipeWorker
             activate Rabbitmq
             Rabbitmq -> RecipeService: 27A.1. Deliver "AbusiveRecipeEvent"\n message
@@ -93,7 +93,7 @@ else Upload to cloudinary success
             activate RecipeService
             RecipeService -> MongoDB++: 27A.2. Consume message and update data
             RecipeService <-- MongoDB--: 27A.3. Return response
-            RecipeService -> Rabbitmq: 27.A.4. Publish "NotifyUserEvent" message <<Async>>
+            RecipeService -> Rabbitmq: 27.A.4. Publish "NotifyUserEvent" event <<Async>>
             ref over Rabbitmq: 27.A.5. NotifyUserConsumer
             deactivate RecipeService
             activate Rabbitmq
@@ -108,7 +108,7 @@ else Upload to cloudinary success
         RecipeService <-- MongoDB--: 31. Return tags list
         RecipeWorker <-- RecipeService--: 32. Return tags list <<gRPC>>
         opt recipe has tags existed in database
-            RecipeWorker -> Rabbitmq++: 33A. Publish "AddTagToRecipeEvent" \n message <<Async>>
+            RecipeWorker -> Rabbitmq++: 33A. Publish "AddTagToRecipeEvent" \n event <<Async>>
             Rabbitmq -> RecipeService: 33A.1. Deliver "AddTagToRecipeEvent"\n message
             deactivate Rabbitmq
             activate RecipeService
@@ -120,7 +120,7 @@ else Upload to cloudinary success
         end opt
 
         opt recipe has tags not existed in database
-            RecipeWorker -> Rabbitmq: 34A. Publish "RequestAddTagEvent" \n message <<Async>>
+            RecipeWorker -> Rabbitmq: 34A. Publish "RequestAddTagEvent" \n event <<Async>>
             deactivate RecipeWorker
             deactivate RecipeWorker
             activate Rabbitmq

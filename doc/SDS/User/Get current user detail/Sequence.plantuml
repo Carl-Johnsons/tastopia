@@ -12,7 +12,7 @@ title "Get current user detail"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n UserService" as UserService
 participant "<<service>>\n IdentityService" as IdentityService
 database Postgresql

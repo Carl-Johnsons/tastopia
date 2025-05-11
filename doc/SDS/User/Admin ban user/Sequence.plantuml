@@ -12,7 +12,7 @@ title "Admin ban user"
 
 actor Admin
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n UserService" as UserService
 participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
@@ -38,7 +38,7 @@ else Current user is admin
     alt User not have banned
       UserService -> Postgresql++: 8A. Update data
       UserService <-- Postgresql--: 8A.1. Return response
-      UserService -> Rabbitmq: 8A.2. Publish "BanUserEvent" \n message <<Async>>
+      UserService -> Rabbitmq: 8A.2. Publish "BanUserEvent" \n event <<Async>>
       activate Rabbitmq
       Rabbitmq -> RecipeService: 8A.3. Deliver "BanUserEvent"\n message
       deactivate Rabbitmq
@@ -57,7 +57,7 @@ else Current user is admin
       WebsiteUI <-- ApiGateway--: 12. Forward response
       Admin <-- WebsiteUI--: 13. Display restore user success message
     end alt
-    UserService -> Rabbitmq: 14. Publish "AddActivityLogEvent" message 
+    UserService -> Rabbitmq: 14. Publish "AddActivityLogEvent" event <<Async>>
     deactivate UserService
     activate Rabbitmq
     ref over Rabbitmq: 15. AddActivityLogConsumers
