@@ -20,6 +20,7 @@ participant "<<service>>\n RecipeWorker" as RecipeWorker
 participant "<<service>>\n GemmaAPI" as GemmaAPI
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Fill the update recipe form and \n touch Update button
 
 MobileUI -> ApiGateway++: 2. Update recipe
@@ -65,6 +66,7 @@ else Upload to cloudinary success
         ApiGateway <-- RecipeService--: 20. Retrun update recipe success
         MobileUI <-- ApiGateway--: 21. Forward response
         User <-- MobileUI--: 22. Display update recipe success\n and redirect user to community screen
+        deactivate User
 
         RecipeWorker -> RecipeWorker: 23. Consume message and call \n CheckRecipeAbuse function
         activate RecipeWorker

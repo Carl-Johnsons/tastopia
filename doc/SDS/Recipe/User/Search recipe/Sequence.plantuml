@@ -18,6 +18,7 @@ participant "<<service>>\n TrackingService" as TrackingService
 database MongoDB
 database Postgresql
 
+activate User
 User -> MobileUI++: 1. Enter keyword and tags \n in search recipe screen
 
 MobileUI -> ApiGateway++: 2. Search recipe
@@ -47,5 +48,5 @@ RecipeService <-- UserService--: 14. Return user's information list <<gRPC>>
 ApiGateway <-- RecipeService--: 15. Return recipe feeds list
 MobileUI <-- ApiGateway--: 16. Forward response
 User <-- MobileUI--: 17. Display recipe feeds list
-
+deactivate User
 @enduml

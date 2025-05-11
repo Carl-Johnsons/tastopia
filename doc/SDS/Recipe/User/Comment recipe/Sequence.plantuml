@@ -16,6 +16,7 @@ participant "<<service>>\n UserService" as UserService
 database MongoDB
 database Postgresql
 
+activate User
 User -> MobileUI++: 1. Enter comment in recipe detail screen
 
 MobileUI -> ApiGateway++: 2. Comment recipe
@@ -39,5 +40,6 @@ deactivate Rabbitmq
 destroy Rabbitmq
 MobileUI <-- ApiGateway--: 14. Forward response
 User <-- MobileUI--: 15. Display recipe comment
+deactivate User
 
 @enduml

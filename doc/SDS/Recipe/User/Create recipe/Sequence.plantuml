@@ -22,6 +22,7 @@ participant "<<service>>\n GemmaAPI" as GemmaAPI
 database MongoDB
 database Postgresql
 
+activate User
 User -> MobileUI++: 1. Fill the create recipe form and \n touch Create button
 
 MobileUI -> ApiGateway++: 2. Create recipe
@@ -78,6 +79,7 @@ else Upload to cloudinary success
         ApiGateway <-- RecipeService--: 21. Return add recipe success
         MobileUI <-- ApiGateway--: 22. Forward response
         User <-- MobileUI--: 23. Display add recipe success\n and redirect user to community screen
+        deactivate User
 
         RecipeWorker -> RecipeWorker: 24. Consume message and call \n CheckRecipeAbuse function
         activate RecipeWorker

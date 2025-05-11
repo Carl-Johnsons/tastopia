@@ -14,6 +14,7 @@ participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Touch delete icon under\n comment in recipe detail screen
 
 MobileUI -> ApiGateway++: 2. Delete comment
@@ -28,5 +29,6 @@ RecipeService <-- MongoDB--: 6. Return response
 ApiGateway <-- RecipeService--: 7. Return deleted comment
 MobileUI <-- ApiGateway--: 8. Forward response
 User <-- MobileUI--: 9. Display delete comment \nout of recipe detail screen
+deactivate User
 
 @enduml

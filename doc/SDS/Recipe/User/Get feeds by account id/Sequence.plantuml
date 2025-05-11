@@ -17,6 +17,7 @@ participant "<<service>>\n UserService" as UserService
 database Postgresql
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Enter user profile screen
 
 MobileUI -> ApiGateway++: 2. Get recipe feeds by account id
@@ -41,6 +42,7 @@ else Recipe list is not empty
     ApiGateway <-- RecipeService--: 12. Return recipe feeds list
     MobileUI <-- ApiGateway--: 13. Forward response
     User <-- MobileUI--: 14. Display recipe feeds list
+    deactivate User
 end alt
 
 @enduml

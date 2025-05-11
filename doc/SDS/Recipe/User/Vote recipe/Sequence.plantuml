@@ -15,6 +15,7 @@ participant "<<service>>\n RecipeService" as RecipeService
 participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Touch on upvote or downvote icon \n in a recipe feed or recipe detail screen
 
 MobileUI -> ApiGateway++: 2. Vote recipe
@@ -34,4 +35,5 @@ ApiGateway <-- RecipeService--: 9. Return recipe vote
 destroy Rabbitmq
 MobileUI <-- ApiGateway--: 10. Forward response
 User <-- MobileUI--: 11. Display recipe vote
+deactivate User
 @enduml

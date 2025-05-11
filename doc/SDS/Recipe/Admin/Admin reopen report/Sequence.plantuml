@@ -18,6 +18,7 @@ participant "<<service>>\n RecipeService" as RecipeService
 participant "<<coordinator>>\nRabbitmq" as Rabbitmq
 database MongoDB
 
+activate Admin
 Admin -> WebsiteUI ++: 1. Click on reopen button in \n recipe or comment report screen
 WebsiteUI -> ApiGateway ++: 2. Admin reopen report
 
@@ -40,6 +41,7 @@ else Current user is admin
         ApiGateway <-- RecipeService: 8. Return report
         WebsiteUI <-- ApiGateway--: 9. Forward response
         Admin <-- WebsiteUI--: 10. Display reopen report success message
+        deactivate Admin
         RecipeService -> Rabbitmq: 11. Publish "AddActivityLogCommand" event <<Async>>
         activate Rabbitmq
         ref over Rabbitmq: 12. Add activity log event

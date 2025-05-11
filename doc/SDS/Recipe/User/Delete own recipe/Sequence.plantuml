@@ -15,6 +15,7 @@ participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Touch Delete button above \na recipe in recipe feed screen
 MobileUI -> ApiGateway++: 2. Delete recipe
 ref over ApiGateway: 3. Verify access token
@@ -24,4 +25,5 @@ RecipeService <-- MongoDB--: 6. Return response
 ApiGateway <-- RecipeService--: 7. Return deleted recipe
 MobileUI <-- ApiGateway--: 8. Forward response
 User <-- MobileUI--: 9. Display delete recipe success message
+deactivate User
 @enduml

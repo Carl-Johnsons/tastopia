@@ -17,6 +17,7 @@ participant "<<service>>\n UserService" as UserService
 database Postgresql
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Toucn recipe bin icon in \nmenu screen
 
 MobileUI -> ApiGateway++: 2. Get recipe bin
@@ -41,6 +42,7 @@ else Recipe list is not empty
     ApiGateway <-- RecipeService--: 12. Return deleted recipe list
     MobileUI <-- ApiGateway--: 13. Forward response
     User <-- MobileUI--: 14. Display deleted recipe list
+    deactivate User
 end alt
 
 @enduml
