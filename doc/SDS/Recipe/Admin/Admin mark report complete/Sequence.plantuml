@@ -12,12 +12,13 @@ title "Admin mark report complete"
 
 actor Admin
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<coordinator>>\nRabbitmq" as Rabbitmq
 database MongoDB
 
+activate Admin
 Admin -> WebsiteUI ++: 1. Click on mark complete button in \n recipe or comment report screen
 WebsiteUI -> ApiGateway ++: 2. Admin mark report complete
 
@@ -40,6 +41,7 @@ else Current user is admin
         ApiGateway <-- RecipeService: 8. Return report
         WebsiteUI <-- ApiGateway--: 9. Forward response
         Admin <-- WebsiteUI--: 10. Display marked report complete success message
+        deactivate Admin
         RecipeService -> Rabbitmq: 11. Publish "AddActivityLogCommand" event <<Async>>
         activate Rabbitmq
         ref over Rabbitmq: 12. Add activity log event

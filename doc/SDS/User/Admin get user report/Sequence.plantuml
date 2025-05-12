@@ -10,8 +10,10 @@ title "Admin get user reports"
 </style>
 
 actor Admin
+activate Admin
+
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n UserService" as UserService
 participant "<<service>>\n IdentityService" as IdentityService
 database Postgresql
@@ -39,6 +41,7 @@ else Current user is admin
         ApiGateway <-- UserService--: 9. Return user reports list
         WebsiteUI <-- ApiGateway--: 10. Forward response
         Admin <-- WebsiteUI--: 11. Display user reports list
+        deactivate Admin
     end alt
 end alt
 

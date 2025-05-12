@@ -11,8 +11,10 @@ title "Ban admin"
 </style>
 
 actor "Super Admin" as SuperAdmin
+activate SuperAdmin
+
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n UserService" as UserService
 database Postgresql
@@ -44,8 +46,9 @@ else Current user is super admin
       ApiGateway <-- UserService: 11. Return restored admin
       WebsiteUI <-- ApiGateway--: 12. Forward response
       SuperAdmin <-- WebsiteUI--: 13. Display restore admin success message
+      deactivate SuperAdmin
     end 
-    UserService -> Rabbitmq: 11. Publish "AddActivityLogEvent" message 
+    UserService -> Rabbitmq: 11. Publish "AddActivityLogEvent" event <<Async>> 
     deactivate UserService
     activate Rabbitmq
     ref over Rabbitmq: 12. AddActivityLogConsumers

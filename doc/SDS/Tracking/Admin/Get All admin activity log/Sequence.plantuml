@@ -10,6 +10,8 @@ title "Get all admins' activity log diagram"
 </style>
 
 actor "Super Admin" as SuperAdmin
+activate SuperAdmin
+
 boundary WebsiteUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n TrackingService" as TrackingService
@@ -42,6 +44,7 @@ else AdminActivityLog list is not empty
     ApiGateway <-- TrackingService--: 12. Return all admin's activity log
     WebsiteUI <-- ApiGateway--: 13. Forward response
     SuperAdmin <-- WebsiteUI--: 14. Display all admins' activity log
-end alt
+    deactivate SuperAdmin
+end
 
 @enduml

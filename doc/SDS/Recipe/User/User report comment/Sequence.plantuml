@@ -10,10 +10,11 @@ title "User report comment"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Touch on report icon \n under a comment in recipe detail screen
 
 MobileUI -> ApiGateway++: 2. Report comment
@@ -37,5 +38,6 @@ else User adrealy reported comment
   ApiGateway <-- RecipeService--: 10. Return comment report
   MobileUI <-- ApiGateway--: 11. Forward response
   User <-- MobileUI--: 12. Display remove report success message
+  deactivate User
 end alt
 @enduml

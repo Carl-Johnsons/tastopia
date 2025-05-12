@@ -10,6 +10,8 @@ title "Search user view recipe detail history diagram"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n TrackingService" as TrackingService
@@ -48,6 +50,7 @@ else View list is not empty
     ApiGateway <-- TrackingService--: 16. Return recipes list
     MobileUI <-- ApiGateway--: 17. Forward response
     User <-- MobileUI--: 18. Display recipes list
-end alt
+    deactivate User
+end
 
 @enduml

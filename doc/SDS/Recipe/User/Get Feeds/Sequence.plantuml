@@ -11,12 +11,13 @@ title "Get feeds"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UserService" as UserService
 database Postgresql
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Select recipe tag
 
 MobileUI -> ApiGateway++: 2. Get recipe feeds
@@ -41,6 +42,7 @@ else Recipe list is not empty
     ApiGateway <-- RecipeService--: 12. Return recipe feeds list
     MobileUI <-- ApiGateway--: 13. Forward response
     User <-- MobileUI--: 14. Display recipe feeds list
+    deactivate User
 end alt
 
 @enduml

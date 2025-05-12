@@ -11,10 +11,11 @@ title "Restore own recipe"
 
 actor User
 boundary MobileUI 
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Touch Restore button above \n a recipe in recipe bin screen
 MobileUI -> ApiGateway++: 2. Restore recipe
 ref over ApiGateway: 3. Verify access token
@@ -24,4 +25,5 @@ RecipeService <-- MongoDB--: 6. Return response
 ApiGateway <-- RecipeService--: 7. Return restore recipe
 MobileUI <-- ApiGateway--: 8. Forward response
 User <-- MobileUI--: 9. Display restore recipe success message
+deactivate User
 @enduml

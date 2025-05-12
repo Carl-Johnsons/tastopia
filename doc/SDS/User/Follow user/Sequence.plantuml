@@ -11,8 +11,10 @@ title "Follow user"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n UserService" as UserService
 participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
@@ -33,7 +35,7 @@ UserService <-- Postgresql--: 6. Return response
 alt User not have followed
   UserService -> Postgresql++: 7. Insert data
   UserService <-- Postgresql--: 7A.1. Return response
-  UserService -> Rabbitmq: 7A.2. Publish "NotifyUserEvent" message 
+  UserService -> Rabbitmq: 7A.2. Publish "NotifyUserEvent" event <<Async>>
   activate Rabbitmq
   ref over Rabbitmq: 7A.3. NotifyUserConsumer
   ApiGateway <-- UserService: 7A.4. Return user follow
@@ -46,5 +48,6 @@ else User adrealy followed
   ApiGateway <-- UserService--: 10. Return user follow
   MobileUI <-- ApiGateway--: 11. Forward response
   User <-- MobileUI--: 12. Display unfollow success message
+  deactivate User
 end alt
 @enduml

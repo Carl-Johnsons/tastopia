@@ -11,15 +11,15 @@ title "Get recipe detail"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\n ApiGateway" as ApiGateway
+participant "<<coordinator>>\n ApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UserService" as UserService
-participant "<<cordinator>>\n Rabbitmq" as Rabbitmq
+participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
 participant "<<service>>\n TrackingService" as TrackingService
 database MongoDB
 database Postgresql
 
-
+activate User
 User -> MobileUI++: 1. Touch a recipe feed
 
 MobileUI -> ApiGateway++: 2. Get recipe detail
@@ -36,7 +36,7 @@ alt Recipe is not existed
     MobileUI <-- ApiGateway: 7A.1. Foward response
     User <-- ApiGateway: 7a.2. Display not found error
 else Recipe is existed
-    RecipeService -> Rabbitmq++: 8. Publish "UserViewRecipeDetailEvent" \n message <<Async>>
+    RecipeService -> Rabbitmq++: 8. Publish "UserViewRecipeDetailEvent" \n event <<Async>>
     Rabbitmq --> TrackingService: 9. Deliver "UserViewRecipeDetailEvent"\n message
     deactivate Rabbitmq
     activate TrackingService
@@ -53,6 +53,7 @@ else Recipe is existed
     ApiGateway <-- RecipeService--: 16. return recipe detail
     MobileUI <-- ApiGateway--: 17. Forward response
     User <-- MobileUI--: 18. Display recipe detail
+    deactivate User
 end alt
 
 

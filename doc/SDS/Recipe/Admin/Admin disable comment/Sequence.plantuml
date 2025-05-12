@@ -11,12 +11,13 @@ title "Admin disable comment"
 
 actor Admin
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<coordinator>>\nRabbitmq" as Rabbitmq
 database MongoDB
 
+activate Admin
 Admin -> WebsiteUI++: 1. Admin click disable button in \n comment table
 WebsiteUI -> ApiGateway++: 2. Admin disable comment
 
@@ -47,6 +48,7 @@ RecipeService <-- MongoDB--: 7. Return response
           ApiGateway <-- RecipeService: 12. Return recipe detail
           WebsiteUI <-- ApiGateway--: 13. Forward response
           Admin <-- WebsiteUI--: 14. Display success message
+          deactivate Admin
           RecipeService -> Rabbitmq: 15. Publish "AddActivityLogCommand" event <<Async>>
           activate Rabbitmq
           ref over Rabbitmq: 16. Add activity log event

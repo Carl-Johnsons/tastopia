@@ -11,14 +11,14 @@ title "Admin create tag"
 
 actor Admin
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UploadFileService" as UploadFileService
 participant "<<service>>\n Cloudinary" as Cloudinary
 participant "<<coordinator>>\nRabbitmq" as Rabbitmq
 database MongoDB
-
+activate Admin
 Admin -> WebsiteUI++: 1. Fill the create tag form and \n click Create button
 WebsiteUI -> ApiGateway++: 2. Admin create tag
 
@@ -52,7 +52,7 @@ else Current user is admin
         alt Add tag to database fail
             RecipeService -> RecipeService: 13A. Roll back images
             activate RecipeService
-            RecipeService -> Rabbitmq: 13A.1. Publish "DeleteMultipleImageEvent" \n message <<Async>>
+            RecipeService -> Rabbitmq: 13A.1. Publish "DeleteMultipleImageEvent" \n event <<Async>>
             deactivate RecipeService
             activate Rabbitmq
             Rabbitmq -> UploadFileService: 13A.2. Deliver "DeleteMultipleImageEvent"\n message
@@ -73,10 +73,13 @@ else Current user is admin
             deactivate Rabbitmq
             destroy Rabbitmq
             ApiGateway <-- RecipeService: 16. Return add tag success message
+            deactivate RecipeService
             WebsiteUI <-- ApiGateway: 17. Forward response
+            deactivate ApiGateway
             Admin <-- WebsiteUI: 18. Display add tag success message
+            deactivate WebsiteUI
+            deactivate Admin
         end alt 
     end alt 
 end alt
-
 @enduml

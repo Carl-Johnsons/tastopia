@@ -10,10 +10,11 @@ title "User report recipe"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Touch on report icon \n in a recipe feed or recipe detail screen
 
 MobileUI -> ApiGateway++: 2. Report recipe
@@ -37,6 +38,7 @@ else User adrealy reported recipe
   ApiGateway <-- RecipeService--: 10. Return recipe report
   MobileUI <-- ApiGateway--: 11. Forward response
   User <-- MobileUI--: 12. Display remove report success message
+  deactivate User
 end alt
 
 

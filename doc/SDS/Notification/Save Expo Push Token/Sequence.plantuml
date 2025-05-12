@@ -11,6 +11,7 @@ title "Save expo push token diagram"
 </style>
 
 actor User
+activate User
 boundary MobileUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
@@ -40,5 +41,6 @@ end
 ApiGateway <-- NotificationService--: 10. Return success
 MobileUI <-- ApiGateway--: 11. Forward response
 User <-- MobileUI--: 12. Display notification list
+deactivate User
 
 @enduml

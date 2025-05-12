@@ -11,11 +11,12 @@ title "Admin get recipe ranking by view"
 
 actor Admin
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n RecipeService" as RecipeService
 database MongoDB
 
+activate Admin
 Admin -> WebsiteUI++: 1. Admin enter statistic screen
 WebsiteUI -> ApiGateway++: 2. Admin get recipe ranking by view
 
@@ -34,6 +35,7 @@ else Current user is admin
     ApiGateway <-- RecipeService--: 8. Return recipe ranking list
     WebsiteUI <-- ApiGateway--: 9. Forward response
     Admin <-- WebsiteUI--: 10. Display recipe ranking list
+    deactivate Admin
 end alt
 
 @enduml

@@ -10,6 +10,9 @@ title "Create admin diagram"
 </style>
 
 actor "Super admin" as SuperAdmin
+
+activate SuperAdmin
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
@@ -63,6 +66,7 @@ else
   ApiGateway <-- IdentityService --: 20. Return success status code
   MobileUI <-- ApiGateway --: 21. Forward response
   SuperAdmin <-- MobileUI --: 22. Display alert create admin successfully
+  deactivate SuperAdmin
 end
 
 @enduml

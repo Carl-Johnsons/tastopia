@@ -10,6 +10,8 @@ title "Change password diagram"
 </style>
 
 actor User
+
+activate User
 boundary MobileUI
 participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
@@ -42,6 +44,7 @@ else
       ApiGateway <-- IdentityService --: 11. Return success status code
       MobileUI <-- ApiGateway --: 12. Forward response
       User <-- MobileUI --: 13. Redirect user to login page to\n login their account with new password
+      deactivate User
     end
   end
 end
