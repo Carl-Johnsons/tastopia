@@ -12,30 +12,30 @@ actor "Gemma" as gemma
 actor "Expo Speech Recognition" as speech
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application {
-    usecase "UC-2: Login (Mobile)" as ucLogin
-    usecase "UC-5: Forgot password (Mobile)" as ucForgotPassword
-    usecase "UC-11 Report users" as ucReportUser
-    usecase "UC-12 Logout" as ucLogout
-    usecase "UC-13: Change settings (Mobile)" as ucManageSetting
-    usecase "UC-15: Manage profile (Mobile)" as ucManageProfile
+    usecase "UC-M-02: Login" as ucLogin
+    usecase "UC-M-04: Forgot password" as ucForgotPassword
+    usecase "UC-M-07: View other users' profiles" as ucViewUSProfile
+    usecase "UC-M-08: Report users" as ucReportUser
+    usecase "UC-M-09: Logout" as ucLogout
+    usecase "UC-M-10: Change settings" as ucManageSetting
+    usecase "UC-M-11: Manage profile" as ucManageProfile
 
-    usecase "UC-7: Search" as ucSearch
-    usecase "UC-8: Browse recipes" as ucBrowseRecipes
-    usecase "UC-17: Vote recipes" as ucVoteRecipe
-    usecase "UC-18: Comment recipes" as ucCmtRecipe
-    usecase "UC-19: Report comments" as ucReportComment
-    usecase "UC-20: Report recipes" as ucReportRecipe
-    usecase "UC-21: Bookmark recipes" as ucBookmarkRecipe
-    usecase "UC-22: View recipe detail" as ucViewRecipeDetail
-    usecase "UC-23: Use guided cooking mode" as ucGuidedCCM
-    usecase "UC-10: View other users' profiles (User)" as ucViewUSProfile
+    usecase "UC-M-05: Search" as ucSearch
+    usecase "UC-M-06: Browse recipes" as ucBrowseRecipes
+    usecase "UC-M-12: Vote recipes" as ucVoteRecipe
+    usecase "UC-M-13: Comment recipes" as ucCmtRecipe
+    usecase "UC-M-14: Report comments" as ucReportComment
+    usecase "UC-M-15: Report recipes" as ucReportRecipe
+    usecase "UC-M-16: Bookmark recipes" as ucBookmarkRecipe
+    usecase "UC-M-17: View recipe detail" as ucViewRecipeDetail
+    usecase "UC-M-18: Use guided cooking mode" as ucGuidedCCM
 
-    usecase "UC-24: View menu" as ucViewMenu
-    usecase "UC-25: Manage own recipes" as ucManageRecipe
-    usecase "UC-26: View recent recipes" as ucViewRecentRecipes
+    usecase "UC-M-19: View menu" as ucViewMenu
+    usecase "UC-M-20: Manage own recipes" as ucManageRecipe
+    usecase "UC-M-21: View recent recipes" as ucViewRecentRecipes
 
-    usecase "UC-27: View notifications" as ucViewNotif
-    usecase "UC-28: View followers and followings" as ucViewFollow
+    usecase "UC-M-22: View notifications" as ucViewNotif
+    usecase "UC-M-23: View followers and followings" as ucViewFollow
 
     note "Create/Read/\nUpdate/Delete" as noteManageRecipe
     note "Read/Update" as noteManageProfile
@@ -86,8 +86,8 @@ rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>application 
     ucViewNotif .....>ucLogin : <<include>>
     ucLogin <.. ucForgotPassword : <<extend>>
 
-    usecase "UC-29: Command by voice \n in cooking mode" as ucCommandVoiceCCM
-    usecase "UC-30: Recognize ingredients \n by capturing image" as ucRecognizeIngre
+    usecase "UC-M-24: Command by voice \n in cooking mode" as ucCommandVoiceCCM
+    usecase "UC-M-25: Recognize ingredients \n by capturing image" as ucRecognizeIngre
 
     speech --up-> ucCommandVoiceCCM
 

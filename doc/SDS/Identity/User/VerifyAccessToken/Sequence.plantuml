@@ -12,7 +12,7 @@ title "Verify access token sequence diagram"
 </style>
 
 ' Write flow here
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\nIdentity service" as IdentityService
 
 ApiGateway -> IdentityService: 1. Request to validate token

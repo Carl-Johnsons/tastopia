@@ -11,13 +11,14 @@ title "Admin get comment reports"
 
 actor Admin
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UserService" as UserService
 database Postgresql
 database MongoDB
 
+activate Admin
 Admin -> WebsiteUI++: 1. Admin click comment report \n button in administer comment
 WebsiteUI -> ApiGateway++: 2. Admin get comment reports
 
@@ -45,6 +46,7 @@ RecipeService <-- MongoDB--: 7. Return response
       ApiGateway <-- RecipeService--: 13. Return comment reports list
       WebsiteUI <-- ApiGateway--: 14. Forward response
       Admin <-- WebsiteUI--: 15. Display comment reports list
+      deactivate Admin
   end alt
 end alt
 @enduml

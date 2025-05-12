@@ -10,6 +10,8 @@ title "Get account statistic diagram"
 </style>
 
 actor "Super admin" as SuperAdmin
+activate SuperAdmin
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
@@ -29,5 +31,5 @@ IdentityService <-- Postgresql --: 6. Return response
 ApiGateway <-- IdentityService --: 7. Return success status code
 MobileUI <-- ApiGateway --: 8. Forward response
 SuperAdmin <-- MobileUI --: 9. Display account statistic
-
+deactivate SuperAdmin
 @enduml

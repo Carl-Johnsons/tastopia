@@ -10,8 +10,10 @@ title "Get admin"
 </style>
 
 actor "Super Admin" as SuperAdmin
+activate SuperAdmin
+
 boundary WebsiteUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n UserService" as UserService
 participant "<<service>>\n IdentityService" as IdentityService
 database Postgresql
@@ -48,6 +50,7 @@ else Current user is super admin
         ApiGateway <-- UserService--: 13. Return admins list
         WebsiteUI <-- ApiGateway--: 14. Forward response
         SuperAdmin <-- WebsiteUI--: 15. Display admins list
+        deactivate SuperAdmin
     end alt
 end alt
 

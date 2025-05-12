@@ -10,6 +10,8 @@ title "Delete user search recipe diagram"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\nTrackingService" as TrackingService
@@ -35,6 +37,7 @@ else
   ApiGateway <-- TrackingService--: 10. Return success status code
   MobileUI <-- ApiGateway--: 11. Forward response
   User <-- MobileUI--: 12. Re-render the search keyword
+  deactivate User
 end
 
 @enduml

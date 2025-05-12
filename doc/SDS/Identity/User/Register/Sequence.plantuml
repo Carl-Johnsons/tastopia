@@ -1,5 +1,7 @@
 @startuml Sequence
 actor User
+activate User
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
@@ -68,6 +70,7 @@ else
 
   MobileUI <-- ApiGateway--: 19. Forward response
   User <-- MobileUI--: 20. Redirect user to verify account screen
+  deactivate User
 end
 
 @enduml

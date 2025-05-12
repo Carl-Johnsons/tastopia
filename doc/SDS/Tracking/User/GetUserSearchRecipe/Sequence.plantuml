@@ -10,6 +10,8 @@ title "Get user search recipe diagram"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n TrackingService" as TrackingService
@@ -28,5 +30,6 @@ TrackingService <-- MongoDB--: 6. Return response
 ApiGateway <-- TrackingService--: 7. Return keyword list
 MobileUI <-- ApiGateway--: 8. Forward response
 User <-- MobileUI--: 9. Display keyword list
+deactivate User
 
 @enduml

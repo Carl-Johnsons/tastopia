@@ -11,8 +11,10 @@ title "User report"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n UserService" as UserService
 database Postgresql
@@ -41,5 +43,6 @@ else User adrealy reported
   ApiGateway <-- UserService--: 10. Return user report
   MobileUI <-- ApiGateway--: 11. Forward response
   User <-- MobileUI--: 12. Display remove report success message
+  deactivate User
 end alt
 @enduml

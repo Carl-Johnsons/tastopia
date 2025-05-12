@@ -11,8 +11,10 @@ title "Get user setting"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n UserService" as UserService
 database Postgresql
@@ -32,5 +34,6 @@ UserService <-- Postgresql--: 6. Return response
 ApiGateway <-- UserService--: 7. Return user setting
 MobileUI <-- ApiGateway--: 8. Forward response
 User <-- MobileUI--: 9. Save user setting\n to async storage
+deactivate User
 
 @enduml

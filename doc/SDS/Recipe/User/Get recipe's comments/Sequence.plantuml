@@ -11,12 +11,13 @@ title "Get recipe comment"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\n ApiGateway" as ApiGateway
+participant "<<coordinator>>\n ApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<service>>\n UserService" as UserService
 database Postgresql
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Enter recipe detail screen
 
 MobileUI -> ApiGateway++: 2. Get recipe comments
@@ -41,5 +42,6 @@ else Comment list is not empty
     ApiGateway <-- RecipeService--: 12. Return recipe comments list
     MobileUI <-- ApiGateway--: 13. Forward response
     User <-- MobileUI--: 14. Display recipe comments list
+    deactivate User
 end alt
 @enduml

@@ -10,16 +10,16 @@ actor "SpeedSMS      " as sms
 actor "Gmail      " as gmail
 
 rectangle Ingredient-based<U+0020>food<U+0020>recommendation<U+0020>dashboard<U+0020>website {
-    usecase "UC-3: Login (Dashboard)" as ucLogin
-    usecase "UC-6: Forgot password (Dashboard)" as ucForgotPassword
-    usecase "UC-12: Logout" as ucLogout
-    usecase "UC-14: Change settings (Dashboard)" as ucManageSetting
-    usecase "UC-16: Manage profile (Dashboard)" as ucManageProfile
+    usecase "UC-W-01: Login" as ucLogin
+    usecase "UC-W-02: Forgot password" as ucForgotPassword
+    usecase "UC-W-03: Logout" as ucLogout
+    usecase "UC-W-04: Change settings" as ucManageSetting
+    usecase "UC-W-05: Manage profile" as ucManageProfile
 
-    usecase "UC-31: Administer users" as ucAdmUser
-    usecase "UC-32: Administer tags" as ucAdmTags
-    usecase "UC-33: Administer recipes" as ucAdmRecipe
-    usecase "UC-35: Administer reports" as ucAdmReport
+    usecase "UC-W-06: Administer users" as ucAdmUser
+    usecase "UC-W-07: Administer tags" as ucAdmTags
+    usecase "UC-W-08: Administer recipes" as ucAdmRecipe
+    usecase "UC-W-09: Administer reports" as ucAdmReport
 
 
     note "Read/Delete/Restore" as noteAdmUser

@@ -10,11 +10,12 @@ title "Vote recipe"
 
 actor User
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n RecipeService" as RecipeService
 participant "<<coordinator>>\n Rabbitmq" as Rabbitmq
 database MongoDB
 
+activate User
 User -> MobileUI++: 1. Touch on upvote or downvote icon \n in a recipe feed or recipe detail screen
 
 MobileUI -> ApiGateway++: 2. Vote recipe
@@ -27,11 +28,12 @@ database MongoDB
 RecipeService -> MongoDB++: 5. Query and insert data
 RecipeService <-- MongoDB--: 6. Return response
 
-RecipeService -> Rabbitmq++: 7. Publish "NotifyUserEvent" message <<Async>>
+RecipeService -> Rabbitmq++: 7. Publish "NotifyUserEvent" event <<Async>>
 ref over Rabbitmq: 8. NotifyUserConsumer
 
 ApiGateway <-- RecipeService--: 9. Return recipe vote
 destroy Rabbitmq
 MobileUI <-- ApiGateway--: 10. Forward response
 User <-- MobileUI--: 11. Display recipe vote
+deactivate User
 @enduml

@@ -11,8 +11,10 @@ title "Get current user detail"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n UserService" as UserService
 participant "<<service>>\n IdentityService" as IdentityService
 database Postgresql
@@ -37,5 +39,6 @@ UserService <-- IdentityService--: 10. Return account \n information <<gRPC>>
 ApiGateway <-- UserService--: 11. Return user detail
 MobileUI <-- ApiGateway--: 12. Forward response
 User <-- MobileUI--: 13. Display user detail
+deactivate User
 
 @enduml

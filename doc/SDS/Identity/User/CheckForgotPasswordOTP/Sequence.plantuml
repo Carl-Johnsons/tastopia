@@ -10,6 +10,9 @@ title "Check forgot password's OTP diagram"
 </style>
 
 actor User
+
+activate User
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
@@ -40,6 +43,7 @@ else
       ApiGateway <-- IdentityService --: 9. Return success status code
       MobileUI <-- ApiGateway --: 10. Forward response
       User <-- MobileUI --: 11. Redirect user to change password screen
+      deactivate User
     end
   end
 end

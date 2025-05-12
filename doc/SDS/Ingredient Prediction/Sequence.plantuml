@@ -12,6 +12,8 @@ title "Ingredient Prediction sequence diagram"
 
 
 actor User
+activate User
+
 boundary MobileUI
 participant "<<coordinator>>\nApiGateWay" as ApiGateway
 participant "<<service>>\nIdentityService" as IdentityService
@@ -21,7 +23,7 @@ User -> MobileUI++: 1. User capture photo \n or upload photo
 MobileUI -> ApiGateway++: 2. Request ingredient prediction 
 
 activate IdentityService
-ref over ApiGateway, IdentityService: 3. Get access token
+ref over ApiGateway, IdentityService: 3. Verify access token
 ApiGateway -[hidden]-> IdentityService
 deactivate IdentityService
 
@@ -29,5 +31,5 @@ ApiGateway -> IngredientPredictService++: 4. Forward request
 ApiGateway <-- IngredientPredictService--: 5. return response
 MobileUI <-- ApiGateway--: 6. Forward response
 User <-- MobileUI--: 7. Display ingredient prediction result
-
+deactivate User
 @enduml

@@ -11,8 +11,10 @@ title "Update current user's setting"
 </style>
 
 actor User
+activate User
+
 boundary MobileUI
-participant "<<cordinator>>\nApiGateway" as ApiGateway
+participant "<<coordinator>>\nApiGateway" as ApiGateway
 participant "<<service>>\n IdentityService" as IdentityService
 participant "<<service>>\n UserService" as UserService
 database Postgresql
@@ -43,6 +45,7 @@ else
   ApiGateway <-- UserService--: 11. Return success status code
   MobileUI <-- ApiGateway--: 12. Forward response
   User <-- MobileUI--: 13. Display update setting successfully
+  deactivate User
 end
 
 @enduml
