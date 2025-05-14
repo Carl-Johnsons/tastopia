@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+      - name: mongo
+        envFrom:
+          - secretRef:
+              name: global-secret
+        image: mongo
+        livenessProbe:
+          exec:
+            command:
+              - sh
+              - -c
+              - |
+                mongosh -u $MONGO_INITDB_ROOT_USERNAME -p $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --quiet --eval "db.runCommand('ping').ok"
+          failureThreshold: 10
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 15
+        volumeMounts:
+          - name: mongo-storage
+            mountPath: /data/db
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "64Mi"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+      restartPolicy: Always
+      volumes:
+        - name: mongo-storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  resources:
+    requests:
+      storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+
