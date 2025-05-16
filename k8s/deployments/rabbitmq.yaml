@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+spec:
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      volumes:
+        - name: rabbitmq-storage
+          persistentVolumeClaim: 
+            claimName: rabbitmq-pvc
+      initContainers:
+        - name: init-rabbitmq
+          image: rabbitmq:4.0.2-management
+          command: ["sh", "-c", "chown -R rabbitmq:rabbitmq /var/lib/rabbitmq"]
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:4.0.2-management
+        env:
+          - name: RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS
+            value: "true"
+        envFrom:
+          - secretRef:
+              name: global-secret
+        livenessProbe:
+          exec:
+            command:
+              - sh
+              - -c
+              - |
+                rabbitmq-diagnostics -q ping
+          failureThreshold: 10
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 10
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "64Mi"
+          limits:
+            memory: "500M"
+            cpu: "500m"
+        ports:
+          - containerPort: 5672
+            protocol: TCP
+          - containerPort: 15672
+            protocol: TCP
+        volumeMounts:
+          - mountPath: /var/lib/rabbitmq
+            name: rabbitmq-storage
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rabbitmq-pvc
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany

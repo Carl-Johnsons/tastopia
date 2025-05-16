@@ -1,46 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo
+  name: postgres
 spec:
   selector:
     matchLabels:
-      app: mongo
-  strategy:
-    type: Recreate
+      app: postgres
   template:
     metadata:
       labels:
-        app: mongo
+        app: postgres
     spec:
       volumes:
-        - name: mongo-storage
+        - name: postgres-storage
           persistentVolumeClaim:
-            claimName: mongo-pvc
+            claimName: postgres-pvc
       restartPolicy: Always
       containers:
-      - name: mongo
+      - name: postgres
         envFrom:
           - secretRef:
               name: global-secret
-        image: mongo
+        image: postgres:17.0-alpine
         volumeMounts:
-          - name: mongo-storage
-            mountPath: /data/db
+          - name: postgres-storage
+            mountPath: /var/lib/postgresql/data
         livenessProbe:
           exec:
             command:
               - sh
               - -c
-              - |
-                mongosh -u $MONGO_INITDB_ROOT_USERNAME -p $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --quiet --eval "db.runCommand('ping').ok"
+              - | 
+                pg_isready -U ${POSTGRES_USER} || exit 1
           failureThreshold: 10
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 15
-        ports:
-        - containerPort: 27017
-          protocol: TCP
         resources:
           requests:
             cpu: "250m"
@@ -48,11 +43,14 @@ spec:
           limits:
             memory: "500M"
             cpu: "500m"
+        ports:
+        - containerPort: 5432
+          protocol: TCP
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mongo-pvc
+  name: postgres-pvc
 spec:
   resources:
     requests:
