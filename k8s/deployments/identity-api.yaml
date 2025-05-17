@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identity-api
+spec:
+  selector:
+    matchLabels:
+      app: identity-api
+  template:
+    metadata:
+      labels:
+        app: identity-api
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: identity-api
+        image: localhost:6000/tastopia-identity-api
+        envFrom:
+          - secretRef:
+              name: global-secret
+          - secretRef:
+              name: identity-api-secret
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "64Mi"
+          limits:
+            memory: "500M"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        - containerPort: 443
+          protocol: TCP
