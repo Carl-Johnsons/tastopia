@@ -1,29 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: identity-api
+  name: user-api
 spec:
   selector:
     matchLabels:
-      app: identity-api
+      app: user-api
   template:
     metadata:
       labels:
-        app: identity-api
+        app: user-api
     spec:
       restartPolicy: Always
       volumes:
         - name: tls-certs
           secret:
-            secretName: identity-api-tls
+            secretName: user-api-tls
             items:
               - key: tls.crt
                 path: tls.crt
               - key: tls.key
                 path: tls.key
       containers:
-      - name: identity-api
-        image: taiduc113/tastopia:identity-api
+      - name: user-api
+        image: taiduc113/tastopia:user-api
         volumeMounts:
           - name: tls-certs
             mountPath: /etc/ssl/certs/server-cert.crt
@@ -35,7 +35,7 @@ spec:
           - secretRef:
               name: global-secret
           - secretRef:
-              name: identity-api-secret
+              name: user-api-secret
         resources:
           requests:
             cpu: "250m"
