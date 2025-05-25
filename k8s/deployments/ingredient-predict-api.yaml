@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingredient-predict-api
+spec:
+  selector:
+    matchLabels:
+      app: ingredient-predict-api
+  template:
+    metadata:
+      labels:
+        app: ingredient-predict-api
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: ingredient-predict-api
+        image: taiduc113/tastopia:ingredient-predict-api
+        envFrom:
+          - secretRef:
+              name: global-secret
+          - secretRef:
+              name: ingredient-predict-api-secret
+        resources:
+          requests:
+            cpu: "1000m"         # Request 1 full CPU
+            memory: "3Gi"        # Start with 3Gi to ensure the pod gets scheduled on a capable node
+          limits:
+            cpu: "2000m"         # Max 2 CPUs
+            memory: "5Gi"        # Cap memory at 5Gi
+        ports:
+        - containerPort: 80
+          protocol: TCP
