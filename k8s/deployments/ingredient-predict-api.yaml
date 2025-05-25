@@ -22,11 +22,11 @@ spec:
               name: ingredient-predict-api-secret
         resources:
           requests:
-            cpu: "1000m"         # Request 1 full CPU
-            memory: "3Gi"        # Start with 3Gi to ensure the pod gets scheduled on a capable node
+            cpu: "1000m"
+            memory: "4Gi"
           limits:
-            cpu: "2000m"         # Max 2 CPUs
-            memory: "5Gi"        # Cap memory at 5Gi
+            cpu: "2000m"
+            memory: "8Gi"
         ports:
         - containerPort: 80
           protocol: TCP
