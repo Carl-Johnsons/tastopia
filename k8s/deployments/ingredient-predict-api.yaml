@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingredient-predict-api
+spec:
+  selector:
+    matchLabels:
+      app: ingredient-predict-api
+  template:
+    metadata:
+      labels:
+        app: ingredient-predict-api
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: ingredient-predict-api
+        image: taiduc113/tastopia:ingredient-predict-api
+        envFrom:
+          - secretRef:
+              name: global-secret
+          - secretRef:
+              name: ingredient-predict-api-secret
+        resources:
+          requests:
+            cpu: "1000m"
+            memory: "4Gi"
+          limits:
+            cpu: "2000m"
+            memory: "8Gi"
+        ports:
+        - containerPort: 80
+          protocol: TCP
