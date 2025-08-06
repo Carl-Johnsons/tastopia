@@ -13,7 +13,7 @@ python -m venv venv
 echo -e "${PURPLE}Activate virtual environment for Python${NC}"
 
 if [[ "$PLATFORM" == "windows" ]]; then
-  ./venv/Scripts/activate
+  source ./venv/Scripts/activate
 else
   source ./venv/bin/activate
 fi
