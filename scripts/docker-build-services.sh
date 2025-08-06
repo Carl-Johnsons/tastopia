@@ -1,10 +1,10 @@
 #!/bin/bash
 
-services=("ingredient-predict-api")
+services=("website")
 project="tastopia"
 repo="taiduc113/tastopia"
 
-docker compose build ingredient-predict-api
+docker compose build website
 
 # Tag each built image into the same repo with different tags
 for service in "${services[@]}"; do

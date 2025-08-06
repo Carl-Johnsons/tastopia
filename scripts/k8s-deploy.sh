@@ -52,6 +52,7 @@ echo ""
 # Apply file .yaml
 cd ./k8s
 
-kubectl apply -f deployments -f services
+# kubectl apply -f deployments -f services
+kubectl apply -f ./deployments/ingredient-predict-api.yaml -f ./services/ingredient-predict-api.yaml
 
 cd "$project_root"
