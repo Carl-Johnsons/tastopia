@@ -126,8 +126,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/APIGateway/.env.production
+      - .env.prod
+      - ./app/server/APIGateway/.env.prod
     depends_on:
       - identity-api
     develop:
@@ -157,8 +157,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/IdentityService/.env.production
+      - .env.prod
+      - ./app/server/IdentityService/.env.prod
     develop:
       watch:
         - path: ./app/server/IdentityService/src
@@ -186,8 +186,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/RecipeService/.env.production
+      - .env.prod
+      - ./app/server/RecipeService/.env.prod
     develop:
       watch:
         - path: ./app/server/RecipeService/src
@@ -213,8 +213,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/UserService/.env.production
+      - .env.prod
+      - ./app/server/UserService/.env.prod
     develop:
       watch:
         - path: ./app/server/UserService/src
@@ -242,8 +242,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/NotificationService/.env.production
+      - .env.prod
+      - ./app/server/NotificationService/.env.prod
     develop:
       watch:
         - path: ./app/server/NotificationService/src
@@ -267,8 +267,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/UploadFileService/.env.production
+      - .env.prod
+      - ./app/server/UploadFileService/.env.prod
     develop:
       watch:
         - path: ./app/server/UploadFileService/src
@@ -294,8 +294,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/TrackingService/.env.production
+      - .env.prod
+      - ./app/server/TrackingService/.env.prod
     develop:
       watch:
         - path: ./app/server/TrackingService/src
@@ -316,8 +316,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/IngredientPredictService/.env.production
+      - .env.prod
+      - ./app/server/IngredientPredictService/.env.prod
 
   # Real-time communication 
   signalr:
@@ -333,8 +333,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/SignalRService/.env.production
+      - .env.prod
+      - ./app/server/SignalRService/.env.prod
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost/health || exit 1"]
       interval: 30s
@@ -351,8 +351,8 @@ services:
     networks:
       - front-end
     env_file:
-      - .env.production
-      - ./app/client/website/.env.production
+      - .env.prod
+      - ./app/client/website/.env.prod
 
   # Worker services
   email-worker:
@@ -366,8 +366,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/NotificationService/.env.production
+      - .env.prod
+      - ./app/server/NotificationService/.env.prod
 
   sms-worker:
     build:
@@ -380,8 +380,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/NotificationService/.env.production
+      - .env.prod
+      - ./app/server/NotificationService/.env.prod
 
   push-notification-worker:
     build:
@@ -394,8 +394,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/NotificationService/.env.production
+      - .env.prod
+      - ./app/server/NotificationService/.env.prod
 
   recipe-worker:
     build:
@@ -408,8 +408,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.production
-      - ./app/server/RecipeService/.env.production
+      - .env.prod
+      - ./app/server/RecipeService/.env.prod
 
 networks:
   back-end:
