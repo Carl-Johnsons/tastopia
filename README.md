@@ -35,14 +35,17 @@ Ensure that you have:
 - Node.js
 - Download google-service.json from Firebase project setting. Then put it in the `./app/client/mobile` directory.
 - Download google credential from Google cloud then put it into the EmailWorker service's root path: `./app/server/NotificationService/src/EmailWorker/`.
+- Infisical CLI ([installation]https://infisical.com/docs/cli/overview)
+  - Once you install infisical cli, you need to copy the "INFISICAL_READ_TOKEN" I already provided in the Secrets tab to fetch secrets
 
 0. Ensure that docker is running
 1. Run this line in Git Bash or a regular terminal if you use MacOS/Linux:
 ``` bash
 ./runScripts
 ```
-2. Choose the option `Generate SSL certificate`
-3. Choose the option `Setup back-end`
-4. After the setup is done, choose the option `Run all services`
-5. Enjoy 💃✨
+2. Choose the option `Generate SSL certificate` (Only do it once)
+3. Choose the option `Pulling environment variables`
+4. Choose the option `Setup back-end`
+5. After the setup is done, choose the option `Run all services`
+6. Enjoy 💃✨
 
