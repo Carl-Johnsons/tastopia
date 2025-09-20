@@ -55,6 +55,12 @@ cd ./scripts
 ./kill-port.sh 6002 &
 ./kill-port.sh 6003
 
+# Kill dotnet services
+if [[ "$PLATFORM" != "windows" ]]; then
+  pkill -9 dotnet &&
+    echo -e "${GREEN}Killed all dotnet process successfully${NC}"
+fi
+
 cd "$project_root"
 
 # Source the .env file to load environment variables
