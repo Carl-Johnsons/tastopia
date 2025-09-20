@@ -33,12 +33,14 @@ const useSearchRecipes = (keyword: string, tagCodes: string[]) => {
     queryKey: ["searchRecipes", keyword],
     enabled: keyword.length > 0 || tagCodes.length > 0,
     queryFn: async ({ pageParam = 0 }) => {
-      const { data } = await protectedAxiosInstance.post<SearchRecipeResponse>(
+      const { data } = await protectedAxiosInstance.get<SearchRecipeResponse>(
         "/api/recipe/search-recipe",
         {
-          keyword,
-          tagCodes: finalTagCodes,
-          skip: pageParam.toString()
+          params: {
+            keyword,
+            tagCodes: finalTagCodes,
+            skip: pageParam.toString()
+          }
         }
       );
       return data;

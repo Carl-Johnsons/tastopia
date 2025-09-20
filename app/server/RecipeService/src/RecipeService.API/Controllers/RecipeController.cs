@@ -99,11 +99,11 @@ public class RecipeController : BaseApiController
     }
 
     [AllowAnonymous]
-    [HttpPost("get-recipe-feed")]
+    [HttpGet("get-recipe-feed")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedRecipeFeedsListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> GetRecipeFeed([FromBody] GetRecipeFeedsDTO getRecipeFeedsDTO)
+    public async Task<IActionResult> GetRecipeFeed([FromQuery] GetRecipeFeedsDTO getRecipeFeedsDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
@@ -130,11 +130,11 @@ public class RecipeController : BaseApiController
     }
 
     [AllowAnonymous]
-    [HttpPost("get-recipe-feed-by-author-id")]
+    [HttpGet("get-recipe-feed-by-author-id")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedRecipeFeedsListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> GetRecipeFeedByAccountId([FromBody] GetRecipeFeedsByAuthorIdDTO getRecipeFeedsByAuthorIdDTO)
+    public async Task<IActionResult> GetRecipeFeedByAccountId([FromQuery] GetRecipeFeedsByAuthorIdDTO getRecipeFeedsByAuthorIdDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
@@ -156,11 +156,11 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpPost("search-recipe")]
+    [HttpGet("search-recipe")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedSearchRecipeListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> SearchRecipe([FromBody] SearchRecipesDTO searchRecipesDTO)
+    public async Task<IActionResult> SearchRecipe([FromQuery] SearchRecipesDTO searchRecipesDTO)
     {
         var claims = _httpContextAccessor.HttpContext?.User.Claims;
         var subjectId = claims?.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Sub)?.Value;
