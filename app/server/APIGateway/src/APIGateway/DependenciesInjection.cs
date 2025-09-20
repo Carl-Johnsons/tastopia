@@ -51,7 +51,8 @@ public static class DependenciesInjection
                 .AddConsul()
                 .AddCacheManager(x =>
                 {
-                    x.WithRedisConfiguration("redis", config =>
+                    x.WithJsonSerializer()
+                    .WithRedisConfiguration("redis", config =>
                     {
                         config.WithEndpoint(DotNetEnv.Env.GetString("REDIS_HOST", "Not Found"), DotNetEnv.Env.GetInt("REDIS_PORT", 0));
                         config.WithPassword(DotNetEnv.Env.GetString("REDIS_PASSWORD", "Not Found"));
