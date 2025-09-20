@@ -175,11 +175,11 @@ public class RecipeController : BaseApiController
         return Ok(result.Value);
     }
 
-    [HttpPost("get-tag")]
+    [HttpGet("get-tag")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(PaginatedTagListResponse), 200)]
     [ProducesResponseType(typeof(ErrorResponseDTO), 400)]
-    public async Task<IActionResult> GetTag([FromBody] GetTagsDTO getTagsDTO)
+    public async Task<IActionResult> GetTag([FromQuery] GetTagsDTO getTagsDTO)
     {
         var result = await _sender.Send(new GetTagsQuery
         {
