@@ -30,5 +30,10 @@
     "editor.defaultFormatter": "zxh404.vscode-proto3"
   },
   "plantuml.dotPath": "${workspaceFolder}/doc/Graphviz-12.2.1-win64/bin/dot.exe",
-  "plantuml.commandArgs": ["-DPLANTUML_LIMIT_SIZE=8192"]
+  "plantuml.commandArgs": [
+    "-DPLANTUML_LIMIT_SIZE=8192"
+  ],
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  }
 }

@@ -8,6 +8,8 @@ using System.Net;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Serilog;
+using Ocelot.Cache.CacheManager;
+using CacheManager.Core;
 
 namespace APIGateway;
 
@@ -24,7 +26,6 @@ public static class DependenciesInjection
         var env = builder.Environment;
 
         builder.ConfigureCommonAPIServices();
-
         services.AddConsulRegistryService();
 
         config.SetBasePath(env.ContentRootPath)
@@ -47,7 +48,15 @@ public static class DependenciesInjection
         // Configure service
         services.AddOcelot()
                 .AddDelegatingHandler<SecretHeaderHandler>(global: true)
-                .AddConsul();
+                .AddConsul()
+                .AddCacheManager(x =>
+                {
+                    x.WithRedisConfiguration("redis", config =>
+                    {
+                        config.WithEndpoint(DotNetEnv.Env.GetString("REDIS_HOST", "Not Found"), DotNetEnv.Env.GetInt("REDIS_PORT", 0));
+                        config.WithPassword(DotNetEnv.Env.GetString("REDIS_PASSWORD", "Not Found"));
+                    }).WithRedisCacheHandle("redis", true);
+                });
 
         services.AddSwaggerServices(config);
 
@@ -132,7 +141,6 @@ public static class DependenciesInjection
         if (ctx.Items.DownstreamRoute().AuthenticationOptions.AuthenticationProviderKey == null) return true;
         else
         {
-
             bool auth = false;
             Claim[] claims = ctx.User.Claims.ToArray<Claim>();
             Dictionary<string, string> required = ctx.Items.DownstreamRoute().RouteClaimsRequirement;

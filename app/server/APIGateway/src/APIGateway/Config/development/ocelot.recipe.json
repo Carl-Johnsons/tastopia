@@ -90,6 +90,28 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
+      "DownstreamPathTemplate": "/api/recipe/get-tag",
+      "DownstreamScheme": "https",
+      "UpstreamHttpMethod": [
+        "POST"
+      ],
+      "UpstreamPathTemplate": "/api/recipe/get-tag",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "SwaggerKey": "recipe",
+      "FileCacheOptions": {
+        "TtlSeconds": 30,
+        "Region": "getTagCache",
+        "MaxBytes": 5242880
+      }
+    },
+    {
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
       "DownstreamPathTemplate": "/api/recipe/{everything}",
       "DownstreamScheme": "https",
       "UpstreamHttpMethod": [
