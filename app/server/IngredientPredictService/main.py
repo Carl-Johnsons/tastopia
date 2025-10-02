@@ -1,19 +1,19 @@
 from contextlib import asynccontextmanager
-from EnvUtility import EnvUtility
+from EnvUtility import get_mongodb_connection_string, is_development, load_env
+from MongoClient import MongoClient
+from ModelLoader import get_clip_model, get_clip_preprocessor, get_model, get_model_tokenizer
+from RedisManager import RedisManager
 from fastapi import FastAPI, File, UploadFile
 from PIL import Image, ImageOps
 # from ultralytics import YOLO
 import httpx
-import pymongo
 import io
 import logging
 import logging.config
 import random
 import uvicorn
 import yaml
-import tensorflow as tf
 import numpy as np
-from open_clip import create_model_from_pretrained, get_tokenizer
 import torch
 import cv2
 import faiss
@@ -23,6 +23,7 @@ import asyncio
 import aiohttp
 import requests
 import os
+
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 with open("log_config.yaml", "r") as f:
@@ -31,18 +32,21 @@ logging.config.dictConfig(log_config)
 logging.addLevelName(logging.INFO, "Information")
 logging.addLevelName(logging.WARNING, "Warning")
 
+load_env()
+# Define utility
+mongoClient = MongoClient(get_mongodb_connection_string())
+redisManager = RedisManager()
+
 # Load the CNN model
-convnext_model = tf.keras.models.load_model('model/convnext_224_f.model.keras')
+convnext_model = get_model()
 # yolo_model = YOLO("./model/yolo_best_f.pt")
-clip_model, preprocess = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-ViT-H-14')
-tokenizer = get_tokenizer('ViT-H-14')
+clip_model = get_clip_model()
+preprocess = get_clip_preprocessor() 
+tokenizer = get_model_tokenizer()
 
 # device = torch.device('cuda:0' if torch.backends.cuda.is_built() else 'cpu')
 device = torch.device('cpu')
 clip_model = clip_model.to(device)
-
-envUtil = EnvUtility()
-envUtil.load_env()
 
 service_host = os.getenv("SERVICE_HOST")
 service_port = int(os.getenv("PORT"))
@@ -50,8 +54,8 @@ service_port = int(os.getenv("PORT"))
 ai_kaggle_server_url = ''
 
 # Load tag from MongoDB
-mongo_client = pymongo.MongoClient(envUtil.get_mongodb_connection_string())
-print(mongo_client.list_database_names())
+mongo_client = mongoClient.get_mongo_client()
+# print(mongo_client.list_database_names())
 recipe_db = mongo_client["RecipeDB"]
 tag_collection = recipe_db["Tag"]
 
@@ -59,7 +63,7 @@ def sync_ai_kaggle_server_url():
     global ai_kaggle_server_url
     ai_kaggle_server_url = requests.get('https://script.google.com/macros/s/AKfycbyVK0wd-G_kuZXrQ0dGDC86xBkhfuHFTm5bXXe0hyL39IND815GSHpli4_v99Cb2KeZFg/exec').text
     
-    print(f"AI Kaggle Server URL: {ai_kaggle_server_url}")
+    logging.info(f"AI Kaggle Server URL: {ai_kaggle_server_url}")
 
 def load_clip_features(names: dict, tag_dict: dict):
     # Load feature
@@ -88,6 +92,7 @@ def load_clip_features(names: dict, tag_dict: dict):
     return features_list, filename_index_list
 
 def sync_tags_and_load_faiss():
+    logging.info('Begin sync_tags_and_load_faiss')
     global tag_dict, names, index, filename_index, text_features, tag_codes
 
     # Load tags from MongoDB
@@ -119,6 +124,8 @@ def sync_tags_and_load_faiss():
     text = torch.as_tensor(text, device=device)
     with torch.no_grad():
         text_features = clip_model.encode_text(text)
+    logging.info('sync_tags_and_load_faiss End')
+    
 
 # Initialize the index, tags and load features
 sync_tags_and_load_faiss()
@@ -136,7 +143,7 @@ async def lifespan(app: FastAPI):
     consul_register_url = f"{consul_base_address}/v1/agent/service/register"
     consul_deregister_url = f"{consul_base_address}/v1/agent/service/deregister/{service_id}"
 
-    if(envUtil.is_development()):
+    if(is_development()):
         health_check_url = f"http://host.docker.internal:{service_port}/health"
     else:
         health_check_url = f"http://{service_host}:{service_port}/health"
@@ -157,7 +164,7 @@ async def lifespan(app: FastAPI):
     async with httpx.AsyncClient() as client:
         response = await client.put(consul_register_url, json=service_registration)
         if response.status_code == 200:
-            logging.info("Successfully registered with Consul 😊")
+            logging.info("Successfully registered with Consul")
         else:
             logging.error("Failed to register with Consul", response.text)
     yield  # The app starts here
@@ -165,7 +172,7 @@ async def lifespan(app: FastAPI):
     async with httpx.AsyncClient() as client:
         response = await client.put(consul_deregister_url)
         if response.status_code == 200:
-            logging.info("Deregistered from Consul 👋")
+            logging.info("Deregistered from Consul")
         else:
             logging.error("Deregistration failed:", response.text)
 
@@ -338,21 +345,35 @@ async def predict_local(image_bytes: bytes):
 async def predict_v2(file: UploadFile = File(...)):
     image_bytes = await file.read()
 
+    phash = redisManager.compute_phash(image_bytes)
+    cached_prediction = redisManager.get_prediction_from_cache(phash=phash)
+    logging.info(f"Phash {phash}")
+
+    if cached_prediction is not None:
+        logging.info(f"Get image from cache with phash {phash}")
+        return cached_prediction
+
     task_server = asyncio.create_task(predict_server(image_bytes))
     task_local = asyncio.create_task(predict_local(image_bytes))
     
-
     done, pending = await asyncio.wait(
         [task_server, task_local], return_when=asyncio.FIRST_COMPLETED
     )
 
     if not list(done)[0].result():
-        return await list(pending)[0]
+        result = await list(pending)[0]
+        redisManager.save_prediction_to_cache(phash=phash, prediction=result)
+        logging.info(f"Save image from local cache with phash {phash}")
+        return result
 
     for task in pending:
         task.cancel()
 
     result = list(done)[0].result()
+
+    redisManager.save_prediction_to_cache(phash=phash, prediction=result)
+    logging.info(f"Save image from remote cache with phash {phash}")
+
     return result
 
 @app.post("/api/ingredient-predict")
