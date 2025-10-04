@@ -339,14 +339,13 @@ async def predict_local(image_bytes: bytes):
     except Exception as e:
         print(f"[Server Error] {e}")
     return None
-    
 
 @app.post("/api/ingredient-predict-v2")
 async def predict_v2(file: UploadFile = File(...)):
     image_bytes = await file.read()
 
     phash = redisManager.compute_phash(image_bytes)
-    cached_prediction = redisManager.get_prediction_from_cache(phash=phash)
+    cached_prediction = redisManager.get_approx_prediction_from_cache(phash=phash)
     logging.info(f"Phash {phash}")
 
     if cached_prediction is not None:
@@ -375,6 +374,46 @@ async def predict_v2(file: UploadFile = File(...)):
     logging.info(f"Save image from remote cache with phash {phash}")
 
     return result
+
+@app.post("/api/ingredient-predict-v2/multi")
+async def predict_v2_multi(files: list[UploadFile] = File(...)):
+    results = []
+
+    for file in files:
+        image_bytes = await file.read()
+
+        phash = redisManager.compute_phash(image_bytes)
+        cached_prediction = redisManager.get_approx_prediction_from_cache(phash=phash)
+        logging.info(f"Phash {phash}")
+
+        if cached_prediction is not None:
+            logging.info(f"Get image from cache with phash {phash}")
+            results.append(cached_prediction)
+            continue
+
+        # Run server + local in parallel
+        task_server = asyncio.create_task(predict_server(image_bytes))
+        task_local = asyncio.create_task(predict_local(image_bytes))
+
+        done, pending = await asyncio.wait(
+            [task_server, task_local], return_when=asyncio.FIRST_COMPLETED
+        )
+
+        if not list(done)[0].result():
+            result = await list(pending)[0]
+            redisManager.save_prediction_to_cache(phash=phash, prediction=result)
+            logging.info(f"Save image from local cache with phash {phash}")
+            results.append(result)
+        else:
+            for task in pending:
+                task.cancel()
+
+            result = list(done)[0].result()
+            redisManager.save_prediction_to_cache(phash=phash, prediction=result)
+            logging.info(f"Save image from remote cache with phash {phash}")
+            results.append(result)
+
+    return {"predictions": results}
 
 @app.post("/api/ingredient-predict")
 async def predict(file: UploadFile = File(...)):

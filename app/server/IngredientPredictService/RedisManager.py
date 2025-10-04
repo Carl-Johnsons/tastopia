@@ -22,6 +22,28 @@ class RedisManager:
       data = self.redis.get(key)
       return json.loads(data) if data else None
 
+  def get_approx_prediction_from_cache(self, phash: str):
+    cached = self.get_prediction_from_cache(phash) 
+
+    if cached:
+       return cached
+
+    key: str = "prediction_img:*"
+    keys: list[bytes] = self.redis.keys(key)
+    keys_str: list[str] = [k.decode("utf-8") for k in keys]
+    
+    for key_item in keys_str:
+      raw_key = key_item[15:]  
+      result = imagehash.hex_to_hash(raw_key) - imagehash.hex_to_hash(phash)
+
+      if (result < 5 and result > 0):
+        logging.info(f"cache hit for: {str(imagehash.hex_to_hash(raw_key))} - {str(imagehash.hex_to_hash(phash))} = {result}")
+        return self.get_prediction_from_cache(raw_key)
+      else:
+        logging.info(f"cache miss, getting prediction for: {str(imagehash.hex_to_hash(raw_key))} - {str(imagehash.hex_to_hash(phash))} = {result}")
+
+    return None
+
   def save_prediction_to_cache(self, phash: str, prediction, ttl=86400):
       key = f"prediction_img:{phash}"
       self.redis.set(key, json.dumps(prediction), ex=ttl)  # expire in 24h
