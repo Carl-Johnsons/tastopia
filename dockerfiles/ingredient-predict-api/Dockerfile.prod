@@ -7,7 +7,8 @@ COPY $BASE_PROJECT_PATH/requirements.txt .
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
-    libgl1-mesa-glx \
+    libgl1 \  
+    # This lib "libgl1-mesa-glx" no longer exist, renamed to libgl1 \
     libglib2.0-0 \
     libgomp1 \
     libsm6 \

@@ -33,6 +33,7 @@ services:
       timeout: 3s
       retries: 10
       start_period: 10s
+    restart: always
     networks:
       - back-end
     environment:
@@ -333,6 +334,8 @@ services:
       context: .
       dockerfile: ./dockerfiles/ingredient-predict-api/Dockerfile.prod
     container_name: ingredient-predict-service
+    volumes:
+      - ./app/server/IngredientPredictService/model:/app/model
     depends_on:
       consul:
         condition: service_healthy
