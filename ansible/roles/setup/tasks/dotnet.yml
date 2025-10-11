@@ -1,22 +1,55 @@
 ---
-- name: Install dotnet package
+- name: Update apt cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+  changed_when: false
+
+- name: Install prerequisites for Microsoft package repo
   become: true
   ansible.builtin.package:
     name:
-      - dotnet-sdk-8.0
+      - wget
+      - apt-transport-https
+      - software-properties-common
     state: present
 
-- name: Get dotnet version
+- name: Download Microsoft package repo
+  become: true
+  ansible.builtin.get_url:
+    url: https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb
+    dest: /tmp/packages-microsoft-prod.deb
+    mode: '0644'
+
+- name: Register Microsoft package repo
+  become: true
+  ansible.builtin.command: dpkg -i /tmp/packages-microsoft-prod.deb
+  register: ms_repo
+  changed_when: ms_repo.rc == 0
+
+- name: Remove Microsoft repo installer
+  become: true
+  ansible.builtin.file:
+    path: /tmp/packages-microsoft-prod.deb
+    state: absent
+
+- name: Update apt cache after adding Microsoft repo
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+  changed_when: false
+
+- name: Install .NET SDK 8.0
+  become: true
+  ansible.builtin.package:
+    name: dotnet-sdk-8.0
+    state: present
+
+- name: Get installed .NET runtimes
   ansible.builtin.command: dotnet --list-runtimes
-  register: out
+  register: dotnet_out
+  changed_when: false
 
-- name: Print output
+- name: Print installed .NET runtimes
   ansible.builtin.debug:
-    var: out.stdout_lines
-
-- name: Install dotnet package
-  become: true
-  ansible.builtin.package:
-    name:
-      - dotnet-sdk-8.0
-    state: present
+    var: dotnet_out.stdout_lines
