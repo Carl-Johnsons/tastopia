@@ -1,8 +1,9 @@
 ---
 - name: Update system
-  ansible.builtin.command: "sudo apt-get update"
+  become: true
+  ansible.builtin.command: "apt-get update"
   register: out
-  changed_when: out.rc = 0
+  changed_when: out.rc == 0
 
 - name: Install dotnet
   ansible.builtin.include_tasks: ./dotnet.yml
