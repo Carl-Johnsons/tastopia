@@ -37,8 +37,12 @@ pull_env_file() {
   else
     output_file=".env.$environment"
   fi
-  echo -e "\e[95mPulling $folder_name $environment env file...\e[0m"
-  infisical export --token=$INFISICAL_TOKEN --path=//$folder_name --env=$environment --log-level debug \
+
+  local prefix_folder_path="/"
+  [[ "$PLATFORM" == "windows" ]] && prefix_folder_path="//"
+
+  echo -e "\e[95mPulling $prefix_folder_path$folder_name $environment env file...\e[0m"
+  infisical export --token=$INFISICAL_TOKEN --path=$prefix_folder_path$folder_name --env=$environment --log-level debug \
   | sed -E "s/^([A-Z0-9_]+)='([0-9]+)'$/\1=\2/" \
   | sed -E "s/^([A-Z0-9_]+)='(.*)'$/\1=\2/" \
   > ./$service_path/$output_file
