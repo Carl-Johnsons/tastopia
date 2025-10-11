@@ -1,6 +1,5 @@
 ---
 - name: Update system
-  become: true
   ansible.builtin.command: "apt-get update"
   register: out
   changed_when: out.rc == 0
