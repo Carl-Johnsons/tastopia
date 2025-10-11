@@ -1,0 +1,22 @@
+---
+- name: Install dotnet package
+  become: true
+  ansible.builtin.package:
+    name:
+      - dotnet-sdk-8.0
+    state: present
+
+- name: Get dotnet version
+  ansible.builtin.command: dotnet --list-runtimes
+  register: out
+
+- name: Print output
+  ansible.builtin.debug:
+    var: out.stdout_lines
+
+- name: Install dotnet package
+  become: true
+  ansible.builtin.package:
+    name:
+      - dotnet-sdk-8.0
+    state: present

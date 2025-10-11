@@ -1,0 +1,6 @@
+---
+- name: Add Infisical CLI repository
+  ansible.builtin.shell: |
+    curl -1sLf 'https://artifacts-cli.infisical.com/setup.deb.sh' | sudo -E bash
+  register: infisical_repo
+  changed_when: infisical_repo.rc == 0

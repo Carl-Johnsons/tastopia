@@ -1,0 +1,17 @@
+---
+- name: Update system
+  ansible.builtin.command: "sudo apt-get update"
+  register: out
+  changed_when: out.rc = 0
+
+- name: Install dotnet
+  ansible.builtin.include_tasks: ./dotnet.yml
+
+- name: Install nodejs
+  ansible.builtin.include_tasks: ./node.yml
+
+- name: Install infisical
+  ansible.builtin.include_tasks: ./infisical.yml
+
+- name: Install docker
+  ansible.builtin.include_tasks: ./docker.yml
