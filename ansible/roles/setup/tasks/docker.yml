@@ -1,7 +1,5 @@
+---
 - name: Add Docker’s official GPG key and repository, then install Docker
-  vars:
-    docker_version: "5:28.1.1-1~ubuntu.24.04~noble"
-
   block:
     - name: Ensure dependencies are installed
       ansible.builtin.apt:
@@ -35,11 +33,17 @@
       ansible.builtin.apt:
         update_cache: yes
 
+    - name: Get Docker CE version string
+      ansible.builtin.shell: |
+        apt-cache madison docker-ce | awk '{ print $3 }' | grep 28.1.1 | head -n 1
+      register: docker_version
+      changed_when: false
+
     - name: Install Docker
       ansible.builtin.apt:
         name:
-          - "docker-ce={{ docker_version }}"
-          - "docker-ce-cli={{ docker_version }}"
+          - "docker-ce={{ docker_version.stdout }}"
+          - "docker-ce-cli={{ docker_version.stdout }}"
           - containerd.io
           - docker-buildx-plugin
           - docker-compose-plugin
