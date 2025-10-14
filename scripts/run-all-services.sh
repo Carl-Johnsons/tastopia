@@ -73,9 +73,6 @@ fi
 
 run_required_docker_services
 
-CertPath=$HOME$ASPNETCORE_Kestrel__Certificates__Default__Path
-echo "SSL certification is on '$CertPath'"
-
 run_service() {
   local http_port=$1
   local project=$2
@@ -85,8 +82,6 @@ run_service() {
   env NUGET_PACKAGES="$project_root/data/nuget" \
     ASPNETCORE_ENVIRONMENT="$ASPNETCORE_ENVIRONMENT" \
     PORT="$http_port" \
-    ASPNETCORE_Kestrel__Certificates__Default__Path=$CertPath \
-    ASPNETCORE_Kestrel__Certificates__Default__Password=$ASPNETCORE_Kestrel__Certificates__Default__Password \
     dotnet watch run --non-interactive \
     --no-launch-profile \
     --project "$project" \
