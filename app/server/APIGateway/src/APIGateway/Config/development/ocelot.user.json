@@ -6,7 +6,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/user/statistic/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -27,7 +27,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/user/toggle-admin-active",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "POST"
       ],
@@ -47,7 +47,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/user",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -67,7 +67,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/user/detail",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -87,7 +87,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/user/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST",
@@ -110,7 +110,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/user/get-user-detail-by-account-id",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -124,7 +124,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/user/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST",
@@ -143,7 +143,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/setting/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST",

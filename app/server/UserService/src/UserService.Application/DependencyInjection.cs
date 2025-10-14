@@ -1,5 +1,6 @@
 ﻿using AccountProto;
 using AutoMapper;
+using Grpc.Core;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using UploadFileProto;
@@ -21,17 +22,23 @@ public static class DependencyInjection
     }
     private static void AddGrpcClientService(this IServiceCollection services)
     {
+        AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
         var serviceProvider = services.BuildServiceProvider();
         var consulService = serviceProvider.GetRequiredService<IConsulRegistryService>();
+        
+        Action<Grpc.Net.Client.GrpcChannelOptions> channelOptions = options =>
+        {
+            options.Credentials = ChannelCredentials.Insecure;
+        };
 
         services.AddGrpcClient<GrpcAccount.GrpcAccountClient>(options =>
         {
-            options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
-        });
+            options.Address = consulService.GetGrpcServiceUri(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
+        }).ConfigureChannel(channelOptions);
 
         services.AddGrpcClient<GrpcUploadFile.GrpcUploadFileClient>(options =>
         {
-            options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_UPLOAD", "Not Found"));
-        });
+            options.Address = consulService.GetGrpcServiceUri(DotNetEnv.Env.GetString("CONSUL_UPLOAD", "Not Found"));
+        }).ConfigureChannel(channelOptions);
     }
 }

@@ -38,7 +38,7 @@ public static class DependenciesInjection
         app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_UPLOAD", "Not Found"));
         app.UseSwaggerServices();
 
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
 
         app.MapControllers();
 

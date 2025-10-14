@@ -6,7 +6,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/recipe/statistic{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -26,7 +26,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/recipe/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST",
@@ -49,7 +49,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/recipe/get-recipe-feed",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -67,7 +67,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/recipe/get-recipe-feed-by-author-id",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -85,7 +85,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/recipe/search-recipe",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -103,7 +103,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/recipe/get-tag",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -125,7 +125,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/recipe/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"

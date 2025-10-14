@@ -15,12 +15,8 @@ public static class DependenciesInjection
     {
         EnvUtility.LoadEnvFile();
         var services = builder.Services;
-        var config = builder.Configuration;
-        var host = builder.Host;
 
-        builder.ConfigureKestrel();
-        builder.ConfigureSerilog();
-        builder.ConfigureHealthCheck();
+        builder.ConfigureCommonAPIServices();
 
         services.AddInfrastructureServices();
         services.AddApplicationServices();
@@ -45,7 +41,7 @@ public static class DependenciesInjection
 
         app.UseSwaggerServices();
 
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
 
         app.UseAuthentication();
         app.UseAuthorization();

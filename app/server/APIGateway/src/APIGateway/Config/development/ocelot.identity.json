@@ -6,7 +6,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/account/current",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "PATCH"
       ],
@@ -26,7 +26,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/account/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST",
@@ -47,7 +47,7 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamPathTemplate": "/connect/userinfo",
       "UpstreamHttpMethod": [
         "GET"
@@ -64,7 +64,7 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamPathTemplate": "/connect/token",
       "UpstreamHttpMethod": [
         "POST"
@@ -77,7 +77,7 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamPathTemplate": "/api/account/register/{everything}",
       "UpstreamHttpMethod": [
         "POST"
@@ -90,7 +90,7 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamPathTemplate": "/api/account/find-account/{everything}",
       "UpstreamHttpMethod": [
         "POST"
@@ -103,7 +103,7 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamPathTemplate": "/api/account/forgot-password/{everything}",
       "UpstreamHttpMethod": [
         "POST"
@@ -117,7 +117,7 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamPathTemplate": "/api/account/change-password/{everything}",
       "UpstreamHttpMethod": [
         "POST"
@@ -131,7 +131,7 @@
       "LoadBalancerOptions": {
         "Type": "LeastConnection"
       },
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "DownstreamPathTemplate": "/api/account/{everything}",
       "UpstreamHttpMethod": [
         "GET",

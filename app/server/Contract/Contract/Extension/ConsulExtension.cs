@@ -11,11 +11,15 @@ public static class ConsulExtension
 {
     public static WebApplication UseConsulServiceDiscovery(this WebApplication app, string serviceName, bool IsSecure = true)
     {
+
         var consulClient = app.Services.GetRequiredService<IConsulClient>();
         var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
 
         var serviceHost = DotNetEnv.Env.GetString("SERVICE_HOST", "Not Found");
-        var servicePort = IsSecure ? DotNetEnv.Env.GetInt("HTTPS_PORT", 0) : DotNetEnv.Env.GetInt("PORT", 0);
+        var httpPort = DotNetEnv.Env.GetInt("PORT", 0);
+        var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
+        // Not need secure from this point
+        IsSecure = false;
 
         var random = new Random();
         var number = random.Next(1000000000, 2000000000);
@@ -23,8 +27,8 @@ public static class ConsulExtension
         var scheme = IsSecure ? "https" : "http";
 
         var healthCheckEndpoint = EnvUtility.IsDevelopment()
-                            ? $"{scheme}://host.docker.internal:{servicePort}/health"
-                            : $"{scheme}://{serviceHost}:{servicePort}/health";
+                            ? $"{scheme}://host.docker.internal:{httpPort}/health"
+                            : $"{scheme}://{serviceHost}:{httpPort}/health";
 
         var registration = new AgentServiceRegistration()
         {
@@ -33,7 +37,12 @@ public static class ConsulExtension
             Address = serviceHost,
             EnableTagOverride = true,
             Tags = IsSecure ? ["secure=true"] : [],
-            Port = servicePort,
+            Port = httpPort,
+            Meta = new Dictionary<string, string>
+            {
+                {"grpc_scheme", "http"},
+                {"grpc_port", httpsPort + ""}
+            },
             Check = new AgentServiceCheck
             {
                 Timeout = TimeSpan.FromSeconds(10),
