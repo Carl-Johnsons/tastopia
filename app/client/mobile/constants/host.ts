@@ -40,6 +40,21 @@ const protectedAxiosInstance = axios.create({
   maxBodyLength: Infinity
 });
 
+axiosInstance.interceptors.request.use(
+  config => {
+    if (config.method === "get") {
+      config.paramsSerializer = {
+        indexes: true
+      }
+    }
+
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
+
 protectedAxiosInstance.interceptors.request.use(
   config => {
     const state = store.getState();
@@ -48,6 +63,13 @@ protectedAxiosInstance.interceptors.request.use(
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+
+    if (config.method === "get") {
+      config.paramsSerializer = {
+        indexes: true
+      }
+    }
+
     return config;
   },
   error => {
