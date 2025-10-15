@@ -1,0 +1,5 @@
+---
+- name: Install Java
+  ansible.builtin.package:
+    name: openjdk-17-jdk
+    state: present

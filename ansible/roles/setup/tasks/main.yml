@@ -4,14 +4,20 @@
   register: out
   changed_when: out.rc == 0
 
-- name: Install dotnet
+- name: Install dotnet v8.0
   ansible.builtin.include_tasks: ./dotnet.yml
 
-- name: Install nodejs
+- name: Install nodejs v22
   ansible.builtin.include_tasks: ./node.yml
 
 - name: Install infisical
   ansible.builtin.include_tasks: ./infisical.yml
 
-- name: Install docker
+- name: Install docker v28.1.1 
   ansible.builtin.include_tasks: ./docker.yml
+
+- name: Install java v17
+  ansible.builtin.include_tasks: ./java.yml
+
+- name: Install python v3.13
+  ansible.builtin.include_tasks: ./python.yml
