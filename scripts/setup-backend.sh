@@ -2,10 +2,11 @@
 
 . ./scripts/lib.sh && check_docker
 
-dotnet tool install --global dotnet-ef --version 8.0.0
+dotnet tool install --global dotnet-ef --version 8.0.11
 if [[ "$PLATFORM" != "windows" ]]; then
-    echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> ~/.bashrc
-    . ~/.bashrc
+    grep -qxF 'export PATH="$PATH:$HOME/.dotnet/tools"' ~/.bashrc || echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> ~/.bashrc
+    # Source the bashrc outside of subshell process by skipping 10 lines of code in .bashrc which is checking whether the current shell process is interactive or not
+    eval "$(cat ~/.bashrc | tail -n +10)"
     printf "\n\t*** ${DEBUG}Add dotnet-ef to PATH and source ~/bashrc${NC} ***\n\n"
 fi
 
