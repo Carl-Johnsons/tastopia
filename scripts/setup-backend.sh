@@ -2,7 +2,8 @@
 
 . ./scripts/lib.sh && check_docker
 
-dotnet tool install --global dotnet-ef --version 9.0.0
+dotnet tool install --global dotnet-ef --version 8.0.0
+[[ "$PLATFORM" != "windows" ]] && echo 'export PATH="$PATH:$HOME/.dotnet/tools"' >> ~/.bashrc && . ~/.bashrc
 echo "Install dotnet-ef successfully"
 
 ./scripts/pull-env.sh
