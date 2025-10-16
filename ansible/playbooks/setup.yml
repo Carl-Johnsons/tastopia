@@ -1,6 +1,30 @@
 ---
-- name: Setup dependencies
+- name: Setup dependencies and Infisical token
   become: true
   hosts: localhost
+  vars:
+    env_data: "{{ lookup('ini', '../.env.local', errors='ignore') }}"
+    infisical_token: "{{ env_data.INFISICAL_TOKEN | default('', true) }}"
+    
+  tasks:
+    - name: Infisical Token not found
+      ansible.builtin.pause:
+        prompt: "Enter your Infisical Token"
+      register: prompt_token
+      when: infisical_token | length == 0
+
+    - name: Set final token
+      ansible.builtin.set_fact:
+        infisical_token: "{{ prompt_token.user_input | default(infisical_token) }}"
+  
   roles:
     - setup
+
+  post_tasks:
+    - name: Create .env.local file with Infisical Token
+      ansible.builtin.copy:
+        dest: ../.env.local
+        content: |
+          INFISICAL_TOKEN='{{ infisical_token }}'
+        mode: '0600'
+
