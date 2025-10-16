@@ -13,6 +13,7 @@
         [ -f "{{ env_file_path }}" ] && . "{{ env_file_path }}" && echo "${INFISICAL_TOKEN:-}"
       register: env_result
       changed_when: false
+      failed_when: false
 
     - name: Set infisical_token fact
       ansible.builtin.set_fact:
