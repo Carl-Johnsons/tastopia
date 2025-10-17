@@ -1,16 +1,15 @@
 {
   "scripts": {
-    "Pulling environment variables": "./scripts/pull-env.sh",
-    "Setup back-end": "./scripts/setup-backend.sh",
-    "Run all services": "./scripts/run-all-services.sh",
-    "Build all services": "./scripts/build-all-services.sh",
-    "Restore all services": "./scripts/restore-all-services.sh",
-    "Apply all migrations": "./scripts/apply-all-migrations.sh",
-    "Rebuild docker services": "./scripts/rebuild-service.sh",
-    "Kill service bus": "./scripts/kill-mq.sh",
-    "Export plantUML image": "./scripts/export-plantuml-image.sh",
-    "Drop all postgres databases": "./scripts/drop-all-postgres-databases.sh",
-    "Drop all mongo databases": "./scripts/drop-all-mongo-databases.sh",
-    "Setup capturing service": "./scripts/setup-capture-service.sh"
+    "Pulling environment variables": "./scripts/env/pull-env.sh",
+    "Setup back-end": "./scripts/local/setup-backend.sh",
+    "Run all services": "./scripts/local/run-all-services.sh",
+    "Build all services": "./scripts/local/build-all-services.sh",
+    "Restore all services": "./scripts/local/restore-all-services.sh",
+    "Apply all migrations": "./scripts/local/apply-all-migrations.sh",
+    "Rebuild docker services": "./scripts/docker/rebuild-service.sh",
+    "Kill service bus": "./scripts/docker/kill-mq.sh",
+    "Drop all postgres databases": "./scripts/local/drop-all-postgres-databases.sh",
+    "Drop all mongo databases": "./scripts/local/drop-all-mongo-databases.sh",
+    "Setup capturing service": "./scripts/local/setup-capture-service.sh"
   }
 }

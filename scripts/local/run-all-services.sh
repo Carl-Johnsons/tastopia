@@ -41,19 +41,19 @@ project_root=$(pwd)
 cd ./scripts
 
 # kill all ports
-./kill-port.sh 5000 &
-./kill-port.sh 5001 &
-./kill-port.sh 5002 &
-./kill-port.sh 5003 &
-./kill-port.sh 5004 &
-./kill-port.sh 5005 &
-./kill-port.sh 5006 &
-./kill-port.sh 5007 &
-./kill-port.sh 5008 &
-./kill-port.sh 6000 &
-./kill-port.sh 6001 &
-./kill-port.sh 6002 &
-./kill-port.sh 6003
+./local/kill-port.sh 5000 &
+./local/kill-port.sh 5001 &
+./local/kill-port.sh 5002 &
+./local/kill-port.sh 5003 &
+./local/kill-port.sh 5004 &
+./local/kill-port.sh 5005 &
+./local/kill-port.sh 5006 &
+./local/kill-port.sh 5007 &
+./local/kill-port.sh 5008 &
+./local/kill-port.sh 6000 &
+./local/kill-port.sh 6001 &
+./local/kill-port.sh 6002 &
+./local/kill-port.sh 6003
 
 # Kill dotnet services
 if [[ "$PLATFORM" != "windows" ]]; then
@@ -133,7 +133,8 @@ run_services() {
 }
 
 test_services() {
-  run_service 5005 "./app/server/RecipeService/src/RecipeService.API" "$LIGHT_GREEN" "Recipe" &
+  run_service 5000 "./app/server/APIGateway/src/APIGateway" "$LIGHT_PURPLE" "ApiGateway" &
+  run_service 5001 "./app/server/IdentityService/src/DuendeIdentityServer" "$PURPLE" "Identity"
 }
 
 run_services

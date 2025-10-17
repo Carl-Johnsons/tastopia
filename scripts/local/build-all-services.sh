@@ -36,4 +36,5 @@ build_service "./app/server/APIGateway/src/APIGateway" "api gateway" &&
   build_service "./app/server/NotificationService/src/SMSWorker" sms_worker &&
   build_service "./app/server/SignalRService/src/SignalRHub" "signalR" &&
   build_service "./app/server/TrackingService/src/TrackingService.API" "tracking"
-./scripts/post-build.sh
+  
+./scripts/local/post-build.sh

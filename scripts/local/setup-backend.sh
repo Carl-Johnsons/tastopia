@@ -12,7 +12,7 @@ fi
 
 printf "\n\t*** ${SUCCESS}INSTALL dotnet-ef SUCCESSFULLY${NC} ***\n\n"
 
-./scripts/pull-env.sh
+./scripts/env/pull-env.sh
 printf "\n\t*** ${SUCCESS}DONE PULLING ENV${NC} ***\n\n"
 
 run_required_docker_services
@@ -20,14 +20,14 @@ run_required_docker_services
 [[ "$PLATFORM" != "windows" ]] && sudo chown $(whoami) data -R && echo -e "${SUCCESS}Run chown for data directory successfully${NC}"
 printf "\n\t*** ${SUCCESS}DONE RUNNING CONTAINER${NC} ***\n\n"
 
-./scripts/build-all-services.sh
+./scripts/local/build-all-services.sh
 printf "\n\t*** ${SUCCESS}DONE BUILDING ALL SERVICES${NC} ***\n\n"
 
-./scripts/apply-all-migrations.sh
+./scripts/local/apply-all-migrations.sh
 printf "\n\t*** ${SUCCESS}DONE APPLY ALL MIGRATIONS${NC} ***\n\n"
 
-./scripts/config-docker-compose.sh
+./scripts/docker/config-docker-compose.sh
 printf "\n\t*** ${SUCCESS}DONE GENERATING DOCKER COMPOSE OVERRIDE FILE${NC} ***\n\n"
 
-./scripts/setup-capture-service.sh
+./scripts/local/setup-capture-service.sh
 printf "\n\t*** ${SUCCESS}DONE SETUP CAPTURE SERVICE${NC} ***\n\n"
