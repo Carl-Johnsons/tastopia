@@ -1,0 +1,14 @@
+---
+- name: Init collections
+  hosts: localhost
+  tasks:
+    - name: Run install command
+      ansible.builtin.command:
+        argv:
+          - ansible-galaxy
+          - collection
+          - install
+          - -r
+          - requirements.yaml
+      register: out
+      changed_when: out.rc == 0

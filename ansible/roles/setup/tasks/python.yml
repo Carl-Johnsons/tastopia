@@ -11,9 +11,15 @@
 
 - name: Update apt cache
   ansible.builtin.apt:
-    update_cache: yes
+    update_cache: true
 
 - name: Install python
   ansible.builtin.package:
     name: python3.13
     state: present
+
+- name: Set default python version
+  community.general.alternatives:
+    name: python
+    link: /usr/bin/python
+    path: /usr/bin/python3.13
