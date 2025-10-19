@@ -1,4 +1,11 @@
 ---
+- name: Install dependencies
+  ansible.builtin.apt:
+    name:
+      - curl
+      - bash
+    state: present
+
 - name: Add Infisical CLI repository
   ansible.builtin.shell: |
     curl -1sLf https://artifacts-cli.infisical.com/setup.deb.sh | bash
@@ -8,42 +15,9 @@
 - name: Update apt cache
   ansible.builtin.apt:
     update_cache: true
-  changed_when: false
 
 - name: Install Infisical
   ansible.builtin.package:
     name:
       - infisical
     state: present
-
-- name: Setup Infisical token
-  block:
-    - name: Read INFISICAL_TOKEN from .env.local (if exists)
-      ansible.builtin.shell: |
-        set -a
-        [ -f "{{ env_file_path }}" ] && . "{{ env_file_path }}" && echo "${INFISICAL_TOKEN:-}"
-      register: env_result
-      changed_when: false
-      failed_when: false
-
-    - name: Set infisical_token fact
-      ansible.builtin.set_fact:
-        infisical_token: "{{ env_result.stdout | trim }}"
-
-    - name: Infisical Token not found
-      ansible.builtin.pause:
-        prompt: "Enter your Infisical Token"
-      register: prompt_token
-      when: infisical_token | length == 0
-
-    - name: Set final token
-      ansible.builtin.set_fact:
-        infisical_token: "{{ prompt_token.user_input | default(infisical_token) }}"
-
-    - name: Create .env.local file with Infisical Token
-      become: false
-      ansible.builtin.copy:
-        dest: "{{ env_file_path }}"
-        content: |
-          INFISICAL_TOKEN='{{ infisical_token }}'
-        mode: "0600"

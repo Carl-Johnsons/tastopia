@@ -1,0 +1,5 @@
+---
+- name: Init
+  hosts: localhost
+  roles:
+    - init

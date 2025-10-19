@@ -1,10 +1,9 @@
 ---
-- name: Update system
-  ansible.builtin.command: "apt-get update"
-  register: out
-  changed_when: out.rc == 0
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
 
-- name: Install docker v28.1.1 
+- name: Install docker v28.1.1
   ansible.builtin.include_tasks: ./docker.yml
 
 - name: Install dotnet v8.0
