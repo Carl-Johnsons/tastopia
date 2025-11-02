@@ -6,6 +6,12 @@ pipeline {
     }
 
     stages {
+        stage('Change github status to PENDING') {
+            steps {
+              githubNotify (status: 'PENDING', description: 'Build started!')
+            }
+        }
+
         stage('info') {
             steps {
                 sh(script: """ whoami;pwd;ls -la """, label: "first stage")
@@ -26,6 +32,12 @@ EOF
             steps {
                 // sh(label: "Setup-backend", script: ''' bash ./scripts/local/setup-backend.sh ''')
                 echo 'Build success'
+            }
+        }
+
+        stage('Change github status to SUCCESS') {
+            steps {
+              githubNotify (status: 'SUCCESS', description: 'Build started!')
             }
         }
     }
