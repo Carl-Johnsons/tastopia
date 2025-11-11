@@ -7,7 +7,7 @@
           - ca-certificates
           - curl
         state: present
-        update_cache: yes
+        update_cache: true
 
     - name: Create keyring directory
       ansible.builtin.file:
@@ -28,14 +28,19 @@
         > /etc/apt/sources.list.d/docker.list
       args:
         executable: /bin/bash
+      register: rc
+      changed_when: rc is success
 
     - name: Update apt cache
       ansible.builtin.apt:
-        update_cache: yes
+        update_cache: true
 
     - name: Get Docker CE version string
-      ansible.builtin.shell: |
-        apt-cache madison docker-ce | awk '{ print $3 }' | grep 28.1.1 | head -n 1
+      ansible.builtin.shell:
+        executable: /bin/bash
+        cmd: |
+          set -o pipefail
+          apt-cache madison docker-ce | awk '{ print $3 }' | grep 28.1.1 | head -n 1
       register: docker_version
       changed_when: false
 
@@ -52,5 +57,5 @@
     - name: Enable and start Docker service
       ansible.builtin.service:
         name: docker
-        enabled: yes
+        enabled: true
         state: started

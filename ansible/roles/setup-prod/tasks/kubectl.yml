@@ -1,0 +1,52 @@
+---
+- name: Install dependencies
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+
+- name: Download the public signing key for the Kubernetes package repositories
+  ansible.builtin.get_url:
+    url: https://pkgs.k8s.io/core:/stable:/v1.34/deb/Release.key
+    dest: /tmp/k8s-keyring
+    mode: '444'
+
+- name: Ensure keyrings folder exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+
+- name: Install the k8s keyring
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --dearmor
+      - -o
+      - /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      - /tmp/k8s-keyring
+    creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+- name: add k8s sources into apt source list
+  ansible.builtin.shell:
+    executable: /bin/bash
+    cmd: |
+      set -o pipefail
+      echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.34/deb/ /' \
+      | sudo tee /etc/apt/sources.list.d/kubernetes.list
+    creates: /etc/apt/sources.list.d/kubernetes.list
+
+- name: Allow unprivileged APT programs to read k8s keyring
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/kubernetes.list
+    mode: '644'
+
+- name: Update apt caches
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install kubectl
+  ansible.builtin.apt:
+    name: kubectl

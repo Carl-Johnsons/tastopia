@@ -1,0 +1,6 @@
+---
+- name: Setup production dependencies
+  become: true
+  hosts: localhost
+  roles:
+    - setup-prod
