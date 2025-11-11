@@ -1,44 +1,45 @@
+void setBuildStatus(String message, String state, String context) {
+  step([
+      $class: "GitHubCommitStatusSetter",
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/Carl-Johnsons/tastopia"],
+      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
+      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ]);
+}
+
 pipeline {
-    agent { label 'server' }
+  agent none
 
-    environment {
-        INFISICAL_TOKEN = credentials('infisical-token')
+  environment {
+    INFISICAL_TOKEN = credentials('infisical-token')
+  }
+
+  stages {
+    stage('Build') {
+      agent { label 'server' }
+
+      steps {
+        setBuildStatus('Building...', "PENDING", "jenkins/ci/build")
+
+        sh(script: """ whoami;pwd;ls -la """, label: "Checking info...")
+        sh(label: "Create .env.local", script: 'echo "INFISICAL_TOKEN=${INFISICAL_TOKEN}" > .env.local')
+
+        sh(label: "Show .env.local (sanitized)", script: '''cat .env.local''')
+        // sh(label: "Setup-backend", script: ''' bash ./scripts/local/setup-backend.sh ''')
+
+        setBuildStatus('Built successfully', "SUCCESS", "jenkins/ci/build")
+      }
     }
 
-    stages {
-        stage('Change github status to PENDING') {
-            steps {
-              githubNotify (status: 'PENDING', description: 'Build started!')
-            }
-        }
+    stage('Test deployment') {
+      agent { label 'deploy' }
 
-        stage('info') {
-            steps {
-                sh(script: """ whoami;pwd;ls -la """, label: "first stage")
-            }
-        }
-        stage('Load Infisical Token') {
-            steps {
-                sh(label: "Create .env.local", script: '''
-cat <<-EOF > .env.local
-INFISICAL_TOKEN=${INFISICAL_TOKEN}
-EOF
-        ''')
-
-                sh(label: "Show .env.local (sanitized)", script: '''cat .env.local''')
-            }
-        }
-        stage('Setup back-end') {
-            steps {
-                // sh(label: "Setup-backend", script: ''' bash ./scripts/local/setup-backend.sh ''')
-                echo 'Build success'
-            }
-        }
-
-        stage('Change github status to SUCCESS') {
-            steps {
-              githubNotify (status: 'SUCCESS', description: 'Build started!')
-            }
-        }
+      steps {
+        setBuildStatus('Testing deployment...', "PENDING", "jenkins/ci/deployment")
+        sh(script: """ whoami;pwd;ls -la """, label: "Checking info...")
+        setBuildStatus('Deployed successfully', "SUCCESS", "jenkins/ci/deployment")
+      }
     }
+  }
 }
