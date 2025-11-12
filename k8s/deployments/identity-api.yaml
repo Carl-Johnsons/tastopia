@@ -21,6 +21,17 @@ spec:
                 path: tls.crt
               - key: tls.key
                 path: tls.key
+      initContainers:
+      - name: db-init
+        image: taiduc113/tastopia:identity-api
+        command: ["sh", "-c"]
+        args:
+          - |
+            until nc -z $DB_HOST $DB_PORT; do
+              echo "Waiting for database..."
+              sleep 2
+            done
+            dotnet DuendeIdentityServer.dll --migrate --seed
       containers:
       - name: identity-api
         image: taiduc113/tastopia:identity-api
