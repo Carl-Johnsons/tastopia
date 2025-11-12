@@ -11,6 +11,7 @@ void setBuildStatus(String message, String state, String context) {
 def ensureEnv() {
   sh(label: 'Ensuring that Infisical token is present...', script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
+  sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh')
 }
 
 def buildServices() {
@@ -36,6 +37,7 @@ def ensureK8sCluster() {
 }
 
 def deploy() {
+  ensureEnv()
   ensureK8sCluster()
   sh(label: 'Running K8s deploy script...', script: './scripts/k8s/deploy.sh')
 }
