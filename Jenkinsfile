@@ -37,11 +37,7 @@ def ensureK8sCluster() {
 
 def deploy() {
   ensureK8sCluster()
-  sh(label: 'Running K8s deploy script...', script: '''
-    path=./scripts/k8s/deploy.sh
-    chmod 544 $path
-    $path
-  ''')
+  sh(label: 'Running K8s deploy script...', script: './scripts/k8s/deploy.sh')
 }
 
 pipeline {
@@ -59,7 +55,7 @@ pipeline {
         script {
           try {
             setBuildStatus('Building...', 'PENDING', 'jenkins/ci/build')
-            sh(label: 'Checking current user...', script: 'echo $USER')
+            sh(label: 'Checking current user...', script: 'whoami')
             buildServices()
             setBuildStatus('Build succeeded', 'SUCCESS', 'jenkins/ci/build')
           } catch (Exception err) {
