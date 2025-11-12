@@ -6,10 +6,13 @@ project_root=$(pwd)
 
 [[ "$PLATFORM" != "windows" ]] && sudo chmod 777 data/db -R && echo -e "${GREEN}Run chmod 777 for data/db directory successfully${NC}"
 
+POSTGRES_REQUIRED_SERVICES=("Identity" "User")
+MONGODB_REQUIRED_SERVICES=("Recipe" "Notification" "Tracking")
+
 update_database() {
     local env_path=$1
-    local service_path=$2
-    local service_name=$3
+    local project=$2
+    local name=$3
 
     if [ -f $env_path ]; then
         # Export each line as an environment variable
@@ -18,12 +21,12 @@ update_database() {
         echo ".env file not found."
     fi
 
-    echo -e "\e[96mApplying $service_name service migrations ....\e[0m"
-    cd $service_path  
-    dotnet ef database update
-    cd "$project_root"
+    if [[ " ${POSTGRES_REQUIRED_SERVICES[@]} " =~ " ${name} " ]]; then
+        echo -e "${INFO}Running migrations for ${name}...${NC}"
+        env NUGET_PACKAGES="$project_root/data/nuget" \
+            dotnet run --project "$project" -- --migrate --seed
+    fi
 }
 
-update_database "./app/server/IdentityService/.env" "./app/server/IdentityService/src/IdentityService.Infrastructure" "Identity" &&
-    update_database "./app/server/UploadFileService/.env" "./app/server/UploadFileService/src/UploadFileService.Infrastructure" "Upload" &&
-    update_database "./app/server/UserService/.env" "./app/server/UserService/src/UserService.Infrastructure" "User"
+update_database "./app/server/IdentityService/.env" "./app/server/IdentityService/src/DuendeIdentityServer" "Identity"
+    update_database "./app/server/UserService/.env" "./app/server/UserService/src/UserService.API" "User"
