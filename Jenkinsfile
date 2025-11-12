@@ -39,7 +39,7 @@ def deploy() {
   ensureK8sCluster()
   sh(label: 'Running K8s deploy script...', script: '''
     path=./scripts/k8s/deploy.sh
-    chmod 644 $path
+    chmod 544 $path
     $path
   ''')
 }
@@ -59,6 +59,7 @@ pipeline {
         script {
           try {
             setBuildStatus('Building...', 'PENDING', 'jenkins/ci/build')
+            sh(label: 'Checking current user...', script: 'echo $USER')
             buildServices()
             setBuildStatus('Build succeeded', 'SUCCESS', 'jenkins/ci/build')
           } catch (Exception err) {
