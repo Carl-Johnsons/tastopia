@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# Exit on failure
+set -e 
+
 . ./scripts/lib.sh
 
 err_token_missing() {

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Exit on failure
+set -e
+
 CERT_PATH=./ssl/certs
 CSR_PATH=./ssl/csr
 KEY_PATH=./ssl/private-key
