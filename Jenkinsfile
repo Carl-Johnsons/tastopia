@@ -1,34 +1,67 @@
 void setBuildStatus(String message, String state, String context) {
   step([
-      $class: "GitHubCommitStatusSetter",
-      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/Carl-Johnsons/tastopia"],
-      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: context],
-      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+      $class: 'GitHubCommitStatusSetter',
+      reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/Carl-Johnsons/tastopia'],
+      contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: context],
+      errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
+      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
   ]);
+}
+
+def ensureEnv() {
+  sh(label: 'Ensuring that Infisical token is present...', script: 'echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local')
+  sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
+}
+
+def buildServices() {
+  ensureEnv()
+  sh(label: 'Building services...', script: './scripts/docker/build-services.sh')
+}
+
+def ensureK8sCluster() {
+  sh(label: 'Ensuring that Kubernetes cluster is up...', script: '''
+    if minikube status | grep -q Stopped; then
+      echo Kubernetes cluster is not running
+      echo Starting the cluster...
+      minikube start
+    fi
+
+    if minikube status | grep -q Stopped; then
+      echo 'ERROR: Kubernetes cluster failed to start'
+      exit 1
+    fi
+
+    echo Kubernetes cluster is online
+  ''')
+}
+
+def deploy() {
+  ensureK8sCluster()
+  sh(label: 'Running K8s deploy script...', script: '''
+    ./scripts/k8s/deploy.sh
+  ''')
 }
 
 pipeline {
   agent none
 
-  environment {
-    INFISICAL_TOKEN = credentials('infisical-token')
-  }
-
   stages {
     stage('Build') {
       agent { label 'server' }
 
+      environment {
+        INFISICAL_TOKEN = credentials('infisical-token')
+      }
+
       steps {
-        setBuildStatus('Building...', "PENDING", "jenkins/ci/build")
-
-        sh(script: """ whoami;pwd;ls -la """, label: "Checking info...")
-        sh(label: "Create .env.local", script: 'echo "INFISICAL_TOKEN=${INFISICAL_TOKEN}" > .env.local')
-
-        sh(label: "Show .env.local (sanitized)", script: '''cat .env.local''')
-        // sh(label: "Setup-backend", script: ''' bash ./scripts/local/setup-backend.sh ''')
-
-        setBuildStatus('Built successfully', "SUCCESS", "jenkins/ci/build")
+        try {
+          setBuildStatus('Building...', 'PENDING', 'jenkins/ci/build')
+          buildServices()
+          setBuildStatus('Build succeeded', 'SUCCESS', 'jenkins/ci/build')
+        } catch (err) {
+          setBuildStatus('Build failed', 'FAILURE', 'jenkins/ci/build')
+          throw err
+        }
       }
     }
 
@@ -36,9 +69,14 @@ pipeline {
       agent { label 'deploy' }
 
       steps {
-        setBuildStatus('Testing deployment...', "PENDING", "jenkins/ci/deployment")
-        sh(script: """ whoami;pwd;ls -la """, label: "Checking info...")
-        setBuildStatus('Deployed successfully', "SUCCESS", "jenkins/ci/deployment")
+        try {
+          setBuildStatus('Testing deployment...', 'PENDING', 'jenkins/ci/deployment')
+          deploy()
+          setBuildStatus('Deployment succeeded', 'SUCCESS', 'jenkins/ci/deployment')
+        } catch (err) {
+          setBuildStatus('Deployment failed', 'FAILURE', 'jenkins/ci/deployment')
+          throw err
+        }
       }
     }
   }
