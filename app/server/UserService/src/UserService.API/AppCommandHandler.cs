@@ -12,7 +12,6 @@ public static class AppCommandHandler
             .Where(COMMAND_ARGS.All.Contains)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
-        Console.WriteLine(string.Join(", ", uniqueArgs));
         if (uniqueArgs.Length == 0)
         {
             return false;
