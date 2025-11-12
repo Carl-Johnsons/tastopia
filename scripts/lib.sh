@@ -49,7 +49,7 @@ check_platform() {
   elif [[ "$OSTYPE" == "win32" ]]; then
     platform="windows"
   elif [[ "$OSTYPE" == "freebsd"* ]]; then
-    echo "Freebsd this script does not support running on freebsd platform"
+    echo "This script does not support running on freebsd platform"
     exit 1
   else
     echo "Cannot detect the OS that you're running"

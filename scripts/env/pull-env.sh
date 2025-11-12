@@ -41,6 +41,16 @@ pull_env_file() {
   local prefix_folder_path="/"
   [[ "$PLATFORM" == "windows" ]] && prefix_folder_path="//"
 
+  if [ ! -d $service_path ]; then
+    if [ "$PLATFORM" != "linux" ] && [ "$PLATFORM" != "macos" ]; then
+      echo "Please create folder at path \"$service_path\" before running the script"
+      exit 1
+    fi
+
+    mkdir -p $service_path
+    echo "Created folder at path: $service_path"
+  fi
+
   echo -e "\e[95mPulling $prefix_folder_path$folder_name $environment env file...\e[0m"
   infisical export --token=$INFISICAL_TOKEN --path=$prefix_folder_path$folder_name --env=$environment --log-level debug \
   | sed -E "s/^([A-Z0-9_]+)='([0-9]+)'$/\1=\2/" \
