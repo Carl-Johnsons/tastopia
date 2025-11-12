@@ -5,8 +5,14 @@ using Serilog;
 
 try
 {
-    var app = WebApplication.CreateBuilder(args)
-                .AddAPIServices()
+    var builder = WebApplication.CreateBuilder(args);
+
+    if (await builder.TryHandleAsync(args))
+    {
+        return;
+    }
+
+    var app = builder.AddAPIServices()
                 .Build()
                 .UseAPIServices();
 
@@ -24,7 +30,7 @@ try
     }
     else
     {
-        Log.Information("Could not retrieve server addresses.");
+        Log.Warning("Could not retrieve server addresses.");
     }
 
     app.WaitForShutdown();
