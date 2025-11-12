@@ -9,7 +9,7 @@ void setBuildStatus(String message, String state, String context) {
 }
 
 def ensureEnv() {
-  sh(label: 'Ensuring that Infisical token is present...', script: 'echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local')
+  sh(label: 'Ensuring that Infisical token is present...', script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
 }
 
@@ -38,7 +38,9 @@ def ensureK8sCluster() {
 def deploy() {
   ensureK8sCluster()
   sh(label: 'Running K8s deploy script...', script: '''
-    ./scripts/k8s/deploy.sh
+    path=./scripts/k8s/deploy.sh
+    chmod 644 $path
+    $path
   ''')
 }
 
@@ -54,13 +56,15 @@ pipeline {
       }
 
       steps {
-        try {
-          setBuildStatus('Building...', 'PENDING', 'jenkins/ci/build')
-          buildServices()
-          setBuildStatus('Build succeeded', 'SUCCESS', 'jenkins/ci/build')
-        } catch (err) {
-          setBuildStatus('Build failed', 'FAILURE', 'jenkins/ci/build')
-          throw err
+        script {
+          try {
+            setBuildStatus('Building...', 'PENDING', 'jenkins/ci/build')
+            buildServices()
+            setBuildStatus('Build succeeded', 'SUCCESS', 'jenkins/ci/build')
+          } catch (Exception err) {
+            setBuildStatus('Build failed', 'FAILURE', 'jenkins/ci/build')
+            throw err
+          }
         }
       }
     }
@@ -69,13 +73,15 @@ pipeline {
       agent { label 'deploy' }
 
       steps {
-        try {
-          setBuildStatus('Testing deployment...', 'PENDING', 'jenkins/ci/deployment')
-          deploy()
-          setBuildStatus('Deployment succeeded', 'SUCCESS', 'jenkins/ci/deployment')
-        } catch (err) {
-          setBuildStatus('Deployment failed', 'FAILURE', 'jenkins/ci/deployment')
-          throw err
+        script {
+          try {
+            setBuildStatus('Testing deployment...', 'PENDING', 'jenkins/ci/deployment')
+            deploy()
+            setBuildStatus('Deployment succeeded', 'SUCCESS', 'jenkins/ci/deployment')
+          } catch (Exception err) {
+            setBuildStatus('Deployment failed', 'FAILURE', 'jenkins/ci/deployment')
+            throw err
+          }
         }
       }
     }
