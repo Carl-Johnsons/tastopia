@@ -13,16 +13,12 @@ spec:
     spec:
       restartPolicy: Always
       initContainers:
-      - name: db-init
-        image: taiduc113/tastopia:identity-api
-        command: ["sh", "-c"]
-        args:
-          - |
-            until nc -z $DB_HOST $DB_PORT; do
-              echo "Waiting for database..."
-              sleep 2
-            done
-            dotnet DuendeIdentityServer.dll --migrate --seed
+        - name: db-wait
+          image: busybox:1.36
+          command: ["sh", "-c", "until nc -z $DB_HOST $DB_PORT; do echo 'Waiting for database...'; sleep 2; done"]
+        - name: db-migrate
+          image: taiduc113/tastopia:identity-api
+          command: ["dotnet","DuendeIdentityServer.dll", "--migrate", "--seed"]
       containers:
       - name: identity-api
         image: taiduc113/tastopia:identity-api
