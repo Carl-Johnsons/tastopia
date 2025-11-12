@@ -1,7 +1,9 @@
 ﻿using Contract.Utilities;
+using IdentityService.Infrastructure.Persistence.Mockup;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.DependencyInjection;
 using System.Linq.Expressions;
 
 namespace IdentityService.Infrastructure.Persistence;
@@ -21,6 +23,20 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationAccount>, IAppl
     public DbSet<Permission> Permissions { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<RoleGroupPermission> RoleGroupPermissions { get; set; }
+
+    public void MigrateDb(IServiceProvider serviceProvider)
+    {
+        var db = serviceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Database.Migrate();
+        Console.WriteLine("✅ Database migrated successfully.");
+    }
+
+    public async Task SeedDb(IServiceProvider serviceProvider)
+    {
+        var mockupData = serviceProvider.GetRequiredService<MockupData>();
+        await mockupData.SeedAllData();
+        Console.WriteLine("✅ Seed data complete");
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

@@ -16,20 +16,25 @@ public static class DependencyInjection
         services.AddIdentity<ApplicationAccount, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
-
-
         // MediatR require repository scope dependency injection
         services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
         services.AddScoped<MockupData>();
         services.AddCommonInfrastructureServices("DuendeIdentityServer");
         services.AddSignalRService();
 
-        using (var serviceProvider = services.BuildServiceProvider())
-        {
-            var mockupData = serviceProvider.GetRequiredService<MockupData>();
-            mockupData.SeedAllData().Wait();
-        }
+        return services;
+    }
 
+    public static IServiceCollection AddMinimalInfrastructureServices(this IServiceCollection services)
+    {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options =>
+                options.UseNpgsql(Contract.Utilities.EnvUtility.GetConnectionString()));
+        services.AddIdentity<ApplicationAccount, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+        services.AddScoped<MockupData>();
+        services.AddLogging();
         return services;
     }
 }
