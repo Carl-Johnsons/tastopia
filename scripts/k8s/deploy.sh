@@ -1,5 +1,8 @@
 project_root=$(pwd)
 
+# Exit on failure
+set -e
+
 cd ./k8s
 
 # Declare secret
@@ -53,6 +56,6 @@ echo ""
 cd ./k8s
 
 # kubectl apply -f deployments -f services
-kubectl apply -f ./deployments/ingredient-predict-api.yaml -f ./services/ingredient-predict-api.yaml
+kubectl apply -f ./deployments/identity-api.yaml -f ./services/identity-api.yaml
 
 cd "$project_root"

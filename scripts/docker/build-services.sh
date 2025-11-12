@@ -1,15 +1,18 @@
 #!/bin/bash
 
+# Exit on failure
+set -e
+
 services=(
   # "website"
   # "api-gateway"
   # "signalr"
   # "tracking-api"
-  # "upload-api"
-  # "identity-api"
+  "upload-api"
+  "identity-api"
   # "notification-api"
   # "recipe-api"
-  # "user-api"
+  "user-api"
   # "ingredient-predict-api"
   # "email-worker"
   # "push-notification-worker"
