@@ -13,4 +13,6 @@ public interface IApplicationDbContext : IDbContext
     DbSet<UserFollow> UserFollows { get; set; }
     DbSet<Setting> Settings { get; set; }
     DbSet<UserSetting> UserSettings { get; set; }
+    void MigrateDb(IServiceProvider serviceProvider);
+    Task SeedDb(IServiceProvider serviceProvider);
 }

@@ -14,7 +14,8 @@
 
 - name: Infisical token not found
   ansible.builtin.pause:
-    prompt: "Enter your Infisical Token"
+    prompt: "Enter your Infisical token: "
+    echo: false
   register: prompt_token
   when: infisical_token | length == 0
 
