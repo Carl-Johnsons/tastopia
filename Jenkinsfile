@@ -14,8 +14,13 @@ def ensureEnv() {
   sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh')
 }
 
+def ensureCerts() {
+  sh(label: 'Ensuring that certificates are present...', script: "./scripts/cert/setup.sh")
+}
+
 def buildServices() {
   ensureEnv()
+  ensureCerts()
   sh(label: 'Building services...', script: './scripts/docker/build-services.sh')
 }
 
