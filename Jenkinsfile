@@ -21,7 +21,8 @@ def ensureCerts() {
 def buildServices() {
   ensureEnv()
   ensureCerts()
-  sh(label: 'Building services...', script: './scripts/docker/build-services.sh')
+  sh(label: 'Building services...', script: './scripts/local/build-all-services.sh')
+  sh(label: 'Building docker images...', script: './scripts/docker/build-services.sh')
 }
 
 def ensureK8sCluster() {
