@@ -16,6 +16,9 @@ spec:
         - name: db-wait
           image: busybox:1.36
           command: ["sh", "-c", "until nc -z $DB_HOST $DB_PORT; do echo 'Waiting for database...'; sleep 2; done"]
+          envFrom: 
+            - secretRef:
+                name: global-secret
         - name: db-migrate
           image: taiduc113/tastopia:identity-api
           command: ["dotnet","DuendeIdentityServer.dll", "--migrate", "--seed"]
