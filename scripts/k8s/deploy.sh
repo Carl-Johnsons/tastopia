@@ -61,11 +61,14 @@ services=(
   "rabbitmq"
 )
 
-echo "Restarting postgres database..."
-kubectl delete deployment postgres
-kubectl delete svc postgres
-kubectl delete pvc postgres-pvc
-echo "Done"
+echo "Deleting all deployments..."
+kubectl get deployment --no-headers -o name | xargs -rl kubectl delete
+
+echo "Deleting all services..."
+kubectl get svc --no-headers -o name | xargs -rl kubectl delete
+
+echo "Deleting all persistent volumes..."
+kubectl get pvc --no-headers -o name | xargs -rl kubectl delete
 
 for service in "${services[@]}"; do
   # kubectl apply -f deployments -f services
