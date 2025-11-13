@@ -56,6 +56,8 @@ echo ""
 cd ./k8s
 
 # kubectl apply -f deployments -f services
-kubectl apply -f ./deployments/identity-api.yaml -f ./services/identity-api.yaml
+kubectl apply \
+  -f ./deployments/identity-api.yaml -f ./services/identity-api.yaml \
+  -f ./deployments/postgres.yaml -f ./services/postgres.yaml
 
 cd "$project_root"
