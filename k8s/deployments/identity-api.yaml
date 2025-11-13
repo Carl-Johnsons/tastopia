@@ -32,6 +32,7 @@ spec:
       containers:
       - name: identity-api
         image: taiduc113/tastopia:identity-api
+        imagePullPolicy: Always
         envFrom:
           - secretRef:
               name: global-secret

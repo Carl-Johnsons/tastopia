@@ -22,6 +22,7 @@ spec:
           - secretRef:
               name: global-secret
         image: postgres:17.0-alpine
+        imagePullPolicy: Always
         volumeMounts:
           - name: postgres-storage
             mountPath: /var/lib/postgresql/data
