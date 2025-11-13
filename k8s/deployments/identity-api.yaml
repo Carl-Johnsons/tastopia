@@ -29,6 +29,11 @@ spec:
 
               echo 'Database is online'
         - name: db-migrate
+          envFrom: 
+            - secretRef:
+                name: global-secret
+            - secretRef:
+                name: identity-api-secret
           image: taiduc113/tastopia:identity-api
           command: ["dotnet","DuendeIdentityServer.dll", "--migrate", "--seed"]
       containers:
