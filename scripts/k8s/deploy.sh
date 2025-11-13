@@ -9,25 +9,25 @@ cd ./k8s
 cd "$project_root"
 
 kubectl create secret generic global-secret \
-	--from-env-file=.env.production
+	--from-env-file=.env.prod
 kubectl create secret generic identity-api-secret \
-	--from-env-file=app/server/IdentityService/.env.production
+	--from-env-file=app/server/IdentityService/.env.prod
 kubectl create secret generic user-api-secret \
-	--from-env-file=app/server/UserService/.env.production
+	--from-env-file=app/server/UserService/.env.prod
 kubectl create secret generic recipe-api-secret \
-	--from-env-file=app/server/RecipeService/.env.production
+	--from-env-file=app/server/RecipeService/.env.prod
 kubectl create secret generic notification-api-secret \
-	--from-env-file=app/server/NotificationService/.env.production
+	--from-env-file=app/server/NotificationService/.env.prod
 kubectl create secret generic upload-api-secret \
-	--from-env-file=app/server/UploadFileService/.env.production
+	--from-env-file=app/server/UploadFileService/.env.prod
 kubectl create secret generic tracking-api-secret \
-	--from-env-file=app/server/TrackingService/.env.production
+	--from-env-file=app/server/TrackingService/.env.prod
 kubectl create secret generic signalr-secret \
-	--from-env-file=app/server/SignalRService/.env.production
+	--from-env-file=app/server/SignalRService/.env.prod
 kubectl create secret generic api-gateway-secret \
-	--from-env-file=app/server/APIGateway/.env.production
+	--from-env-file=app/server/APIGateway/.env.prod
 kubectl create secret generic ingredient-predict-api-secret \
-	--from-env-file=app/server/IngredientPredictService/.env.production
+	--from-env-file=app/server/IngredientPredictService/.env.prod
 echo ""
 kubectl create secret tls identity-api-tls \
 	--cert=./ssl/certs/identity.crt \
