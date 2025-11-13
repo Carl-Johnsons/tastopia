@@ -44,6 +44,7 @@ def ensureK8sCluster() {
 
 def deploy() {
   ensureEnv()
+  ensureCerts()
   ensureK8sCluster()
   sh(label: 'Running K8s deploy script...', script: './scripts/k8s/deploy.sh')
 
