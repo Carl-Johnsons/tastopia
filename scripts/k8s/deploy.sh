@@ -1,63 +1,78 @@
-project_root=$(pwd)
+#!/bin/bash
 
-# Exit on failure
-set -e
+project_root=$(pwd)
 
 cd ./k8s
 
 # Declare secret
 cd "$project_root"
 
-kubectl create secret generic global-secret \
-	--from-env-file=.env.prod
-kubectl create secret generic identity-api-secret \
-	--from-env-file=app/server/IdentityService/.env.prod
-kubectl create secret generic user-api-secret \
-	--from-env-file=app/server/UserService/.env.prod
-kubectl create secret generic recipe-api-secret \
-	--from-env-file=app/server/RecipeService/.env.prod
-kubectl create secret generic notification-api-secret \
-	--from-env-file=app/server/NotificationService/.env.prod
-kubectl create secret generic upload-api-secret \
-	--from-env-file=app/server/UploadFileService/.env.prod
-kubectl create secret generic tracking-api-secret \
-	--from-env-file=app/server/TrackingService/.env.prod
-kubectl create secret generic signalr-secret \
-	--from-env-file=app/server/SignalRService/.env.prod
-kubectl create secret generic api-gateway-secret \
-	--from-env-file=app/server/APIGateway/.env.prod
-kubectl create secret generic ingredient-predict-api-secret \
-	--from-env-file=app/server/IngredientPredictService/.env.prod
-echo ""
-kubectl create secret tls identity-api-tls \
-	--cert=./ssl/certs/identity.crt \
-	--key=./ssl/private-key/identity.key
-kubectl create secret tls user-api-tls \
-	--cert=./ssl/certs/user.crt\
-	--key=./ssl/private-key/user.key
-kubectl create secret tls recipe-api-tls \
-	--cert=./ssl/certs/recipe.crt\
-	--key=./ssl/private-key/recipe.key
-kubectl create secret tls notification-api-tls \
-	--cert=./ssl/certs/notification.crt\
-	--key=./ssl/private-key/notification.key
-kubectl create secret tls tracking-api-tls \
-	--cert=./ssl/certs/tracking.crt\
-	--key=./ssl/private-key/tracking.key
-kubectl create secret tls signalr-tls \
-	--cert=./ssl/certs/signalr.crt\
-	--key=./ssl/private-key/signalr.key
-kubectl create secret tls api-gateway-tls \
-	--cert=./ssl/certs/gateway.crt\
-	--key=./ssl/private-key/gateway.key
-echo ""
+declare -A generic=(
+  [global]=".env.prod"
+  [identity-api]="app/server/IdentityService/.env.prod"
+  [user-api]="app/server/UserService/.env.prod"
+  [recipe-api]="app/server/RecipeService/.env.prod"
+  [notification-api]="app/server/NotificationService/.env.prod"
+  [upload-api]="app/server/UploadFileService/.env.prod"
+  [tracking-api]="app/server/TrackingService/.env.prod"
+  [signalr]="app/server/SignalRService/.env.prod"
+  [api-gateway]="app/server/APIGateway/.env.prod"
+  [ingredient-predict-api]="app/server/IngredientPredictService/.env.prod"
+)
+
+declare -A tls=(
+  [identity-api]="identity"
+  [user-api]="user"
+  [recipe-api]="recipe"
+  [notification-api]="notification"
+  [tracking-api]="tracking"
+  [signalr]="signalr"
+  [api-gateway]="gateway"
+)
+
+# Creating secret
+
+for secret in "${!generic[@]}"; do
+  file="${generic[$secret]}"
+  secret="${secret}-secret"
+
+  kubectl delete secret "$secret" 2>/dev/null
+  kubectl create secret generic "$secret" --from-env-file="$file"
+done
+
+
+for secret in "${!tls[@]}"; do
+  name="${tls[$secret]}"
+  crt="./ssl/certs/${name}.crt"
+  key="./ssl/private-key/${name}.key"
+  secret="${secret}-tls"
+
+  kubectl delete secret "$secret" 2>/dev/null
+  kubectl create secret tls "$secret" --cert="$crt" --key="$key"
+done
 
 # Apply file .yaml
 cd ./k8s
 
-# kubectl apply -f deployments -f services
-kubectl apply \
-  -f ./deployments/identity-api.yaml -f ./services/identity-api.yaml \
-  -f ./deployments/postgres.yaml -f ./services/postgres.yaml
+services=(
+  "identity-api"
+  "postgres"
+  "consul"
+  "rabbitmq"
+)
+
+echo "Restarting postgres database..."
+kubectl delete deployment postgres
+kubectl delete svc postgres
+kubectl delete pvc postgres-pvc
+echo "Done"
+
+for service in "${services[@]}"; do
+  # kubectl apply -f deployments -f services
+  echo "Deploying $service..."
+
+  kubectl apply -f "./deployments/${service}.yaml" -f "./services/${service}.yaml"
+  kubectl rollout restart deployment ${service}
+done
 
 cd "$project_root"
