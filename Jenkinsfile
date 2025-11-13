@@ -61,14 +61,18 @@ pipeline {
 
       steps {
         script {
-          try {
             setBuildStatus('Testing deployment...', 'PENDING', 'jenkins/ci/deployment')
             deploy()
-            setBuildStatus('Deployment succeeded', 'SUCCESS', 'jenkins/ci/deployment')
-          } catch (Exception err) {
-            setBuildStatus('Deployment failed', 'FAILURE', 'jenkins/ci/deployment')
-            throw err
-          }
+        }
+      }
+
+      post {
+        success {
+          setBuildStatus('Deployment succeeded', 'SUCCESS', 'jenkins/ci/deployment')
+        }
+
+        failure {
+          setBuildStatus('Deployment failed', 'FAILURE', 'jenkins/ci/deployment')
         }
       }
     }
