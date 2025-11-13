@@ -46,6 +46,17 @@ def deploy() {
   ensureEnv()
   ensureK8sCluster()
   sh(label: 'Running K8s deploy script...', script: './scripts/k8s/deploy.sh')
+
+  def deployments = [
+    'identity-api',
+    'postgres',
+    'rabbitmq', 
+    'consul'
+  ]
+
+  for (d in deployments) {
+    sh(label: "Checking rollout status for ${d}...", script: "kubectl rollout status deployment/${d} --timeout=2m")
+  }
 }
 
 pipeline {
