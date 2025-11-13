@@ -51,6 +51,10 @@ def deploy() {
 pipeline {
   agent none
 
+  environment {
+    INFISICAL_TOKEN = credentials('infisical-token')
+  }
+
   stages {
     stage('Test deployment') {
       agent { label 'deploy' }
