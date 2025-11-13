@@ -52,28 +52,6 @@ pipeline {
   agent none
 
   stages {
-    stage('Build') {
-      agent { label 'server' }
-
-      environment {
-        INFISICAL_TOKEN = credentials('infisical-token')
-      }
-
-      steps {
-        script {
-          try {
-            setBuildStatus('Building...', 'PENDING', 'jenkins/ci/build')
-            sh(label: 'Checking current user...', script: 'whoami')
-            buildServices()
-            setBuildStatus('Build succeeded', 'SUCCESS', 'jenkins/ci/build')
-          } catch (Exception err) {
-            setBuildStatus('Build failed', 'FAILURE', 'jenkins/ci/build')
-            throw err
-          }
-        }
-      }
-    }
-
     stage('Test deployment') {
       agent { label 'deploy' }
 
