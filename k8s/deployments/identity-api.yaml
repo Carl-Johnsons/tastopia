@@ -26,6 +26,8 @@ spec:
                 echo 'Waiting for database...'
                 sleep 2
               done
+
+              echo 'Database is online'
         - name: db-migrate
           image: taiduc113/tastopia:identity-api
           command: ["dotnet","DuendeIdentityServer.dll", "--migrate", "--seed"]
