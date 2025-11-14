@@ -28,8 +28,8 @@ spec:
               done
 
               echo 'Database is online'
-              echo 'Waiting for 30s before doing migration...'
-              sleep 30
+              echo 'Waiting for 10s before doing migration...'
+              sleep 10
               echo 'Migration started'
 
         - name: db-migrate

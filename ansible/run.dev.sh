@@ -1,7 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# Exiting on errors
-set -e 
+set -e
 
 echo "Init"
 ansible-playbook ./playbooks/init.yml
