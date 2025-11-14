@@ -1,9 +1,11 @@
 ﻿using Contract.Constants;
 using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using TrackingService.Domain.Entities;
+using TrackingService.Infrastructure.Persistence.Mockup;
 
 namespace TrackingService.Infrastructure.Persistence;
 
@@ -26,6 +28,13 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserSearchUser> UserSearchUsers { get; set; }
     public DbSet<AdminActivityLog> AdminActivityLogs { get; set; }
 
+    public async Task SeedDb(IServiceProvider serviceProvider)
+    {
+        var mockupData = serviceProvider.GetRequiredService<MockupData>();
+        await mockupData.SeedAllDataAsync();
+        Console.WriteLine("✅ Seed data complete");
+    }
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         EnvUtility.LoadEnvFile();

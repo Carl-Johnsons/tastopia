@@ -27,13 +27,19 @@ public static class DependencyInjection
         services.AddCommonInfrastructureServices("RecipeService.API");
         services.AddSignalRService();
 
-        using (var serviceProvider = services.BuildServiceProvider())
-        {
-            var mockupData = serviceProvider.GetRequiredService<MockupData>();
-            mockupData.SeedAllData().Wait();
-        }
-
         return services;
     }
-
+    public static IServiceCollection AddMinimalInfrastructureServices(this IServiceCollection services)
+    {
+        // This line only use 1 in infrastructure
+        if (!BsonClassMap.IsClassMapRegistered(typeof(Guid)))
+        {
+            BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+        }
+        services.AddDbContext<IApplicationDbContext, ApplicationDbContext>();
+        services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+        services.AddScoped<MockupData>();
+        services.AddLogging();
+        return services;
+    }
 }

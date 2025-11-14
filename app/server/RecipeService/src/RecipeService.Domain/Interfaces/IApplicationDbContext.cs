@@ -14,4 +14,5 @@ public interface IApplicationDbContext : IMongoDbContext
     public DbSet<UserReportRecipe> UserReportRecipes { get; set; }
     public DbSet<UserReportComment> UserReportComments { get; set; }
     public DbSet<UserRecipeBin> UserRecipeBins { get; set; }
+    Task SeedDb(IServiceProvider serviceProvider);
 }

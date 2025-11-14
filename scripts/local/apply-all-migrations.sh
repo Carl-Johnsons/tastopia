@@ -22,11 +22,20 @@ update_database() {
     fi
 
     if [[ " ${POSTGRES_REQUIRED_SERVICES[@]} " =~ " ${name} " ]]; then
-        echo -e "${INFO}Running migrations for ${name}...${NC}"
+        echo -e "${INFO}Running Postgresql migrations for ${name}...${NC}"
         env NUGET_PACKAGES="$project_root/data/nuget" \
             dotnet run --project "$project" -- --migrate --seed
+    fi
+
+    if [[ " ${MONGODB_REQUIRED_SERVICES[@]} " =~ " ${name} " ]]; then
+        echo -e "${INFO}Running MongoDB migrations for ${name}...${NC}"
+        env NUGET_PACKAGES="$project_root/data/nuget" \
+            dotnet run --project "$project" -- --seed
     fi
 }
 
 update_database "./app/server/IdentityService/.env" "./app/server/IdentityService/src/DuendeIdentityServer" "Identity"
-    update_database "./app/server/UserService/.env" "./app/server/UserService/src/UserService.API" "User"
+update_database "./app/server/UserService/.env" "./app/server/UserService/src/UserService.API" "User"
+update_database "./app/server/RecipeService/.env" "./app/server/RecipeService/src/RecipeService.API" "Recipe"
+update_database "./app/server/NotificationService/.env" "./app/server/NotificationService/src/NotificationService.API" "Notification"
+update_database "./app/server/TrackingService/.env" "./app/server/TrackingService/src/TrackingService.API" "Tracking"
