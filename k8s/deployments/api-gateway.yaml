@@ -12,25 +12,9 @@ spec:
         app: api-gateway
     spec:
       restartPolicy: Always
-      volumes:
-        - name: tls-certs
-          secret:
-            secretName: api-gateway-tls
-            items:
-              - key: tls.crt
-                path: tls.crt
-              - key: tls.key
-                path: tls.key
       containers:
       - name: api-gateway
         image: taiduc113/tastopia:api-gateway
-        volumeMounts:
-          - name: tls-certs
-            mountPath: /etc/ssl/certs/server-cert.crt
-            subPath: tls.crt
-          - name: tls-certs
-            mountPath: /etc/ssl/private/private-key.pem
-            subPath: tls.key
         envFrom:
           - secretRef:
               name: global-secret

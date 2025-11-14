@@ -35,8 +35,5 @@ COPY --from=publish /app/publish .
 # RUN chmod -R 755 ./keys/
 
 COPY seeds seeds
-COPY ./ssl/certs/root-ca.crt /usr/local/share/ca-certificates/ca.crt
-COPY ./ssl/certs/self-root-ca.crt /usr/local/share/ca-certificates/ca.crt
-RUN update-ca-certificates
 
 ENTRYPOINT ["dotnet", "DuendeIdentityServer.dll"]

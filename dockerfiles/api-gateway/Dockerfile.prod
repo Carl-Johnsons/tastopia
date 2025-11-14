@@ -30,8 +30,7 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-COPY ./ssl/certs/root-ca.crt /usr/local/share/ca-certificates/ca.crt
-COPY ./ssl/certs/self-root-ca.crt /usr/local/share/ca-certificates/ca.crt
-RUN update-ca-certificates
+# COPY ./ssl/certs/root-ca.crt /usr/local/share/ca-certificates/ca.crt
+# RUN update-ca-certificates
 
 ENTRYPOINT ["dotnet", "APIGateway.dll"]

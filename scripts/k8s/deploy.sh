@@ -48,17 +48,32 @@ for secret in "${!tls[@]}"; do
   secret="${secret}-tls"
 
   kubectl delete secret "$secret" 2>/dev/null
-  kubectl create secret tls "$secret" --cert="$crt" --key="$key"
+  # kubectl create secret tls "$secret" --cert="$crt" --key="$key"
 done
 
 # Apply file .yaml
 cd ./k8s
 
 services=(
-  "identity-api"
   "postgres"
-  "consul"
+  # "mongo"
+  "redis"
   "rabbitmq"
+  "consul"
+  # "website"
+  "api-gateway"
+  # "signalr"
+  # "tracking-api"
+  "upload-api"
+  "identity-api"
+  # "notification-api"
+  # "recipe-api"
+  "user-api"
+  # "ingredient-predict-api"
+  # "email-worker"
+  # "push-notification-worker"
+  # "recipe-worker"
+  # "sms-worker"
 )
 
 echo "Deleting all deployments..."

@@ -12,25 +12,36 @@ spec:
         app: user-api
     spec:
       restartPolicy: Always
-      volumes:
-        - name: tls-certs
-          secret:
-            secretName: user-api-tls
-            items:
-              - key: tls.crt
-                path: tls.crt
-              - key: tls.key
-                path: tls.key
+      initContainers:
+        - name: db-wait
+          image: postgres:17.0-alpine
+          envFrom: 
+            - secretRef:
+                name: global-secret
+          command: 
+            - sh
+            - -c
+            - |
+              until PGPASSWORD=$POSTGRES_PASSWORD psql -h $DB_HOST -U $POSTGRES_USER -d postgres -c '\q'; do
+                echo 'Waiting for database to be creatable...'
+                sleep 2
+              done
+
+              echo 'Database is online'
+              echo 'Waiting for 30s before doing migration...'
+              sleep 30
+              echo 'Migration started'
+        - name: db-migrate
+          envFrom: 
+            - secretRef:
+                name: global-secret
+            - secretRef:
+                name: user-api-secret
+          image: taiduc113/tastopia:user-api
+          command: ["dotnet","UserService.API.dll", "--migrate", "--seed"]
       containers:
       - name: user-api
         image: taiduc113/tastopia:user-api
-        volumeMounts:
-          - name: tls-certs
-            mountPath: /etc/ssl/certs/server-cert.crt
-            subPath: tls.crt
-          - name: tls-certs
-            mountPath: /etc/ssl/private/private-key.pem
-            subPath: tls.key
         envFrom:
           - secretRef:
               name: global-secret

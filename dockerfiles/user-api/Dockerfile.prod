@@ -32,6 +32,4 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 COPY seeds seeds
 
-COPY ./ssl/certs/self-root-ca.crt /usr/local/share/ca-certificates/ca.crt
-RUN update-ca-certificates
 ENTRYPOINT ["dotnet", "UserService.API.dll"]
