@@ -10,4 +10,5 @@ public interface IApplicationDbContext : IMongoDbContext
     public DbSet<UserSearchRecipe> UserSearchRecipes { get; set; }
     public DbSet<UserSearchUser> UserSearchUsers { get; set; }
     public DbSet<AdminActivityLog> AdminActivityLogs { get; set; }
+    Task SeedDb(IServiceProvider serviceProvider);
 }
