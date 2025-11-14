@@ -1,6 +1,6 @@
 ---
 - name: Setup production dependencies
   become: true
-  hosts: localhost
+  hosts: deployers
   roles:
     - setup-deploy
