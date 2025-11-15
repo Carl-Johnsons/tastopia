@@ -59,7 +59,7 @@ def deploy() {
 
   for (d in deployments) {
     sh(label: "Checking rollout status for ${d}...", script: """
-      kubectl rollout status ${d} --timeout=2m || {
+      kubectl rollout status ${d} --timeout=5m || {
         kubectl logs "${d}";
         exit 1;
       }
