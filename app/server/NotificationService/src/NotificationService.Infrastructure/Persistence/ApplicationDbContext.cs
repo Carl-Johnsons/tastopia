@@ -1,5 +1,6 @@
 ﻿using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using NotificationService.Domain.Entities;
 
@@ -20,6 +21,13 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<NotificationTemplate> NotificationTemplates { get; set; }
     public DbSet<AccountExpoPushToken> AccountExpoPushTokens { get; set; }
+
+    public async Task SeedDb(IServiceProvider serviceProvider)
+    {
+        var mockupData = serviceProvider.GetRequiredService<MockupData>();
+        await mockupData.SeedAllDataAsync();
+        Console.WriteLine("✅ Seed data complete");
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

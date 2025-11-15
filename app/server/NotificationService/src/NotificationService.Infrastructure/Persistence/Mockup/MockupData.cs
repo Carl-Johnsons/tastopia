@@ -13,7 +13,7 @@ internal class MockupData
         _unitOfWork = unitOfWork;
     }
 
-    public async Task SeedAllData()
+    public async Task SeedAllDataAsync()
     {
         await SeedNotificationTemplate();
         //await SeedNotifications();
