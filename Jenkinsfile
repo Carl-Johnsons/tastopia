@@ -42,6 +42,10 @@ def ensureK8sCluster() {
   ''')
 }
 
+def exposeService() {
+  sh(label: 'Exposing api gateway port...', script: 'kubectl port-forward svc/api-gateway 80:80')
+}
+
 def deploy() {
   ensureEnv()
   ensureCerts()
@@ -63,6 +67,8 @@ def deploy() {
       }
     """)
   }
+
+  exposeService()
 }
 
 pipeline {
