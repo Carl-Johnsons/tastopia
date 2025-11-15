@@ -88,9 +88,7 @@ kubectl delete pvc --all
 for service in "${services[@]}"; do
   # kubectl apply -f deployments -f services
   echo "Deploying $service..."
-
   kubectl apply -f "./deployments/${service}.yaml" -f "./services/${service}.yaml"
-  kubectl rollout restart deployment ${service}
 done
 
 cd "$project_root"
