@@ -22,16 +22,19 @@ spec:
             - sh
             - -c
             - |
-              until PGPASSWORD=$POSTGRES_PASSWORD psql -h $DB_HOST -U $POSTGRES_USER -d postgres -c '\q'; do
-                echo 'Waiting for database to be creatable...'
-                sleep 2
+              until PGPASSWORD=$POSTGRES_PASSWORD psql \
+                -h $DB_HOST -U $POSTGRES_USER -d postgres \
+                -c '\q' \
+                2>/dev/null; do
+
+                  echo 'Waiting for database to be creatable...'
+                  sleep 2
               done
 
               echo 'Database is online'
               echo 'Waiting for 10s before doing migration...'
               sleep 10
               echo 'Migration started'
-
         - name: db-migrate
           envFrom: 
             - secretRef:
