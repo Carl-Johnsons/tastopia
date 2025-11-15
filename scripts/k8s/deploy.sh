@@ -76,14 +76,14 @@ services=(
   # "sms-worker"
 )
 
-echo "Deleting all deployments..."
-kubectl get deployment --no-headers -o name | xargs -rl kubectl delete
+echo "deleting all deployments..."
+kubectl delete deployment --all
 
 echo "Deleting all services..."
-kubectl get svc --no-headers -o name | xargs -rl kubectl delete
+kubectl delete svc --all
 
-echo "Deleting all persistent volumes..."
-kubectl get pvc --no-headers -o name | xargs -rl kubectl delete
+echo "Deleting all persistent volumes claims..."
+kubectl delete pvc --all
 
 for service in "${services[@]}"; do
   # kubectl apply -f deployments -f services
