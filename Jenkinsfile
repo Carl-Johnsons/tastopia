@@ -52,12 +52,10 @@ def deploy() {
   ensureK8sCluster()
   sh(label: 'Running K8s deploy script...', script: './scripts/k8s/deploy.sh')
 
-  def deployments = [
-    'identity-api',
-    'postgres',
-    'rabbitmq', 
-    'consul'
-  ]
+  def deployments = sh(
+    script: 'kubectl get deployments -o name --no-headers',
+    returnStdout: true
+  ).trim().split('\n')
 
   for (d in deployments) {
     sh(label: "Checking rollout status for ${d}...", script: """
