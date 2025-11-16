@@ -48,7 +48,7 @@ def deploy() {
   sh(label: 'Running K8s deploy script...', script: './scripts/k8s/deploy.sh')
 
   def deployments = sh(
-    label: 'Get deployment list for health checking'
+    label: 'Get deployment list for health checking',
     script: 'kubectl get deployments -o name --no-headers',
     returnStdout: true
   ).trim().split('\n')
