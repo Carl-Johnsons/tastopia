@@ -7,8 +7,11 @@
     state: present
 
 - name: Add Infisical CLI repository
-  ansible.builtin.shell: |
-    curl -1sLf https://artifacts-cli.infisical.com/setup.deb.sh | bash
+  ansible.builtin.shell:
+    executable: bash
+    cmd: |
+      set -o pipefail
+      curl -1sLf https://artifacts-cli.infisical.com/setup.deb.sh | bash
   register: infisical_repo
   changed_when: infisical_repo.rc == 0
 
@@ -18,6 +21,4 @@
 
 - name: Install Infisical
   ansible.builtin.package:
-    name:
-      - infisical
-    state: present
+    name: infisical
