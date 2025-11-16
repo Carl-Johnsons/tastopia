@@ -85,10 +85,18 @@ kubectl delete svc --all
 echo "Deleting all persistent volumes claims..."
 kubectl delete pvc --all
 
+echo "Deleting all ingresses..."
+kubectl delete ingress --all
+
 for service in "${services[@]}"; do
   # kubectl apply -f deployments -f services
   echo "Deploying $service..."
   kubectl apply -f "./deployments/${service}.yaml" -f "./services/${service}.yaml"
+
+  if [ -f "./ingresses/${service}.yaml" ]; then
+    echo "Creating ingress for $service..."
+    kubectl apply -f "./ingresses/${service}.yaml"
+  fi
 done
 
 cd "$project_root"
