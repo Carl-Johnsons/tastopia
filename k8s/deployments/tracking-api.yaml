@@ -12,25 +12,37 @@ spec:
         app: tracking-api
     spec:
       restartPolicy: Always
-      volumes:
-        - name: tls-certs
-          secret:
-            secretName: tracking-api-tls
-            items:
-              - key: tls.crt
-                path: tls.crt
-              - key: tls.key
-                path: tls.key
+      initContainers:
+        - name: db-wait
+          image: mongo
+          envFrom: 
+            - secretRef:
+                name: global-secret
+          command: 
+            - sh
+            - -c
+            - |
+              until mongosh -u $MONGO_INITDB_ROOT_USERNAME -p \
+                $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin \
+                --quiet --eval "db.runCommand('ping').ok" \
+                2>/dev/null; do
+
+                  echo 'Waiting for database to be creatable...'
+                  sleep 2
+              done
+
+              echo 'Database is online'
+        - name: db-migrate
+          envFrom: 
+            - secretRef:
+                name: global-secret
+            - secretRef:
+                name: tracking-api-secret
+          image: taiduc113/tastopia:tracking-api
+          command: ["dotnet","TrackingService.API.dll", "--seed"]
       containers:
       - name: tracking-api
         image: taiduc113/tastopia:tracking-api
-        volumeMounts:
-          - name: tls-certs
-            mountPath: /etc/ssl/certs/server-cert.crt
-            subPath: tls.crt
-          - name: tls-certs
-            mountPath: /etc/ssl/private/private-key.pem
-            subPath: tls.key
         envFrom:
           - secretRef:
               name: global-secret
