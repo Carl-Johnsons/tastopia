@@ -24,7 +24,7 @@ spec:
             - |
               until mongosh -u $MONGO_INITDB_ROOT_USERNAME -p \
                 $MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin \
-                --quiet --eval "db.runCommand('ping').ok" \
+                --quiet --eval "1"; echo $? \
                 2>/dev/null; do
 
                   echo 'Waiting for database to be creatable...'
