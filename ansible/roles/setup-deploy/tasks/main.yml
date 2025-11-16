@@ -17,3 +17,9 @@
 
 - name: Install kubectl
   ansible.builtin.include_tasks: ./kubectl.yml
+
+- name: Install helm
+  ansible.builtin.include_tasks: ./helm.yml
+
+- name: Install Nginx ingress controller
+  ansible.builtin.include_tasks: ./ingress-nginx.yml

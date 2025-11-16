@@ -1,0 +1,42 @@
+---
+- name: Install dependencies
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - curl
+      - gpg
+
+- name: Download the public signing key for the helm package repository
+  ansible.builtin.get_url:
+    url: '{{ helm.public_key.link }}'
+    dest: '{{ helm.public_key.path }}'
+    mode: '444'
+
+- name: Ensure keyrings folder exists
+  ansible.builtin.file:
+    path: '{{ helm.keyring.dir }}'
+    state: directory
+    mode: '0755'
+
+- name: Add the helm repo's key
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --dearmor
+      - -o
+      - '{{ helm.keyring.file_path }}'
+      - '{{ helm.public_key.path }}'
+    creates: '{{ helm.keyring.file_path }}'
+
+- name: Add helm sources into apt source list
+  ansible.builtin.apt_repository:
+    repo: '{{ helm.source.repo }}'
+    filename: '{{ helm.source.name }}'
+
+- name: Update apt caches
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install helm
+  ansible.builtin.apt:
+    name: helm
