@@ -20,15 +20,15 @@ declare -A generic=(
   [ingredient-predict-api]="app/server/IngredientPredictService/.env.prod"
 )
 
-declare -A tls=(
-  [identity-api]="identity"
-  [user-api]="user"
-  [recipe-api]="recipe"
-  [notification-api]="notification"
-  [tracking-api]="tracking"
-  [signalr]="signalr"
-  [api-gateway]="gateway"
-)
+# declare -A tls=(
+#   [identity-api]="identity"
+#   [user-api]="user"
+#   [recipe-api]="recipe"
+#   [notification-api]="notification"
+#   [tracking-api]="tracking"
+#   [signalr]="signalr"
+#   [api-gateway]="gateway"
+# )
 
 # Creating secret
 
@@ -41,33 +41,33 @@ for secret in "${!generic[@]}"; do
 done
 
 
-for secret in "${!tls[@]}"; do
-  name="${tls[$secret]}"
-  crt="./ssl/certs/${name}.crt"
-  key="./ssl/private-key/${name}.key"
-  secret="${secret}-tls"
+# for secret in "${!tls[@]}"; do
+#   name="${tls[$secret]}"
+#   crt="./ssl/certs/${name}.crt"
+#   key="./ssl/private-key/${name}.key"
+#   secret="${secret}-tls"
 
-  kubectl delete secret "$secret" 2>/dev/null
-  # kubectl create secret tls "$secret" --cert="$crt" --key="$key"
-done
+#   kubectl delete secret "$secret" 2>/dev/null
+#   kubectl create secret tls "$secret" --cert="$crt" --key="$key"
+# done
 
 # Apply file .yaml
 cd ./k8s
 
 services=(
   "postgres"
-  # "mongo"
+  "mongo"
   "redis"
   "rabbitmq"
   "consul"
   # "website"
   "api-gateway"
-  # "signalr"
-  # "tracking-api"
+  "signalr"
+  "tracking-api"
   "upload-api"
   "identity-api"
-  # "notification-api"
-  # "recipe-api"
+  "notification-api"
+  "recipe-api"
   "user-api"
   # "ingredient-predict-api"
   # "email-worker"
