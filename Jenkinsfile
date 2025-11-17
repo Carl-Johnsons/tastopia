@@ -30,7 +30,7 @@ def ensureK8sCluster() {
     if minikube status | grep -q Stopped; then
       echo Kubernetes cluster is not running
       echo Starting the cluster...
-      minikube start
+      minikube start --cpus='4'
     fi
 
     if minikube status | grep -q Stopped; then
