@@ -1,23 +1,24 @@
 #!/bin/bash
 
 project_root=$(pwd)
-
+server_root="app/server"
+env_file=".env.prod"
 cd ./k8s
 
 # Declare secret
 cd "$project_root"
 
 declare -A generic=(
-  [global]=".env.prod"
-  [identity-api]="app/server/IdentityService/.env.prod"
-  [user-api]="app/server/UserService/.env.prod"
-  [recipe-api]="app/server/RecipeService/.env.prod"
-  [notification-api]="app/server/NotificationService/.env.prod"
-  [upload-api]="app/server/UploadFileService/.env.prod"
-  [tracking-api]="app/server/TrackingService/.env.prod"
-  [signalr]="app/server/SignalRService/.env.prod"
-  [api-gateway]="app/server/APIGateway/.env.prod"
-  [ingredient-predict-api]="app/server/IngredientPredictService/.env.prod"
+  [global]="$env_file"
+  [identity-api]="$server_root/IdentityService/$env_file"
+  [user-api]="$server_root/UserService/$env_file"
+  [recipe-api]="$server_root/RecipeService/$env_file"
+  [notification-api]="$server_root/NotificationService/$env_file"
+  [upload-api]="$server_root/UploadFileService/$env_file"
+  [tracking-api]="$server_root/TrackingService/$env_file"
+  [signalr]="$server_root/SignalRService/$env_file"
+  [api-gateway]="$server_root/APIGateway/$env_file"
+  [ingredient-predict-api]="$server_root/IngredientPredictService/$env_file"
 )
 
 # declare -A tls=(
