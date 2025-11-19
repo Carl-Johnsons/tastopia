@@ -1,4 +1,4 @@
-def deployServices = ""
+def deployServices = ''
 
 void setBuildStatus(String message, String state, String context) {
   step([
@@ -123,10 +123,12 @@ def detectChange() {
     return
   }
   deployServices = filtered.join(' ')
-  runBuildScript(filtered)
 }
 
 def buildServices() {
+  if (deployServices == '') {
+    return
+  }
   ensureEnv()
   sh(label: 'Publish share library...', script: '''
     dotnet publish --packages "$(pwd)/data/nuget" \
