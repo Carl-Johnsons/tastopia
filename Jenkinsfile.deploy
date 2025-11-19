@@ -1,5 +1,3 @@
-def deployServices = ""
-
 void setBuildStatus(String message, String state, String context) {
   step([
       $class: 'GitHubCommitStatusSetter',
@@ -37,11 +35,7 @@ def ensureK8sCluster() {
 }
 
 def deploy() {
-  if (params.DEPLOY_SERVICES) {
-    deployServices = params.DEPLOY_SERVICES
-  }
-
-  if(deployServices == "") {
+  if(!params.DEPLOY_SERVICES) {
     echo "Nothing built. Cancel deployment!"
     return
   }
@@ -54,7 +48,7 @@ def deploy() {
 }
 
 def serviceStatusCheck() {
-  if(deployServices == "") {
+  if(!params.DEPLOY_SERVICES) {
     return
   }
 
