@@ -81,12 +81,16 @@ def buildServices() {
 
   def validServices = serviceFolders.keySet() as List
 
-  if (params.BUILD_SERVICES?.trim()) {
+  if (params.BUILD_SERVICES) {
     def manualList = params.BUILD_SERVICES
-      ?.trim()
-      ?.split(',')
-      *.trim()
-      .findAll { it }   // remove empty
+        .trim()
+        .split(',')
+        .each { s ->
+          s = s.trim()
+          if (s) {
+            manualList << s
+          }
+        }
     def invalid = manualList.findAll { !validServices.contains(it) }
 
     if (!invalid.isEmpty()) {
