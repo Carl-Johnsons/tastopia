@@ -30,8 +30,8 @@ def getChangedPaths() {
 def detectServicesToBuild(changedFiles, services) {
   def buildList = []
 
-  serviceFolders.each { service, folders ->
-    def affected = changedFiles.any { files ->
+  services.each { service, folders ->
+    def affected = changedFiles.any { file ->
       folders.any { folder -> file.startsWith(folder) }
     }
 
