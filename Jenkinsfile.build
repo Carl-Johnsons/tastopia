@@ -43,7 +43,7 @@ def detectServicesToBuild(changedFiles, services) {
 }
 
 def ensureEnv() {
-  sh(label: 'Ensuring that Infisical token is present...', 
+  sh(label: 'Ensuring that Infisical token is present...',
      script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
   sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh')
@@ -79,6 +79,24 @@ def buildServices() {
     'recipe-worker': [ 'RecipeService/src/RecipeWorker' ]
   ]
 
+  def validServices = serviceFolders.keySet() as List
+
+  if (params.BUILD_SERVICES?.trim()) {
+    def manualList = params.BUILD_SERVICES
+      ?.trim()
+      ?.split(',')
+      *.trim()
+      .findAll { it }   // remove empty
+    def invalid = manualList.findAll { !validServices.contains(it) }
+
+    if (!invalid.isEmpty()) {
+      error "Invalid service name(s): ${invalid}. Valid values: ${validServices}"
+    }
+    echo "Manual override: building ${manualList}"
+    runBuildScript(manualList)
+    return
+  }
+
   def changed = getChangedPaths()
   def filtered = []
   if (changed == null) {
@@ -92,6 +110,10 @@ def buildServices() {
     return
   }
 
+  runBuildScript(filtered)
+}
+
+def runBuildScript(services) {
   sh(label: 'Publish share library...', script: '''
     dotnet publish --packages "$(pwd)/data/nuget" \
       -o ./app/server/Contract/Contract/Published \
@@ -99,7 +121,7 @@ def buildServices() {
   ''')
 
   sh(label: 'Building docker images...', script: '''
-    ./scripts/docker/build-services.sh ${filtered.join(' ')}
+    ./scripts/docker/build-services.sh ${services.join(' ')}
   ''')
 }
 
@@ -108,6 +130,14 @@ pipeline {
 
   environment {
     INFISICAL_TOKEN = credentials('infisical-token')
+  }
+
+  parameters {
+    string(
+      name: 'BUILD_SERVICES',
+      defaultValue: '',
+      description: 'Comma-separated list of services to build (override auto-detect)'
+    )
   }
 
   stages {
