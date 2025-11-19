@@ -1,42 +1,50 @@
 void setBuildStatus(String message, String state, String context) {
   step([
       $class: 'GitHubCommitStatusSetter',
-      reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/Carl-Johnsons/tastopia'],
+      reposSource: [$class: 'ManuallyEnteredRepositorySource',
+                          url: 'https://github.com/Carl-Johnsons/tastopia'],
       contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: context],
       errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
-      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
-  ]);
+      statusResultSource: [ $class: 'ConditionalStatusResultSource',
+                          results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
+  ])
 }
 
 def getChangedPaths() {
-    def prev = env.GIT_PREVIOUS_SUCCESSFUL_COMMIT
-    if (!prev) {
-        echo "No previous successful commit found, full rebuild."
-        return null
-    }
+  def prev = env.GIT_PREVIOUS_SUCCESSFUL_COMMIT
+  if (!prev) {
+    echo 'No previous successful commit found, full rebuild.'
+    return null
+  }
 
-    echo "Last git previous successful commit: ${prev}"
-    def output = sh(
+  echo "Last git previous successful commit: ${prev}"
+  def output = sh(
         script: "git diff --name-only ${prev} HEAD",
         returnStdout: true
     ).trim()
 
-    if (output == "") return []
-    return output.split("\n")
+  if (output == '') return []
+  return output.split('\n')
 }
 
 def detectServicesToBuild(changedFiles, services) {
-    def selected = []
-    for (svc in services) {
-        if (changedFiles.any { it.contains(svc) }) {
-            selected << svc
-        }
+  def buildList = []
+
+  serviceFolders.each { service, folders ->
+    def affected = changedFiles.any { files ->
+      folders.any { folder -> file.startsWith(folder) }
     }
-    return selected
+
+    if (affected) {
+        buildList << service
+    }
+  }
+  return buildList
 }
 
 def ensureEnv() {
-  sh(label: 'Ensuring that Infisical token is present...', script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
+  sh(label: 'Ensuring that Infisical token is present...', 
+     script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
   sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh')
 }
@@ -44,23 +52,48 @@ def ensureEnv() {
 def buildServices() {
   ensureEnv()
 
-  def changed = getChangedPaths()
-  def allServices = ["website", "api-gateway", "signalr", "tracking-api", "upload-api", "identity-api", "notification-api", "recipe-api", "user-api", "ingredient-predict-api", "email-worker", "push-notification-worker", "recipe-worker", "sms-worker"]
+  def serviceFolders = [
+    'website': [ 'website' ],
+    'api-gateway': [ 'APIGateway' ],
+    'signalr': [ 'SignalRService' ],
+    'tracking-api': [ 'TrackingService' ],
+    'upload-api': [ 'UploadFileService' ],
+    'identity-api': [ 'IdentityService' ],
+    'notification-api': [
+      'NotificationService/src/NotificationService.API',
+      'NotificationService/src/NotificationService.Application',
+      'NotificationService/src/NotificationService.Domain',
+      'NotificationService/src/NotificationService.Infrastructure'
+    ],
+    'recipe-api': [
+      'RecipeService/src/RecipeService.API',
+      'RecipeService/src/RecipeService.Application',
+      'RecipeService/src/RecipeService.Domain',
+      'RecipeService/src/RecipeService.Infrastructure',
+    ],
+    'user-api': [ 'UserService' ],
+    'ingredient-predict-api': [ 'IngredientPredictService' ],
+    'email-worker': [ 'NotificationService/src/EmailWorker' ],
+    'sms-worker': [ 'NotificationService/src/SMSWorker' ],
+    'push-notification-worker': [ 'NotificationService/src/PushNotificationWorker' ],
+    'recipe-worker': [ 'RecipeService/src/RecipeWorker' ]
+  ]
 
+  def changed = getChangedPaths()
   def filtered = []
-  if (changed == null){
-    filtered = allServices
+  if (changed == null) {
+    filtered = serviceFolders.keySet() as List
   } else {
-    filtered = detectServicesToBuild(changed, allServices)
+    filtered = detectServicesToBuild(changed, serviceFolders)
   }
 
   if (filtered.isEmpty()) {
-    echo "No changed services. Nothing to build."
+    echo 'No changed services. Nothing to build.'
     return
   }
 
   sh(label: 'Publish share library...', script: '''
-    dotnet publish --packages "$(pwd)/data/nuget" \ 
+    dotnet publish --packages "$(pwd)/data/nuget" \
       -o ./app/server/Contract/Contract/Published \
       ./app/server/Contract/Contract
   ''')
