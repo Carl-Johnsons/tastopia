@@ -8,6 +8,33 @@ void setBuildStatus(String message, String state, String context) {
   ]);
 }
 
+def getChangedPaths() {
+    def prev = env.GIT_PREVIOUS_SUCCESSFUL_COMMIT
+    if (!prev) {
+        echo "No previous successful commit found, full rebuild."
+        return null
+    }
+
+    echo "Last git previous successful commit: ${prev}"
+    def output = sh(
+        script: "git diff --name-only ${prev} HEAD",
+        returnStdout: true
+    ).trim()
+
+    if (output == "") return []
+    return output.split("\n")
+}
+
+def detectServicesToBuild(changedFiles, services) {
+    def selected = []
+    for (svc in services) {
+        if (changedFiles.any { it.contains(svc) }) {
+            selected << svc
+        }
+    }
+    return selected
+}
+
 def ensureEnv() {
   sh(label: 'Ensuring that Infisical token is present...', script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
@@ -16,8 +43,31 @@ def ensureEnv() {
 
 def buildServices() {
   ensureEnv()
-  sh(label: 'Building services...', script: './scripts/local/build-all-services.sh')
-  sh(label: 'Building docker images...', script: './scripts/docker/build-services.sh')
+
+  def changed = getChangedPaths()
+  def allServices = ["website", "api-gateway", "signalr", "tracking-api", "upload-api", "identity-api", "notification-api", "recipe-api", "user-api", "ingredient-predict-api", "email-worker", "push-notification-worker", "recipe-worker", "sms-worker"]
+
+  def filtered = []
+  if (changed == null){
+    filtered = allServices
+  } else {
+    filtered = detectServicesToBuild(changed, allServices)
+  }
+
+  if (filtered.isEmpty()) {
+    echo "No changed services. Nothing to build."
+    return
+  }
+
+  sh(label: 'Publish share library...', script: '''
+    dotnet publish --packages "$(pwd)/data/nuget" \ 
+      -o ./app/server/Contract/Contract/Published \
+      ./app/server/Contract/Contract
+  ''')
+
+  sh(label: 'Building docker images...', script: '''
+    ./scripts/docker/build-services.sh ${filtered.join(' ')}
+  ''')
 }
 
 pipeline {
