@@ -103,8 +103,8 @@ def detectChange() {
     if (!invalid.isEmpty()) {
       error "Invalid service name(s): ${invalid}. Valid values: ${validServices}"
     }
-    echo "Manual override: building ${manualList}"
-    env.DEPLOY_SERVICES = manualList.join(' ')
+    env.SERVICES_TO_BUILD = manualList.join(' ')
+    echo "Manual override: building ${env.SERVICES_TO_BUILD}"
     return
   }
 
@@ -120,11 +120,12 @@ def detectChange() {
     echo 'No changed services. Nothing to build.'
     return
   }
-  env.DEPLOY_SERVICES = filtered.join(' ')
+  env.SERVICES_TO_BUILD = filtered.join(' ')
+  echo "Building services ${env.SERVICES_TO_BUILD}"
 }
 
 def buildServices() {
-  if (!env.DEPLOY_SERVICES) {
+  if (!env.SERVICES_TO_BUILD) {
     return
   }
   ensureEnv()
@@ -134,9 +135,18 @@ def buildServices() {
       ./app/server/Contract/Contract
   ''')
 
-  echo "Building ${env.DEPLOY_SERVICES}"
-  sh(label: 'Building docker images...', script: "bash ./scripts/docker/build-services.sh ${env.DEPLOY_SERVICES}")
+  echo "Building ${env.SERVICES_TO_BUILD}"
+  sh(label: 'Building docker images...', script: "bash ./scripts/docker/build-services.sh ${env.SERVICES_TO_BUILD}")
   cleanUp()
+}
+
+def triggerDeployPipeline() {
+  if (!env.SERVICES_TO_BUILD) {
+    return
+  }
+  build job: 'pipeline', parameters: [
+    string(name: 'DEPLOY_SERVICES', value: env.SERVICES_TO_BUILD)
+  ], wait: false
 }
 
 pipeline {
@@ -144,7 +154,7 @@ pipeline {
 
   environment {
     INFISICAL_TOKEN = credentials('infisical-token')
-    DEPLOY_SERVICES = ''
+    SERVICES_TO_BUILD = ''
   }
 
   parameters {
@@ -159,24 +169,22 @@ pipeline {
     stage('Detect service change') {
       steps {
         script {
-            setBuildStatus('Begin detect change...', 'PENDING', 'jenkins/ci/build')
-            detectChange()
+          setBuildStatus('Begin detect change...', 'PENDING', 'jenkins/ci/build')
+          detectChange()
         }
       }
     }
     stage('Build services') {
       steps {
         script {
-            buildServices()
+          buildServices()
         }
       }
     }
     stage('Trigger Deploy Pipeline') {
       steps {
         script {
-            build job: 'pipeline', parameters: [
-                string(name: 'DEPLOY_SERVICES', value: env.DEPLOY_SERVICES)
-            ], wait: false
+          triggerDeployPipeline()
         }
       }
       post {
