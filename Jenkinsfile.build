@@ -90,6 +90,7 @@ def detectChange() {
   echo "Log params: \"${params.BUILD_SERVICES}\""
 
   def manualList = []
+
   if (params.BUILD_SERVICES) {
     echo 'Params exist'
     manualList = params.BUILD_SERVICES
@@ -111,10 +112,12 @@ def detectChange() {
 
     def JOINED_STRING = manualList.join(' ')
 
-    echo "JOINED_STRING: ${JOINED_STRING}"
+    echo "JOINED_STRING: \"${JOINED_STRING}\""
     env.SERVICES_TO_BUILD = JOINED_STRING
+    env.SERVICES_BUILD_LIST = JOINED_STRING
 
     echo "Manual override: building ${env.SERVICES_TO_BUILD}"
+    echo "Manual override: building ${env.SERVICES_BUILD_LIST}"
     return
   }
 
