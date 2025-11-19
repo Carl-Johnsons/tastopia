@@ -108,7 +108,12 @@ def detectChange() {
     if (!invalid.isEmpty()) {
       error "Invalid service name(s): ${invalid}. Valid values: ${validServices}"
     }
-    env.SERVICES_TO_BUILD = manualList.join(' ')
+
+    def JOINED_STRING = manualList.join(' ')
+
+    echo "JOINED_STRING: ${JOINED_STRING}"
+    env.SERVICES_TO_BUILD = JOINED_STRING
+
     echo "Manual override: building ${env.SERVICES_TO_BUILD}"
     return
   }
