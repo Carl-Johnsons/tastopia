@@ -1,3 +1,5 @@
+def deployService = ""
+
 void setBuildStatus(String message, String state, String context) {
   step([
       $class: 'GitHubCommitStatusSetter',
@@ -80,11 +82,11 @@ def buildServices() {
       'RecipeService/src/RecipeService.Infrastructure',
     ],
     'user-api': [ 'UserService' ],
-    // 'ingredient-predict-api': [ 'IngredientPredictService' ],
-    // 'email-worker': [ 'NotificationService/src/EmailWorker' ],
-    // 'sms-worker': [ 'NotificationService/src/SMSWorker' ],
-    // 'push-notification-worker': [ 'NotificationService/src/PushNotificationWorker' ],
-    // 'recipe-worker': [ 'RecipeService/src/RecipeWorker' ]
+  // 'ingredient-predict-api': [ 'IngredientPredictService' ],
+  // 'email-worker': [ 'NotificationService/src/EmailWorker' ],
+  // 'sms-worker': [ 'NotificationService/src/SMSWorker' ],
+  // 'push-notification-worker': [ 'NotificationService/src/PushNotificationWorker' ],
+  // 'recipe-worker': [ 'RecipeService/src/RecipeWorker' ]
   ]
 
   def validServices = serviceFolders.keySet() as List
@@ -132,8 +134,10 @@ def runBuildScript(services) {
       -o ./app/server/Contract/Contract/Published \
       ./app/server/Contract/Contract
   ''')
-  echo "Building ${services.join(' ')}" 
-  sh(label: 'Building docker images...', script: "bash ./scripts/docker/build-services.sh ${services.join(' ')}")
+
+  deployService = service.join(' ')
+  echo "Building ${deployService}"
+  sh(label: 'Building docker images...', script: "bash ./scripts/docker/build-services.sh ${deployService}")
   cleanUp()
 }
 
@@ -170,6 +174,15 @@ pipeline {
 
         failure {
           setBuildStatus('Deployment failed', 'FAILURE', 'jenkins/ci/build')
+        }
+      }
+    }
+    stage('Trigger Deploy') {
+      steps {
+        script {
+            build job: 'pipeline', parameters: [
+                string(name: 'DEPLOY_SERVICES', value: deployService)
+            ], wait: false
         }
       }
     }
