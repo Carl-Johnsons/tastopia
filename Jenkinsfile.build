@@ -86,13 +86,9 @@ def detectChange() {
   ]
 
   def validServices = serviceFolders.keySet() as List
-
-  echo "Log params: \"${params.BUILD_SERVICES}\""
-
   def manualList = []
 
   if (params.BUILD_SERVICES) {
-    echo 'Params exist'
     manualList = params.BUILD_SERVICES
         .trim()
         .split(',')
@@ -103,21 +99,15 @@ def detectChange() {
           }
         }
 
-    echo "List: ${manualList}"
     def invalid = manualList.findAll { !validServices.contains(it) }
 
     if (!invalid.isEmpty()) {
       error "Invalid service name(s): ${invalid}. Valid values: ${validServices}"
     }
 
-    def JOINED_STRING = manualList.join(' ')
-
-    echo "JOINED_STRING: \"${JOINED_STRING}\""
-    env.SERVICES_TO_BUILD = JOINED_STRING
-    env.SERVICES_BUILD_LIST = JOINED_STRING
-
+    env.SERVICES_TO_BUILD = manualList.join(' ')
     echo "Manual override: building ${env.SERVICES_TO_BUILD}"
-    echo "Manual override: building ${env.SERVICES_BUILD_LIST}"
+
     return
   }
 
