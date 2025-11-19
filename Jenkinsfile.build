@@ -49,6 +49,13 @@ def ensureEnv() {
   sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh')
 }
 
+def cleanUp() {
+  sh(label: 'Clean up unused docker container...', script: 'docker container prune -f')
+  sh(label: 'Clean up unused docker image...', script: 'docker image prune -a -f')
+  sh(label: 'Clean up unused docker volume...', script: 'docker volume prune -f')
+  sh(label: 'Clean up unused docker network...', script: 'docker network prune -f')
+}
+
 def buildServices() {
   ensureEnv()
 
@@ -123,10 +130,9 @@ def runBuildScript(services) {
       -o ./app/server/Contract/Contract/Published \
       ./app/server/Contract/Contract
   ''')
-
-  sh(label: 'Building docker images...', script: '''
-    ./scripts/docker/build-services.sh ${services.join(' ')}
-  ''')
+  echo "Building ${services.join(' ')}" 
+  sh(label: 'Building docker images...', script: "bash ./scripts/docker/build-services.sh ${services.join(' ')}")
+  cleanUp()
 }
 
 pipeline {
