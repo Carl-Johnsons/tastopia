@@ -54,6 +54,7 @@ def cleanUp() {
   sh(label: 'Clean up unused docker image...', script: 'docker image prune -a -f')
   sh(label: 'Clean up unused docker volume...', script: 'docker volume prune -f')
   sh(label: 'Clean up unused docker network...', script: 'docker network prune -f')
+  sh(label: 'Clean up docker system ...', script: 'docker system prune -f')
 }
 
 def buildServices() {
@@ -88,8 +89,9 @@ def buildServices() {
 
   def validServices = serviceFolders.keySet() as List
 
+  def manualList = []
   if (params.BUILD_SERVICES) {
-    def manualList = params.BUILD_SERVICES
+    manualList = params.BUILD_SERVICES
         .trim()
         .split(',')
         .each { s ->
