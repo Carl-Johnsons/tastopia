@@ -57,6 +57,12 @@ def cleanUp() {
   sh(label: 'Clean up docker system ...', script: 'docker system prune -f')
 }
 
+def abortDueToEmptyBuildList() {
+  currentBuild.result = 'ABORTED'
+  setBuildStatus('Build check succeeded. There is nothing to build', 'SUCCESS', 'jenkins/ci/build')
+  error('Stopping early due to empty service building list…')
+}
+
 def detectChange() {
   def serviceFolders = [
     // 'website': [ 'website' ],
@@ -106,8 +112,13 @@ def detectChange() {
     }
 
     env.SERVICES_TO_BUILD = manualList.join(' ')
-    echo "Manual override: building ${env.SERVICES_TO_BUILD}"
 
+    if (env.SERVICES_TO_BUILD.isEmpty()) {
+      echo 'List of services provided is empty. Nothing to build.'
+      abortDueToEmptyBuildList()
+    }
+
+    echo "Manual override: building ${env.SERVICES_TO_BUILD}"
     return
   }
 
@@ -121,7 +132,7 @@ def detectChange() {
 
   if (filtered.isEmpty()) {
     echo 'No changed services. Nothing to build.'
-    return
+    abortDueToEmptyBuildList()
   }
   env.SERVICES_TO_BUILD = filtered.join(' ')
   echo "Building services ${env.SERVICES_TO_BUILD}"
@@ -178,10 +189,6 @@ pipeline {
       post {
         success {
           setBuildStatus('Detect service change succeeded', 'SUCCESS', 'jenkins/ci/build')
-        }
-
-        failure {
-          setBuildStatus('Detect service change failed', 'FAILURE', 'jenkins/ci/build')
         }
       }
     }
