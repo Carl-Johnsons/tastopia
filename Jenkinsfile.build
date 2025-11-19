@@ -60,7 +60,7 @@ def buildServices() {
   ensureEnv()
 
   def serviceFolders = [
-    'website': [ 'website' ],
+    // 'website': [ 'website' ],
     'api-gateway': [ 'APIGateway' ],
     'signalr': [ 'SignalRService' ],
     'tracking-api': [ 'TrackingService' ],
@@ -79,11 +79,11 @@ def buildServices() {
       'RecipeService/src/RecipeService.Infrastructure',
     ],
     'user-api': [ 'UserService' ],
-    'ingredient-predict-api': [ 'IngredientPredictService' ],
-    'email-worker': [ 'NotificationService/src/EmailWorker' ],
-    'sms-worker': [ 'NotificationService/src/SMSWorker' ],
-    'push-notification-worker': [ 'NotificationService/src/PushNotificationWorker' ],
-    'recipe-worker': [ 'RecipeService/src/RecipeWorker' ]
+    // 'ingredient-predict-api': [ 'IngredientPredictService' ],
+    // 'email-worker': [ 'NotificationService/src/EmailWorker' ],
+    // 'sms-worker': [ 'NotificationService/src/SMSWorker' ],
+    // 'push-notification-worker': [ 'NotificationService/src/PushNotificationWorker' ],
+    // 'recipe-worker': [ 'RecipeService/src/RecipeWorker' ]
   ]
 
   def validServices = serviceFolders.keySet() as List
