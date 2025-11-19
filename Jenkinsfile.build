@@ -124,7 +124,7 @@ def detectChange() {
 }
 
 def buildServices() {
-  if (env.DEPLOY_SERVICES == '') {
+  if (!env.DEPLOY_SERVICES) {
     return
   }
   ensureEnv()
