@@ -1,0 +1,201 @@
+void setBuildStatus(String message, String state, String context) {
+  step([
+      $class: 'GitHubCommitStatusSetter',
+      reposSource: [$class: 'ManuallyEnteredRepositorySource',
+                          url: 'https://github.com/Carl-Johnsons/tastopia'],
+      contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: context],
+      errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
+      statusResultSource: [ $class: 'ConditionalStatusResultSource',
+                          results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
+  ])
+}
+
+def getChangedPaths() {
+  def prev = env.GIT_PREVIOUS_SUCCESSFUL_COMMIT
+  if (!prev) {
+    echo 'No previous successful commit found, full rebuild.'
+    return null
+  }
+
+  echo "Last git previous successful commit: ${prev}"
+  def output = sh(
+        script: "git diff --name-only ${prev} HEAD",
+        returnStdout: true
+    ).trim()
+
+  if (output == '') return []
+  return output.split('\n')
+}
+
+def detectServicesToBuild(changedFiles, services) {
+  def buildList = []
+
+  services.each { service, folders ->
+    def affected = changedFiles.any { file ->
+      folders.any { folder -> file.startsWith(folder) }
+    }
+
+    if (affected) {
+        buildList << service
+    }
+  }
+  return buildList
+}
+
+def ensureEnv() {
+  sh(label: 'Ensuring that Infisical token is present...',
+     script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
+  sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
+  sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh')
+}
+
+def cleanUp() {
+  sh(label: 'Clean up unused docker container...', script: 'docker container prune -f')
+  sh(label: 'Clean up unused docker image...', script: 'docker image prune -a -f')
+  sh(label: 'Clean up unused docker volume...', script: 'docker volume prune -f')
+  sh(label: 'Clean up unused docker network...', script: 'docker network prune -f')
+  sh(label: 'Clean up docker system ...', script: 'docker system prune -f')
+}
+
+def detectChange() {
+  def serviceFolders = [
+    // 'website': [ 'website' ],
+    'api-gateway': [ 'APIGateway' ],
+    'signalr': [ 'SignalRService' ],
+    'tracking-api': [ 'TrackingService' ],
+    'upload-api': [ 'UploadFileService' ],
+    'identity-api': [ 'IdentityService' ],
+    'notification-api': [
+      'NotificationService/src/NotificationService.API',
+      'NotificationService/src/NotificationService.Application',
+      'NotificationService/src/NotificationService.Domain',
+      'NotificationService/src/NotificationService.Infrastructure'
+    ],
+    'recipe-api': [
+      'RecipeService/src/RecipeService.API',
+      'RecipeService/src/RecipeService.Application',
+      'RecipeService/src/RecipeService.Domain',
+      'RecipeService/src/RecipeService.Infrastructure',
+    ],
+    'user-api': [ 'UserService' ],
+  // 'ingredient-predict-api': [ 'IngredientPredictService' ],
+  // 'email-worker': [ 'NotificationService/src/EmailWorker' ],
+  // 'sms-worker': [ 'NotificationService/src/SMSWorker' ],
+  // 'push-notification-worker': [ 'NotificationService/src/PushNotificationWorker' ],
+  // 'recipe-worker': [ 'RecipeService/src/RecipeWorker' ]
+  ]
+
+  def validServices = serviceFolders.keySet() as List
+
+  def manualList = []
+  if (params.BUILD_SERVICES) {
+    manualList = params.BUILD_SERVICES
+        .trim()
+        .split(',')
+        .each { s ->
+          s = s.trim()
+          if (s) {
+            manualList << s
+          }
+        }
+    def invalid = manualList.findAll { !validServices.contains(it) }
+
+    if (!invalid.isEmpty()) {
+      error "Invalid service name(s): ${invalid}. Valid values: ${validServices}"
+    }
+    env.SERVICES_TO_BUILD = manualList.join(' ')
+    echo "Manual override: building ${env.SERVICES_TO_BUILD}"
+    return
+  }
+
+  def changed = getChangedPaths()
+  def filtered = []
+  if (changed == null) {
+    filtered = serviceFolders.keySet() as List
+  } else {
+    filtered = detectServicesToBuild(changed, serviceFolders)
+  }
+
+  if (filtered.isEmpty()) {
+    echo 'No changed services. Nothing to build.'
+    return
+  }
+  env.SERVICES_TO_BUILD = filtered.join(' ')
+  echo "Building services ${env.SERVICES_TO_BUILD}"
+}
+
+def buildServices() {
+  if (!env.SERVICES_TO_BUILD) {
+    return
+  }
+  ensureEnv()
+  sh(label: 'Publish share library...', script: '''
+    dotnet publish --packages "$(pwd)/data/nuget" \
+      -o ./app/server/Contract/Contract/Published \
+      ./app/server/Contract/Contract
+  ''')
+
+  echo "Building ${env.SERVICES_TO_BUILD}"
+  sh(label: 'Building docker images...', script: "bash ./scripts/docker/build-services.sh ${env.SERVICES_TO_BUILD}")
+  cleanUp()
+}
+
+def triggerDeployPipeline() {
+  if (!env.SERVICES_TO_BUILD) {
+    return
+  }
+  build job: 'pipeline', parameters: [
+    string(name: 'DEPLOY_SERVICES', value: env.SERVICES_TO_BUILD)
+  ], wait: false
+}
+
+pipeline {
+  agent { label 'builder' }
+
+  environment {
+    INFISICAL_TOKEN = credentials('infisical-token')
+    SERVICES_TO_BUILD = ''
+  }
+
+  parameters {
+    string(
+      name: 'BUILD_SERVICES',
+      defaultValue: '',
+      description: 'Comma-separated list of services to build (override auto-detect)'
+    )
+  }
+
+  stages {
+    stage('Detect service change') {
+      steps {
+        script {
+          setBuildStatus('Begin detect change...', 'PENDING', 'jenkins/ci/build')
+          detectChange()
+        }
+      }
+    }
+    stage('Build services') {
+      steps {
+        script {
+          buildServices()
+        }
+      }
+    }
+    stage('Trigger Deploy Pipeline') {
+      steps {
+        script {
+          triggerDeployPipeline()
+        }
+      }
+      post {
+        success {
+          setBuildStatus('Deployment succeeded', 'SUCCESS', 'jenkins/ci/build')
+        }
+
+        failure {
+          setBuildStatus('Deployment failed', 'FAILURE', 'jenkins/ci/build')
+        }
+      }
+    }
+  }
+}

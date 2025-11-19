@@ -1,28 +1,20 @@
 void setBuildStatus(String message, String state, String context) {
   step([
       $class: 'GitHubCommitStatusSetter',
-      reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/Carl-Johnsons/tastopia'],
+      reposSource: [$class: 'ManuallyEnteredRepositorySource',
+                            url: 'https://github.com/Carl-Johnsons/tastopia'],
       contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: context],
       errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
-      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
-  ]);
+      statusResultSource: [ $class: 'ConditionalStatusResultSource',
+                            results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
+  ])
 }
 
 def ensureEnv() {
-  sh(label: 'Ensuring that Infisical token is present...', script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
+  sh(label: 'Ensuring that Infisical token is present...',
+    script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
   sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh')
-}
-
-def ensureCerts() {
-  sh(label: 'Ensuring that certificates are present...', script: "./scripts/cert/setup.sh")
-}
-
-def buildServices() {
-  ensureEnv()
-  ensureCerts()
-  sh(label: 'Building services...', script: './scripts/local/build-all-services.sh')
-  sh(label: 'Building docker images...', script: './scripts/docker/build-services.sh')
 }
 
 def ensureK8sCluster() {
@@ -43,9 +35,22 @@ def ensureK8sCluster() {
 }
 
 def deploy() {
+  if(!params.DEPLOY_SERVICES) {
+    echo "Nothing built. Cancel deployment!"
+    return
+  }
+
   ensureEnv()
   ensureK8sCluster()
-  sh(label: 'Running K8s deploy script...', script: './scripts/k8s/deploy.sh')
+
+
+  sh(label: 'Running K8s deploy script...', script: "./scripts/k8s/deploy.sh ${manualList.join(' ')}")
+}
+
+def serviceStatusCheck() {
+  if(!params.DEPLOY_SERVICES) {
+    return
+  }
 
   def deployments = sh(
     label: 'Getting deployment list for health checking...',
@@ -64,20 +69,32 @@ def deploy() {
 }
 
 pipeline {
-  agent none
+  agent { label 'deploy' }
 
   environment {
     INFISICAL_TOKEN = credentials('infisical-token')
   }
 
+  parameters {
+    string(
+      name: 'DEPLOY_SERVICES',
+      defaultValue: '',
+      description: 'Comma-separated list of services to deploy (override auto-detect)'
+    )
+  }
   stages {
-    stage('Test deployment') {
-      agent { label 'deploy' }
-
+    stage('Service Deployment') {
       steps {
         script {
             setBuildStatus('Testing deployment...', 'PENDING', 'jenkins/ci/deployment')
             deploy()
+        }
+      }
+    }
+    stage('Service Status check') {
+      steps {
+        script {
+            serviceStatusCheck()
         }
       }
 
