@@ -26,7 +26,7 @@ if [ ${#services[@]} -eq 0 ]; then
   services=("${default_services[@]}")
 fi
 
-project="tastopia"
+project="$(basename $(pwd))"
 repo="taiduc113/tastopia"
 
 echo Building...
