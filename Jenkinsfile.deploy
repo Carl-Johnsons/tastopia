@@ -1,11 +1,14 @@
+def deployServices = ""
+
 void setBuildStatus(String message, String state, String context) {
   step([
       $class: 'GitHubCommitStatusSetter',
-      reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/Carl-Johnsons/tastopia'],
+      reposSource: [$class: 'ManuallyEnteredRepositorySource',
+                            url: 'https://github.com/Carl-Johnsons/tastopia'],
       contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: context],
       errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
       statusResultSource: [ $class: 'ConditionalStatusResultSource',
-       results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
+                            results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
   ])
 }
 
@@ -34,23 +37,26 @@ def ensureK8sCluster() {
 }
 
 def deploy() {
+  if (params.DEPLOY_SERVICES) {
+    deployServices = params.DEPLOY_SERVICES
+  }
+
+  if(deployServices == "") {
+    echo "Nothing built. Cancel deployment!"
+    return
+  }
+
   ensureEnv()
   ensureK8sCluster()
 
-  def manualList = []
-  if (params.DEPLOY_SERVICES) {
-    manualList = params.DEPLOY_SERVICES
-        .trim()
-        .split(',')
-        .each { s ->
-          s = s.trim()
-          if (s) {
-            manualList << s
-          }
-        }
-  }
 
   sh(label: 'Running K8s deploy script...', script: "./scripts/k8s/deploy.sh ${manualList.join(' ')}")
+}
+
+def serviceStatusCheck() {
+  if(deployServices == "") {
+    return
+  }
 
   def deployments = sh(
     label: 'Get deployment list for health checking',
@@ -69,7 +75,7 @@ def deploy() {
 }
 
 pipeline {
-  agent none
+  agent { label 'deploy' }
 
   environment {
     INFISICAL_TOKEN = credentials('infisical-token')
@@ -82,15 +88,19 @@ pipeline {
       description: 'Comma-separated list of services to deploy (override auto-detect)'
     )
   }
-
   stages {
-    stage('Test deployment') {
-      agent { label 'deploy' }
-
+    stage('Service Deployment') {
       steps {
         script {
             setBuildStatus('Testing deployment...', 'PENDING', 'jenkins/ci/deployment')
             deploy()
+        }
+      }
+    }
+    stage('Service Status check') {
+      steps {
+        script {
+            serviceStatusCheck()
         }
       }
 
