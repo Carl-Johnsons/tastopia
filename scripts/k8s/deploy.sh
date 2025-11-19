@@ -21,16 +21,6 @@ declare -A generic=(
   [ingredient-predict-api]="$server_root/IngredientPredictService/$env_file"
 )
 
-# declare -A tls=(
-#   [identity-api]="identity"
-#   [user-api]="user"
-#   [recipe-api]="recipe"
-#   [notification-api]="notification"
-#   [tracking-api]="tracking"
-#   [signalr]="signalr"
-#   [api-gateway]="gateway"
-# )
-
 # Creating secret
 
 for secret in "${!generic[@]}"; do
@@ -41,21 +31,10 @@ for secret in "${!generic[@]}"; do
   kubectl create secret generic "$secret" --from-env-file="$file"
 done
 
-
-# for secret in "${!tls[@]}"; do
-#   name="${tls[$secret]}"
-#   crt="./ssl/certs/${name}.crt"
-#   key="./ssl/private-key/${name}.key"
-#   secret="${secret}-tls"
-
-#   kubectl delete secret "$secret" 2>/dev/null
-#   kubectl create secret tls "$secret" --cert="$crt" --key="$key"
-# done
-
 # Apply file .yaml
 cd ./k8s
 
-services=(
+default_services=(
   "postgres"
   "mongo"
   "redis"
@@ -77,17 +56,23 @@ services=(
   # "sms-worker"
 )
 
-echo "deleting all deployments..."
-kubectl delete deployment --all
+services=("$@")
 
-echo "Deleting all services..."
-kubectl delete svc --all
+if [ ${#services[@]} -eq 0 ]; then
+  services=("${default_services[@]}")
+fi
 
-echo "Deleting all persistent volumes claims..."
-kubectl delete pvc --all
+# echo "deleting all deployments..."
+# kubectl delete deployment --all
 
-echo "Deleting all ingresses..."
-kubectl delete ingress --all
+# echo "Deleting all services..."
+# kubectl delete svc --all
+
+# echo "Deleting all persistent volumes claims..."
+# kubectl delete pvc --all
+
+# echo "Deleting all ingresses..."
+# kubectl delete ingress --all
 
 for service in "${services[@]}"; do
   # kubectl apply -f deployments -f services

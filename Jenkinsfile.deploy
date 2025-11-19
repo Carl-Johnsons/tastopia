@@ -4,25 +4,16 @@ void setBuildStatus(String message, String state, String context) {
       reposSource: [$class: 'ManuallyEnteredRepositorySource', url: 'https://github.com/Carl-Johnsons/tastopia'],
       contextSource: [$class: 'ManuallyEnteredCommitContextSource', context: context],
       errorHandlers: [[$class: 'ChangingBuildStatusErrorHandler', result: 'UNSTABLE']],
-      statusResultSource: [ $class: 'ConditionalStatusResultSource', results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
-  ]);
+      statusResultSource: [ $class: 'ConditionalStatusResultSource',
+       results: [[$class: 'AnyBuildResult', message: message, state: state]] ]
+  ])
 }
 
 def ensureEnv() {
-  sh(label: 'Ensuring that Infisical token is present...', script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
+  sh(label: 'Ensuring that Infisical token is present...',
+    script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
   sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh')
-}
-
-def ensureCerts() {
-  sh(label: 'Ensuring that certificates are present...', script: "./scripts/cert/setup.sh")
-}
-
-def buildServices() {
-  ensureEnv()
-  ensureCerts()
-  sh(label: 'Building services...', script: './scripts/local/build-all-services.sh')
-  sh(label: 'Building docker images...', script: './scripts/docker/build-services.sh')
 }
 
 def ensureK8sCluster() {
@@ -45,7 +36,21 @@ def ensureK8sCluster() {
 def deploy() {
   ensureEnv()
   ensureK8sCluster()
-  sh(label: 'Running K8s deploy script...', script: './scripts/k8s/deploy.sh')
+
+  def manualList = []
+  if (params.DEPLOY_SERVICES) {
+    manualList = params.DEPLOY_SERVICES
+        .trim()
+        .split(',')
+        .each { s ->
+          s = s.trim()
+          if (s) {
+            manualList << s
+          }
+        }
+  }
+
+  sh(label: 'Running K8s deploy script...', script: "./scripts/k8s/deploy.sh ${manualList.join(' ')}")
 
   def deployments = sh(
     label: 'Get deployment list for health checking',
@@ -68,6 +73,14 @@ pipeline {
 
   environment {
     INFISICAL_TOKEN = credentials('infisical-token')
+  }
+
+  parameters {
+    string(
+      name: 'DEPLOY_SERVICES',
+      defaultValue: '',
+      description: 'Comma-separated list of services to deploy (override auto-detect)'
+    )
   }
 
   stages {
