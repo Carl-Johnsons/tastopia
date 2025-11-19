@@ -178,6 +178,15 @@ pipeline {
           detectChange()
         }
       }
+      post {
+        success {
+          setBuildStatus('Detect service change succeeded', 'SUCCESS', 'jenkins/ci/build')
+        }
+
+        failure {
+          setBuildStatus('Detect service change failed', 'FAILURE', 'jenkins/ci/build')
+        }
+      }
     }
     stage('Build services') {
       steps {
@@ -185,7 +194,17 @@ pipeline {
           buildServices()
         }
       }
+      post {
+        success {
+          setBuildStatus('Build succeeded', 'SUCCESS', 'jenkins/ci/build')
+        }
+
+        failure {
+          setBuildStatus('Build failed', 'FAILURE', 'jenkins/ci/build')
+        }
+      }
     }
+
     stage('Trigger Deploy Pipeline') {
       steps {
         script {
