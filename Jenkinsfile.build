@@ -167,7 +167,6 @@ pipeline {
 
   environment {
     INFISICAL_TOKEN = credentials('infisical-token')
-    SERVICES_TO_BUILD = ''
   }
 
   parameters {
