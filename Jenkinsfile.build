@@ -1,4 +1,4 @@
-def deployService = ""
+def deployServices = ""
 
 void setBuildStatus(String message, String state, String context) {
   step([
@@ -59,9 +59,7 @@ def cleanUp() {
   sh(label: 'Clean up docker system ...', script: 'docker system prune -f')
 }
 
-def buildServices() {
-  ensureEnv()
-
+def detectChange() {
   def serviceFolders = [
     // 'website': [ 'website' ],
     'api-gateway': [ 'APIGateway' ],
@@ -108,7 +106,7 @@ def buildServices() {
       error "Invalid service name(s): ${invalid}. Valid values: ${validServices}"
     }
     echo "Manual override: building ${manualList}"
-    runBuildScript(manualList)
+    deployServices = manualList.join(' ')
     return
   }
 
@@ -124,25 +122,25 @@ def buildServices() {
     echo 'No changed services. Nothing to build.'
     return
   }
-
+  deployServices = filtered.join(' ')
   runBuildScript(filtered)
 }
 
-def runBuildScript(services) {
+def buildServices() {
+  ensureEnv()
   sh(label: 'Publish share library...', script: '''
     dotnet publish --packages "$(pwd)/data/nuget" \
       -o ./app/server/Contract/Contract/Published \
       ./app/server/Contract/Contract
   ''')
 
-  deployService = service.join(' ')
-  echo "Building ${deployService}"
-  sh(label: 'Building docker images...', script: "bash ./scripts/docker/build-services.sh ${deployService}")
+  echo "Building ${deployServices}"
+  sh(label: 'Building docker images...', script: "bash ./scripts/docker/build-services.sh ${deployServices}")
   cleanUp()
 }
 
 pipeline {
-  agent none
+  agent { label 'builder' }
 
   environment {
     INFISICAL_TOKEN = credentials('infisical-token')
@@ -157,16 +155,29 @@ pipeline {
   }
 
   stages {
-    stage('Build service') {
-      agent { label 'builder' }
-
+    stage('Detect service change') {
       steps {
         script {
-            setBuildStatus('Begin building services...', 'PENDING', 'jenkins/ci/build')
+            setBuildStatus('Begin detect change...', 'PENDING', 'jenkins/ci/build')
+            detectChange()
+        }
+      }
+    }
+    stage('Build services') {
+      steps {
+        script {
             buildServices()
         }
       }
-
+    }
+    stage('Trigger Deploy Pipeline') {
+      steps {
+        script {
+            build job: 'pipeline', parameters: [
+                string(name: 'DEPLOY_SERVICES', value: deployServices)
+            ], wait: false
+        }
+      }
       post {
         success {
           setBuildStatus('Deployment succeeded', 'SUCCESS', 'jenkins/ci/build')
@@ -174,15 +185,6 @@ pipeline {
 
         failure {
           setBuildStatus('Deployment failed', 'FAILURE', 'jenkins/ci/build')
-        }
-      }
-    }
-    stage('Trigger Deploy') {
-      steps {
-        script {
-            build job: 'pipeline', parameters: [
-                string(name: 'DEPLOY_SERVICES', value: deployService)
-            ], wait: false
         }
       }
     }
