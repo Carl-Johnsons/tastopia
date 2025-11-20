@@ -114,7 +114,7 @@ def detectChange() {
       abortDueToEmptyBuildList()
     }
 
-    echo "Manual override: building ${servicesToBuild.join(' ')}"
+    echo "Manual override: building ${servicesToBuild.join(', ')}"
     return
   }
 
