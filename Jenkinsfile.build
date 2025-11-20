@@ -111,14 +111,14 @@ def detectChange() {
       error "Invalid service name(s): ${invalid}. Valid values: ${validServices}"
     }
 
-    env.SERVICES_TO_BUILD = manualList.join(' ')
+    servicesToBuild = manualList
 
-    if (env.SERVICES_TO_BUILD.isEmpty()) {
+    if (servicesToBuild.isEmpty()) {
       echo 'List of services provided is empty. Nothing to build.'
       abortDueToEmptyBuildList()
     }
 
-    echo "Manual override: building ${env.SERVICES_TO_BUILD}"
+    echo "Manual override: building ${servicesToBuild.join(' ')}"
     return
   }
 
@@ -134,14 +134,18 @@ def detectChange() {
     echo 'No changed services. Nothing to build.'
     abortDueToEmptyBuildList()
   }
-  env.SERVICES_TO_BUILD = filtered.join(' ')
-  echo "Building services ${env.SERVICES_TO_BUILD}"
+
+  servicesToBuild = filtered
+  echo "Building services ${servicesToBuild.join(', ')}"
 }
 
+def servicesToBuild = []
+
 def buildServices() {
-  if (!env.SERVICES_TO_BUILD) {
+  if (servicesToBuild.isEmpty()) {
     return
   }
+
   ensureEnv()
   sh(label: 'Publish share library...', script: '''
     dotnet publish --packages "$(pwd)/data/nuget" \
@@ -149,17 +153,20 @@ def buildServices() {
       ./app/server/Contract/Contract
   ''')
 
-  echo "Building ${env.SERVICES_TO_BUILD}"
-  sh(label: 'Building docker images...', script: "bash ./scripts/docker/build-services.sh ${env.SERVICES_TO_BUILD}")
-  cleanUp()
+  echo "Building ${servicesToBuild.join(', ')}"
+
+  servicesToBuild.each { service ->
+    sh(label: "Building ${service}...", script: "bash ./scripts/docker/build-services.sh ${service}")
+  }
 }
 
 def triggerDeployPipeline() {
-  if (!env.SERVICES_TO_BUILD) {
+  if (servicesToBuild.isEmpty()) {
     return
   }
+  
   build job: 'pipeline', parameters: [
-    string(name: 'DEPLOY_SERVICES', value: env.SERVICES_TO_BUILD)
+    string(name: 'DEPLOY_SERVICES', value: servicesToBuild.join(' '))
   ], wait: false
 }
 
