@@ -1,3 +1,5 @@
+def servicesToBuild = []
+
 void setBuildStatus(String message, String state, String context) {
   step([
       $class: 'GitHubCommitStatusSetter',
@@ -138,8 +140,6 @@ def detectChange() {
   servicesToBuild = filtered
   echo "Building services ${servicesToBuild.join(', ')}"
 }
-
-def servicesToBuild = []
 
 def buildServices() {
   if (servicesToBuild.isEmpty()) {
