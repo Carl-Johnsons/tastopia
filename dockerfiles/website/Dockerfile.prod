@@ -39,13 +39,6 @@ RUN \
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
-
-# Update ca-certificates
-RUN apk add --no-cache ca-certificates
-COPY ./ssl/certs/root-ca.crt /usr/local/share/ca-certificates/root-ca.crt
-RUN chmod 644 /usr/local/share/ca-certificates/root-ca.crt
-RUN update-ca-certificates
-
 ENV NODE_ENV=production
 
 # Uncomment the following line in case you want to disable telemetry during runtime.
