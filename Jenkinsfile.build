@@ -135,8 +135,6 @@ def detectChange() {
   echo "Building services ${servicesToBuild.join(', ')}"
 }
 
-def servicesToBuild = []
-
 def buildServices() {
   if (servicesToBuild.isEmpty()) {
     return
