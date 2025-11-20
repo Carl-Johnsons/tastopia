@@ -15,6 +15,7 @@ spec:
       containers:
       - name: upload-api
         image: taiduc113/tastopia:upload-api
+        imagePullPolicy: Always
         envFrom:
           - secretRef:
               name: global-secret

@@ -48,6 +48,7 @@ spec:
       containers:
       - name: api-gateway
         image: taiduc113/tastopia:api-gateway
+        imagePullPolicy: Always
         envFrom:
           - secretRef:
               name: global-secret

@@ -43,6 +43,7 @@ spec:
       containers:
       - name: recipe-api
         image: taiduc113/tastopia:recipe-api
+        imagePullPolicy: Always
         envFrom:
           - secretRef:
               name: global-secret

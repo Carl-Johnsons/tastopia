@@ -31,6 +31,7 @@ spec:
       containers:
       - name: website
         image: taiduc113/tastopia:website
+        imagePullPolicy: Always
         envFrom:
           - secretRef:
               name: global-secret
