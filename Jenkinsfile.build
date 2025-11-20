@@ -158,6 +158,8 @@ def buildServices() {
   servicesToBuild.each { service ->
     sh(label: "Building ${service}...", script: "bash ./scripts/docker/build-services.sh ${service}")
   }
+  
+  // cleanUp()
 }
 
 def triggerDeployPipeline() {
