@@ -43,8 +43,7 @@ def deploy() {
   ensureEnv()
   ensureK8sCluster()
 
-
-  sh(label: 'Running K8s deploy script...', script: "./scripts/k8s/deploy.sh ${manualList.join(' ')}")
+  sh(label: 'Running K8s deploy script...', script: "./scripts/k8s/deploy.sh ${params.DEPLOY_SERVICES}")
 }
 
 def serviceStatusCheck() {
@@ -86,7 +85,7 @@ pipeline {
     stage('Service Deployment') {
       steps {
         script {
-            setBuildStatus('Testing deployment...', 'PENDING', 'jenkins/ci/deployment')
+            setBuildStatus('Begin Deployment...', 'PENDING', 'jenkins/ci/deployment')
             deploy()
         }
       }
