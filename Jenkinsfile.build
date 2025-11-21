@@ -42,11 +42,29 @@ def detectServicesToBuild(changedFiles, services) {
   return buildList
 }
 
-def ensureEnv() {
+def ensureSecret() {
   sh(label: 'Ensuring that Infisical token is present...',
      script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.+/=******/\' < .env.local')
   sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh')
+
+  withCredentials([file(credentialsId: 'gmail-access-token', variable: 'GMAIL_TOKEN_FILE')]) {
+    sh(label: 'copy gmail-access-token to $WORKSPACE/data/Auth.Store', script: '''
+      mkdir -p $WORKSPACE/data/Auth.Store
+      cp $GMAIL_TOKEN_FILE $WORKSPACE/data/Auth.Store/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user
+      chmod 600 $WORKSPACE/data/Auth.Store/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user
+      ls -la $WORKSPACE/data/Auth.Store
+    ''')
+  }
+
+  withCredentials([file(credentialsId: 'gmail-credentials', variable: 'GMAIL_CREDENTIAL_FILE')]) {
+    sh(label: 'copy gmail-credentials to $WORKSPACE/app/server/NotificationService/src/EmailWorker', script: '''
+      mkdir -p $WORKSPACE/app/server/NotificationService/src/EmailWorker
+      cp $GMAIL_CREDENTIAL_FILE $WORKSPACE/app/server/NotificationService/src/EmailWorker/credentials.json
+      chmod 600 $WORKSPACE/app/server/NotificationService/src/EmailWorker/credentials.json
+      ls -la $WORKSPACE/app/server/NotificationService/src/EmailWorker | grep credentials
+    ''')
+  } 
 }
 
 def cleanUp() {
@@ -85,7 +103,7 @@ def detectChange() {
     ],
     'user-api': [ 'app/server/UserService' ],
   // 'ingredient-predict-api': [ 'app/server/IngredientPredictService' ],
-  // 'email-worker': [ 'app/server/NotificationService/src/EmailWorker' ],
+  'email-worker': [ 'app/server/NotificationService/src/EmailWorker' ],
   // 'sms-worker': [ 'app/server/NotificationService/src/SMSWorker' ],
   // 'push-notification-worker': [ 'app/server/NotificationService/src/PushNotificationWorker' ],
   // 'recipe-worker': [ 'app/server/RecipeService/src/RecipeWorker' ]
@@ -140,7 +158,7 @@ def buildServices() {
     return
   }
 
-  ensureEnv()
+  ensureSecret()
   sh(label: 'Publish share library...', script: '''
     dotnet publish --packages "$(pwd)/data/nuget" \
       -o ./app/server/Contract/Contract/Published \
@@ -152,15 +170,15 @@ def buildServices() {
   servicesToBuild.each { service ->
     sh(label: "Building ${service}...", script: "bash ./scripts/docker/build-services.sh ${service}")
   }
-  
-  // cleanUp()
+
+// cleanUp()
 }
 
 def triggerDeployPipeline() {
   if (servicesToBuild.isEmpty()) {
     return
   }
-  
+
   build job: 'pipeline', parameters: [
     string(name: 'DEPLOY_SERVICES', value: servicesToBuild.join(' '))
   ], wait: false
