@@ -18,11 +18,11 @@ spec:
           envFrom:
             - secretRef:
                 name: global-secret
-          command: /bin/sh 
+          command: ["/bin/sh"]
           args: 
             - -c
             - |
-              until nc -z api-gateway; do
+              until nc -z api-gateway 80; do
                 echo 'Waiting for api-gateway...'
                 sleep 2
               done
