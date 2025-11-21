@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Exit on failure
-set -e
+set -eo pipefail
 
 default_services=(
   "website"
