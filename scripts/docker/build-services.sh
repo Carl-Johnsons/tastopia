@@ -32,7 +32,7 @@ repo="taiduc113/tastopia"
 echo Building...
 for service in "${services[@]}"; do
   echo "Building \"${service}\"..."
-  docker compose build ${service}
+  docker compose build ${service} 2>&1 | tee build.log
 done
 
 # Tag each built image into the same repo with different tags
