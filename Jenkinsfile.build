@@ -65,30 +65,30 @@ def abortDueToEmptyBuildList() {
 
 def detectChange() {
   def serviceFolders = [
-    // 'website': [ 'website' ],
-    'api-gateway': [ 'APIGateway' ],
-    'signalr': [ 'SignalRService' ],
-    'tracking-api': [ 'TrackingService' ],
-    'upload-api': [ 'UploadFileService' ],
-    'identity-api': [ 'IdentityService' ],
+    'website': [ 'app/client/website' ],
+    'api-gateway': [ 'app/server/APIGateway' ],
+    'signalr': [ 'app/server/SignalRService' ],
+    'tracking-api': [ 'app/server/TrackingService' ],
+    'upload-api': [ 'app/server/UploadFileService' ],
+    'identity-api': [ 'app/server/IdentityService' ],
     'notification-api': [
-      'NotificationService/src/NotificationService.API',
-      'NotificationService/src/NotificationService.Application',
-      'NotificationService/src/NotificationService.Domain',
-      'NotificationService/src/NotificationService.Infrastructure'
+      'app/server/NotificationService/src/NotificationService.API',
+      'app/server/NotificationService/src/NotificationService.Application',
+      'app/server/NotificationService/src/NotificationService.Domain',
+      'app/server/NotificationService/src/NotificationService.Infrastructure'
     ],
     'recipe-api': [
-      'RecipeService/src/RecipeService.API',
-      'RecipeService/src/RecipeService.Application',
-      'RecipeService/src/RecipeService.Domain',
-      'RecipeService/src/RecipeService.Infrastructure',
+      'app/server/RecipeService/src/RecipeService.API',
+      'app/server/RecipeService/src/RecipeService.Application',
+      'app/server/RecipeService/src/RecipeService.Domain',
+      'app/server/RecipeService/src/RecipeService.Infrastructure',
     ],
-    'user-api': [ 'UserService' ],
-  // 'ingredient-predict-api': [ 'IngredientPredictService' ],
-  // 'email-worker': [ 'NotificationService/src/EmailWorker' ],
-  // 'sms-worker': [ 'NotificationService/src/SMSWorker' ],
-  // 'push-notification-worker': [ 'NotificationService/src/PushNotificationWorker' ],
-  // 'recipe-worker': [ 'RecipeService/src/RecipeWorker' ]
+    'user-api': [ 'app/server/UserService' ],
+  // 'ingredient-predict-api': [ 'app/server/IngredientPredictService' ],
+  // 'email-worker': [ 'app/server/NotificationService/src/EmailWorker' ],
+  // 'sms-worker': [ 'app/server/NotificationService/src/SMSWorker' ],
+  // 'push-notification-worker': [ 'app/server/NotificationService/src/PushNotificationWorker' ],
+  // 'recipe-worker': [ 'app/server/RecipeService/src/RecipeWorker' ]
   ]
 
   def validServices = serviceFolders.keySet() as List
