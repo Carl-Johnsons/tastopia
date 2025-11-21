@@ -2,6 +2,7 @@
 
 project_root=$(pwd)
 server_root="app/server"
+client_root="app/client"
 env_file=".env.prod"
 cd ./k8s
 
@@ -19,6 +20,7 @@ declare -A generic=(
   [signalr]="$server_root/SignalRService/$env_file"
   [api-gateway]="$server_root/APIGateway/$env_file"
   [ingredient-predict-api]="$server_root/IngredientPredictService/$env_file"
+  [website]="$client_root/website/$env_file"
 )
 
 # Creating secret
@@ -40,7 +42,7 @@ default_services=(
   "redis"
   "rabbitmq"
   "consul"
-  # "website"
+  "website"
   "api-gateway"
   "signalr"
   "tracking-api"
@@ -76,11 +78,17 @@ fi
 
 for service in "${services[@]}"; do
   # kubectl apply -f deployments -f services
-  echo "Deploying $service..."
-  kubectl apply -f "./deployments/${service}.yaml" -f "./services/${service}.yaml"
+  echo -e "\nDeploying $service..."
+
+  if [ -f "./deployments/${service}.yaml" ]; then
+    kubectl apply -f "./deployments/${service}.yaml"
+  fi
+
+  if [ -f "./services/${service}.yaml" ]; then
+    kubectl apply -f "./services/${service}.yaml"
+  fi
 
   if [ -f "./ingresses/${service}.yaml" ]; then
-    echo "Creating ingress for $service..."
     kubectl apply -f "./ingresses/${service}.yaml"
   fi
 done
