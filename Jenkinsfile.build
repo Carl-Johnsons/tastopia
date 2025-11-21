@@ -150,7 +150,12 @@ def buildServices() {
   echo "Building ${servicesToBuild.join(', ')}"
 
   servicesToBuild.each { service ->
-    sh(label: "Building ${service}...", script: "bash ./scripts/docker/build-services.sh ${service}")
+    try {
+      sh(label: "Building ${service}...", script: "bash ./scripts/docker/build-services.sh ${service}")
+    } catch (err) {
+      sh(label: "Printing build logs for failed build...", script: 'cat build.log')
+      throw err
+    }
   }
   
   // cleanUp()
