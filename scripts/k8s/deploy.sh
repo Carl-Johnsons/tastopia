@@ -81,7 +81,19 @@ for service in "${services[@]}"; do
   echo -e "\nDeploying $service..."
 
   if [ -f "./deployments/${service}.yaml" ]; then
-    kubectl apply -f "./deployments/${service}.yaml"
+    echo "Checking changes for deployment..."
+
+    if kubectl diff -f "./deployments/${service}.yaml" &>/dev/null; then
+      echo "No changes for $service, skipping apply..."
+
+      if kubectl get deployment "$service" &>/dev/null; then
+        echo "Deployment $service currently exists, restarting due to no new configs exist..."
+        kubectl rollout restart deployment "$service"
+      fi
+    else
+      echo "New changes detected, applying deployment..."
+      kubectl apply -f "./deployments/${service}.yaml"
+    fi
   fi
 
   if [ -f "./services/${service}.yaml" ]; then
