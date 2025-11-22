@@ -32,6 +32,16 @@ repo="taiduc113/tastopia"
 echo Building...
 for service in "${services[@]}"; do
   echo "Building \"${service}\"..."
+
+  if [ $service == "website" ]; then
+    current_dir=$(pwd)
+    cd app/client/website
+    npm ci
+    npm run build:prod
+    cd $current_dir
+    unset current_dir
+  fi
+
   docker compose build ${service} 2>&1 | tee build.log
 done
 
