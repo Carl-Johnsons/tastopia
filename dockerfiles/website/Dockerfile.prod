@@ -1,4 +1,4 @@
-FROM node:23-alpine3.20 AS base
+FROM node:25-alpine AS base
 # Install dependencies only when needed
 FROM base AS deps
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
@@ -23,6 +23,7 @@ ARG BASE_WEBSITE_PATH=app/client/website
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY $BASE_WEBSITE_PATH .
+COPY $BASE_WEBSITE_PATH/.env.prod .env.production
 
 # Next.js collects completely anonymous telemetry data about general usage.
 # Learn more here: https://nextjs.org/telemetry
@@ -31,7 +32,7 @@ COPY $BASE_WEBSITE_PATH .
 
 RUN \
   if [ -f yarn.lock ]; then yarn run build; \
-  elif [ -f package-lock.json ]; then npm run build; \
+  elif [ -f package-lock.json ]; then npm run build:prod; \
   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
   else echo "Lockfile not found." && exit 1; \
   fi
@@ -39,9 +40,9 @@ RUN \
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
-ENV NODE_ENV=production
 
-# Uncomment the following line in case you want to disable telemetry during runtime.
+ENV NODE_ENV=production
+# Disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN addgroup --system --gid 1001 nodejs
