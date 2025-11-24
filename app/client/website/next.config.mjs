@@ -10,11 +10,10 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "res.cloudinary.com",
         pathname: "/**"
       }
     ],
-    domains: ["res.cloudinary.com"]
   },
   typescript: {
     ignoreBuildErrors: true
