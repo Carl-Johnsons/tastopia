@@ -104,9 +104,9 @@ def detectChange() {
     'user-api': [ 'app/server/UserService' ],
   // 'ingredient-predict-api': [ 'app/server/IngredientPredictService' ],
   'email-worker': [ 'app/server/NotificationService/src/EmailWorker' ],
-  // 'sms-worker': [ 'app/server/NotificationService/src/SMSWorker' ],
-  // 'push-notification-worker': [ 'app/server/NotificationService/src/PushNotificationWorker' ],
-  // 'recipe-worker': [ 'app/server/RecipeService/src/RecipeWorker' ]
+  'sms-worker': [ 'app/server/NotificationService/src/SMSWorker' ],
+  'push-notification-worker': [ 'app/server/NotificationService/src/PushNotificationWorker' ],
+  'recipe-worker': [ 'app/server/RecipeService/src/RecipeWorker' ]
   ]
 
   def validServices = serviceFolders.keySet() as List
@@ -195,7 +195,7 @@ pipeline {
     string(
       name: 'BUILD_SERVICES',
       defaultValue: '',
-      description: 'Comma-separated list of services to build (override auto-detect)'
+      description: 'Comma-separated list of services to build (example: "consul,rabbitmq,mongo")'
     )
   }
 
