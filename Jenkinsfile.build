@@ -46,7 +46,7 @@ def ensureSecret() {
   sh(label: 'Ensuring that Infisical token is present...',
      script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.+/=******/\' < .env.local')
-  sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh')
+  sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh prod')
 
   withCredentials([file(credentialsId: 'gmail-access-token', variable: 'GMAIL_TOKEN_FILE')]) {
     sh(label: 'copy gmail-access-token to $WORKSPACE/data/Auth.Store', script: '''
