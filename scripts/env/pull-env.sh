@@ -3,6 +3,8 @@
 # Exit on failure
 set -e 
 
+TARGET_ENV=$1
+
 . ./scripts/lib.sh
 
 err_token_missing() {
@@ -56,25 +58,47 @@ pull_env_file() {
   fi
 
   echo -e "\e[95mPulling $prefix_folder_path$folder_name $environment env file...\e[0m"
-  infisical export --token=$INFISICAL_TOKEN --path=$prefix_folder_path$folder_name --env=$environment --log-level debug \
+
+  export INFISICAL_DISABLE_UPDATE_CHECK=true
+   infisical export --token=$INFISICAL_TOKEN --path=$prefix_folder_path$folder_name --env=$environment --log-level debug \
   | sed -E "s/^([A-Z0-9_]+)='([0-9]+)'$/\1=\2/" \
   | sed -E "s/^([A-Z0-9_]+)='(.*)'$/\1=\2/" \
   > ./$service_path/$output_file
 }
 
-pull_both_env_file() {
-  pull_env_file $1 $2 dev && pull_env_file $1 $2 prod
+pull_all_services() {
+  local env=$1
+  printf "\n\t${INFO}=== Begin pull for $env environment ===${NC}\n"
+  pull_env_file "./" global $env &&
+    pull_env_file "./app/server/APIGateway" apigateway $env &&
+    pull_env_file "./app/server/IdentityService" identity $env &&
+    pull_env_file "./app/server/UploadFileService" upload $env &&
+    pull_env_file "./app/server/UserService" user $env &&
+    pull_env_file "./app/server/RecipeService" recipe $env &&
+    pull_env_file "./app/server/NotificationService" notification $env &&
+    pull_env_file "./app/server/SignalRService" signalr $env &&
+    pull_env_file "./app/server/TrackingService" tracking $env &&
+    pull_env_file "./app/server/IngredientPredictService" "ingredient-predict" $env &&
+    pull_env_file "./app/client/mobile" "mobile" $env &&
+    pull_env_file "./app/client/website" "website" $env
 }
 
-pull_both_env_file "./" global &&
-  pull_both_env_file "./app/server/APIGateway" apigateway &&
-  pull_both_env_file "./app/server/IdentityService" identity &&
-  pull_both_env_file "./app/server/UploadFileService" upload &&
-  pull_both_env_file "./app/server/UserService" user &&
-  pull_both_env_file "./app/server/RecipeService" recipe &&
-  pull_both_env_file "./app/server/NotificationService" notification &&
-  pull_both_env_file "./app/server/SignalRService" signalr &&
-  pull_both_env_file "./app/server/TrackingService" tracking &&
-  pull_both_env_file "./app/server/IngredientPredictService" "ingredient-predict" &&
-  pull_both_env_file "./app/client/mobile" "mobile" &&
-  pull_both_env_file "./app/client/website" "website"
+case "$TARGET_ENV" in
+  "dev")
+    pull_all_services dev
+    ;;
+  "prod")
+    pull_all_services prod
+    ;;
+  "")
+    # No argument provided: Pull BOTH dev and prod
+    printf "${INFO}No environment specified. Pulling both 'dev' and 'prod' secrets...${NC}"
+    pull_all_services dev
+    pull_all_services prod
+    ;;
+  *)
+    # Invalid argument
+    printf "${DANGER}Invalid argument: '$TARGET_ENV'. Usage: $0 [dev | prod]${NC}"
+    exit 1
+    ;;
+esac
