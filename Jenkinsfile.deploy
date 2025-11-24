@@ -10,7 +10,7 @@ void setBuildStatus(String message, String state, String context) {
   ])
 }
 
-def ensureEnv() {
+def ensureSecret() {
   sh(label: 'Ensuring that Infisical token is present...',
     script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
@@ -40,7 +40,7 @@ def deploy() {
     return
   }
 
-  ensureEnv()
+  ensureSecret()
   ensureK8sCluster()
 
   sh(label: 'Running K8s deploy script...', script: "./scripts/k8s/deploy.sh ${params.DEPLOY_SERVICES}")
@@ -78,7 +78,7 @@ pipeline {
     string(
       name: 'DEPLOY_SERVICES',
       defaultValue: '',
-      description: 'Comma-separated list of services to deploy (override auto-detect)'
+      description: 'Space-separated list of services to deploy (example: "consul rabbitmq mongo")'
     )
   }
   stages {
