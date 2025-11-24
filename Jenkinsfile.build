@@ -207,6 +207,7 @@ pipeline {
     stage('Build services') {
       steps {
         script {
+          setBuildStatus('Building...', 'PENDING', 'jenkins/ci/build')
           buildServices()
         }
       }
