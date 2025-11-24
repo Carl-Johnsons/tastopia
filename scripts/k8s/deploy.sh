@@ -53,9 +53,9 @@ default_services=(
   "user-api"
   # "ingredient-predict-api"
   "email-worker"
-  # "push-notification-worker"
-  # "recipe-worker"
-  # "sms-worker"
+  "push-notification-worker"
+  "recipe-worker"
+  "sms-worker"
 )
 
 services=("$@")
