@@ -23,3 +23,6 @@
 
 - name: Install Nginx ingress controller
   ansible.builtin.include_tasks: ./ingress-nginx.yml
+
+- name: Install aws-cli
+  ansible.builtin.include_tasks: ./aws.yml
