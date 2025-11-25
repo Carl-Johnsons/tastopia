@@ -12,7 +12,6 @@ type Props = {
 
 const Protected = async ({ children, allowedRoles }: Props) => {
   const session = await auth();
-  console.log("session", session);
 
   // TODO: Check roles
   if (!session) {
