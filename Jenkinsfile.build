@@ -64,7 +64,7 @@ def ensureSecret() {
       chmod 600 $WORKSPACE/app/server/NotificationService/src/EmailWorker/credentials.json
       ls -la $WORKSPACE/app/server/NotificationService/src/EmailWorker | grep credentials
     ''')
-  } 
+  }
 }
 
 def cleanUp() {
@@ -102,7 +102,7 @@ def detectChange() {
       'app/server/RecipeService/src/RecipeService.Infrastructure',
     ],
     'user-api': [ 'app/server/UserService' ],
-  // 'ingredient-predict-api': [ 'app/server/IngredientPredictService' ],
+  'ingredient-predict-api': [ 'app/server/IngredientPredictService' ],
   'email-worker': [ 'app/server/NotificationService/src/EmailWorker' ],
   'sms-worker': [ 'app/server/NotificationService/src/SMSWorker' ],
   'push-notification-worker': [ 'app/server/NotificationService/src/PushNotificationWorker' ],
@@ -171,7 +171,7 @@ def buildServices() {
     sh(label: "Building ${service}...", script: "bash ./scripts/docker/build-services.sh ${service}")
   }
 
-// cleanUp()
+  cleanUp()
 }
 
 def triggerDeployPipeline() {
