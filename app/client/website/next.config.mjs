@@ -1,9 +1,10 @@
 import createNextIntlPlugin from "next-intl/plugin";
+import 'dotenv/config';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // update image remote later
-  basePath: '/tastopia/ci/deploy/dashboard',
+  basePath: process.env.BASE_PATH,
   output: 'standalone',
   reactStrictMode: true,
   images: {

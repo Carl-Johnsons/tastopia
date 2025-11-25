@@ -11,6 +11,7 @@ import { Roles } from "@/constants/role";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { routing } from "@/i18n/routing";
 import { notFound } from "next/navigation";
+import { BASE_PATH } from "@/constants/config";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   title: "Tastopia",
   description: "About Tastopia",
   icons: {
-    icon: "/assets/favicon.ico"
+    icon: `${BASE_PATH}/assets/favicon.ico`
   },
   other: {
     "og:url": "https://tastopia.social:3000/",
