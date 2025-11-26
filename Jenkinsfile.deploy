@@ -68,7 +68,7 @@ def serviceStatusCheck() {
 }
 
 def checkoutBranch() {
-  def BRANCH = params.BRANCH_NAME?.trim()
+  def BRANCH = params.BUILD_BRANCH_NAME?.trim()
 
   if (!Boolean.valueOf(BRANCH)) {
     checkout scm
@@ -97,7 +97,7 @@ pipeline {
     )
     
     string(
-      name: 'BRANCH_NAME',
+      name: 'BUILD_BRANCH_NAME',
       defaultValue: '',
       description: 'The github branch to run script on'
     )
