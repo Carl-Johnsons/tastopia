@@ -105,7 +105,9 @@ pipeline {
 
   stages {
     stage('Checkout SCM') {
-      checkoutBranch()
+      steps {
+        checkoutBranch()
+      }
     }
 
     stage('Service Deployment') {
