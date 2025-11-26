@@ -10,11 +10,24 @@ void setBuildStatus(String message, String state, String context) {
   ])
 }
 
-def ensureEnv() {
+def ensureAIModel() {
+  sh(label:'Ensuring AI model exist', script: '''
+    mkdir -p ~/models
+    if [ ! -f ~/models/convnext_224_f.model.keras ]; then
+      echo "Downloading model..."
+      aws s3 cp s3://tastopia-ingredient-predict-model/convnext_224_f.model.keras ~/models \
+       --endpoint-url=${R2_BUCKET_ENDPOINT}
+    else
+      echo "Model already exists, skipping download."
+    fi
+  ''')
+}
+
+def ensureSecret() {
   sh(label: 'Ensuring that Infisical token is present...',
     script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
-  sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh')
+  sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh prod')
 }
 
 def ensureK8sCluster() {
@@ -35,19 +48,19 @@ def ensureK8sCluster() {
 }
 
 def deploy() {
-  if(!params.DEPLOY_SERVICES) {
-    echo "Nothing built. Cancel deployment!"
+  if (!params.DEPLOY_SERVICES) {
+    echo 'Nothing built. Cancel deployment!'
     return
   }
-
-  ensureEnv()
+  ensureAIModel()
+  ensureSecret()
   ensureK8sCluster()
 
   sh(label: 'Running K8s deploy script...', script: "./scripts/k8s/deploy.sh ${params.DEPLOY_SERVICES}")
 }
 
 def serviceStatusCheck() {
-  if(!params.DEPLOY_SERVICES) {
+  if (!params.DEPLOY_SERVICES) {
     return
   }
 
@@ -62,9 +75,9 @@ def serviceStatusCheck() {
       kubectl rollout status ${d} --timeout=5m || {
         kubectl logs "${d}";
         exit 1;
-      }
-    """)
   }
+    """)
+}
 }
 
 def checkoutBranch() {
@@ -87,13 +100,14 @@ pipeline {
 
   environment {
     INFISICAL_TOKEN = credentials('infisical-token')
+    R2_BUCKET_ENDPOINT = credentials('tastopia-r2-bucket-endpoint')
   }
 
   parameters {
     string(
       name: 'DEPLOY_SERVICES',
       defaultValue: '',
-      description: 'Comma-separated list of services to deploy (override auto-detect)'
+      description: 'Space-separated list of services to deploy (example: "consul rabbitmq mongo")'
     )
     
     string(

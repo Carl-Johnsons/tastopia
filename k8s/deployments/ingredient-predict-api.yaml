@@ -12,22 +12,30 @@ spec:
         app: ingredient-predict-api
     spec:
       restartPolicy: Always
+      volumes:
+        - name: model-volume
+          hostPath:
+            path: /home/server/models
+            type: DirectoryOrCreate
       containers:
-      - name: ingredient-predict-api
-        image: taiduc113/tastopia:ingredient-predict-api
-        imagePullPolicy: Always
-        envFrom:
-          - secretRef:
-              name: global-secret
-          - secretRef:
-              name: ingredient-predict-api-secret
-        resources:
-          requests:
-            cpu: "1000m"
-            memory: "4Gi"
-          limits:
-            cpu: "2000m"
-            memory: "8Gi"
-        ports:
-        - containerPort: 80
-          protocol: TCP
+        - name: ingredient-predict-api
+          image: taiduc113/tastopia:ingredient-predict-api
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: global-secret
+            - secretRef:
+                name: ingredient-predict-api-secret
+              volumeMounts:
+                - mountPath: /app/model
+                  name: model-volume
+          resources:
+            requests:
+              cpu: "1000m"
+              memory: "4Gi"
+            limits:
+              cpu: "2000m"
+              memory: "8Gi"
+          ports:
+            - containerPort: 80
+              protocol: TCP

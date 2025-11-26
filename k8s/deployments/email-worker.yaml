@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email-worker
+spec:
+  selector:
+    matchLabels:
+      app: email-worker
+  template:
+    metadata:
+      labels:
+        app: email-worker
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: email-worker
+        image: taiduc113/tastopia:email-worker
+        imagePullPolicy: Always
+        envFrom:
+          - secretRef:
+              name: global-secret
+          - secretRef:
+              name: notification-api-secret
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "64Mi"
+          limits:
+            memory: "500M"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+          protocol: TCP

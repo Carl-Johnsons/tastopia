@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sms-worker
+spec:
+  selector:
+    matchLabels:
+      app: sms-worker
+  template:
+    metadata:
+      labels:
+        app: sms-worker
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: sms-worker
+          image: taiduc113/tastopia:sms-worker
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: global-secret
+            - secretRef:
+                name: notification-api-secret
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "64Mi"
+            limits:
+              memory: "500M"
+              cpu: "500m"
+          ports:
+            - containerPort: 80
+              protocol: TCP
