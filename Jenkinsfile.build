@@ -167,7 +167,8 @@ def triggerDeployPipeline() {
   }
   
   build job: 'pipeline', parameters: [
-    string(name: 'DEPLOY_SERVICES', value: servicesToBuild.join(' '))
+    string(name: 'DEPLOY_SERVICES', value: servicesToBuild.join(' ')),
+    string(name: 'BRANCH_NAME', value: env.GIT_BRANCH)
   ], wait: false
 }
 

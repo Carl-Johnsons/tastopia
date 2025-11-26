@@ -67,8 +67,23 @@ def serviceStatusCheck() {
   }
 }
 
+def checkoutBranch() {
+  def BRANCH = params.BRANCH_NAME?.trim()
+
+  if (!Boolean.valueOf(BRANCH)) {
+    checkout scm
+    return
+  }
+
+  checkout scmGit(branches: [[name: "${BRANCH}"]])
+}
+
 pipeline {
   agent { label 'deploy' }
+
+  options {
+    skipDefaultCheckout()
+  }
 
   environment {
     INFISICAL_TOKEN = credentials('infisical-token')
@@ -80,8 +95,19 @@ pipeline {
       defaultValue: '',
       description: 'Comma-separated list of services to deploy (override auto-detect)'
     )
+    
+    string(
+      name: 'BRANCH_NAME',
+      defaultValue: '',
+      description: 'The github branch to run script on'
+    )
   }
+
   stages {
+    stage('Checkout SCM') {
+      checkoutBranch()
+    }
+
     stage('Service Deployment') {
       steps {
         script {
