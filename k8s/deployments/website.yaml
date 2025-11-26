@@ -34,8 +34,6 @@ spec:
         imagePullPolicy: Always
         envFrom:
           - secretRef:
-              name: global-secret
-          - secretRef:
               name: website-secret
         resources:
           requests:
@@ -45,7 +43,5 @@ spec:
             memory: "500M"
             cpu: "500m"
         ports:
-        - containerPort: 80
-          protocol: TCP
-        - containerPort: 443
+        - containerPort: 3000
           protocol: TCP
