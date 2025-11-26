@@ -60,7 +60,7 @@ default_services=(
 
 services=("$@")
 
-if [ ${#services[@]} -eq 0 ]; then
+if [ ${#services[@]} -eq 0 ] || [ "$1" == "default" ] ; then
   services=("${default_services[@]}")
 fi
 
