@@ -166,10 +166,14 @@ def triggerDeployPipeline() {
     return
   }
   
-  build job: '/tastopia/pipeline', parameters: [
-    string(name: 'DEPLOY_SERVICES', value: servicesToBuild.join(' ')),
-    string(name: 'BRANCH_NAME', value: env.GIT_BRANCH)
-  ], wait: false
+  build(
+    job: '/tastopia/pipeline',
+    parameters: [
+      string(name: 'DEPLOY_SERVICES', value: servicesToBuild.join(' ')),
+      string(name: 'BRANCH_NAME', value: env.BRANCH_NAME)
+    ],
+    wait: false
+  )
 }
 
 pipeline {
