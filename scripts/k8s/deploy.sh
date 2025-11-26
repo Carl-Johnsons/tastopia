@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 project_root=$(pwd)
 server_root="app/server"
 client_root="app/client"
