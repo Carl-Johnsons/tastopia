@@ -7,8 +7,10 @@ import {
   SCOPE
 } from "./constants/api";
 import { v4 as uuidv4 } from "uuid";
+import { BASE_PATH } from "./constants/config";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  basePath: `${BASE_PATH}/api/auth`, 
   providers: [
     DuendeIDS6Provider({
       clientId: DUENDE_IDS6_ID as string,
