@@ -7,7 +7,7 @@
     "start": "next start",
     "build": "dotenv -e .env next build && npm run cp-public-assets",
     "build:prod": "dotenv -e .env.prod next build && npm run cp-public-assets",
-    "cp-public-assets": "mkdir -p .next/standalone/public && cp -r public/* .next/standalone/public/ && cp -r .next/static .next/standalone/.next/",
+    "cp-public-assets": "./scripts/cp-build-assets.sh",
     "lint": "next lint",
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
