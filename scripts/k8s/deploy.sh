@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eo pipefail
+
 project_root=$(pwd)
 server_root="app/server"
 client_root="app/client"
