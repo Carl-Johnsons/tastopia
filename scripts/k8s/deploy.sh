@@ -105,4 +105,12 @@ for service in "${services[@]}"; do
   fi
 done
 
+default_configs=(
+  "nginx"
+)
+
+for config in "${default_configs[@]}"; do
+  kubectl apply -f "./configMaps/${config}.yaml"
+done
+
 cd "$project_root"
