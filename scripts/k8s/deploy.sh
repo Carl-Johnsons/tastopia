@@ -108,6 +108,7 @@ default_configs=(
 )
 
 for config in "${default_configs[@]}"; do
+  echo -e "\nApplying $config config..."
   kubectl apply -f "./configMaps/${config}.yaml"
 done
 
