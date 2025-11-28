@@ -11,7 +11,7 @@ mkdir -p "$DST_DIR/public"
 mkdir -p "$DST_DIR/.next/static"
 
 echo "Copying \"public\" folder..."
-cp -surf "$SRC_PUBLIC" "$DST_DIR"
+cp -urf "$SRC_PUBLIC" "$DST_DIR"
 
 echo "Copying \".next/static\" folder..."
-cp -surf "$SRC_STATIC" "$DST_DIR/.next"
+cp -urf "$SRC_STATIC" "$DST_DIR/.next"
