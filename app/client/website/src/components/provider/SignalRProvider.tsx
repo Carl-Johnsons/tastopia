@@ -35,7 +35,6 @@ const SignalRHubContext = createContext<SignalRHubContextType | null>(null);
 
 const SignalRHubProvider = ({ children }: Props) => {
   const hubUrl = `${API_URI}/tastopia-hub`;
-  console.log("hubUrl", hubUrl);
   const [waitingToReconnect, setWaitingToReconnect] = useState(true);
   const accessToken = useSelectAccessToken();
   const user = useSelectUser();
