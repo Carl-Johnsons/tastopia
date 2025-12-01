@@ -6,7 +6,6 @@
     "dev": "next dev --turbo",
     "start": "next start",
     "build": "dotenv -e .env next build && npm run cp-public-assets",
-    "build:prod": "dotenv -e .env.prod next build && npm run cp-public-assets",
     "cp-public-assets": "./scripts/cp-build-assets.sh",
     "lint": "next lint",
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
@@ -71,6 +70,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.20",
+    "dotenv": "^17.2.3",
     "dotenv-cli": "^11.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.14",

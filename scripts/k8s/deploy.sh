@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eo pipefail
+set -o pipefail
 
 project_root=$(pwd)
 server_root="app/server"
@@ -22,7 +22,7 @@ declare -A generic=(
   [signalr]="$server_root/SignalRService/$env_file"
   [api-gateway]="$server_root/APIGateway/$env_file"
   [ingredient-predict-api]="$server_root/IngredientPredictService/$env_file"
-  [website]="$client_root/website/$env_file"
+  [website]="$client_root/website/.env.production"
 )
 
 # Creating secret

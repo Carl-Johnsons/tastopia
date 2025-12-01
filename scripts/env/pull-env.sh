@@ -42,6 +42,10 @@ pull_env_file() {
     output_file=".env"
   else
     output_file=".env.$environment"
+
+    if [ "$folder_name" == "website" ] && [ "$environment" == "prod" ]; then
+      output_file=".env.production"
+    fi
   fi
 
   local prefix_folder_path="/"

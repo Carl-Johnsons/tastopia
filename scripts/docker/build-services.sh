@@ -37,7 +37,7 @@ for service in "${services[@]}"; do
     current_dir=$(pwd)
     cd app/client/website
     npm ci
-    npm run build:prod
+    npm run build
     cd $current_dir
     unset current_dir
   fi
