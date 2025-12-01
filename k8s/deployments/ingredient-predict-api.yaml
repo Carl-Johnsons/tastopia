@@ -26,9 +26,9 @@ spec:
                 name: global-secret
             - secretRef:
                 name: ingredient-predict-api-secret
-              volumeMounts:
-                - mountPath: /app/model
-                  name: model-volume
+          volumeMounts:
+            - mountPath: /app/model
+              name: model-volume
           resources:
             requests:
               cpu: "1000m"
