@@ -53,7 +53,7 @@ default_services=(
   "notification-api"
   "recipe-api"
   "user-api"
-  "ingredient-predict-api"
+  # "ingredient-predict-api"
   "email-worker"
   "push-notification-worker"
   "recipe-worker"
