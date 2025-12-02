@@ -3,9 +3,44 @@
 # Exit on failure
 set -e 
 
-TARGET_ENV=$1
-
 . ./scripts/lib.sh
+
+while getopts psh OPTS; do
+  case $OPTS in
+    p) 
+      pFlag=1
+      sFlag=1
+      ;;
+    s) 
+      sFlag=1
+      ;;
+    h) cat <<EOF
+
+Usage: $0 [options] [dev|staging|production]
+
+Options:
+  -p    Fetch all environments at once. This behavior only
+        works when there is no environment provided, which
+        by default results in a fetch for dev, staging and
+        production environment. This option implies -s.
+
+  -s    Turn on silent mode. Only warnings and errors are 
+        printed.
+
+EOF
+      exit 0
+      ;;
+    ?) 
+      echo "Unknown flag. Usage: $0 [-psh] [dev|staging|production]"
+      exit 1
+      ;;
+  esac
+done
+
+# Shift parsed options
+shift $((OPTIND - 1))
+
+TARGET_ENV=$1
 
 err_token_missing() {
   printf "\n\t${LIGHT_RED}*** Infisical token is missing ❌${NC} *** . Please fill the value in .env.local.\n\n"
@@ -58,51 +93,80 @@ pull_env_file() {
     fi
 
     mkdir -p $service_path
-    echo "Created folder at path: $service_path"
+    [ -z "$sFlag" ] && echo "Created folder at path: $service_path"
   fi
 
-  echo -e "\e[95mPulling $prefix_folder_path$folder_name $environment env file...\e[0m"
+  [ -z "$sFlag" ] && echo -e "\e[95mPulling $prefix_folder_path$folder_name $environment env file...\e[0m"
 
-  export INFISICAL_DISABLE_UPDATE_CHECK=true
-   infisical export --token=$INFISICAL_TOKEN --path=$prefix_folder_path$folder_name --env=$environment --log-level debug \
-  | sed -E "s/^([A-Z0-9_]+)='([0-9]+)'$/\1=\2/" \
-  | sed -E "s/^([A-Z0-9_]+)='(.*)'$/\1=\2/" \
-  > ./$service_path/$output_file
+  PULLED_FILE=$(
+    INFISICAL_DISABLE_UPDATE_CHECK=true \
+    infisical export \
+      --token=$INFISICAL_TOKEN \
+      --path=$prefix_folder_path$folder_name \
+      --env=$environment \
+    | sed -E "s/^([A-Z0-9_]+)='([0-9]+)'$/\1=\2/" \
+    | sed -E "s/^([A-Z0-9_]+)='(.*)'$/\1=\2/"
+  )
+
+  if [ -n "$PULLED_FILE" ]; then
+    echo "$PULLED_FILE" > "./$service_path/$output_file" 
+  fi
+
+  unset PULLED_FILE
 }
 
 pull_all_services() {
   local env=$1
-  printf "\n\t${INFO}=== Begin pull for $env environment ===${NC}\n"
-  pull_env_file "./" global $env &&
-    pull_env_file "./app/server/APIGateway" apigateway $env &&
-    pull_env_file "./app/server/IdentityService" identity $env &&
-    pull_env_file "./app/server/UploadFileService" upload $env &&
-    pull_env_file "./app/server/UserService" user $env &&
-    pull_env_file "./app/server/RecipeService" recipe $env &&
-    pull_env_file "./app/server/NotificationService" notification $env &&
-    pull_env_file "./app/server/SignalRService" signalr $env &&
-    pull_env_file "./app/server/TrackingService" tracking $env &&
-    pull_env_file "./app/server/IngredientPredictService" "ingredient-predict" $env &&
-    pull_env_file "./app/client/mobile" "mobile" $env &&
-    pull_env_file "./app/client/website" "website" $env
+  local services=(
+    "./ global"
+    "./app/server/APIGateway apigateway"
+    "./app/server/IdentityService identity"
+    "./app/server/UploadFileService upload"
+    "./app/server/UserService user"
+    "./app/server/RecipeService recipe"
+    "./app/server/NotificationService notification"
+    "./app/server/SignalRService signalr"
+    "./app/server/TrackingService tracking"
+    "./app/server/IngredientPredictService ingredient-predict"
+    "./app/client/mobile mobile"
+    "./app/client/website website"
+  )
+
+  [ -z "$sFlag" ] && printf "\n\t${INFO}=== Begin pull for $env environment ===${NC}\n"
+
+  printf "%s\n" "${services[@]}" | \
+    xargs -P0 -I {} bash -c 'pull_env_file $@' _ {} $env
 }
+
+export -f pull_env_file
+export INFISICAL_TOKEN sFlag
 
 case "$TARGET_ENV" in
   "dev")
     pull_all_services dev
     ;;
-  "prod")
+  "staging")
+    pull_all_services staging
+    ;;
+  "production")
     pull_all_services prod
     ;;
   "")
-    # No argument provided: Pull BOTH dev and prod
-    printf "${INFO}No environment specified. Pulling both 'dev' and 'prod' secrets...${NC}"
-    pull_all_services dev
-    pull_all_services prod
+    # No argument provided: Pull dev, staging and production
+    printf "${INFO}No environment specified. Pulling 'dev', 'staging' and 'production' secrets...${NC}\n"
+    
+    if [ -n "$pFlag" ]; then
+      export -f pull_all_services
+      echo "dev staging prod" | xargs -P0 -d ' ' -I {} bash -c 'pull_all_services {}'
+    else 
+      pull_all_services dev
+      pull_all_services staging
+      pull_all_services prod
+    fi
     ;;
   *)
     # Invalid argument
-    printf "${DANGER}Invalid argument: '$TARGET_ENV'. Usage: $0 [dev | prod]${NC}"
+    printf "${DANGER}Invalid argument: '$TARGET_ENV'. Usage: $0 [-psh] [dev|staging|production]${NC}\n"
     exit 1
     ;;
 esac
