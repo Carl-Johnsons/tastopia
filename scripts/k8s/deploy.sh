@@ -6,7 +6,74 @@ project_root=$(pwd)
 server_root="app/server"
 client_root="app/client"
 env_file=".env.prod"
-cd ./k8s
+
+ENV="staging"
+BASE_PATH="./k8s/base"
+
+# Paths relative to BASE_PATH
+STAGING_PATH="../overlays/staging"
+KUSTOMIZE_ENV_FILE="${project_root}/.env.staging"
+PRODUCTION_PATH="../overlays/production"
+KUSTOMIZE_PATH="$STAGING_PATH"
+
+while getopts e:h OPTS; do
+  case $OPTS in
+    e) 
+      if [ "$OPTARG" != "staging" ] && [ "$OPTARG" != "production" ]; then
+        echo 'Only "staging" or "production" is allowed as value of -e flag.'
+        exit 1
+      fi
+
+      ENV="$OPTARG"
+
+      if [ "$ENV" = "staging" ]; then
+        KUSTOMIZE_PATH="$STAGING_PATH"
+        KUSTOMIZE_ENV_FILE="${project_root}/.env.staging"
+      else
+        KUSTOMIZE_PATH="$PRODUCTION_PATH"
+        KUSTOMIZE_ENV_FILE="${project_root}/.env.prod"
+      fi
+      ;;
+    h) cat <<EOF
+
+Usage: $0 [options] [services]
+
+  [services]
+        A space-separated list of services to deploy.
+
+Options:
+  -e [environment]   
+        Specify the environment to deploy, accepted values
+        are either "staging" or "production". If omitted, 
+        the default value is "staging".
+
+EOF
+      exit 0
+      ;;
+    ?) 
+      echo "Unknown flag. Usage: $0 [-e staging|production] [services]"
+      exit 1
+      ;;
+  esac
+done
+
+# Shift parsed options
+shift $((OPTIND - 1))
+
+hydrate_yaml() {
+  set -a
+  . "$KUSTOMIZE_ENV_FILE"
+
+  find "$KUSTOMIZE_PATH" -type f -name '*.yaml' -print0 | \
+    xargs -0 -P4 -I {} bash -c '
+      PARENT_DIR=$(dirname "{}")
+      FILE_NAME=$(basename "{}" .yaml)
+      OUTPUT_FILE="${PARENT_DIR}/${FILE_NAME}.hydrated.yaml"
+      envsubst < "{}" > "$OUTPUT_FILE"
+    '
+
+  set +a
+}
 
 # Declare secret
 cd "$project_root"
@@ -36,7 +103,6 @@ for secret in "${!generic[@]}"; do
 done
 
 # Apply file .yaml
-cd ./k8s
 
 default_services=(
   "postgres"
@@ -78,8 +144,10 @@ fi
 # echo "Deleting all ingresses..."
 # kubectl delete ingress --all
 
+cd "$BASE_PATH"
+hydrate_yaml && KUSTOMIZE_YAML=$(kubectl kustomize "$KUSTOMIZE_PATH")
+
 for service in "${services[@]}"; do
-  # kubectl apply -f deployments -f services
   echo -e "\nDeploying $service..."
 
   if [ -f "./deployments/${service}.yaml" ]; then
@@ -99,7 +167,13 @@ for service in "${services[@]}"; do
   fi
 
   if [ -f "./ingresses/${service}.yaml" ]; then
-    kubectl apply -f "./ingresses/${service}.yaml"
+    if [ -f "$KUSTOMIZE_PATH/ingresses/${service}.yaml" ]; then
+      echo "$KUSTOMIZE_YAML" \
+        | yq "select(.kind == \"Ingress\" and .metadata.name == \"${service}\")" \
+        | kubectl apply -f -
+    else
+      kubectl apply -f "./ingresses/${service}.yaml"
+    fi
   fi
 done
 

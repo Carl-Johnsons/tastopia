@@ -189,6 +189,7 @@ def triggerDeployPipeline() {
     parameters: [
       string(name: 'DEPLOY_SERVICES', value: servicesToBuild.join(' ')),
       string(name: 'BUILD_BRANCH_NAME', value: env.BRANCH_NAME)
+      string(name: 'DEPLOY_ENV', value: params.DEPLOY_ENV)
     ],
     wait: false
   )
@@ -207,6 +208,13 @@ pipeline {
       defaultValue: '',
       description: 'Comma-separated list of services to build (example: "consul,rabbitmq,mongo")'
     )
+
+    string(
+      name: 'DEPLOY_ENV',
+      defaultValue: 'staging',
+      description: 'The environment to trigger the deployment pipeline. Could be either "staging" or "production"'
+    )
+
   }
 
   stages {

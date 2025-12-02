@@ -56,7 +56,10 @@ def deploy() {
   ensureSecret()
   ensureK8sCluster()
 
-  sh(label: 'Running K8s deploy script...', script: "./scripts/k8s/deploy.sh ${params.DEPLOY_SERVICES}")
+  sh(
+    label: 'Running K8s deploy script...',
+    script: "./scripts/k8s/deploy.sh -e ${params.DEPLOY_ENV} ${params.DEPLOY_SERVICES}"
+  )
 }
 
 def serviceStatusCheck() {
@@ -114,6 +117,12 @@ pipeline {
       name: 'BUILD_BRANCH_NAME',
       defaultValue: '',
       description: 'The github branch to run script on'
+    )
+
+    string(
+      name: 'DEPLOY_ENV',
+      defaultValue: 'staging',
+      description: 'The environment to run the deploy script with. Could be either "staging" or "production"'
     )
   }
 

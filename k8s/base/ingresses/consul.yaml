@@ -1,16 +1,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: website
+  name: consul
 spec:
   ingressClassName: nginx
   rules:
     - http:
         paths:
-          - path: "/tastopia/ci/deploy/dashboard"
+          - path: /
             pathType: Prefix
             backend:
               service:
-                name: website
+                name: consul
                 port:
-                  number: 80
+                  number: 8500

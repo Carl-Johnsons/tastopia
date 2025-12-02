@@ -1,16 +1,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: rabbitmq
+  name: website
 spec:
   ingressClassName: nginx
   rules:
     - http:
         paths:
-          - path: "/tastopia/ci/deploy/rabbitmq"
+          - path: /
             pathType: Prefix
             backend:
               service:
-                name: rabbitmq
+                name: website
                 port:
-                  number: 15672
+                  number: 80
