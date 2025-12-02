@@ -36,6 +36,7 @@ for service in "${services[@]}"; do
   if [ $service == "website" ]; then
     current_dir=$(pwd)
     cd app/client/website
+    [ -f ".env.staging" ] && mv -f .env.staging .env.production
     npm ci
     npm run build
     cd $current_dir
