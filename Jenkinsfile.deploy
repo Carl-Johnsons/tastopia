@@ -86,7 +86,7 @@ def serviceStatusCheck() {
 def checkoutBranch() {
   def BRANCH = params.BUILD_BRANCH_NAME?.trim()
 
-  if (!Boolean.valueOf(BRANCH)) {
+  if (!BRANCH) {
     checkout scm
     return
   }
