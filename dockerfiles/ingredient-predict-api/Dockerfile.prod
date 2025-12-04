@@ -6,10 +6,10 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PYTHONDONTWRITEBYTECODE=1
 
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-    # gcc \
-    # libjpeg-dev \
-    # zlib1g-dev
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libjpeg-dev \
+    zlib1g-dev
 
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
@@ -22,16 +22,16 @@ EXPOSE 80
 ARG BASE_PROJECT_PATH=app/server/IngredientPredictService
 COPY --from=builder /opt/venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-    # libgl1 \  
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \  
     # This lib "libgl1-mesa-glx" no longer exist, renamed to libgl1 \
-    # libglib2.0-0 \
-    # libgomp1 \
-    # libsm6 \
-    # libxext6 \
-    # libxrender1 \
-    # && rm -rf /var/lib/apt/lists/*
+    libglib2.0-0 \
+    libgomp1 \
+    libsm6 \
+    libxext6 \
+    libxrender1 \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY --exclude=model $BASE_PROJECT_PATH .
+COPY $BASE_PROJECT_PATH .
 ENV PYTHON_ENV=production
 CMD ["python", "main.py"]
