@@ -91,7 +91,10 @@ def checkoutBranch() {
     return
   }
 
-  checkout scmGit(branches: [[name: "refs/heads/${BRANCH}"]])
+  checkout scmGit(
+    branches: [[name: "refs/heads/${BRANCH}"]],
+    userRemoteConfigs: [[url: 'https://github.com/Carl-Johnsons/tastopia']]
+  )
 }
 
 pipeline {
