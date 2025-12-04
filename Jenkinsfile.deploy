@@ -85,8 +85,10 @@ def serviceStatusCheck() {
 
 def checkoutBranch() {
   def BRANCH = params.BUILD_BRANCH_NAME?.trim()
+  echo "Branch to checkout: refs/heads/${BRANCH}"
 
   if (!BRANCH) {
+    echo "Fallback to normal checkout"
     checkout scm
     return
   }
