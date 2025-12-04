@@ -15,7 +15,8 @@ open-clip-torch==2.32.0
 faiss-cpu==1.10.0
 opencv-python-headless==4.11.0.86
 APScheduler==3.11.0
-asyncio==3.4.3
+# https://pypi.org/project/asyncio/ Deprecated backport of asyncio; use the stdlib package instead
+# asyncio==3.4.3
 aiohttp==3.11.18
 ImageHash==4.3.2
 redis==6.4.0
