@@ -46,7 +46,7 @@ def ensureSecret() {
   sh(label: 'Ensuring that Infisical token is present...',
      script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.+/=******/\' < .env.local')
-  sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh prod')
+  sh(label: 'Pulling env files...', script: "./scripts/env/pull-env.sh ${params.DEPLOY_ENV}")
 
   withCredentials([file(credentialsId: 'gmail-access-token', variable: 'GMAIL_TOKEN_FILE')]) {
     sh(label: 'copy gmail-access-token to $WORKSPACE/data/Auth.Store', script: '''
@@ -168,7 +168,12 @@ def buildServices() {
   echo "Building ${servicesToBuild.join(', ')}"
 
   servicesToBuild.each { service ->
-    sh(label: "Building ${service}...", script: "bash ./scripts/docker/build-services.sh ${service}")
+    try {
+      sh(label: "Building ${service}...", script: "bash ./scripts/docker/build-services.sh ${service}")
+    } catch (err) {
+      sh(label: "Printing build logs for failed build...", script: 'cat build.log')
+      throw err
+    }
   }
 
   cleanUp()
@@ -178,10 +183,16 @@ def triggerDeployPipeline() {
   if (servicesToBuild.isEmpty()) {
     return
   }
-
-  build job: 'pipeline', parameters: [
-    string(name: 'DEPLOY_SERVICES', value: servicesToBuild.join(' '))
-  ], wait: false
+  
+  build(
+    job: '/tastopia/pipeline',
+    parameters: [
+      string(name: 'DEPLOY_SERVICES', value: servicesToBuild.join(' ')),
+      string(name: 'BUILD_BRANCH_NAME', value: env.BRANCH_NAME),
+      string(name: 'DEPLOY_ENV', value: params.DEPLOY_ENV)
+    ],
+    wait: false
+  )
 }
 
 pipeline {
@@ -197,6 +208,13 @@ pipeline {
       defaultValue: '',
       description: 'Comma-separated list of services to build (example: "consul,rabbitmq,mongo")'
     )
+
+    string(
+      name: 'DEPLOY_ENV',
+      defaultValue: 'staging',
+      description: 'The environment to trigger the deployment pipeline. Could be either "staging" or "production"'
+    )
+
   }
 
   stages {
@@ -220,6 +238,7 @@ pipeline {
     stage('Build services') {
       steps {
         script {
+          setBuildStatus('Building...', 'PENDING', 'jenkins/ci/build')
           buildServices()
         }
       }

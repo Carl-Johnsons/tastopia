@@ -1,10 +1,82 @@
 #!/bin/bash
 
+set -o pipefail
+
 project_root=$(pwd)
 server_root="app/server"
 client_root="app/client"
 env_file=".env.prod"
-cd ./k8s
+website_env_file=".env.production"
+
+ENV="staging"
+BASE_PATH="./k8s/base"
+
+# Paths relative to BASE_PATH
+STAGING_PATH="../overlays/staging"
+KUSTOMIZE_ENV_FILE="${project_root}/.env.staging"
+PRODUCTION_PATH="../overlays/production"
+KUSTOMIZE_PATH="$STAGING_PATH"
+
+while getopts e:h OPTS; do
+  case $OPTS in
+    e) 
+      if [ "$OPTARG" != "staging" ] && [ "$OPTARG" != "production" ]; then
+        echo 'Only "staging" or "production" is allowed as value of -e flag.'
+        exit 1
+      fi
+
+      ENV="$OPTARG"
+
+      if [ "$ENV" = "staging" ]; then
+        env_file=".env.staging"
+        website_env_file=".env.staging"
+        KUSTOMIZE_PATH="$STAGING_PATH"
+        KUSTOMIZE_ENV_FILE="${project_root}/.env.staging"
+      else
+        KUSTOMIZE_PATH="$PRODUCTION_PATH"
+        KUSTOMIZE_ENV_FILE="${project_root}/.env.prod"
+      fi
+      ;;
+    h) cat <<EOF
+
+Usage: $0 [options] [services]
+
+  [services]
+        A space-separated list of services to deploy.
+
+Options:
+  -e [environment]   
+        Specify the environment to deploy, accepted values
+        are either "staging" or "production". If omitted, 
+        the default value is "staging".
+
+EOF
+      exit 0
+      ;;
+    ?) 
+      echo "Unknown flag. Usage: $0 [-e staging|production] [services]"
+      exit 1
+      ;;
+  esac
+done
+
+# Shift parsed options
+shift $((OPTIND - 1))
+
+hydrate_yaml() {
+  set -a
+  . "$KUSTOMIZE_ENV_FILE"
+
+  find "$KUSTOMIZE_PATH" -type f -name '*.yaml' -print0 | \
+    xargs -0 -P4 -I {} bash -c '
+      PARENT_DIR=$(dirname "{}")
+      FILE_NAME=$(basename "{}" .yaml)
+      OUTPUT_FILE="${PARENT_DIR}/${FILE_NAME}.hydrated.yaml"
+      envsubst < "{}" > "$OUTPUT_FILE"
+    '
+
+  set +a
+}
 
 # Declare secret
 cd "$project_root"
@@ -20,7 +92,7 @@ declare -A generic=(
   [signalr]="$server_root/SignalRService/$env_file"
   [api-gateway]="$server_root/APIGateway/$env_file"
   [ingredient-predict-api]="$server_root/IngredientPredictService/$env_file"
-  [website]="$client_root/website/$env_file"
+  [website]="$client_root/website/$website_env_file"
 )
 
 # Creating secret
@@ -34,7 +106,6 @@ for secret in "${!generic[@]}"; do
 done
 
 # Apply file .yaml
-cd ./k8s
 
 default_services=(
   "postgres"
@@ -51,7 +122,7 @@ default_services=(
   "notification-api"
   "recipe-api"
   "user-api"
-  "ingredient-predict-api"
+  # "ingredient-predict-api"
   "email-worker"
   "push-notification-worker"
   "recipe-worker"
@@ -60,7 +131,7 @@ default_services=(
 
 services=("$@")
 
-if [ ${#services[@]} -eq 0 ]; then
+if [ ${#services[@]} -eq 0 ] || [ "$1" == "default" ] ; then
   services=("${default_services[@]}")
 fi
 
@@ -76,12 +147,22 @@ fi
 # echo "Deleting all ingresses..."
 # kubectl delete ingress --all
 
+cd "$BASE_PATH"
+hydrate_yaml && KUSTOMIZE_YAML=$(kubectl kustomize "$KUSTOMIZE_PATH")
+
 for service in "${services[@]}"; do
-  # kubectl apply -f deployments -f services
   echo -e "\nDeploying $service..."
 
   if [ -f "./deployments/${service}.yaml" ]; then
-    kubectl apply -f "./deployments/${service}.yaml"
+    echo "Checking changes for deployment..."
+
+    if kubectl diff -f "./deployments/${service}.yaml" &>/dev/null \
+       && kubectl get deployment "$service" &>/dev/null; then
+        echo "Deployment $service currently exists, restarting due to no new configs exist..."
+        kubectl rollout restart deployment "$service"
+    else
+      kubectl apply -f "./deployments/${service}.yaml"
+    fi
   fi
 
   if [ -f "./services/${service}.yaml" ]; then
@@ -89,8 +170,23 @@ for service in "${services[@]}"; do
   fi
 
   if [ -f "./ingresses/${service}.yaml" ]; then
-    kubectl apply -f "./ingresses/${service}.yaml"
+    if [ -f "$KUSTOMIZE_PATH/ingresses/${service}.yaml" ]; then
+      echo "$KUSTOMIZE_YAML" \
+        | yq "select(.kind == \"Ingress\" and .metadata.name == \"${service}\")" \
+        | kubectl apply -f -
+    else
+      kubectl apply -f "./ingresses/${service}.yaml"
+    fi
   fi
+done
+
+default_configs=(
+  "nginx"
+)
+
+for config in "${default_configs[@]}"; do
+  echo -e "\nApplying $config config..."
+  kubectl apply -f "./configMaps/${config}.yaml"
 done
 
 cd "$project_root"

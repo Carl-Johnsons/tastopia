@@ -12,7 +12,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     DuendeIDS6Provider({
       clientId: DUENDE_IDS6_ID as string,
-      clientSecret: "",
       issuer: `${DUENDE_IDS6_ISSUER}`,
       wellKnown: `${DUENDE_IDS6_ISSUER}/.well-known/openid-configuration`,
       token: {

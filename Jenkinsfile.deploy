@@ -27,7 +27,7 @@ def ensureSecret() {
   sh(label: 'Ensuring that Infisical token is present...',
     script: "echo 'INFISICAL_TOKEN=${INFISICAL_TOKEN}' > .env.local")
   sh(label: 'Showing .env.local (sanitized)...', script: 'sed \'s/=.*/=******/\' < .env.local')
-  sh(label: 'Pulling env files...', script: './scripts/env/pull-env.sh prod')
+  sh(label: 'Pulling env files...', script: "./scripts/env/pull-env.sh ${params.DEPLOY_ENV}")
 }
 
 def ensureK8sCluster() {
@@ -56,7 +56,10 @@ def deploy() {
   ensureSecret()
   ensureK8sCluster()
 
-  sh(label: 'Running K8s deploy script...', script: "./scripts/k8s/deploy.sh ${params.DEPLOY_SERVICES}")
+  sh(
+    label: 'Running K8s deploy script...',
+    script: "./scripts/k8s/deploy.sh -e ${params.DEPLOY_ENV} ${params.DEPLOY_SERVICES}"
+  )
 }
 
 def serviceStatusCheck() {
@@ -80,8 +83,23 @@ def serviceStatusCheck() {
 }
 }
 
+def checkoutBranch() {
+  def BRANCH = params.BUILD_BRANCH_NAME?.trim()
+
+  if (!BRANCH) {
+    checkout scm
+    return
+  }
+
+  checkout scmGit(branches: [[name: "*/${BRANCH}"]])
+}
+
 pipeline {
   agent { label 'deploy' }
+
+  options {
+    skipDefaultCheckout()
+  }
 
   environment {
     INFISICAL_TOKEN = credentials('infisical-token')
@@ -94,8 +112,27 @@ pipeline {
       defaultValue: '',
       description: 'Space-separated list of services to deploy (example: "consul rabbitmq mongo")'
     )
+    
+    string(
+      name: 'BUILD_BRANCH_NAME',
+      defaultValue: '',
+      description: 'The github branch to run script on'
+    )
+
+    string(
+      name: 'DEPLOY_ENV',
+      defaultValue: 'staging',
+      description: 'The environment to run the deploy script with. Could be either "staging" or "production"'
+    )
   }
+
   stages {
+    stage('Checkout SCM') {
+      steps {
+        checkoutBranch()
+      }
+    }
+
     stage('Service Deployment') {
       steps {
         script {

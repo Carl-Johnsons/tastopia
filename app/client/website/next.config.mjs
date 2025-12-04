@@ -1,20 +1,20 @@
 import createNextIntlPlugin from "next-intl/plugin";
+import 'dotenv/config';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // update image remote later
-  basePath: '/tastopia/dashboard',
+  basePath: process.env.BASE_PATH,
   output: 'standalone',
   reactStrictMode: true,
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "res.cloudinary.com",
         pathname: "/**"
       }
     ],
-    domains: ["res.cloudinary.com"]
   },
   typescript: {
     ignoreBuildErrors: true

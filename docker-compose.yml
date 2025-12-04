@@ -386,7 +386,7 @@ services:
       - front-end
     env_file:
       - .env.prod
-      - ./app/client/website/.env.prod
+      - ./app/client/website/.env.production
 
   # Worker services
   email-worker:

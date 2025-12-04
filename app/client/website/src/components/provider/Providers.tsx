@@ -7,6 +7,7 @@ import StoreProvider from "./StoreProvider";
 import { ReactNode } from "react";
 import ToastProvider from "./ToastProvider";
 import { SignalRHubProvider } from "./SignalRProvider";
+import { BASE_PATH } from "@/constants/config";
 
 function makeQueryClient() {
   return new QueryClient({
@@ -39,7 +40,7 @@ export default function Providers({ children }: { children: ReactNode }) {
 
   return (
     <StoreProvider>
-      <SessionProvider>
+      <SessionProvider basePath={`${BASE_PATH}/api/auth`}>
         <QueryClientProvider client={queryClient}>
           <SignalRHubProvider>
             <ThemeProvider>
