@@ -112,6 +112,12 @@ def detectChange() {
   def validServices = serviceFolders.keySet() as List
   def manualList = []
 
+  if (params.BUILD_SERVICES == 'default' ) {
+    servicesToBuild = serviceFolders.keySet()
+    echo "Manual override: building ${servicesToBuild.join(', ')}"
+    return
+  }
+
   if (params.BUILD_SERVICES) {
     manualList = params.BUILD_SERVICES
         .trim()
