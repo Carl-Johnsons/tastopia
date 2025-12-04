@@ -91,7 +91,7 @@ def checkoutBranch() {
     return
   }
 
-  checkout scmGit(branches: [[name: "*/${BRANCH}"]])
+  checkout scmGit(branches: [[name: "refs/heads/${BRANCH}"]])
 }
 
 pipeline {
