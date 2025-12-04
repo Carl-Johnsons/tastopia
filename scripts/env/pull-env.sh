@@ -139,7 +139,7 @@ pull_all_services() {
 }
 
 export -f pull_env_file
-export INFISICAL_TOKEN sFlag
+export INFISICAL_TOKEN sFlag PLATFORM
 
 case "$TARGET_ENV" in
   "dev")
