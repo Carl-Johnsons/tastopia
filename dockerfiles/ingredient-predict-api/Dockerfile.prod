@@ -1,26 +1,27 @@
 FROM python:3.11-slim AS builder
-
-ARG BASE_PROJECT_PATH=app/server/IngredientPredictService
 WORKDIR /app
+ARG BASE_PROJECT_PATH=app/server/IngredientPredictService
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=off \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PYTHONDONTWRITEBYTECODE=1
 
-# Install build dependencies only
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libjpeg-dev \
-    zlib1g-dev \
-    && rm -rf /var/lib/apt/lists/*
+    zlib1g-dev
 
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 COPY $BASE_PROJECT_PATH/requirements.txt .
-
 RUN pip install --no-cache-dir -r requirements.txt
 
 FROM python:3.11-slim
-ARG BASE_PROJECT_PATH=app/server/IngredientPredictService
 WORKDIR /app
 EXPOSE 80
-
-COPY $BASE_PROJECT_PATH/requirements.txt .
-
+ARG BASE_PROJECT_PATH=app/server/IngredientPredictService
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \  
     # This lib "libgl1-mesa-glx" no longer exist, renamed to libgl1 \
@@ -30,9 +31,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxext6 \
     libxrender1 \
     && rm -rf /var/lib/apt/lists/*
-
-COPY --from=builder /root/.local /root/.local
-ENV PATH=/root/.local/bin:$PATH
 
 COPY $BASE_PROJECT_PATH .
 ENV PYTHON_ENV=production
