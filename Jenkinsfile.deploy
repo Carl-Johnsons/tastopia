@@ -78,9 +78,9 @@ def serviceStatusCheck() {
       kubectl rollout status ${d} --timeout=5m || {
         kubectl logs "${d}";
         exit 1;
-  }
+      }
     """)
-}
+  }
 }
 
 def checkoutBranch() {
