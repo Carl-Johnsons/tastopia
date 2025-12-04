@@ -31,11 +31,11 @@ spec:
               name: model-volume
           resources:
             requests:
-              cpu: "4000m"
-              memory: "6Gi"
+              cpu: "2000m"
+              memory: "7Gi"
             limits:
               cpu: "6000m"
-              memory: "8Gi"
+              memory: "10Gi"
           ports:
             - containerPort: 80
               protocol: TCP
