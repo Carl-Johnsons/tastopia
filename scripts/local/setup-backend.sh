@@ -26,8 +26,5 @@ printf "\n\t*** ${SUCCESS}DONE BUILDING ALL SERVICES${NC} ***\n\n"
 ./scripts/local/apply-all-migrations.sh
 printf "\n\t*** ${SUCCESS}DONE APPLY ALL MIGRATIONS${NC} ***\n\n"
 
-./scripts/docker/config-docker-compose.sh
-printf "\n\t*** ${SUCCESS}DONE GENERATING DOCKER COMPOSE OVERRIDE FILE${NC} ***\n\n"
-
 ./scripts/local/setup-capture-service.sh
 printf "\n\t*** ${SUCCESS}DONE SETUP CAPTURE SERVICE${NC} ***\n\n"
