@@ -343,10 +343,6 @@ services:
         condition: service_healthy
       consul:
         condition: service_healthy
-      postgres:
-        condition: service_healthy
-      rabbitmq:
-        condition: service_healthy
     networks:
       - back-end
     env_file:
