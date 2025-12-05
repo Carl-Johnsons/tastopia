@@ -6,28 +6,11 @@ ENV PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
     PYTHONDONTWRITEBYTECODE=1
 
-RUN --mount=type=cache,target=/var/cache/apt \
-  apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    libjpeg-dev \
-    zlib1g-dev
-
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 RUN --mount=source=$BASE_PROJECT_PATH/requirements.txt,target=requirements.txt \
   --mount=type=cache,target=/root/.cache/pip \
   pip install -r requirements.txt
-
-RUN --mount=type=cache,target=/var/cache/apt \
-  apt-get update && apt-get install -y --no-install-recommends \
-    libgl1 \  
-    # This lib "libgl1-mesa-glx" no longer exist, renamed to libgl1 \
-    libglib2.0-0 \
-    libgomp1 \
-    libsm6 \
-    libxext6 \
-    libxrender1 \
-    && rm -rf /var/lib/apt/lists/*
 
 COPY $BASE_PROJECT_PATH .
 ENV PYTHON_ENV=production
