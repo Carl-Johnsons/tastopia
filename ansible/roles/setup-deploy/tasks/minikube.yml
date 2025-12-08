@@ -14,3 +14,28 @@
   ansible.builtin.command: dpkg -i /tmp/minikube.deb
   register: rc
   changed_when: rc is success
+
+- name: Delete existing minikube node
+  become: false
+  ansible.builtin.command: minikube delete
+  register: rc
+  changed_when: rc is success
+
+- name: Start minikube node
+  become: false
+  ansible.builtin.command: minikube start --cpus {{ minikube.cpus }} --memory {{ minikube.memory }}
+  register: rc
+  changed_when: rc is success
+
+- name: Add minikube ip into /etc/hosts
+  block:
+    - name: Get the cluster ip
+      ansible.builtin.command: sleep 5 && minikube ip
+      register: rc
+      changed_when: false
+
+    - name: Add minikube ip to hosts file
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        regexp: 'minikube$'
+        line: '{{ rc.stdout }} minikube'
