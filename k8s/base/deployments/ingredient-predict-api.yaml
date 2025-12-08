@@ -15,7 +15,7 @@ spec:
       volumes:
         - name: model-volume
           hostPath:
-            path: /home/server/models
+            path: /home/server/app/server/IngredientPredictService/model
             type: DirectoryOrCreate
       containers:
         - name: ingredient-predict-api
