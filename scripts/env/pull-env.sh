@@ -105,7 +105,7 @@ pull_env_file() {
   )
 
   if [ -n "$PULLED_FILE" ]; then
-    echo "$PULLED_FILE" > "./$service_path/$output_file" 
+    echo "$PULLED_FILE" > "$service_path/$output_file" 
   fi
 
   unset PULLED_FILE
@@ -114,7 +114,7 @@ pull_env_file() {
 pull_all_services() {
   local env=$1
   local services=(
-    "./ global"
+    ". global"
     "./app/server/APIGateway apigateway"
     "./app/server/IdentityService identity"
     "./app/server/UploadFileService upload"
