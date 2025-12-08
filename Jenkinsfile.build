@@ -175,7 +175,10 @@ def buildServices() {
 
   servicesToBuild.each { service ->
     try {
-      sh(label: "Building ${service}...", script: "bash ./scripts/docker/build-services.sh ${service}")
+      sh(
+        label: "Building ${service}...",
+        script: "bash ./scripts/docker/build-services.sh -e ${params.DEPLOY_ENV} ${service}"
+      )
     } catch (err) {
       sh(label: "Printing build logs for failed build...", script: 'cat build.log')
       throw err
