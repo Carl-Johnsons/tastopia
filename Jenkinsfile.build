@@ -192,11 +192,17 @@ def triggerDeployPipeline() {
   if (servicesToBuild.isEmpty()) {
     return
   }
+
+  def DEPLOY_SERVICES = servicesToBuild.join(' ')
+
+  if (params.BUILD_SERVICES == 'default') {
+    DEPLOY_SERVICES = 'default'
+  }
   
   build(
     job: '/tastopia/pipeline',
     parameters: [
-      string(name: 'DEPLOY_SERVICES', value: servicesToBuild.join(' ')),
+      string(name: 'DEPLOY_SERVICES', value: DEPLOY_SERVICES),
       string(name: 'BUILD_BRANCH_NAME', value: env.BRANCH_NAME),
       string(name: 'DEPLOY_ENV', value: params.DEPLOY_ENV)
     ],
