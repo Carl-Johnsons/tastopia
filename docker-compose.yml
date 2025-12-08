@@ -143,6 +143,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/api-gateway/Dockerfile.${DOCKERFILE_API_GATEWAY_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:api-gateway-buildcache
+      cache_to:
+        - taiduc113/tastopia:api-gateway-buildcache
     container_name: apigateway
     networks:
       - back-end
@@ -166,6 +170,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/identity-api/Dockerfile.${DOCKERFILE_IDENTITY_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:identity-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:identity-api-buildcache
     container_name: identity-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -195,6 +203,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/recipe-api/Dockerfile.${DOCKERFILE_RECIPE_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:recipe-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:recipe-api-buildcache
     container_name: recipe-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -224,6 +236,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/user-api/Dockerfile.${DOCKERFILE_USER_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:user-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:user-api-buildcache
     container_name: user-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -251,6 +267,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/notification-api/Dockerfile.${DOCKERFILE_NOTIFICATION_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:notification-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:notification-api-buildcache
     container_name: notification-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -280,6 +300,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/upload-api/Dockerfile.${DOCKERFILE_UPLOAD_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:upload-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:upload-api-buildcache
     container_name: upload-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -305,6 +329,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/tracking-api/Dockerfile.${DOCKERFILE_UPLOAD_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:tracking-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:tracking-api-buildcache
     container_name: tracking-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -333,6 +361,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/ingredient-predict-api/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:ingredient-predict-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:ingredient-predict-api-buildcache
     container_name: ingredient-predict-service
     volumes:
       - ./app/server/IngredientPredictService/model:/app/model
@@ -354,6 +386,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/signalr/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:signalr-buildcache
+      cache_to:
+        - taiduc113/tastopia:signalr-buildcache
     container_name: signalr-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -377,6 +413,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/website/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:website-buildcache
+      cache_to:
+        - taiduc113/tastopia:website-buildcache
       args:
         BUILD_ENV: ${ENV:-production}
     container_name: website-dashboard
@@ -390,6 +430,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/email-worker/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:email-worker-buildcache
+      cache_to:
+        - taiduc113/tastopia:email-worker-buildcache
     container_name: email-worker
     depends_on:
       rabbitmq:
@@ -404,6 +448,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/sms-worker/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:sms-worker-buildcache
+      cache_to:
+        - taiduc113/tastopia:sms-worker-buildcache
     container_name: sms-worker
     depends_on:
       rabbitmq:
@@ -418,6 +466,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/push-notification-worker/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:push-notification-worker-buildcache
+      cache_to:
+        - taiduc113/tastopia:push-notification-worker-buildcache
     container_name: push-notification-worker
     depends_on:
       rabbitmq:
@@ -432,6 +484,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/recipe-worker/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:recipe-worker-buildcache
+      cache_to:
+        - taiduc113/tastopia:recipe-worker-buildcache
     container_name: recipe-worker
     depends_on:
       rabbitmq:
