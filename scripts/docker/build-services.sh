@@ -8,7 +8,7 @@ ENV="staging"
 while getopts e:h OPTS; do
   case $OPTS in
     e) 
-      if [ "$OPTARG" != "dev "] && [ "$OPTARG" != "staging" ] && [ "$OPTARG" != "production" ]; then
+      if [ "$OPTARG" != "dev" ] && [ "$OPTARG" != "staging" ] && [ "$OPTARG" != "production" ]; then
         echo 'Only "dev", "staging" or "production" is allowed as value of -e flag.'
         exit 1
       fi
