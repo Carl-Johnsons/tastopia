@@ -138,30 +138,37 @@ pull_all_services() {
     xargs -P0 -I {} bash -c 'pull_env_file $@' _ {} $env
 }
 
+generate_public_env() {
+  ./scripts/env/generate-public-env.sh $1
+}
+
 export -f pull_env_file
 export INFISICAL_TOKEN sFlag PLATFORM
 
 case "$TARGET_ENV" in
-  "dev")
-    pull_all_services dev
-    ;;
-  "staging")
-    pull_all_services staging
+  "dev"|"staging")
+    pull_all_services "$TARGET_ENV"
+    generate_public_env "$TARGET_ENV"
     ;;
   "production")
     pull_all_services prod
+    generate_public_env production
     ;;
   "")
     # No argument provided: Pull dev, staging and production
     printf "${INFO}No environment specified. Pulling 'dev', 'staging' and 'production' secrets...${NC}\n"
     
     if [ -n "$pFlag" ]; then
-      export -f pull_all_services
+      export -f pull_all_services generate_public_env
       echo "dev staging prod" | xargs -P0 -d ' ' -I {} bash -c 'pull_all_services {}'
+      echo "dev staging production" | xargs -P0 -d ' ' -I {} bash -c 'generate_public_env {}'
     else 
       pull_all_services dev
       pull_all_services staging
       pull_all_services prod
+      generate_public_env dev
+      generate_public_env staging
+      generate_public_env production
     fi
     ;;
   *)

@@ -377,12 +377,13 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/website/Dockerfile.prod
+      args:
+        BUILD_ENV: ${ENV:-production}
     container_name: website-dashboard
     networks:
       - front-end
     env_file:
-      - .env.prod
-      - ./app/client/website/.env.production
+      - ./app/client/website/.env.${ENV:-production}
 
   # Worker services
   email-worker:

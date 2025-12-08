@@ -1,10 +1,31 @@
 FROM node:25-alpine AS base
 
-# Production image, copy all the files and run next
-FROM base AS runner
+FROM base AS deps
 ARG BASE_WEBSITE_PATH=app/client/website
 WORKDIR /app
 
+RUN --mount=source=$BASE_WEBSITE_PATH/package.json,target=package.json \
+  --mount=source=$BASE_WEBSITE_PATH/package-lock.json,target=package-lock.json \
+  --mount=type=cache,target=/root/.npm/_cacache \
+  npm ci
+
+FROM deps AS builder
+ARG BASE_WEBSITE_PATH=app/client/website
+ARG BUILD_ENV
+WORKDIR /app
+ENV NEXT_TELEMETRY_DISABLED=1
+
+COPY $BASE_WEBSITE_PATH .
+
+RUN if [ "$BUILD_ENV" = "dev" ]; then mv .env.pub .env.production; \
+  elif [ "$BUILD_ENV" = "staging" ]; then mv .env.staging.pub .env.production; \
+  else mv .env.production.pub .env.production; \
+  fi;
+
+RUN if [ -f package-lock.json ]; then npm run build; else exit 1; fi;
+
+FROM base AS runner
+WORKDIR /app
 ENV NODE_ENV=production
 # Disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -12,12 +33,10 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY $BASE_WEBSITE_PATH/public ./public
-
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --chown=nextjs:nodejs $BASE_WEBSITE_PATH/.next/standalone ./
-COPY --chown=nextjs:nodejs $BASE_WEBSITE_PATH/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 USER nextjs
 

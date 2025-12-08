@@ -3,6 +3,46 @@
 # Exit on failure
 set -eo pipefail
 
+ENV="staging"
+
+while getopts e:h OPTS; do
+  case $OPTS in
+    e) 
+      if [ "$OPTARG" != "dev "] && [ "$OPTARG" != "staging" ] && [ "$OPTARG" != "production" ]; then
+        echo 'Only "dev", "staging" or "production" is allowed as value of -e flag.'
+        exit 1
+      fi
+
+      ENV="$OPTARG"
+      ;;
+    h) cat <<EOF
+
+Usage: $0 [options] [services]
+
+  [services]
+        A space-separated list of services to deploy.
+
+Options:
+  -e [environment]   
+        Specify the environment to build, accepted values
+        are "dev", "staging" or "production". If omitted, 
+        the default value is "staging".
+
+EOF
+      exit 0
+      ;;
+    ?) 
+      echo "Unknown flag. Usage: $0 [-e dev|staging|production] [services]"
+      exit 1
+      ;;
+  esac
+done
+
+export ENV
+
+# Shift parsed options
+shift $((OPTIND - 1))
+
 default_services=(
   "website"
   "api-gateway"
@@ -32,17 +72,6 @@ repo="taiduc113/tastopia"
 echo Building...
 for service in "${services[@]}"; do
   echo "Building \"${service}\"..."
-
-  if [ $service == "website" ]; then
-    current_dir=$(pwd)
-    cd app/client/website
-    [ -f ".env.staging" ] && mv -f .env.staging .env.production
-    npm ci
-    npm run build
-    cd $current_dir
-    unset current_dir
-  fi
-
   docker compose build ${service} 2>&1 | tee build.log
 done
 
