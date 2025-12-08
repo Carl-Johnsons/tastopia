@@ -19,11 +19,6 @@ generate_pub_env() {
   else
     local source_file="$service_path/.env.$environment"
     output_file=".env.$environment.pub"
-
-    if [ "$folder_name" == "website" ] && [ "$environment" == "prod" ]; then
-      local source_file="$service_path/.env.production"
-      output_file=".env.production.pub"
-    fi
   fi
 
   if [ ! -d $service_path ]; then
@@ -63,14 +58,8 @@ export -f generate_pub_env
 export PLATFORM
 
 case "$TARGET_ENV" in
-  "dev")
-    generate dev
-    ;;
-  "staging")
-    generate staging
-    ;;
-  "production")
-    generate prod
+  "dev"|"staging"|"production")
+    generate "$TARGET_ENV"
     ;;
   *)
     # Invalid argument

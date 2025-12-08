@@ -5,8 +5,7 @@ set -o pipefail
 project_root=$(pwd)
 server_root="app/server"
 client_root="app/client"
-env_file=".env.prod"
-website_env_file=".env.production"
+env_file=".env.production"
 
 ENV="staging"
 BASE_PATH="./k8s/base"
@@ -29,12 +28,11 @@ while getopts e:h OPTS; do
 
       if [ "$ENV" = "staging" ]; then
         env_file=".env.staging"
-        website_env_file=".env.staging"
         KUSTOMIZE_PATH="$STAGING_PATH"
         KUSTOMIZE_ENV_FILE="${project_root}/.env.staging"
       else
         KUSTOMIZE_PATH="$PRODUCTION_PATH"
-        KUSTOMIZE_ENV_FILE="${project_root}/.env.prod"
+        KUSTOMIZE_ENV_FILE="${project_root}/.env.production"
       fi
       ;;
     h) cat <<EOF
@@ -92,7 +90,7 @@ declare -A generic=(
   [signalr]="$server_root/SignalRService/$env_file"
   [api-gateway]="$server_root/APIGateway/$env_file"
   [ingredient-predict-api]="$server_root/IngredientPredictService/$env_file"
-  [website]="$client_root/website/$website_env_file"
+  [website]="$client_root/website/$env_file"
 )
 
 # Creating secret

@@ -151,8 +151,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/APIGateway/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/APIGateway/.env.${ENV:-production}
     depends_on:
       identity-api: 
         condition: service_started
@@ -189,8 +189,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/IdentityService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/IdentityService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/IdentityService/src
@@ -222,8 +222,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/RecipeService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/RecipeService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/RecipeService/src
@@ -253,8 +253,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/UserService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/UserService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/UserService/src
@@ -286,8 +286,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/NotificationService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/NotificationService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/NotificationService/src
@@ -315,8 +315,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/UploadFileService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/UploadFileService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/UploadFileService/src
@@ -346,8 +346,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/TrackingService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/TrackingService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/TrackingService/src
@@ -363,8 +363,10 @@ services:
       dockerfile: ./dockerfiles/ingredient-predict-api/Dockerfile.prod
       cache_from:
         - taiduc113/tastopia:ingredient-predict-api-buildcache
-      cache_to:
-        - taiduc113/tastopia:ingredient-predict-api-buildcache
+      # cache_to:
+        # - taiduc113/tastopia:ingredient-predict-api-buildcache
+      args:
+        PYTHON_ENV: ${ENV:-production}
     container_name: ingredient-predict-service
     volumes:
       - ./app/server/IngredientPredictService/model:/app/model
@@ -378,8 +380,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/IngredientPredictService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/IngredientPredictService/.env.${ENV:-production}
 
   # Real-time communication 
   signalr:
@@ -399,8 +401,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/SignalRService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/SignalRService/.env.${ENV:-production}
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost/health || exit 1"]
       interval: 30s
@@ -441,8 +443,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/NotificationService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/NotificationService/.env.${ENV:-production}
 
   sms-worker:
     build:
@@ -459,8 +461,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/NotificationService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/NotificationService/.env.${ENV:-production}
 
   push-notification-worker:
     build:
@@ -477,8 +479,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/NotificationService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/NotificationService/.env.${ENV:-production}
 
   recipe-worker:
     build:
@@ -495,8 +497,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/RecipeService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/RecipeService/.env.${ENV:-production}
 
 networks:
   back-end:

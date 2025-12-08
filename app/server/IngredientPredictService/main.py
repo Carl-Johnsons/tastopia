@@ -58,6 +58,11 @@ mongo_client = mongoClient.get_mongo_client()
 # print(mongo_client.list_database_names())
 recipe_db = mongo_client["RecipeDB"]
 tag_collection = recipe_db["Tag"]
+tag_list = tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list()
+
+if not tag_list:
+    logging.error("Empty tag list detected. Please check database and try again")
+    raise Exception("Empty tag list detected")
 
 def sync_ai_kaggle_server_url():
     global ai_kaggle_server_url
@@ -97,7 +102,9 @@ def sync_tags_and_load_faiss():
 
     # Load tags from MongoDB
     tag_dict = dict()
-    for tag in tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list():
+    tag_list = tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list()
+
+    for tag in tag_list:
         tag_dict[tag['Code']] = {
             'En': tag['Value']['En'],
             'Vi': tag['Value']['Vi'],
