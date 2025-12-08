@@ -59,3 +59,36 @@
         name: docker
         enabled: true
         state: started
+
+- name: Enable containerd image store
+  block:
+    - name: Ensure Docker config folder exists
+      ansible.builtin.file:
+        path: /etc/docker
+        mode: '0755'
+        state: directory
+
+    - name: Change config file content
+      ansible.builtin.copy:
+        dest: /etc/docker/daemon.json
+        content: |
+          {
+            "features": {
+              "containerd-snapshotter": true
+            }
+          }
+        mode: '0644'
+        owner: root
+        group: root
+
+    - name: Prune old images and containers to ensure a clean state
+      community.docker.docker_prune:
+        containers: true
+        images: true
+        networks: true
+        volumes: true
+
+    - name: Loading config file
+      ansible.builtin.service:
+        name: docker
+        state: restarted
