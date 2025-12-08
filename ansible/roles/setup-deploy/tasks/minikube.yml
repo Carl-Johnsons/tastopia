@@ -30,7 +30,8 @@
 - name: Add minikube ip into /etc/hosts
   block:
     - name: Get the cluster ip
-      ansible.builtin.command: sleep 5 && minikube ip
+      become: false
+      ansible.builtin.shell: sleep 5 && minikube ip
       register: rc
       changed_when: false
 
