@@ -40,3 +40,9 @@
         path: /etc/hosts
         regexp: 'minikube$'
         line: '{{ rc.stdout }} minikube'
+
+- name: Install metric-server
+  become: false
+  ansible.builtin.command: minikube addons enable metrics-server
+  register: rc
+  changed_when: rc is success
