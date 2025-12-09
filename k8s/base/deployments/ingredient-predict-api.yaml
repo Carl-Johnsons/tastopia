@@ -17,6 +17,10 @@ spec:
           hostPath:
             path: /home/server/app/server/IngredientPredictService/model
             type: DirectoryOrCreate
+        - name: huggingface-cache-volume
+          hostPath:
+            path: /home/server/.cache/huggingface
+            type: DirectoryOrCreate
       containers:
         - name: ingredient-predict-api
           image: taiduc113/tastopia:ingredient-predict-api
@@ -29,6 +33,8 @@ spec:
           volumeMounts:
             - mountPath: /app/model
               name: model-volume
+            - mountPath: /root/.cache/huggingface
+              name: huggingface-cache-volume
           resources:
             requests:
               cpu: "2000m"
