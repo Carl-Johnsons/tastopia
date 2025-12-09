@@ -75,8 +75,8 @@ def serviceStatusCheck() {
         kubectl get deployments -o name --no-headers
       else
         LIST=\$(
-          cat "${params.DEPLOY_SERVICES}" \
-          | sed -E 's/^\\\\s*//; s/\\\\s*\$//; s/\\\\b\\\\s+\\\\b/|/g'
+          echo "${params.DEPLOY_SERVICES}" \
+          | sed -E 's/^\\s*//; s/\\s*\$//; s/\\b\\s+\\b/|/g'
         )
         kubectl get deployments -o name --no-headers | grep -P "\$LIST"
       fi
