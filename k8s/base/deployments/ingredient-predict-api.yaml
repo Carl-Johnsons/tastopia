@@ -15,7 +15,7 @@ spec:
       volumes:
         - name: model-volume
           hostPath:
-            path: /home/server/tastopia/app/server/IngredientPredictService/model
+            path: /mnt/model
             type: DirectoryOrCreate
         - name: huggingface-cache-volume
           hostPath:
