@@ -43,7 +43,7 @@ spec:
           protocol: TCP
         resources:
           requests:
-            cpu: "250m"
+            cpu: "50m"
             memory: "64Mi"
           limits:
             memory: "500M"
