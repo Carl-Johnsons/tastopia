@@ -71,14 +71,15 @@ def serviceStatusCheck() {
   def deployments = sh(
     label: 'Getting deployment list for health checking...',
     script: """
-      if [ "\$DEPLOY_SERVICES" = "default" ]; then
+      if [ "${params.DEPLOY_SERVICES}" = "default" ]; then
         kubectl get deployments -o name --no-headers
       else
-        LIST=\$(cat "\$DEPLOY_SERVICES" | sed -E 's/^\\\\s*//; s/\\\\s*\$//; s/\\\\b\\\\s+\\\\b/|/g')
+        LIST=\$(
+          cat "${params.DEPLOY_SERVICES}" \
+          | sed -E 's/^\\\\s*//; s/\\\\s*\$//; s/\\\\b\\\\s+\\\\b/|/g'
+        )
         kubectl get deployments -o name --no-headers | grep -P "\$LIST"
       fi
-
-        kubectl get deployments -o name --no-headers | grep -P "$LIST"
     """,
     returnStdout: true
   ).trim().split('\n')
