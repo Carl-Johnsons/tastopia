@@ -15,5 +15,4 @@ RUN --mount=source=$BASE_PROJECT_PATH/requirements.txt,target=requirements.txt \
 COPY $BASE_PROJECT_PATH .
 ARG PYTHON_ENV
 ENV PYTHON_ENV="$PYTHON_ENV"
-CMD ["sleep", "infinity"]
-# CMD ["python", "main.py"]
+CMD ["python", "main.py"]
