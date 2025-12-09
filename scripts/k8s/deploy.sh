@@ -64,6 +64,7 @@ shift $((OPTIND - 1))
 hydrate_yaml() {
   set -a
   . "$KUSTOMIZE_ENV_FILE"
+  set +a
 
   find "$KUSTOMIZE_PATH" -type f -name '*.yaml' -print0 | \
     xargs -0 -P4 -I {} bash -c '
@@ -73,7 +74,8 @@ hydrate_yaml() {
       envsubst < "{}" > "$OUTPUT_FILE"
     '
 
-  set +a
+  # Clean up hydrated files on script exit
+  trap 'find k8s -name *hydrated.yaml 2>/dev/null | xargs -rl rm' EXIT
 }
 
 # Declare secret
