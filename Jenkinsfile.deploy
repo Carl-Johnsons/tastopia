@@ -13,7 +13,8 @@ void setBuildStatus(String message, String state, String context) {
 def ensureAIModel() {
   def BRANCH = params.BUILD_BRANCH_NAME?.trim()
   def MODEL_NAME = 'convnext_224_f.model.keras'
-  def DOWNLOAD_PATH = '~/models'
+  def DOWNLOAD_PATH = '~/model'
+  def MOUNT_PATH = DOWNLOAD_PATH
   def MODEL_PROJECT_PATH = 'app/server/IngredientPredictService/model'
   def MODEL_PATH = "~/tastopia/${MODEL_PROJECT_PATH}" 
   def GIT_REPO_URL = 'https://github.com/carl-johnsons/tastopia'
@@ -44,7 +45,7 @@ def ensureAIModel() {
   sh(label:'Ensure model folder exists inside minikube', script: """
     rsync -aL --progress \
       -e "ssh -i \$(minikube ssh-key)" \
-      ${MODEL_PATH} docker@\$(minikube ip):${DOWNLOAD_PATH}
+      ${MODEL_PATH}/* docker@\$(minikube ip):${MOUNT_PATH}
   """)
 }
 
