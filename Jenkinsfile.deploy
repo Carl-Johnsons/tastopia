@@ -23,7 +23,8 @@ def ensureAIModel() {
 
     if [ ! -f "${DOWNLOAD_PATH}/${MODEL_NAME}" ]; then
       echo "Downloading model..."
-      aws s3 cp "s3://tastopia-ingredient-predict-model/${MODEL_NAME}" "${DOWNLOAD_PATH}" \
+      RESOLVED_PATH="${DOWNLOAD_PATH}"
+      aws s3 cp "s3://tastopia-ingredient-predict-model/${MODEL_NAME}" "\$RESOLVED_PATH" \
        --endpoint-url=${R2_BUCKET_ENDPOINT}
     else
       echo "Model already exists, skipping download."
