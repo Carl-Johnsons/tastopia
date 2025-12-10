@@ -39,8 +39,8 @@ def ensureAIModel() {
 
   sh(label:'Ensure model folder exists inside minikube', script: """
     rsync -aL --progress \
-      -e "ssh -i $(minikube ssh-key)" \
-      "${MODEL_PATH}" "docker@$(minikube ip):${DOWNLOAD_PATH}"
+      -e "ssh -i \$(minikube ssh-key)" \
+      "${MODEL_PATH}" "docker@\$(minikube ip):${DOWNLOAD_PATH}"
   """)
 }
 
