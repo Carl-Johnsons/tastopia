@@ -15,7 +15,7 @@ def ensureAIModel() {
   def MODEL_NAME = 'convnext_224_f.model.keras'
   def DOWNLOAD_PATH = '~/models'
   def MODEL_PROJECT_PATH = 'app/server/IngredientPredictService/model'
-  def MODEL_PATH = '~/tastopia/' + MODEL_PROJECT_PATH
+  def MODEL_PATH = "~/tastopia/${MODEL_PROJECT_PATH}" 
   def GIT_REPO_URL = 'https://github.com/carl-johnsons/tastopia'
 
   sh(label:'Ensuring AI model exist', script: """
