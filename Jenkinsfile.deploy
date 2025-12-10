@@ -11,6 +11,7 @@ void setBuildStatus(String message, String state, String context) {
 }
 
 def ensureAIModel() {
+  def BRANCH = params.BUILD_BRANCH_NAME?.trim()
   def MODEL_NAME = 'convnext_224_f.model.keras'
   def DOWNLOAD_PATH = '~/models'
   def MODEL_PROJECT_PATH = 'app/server/IngredientPredictService/model'
@@ -31,10 +32,11 @@ def ensureAIModel() {
 
   sh(label:'Sparse checkout model folder', script: """
     cd ~
-    git clone --filter=blob:none --no-checkout "${GIT_REPO_URL}"
+    [ ! -d tastopia ] && git clone --filter=blob:none --no-checkout "${GIT_REPO_URL}"
     cd tastopia
+    git fetch origin "${BRANCH}"
     git sparse-checkout set --no-cone "${MODEL_PROJECT_PATH}"
-    git checkout "${params.BUILD_BRANCH_NAME?.trim()}"
+    git checkout "${BRANCH}"
     ln -sf "${DOWNLOAD_PATH}/*" "${MODEL_PATH}"
   """)
 
