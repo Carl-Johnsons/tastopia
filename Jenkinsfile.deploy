@@ -11,17 +11,37 @@ void setBuildStatus(String message, String state, String context) {
 }
 
 def ensureAIModel() {
-  sh(label:'Ensuring AI model exist', script: '''
-    mkdir -p ~/models
+  def MODEL_NAME = 'convnext_224_f.model.keras'
+  def DOWNLOAD_PATH = '~/models'
+  def MODEL_PATH = '~/tastopia/app/server/IngredientPredictService/model'
+  def GIT_REPO_URL = 'https://github.com/carl-johnsons/tastopia'
 
-    if [ ! -f ~/models/convnext_224_f.model.keras ]; then
+  sh(label:'Ensuring AI model exist', script: """
+    mkdir -p "${DOWNLOAD_PATH}"
+
+    if [ ! -f "${DOWNLOAD_PATH}/${MODEL_NAME}" ]; then
       echo "Downloading model..."
-      aws s3 cp s3://tastopia-ingredient-predict-model/convnext_224_f.model.keras ~/models \
+      aws s3 cp "s3://tastopia-ingredient-predict-model/${MODEL_NAME}" "${DOWNLOAD_PATH}" \
        --endpoint-url=${R2_BUCKET_ENDPOINT}
     else
       echo "Model already exists, skipping download."
     fi
-  ''')
+  """)
+
+  sh(label:'Sparse checkout model folder', script: """
+    cd ~
+    git clone --filter=blob:none --no-checkout "${GIT_REPO_URL}"
+    cd tastopia
+    git sparse-checkout set --no-cone "${MODEL_PATH}"
+    git checkout "${params.BUILD_BRANCH_NAME?.trim()}"
+    ln -sf "${DOWNLOAD_PATH}/*" "${MODEL_PATH}"
+  """)
+
+  sh(label:'Ensure model folder exists inside minikube', script: """
+    rsync -aL --progress \
+      -e "ssh -i $(minikube ssh-key)" \
+      "${MODEL_PATH}" "docker@$(minikube ip):${DOWNLOAD_PATH}"
+  """)
 }
 
 def ensureSecret() {

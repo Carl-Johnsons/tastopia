@@ -15,11 +15,11 @@ spec:
       volumes:
         - name: model-volume
           hostPath:
-            path: /mnt/model
+            path: /home/docker/model
             type: DirectoryOrCreate
         - name: huggingface-cache-volume
           hostPath:
-            path: /home/server/.cache/huggingface
+            path: /home/docker/.cache/huggingface
             type: DirectoryOrCreate
       containers:
         - name: ingredient-predict-api
