@@ -37,6 +37,7 @@ def ensureAIModel() {
     git fetch origin "${BRANCH}"
     git sparse-checkout set --no-cone "${MODEL_PROJECT_PATH}"
     git checkout "${BRANCH}"
+    git pull
     ln -sf ${DOWNLOAD_PATH}/* ${MODEL_PATH}
   """)
 
