@@ -13,7 +13,8 @@ void setBuildStatus(String message, String state, String context) {
 def ensureAIModel() {
   def MODEL_NAME = 'convnext_224_f.model.keras'
   def DOWNLOAD_PATH = '~/models'
-  def MODEL_PATH = '~/tastopia/app/server/IngredientPredictService/model'
+  def MODEL_PROJECT_PATH = 'app/server/IngredientPredictService/model'
+  def MODEL_PATH = '~/tastopia/' + MODEL_PROJECT_PATH
   def GIT_REPO_URL = 'https://github.com/carl-johnsons/tastopia'
 
   sh(label:'Ensuring AI model exist', script: """
@@ -32,7 +33,7 @@ def ensureAIModel() {
     cd ~
     git clone --filter=blob:none --no-checkout "${GIT_REPO_URL}"
     cd tastopia
-    git sparse-checkout set --no-cone "${MODEL_PATH}"
+    git sparse-checkout set --no-cone "${MODEL_PROJECT_PATH}"
     git checkout "${params.BUILD_BRANCH_NAME?.trim()}"
     ln -sf "${DOWNLOAD_PATH}/*" "${MODEL_PATH}"
   """)
