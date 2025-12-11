@@ -189,4 +189,13 @@ for config in "${default_configs[@]}"; do
   kubectl apply -f "./configMaps/${config}.yaml"
 done
 
+default_cronJobs=(
+  "check-database"
+)
+
+for job in "${default_cronJobs[@]}"; do
+  echo -e "\nApplying $job config..."
+  kubectl apply -f "./cronJobs/${job}.yaml"
+done
+
 cd "$project_root"
