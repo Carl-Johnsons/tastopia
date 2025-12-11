@@ -11,13 +11,10 @@ void setBuildStatus(String message, String state, String context) {
 }
 
 def ensureAIModel() {
-  def BRANCH = params.BUILD_BRANCH_NAME?.trim()
   def MODEL_NAME = 'convnext_224_f.model.keras'
   def DOWNLOAD_PATH = '~/model'
   def MOUNT_PATH = DOWNLOAD_PATH
-  def MODEL_PROJECT_PATH = 'app/server/IngredientPredictService/model'
-  def MODEL_PATH = "~/tastopia/${MODEL_PROJECT_PATH}" 
-  def GIT_REPO_URL = 'https://github.com/carl-johnsons/tastopia'
+  def MODEL_PATH = DOWNLOAD_PATH 
 
   sh(label:'Ensuring AI model exist', script: """
     mkdir -p ${DOWNLOAD_PATH}
@@ -29,17 +26,6 @@ def ensureAIModel() {
     else
       echo "Model already exists, skipping download."
     fi
-  """)
-
-  sh(label:'Sparse checkout model folder', script: """
-    cd ~
-    [ ! -d tastopia ] && git clone --filter=blob:none --no-checkout "${GIT_REPO_URL}"
-    cd tastopia
-    git fetch origin "${BRANCH}"
-    git sparse-checkout set --no-cone "${MODEL_PROJECT_PATH}"
-    git checkout "${BRANCH}"
-    git pull
-    ln -sf ${DOWNLOAD_PATH}/* ${MODEL_PATH}
   """)
 
   sh(label:'Ensure model folder exists inside minikube', script: """
