@@ -11,8 +11,8 @@ spec:
       template:
         spec:
           containers:
-            - name: check-db
-              image: alpine:3.23.0
+            - name: check-mongo
+              image: mongo
               envFrom: 
               - secretRef:
                   name: global-secret
@@ -21,8 +21,6 @@ spec:
                 - -c
                 - |
                   set -e
-                  apk add --update --no-cache postgresql-client mongodb-tools > /dev/null
-
                   echo "================== 1. MONGODB Check =================="
                   echo "1.1 Total recipes count:"
                   mongosh \
@@ -31,7 +29,16 @@ spec:
                     --authenticationDatabase "admin" \
                     "$MONGODB_HOST" \
                     --eval "db = db.getSiblingDB('RecipeDB'); db.Recipe.countDocuments({})"
-                  
+            - name: check-postgres
+              image: postgres:17.0-alpine
+              envFrom: 
+              - secretRef:
+                  name: global-secret
+              args: 
+                - /bin/sh
+                - -c
+                - |
+                  set -e
                   echo "================== 2. POSTGRESQL Check =================="
                   echo "2.1. Total account count:"
                   PGPASSWORD="$POSTGRES_PASSWORD" \
