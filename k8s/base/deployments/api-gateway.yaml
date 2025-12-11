@@ -22,7 +22,7 @@ spec:
           - sh
           - -c
           - |
-            until redis-cli -h redis -p $REDIS_PORT ping 2>/dev/null | grep -q PONG; do
+            until redis-cli -h $REDIS_HOST -p $REDIS_PORT ping 2>/dev/null | grep -q PONG; do
               echo 'Waiting for redis...'
               sleep 2
             done
@@ -37,7 +37,7 @@ spec:
           - sh
           - -c
           - |
-            until curl -s "$CONSUL_SCHEME://consul:$CONSUL_PORT/v1/health/checks/identity-service" \
+            until curl -s "$CONSUL_SCHEME://$CONSUL_HOST:$CONSUL_PORT/v1/health/checks/identity-service" \
                    | grep -q '"Status": "passing"'; do
 
                 echo 'Waiting for identity-service...'
