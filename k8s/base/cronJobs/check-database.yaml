@@ -23,12 +23,7 @@ spec:
                   set -e
                   echo "================== 1. MONGODB Check =================="
                   echo "1.1 Total recipes count:"
-                  mongosh \
-                    -u "$MONGO_INITDB_ROOT_USERNAME" \ 
-                    -p "$MONGO_INITDB_ROOT_PASSWORD" \
-                    --authenticationDatabase "admin" \
-                    "$MONGODB_HOST" \
-                    --eval "db = db.getSiblingDB('RecipeDB'); db.Recipe.countDocuments({})"
+                  mongosh "mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@$MONGODB_HOST:$MONGODB_PORT/?authSource=admin" --eval "db = db.getSiblingDB('RecipeDB'); db.Recipe.countDocuments({})"
             - name: check-postgres
               image: postgres:17.0-alpine
               envFrom: 
@@ -48,5 +43,4 @@ spec:
                     --username="$POSTGRES_USER"\
                     --dbname="IdentityDB"\
                     -c "select COUNT(a.\"Id\" ) from \"Account\" a"
-                  echo "OK"
           restartPolicy: Never
