@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: daily-db-checker
+spec:
+  schedule: "0 * * * *"
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: check-db
+              image: alpine:3.23.0
+              envFrom: 
+              - secretRef:
+                  name: global-secret
+              args: 
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  apk add --update --no-cache postgresql-client mongodb-tools > /dev/null
+
+                  echo "================== 1. MONGODB Check =================="
+                  echo "1.1 Total recipes count:"
+                  mongosh \
+                    -u "$MONGO_INITDB_ROOT_USERNAME" \ 
+                    -p "$MONGO_INITDB_ROOT_PASSWORD" \
+                    --authenticationDatabase "admin" \
+                    "$MONGODB_HOST" \
+                    --eval "db = db.getSiblingDB('RecipeDB'); db.Recipe.countDocuments({})"
+                  
+                  echo "================== 2. POSTGRESQL Check =================="
+                  echo "2.1. Total account count:"
+                  PGPASSWORD="$POSTGRES_PASSWORD" \
+                    psql \
+                    --host="$DB_HOST"\
+                    --port="$DB_PORT"\
+                    --username="$POSTGRES_USER"\
+                    --dbname="IdentityDB"\
+                    -c "select COUNT(a.\"Id\" ) from \"Account\" a"
+                  echo "OK"
+          restartPolicy: Never
