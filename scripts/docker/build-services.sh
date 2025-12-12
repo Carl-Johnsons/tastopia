@@ -67,6 +67,7 @@ if [ ${#services[@]} -eq 0 ]; then
 fi
 
 project="$(basename $(pwd))"
+project="${project,,}" # make the name lowercase
 repo="taiduc113/tastopia"
 
 echo Building...
