@@ -10,19 +10,16 @@ COPY ["./app/server/Contract/Contract/Published", "Contract/"]
 COPY ["./app/server/APIGateway/src/APIGateway/APIGateway.csproj", "./APIGateway/"]
 
 WORKDIR "/src/APIGateway"
-RUN --mount=type=cache,target=/root/.cache/.nuget \
-    dotnet restore "./APIGateway.csproj" --verbosity normal
+RUN dotnet restore "./APIGateway.csproj" --verbosity normal
 
 COPY ["./app/server/APIGateway/src/APIGateway","."]
-RUN --mount=type=cache,target=/root/.cache/.nuget \
-    dotnet build "./APIGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./APIGateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 # Have to add work dir, because dotnet publish will scan entire fs, make the docker hang with NAT network
 WORKDIR "/src/APIGateway"
 ARG BUILD_CONFIGURATION=Release
-RUN --mount=type=cache,target=/root/.cache/.nuget \
-    dotnet publish "./APIGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./APIGateway.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
     
 FROM base AS final
 WORKDIR /app

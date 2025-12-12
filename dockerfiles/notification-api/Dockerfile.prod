@@ -13,18 +13,15 @@ COPY ["./app/server/NotificationService/src/NotificationService.Domain/Notificat
 
 # Building the services
 WORKDIR "/src/NotificationService.API"
-RUN --mount=type=cache,target=/root/.cache/.nuget \ 
-    dotnet restore --verbosity normal
+RUN dotnet restore --verbosity normal
 COPY ["./app/server/NotificationService/src","/src"]
-RUN --mount=type=cache,target=/root/.cache/.nuget \ 
-    dotnet build "./NotificationService.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./NotificationService.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 # Have to add work dir, because dotnet publish will scan entire fs, make the docker hang with NAT network
 WORKDIR "/src/NotificationService.API"
 ARG BUILD_CONFIGURATION=Release
-RUN --mount=type=cache,target=/root/.cache/.nuget \ 
-    dotnet publish "./NotificationService.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./NotificationService.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

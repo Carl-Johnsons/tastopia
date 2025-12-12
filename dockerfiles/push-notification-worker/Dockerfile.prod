@@ -10,18 +10,15 @@ COPY ["./app/server/NotificationService/src/PushNotificationWorker/PushNotificat
 
 # Building the services
 WORKDIR "/src/PushNotificationWorker"
-RUN --mount=type=cache,target=/root/.cache/.nuget \
-    dotnet restore --verbosity normal
+RUN dotnet restore --verbosity normal
 COPY ["./app/server/NotificationService/src/PushNotificationWorker","/src/PushNotificationWorker"]
-RUN --mount=type=cache,target=/root/.cache/.nuget \
-    dotnet build -c $BUILD_CONFIGURATION -o /app/build  --verbosity normal
+RUN dotnet build -c $BUILD_CONFIGURATION -o /app/build  --verbosity normal
 
 FROM build AS publish
 # Have to add work dir, because dotnet publish will scan entire fs, make the docker hang with NAT network
 WORKDIR "/src/PushNotificationWorker"
 ARG BUILD_CONFIGURATION=Release
-RUN --mount=type=cache,target=/root/.cache/.nuget \
-    dotnet publish -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
