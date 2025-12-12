@@ -68,11 +68,18 @@ def ensureSecret() {
 }
 
 def cleanUp() {
-  sh(label: 'Clean up unused docker container...', script: 'docker container prune -f')
-  sh(label: 'Clean up unused docker image...', script: 'docker image prune -a -f')
-  sh(label: 'Clean up unused docker volume...', script: 'docker volume prune -f')
-  sh(label: 'Clean up unused docker network...', script: 'docker network prune -f')
-  sh(label: 'Clean up docker system ...', script: 'docker system prune -fa')
+  sh(label: 'Cleaning up ...', script: '''
+    echo Clean up unused docker container...
+    docker container prune -f
+    echo Clean up unused docker image...
+    docker image prune -a -f
+    echo Clean up unused docker volume...
+    docker volume prune -f
+    echo Clean up unused docker network...
+    docker network prune -f
+    echo Clean up docker system...
+    docker system prune -fa
+  ''')
 }
 
 def abortDueToEmptyBuildList() {
