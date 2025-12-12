@@ -19,11 +19,13 @@ const useRecipesFeed = (filterSelected: string) => {
   return useInfiniteQuery<RecipeResponse>({
     queryKey: ["recipes", filterSelected],
     queryFn: async ({ pageParam = 0 }) => {
-      const { data } = await protectedAxiosInstance.post<RecipeResponse>(
+      const { data } = await protectedAxiosInstance.get<RecipeResponse>(
         "/api/recipe/get-recipe-feed",
         {
-          skip: pageParam.toString(),
-          tagValues: [filterSelected]
+          params: {
+            skip: pageParam.toString(),
+            tagValues: [filterSelected]
+          }
         }
       );
       return data;
@@ -41,11 +43,13 @@ const useRecipesFeedByAuthorId = (authorId: string) => {
   return useInfiniteQuery<RecipeResponse>({
     queryKey: ["recipesByAuthorId", authorId],
     queryFn: async ({ pageParam = 0 }) => {
-      const { data } = await protectedAxiosInstance.post<RecipeResponse>(
+      const { data } = await protectedAxiosInstance.get<RecipeResponse>(
         "/api/recipe/get-recipe-feed-by-author-id",
         {
-          skip: pageParam.toString(),
-          authorId: authorId
+          params: {
+            skip: pageParam.toString(),
+            authorId: authorId
+          }
         }
       );
       return data;

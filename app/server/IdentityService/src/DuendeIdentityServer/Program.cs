@@ -6,6 +6,10 @@ using Serilog;
 try
 {
     var builder = WebApplication.CreateBuilder(args);
+    if (await builder.TryHandleAsync(args))
+    {
+        return;
+    }
 
     var app = await builder
         .ConfigureServices()
@@ -25,7 +29,7 @@ try
     }
     else
     {
-        Log.Information("Could not retrieve server addresses.");
+        Log.Warning("Could not retrieve server addresses.");
     }
 
     app.WaitForShutdown();

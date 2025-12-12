@@ -435,3 +435,12 @@ app/server/NotificationService/src/EmailWorker/Tokens
 
 # docker-compose
 docker-compose.override.yml
+
+# redis config file
+redis.override.conf
+
+# ansible config
+inventory.yml
+
+# Generated files for K8s Kustomization
+*.hydrated.yaml

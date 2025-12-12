@@ -6,7 +6,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/recipe/statistic{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -26,7 +26,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/recipe/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST",
@@ -49,13 +49,17 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/recipe/get-recipe-feed",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
-        "GET",
-        "POST"
+        "GET"
       ],
       "UpstreamPathTemplate": "/api/recipe/get-recipe-feed",
-      "SwaggerKey": "recipe"
+      "SwaggerKey": "recipe",
+      "FileCacheOptions": {
+        "TtlSeconds": 30,
+        "Region": "getRecipeFeed",
+        "MaxBytes": 104857600
+      }
     },
     {
       "ServiceName": "recipe-service",
@@ -63,13 +67,17 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/recipe/get-recipe-feed-by-author-id",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
-        "GET",
-        "POST"
+        "GET"
       ],
       "UpstreamPathTemplate": "/api/recipe/get-recipe-feed-by-author-id",
-      "SwaggerKey": "recipe"
+      "SwaggerKey": "recipe",
+      "FileCacheOptions": {
+        "TtlSeconds": 30,
+        "Region": "getRecipeFeedByAuthorId",
+        "MaxBytes": 104857600
+      }
     },
     {
       "ServiceName": "recipe-service",
@@ -77,13 +85,39 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/recipe/search-recipe",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
-        "GET",
-        "POST"
+        "GET"
       ],
       "UpstreamPathTemplate": "/api/recipe/search-recipe",
-      "SwaggerKey": "recipe"
+      "SwaggerKey": "recipe",
+      "FileCacheOptions": {
+        "TtlSeconds": 30,
+        "Region": "searchRecipe",
+        "MaxBytes": 104857600
+      }
+    },
+    {
+      "ServiceName": "recipe-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamPathTemplate": "/api/recipe/get-tag",
+      "DownstreamScheme": "http",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "UpstreamPathTemplate": "/api/recipe/get-tag",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [ "Bearer" ],
+        "AllowedScopes": [ "openid" ]
+      },
+      "SwaggerKey": "recipe",
+      "FileCacheOptions": {
+        "TtlSeconds": 86400,
+        "Region": "getTag",
+        "MaxBytes": 104857600
+      }
     },
     {
       "ServiceName": "recipe-service",
@@ -91,7 +125,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/recipe/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"

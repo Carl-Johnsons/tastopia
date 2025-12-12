@@ -1,10 +1,12 @@
 using Contract.Utilities;
 using DnsClient.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using MongoDB.EntityFrameworkCore.Extensions;
 using RecipeService.Domain.Entities;
+using RecipeService.Infrastructure.Persistence.Mockup;
 
 namespace RecipeService.Infrastructure.Persistence;
 
@@ -21,7 +23,6 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         _logger = logger;
     }
-
 
     public DbSet<Recipe> Recipes { get; set; }
     public DbSet<Domain.Entities.Tag> Tags { get; set; }
@@ -50,6 +51,13 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         _logger.LogInformation($"DB Connection string: {mongoConnectionString}");
 
         optionsBuilder.UseMongoDB(mongoConnectionString, db);
+    }
+
+    public async Task SeedDb(IServiceProvider serviceProvider)
+    {
+        var mockupData = serviceProvider.GetRequiredService<MockupData>();
+        await mockupData.SeedAllDataAsync();
+        Console.WriteLine("✅ Seed data complete");
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

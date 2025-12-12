@@ -24,7 +24,7 @@ internal class MockupData
         _logger = logger;
     }
 
-    public async Task SeedAllData()
+    public async Task SeedAllDataAsync()
     {
         await EnsureDatabaseIsReady();
         await SeedRecipeTags();

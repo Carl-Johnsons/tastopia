@@ -1,7 +1,9 @@
 ﻿using Contract.Common;
 using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Microsoft.Extensions.DependencyInjection;
 using UserService.Domain.Entities;
+using UserService.Infrastructure.Persistence.Mockup;
 namespace UserService.Infrastructure.Persistence;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
@@ -11,12 +13,31 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
     }
 
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : base(options)
+    {
+    }
+
     public DbContext Instance => this;
     public DbSet<User> Users { get; set; }
     public DbSet<UserFollow> UserFollows { get; set; }
     public DbSet<UserReport> UserReports { get; set; }
     public DbSet<Setting> Settings { get; set; }
     public DbSet<UserSetting> UserSettings { get; set; }
+
+    public void MigrateDb(IServiceProvider serviceProvider)
+    {
+        var db = serviceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Database.Migrate();
+        Console.WriteLine("✅ Database migrated successfully.");
+    }
+
+    public async Task SeedDb(IServiceProvider serviceProvider)
+    {
+        var mockupData = serviceProvider.GetRequiredService<MockupData>();
+        await mockupData.SeedDataAsync();
+        Console.WriteLine("✅ Seed data complete");
+    }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var connectionString = EnvUtility.GetConnectionString();

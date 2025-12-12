@@ -19,6 +19,27 @@ services:
       - back-end
       - front-end
 
+  redis:
+    image: redis:alpine
+    container_name: redis
+    volumes:
+      # - ./redis.conf:/usr/local/etc/redis/redis-full.conf
+      - ./data/redis:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $REDIS_PASSWORD ping | grep PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    restart: always
+    networks:
+      - back-end
+    environment:
+      - REDIS_PASSWORD=$REDIS_PASSWORD
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+
   postgres:
     image: postgres:17.0-alpine
     container_name: postgres
@@ -122,14 +143,21 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/api-gateway/Dockerfile.${DOCKERFILE_API_GATEWAY_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:api-gateway-buildcache
+      cache_to:
+        - taiduc113/tastopia:api-gateway-buildcache
     container_name: apigateway
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/APIGateway/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/APIGateway/.env.${ENV:-production}
     depends_on:
-      - identity-api
+      identity-api: 
+        condition: service_started
+      redis:
+        condition: service_healthy
     develop:
       watch:
         - path: ./app/server/APIGateway/src
@@ -142,6 +170,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/identity-api/Dockerfile.${DOCKERFILE_IDENTITY_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:identity-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:identity-api-buildcache
     container_name: identity-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -157,8 +189,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/IdentityService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/IdentityService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/IdentityService/src
@@ -171,6 +203,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/recipe-api/Dockerfile.${DOCKERFILE_RECIPE_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:recipe-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:recipe-api-buildcache
     container_name: recipe-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -186,8 +222,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/RecipeService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/RecipeService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/RecipeService/src
@@ -200,6 +236,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/user-api/Dockerfile.${DOCKERFILE_USER_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:user-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:user-api-buildcache
     container_name: user-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -213,8 +253,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/UserService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/UserService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/UserService/src
@@ -227,6 +267,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/notification-api/Dockerfile.${DOCKERFILE_NOTIFICATION_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:notification-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:notification-api-buildcache
     container_name: notification-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -242,8 +286,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/NotificationService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/NotificationService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/NotificationService/src
@@ -256,6 +300,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/upload-api/Dockerfile.${DOCKERFILE_UPLOAD_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:upload-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:upload-api-buildcache
     container_name: upload-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -267,8 +315,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/UploadFileService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/UploadFileService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/UploadFileService/src
@@ -281,6 +329,10 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/tracking-api/Dockerfile.${DOCKERFILE_UPLOAD_ENV:-prod}
+      cache_from:
+        - taiduc113/tastopia:tracking-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:tracking-api-buildcache
     container_name: tracking-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -294,8 +346,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/TrackingService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/TrackingService/.env.${ENV:-production}
     develop:
       watch:
         - path: ./app/server/TrackingService/src
@@ -309,21 +361,37 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/ingredient-predict-api/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:ingredient-predict-api-buildcache
+      # cache_to:
+        # - taiduc113/tastopia:ingredient-predict-api-buildcache
+      args:
+        PYTHON_ENV: ${ENV:-production}
     container_name: ingredient-predict-service
+    volumes:
+      - ./app/server/IngredientPredictService/model:/app/model
     depends_on:
+      redis:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
       consul:
         condition: service_healthy
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/IngredientPredictService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/IngredientPredictService/.env.${ENV:-production}
 
   # Real-time communication 
   signalr:
     build:
       context: .
       dockerfile: ./dockerfiles/signalr/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:signalr-buildcache
+      cache_to:
+        - taiduc113/tastopia:signalr-buildcache
     container_name: signalr-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -333,10 +401,10 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/SignalRService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/SignalRService/.env.${ENV:-production}
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -347,18 +415,27 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/website/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:website-buildcache
+      cache_to:
+        - taiduc113/tastopia:website-buildcache
+      args:
+        BUILD_ENV: ${ENV:-production}
     container_name: website-dashboard
     networks:
       - front-end
     env_file:
-      - .env.prod
-      - ./app/client/website/.env.prod
+      - ./app/client/website/.env.${ENV:-production}
 
   # Worker services
   email-worker:
     build:
       context: .
       dockerfile: ./dockerfiles/email-worker/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:email-worker-buildcache
+      cache_to:
+        - taiduc113/tastopia:email-worker-buildcache
     container_name: email-worker
     depends_on:
       rabbitmq:
@@ -366,13 +443,17 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/NotificationService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/NotificationService/.env.${ENV:-production}
 
   sms-worker:
     build:
       context: .
       dockerfile: ./dockerfiles/sms-worker/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:sms-worker-buildcache
+      cache_to:
+        - taiduc113/tastopia:sms-worker-buildcache
     container_name: sms-worker
     depends_on:
       rabbitmq:
@@ -380,13 +461,17 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/NotificationService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/NotificationService/.env.${ENV:-production}
 
   push-notification-worker:
     build:
       context: .
       dockerfile: ./dockerfiles/push-notification-worker/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:push-notification-worker-buildcache
+      cache_to:
+        - taiduc113/tastopia:push-notification-worker-buildcache
     container_name: push-notification-worker
     depends_on:
       rabbitmq:
@@ -394,13 +479,17 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/NotificationService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/NotificationService/.env.${ENV:-production}
 
   recipe-worker:
     build:
       context: .
       dockerfile: ./dockerfiles/recipe-worker/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:recipe-worker-buildcache
+      cache_to:
+        - taiduc113/tastopia:recipe-worker-buildcache
     container_name: recipe-worker
     depends_on:
       rabbitmq:
@@ -408,8 +497,8 @@ services:
     networks:
       - back-end
     env_file:
-      - .env.prod
-      - ./app/server/RecipeService/.env.prod
+      - .env.${ENV:-production}
+      - ./app/server/RecipeService/.env.${ENV:-production}
 
 networks:
   back-end:

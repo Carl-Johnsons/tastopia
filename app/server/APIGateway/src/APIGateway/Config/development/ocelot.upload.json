@@ -6,7 +6,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/upload/upload-images",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -20,7 +20,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/upload/delete-images",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -34,7 +34,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/upload/update-images",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -48,7 +48,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/upload/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"

@@ -12,12 +12,10 @@ internal class MockupData
     private UserManager<ApplicationAccount> _userManager;
     private RoleManager<IdentityRole> _roleManager;
     private readonly ApplicationDbContext _context;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<MockupData> _logger;
-    public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork, UserManager<ApplicationAccount> userManager, RoleManager<IdentityRole> roleManager, ILogger<MockupData> logger)
+    public MockupData(ApplicationDbContext context, UserManager<ApplicationAccount> userManager, RoleManager<IdentityRole> roleManager, ILogger<MockupData> logger)
     {
         _context = context;
-        _unitOfWork = unitOfWork;
         _userManager = userManager;
         _roleManager = roleManager;
         _logger = logger;

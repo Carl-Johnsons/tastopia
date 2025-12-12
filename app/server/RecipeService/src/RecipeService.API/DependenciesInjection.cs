@@ -40,7 +40,7 @@ public static class DependenciesInjection
 
         app.UseSwaggerServices();
 
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
 
         app.MapControllers();
 

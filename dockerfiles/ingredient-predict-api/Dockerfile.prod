@@ -1,23 +1,18 @@
 FROM python:3.11-slim
-ARG BASE_PROJECT_PATH=app/server/IngredientPredictService
 WORKDIR /app
 EXPOSE 80
+ARG BASE_PROJECT_PATH=app/server/IngredientPredictService
+ENV PYTHONUNBUFFERED=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PYTHONDONTWRITEBYTECODE=1
 
-COPY $BASE_PROJECT_PATH/requirements.txt .
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    libgl1-mesa-glx \
-    libglib2.0-0 \
-    libgomp1 \
-    libsm6 \
-    libxext6 \
-    libxrender1 \
-    libjpeg-dev \
-    zlib1g-dev \
-    && pip install --no-cache-dir -r requirements.txt \
-    && rm -rf /var/lib/apt/lists/*
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN --mount=source=$BASE_PROJECT_PATH/requirements.txt,target=requirements.txt \
+  --mount=type=cache,target=/root/.cache/pip \
+  pip install -r requirements.txt
 
 COPY $BASE_PROJECT_PATH .
-ENV PYTHON_ENV=production
+ARG PYTHON_ENV
+ENV PYTHON_ENV="$PYTHON_ENV"
 CMD ["python", "main.py"]

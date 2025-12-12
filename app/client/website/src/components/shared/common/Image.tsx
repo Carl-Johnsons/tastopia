@@ -4,6 +4,7 @@ import BaseImage, { ImageProps as BaseImageProps } from "next/image";
 import { ImageOff } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BASE_PATH } from "@/constants/config";
 
 export type ImageProps = BaseImageProps & {
   wrapperClassName?: string;
@@ -11,6 +12,7 @@ export type ImageProps = BaseImageProps & {
 };
 
 function Image({
+  src,
   width,
   height,
   onError,
@@ -44,6 +46,7 @@ function Image({
       )}
       <BaseImage
         {...props}
+        src={`${BASE_PATH}${src}`}
         width={width}
         height={height}
         quality={100}

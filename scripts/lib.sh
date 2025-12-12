@@ -49,7 +49,7 @@ check_platform() {
   elif [[ "$OSTYPE" == "win32" ]]; then
     platform="windows"
   elif [[ "$OSTYPE" == "freebsd"* ]]; then
-    echo "Freebsd this script does not support running on freebsd platform"
+    echo "This script does not support running on freebsd platform"
     exit 1
   else
     echo "Cannot detect the OS that you're running"
@@ -71,11 +71,11 @@ check_docker() {
     if ! docker info > /dev/null 2>&1; then
       err_docker
     fi
-  elif ! sudo docker info > /dev/null 2>&1; then 
+  elif ! docker info > /dev/null 2>&1; then 
    err_docker
   fi
 }
 
 run_required_docker_services(){
-  $SUDO_PREFIX docker compose up -d postgres rabbitmq mongo consul
+  $SUDO_PREFIX docker compose up -d postgres rabbitmq mongo consul redis
 }

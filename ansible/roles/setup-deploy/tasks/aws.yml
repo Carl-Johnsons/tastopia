@@ -1,0 +1,6 @@
+---
+- name: Install aws cli using snap
+  become: true
+  ansible.builtin.snap:
+    name: aws-cli
+    classic: true

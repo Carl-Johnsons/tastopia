@@ -6,7 +6,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/notification/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST",

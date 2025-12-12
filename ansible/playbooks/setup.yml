@@ -1,0 +1,6 @@
+---
+- name: Setup dependencies
+  become: true
+  hosts: localhost
+  roles:
+    - setup

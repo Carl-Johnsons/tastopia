@@ -1,19 +1,19 @@
 from contextlib import asynccontextmanager
-from EnvUtility import EnvUtility
+from EnvUtility import get_mongodb_connection_string, is_development, load_env
+from MongoClient import MongoClient
+from ModelLoader import get_clip_model, get_clip_preprocessor, get_model, get_model_tokenizer
+from RedisManager import RedisManager
 from fastapi import FastAPI, File, UploadFile
 from PIL import Image, ImageOps
 # from ultralytics import YOLO
 import httpx
-import pymongo
 import io
 import logging
 import logging.config
 import random
 import uvicorn
 import yaml
-import tensorflow as tf
 import numpy as np
-from open_clip import create_model_from_pretrained, get_tokenizer
 import torch
 import cv2
 import faiss
@@ -23,6 +23,7 @@ import asyncio
 import aiohttp
 import requests
 import os
+
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 with open("log_config.yaml", "r") as f:
@@ -31,18 +32,21 @@ logging.config.dictConfig(log_config)
 logging.addLevelName(logging.INFO, "Information")
 logging.addLevelName(logging.WARNING, "Warning")
 
+load_env()
+# Define utility
+mongoClient = MongoClient(get_mongodb_connection_string())
+redisManager = RedisManager()
+
 # Load the CNN model
-convnext_model = tf.keras.models.load_model('model/convnext_224_f.model.keras')
+convnext_model = get_model()
 # yolo_model = YOLO("./model/yolo_best_f.pt")
-clip_model, preprocess = create_model_from_pretrained('hf-hub:apple/DFN5B-CLIP-ViT-H-14')
-tokenizer = get_tokenizer('ViT-H-14')
+clip_model = get_clip_model()
+preprocess = get_clip_preprocessor() 
+tokenizer = get_model_tokenizer()
 
 # device = torch.device('cuda:0' if torch.backends.cuda.is_built() else 'cpu')
 device = torch.device('cpu')
 clip_model = clip_model.to(device)
-
-envUtil = EnvUtility()
-envUtil.load_env()
 
 service_host = os.getenv("SERVICE_HOST")
 service_port = int(os.getenv("PORT"))
@@ -50,16 +54,21 @@ service_port = int(os.getenv("PORT"))
 ai_kaggle_server_url = ''
 
 # Load tag from MongoDB
-mongo_client = pymongo.MongoClient(envUtil.get_mongodb_connection_string())
-print(mongo_client.list_database_names())
+mongo_client = mongoClient.get_mongo_client()
+# print(mongo_client.list_database_names())
 recipe_db = mongo_client["RecipeDB"]
 tag_collection = recipe_db["Tag"]
+tag_list = tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list()
+
+if not tag_list:
+    logging.error("Empty tag list detected. Please check database and try again")
+    raise Exception("Empty tag list detected")
 
 def sync_ai_kaggle_server_url():
     global ai_kaggle_server_url
     ai_kaggle_server_url = requests.get('https://script.google.com/macros/s/AKfycbyVK0wd-G_kuZXrQ0dGDC86xBkhfuHFTm5bXXe0hyL39IND815GSHpli4_v99Cb2KeZFg/exec').text
     
-    print(f"AI Kaggle Server URL: {ai_kaggle_server_url}")
+    logging.info(f"AI Kaggle Server URL: {ai_kaggle_server_url}")
 
 def load_clip_features(names: dict, tag_dict: dict):
     # Load feature
@@ -88,11 +97,14 @@ def load_clip_features(names: dict, tag_dict: dict):
     return features_list, filename_index_list
 
 def sync_tags_and_load_faiss():
+    logging.info('Begin sync_tags_and_load_faiss')
     global tag_dict, names, index, filename_index, text_features, tag_codes
 
     # Load tags from MongoDB
     tag_dict = dict()
-    for tag in tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list():
+    tag_list = tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list()
+
+    for tag in tag_list:
         tag_dict[tag['Code']] = {
             'En': tag['Value']['En'],
             'Vi': tag['Value']['Vi'],
@@ -119,6 +131,8 @@ def sync_tags_and_load_faiss():
     text = torch.as_tensor(text, device=device)
     with torch.no_grad():
         text_features = clip_model.encode_text(text)
+    logging.info('sync_tags_and_load_faiss End')
+    
 
 # Initialize the index, tags and load features
 sync_tags_and_load_faiss()
@@ -136,7 +150,7 @@ async def lifespan(app: FastAPI):
     consul_register_url = f"{consul_base_address}/v1/agent/service/register"
     consul_deregister_url = f"{consul_base_address}/v1/agent/service/deregister/{service_id}"
 
-    if(envUtil.is_development()):
+    if(is_development()):
         health_check_url = f"http://host.docker.internal:{service_port}/health"
     else:
         health_check_url = f"http://{service_host}:{service_port}/health"
@@ -157,7 +171,7 @@ async def lifespan(app: FastAPI):
     async with httpx.AsyncClient() as client:
         response = await client.put(consul_register_url, json=service_registration)
         if response.status_code == 200:
-            logging.info("Successfully registered with Consul 😊")
+            logging.info("Successfully registered with Consul")
         else:
             logging.error("Failed to register with Consul", response.text)
     yield  # The app starts here
@@ -165,7 +179,7 @@ async def lifespan(app: FastAPI):
     async with httpx.AsyncClient() as client:
         response = await client.put(consul_deregister_url)
         if response.status_code == 200:
-            logging.info("Deregistered from Consul 👋")
+            logging.info("Deregistered from Consul")
         else:
             logging.error("Deregistration failed:", response.text)
 
@@ -332,78 +346,131 @@ async def predict_local(image_bytes: bytes):
     except Exception as e:
         print(f"[Server Error] {e}")
     return None
-    
 
 @app.post("/api/ingredient-predict-v2")
 async def predict_v2(file: UploadFile = File(...)):
     image_bytes = await file.read()
 
+    phash = redisManager.compute_phash(image_bytes)
+    cached_prediction = redisManager.get_approx_prediction_from_cache(phash=phash)
+    logging.info(f"Phash {phash}")
+
+    if cached_prediction is not None:
+        logging.info(f"Get image from cache with phash {phash}")
+        return cached_prediction
+
     task_server = asyncio.create_task(predict_server(image_bytes))
     task_local = asyncio.create_task(predict_local(image_bytes))
     
-
     done, pending = await asyncio.wait(
         [task_server, task_local], return_when=asyncio.FIRST_COMPLETED
     )
 
     if not list(done)[0].result():
-        return await list(pending)[0]
+        result = await list(pending)[0]
+        redisManager.save_prediction_to_cache(phash=phash, prediction=result)
+        logging.info(f"Save image from local cache with phash {phash}")
+        return result
 
     for task in pending:
         task.cancel()
 
     result = list(done)[0].result()
+
+    redisManager.save_prediction_to_cache(phash=phash, prediction=result)
+    logging.info(f"Save image from remote cache with phash {phash}")
+
     return result
 
-@app.post("/api/ingredient-predict")
-async def predict(file: UploadFile = File(...)):
-    image = Image.open(io.BytesIO(await file.read()))
-    image = image.convert("RGB")
-    # Apply exif metadata if exist
-    image = ImageOps.exif_transpose(image)
+@app.post("/api/ingredient-predict-v2/multi")
+async def predict_v2_multi(files: list[UploadFile] = File(...)):
+    results = []
 
-    classifications = []
+    for file in files:
+        image_bytes = await file.read()
 
-    # Predict with pretrained and not pretrained text
-    image_features = encode_image_by_clip(image)
-    indexs, probs = get_raw_clip_text_predict(image_features)
-    if len(indexs) > 0:
-        for class_index, conf in zip(indexs[:5], probs[:5]):
-            class_label = '0'
-            classifications.append({
-                "class": class_label,
-                "confidence": float(conf),
-                "name": {
-                    'en': tag_dict.get(tag_codes[class_index])['En'],
-                    'vi': tag_dict.get(tag_codes[class_index])['Vi']
-                },
-                "code": tag_codes[class_index],
-            })
-    else:
-        # Predict with pretrained class
-        clip_pred_raw = get_raw_clip_predict(image_features, 50)
-        results = yolo_model(image, verbose=False)
-        yolo_pred_raw = [[0] * 300]
-        for i in range(len(results[0].names)):
-            class_index = int(results[0].names[i]) - 1
-            yolo_pred_raw[0][class_index] = float(results[0].probs.data[i])
-        # yolo_pred_raw = [results[0].probs.data.tolist()]
-        indexs, probs = cal_mix_clip_cnn(clip_pred_raw[0], yolo_pred_raw[0])
+        phash = redisManager.compute_phash(image_bytes)
+        cached_prediction = redisManager.get_approx_prediction_from_cache(phash=phash)
+        logging.info(f"Phash {phash}")
 
-        for class_index, conf in zip(indexs[:5], probs[:5]):
-            class_label = str(class_index + 1).zfill(3)
-            classifications.append({
-                "class": class_label,
-                "confidence": float(conf),
-                "name": {
-                    'en': names[class_label][0],
-                    'vi': names[class_label][1]
-                },
-                "code": '_'.join(names[class_label][0].split(' ')).upper(),
-            })
+        if cached_prediction is not None:
+            logging.info(f"Get image from cache with phash {phash}")
+            results.append(cached_prediction)
+            continue
 
-    # results = box_model(image, verbose=False)
-    return {"classifications": classifications, "boxes": []}
+        # Run server + local in parallel
+        task_server = asyncio.create_task(predict_server(image_bytes))
+        task_local = asyncio.create_task(predict_local(image_bytes))
+
+        done, pending = await asyncio.wait(
+            [task_server, task_local], return_when=asyncio.FIRST_COMPLETED
+        )
+
+        if not list(done)[0].result():
+            result = await list(pending)[0]
+            redisManager.save_prediction_to_cache(phash=phash, prediction=result)
+            logging.info(f"Save image from local cache with phash {phash}")
+            results.append(result)
+        else:
+            for task in pending:
+                task.cancel()
+
+            result = list(done)[0].result()
+            redisManager.save_prediction_to_cache(phash=phash, prediction=result)
+            logging.info(f"Save image from remote cache with phash {phash}")
+            results.append(result)
+
+    return {"predictions": results}
+
+# @app.post("/api/ingredient-predict")
+# async def predict(file: UploadFile = File(...)):
+#     image = Image.open(io.BytesIO(await file.read()))
+#     image = image.convert("RGB")
+#     # Apply exif metadata if exist
+#     image = ImageOps.exif_transpose(image)
+
+#     classifications = []
+
+#     # Predict with pretrained and not pretrained text
+#     image_features = encode_image_by_clip(image)
+#     indexs, probs = get_raw_clip_text_predict(image_features)
+#     if len(indexs) > 0:
+#         for class_index, conf in zip(indexs[:5], probs[:5]):
+#             class_label = '0'
+#             classifications.append({
+#                 "class": class_label,
+#                 "confidence": float(conf),
+#                 "name": {
+#                     'en': tag_dict.get(tag_codes[class_index])['En'],
+#                     'vi': tag_dict.get(tag_codes[class_index])['Vi']
+#                 },
+#                 "code": tag_codes[class_index],
+#             })
+#     else:
+#         # Predict with pretrained class
+#         clip_pred_raw = get_raw_clip_predict(image_features, 50)
+#         results = yolo_model(image, verbose=False)
+#         yolo_pred_raw = [[0] * 300]
+#         for i in range(len(results[0].names)):
+#             class_index = int(results[0].names[i]) - 1
+#             yolo_pred_raw[0][class_index] = float(results[0].probs.data[i])
+#         # yolo_pred_raw = [results[0].probs.data.tolist()]
+#         indexs, probs = cal_mix_clip_cnn(clip_pred_raw[0], yolo_pred_raw[0])
+
+#         for class_index, conf in zip(indexs[:5], probs[:5]):
+#             class_label = str(class_index + 1).zfill(3)
+#             classifications.append({
+#                 "class": class_label,
+#                 "confidence": float(conf),
+#                 "name": {
+#                     'en': names[class_label][0],
+#                     'vi': names[class_label][1]
+#                 },
+#                 "code": '_'.join(names[class_label][0].split(' ')).upper(),
+#             })
+
+#     # results = box_model(image, verbose=False)
+#     return {"classifications": classifications, "boxes": []}
 
 @app.get("/api/tags")
 async def get_tags():

@@ -1,0 +1,47 @@
+---
+- name: Set NVM directory
+  ansible.builtin.set_fact:
+    nvm_dir: "{{ ansible_env.HOME }}/.nvm"
+
+- name: Download and install NVM
+  ansible.builtin.shell: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+  args:
+    creates: "{{ nvm_dir }}"
+  register: nvm_install
+  changed_when: nvm_install.rc == 0
+
+- name: Load NVM environment
+  ansible.builtin.shell: |
+    . "{{ nvm_dir }}/nvm.sh"
+  register: nvm_env
+  changed_when: false
+
+- name: Install Node.js 22
+  ansible.builtin.shell: |
+    . "{{ nvm_dir }}/nvm.sh" && nvm install 22
+  args:
+    executable: /bin/bash
+  register: node_install
+  changed_when: node_install.rc == 0
+
+- name: Verify Node.js version
+  ansible.builtin.shell: |
+    . "{{ nvm_dir }}/nvm.sh" && node -v
+  args:
+    executable: /bin/bash
+  register: node_version
+  changed_when: false
+
+- name: Verify npm version
+  ansible.builtin.shell: |
+    . "{{ nvm_dir }}/nvm.sh" && npm -v
+  args:
+    executable: /bin/bash
+  register: npm_version
+  changed_when: false
+
+- name: Print versions
+  ansible.builtin.debug:
+    msg:
+      - "Node.js version: {{ node_version.stdout }}"
+      - "npm version: {{ npm_version.stdout }}"

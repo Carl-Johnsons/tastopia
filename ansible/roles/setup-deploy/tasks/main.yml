@@ -1,0 +1,28 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Install docker v28.1.1
+  ansible.builtin.include_tasks: ../../setup/tasks/docker.yml
+
+- name: Install infisical
+  ansible.builtin.include_tasks: ../../setup/tasks/infisical.yml
+
+- name: Install java v17
+  ansible.builtin.include_tasks: ../../setup/tasks/java.yml
+
+- name: Install minikube
+  ansible.builtin.include_tasks: ./minikube.yml
+
+- name: Install kubectl
+  ansible.builtin.include_tasks: ./kubectl.yml
+
+- name: Install helm
+  ansible.builtin.include_tasks: ./helm.yml
+
+- name: Install Nginx ingress controller
+  ansible.builtin.include_tasks: ./ingress-nginx.yml
+
+- name: Install aws-cli
+  ansible.builtin.include_tasks: ./aws.yml

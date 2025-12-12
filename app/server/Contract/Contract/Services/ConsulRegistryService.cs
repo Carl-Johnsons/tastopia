@@ -23,6 +23,7 @@ public class ConsulRegistryService : IConsulRegistryService
             || serviceQueryResult.Response == null
             || serviceQueryResult.Response.Length == 0)
         {
+            _logger.LogWarning($"No healthy instance found for {serviceName}");
             return null;
         }
 
@@ -32,6 +33,25 @@ public class ConsulRegistryService : IConsulRegistryService
         var uri = $"{scheme}://{services[0].Service.Address}:{services[0].Service.Port}";
 
         _logger.LogInformation($"Service queried successfully with: {uri}");
+        return new Uri(uri);
+    }
+
+    public Uri? GetGrpcServiceUri(string serviceName)
+    {
+        var serviceQueryResult = _consulClient.Health.Service(serviceName).Result;
+
+        if (serviceQueryResult?.Response == null || serviceQueryResult.Response.Length == 0)
+        {
+            _logger.LogWarning($"No healthy instance found for {serviceName}");
+            return null;
+        }
+
+        var service = serviceQueryResult.Response.First().Service;
+
+        var scheme = service.Meta["grpc_scheme"];
+        var port = service.Meta["grpc_port"];
+        var uri = $"{scheme}://{service.Address}:{port}";
+        _logger.LogInformation($"gRPC service URI resolved: {uri}");
         return new Uri(uri);
     }
 }

@@ -17,6 +17,11 @@ public class EnvUtility
             DotNetEnv.Env.Load(rootEnvPath);
             DotNetEnv.Env.Load(Path.Combine(solutionPath, ".env.production"));
         }
+        else if (IsStaging())
+        {
+            LoadEnvWithoutOverriding(rootEnvPath);
+            LoadEnvWithoutOverriding(Path.Combine(solutionPath, ".env.staging"));
+        }
         else if (IsDevelopment())
         {
             LoadEnvWithoutOverriding(rootEnvPath);
@@ -30,6 +35,10 @@ public class EnvUtility
     public static bool IsProduction()
     {
         return DotNetEnv.Env.GetString("ASPNETCORE_ENVIRONMENT", "") == "Production";
+    }
+    public static bool IsStaging()
+    {
+        return DotNetEnv.Env.GetString("ASPNETCORE_ENVIRONMENT", "") == "Staging";
     }
 
     /// <summary>

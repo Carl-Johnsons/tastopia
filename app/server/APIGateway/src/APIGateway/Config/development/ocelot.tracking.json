@@ -6,7 +6,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/tracking/current",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -27,7 +27,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/admin/tracking/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"
@@ -48,7 +48,7 @@
         "Type": "LeastConnection"
       },
       "DownstreamPathTemplate": "/api/tracking/{everything}",
-      "DownstreamScheme": "https",
+      "DownstreamScheme": "http",
       "UpstreamHttpMethod": [
         "GET",
         "POST"

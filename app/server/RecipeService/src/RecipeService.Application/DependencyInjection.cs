@@ -8,7 +8,7 @@ using TrackingProto;
 using Contract.Constants;
 using Grpc.Net.Compression;
 using System.IO.Compression;
-using RecipeProto;
+using Grpc.Core;
 
 namespace RecipeService.Application;
 
@@ -28,28 +28,34 @@ public static class DependencyInjection
     }
     private static void AddGrpcClientService(this IServiceCollection services)
     {
+        AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
         var serviceProvider = services.BuildServiceProvider();
         var consulService = serviceProvider.GetRequiredService<IConsulRegistryService>();
+        
+        Action<Grpc.Net.Client.GrpcChannelOptions> channelOptions = options =>
+        {
+            options.Credentials = ChannelCredentials.Insecure;
+        };
 
         services.AddGrpcClient<GrpcUser.GrpcUserClient>(options =>
         {
-            options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_USER", "Not Found"));
-        });
+            options.Address = consulService.GetGrpcServiceUri(DotNetEnv.Env.GetString("CONSUL_USER", "Not Found"));
+        }).ConfigureChannel(channelOptions);
 
         services.AddGrpcClient<GrpcUploadFile.GrpcUploadFileClient>(options =>
         {
-            options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_UPLOAD", "Not Found"));
+            options.Address = consulService.GetGrpcServiceUri(DotNetEnv.Env.GetString("CONSUL_UPLOAD", "Not Found"));
 
         }).ConfigureChannel(options =>
         {
             options.MaxReceiveMessageSize = GrpcUploadFileConfig.MaxMessageSize;
             options.MaxSendMessageSize = GrpcUploadFileConfig.MaxMessageSize;
-            options.CompressionProviders = new[] { new GzipCompressionProvider(CompressionLevel.Optimal) };
-        });
+            options.CompressionProviders = [new GzipCompressionProvider(CompressionLevel.Optimal)];
+        }).ConfigureChannel(channelOptions);
 
         services.AddGrpcClient<GrpcTracking.GrpcTrackingClient>(options =>
         {
-            options.Address = consulService.GetServiceUri(DotNetEnv.Env.GetString("CONSUL_TRACKING", "Not Found"));
-        });
+            options.Address = consulService.GetGrpcServiceUri(DotNetEnv.Env.GetString("CONSUL_TRACKING", "Not Found"));
+        }).ConfigureChannel(channelOptions);
     }
 }

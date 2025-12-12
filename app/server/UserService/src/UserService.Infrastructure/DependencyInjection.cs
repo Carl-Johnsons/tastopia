@@ -16,12 +16,17 @@ public static class DependencyInjection
         services.AddScoped<MockupData>();
         services.AddCommonInfrastructureServices("UserService.API");
 
-        using (var serviceProvider = services.BuildServiceProvider())
-        {
-            var mockupData = serviceProvider.GetRequiredService<MockupData>();
-            mockupData.SeedDataAsync().Wait();
-        }
+        return services;
+    }
 
+    public static IServiceCollection AddMinimalInfrastructureServices(this IServiceCollection services)
+    {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options =>
+                options.UseNpgsql(Contract.Utilities.EnvUtility.GetConnectionString()));
+        services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+        services.AddScoped<MockupData>();
+        services.AddLogging();
         return services;
     }
 }

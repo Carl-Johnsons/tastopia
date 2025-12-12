@@ -13,44 +13,44 @@ public static class KestrelExtension
         EnvUtility.LoadEnvFile();
 
         var httpPort = DotNetEnv.Env.GetInt("PORT", 0);
-        var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
-        var publicHttpsPort = DotNetEnv.Env.GetInt("PUBLIC_HTTPS_PORT", 0);
+        // var httpsPort = DotNetEnv.Env.GetInt("HTTPS_PORT", 0);
+        // var publicHttpsPort = DotNetEnv.Env.GetInt("PUBLIC_HTTPS_PORT", 0);
 
         builder.ConfigureKestrel(options =>
         {
-
-            if (EnvUtility.IsDevelopment())
+            options.ListenAnyIP(int.Parse("1" + httpPort), listenOption =>
             {
-                options.ListenAnyIP(int.Parse("1" + httpPort), listenOption =>
-                {
-                    listenOption.Protocols = HttpProtocols.Http1;
-                });
-                var certPath = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Path");
-                var certPassword = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Password");
+                listenOption.Protocols = HttpProtocols.Http1;
+            });
 
-                options.ListenAnyIP(int.Parse("1" + httpsPort), listenOption =>
-                {
-                    listenOption.Protocols = HttpProtocols.Http1AndHttp2;
-                    // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
-                    listenOption.UseHttps(certPath, certPassword);
-                });
+            // if (EnvUtility.IsDevelopment())
+            // {
+            //     var certPath = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Path");
+            //     var certPassword = DotNetEnv.Env.GetString("ASPNETCORE_Kestrel__Certificates__Default__Password");
 
-            }
-            else
-            {
-                options.ListenAnyIP(httpPort, listenOption =>
-                {
-                    listenOption.Protocols = HttpProtocols.Http1;
-                });
+            //     options.ListenAnyIP(int.Parse("1" + httpsPort), listenOption =>
+            //     {
+            //         listenOption.Protocols = HttpProtocols.Http1AndHttp2;
+            //         // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
+            //         listenOption.UseHttps(certPath, certPassword);
+            //     });
 
-                var certificate = X509Certificate2.CreateFromPemFile("/etc/ssl/certs/server-cert.crt", "/etc/ssl/private/private-key.pem");
-                options.ListenAnyIP(httpsPort, listenOption =>
-                {
-                    listenOption.Protocols = HttpProtocols.Http1AndHttp2;
-                    // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
-                    listenOption.UseHttps(certificate);
-                });
-            }
+            // }
+            // else
+            // {
+            //     options.ListenAnyIP(httpPort, listenOption =>
+            //     {
+            //         listenOption.Protocols = HttpProtocols.Http1;
+            //     });
+
+            //     var certificate = X509Certificate2.CreateFromPemFile("/etc/ssl/certs/server-cert.crt", "/etc/ssl/private/private-key.pem");
+            //     options.ListenAnyIP(httpsPort, listenOption =>
+            //     {
+            //         listenOption.Protocols = HttpProtocols.Http1AndHttp2;
+            //         // Can't use directly from dotnetenv, have to assign to an variable. Weird bug
+            //         listenOption.UseHttps(certificate);
+            //     });
+            // }
         });
 
         return builder;
