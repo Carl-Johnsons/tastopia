@@ -57,7 +57,7 @@ if [ -n "$lFlag" ]; then
     SUFFIX=".$ENV"
   fi
 
-  . "$SCRIPT_DIR/../../env$SUFFIX"
+  . "$SCRIPT_DIR/../../.env$SUFFIX"
   unset SUFFIX
 fi
 
