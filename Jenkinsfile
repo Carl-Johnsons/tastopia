@@ -78,7 +78,7 @@ def cleanUp() {
     echo Clean up unused docker network...
     docker network prune -f
     echo Clean up docker system...
-    docker system prune -fa
+    docker system prune -f
   ''')
 }
 
