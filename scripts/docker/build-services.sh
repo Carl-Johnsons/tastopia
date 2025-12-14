@@ -57,8 +57,11 @@ if [ -n "$lFlag" ]; then
     SUFFIX=".$ENV"
   fi
 
+  set -a
   . "$SCRIPT_DIR/../../.env$SUFFIX"
+  set +a
   unset SUFFIX
+  echo "loaded .env$SUFFIX file"
 fi
 
 default_services=(
