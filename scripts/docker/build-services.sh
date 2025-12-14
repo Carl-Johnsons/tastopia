@@ -50,13 +50,14 @@ shift $((OPTIND - 1))
 export ENV
 
 if [ -n "$lFlag" ]; then
+  SCRIPT_DIR=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
   SUFFIX="" 
 
   if [ "$ENV" != "dev" ]; then
     SUFFIX=".$ENV"
   fi
 
-  . "../../env$SUFFIX"
+  . "$SCRIPT_DIR/../../env$SUFFIX"
   unset SUFFIX
 fi
 
