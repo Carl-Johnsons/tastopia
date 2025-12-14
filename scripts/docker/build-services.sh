@@ -15,6 +15,7 @@ while getopts e:h OPTS; do
 
       ENV="$OPTARG"
       ;;
+    l) lFlag=1
     h) cat <<EOF
 
 Usage: $0 [options] [services]
@@ -28,20 +29,34 @@ Options:
         are "dev", "staging" or "production". If omitted, 
         the default value is "staging".
 
+  -l    Load env file based on the current specified
+        environment.
+
 EOF
       exit 0
       ;;
     ?) 
-      echo "Unknown flag. Usage: $0 [-e dev|staging|production] [services]"
+      echo "Unknown flag. Usage: $0 [-l] [-e dev|staging|production] [services]"
       exit 1
       ;;
   esac
 done
 
-export ENV
-
 # Shift parsed options
 shift $((OPTIND - 1))
+
+export ENV
+
+if [ -n "$lFlag" ]; then
+  SUFFIX="" 
+
+  if [ "$ENV" != "dev" ]; then
+    SUFFIX=".$ENV"
+  fi
+
+  . "../../env$SUFFIX"
+  unset SUFFIX
+fi
 
 default_services=(
   "website"

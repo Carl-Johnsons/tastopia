@@ -184,7 +184,7 @@ def buildServices() {
     try {
       sh(
         label: "Building ${service}...",
-        script: "bash ./scripts/docker/build-services.sh -e ${params.DEPLOY_ENV} ${service}"
+        script: "bash ./scripts/docker/build-services.sh -le ${params.DEPLOY_ENV} ${service}"
       )
       cleanUp()
     } catch (err) {
