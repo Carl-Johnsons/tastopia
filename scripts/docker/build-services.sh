@@ -32,6 +32,8 @@ Options:
   -l    Load env file based on the current specified
         environment.
 
+  -h    Print this help.
+
 EOF
       exit 0
       ;;
