@@ -186,11 +186,10 @@ def buildServices() {
         label: "Building ${service}...",
         script: "bash ./scripts/docker/build-services.sh -e ${params.DEPLOY_ENV} ${service}"
       )
+      cleanUp()
     } catch (err) {
       sh(label: "Printing build logs for failed build...", script: 'cat build.log')
       throw err
-    } finally {
-      cleanUp()
     }
   }
 }
