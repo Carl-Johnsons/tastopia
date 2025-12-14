@@ -15,7 +15,7 @@ while getopts e:h OPTS; do
 
       ENV="$OPTARG"
       ;;
-    l) lFlag=1
+    l) lFlag=1 ;;
     h) cat <<EOF
 
 Usage: $0 [options] [services]
