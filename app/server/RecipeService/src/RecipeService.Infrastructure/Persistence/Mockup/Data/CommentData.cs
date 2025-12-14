@@ -8,7 +8,7 @@ internal class CommentData
 {
     private static List<string> Comments = [];
     private static List<SeedWrongComment> WrongComments = [];
-    private static readonly string SeedDataPath = EnvUtility.IsProduction() ? "seeds" : Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.Parent?.FullName!, "seeds") ?? "";
+    private static readonly string SeedDataPath = EnvUtility.IsProduction() || EnvUtility.IsStaging() ? "seeds" : Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory())?.Parent?.Parent?.Parent?.Parent?.FullName!, "seeds") ?? "";
 
     static CommentData()
     {

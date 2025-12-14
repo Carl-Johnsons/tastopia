@@ -68,11 +68,18 @@ def ensureSecret() {
 }
 
 def cleanUp() {
-  sh(label: 'Clean up unused docker container...', script: 'docker container prune -f')
-  sh(label: 'Clean up unused docker image...', script: 'docker image prune -a -f')
-  sh(label: 'Clean up unused docker volume...', script: 'docker volume prune -f')
-  // sh(label: 'Clean up unused docker network...', script: 'docker network prune -f')
-  // sh(label: 'Clean up docker system ...', script: 'docker system prune -f')
+  sh(label: 'Cleaning up ...', script: '''
+    echo Clean up unused docker container...
+    docker container prune -f
+    echo Clean up unused docker image...
+    docker image prune -a -f
+    echo Clean up unused docker volume...
+    docker volume prune -f
+    echo Clean up unused docker network...
+    docker network prune -f
+    echo Clean up docker system...
+    docker system prune -f
+  ''')
 }
 
 def abortDueToEmptyBuildList() {
@@ -177,15 +184,14 @@ def buildServices() {
     try {
       sh(
         label: "Building ${service}...",
-        script: "bash ./scripts/docker/build-services.sh -e ${params.DEPLOY_ENV} ${service}"
+        script: "bash ./scripts/docker/build-services.sh -le ${params.DEPLOY_ENV} ${service}"
       )
+      cleanUp()
     } catch (err) {
       sh(label: "Printing build logs for failed build...", script: 'cat build.log')
       throw err
     }
   }
-
-  cleanUp()
 }
 
 def triggerDeployPipeline() {
@@ -200,7 +206,7 @@ def triggerDeployPipeline() {
   }
   
   build(
-    job: '/tastopia/deployment',
+    job: '/tastopia/deployment-multibranch/master',
     parameters: [
       string(name: 'DEPLOY_SERVICES', value: DEPLOY_SERVICES),
       string(name: 'BUILD_BRANCH_NAME', value: env.BRANCH_NAME),

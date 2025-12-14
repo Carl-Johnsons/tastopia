@@ -6,7 +6,6 @@ WORKDIR /app
 
 RUN --mount=source=$BASE_WEBSITE_PATH/package.json,target=package.json \
   --mount=source=$BASE_WEBSITE_PATH/package-lock.json,target=package-lock.json \
-  --mount=type=cache,target=/root/.npm/_cacache \
   npm ci
 
 FROM deps AS builder

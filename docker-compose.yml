@@ -363,8 +363,8 @@ services:
       dockerfile: ./dockerfiles/ingredient-predict-api/Dockerfile.prod
       cache_from:
         - taiduc113/tastopia:ingredient-predict-api-buildcache
-      # cache_to:
-        # - taiduc113/tastopia:ingredient-predict-api-buildcache
+      cache_to:
+        - taiduc113/tastopia:ingredient-predict-api-buildcache
       args:
         PYTHON_ENV: ${ENV:-production}
     container_name: ingredient-predict-service

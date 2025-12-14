@@ -5,7 +5,7 @@ set -eo pipefail
 
 ENV="staging"
 
-while getopts e:h OPTS; do
+while getopts le:h OPTS; do
   case $OPTS in
     e) 
       if [ "$OPTARG" != "dev" ] && [ "$OPTARG" != "staging" ] && [ "$OPTARG" != "production" ]; then
@@ -15,6 +15,7 @@ while getopts e:h OPTS; do
 
       ENV="$OPTARG"
       ;;
+    l) lFlag=1 ;;
     h) cat <<EOF
 
 Usage: $0 [options] [services]
@@ -28,20 +29,40 @@ Options:
         are "dev", "staging" or "production". If omitted, 
         the default value is "staging".
 
+  -l    Load env file based on the current specified
+        environment.
+
+  -h    Print this help.
+
 EOF
       exit 0
       ;;
     ?) 
-      echo "Unknown flag. Usage: $0 [-e dev|staging|production] [services]"
+      echo "Unknown flag. Usage: $0 [-l] [-e dev|staging|production] [services]"
       exit 1
       ;;
   esac
 done
 
-export ENV
-
 # Shift parsed options
 shift $((OPTIND - 1))
+
+export ENV
+
+if [ -n "$lFlag" ]; then
+  SCRIPT_DIR=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
+  SUFFIX="" 
+
+  if [ "$ENV" != "dev" ]; then
+    SUFFIX=".$ENV"
+  fi
+
+  set -a
+  . "$SCRIPT_DIR/../../.env$SUFFIX"
+  set +a
+  echo "loaded .env$SUFFIX file"
+  unset SUFFIX
+fi
 
 default_services=(
   "website"
