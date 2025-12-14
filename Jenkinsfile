@@ -207,7 +207,7 @@ def triggerDeployPipeline() {
   }
   
   build(
-    job: 'tastopia/deployment-multibranch/master',
+    job: '/tastopia/deployment-multibranch/master',
     parameters: [
       string(name: 'DEPLOY_SERVICES', value: DEPLOY_SERVICES),
       string(name: 'BUILD_BRANCH_NAME', value: env.BRANCH_NAME),
