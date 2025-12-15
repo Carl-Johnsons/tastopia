@@ -1,5 +1,0 @@
----
-- name: Install yq using snap
-  become: true
-  ansible.builtin.snap:
-    name: yq
