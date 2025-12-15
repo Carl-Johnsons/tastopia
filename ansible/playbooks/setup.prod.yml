@@ -1,6 +1,0 @@
----
-- name: Setup production dependencies
-  become: true
-  hosts: deployers
-  roles:
-    - setup-deploy
