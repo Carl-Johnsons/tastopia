@@ -5,7 +5,7 @@ set -eo pipefail
 
 ENV="staging"
 
-while getopts le:h OPTS; do
+while getopts le:c:h OPTS; do
   case $OPTS in
     e) 
       if [ "$OPTARG" != "dev" ] && [ "$OPTARG" != "staging" ] && [ "$OPTARG" != "production" ]; then
