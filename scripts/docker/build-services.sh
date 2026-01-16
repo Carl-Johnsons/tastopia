@@ -109,6 +109,8 @@ done
 
 # Tag each built image into the same repo with different tags
 for service in "${services[@]}"; do
-  docker tag ${project}-${service} ${repo}-${service}:${commitHash}
-  docker push ${repo}-${service}:${commitHash}
+  serviceRepo=${repo}-${service}
+  echo "Pushing to repo ${serviceRepo} with tag ${commitHash}"
+  docker tag ${project}-${service} ${serviceRepo}:${commitHash}
+  docker push ${serviceRepo}:${commitHash}
 done
