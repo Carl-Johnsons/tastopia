@@ -16,6 +16,7 @@ while getopts le:h OPTS; do
       ENV="$OPTARG"
       ;;
     l) lFlag=1 ;;
+    c) commitHash="$OPTARG" ;;
     h) cat <<EOF
 
 Usage: $0 [options] [services]
@@ -24,6 +25,9 @@ Usage: $0 [options] [services]
         A space-separated list of services to deploy.
 
 Options:
+  -c [commit]
+        Commit SHA (required)
+
   -e [environment]   
         Specify the environment to build, accepted values
         are "dev", "staging" or "production". If omitted, 
@@ -38,11 +42,17 @@ EOF
       exit 0
       ;;
     ?) 
-      echo "Unknown flag. Usage: $0 [-l] [-e dev|staging|production] [services]"
+      echo "Unknown flag. Usage: $0 -c <commit> [-l] [-e dev|staging|production] [services]"
       exit 1
       ;;
   esac
 done
+
+if [ -z "$commitHash" ]; then
+  echo "Error: -c <commit> is required."
+  echo "Usage: $0 -c <commit> [-e dev|staging|production] [-l] [services]"
+  exit 1
+fi
 
 # Shift parsed options
 shift $((OPTIND - 1))
@@ -99,6 +109,6 @@ done
 
 # Tag each built image into the same repo with different tags
 for service in "${services[@]}"; do
-  docker tag ${project}-${service} ${repo}:${service}
-  docker push ${repo}:${service}
+  docker tag ${project}-${service} ${repo}-${service}:${commitHash}
+  docker push ${repo}-${service}:${commitHash}
 done
