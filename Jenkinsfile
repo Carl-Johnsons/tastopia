@@ -275,13 +275,5 @@ pipeline {
         }
       }
     }
-
-    stage('Trigger Deploy Pipeline') {
-      steps {
-        script {
-          triggerDeployPipeline()
-        }
-      }
-    }
   }
 }
