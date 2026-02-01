@@ -1,7 +1,7 @@
 "use client";
 
 import { createAdmin, updateAdmin } from "@/actions/admin.action";
-import { Gender } from "@/constants/gender";
+
 import { BinaryStatus } from "@/constants/status";
 import { getCreateAdminSchema, getUpdateAdminSchema } from "@/schemas/admin";
 import {
@@ -21,8 +21,10 @@ import { useGetAdminById } from "@/api/admin";
 import { useAppDispatch } from "@/store/hooks";
 import { closeForm, saveAdminData, useSelectAdmin } from "@/slices/admin.slice";
 import { ImageListType } from "react-images-uploading";
-import { format, parse } from "date-fns";
+import { format } from "date-fns/format";
+import { parse } from "date-fns/parse";
 import { useErrorHandler } from "../error/useErrorHanler";
+import { normalizeGender } from "@/lib/gender";
 
 type FormType = "create" | "update";
 
@@ -64,13 +66,17 @@ export const useAdminForm = ({ formType, targetId }: UseAdminFormParams) => {
       : undefined;
 
     console.log("admin.dob", admin?.dob, "parsedDate", parsedDate);
+    console.log("admin.gender from API:", admin?.gender);
+
+    const normalizedGender = normalizeGender(admin?.gender);
+    console.log("normalized gender:", normalizedGender);
 
     const valueNew = {
       name: admin?.displayName,
       gmail: admin?.email,
       phone: admin?.phoneNumber,
       dob: parsedDate,
-      gender: admin?.gender ? (admin?.gender as Gender) : undefined,
+      gender: normalizedGender,
       address: admin?.address,
       status: admin?.isActive ? BinaryStatus.Active : BinaryStatus.Inactive,
       avatarFile: images

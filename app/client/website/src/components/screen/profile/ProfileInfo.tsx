@@ -11,6 +11,7 @@ import {
   UserIcon
 } from "@/components/shared/icons";
 import { getTranslations } from "next-intl/server";
+import { getGenderDisplayValue } from "@/lib/gender";
 
 export default async function ProfileInfo({ user }: any) {
   const t = await getTranslations("userDetail.info");
@@ -19,7 +20,11 @@ export default async function ProfileInfo({ user }: any) {
     { icon: "user", label: t("fields.username"), value: user.accountUsername },
     { icon: "email", label: t("fields.gmail"), value: user.accountEmail },
     { icon: "phone", label: t("fields.phoneNumber"), value: user.accountPhoneNumber },
-    { icon: "gender", label: t("fields.gender"), value: user.gender },
+    {
+      icon: "gender",
+      label: t("fields.gender"),
+      value: getGenderDisplayValue(user.gender, t, "fields.genders")
+    },
     { icon: "location", label: t("fields.address"), value: user.address },
     { icon: "bio", label: t("fields.bio"), value: user.bio },
     { icon: "followers", label: t("fields.followers"), value: user.totalFollower ?? 0 },

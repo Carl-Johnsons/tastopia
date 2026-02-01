@@ -9,13 +9,13 @@ import {
   PhoneIcon,
   UserIcon
 } from "@/components/shared/icons";
-import { Gender } from "@/constants/gender";
 import { ReactNode } from "react";
 import { format } from "date-fns";
 import { IAdminDetailResponse } from "@/generated/interfaces/user.interface";
 import { UpdateAdminButton } from "./Button";
 import AdminDialog from "./Dialog";
 import { useTranslations } from "next-intl";
+import { getGenderDisplayValue } from "@/lib/gender";
 
 type Props = {
   admin: IAdminDetailResponse;
@@ -57,11 +57,7 @@ export default function ProfileInfo({ admin, self }: Props) {
     {
       icon: Icon.GENDER,
       label: t("fields.gender"),
-      value: gender
-        ? gender === Gender.Male
-          ? t("fields.genders.male")
-          : t("fields.genders.female")
-        : null
+      value: getGenderDisplayValue(gender, t, "fields.genders")
     }
   ];
 

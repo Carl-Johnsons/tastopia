@@ -5,7 +5,6 @@ import React, {
   forwardRef,
   memo,
   useCallback,
-  useEffect,
   useImperativeHandle,
   useMemo,
   useState
@@ -32,7 +31,9 @@ import { useTranslations } from "next-intl";
 import { Gender } from "@/constants/gender";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "@/components/shared/icons";
-import { format, isValid, parse } from "date-fns";
+import { format } from "date-fns/format";
+import { isValid } from "date-fns/isValid";
+import { parse } from "date-fns/parse";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Image from "@/components/shared/common/Image";
@@ -241,6 +242,16 @@ const FormSelect = ({
 }: FormSelectProps) => {
   const { onChange, value } = field;
 
+  // Ensure value is a string and matches one of the available options
+  const normalizedValue = useMemo(() => {
+    if (!value) return undefined;
+    const stringValue = String(value);
+    const matchingItem = items.find(item => item.value === stringValue);
+    return matchingItem ? stringValue : undefined;
+  }, [value, items]);
+
+  console.log("debug normalizedValue:", normalizedValue);
+
   return (
     <FormItem className='relative'>
       {isLoading ? (
@@ -255,7 +266,7 @@ const FormSelect = ({
           </FormLabel>
 
           <Select
-            value={value}
+            value={normalizedValue || ""}
             onValueChange={onChange}
           >
             <FormControl>

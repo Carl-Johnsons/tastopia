@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import Status from "@/components/ui/Status";
 import { useTranslations } from "next-intl";
 import { useInvalidateAdmin } from "@/hooks/query";
+import { getGenderDisplayValue } from "@/lib/gender";
 
 export const usersColumns = (t: any) => [
   {
@@ -35,7 +36,8 @@ export const usersColumns = (t: any) => [
   },
   {
     name: t("columns.gender"),
-    selector: (user: IAdminGetUserResponse) => user?.gender ?? "",
+    selector: (user: IAdminGetUserResponse) =>
+      getGenderDisplayValue(user?.gender, t) || "",
     hide: 1612,
     sortable: true
   },
