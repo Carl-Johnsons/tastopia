@@ -8,7 +8,14 @@ import { useEffect, useState } from "react";
 import { useGetNotification } from "@/api/notification";
 import { useQueryClient } from "react-query";
 import { useTranslation } from "react-i18next";
-import { View, StyleSheet, Keyboard, ActivityIndicator, Platform } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Keyboard,
+  ActivityIndicator,
+  Platform,
+  Pressable
+} from "react-native";
 import useColorizer from "@/hooks/useColorizer";
 import { NotificationCategories } from "@/constants/notifications";
 
@@ -72,8 +79,9 @@ const ProtectedLayout = () => {
   const styles = StyleSheet.create({
     tabBar: {
       display: "flex",
-      justifyContent: "flex-start",
-      alignItems: "flex-start",
+      flexDirection: "row",
+      justifyContent: "space-around",
+      alignItems: "center",
       backgroundColor: c(white.DEFAULT, black[100]),
       height: isAndroid ? 64 : 80,
       paddingTop: 10,
@@ -89,12 +97,22 @@ const ProtectedLayout = () => {
     },
 
     tabItem: {
-      width: 80,
+      flex: 1,
       padding: 0,
       justifyContent: "center",
-      alignItems: "center"
+      alignItems: "center",
+      height: "100%"
     }
   });
+
+  const isHiddenPath = (
+    isNotAllowed: boolean,
+    code: string,
+    hidden: boolean | undefined,
+    includeInMainTab: Object | undefined
+  ) => {
+    return (isNotAllowed && code !== "OPTION") || hidden || !includeInMainTab;
+  };
 
   return (
     <>
@@ -118,11 +136,28 @@ const ProtectedLayout = () => {
               key={path}
               name={path}
               options={{
-                ...(((isNotAllowed && code !== "OPTION") ||
-                  hidden ||
-                  !includeInMainTab) && { href: null }),
+                ...(isHiddenPath(isNotAllowed, code, hidden, includeInMainTab) && {
+                  href: null
+                }),
                 ...(translateCode && { title: t(translateCode) }),
                 headerShown: false,
+                ...(!isHiddenPath(isNotAllowed, code, hidden, includeInMainTab) && {
+                  tabBarButton: props => (
+                    <Pressable
+                      {...props}
+                      android_ripple={null}
+                      style={[
+                        props.style,
+                        {
+                          flex: 1,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          height: "100%"
+                        }
+                      ]}
+                    />
+                  )
+                }),
                 tabBarIcon: ({ size, focused }) => (
                   <View
                     style={styles.tabItem}

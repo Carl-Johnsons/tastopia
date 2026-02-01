@@ -44,10 +44,13 @@ const TabIcon = ({ icon, translateCode, focused, hidden, hideTitle }: TabIconTyp
       <View>{icon}</View>
       {!hideTitle && (
         <Text
+          numberOfLines={1}
           style={{
+            width: "100%",
             color: focused ? primary : c(black.DEFAULT, white.DEFAULT),
             textAlign: "center",
-            fontSize: 12,
+            fontSize: 10,
+            fontWeight: "bold",
             marginTop: 2
           }}
         >
