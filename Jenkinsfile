@@ -180,11 +180,13 @@ def buildServices() {
 
   echo "Building ${servicesToBuild.join(', ')}"
 
+  def shortSha = env.GIT_COMMIT.take(8)
+
   servicesToBuild.each { service ->
     try {
       sh(
         label: "Building ${service}...",
-        script: "bash ./scripts/docker/build-services.sh -le ${params.DEPLOY_ENV} ${service}"
+        script: "bash ./scripts/docker/build-services.sh -c ${shortSha} -le ${params.DEPLOY_ENV} ${service}"
       )
       cleanUp()
     } catch (err) {
@@ -270,14 +272,6 @@ pipeline {
 
         failure {
           setBuildStatus('Build failed', 'FAILURE', 'jenkins/ci/build')
-        }
-      }
-    }
-
-    stage('Trigger Deploy Pipeline') {
-      steps {
-        script {
-          triggerDeployPipeline()
         }
       }
     }
