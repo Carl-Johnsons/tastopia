@@ -1,5 +1,12 @@
 import logging
+from modal import is_local
 import pymongo
+
+if not is_local():
+    import socket
+    import socks
+    socks.set_default_proxy(socks.SOCKS5, "0.0.0.0", 1080)
+    socket.socket = socks.socksocket
 
 class MongoClient:
   def __init__(self, mongodb_url):

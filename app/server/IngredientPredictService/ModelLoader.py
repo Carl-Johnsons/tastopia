@@ -6,24 +6,28 @@ _model = None
 _clip_model = None
 _clip_preprocessor = None
 _tokenizer = None
-_model_path = 'model/convnext_224_f.model.keras'
+_model_path = '/models/convnext_224_f.model.keras'
 
 def get_model():
+  global _model
   if(_model is None):
     _load_model()
   return _model
 
 def get_clip_model():
+  global _clip_model
   if(_clip_model is None):
     _load_clip_model()
   return _clip_model
 
 def get_clip_preprocessor():
+  global _clip_preprocessor
   if(_clip_preprocessor is None):
     _load_clip_model()
   return _clip_preprocessor
 
 def get_model_tokenizer():
+  global _tokenizer
   if(_tokenizer is None):
     _load_tokenizer()
   return _tokenizer

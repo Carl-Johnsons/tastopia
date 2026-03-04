@@ -1,27 +1,18 @@
-from contextlib import asynccontextmanager
-from EnvUtility import get_mongodb_connection_string, is_development, load_env
+from EnvUtility import get_mongodb_connection_string, load_env
 from MongoClient import MongoClient
 from ModelLoader import get_clip_model, get_clip_preprocessor, get_model, get_model_tokenizer
 from RedisManager import RedisManager
-from fastapi import FastAPI, File, UploadFile
 from PIL import Image, ImageOps
-# from ultralytics import YOLO
-import httpx
 import io
 import logging
 import logging.config
-import random
-import uvicorn
 import yaml
 import numpy as np
 import torch
 import cv2
 import faiss
-from apscheduler.schedulers.background import BackgroundScheduler  # runs tasks in the background
-from apscheduler.triggers.cron import CronTrigger  # allows us to specify a recurring time for execution
 import asyncio
 import aiohttp
-import requests
 import os
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -48,10 +39,10 @@ tokenizer = get_model_tokenizer()
 device = torch.device('cpu')
 clip_model = clip_model.to(device)
 
-service_host = os.getenv("SERVICE_HOST")
-service_port = int(os.getenv("PORT"))
-
-ai_kaggle_server_url = ''
+ai_server_url = ''
+MODAL_APP_NAME = "tastopia-ingredient-predict"
+BUCKET_NAME = "tastopia-ingredient-predict-model"
+CLOUDFLARE_R2_BUCKET_ENDPOINT = os.getenv("CLOUDFLARE_R2_BUCKET_ENDPOINT")
 
 # Load tag from MongoDB
 mongo_client = mongoClient.get_mongo_client()
@@ -63,12 +54,6 @@ tag_list = tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).t
 if not tag_list:
     logging.error("Empty tag list detected. Please check database and try again")
     raise Exception("Empty tag list detected")
-
-def sync_ai_kaggle_server_url():
-    global ai_kaggle_server_url
-    ai_kaggle_server_url = requests.get('https://script.google.com/macros/s/AKfycbyVK0wd-G_kuZXrQ0dGDC86xBkhfuHFTm5bXXe0hyL39IND815GSHpli4_v99Cb2KeZFg/exec').text
-    
-    logging.info(f"AI Kaggle Server URL: {ai_kaggle_server_url}")
 
 def load_clip_features(names: dict, tag_dict: dict):
     # Load feature
@@ -136,67 +121,6 @@ def sync_tags_and_load_faiss():
 
 # Initialize the index, tags and load features
 sync_tags_and_load_faiss()
-sync_ai_kaggle_server_url()
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    service_name = os.getenv("CONSUL_INGREDIENT_PREDICT")
-    service_id = service_name + str(random.randint(100000, 999999))
-    consul_scheme = os.getenv("CONSUL_SCHEME")
-    consul_port = int(os.getenv("CONSUL_PORT"))
-    consul_host = os.getenv("CONSUL_HOST")
-    consul_base_address = f"{consul_scheme}://{consul_host}:{consul_port}"
-
-    consul_register_url = f"{consul_base_address}/v1/agent/service/register"
-    consul_deregister_url = f"{consul_base_address}/v1/agent/service/deregister/{service_id}"
-
-    if(is_development()):
-        health_check_url = f"http://host.docker.internal:{service_port}/health"
-    else:
-        health_check_url = f"http://{service_host}:{service_port}/health"
-        
-    logging.info(f"Start instance {service_id}")
-    service_registration = {
-        "ID": service_id,
-        "Name": service_name,
-        "Address": service_host,
-        "Port": service_port,
-        "Tags": ["fastapi", "python"],
-        "Check": {
-            "HTTP": health_check_url,
-            "Interval": "10s",
-            "DeregisterCriticalServiceAfter": "1m"
-        }
-    }
-    async with httpx.AsyncClient() as client:
-        response = await client.put(consul_register_url, json=service_registration)
-        if response.status_code == 200:
-            logging.info("Successfully registered with Consul")
-        else:
-            logging.error("Failed to register with Consul", response.text)
-    yield  # The app starts here
-
-    async with httpx.AsyncClient() as client:
-        response = await client.put(consul_deregister_url)
-        if response.status_code == 200:
-            logging.info("Deregistered from Consul")
-        else:
-            logging.error("Deregistration failed:", response.text)
-
-# Set up the scheduler
-scheduler = BackgroundScheduler()
-trigger = CronTrigger(hour=0, minute=0)  # midnight every day
-scheduler.add_job(sync_tags_and_load_faiss, trigger)
-sync_ai_url_trigger = CronTrigger(minute='*/10')  # every 10 minutes
-scheduler.add_job(sync_ai_kaggle_server_url, sync_ai_url_trigger)
-scheduler.start()
-
-app = FastAPI(lifespan=lifespan, redirect_slashes=False)
-# app = FastAPI(redirect_slashes=False)
-
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
 
 def cal_mix_clip_cnn(a, b):
     scores = dict()
@@ -288,7 +212,7 @@ async def predict_server(image_bytes: bytes):
             data = aiohttp.FormData()
             data.add_field('file', image_bytes, filename="image.jpg", content_type="image/jpeg")
 
-            async with session.post(ai_kaggle_server_url + '/api/ingredient-predict', data=data, timeout=30) as resp:
+            async with session.post(ai_server_url, data=data, timeout=30) as resp:
                 if resp.status == 200:
                     return await resp.json()
     except Exception as e:
@@ -346,141 +270,3 @@ async def predict_local(image_bytes: bytes):
     except Exception as e:
         print(f"[Server Error] {e}")
     return None
-
-@app.post("/api/ingredient-predict-v2")
-async def predict_v2(file: UploadFile = File(...)):
-    image_bytes = await file.read()
-
-    phash = redisManager.compute_phash(image_bytes)
-    cached_prediction = redisManager.get_approx_prediction_from_cache(phash=phash)
-    logging.info(f"Phash {phash}")
-
-    if cached_prediction is not None:
-        logging.info(f"Get image from cache with phash {phash}")
-        return cached_prediction
-
-    task_server = asyncio.create_task(predict_server(image_bytes))
-    task_local = asyncio.create_task(predict_local(image_bytes))
-    
-    done, pending = await asyncio.wait(
-        [task_server, task_local], return_when=asyncio.FIRST_COMPLETED
-    )
-
-    if not list(done)[0].result():
-        result = await list(pending)[0]
-        redisManager.save_prediction_to_cache(phash=phash, prediction=result)
-        logging.info(f"Save image from local cache with phash {phash}")
-        return result
-
-    for task in pending:
-        task.cancel()
-
-    result = list(done)[0].result()
-
-    redisManager.save_prediction_to_cache(phash=phash, prediction=result)
-    logging.info(f"Save image from remote cache with phash {phash}")
-
-    return result
-
-@app.post("/api/ingredient-predict-v2/multi")
-async def predict_v2_multi(files: list[UploadFile] = File(...)):
-    results = []
-
-    for file in files:
-        image_bytes = await file.read()
-
-        phash = redisManager.compute_phash(image_bytes)
-        cached_prediction = redisManager.get_approx_prediction_from_cache(phash=phash)
-        logging.info(f"Phash {phash}")
-
-        if cached_prediction is not None:
-            logging.info(f"Get image from cache with phash {phash}")
-            results.append(cached_prediction)
-            continue
-
-        # Run server + local in parallel
-        task_server = asyncio.create_task(predict_server(image_bytes))
-        task_local = asyncio.create_task(predict_local(image_bytes))
-
-        done, pending = await asyncio.wait(
-            [task_server, task_local], return_when=asyncio.FIRST_COMPLETED
-        )
-
-        if not list(done)[0].result():
-            result = await list(pending)[0]
-            redisManager.save_prediction_to_cache(phash=phash, prediction=result)
-            logging.info(f"Save image from local cache with phash {phash}")
-            results.append(result)
-        else:
-            for task in pending:
-                task.cancel()
-
-            result = list(done)[0].result()
-            redisManager.save_prediction_to_cache(phash=phash, prediction=result)
-            logging.info(f"Save image from remote cache with phash {phash}")
-            results.append(result)
-
-    return {"predictions": results}
-
-# @app.post("/api/ingredient-predict")
-# async def predict(file: UploadFile = File(...)):
-#     image = Image.open(io.BytesIO(await file.read()))
-#     image = image.convert("RGB")
-#     # Apply exif metadata if exist
-#     image = ImageOps.exif_transpose(image)
-
-#     classifications = []
-
-#     # Predict with pretrained and not pretrained text
-#     image_features = encode_image_by_clip(image)
-#     indexs, probs = get_raw_clip_text_predict(image_features)
-#     if len(indexs) > 0:
-#         for class_index, conf in zip(indexs[:5], probs[:5]):
-#             class_label = '0'
-#             classifications.append({
-#                 "class": class_label,
-#                 "confidence": float(conf),
-#                 "name": {
-#                     'en': tag_dict.get(tag_codes[class_index])['En'],
-#                     'vi': tag_dict.get(tag_codes[class_index])['Vi']
-#                 },
-#                 "code": tag_codes[class_index],
-#             })
-#     else:
-#         # Predict with pretrained class
-#         clip_pred_raw = get_raw_clip_predict(image_features, 50)
-#         results = yolo_model(image, verbose=False)
-#         yolo_pred_raw = [[0] * 300]
-#         for i in range(len(results[0].names)):
-#             class_index = int(results[0].names[i]) - 1
-#             yolo_pred_raw[0][class_index] = float(results[0].probs.data[i])
-#         # yolo_pred_raw = [results[0].probs.data.tolist()]
-#         indexs, probs = cal_mix_clip_cnn(clip_pred_raw[0], yolo_pred_raw[0])
-
-#         for class_index, conf in zip(indexs[:5], probs[:5]):
-#             class_label = str(class_index + 1).zfill(3)
-#             classifications.append({
-#                 "class": class_label,
-#                 "confidence": float(conf),
-#                 "name": {
-#                     'en': names[class_label][0],
-#                     'vi': names[class_label][1]
-#                 },
-#                 "code": '_'.join(names[class_label][0].split(' ')).upper(),
-#             })
-
-#     # results = box_model(image, verbose=False)
-#     return {"classifications": classifications, "boxes": []}
-
-@app.get("/api/tags")
-async def get_tags():
-    ans = []
-    for tag in tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list():
-        ans.append([tag['Code'], tag['Value']['En'], tag['Value']['Vi']])
-    return ans
-
-@app.get("/")
-async def root():
-    return {"message": "FastAPI is running!"}
-
-uvicorn.run(app, host="0.0.0.0", port=service_port,log_config=log_config)
