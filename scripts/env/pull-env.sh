@@ -4,6 +4,9 @@
 set -e 
 
 . ./scripts/lib.sh
+# Prevent git bash auto add root prefix (e.g /app/global => C:/Program File/app/global)
+MSYS_NO_PATHCONV=1
+export MSYS_NO_PATHCONV
 
 while getopts psh OPTS; do
   case $OPTS in
@@ -79,8 +82,7 @@ pull_env_file() {
     output_file=".env.$environment"
   fi
 
-  local prefix_folder_path="/"
-  [[ "$PLATFORM" == "windows" ]] && prefix_folder_path="//"
+  local prefix_folder_path="/apps/"
 
   if [ ! -d $service_path ]; then
     if [ "$PLATFORM" != "linux" ] && [ "$PLATFORM" != "macos" ]; then
