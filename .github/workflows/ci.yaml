@@ -3,9 +3,13 @@ name: CI Pipeline
 
 on:
   pull_request:
-    branches: [master]
+    branches: 
+      - master
+      - pipeline
   push:
-    branches: [master]
+    branches: 
+      - master
+      - pipeline
   workflow_dispatch:
     inputs:
       BUILD_SERVICES:
