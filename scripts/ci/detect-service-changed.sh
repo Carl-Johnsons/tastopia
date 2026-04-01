@@ -27,20 +27,12 @@ SERVICES_JSON='{
     "recipe-worker": ["app/server/RecipeService/src/RecipeWorker"]
 }'
 
-BUILD_SERVICES="${{ github.event.inputs.BUILD_SERVICES }}"
-
-if [ "$BUILD_SERVICES" != "" ]; then
-echo "Manual override: $BUILD_SERVICES"
-echo "services=$BUILD_SERVICES" >> $GITHUB_OUTPUT
-exit 0
-fi
-
 # Handle first build commit
 PREV=$(git rev-parse HEAD~1 || echo "")
 if [ -z "$PREV" ]; then
-echo "No previous commit, build all services"
-echo "services=$(echo $SERVICES_JSON | jq -r  'keys | join(\",\")')"
-exit 0
+  echo "No previous commit, build all services"
+  echo "services=$(echo $SERVICES_JSON | jq -r  'keys | join(\",\")')"
+  exit 0
 fi
 
 # Handle changed service commit
@@ -57,8 +49,8 @@ done
 done
 
 if [ -z $RESULT ]; then
-echo "No services changed"
-exit 1
+  echo "No services changed"
+  exit 1
 fi
 
 echo "services=$RESULT" >> $GITHUB_OUTPUT
