@@ -40,12 +40,12 @@ CHANGED=$(git diff --name-only $PREV HEAD)
 RESULT=""
 
 for svc in $(echo $SERVICES_JSON | jq -r 'keys[]'); do
-for path in $(echo $SERVICES_JSON | jq -r ".\"$svc\"[]"); do
-    if [ echo "$CHANGED" | grep -q "^$path" ]; then
-    RESULT="$RESULT,$svc"
-    break
-    fi
-done
+  for path in $(echo $SERVICES_JSON | jq -r ".\"$svc\"[]"); do
+      if echo "$CHANGED" | grep -q "^$path"; then
+        RESULT="${RESULT:+$RESULT,}$svc"
+        break
+      fi
+  done
 done
 
 if [ -z $RESULT ]; then
