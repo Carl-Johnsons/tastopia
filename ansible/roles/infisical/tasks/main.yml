@@ -1,0 +1,10 @@
+---
+- name: Check if it already existed
+  ansible.builtin.command: which infisical
+  register: check
+  failed_when: false
+  changed_when: false
+
+- name: Load OS-specific tasks
+  include_tasks: '{{ ansible_os_family | lower }}.yml'
+  when: check is failed

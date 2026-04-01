@@ -1,0 +1,31 @@
+---
+- name: Install prerequisites for Microsoft package repo
+  ansible.builtin.package:
+    name:
+      - wget
+      - apt-transport-https
+      - software-properties-common
+    state: present
+
+- name: Download Microsoft package repo
+  ansible.builtin.get_url:
+    url: '{{ package.link }}'
+    dest: '{{ package.dest }}'
+    mode: '0644'
+
+- name: Register Microsoft package repo
+  ansible.builtin.apt:
+    deb: '{{ package.dest }}'
+
+- name: Install .NET SDK 8.0
+  ansible.builtin.package:
+    name: dotnet-sdk-8.0
+
+- name: Get installed .NET runtimes
+  ansible.builtin.command: dotnet --list-runtimes
+  register: dotnet_out
+  changed_when: false
+
+- name: Print installed .NET runtimes
+  ansible.builtin.debug:
+    var: dotnet_out.stdout_lines
