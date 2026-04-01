@@ -50,7 +50,7 @@ done
 
 if [ -z $RESULT ]; then
   echo "No services changed"
-  exit 1
+  exit 0
 fi
 
 echo "services=$RESULT" >> $GITHUB_OUTPUT
