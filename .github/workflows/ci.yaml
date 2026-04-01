@@ -1,0 +1,57 @@
+#!/bin/bash
+name: CI Pipeline
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      BUILD_SERVICES:
+        description: "Comma-separated services"
+        required: false
+      DEPLOY_ENV:
+        description: "'staging' or 'production'"
+        required: true
+        default: "staging"
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      INFISICAL_TOKEN: ${{ secrets.INFISICAL_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Detect services
+        id: detect
+        run: |
+          bash ./scripts/ci/detect-service-changed.sh
+
+      - name: Retrieve secrets
+        id: ret_sec
+        run: |
+          bash ./scripts/env/pull-env.sh
+
+          mkdir -p data/Auth.Store
+          echo "${{ secrets.GMAIL_TOKEN }}" > data/Auth.Store/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user
+
+          mkdir -p app/server/NotificationService/src/EmailWorker
+          echo "${{ secrets.GMAIL_CREDENTIALS }}" > app/server/NotificationService/src/EmailWorker/credentials.json
+      
+      - name: Build services
+        id: build_serv
+        run: |
+          echo "Public shared library"
+          dotnet publish --packages "$(pwd)/data/nuget" \
+            -o ./app/server/Contract/Contract/Published \
+            ./app/server/Contract/Contract
+
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          bash ./scripts/docker/build-services.sh -c $SHORT_SHA -le ${{ github.event.inputs.DEPLOY_ENV || 'staging' }} ${{ steps.detect.outputs.services }}
+
