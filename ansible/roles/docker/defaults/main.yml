@@ -1,0 +1,16 @@
+---
+public_key:
+  link: 'https://download.docker.com/linux/ubuntu/gpg'
+  path: '{{ keyring.dir }}/docker.asc'
+keyring:
+  dir: '/etc/apt/keyrings'
+  file_path: '{{ public_key.path }}'
+source:
+  link: 'https://download.docker.com/linux/ubuntu'
+  name: 'docker'
+daemon_json: |
+  {
+    "features": {
+      "containerd-snapshotter": true
+    }
+  }
