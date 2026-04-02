@@ -106,10 +106,11 @@ repo="taiduc113/tastopia"
 # Always build contract image first
 CONTRACT_HASH=$(git rev-parse --short HEAD:app/server/Contract)
 if [[ "$commitHash" != "$CONTRACT_HASH" ]]; then
+  CONTRACT_HASH="$commitHash"
   echo "Contract unchanged → skip build"
   docker compose build contract
-  docker tag ${project}-contract ${repo}-contract:${commitHash}
-  docker push ${repo}-contract:${commitHash}
+  docker tag ${project}-contract ${repo}-contract:${CONTRACT_HASH}
+  docker push ${repo}-contract:${CONTRACT_HASH}
 else
   echo "Contract unchanged → skip build"
   docker tag ${project}-contract ${repo}-contract:${CONTRACT_HASH}
@@ -119,7 +120,7 @@ fi
 echo Building...
 for service in "${services[@]}"; do
   echo "Building \"${service}\"..."
-  docker compose build ${service} --build-arg CONTRACT_IMAGE=contract:$CONTRACT_HASH 2>&1 | tee build.log
+  docker compose build ${service} --build-arg CONTRACT_IMAGE=${repo}-contract:$CONTRACT_HASH 2>&1 | tee build.log
 done
 
 # Tag each built image into the same repo with different tags
