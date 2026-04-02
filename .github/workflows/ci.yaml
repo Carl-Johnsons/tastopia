@@ -55,6 +55,7 @@ jobs:
       - name: Retrieve secrets
         id: ret_sec
         run: |
+          echo "INFISICAL_TOKEN=${INFISICAL_TOKEN}" > .env.local
           bash ./scripts/env/pull-env.sh
 
           mkdir -p data/Auth.Store
