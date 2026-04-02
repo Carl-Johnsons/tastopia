@@ -62,6 +62,11 @@ fi
 
 source .env.local
 
+command -v infisical >/dev/null 2>&1 || {
+  echo "infisical not installed"
+  exit 1
+}
+
 if [ -z "${INFISICAL_TOKEN}" ]; then
   err_token_missing
   exit
