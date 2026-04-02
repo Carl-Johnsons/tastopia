@@ -63,6 +63,12 @@ jobs:
 
           mkdir -p app/server/NotificationService/src/EmailWorker
           echo "${{ secrets.GMAIL_CREDENTIALS }}" > app/server/NotificationService/src/EmailWorker/credentials.json
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       
       - name: Build services
         id: build_serv
