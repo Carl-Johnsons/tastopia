@@ -108,11 +108,11 @@ CONTRACT_HASH=$(git rev-parse --short HEAD:app/server/Contract)
 if [[ "$commitHash" != "$CONTRACT_HASH" ]]; then
   echo "Contract unchanged → skip build"
   docker compose build contract
-  docker tag ${project}-contract ${serviceRepo}:${commitHash}
+  docker tag ${project}-contract ${repo}-contract:${commitHash}
   docker push ${serviceRepo}:${commitHash}
 else
   echo "Contract unchanged → skip build"
-  docker tag ${project}-contract ${serviceRepo}:${CONTRACT_HASH}
+  docker tag ${project}-contract ${repo}-contract:${CONTRACT_HASH}
 fi
 
 # Build each service
