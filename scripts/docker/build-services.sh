@@ -97,14 +97,29 @@ if [ ${#services[@]} -eq 0 ]; then
   services=("${default_services[@]}")
 fi
 
+services=("${services[@]}")
+
 project="$(basename $(pwd))"
 project="${project,,}" # make the name lowercase
 repo="taiduc113/tastopia"
 
+# Always build contract image first
+docker compose build contract
+CONTRACT_HASH=$(git rev-parse --short HEAD:app/server/Contract)
+if [[ "$commitHash" != "$CONTRACT_HASH" ]]; then
+  CONTRACT_HASH= "$commitHash"
+  docker tag ${project}-${service} ${serviceRepo}:${CONTRACT_HASH}
+  docker push ${serviceRepo}:${CONTRACT_HASH}
+  echo "Contract image changed"
+else
+  docker tag ${project}-${service} ${serviceRepo}:${CONTRACT_HASH}
+fi
+
+# Build each service
 echo Building...
 for service in "${services[@]}"; do
   echo "Building \"${service}\"..."
-  docker compose build ${service} 2>&1 | tee build.log
+  docker compose build ${service} --build-arg CONTRACT_IMAGE=contract:$CONTRACT_HASH 2>&1 | tee build.log
 done
 
 # Tag each built image into the same repo with different tags

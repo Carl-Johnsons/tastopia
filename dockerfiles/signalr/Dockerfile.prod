@@ -1,3 +1,6 @@
+ARG CONTRACT_IMAGE
+FROM ${CONTRACT_IMAGE} AS contract
+
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
 WORKDIR /app
 
@@ -8,7 +11,7 @@ WORKDIR /src
 RUN apk update && \
 apk add --no-cache curl
 
-COPY ["./app/server/Contract/Contract/Published", "Contract/"]
+COPY --from=contract /publish ./Contract
 COPY ["./app/server/SignalRService/src/SignalRHub/SignalRHub.csproj", "SignalRHub/"]
 
 # Building the services
