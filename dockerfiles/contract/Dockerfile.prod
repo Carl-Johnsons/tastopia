@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /app
+
+COPY ./app/server/Contract/Contract/*.csproj ./Contract/
+RUN dotnet restore ./Contract/Contract.csproj
+COPY ./app/server/Contract/Contract ./Contract
+RUN dotnet publish ./Contract/Contract.csproj \
+    -c $BUILD_CONFIGURATION \
+    -o /publish

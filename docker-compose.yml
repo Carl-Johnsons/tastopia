@@ -139,6 +139,15 @@ services:
       timeout: 10s
       retries: 3
 
+  contract:
+    build:
+      context: .
+      dockerfile: ./dockerfiles/contract/Dockerfile.prod
+      cache_from:
+        - taiduc113/tastopia:contract-buildcache
+      cache_to:
+        - taiduc113/tastopia:contract-buildcache
+
   api-gateway:
     build:
       context: .
