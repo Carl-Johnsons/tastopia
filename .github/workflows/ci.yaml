@@ -43,20 +43,20 @@ jobs:
             exit 0
           fi
 
-          bash ./scripts/ci/detect-service-changed.sh
+          ./scripts/ci/detect-service-changed.sh
 
       - name: Install dependencies
         id: install_deps
         run: |
           echo "Begin install deps"
-          bash ./scripts/ci/install-deps.sh
+          ./scripts/ci/install-deps.sh
           echo "End install deps"
 
       - name: Retrieve secrets
         id: ret_sec
         run: |
           echo "INFISICAL_TOKEN=${INFISICAL_TOKEN}" > .env.local
-          bash ./scripts/env/pull-env.sh
+          ./scripts/env/pull-env.sh
 
           mkdir -p data/Auth.Store
           echo "${{ secrets.GMAIL_TOKEN }}" > data/Auth.Store/Google.Apis.Auth.OAuth2.Responses.TokenResponse-user
@@ -73,5 +73,5 @@ jobs:
             ./app/server/Contract/Contract
 
           SHORT_SHA=$(git rev-parse --short HEAD)
-          bash ./scripts/docker/build-services.sh -c $SHORT_SHA -le ${{ github.event.inputs.DEPLOY_ENV || 'staging' }} ${{ steps.detect.outputs.services }}
+          ./scripts/docker/build-services.sh -c $SHORT_SHA -le ${{ github.event.inputs.DEPLOY_ENV || 'staging' }} ${{ steps.detect.outputs.services }}
 
