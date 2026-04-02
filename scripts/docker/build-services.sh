@@ -104,14 +104,14 @@ project="${project,,}" # make the name lowercase
 repo="taiduc113/tastopia"
 
 # Always build contract image first
-docker compose build contract
 CONTRACT_HASH=$(git rev-parse --short HEAD:app/server/Contract)
 if [[ "$commitHash" != "$CONTRACT_HASH" ]]; then
-  CONTRACT_HASH= "$commitHash"
-  docker tag ${project}-${service} ${serviceRepo}:${CONTRACT_HASH}
-  docker push ${serviceRepo}:${CONTRACT_HASH}
-  echo "Contract image changed"
+  echo "Contract unchanged → skip build"
+  docker compose build contract
+  docker tag ${project}-${service} ${serviceRepo}:${commitHash}
+  docker push ${serviceRepo}:${commitHash}
 else
+  echo "Contract unchanged → skip build"
   docker tag ${project}-${service} ${serviceRepo}:${CONTRACT_HASH}
 fi
 
