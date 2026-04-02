@@ -77,11 +77,6 @@ jobs:
       - name: Build services
         id: build_serv
         run: |
-          echo "Public shared library"
-          dotnet publish --packages "$(pwd)/data/nuget" \
-            -o ./app/server/Contract/Contract/Published \
-            ./app/server/Contract/Contract
-
           SHORT_SHA=$(git rev-parse --short HEAD)
           ./scripts/docker/build-services.sh -c $SHORT_SHA -le ${{ github.event.inputs.DEPLOY_ENV || 'staging' }} ${{ steps.detect.outputs.services }}
 
