@@ -109,7 +109,7 @@ if [[ "$commitHash" != "$CONTRACT_HASH" ]]; then
   echo "Contract unchanged → skip build"
   docker compose build contract
   docker tag ${project}-contract ${repo}-contract:${commitHash}
-  docker push ${serviceRepo}:${commitHash}
+  docker push ${repo}-contract:${commitHash}
 else
   echo "Contract unchanged → skip build"
   docker tag ${project}-contract ${repo}-contract:${CONTRACT_HASH}
