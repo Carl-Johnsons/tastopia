@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       BUILD_SERVICES:
-        description: "Comma-separated services"
+        description: "space-separated services"
         required: false
       DEPLOY_ENV:
         description: "'staging' or 'production'"
