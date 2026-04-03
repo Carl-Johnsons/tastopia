@@ -91,6 +91,21 @@ default_services=(
   "sms-worker"
 )
 
+dotnet_services=(
+  "api-gateway"
+  "signalr"
+  "tracking-api"
+  "upload-api"
+  "identity-api"
+  "notification-api"
+  "recipe-api"
+  "user-api"
+  "email-worker"
+  "push-notification-worker"
+  "recipe-worker"
+  "sms-worker"
+)
+
 services=("$@")
 
 if [ ${#services[@]} -eq 0 ]; then
@@ -104,6 +119,7 @@ repo="taiduc113/tastopia"
 
 # Always build contract image first
 CONTRACT_HASH=$(git log -n 1 --pretty=format:%H -- app/server/Contract) # Get latest commit full SHA that touch app/server/Contract
+CONTRACT_REBUILT=0
 if docker manifest inspect ${repo}-contract:${CONTRACT_HASH} > /dev/null 2>&1; then
   echo "Contract image with hash ${CONTRACT_HASH} exists → skip"
 else
@@ -111,6 +127,18 @@ else
   docker compose build contract
   docker tag ${project}-contract ${repo}-contract:${CONTRACT_HASH}
   docker push ${repo}-contract:${CONTRACT_HASH}
+  CONTRACT_REBUILT=1
+fi
+
+if [ "$CONTRACT_REBUILT" -eq 1 ]; then
+  echo "Contract was rebuilt → forcing rebuild of all dotnet services"
+  # Add all dotnet services to the services array if not already present
+  for dotnet_service in "${dotnet_services[@]}"; do
+    if [[ ! " ${services[@]} " =~ " ${dotnet_service} " ]]; then
+      services+=("$dotnet_service")
+      echo "Added ${dotnet_service} to build list"
+    fi
+  done
 fi
 
 # Build each service
