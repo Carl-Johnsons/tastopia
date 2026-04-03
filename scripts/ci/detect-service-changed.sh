@@ -39,7 +39,9 @@ PREV=$(gh run list \
 
 if [ -z "$PREV" ]; then
   echo "No previous commit, build all services"
-  echo "services=$(echo $SERVICES_JSON | jq -r  'keys | join(\",\")')"
+  services=$(echo $SERVICES_JSON | jq -r 'keys | join(",")') 
+  echo "services=$services"
+  echo "services=$services" >> "$GITHUB_OUTPUT"
   exit 0
 fi
 
