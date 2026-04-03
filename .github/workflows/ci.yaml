@@ -47,6 +47,9 @@ jobs:
           fi
 
           ./scripts/ci/detect-service-changed.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.ref_name }}
 
       - name: Install dependencies
         id: install_deps

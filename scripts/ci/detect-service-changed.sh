@@ -27,8 +27,16 @@ SERVICES_JSON='{
     "recipe-worker": ["app/server/RecipeService/src/RecipeWorker"]
 }'
 
-# Handle first build commit
-PREV=$(git rev-parse HEAD~1 || echo "")
+# Handle first successfully built commit
+PREV=$(gh run list \
+  --workflow '.github/workflows/ci.yaml' \
+  --branch "$BRANCH" \
+  --status success \
+  --limit 1 \
+  --json headSha -q '.[0].headSha' \
+  || echo ""
+)
+
 if [ -z "$PREV" ]; then
   echo "No previous commit, build all services"
   echo "services=$(echo $SERVICES_JSON | jq -r  'keys | join(\",\")')"
