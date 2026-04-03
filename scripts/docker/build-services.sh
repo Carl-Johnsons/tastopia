@@ -105,15 +105,13 @@ repo="taiduc113/tastopia"
 
 # Always build contract image first
 CONTRACT_HASH=$(git rev-parse --short HEAD:app/server/Contract)
-if [[ "$commitHash" != "$CONTRACT_HASH" ]]; then
-  CONTRACT_HASH="$commitHash"
-  echo "Contract unchanged → skip build"
+if docker manifest inspect ${repo}-contract:${CONTRACT_HASH} > /dev/null 2>&1; then
+  echo "Contract image with hash ${CONTRACT_HASH} exists → skip"
+else
+  echo "Contract image with hash ${CONTRACT_HASH} not found → build"
   docker compose build contract
   docker tag ${project}-contract ${repo}-contract:${CONTRACT_HASH}
   docker push ${repo}-contract:${CONTRACT_HASH}
-else
-  echo "Contract unchanged → skip build"
-  docker tag ${project}-contract ${repo}-contract:${CONTRACT_HASH}
 fi
 
 # Build each service
