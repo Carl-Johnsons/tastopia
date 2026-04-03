@@ -52,6 +52,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: detect
     if: ${{ needs.detect.outputs.services != '' }}
+    outputs:
+      sha: ${{ steps.build_serv.outputs.sha }}
     env:
       INFISICAL_TOKEN: ${{ secrets.INFISICAL_TOKEN }}
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -94,5 +96,39 @@ jobs:
         id: build_serv
         run: |
           SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT
           ./scripts/docker/build-services.sh -c $SHORT_SHA -le ${{ github.event.inputs.DEPLOY_ENV || 'staging' }} ${{ needs.detect.outputs.services }}
+  update-manifest:
+    name: Update service manifest in gitOps repository
+    runs-on: ubuntu-latest
+    needs: [detect,build]
+    env:
+      GITOPS_REPO_NAME: ${{ secrets.GITOPS_REPO_NAME }}
+      GITOPS_REPO_TOKEN: ${{ secrets.GITOPS_REPO_TOKEN }}
+    steps:
+    - name: Checkout GitOps repo
+      uses: actions/checkout@v6
+      with:
+        repository: ${{ secrets.GITOPS_REPO_NAME }}
+        token: ${{ secrets.GITOPS_REPO_TOKEN }}
+    - name: Update image tag
+      run: |
+        for SERVICE in ${{ needs.detect.outputs.services }}; do
+          FILE="k8s/kustomize/overlays/staging/deployments/$SERVICE.yaml"
 
+          echo "Updating $SERVICE..."
+
+          yq -i "
+            (.spec.template.spec.containers[] | select(.name == \"$SERVICE\")).image 
+            = \"taiduc113/tastopia-$SERVICE:${{ needs.build.outputs.sha }}\"
+          " $FILE
+        done
+    - name: Commit & push
+      run: |
+        cd gitops
+        git config user.name "ci-bot"
+        git config user.email "ci-bot@users.noreply.github.com"
+
+        git add .
+        git commit -m "Update image to ${{ needs.build.outputs.sha }}" || echo "No changes"
+        git push
