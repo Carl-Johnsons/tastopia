@@ -125,7 +125,6 @@ jobs:
         done
     - name: Commit & push
       run: |
-        cd gitops
         git config user.name "ci-bot"
         git config user.email "ci-bot@users.noreply.github.com"
 
