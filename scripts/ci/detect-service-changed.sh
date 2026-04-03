@@ -69,4 +69,5 @@ if [ -z $RESULT ]; then
   exit 0
 fi
 
+echo "services=$RESULT"
 echo "services=$RESULT" >> $GITHUB_OUTPUT
