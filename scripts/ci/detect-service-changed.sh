@@ -37,6 +37,12 @@ PREV=$(gh run list \
   || echo ""
 )
 
+# validate commit is reachable from current HEAD
+if [[ -n "$PREV" ]] && ! git merge-base --is-ancestor "$PREV" HEAD; then
+  echo "Invalid or unrelated commit, fallback"
+  PREV=""
+fi
+
 if [ -z "$PREV" ]; then
   echo "No previous commit, build all services"
   services=$(echo $SERVICES_JSON | jq -r 'keys | join(",")') 
