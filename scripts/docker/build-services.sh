@@ -94,10 +94,9 @@ default_services=(
 services=("$@")
 
 if [ ${#services[@]} -eq 0 ]; then
-  services=("${default_services[@]}")
+  echo Please specify the services to build >&2
+  exit 1
 fi
-
-services=("${services[@]}")
 
 project="$(basename $(pwd))"
 project="${project,,}" # make the name lowercase
