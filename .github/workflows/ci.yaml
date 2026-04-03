@@ -117,11 +117,7 @@ jobs:
           FILE="k8s/kustomize/overlays/staging/deployments/$SERVICE.yaml"
 
           echo "Updating $SERVICE..."
-
-          yq -i "
-            (.spec.template.spec.containers[] | select(.name == \"$SERVICE\")).image 
-            = \"taiduc113/tastopia-$SERVICE:${{ needs.build.outputs.sha }}\"
-          " $FILE
+          SERVICE=$SERVICE IMAGE="taiduc113/tastopia-$SERVICE:${{ needs.build.outputs.sha }}" yq -i '(.spec.template.spec.containers[] | select(.name == strenv(SERVICE))).image = strenv(IMAGE)' "$FILE"
         done
     - name: Commit & push
       run: |
