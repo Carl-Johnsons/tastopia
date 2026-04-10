@@ -3,12 +3,11 @@ name: CI Pipeline
 on:
   pull_request:
     branches: 
-      - master
-      - pipeline
+      - staging
   push:
     branches: 
       - master
-      - pipeline
+      - staging
   workflow_dispatch:
     inputs:
       BUILD_SERVICES:
@@ -111,18 +110,45 @@ jobs:
       with:
         repository: ${{ secrets.GITOPS_REPO_NAME }}
         token: ${{ secrets.GITOPS_REPO_TOKEN }}
+        ref: improve-ci
     - name: Update image tag
       run: |
+        #!/bin/bash
+        
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          VALUES_FILE="k8s/helm/values-pr-${PR_NUMBER}.yaml"
+        else
+          case "$BRANCH" in
+            master) 
+              VALUES_FILE="k8s/helm/values-production.yaml"
+              ;;
+            staging) 
+              VALUES_FILE="k8s/helm/values-staging.yaml"
+              ;;
+            *) 
+              echo Unsupported branch
+              exit 1
+              ;;
+          esac
+        fi
+
+        if [ ! -f "$VALUES_FILE" ]; then
+          if [ "$BRANCH" == "master" || "$BRANCH" == "staging" ]; then
+            echo "Values file does not exist, please add it before running the workflow..."
+            exit 1
+          fi
+          echo "Values file does not exist, creating..."
+          cp "k8s/helm/values-staging.yaml" "$VALUES_FILE"
+        fi
+
         for SERVICE in ${{ needs.detect.outputs.services }}; do
-          FILE="k8s/kustomize/overlays/staging/deployments/$SERVICE.yaml"
-
           echo "Updating $SERVICE..."
-
-          SERVICE=$SERVICE \
-            IMAGE="taiduc113/tastopia-$SERVICE:${{ needs.build.outputs.sha }}" \
-            yq -i '(.spec.template.spec.containers[] | select(.name == strenv(SERVICE))).image = strenv(IMAGE)' \
-            "$FILE"
+          IMAGE="taiduc113/tastopia-${SERVICE}:${{ needs.build.outputs.sha }}"
+          sed -i "s|taiduc113/tastopia-${SERVICE}:.*|${IMAGE}|g" "$VALUES_FILE"
         done
+      env:
+        BRANCH: ${{ github.head_ref || github.ref_name }}
     - name: Commit & push
       run: |
         git config user.name "github-actions[bot]"
