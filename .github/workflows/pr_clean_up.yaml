@@ -21,7 +21,7 @@ jobs:
         repository: ${{ secrets.GITOPS_REPO_NAME }}
         token: ${{ secrets.GITOPS_REPO_TOKEN }}
         ref: improve-ci
-    - name: Update image tag
+    - name: Delete PR values file
       run: |
         #!/bin/bash
         
