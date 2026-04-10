@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -x
+
 SERVICES_JSON='{
     "website": ["app/client/website"],
     "api-gateway": ["app/server/APIGateway"],
