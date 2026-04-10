@@ -1,0 +1,34 @@
+appId: com.tastopia.app
+---
+- launchApp
+- assertVisible: Welcome to
+- assertVisible: Tastopia
+- tapOn: Already have an account? Sign In
+
+- assertVisible: Login
+- assertVisible: LOG IN
+- tapOn: LOG IN
+- assertVisible: Please enter email or phone number.
+- assertVisible: Please enter password.
+
+- assertVisible: Your email, phone number or username
+- tapOn: Your email, phone number or username
+- inputText: ${USERNAME}
+- assertNotVisible: Please enter email or phone number.
+
+- assertVisible: Password
+- tapOn: Password
+- inputText: ${PASSWORD}
+- assertNotVisible: Please enter password.
+
+- tapOn: Login
+- assertVisible: LOG IN
+- tapOn: LOG IN
+- assertVisible: Community
+
+- tapOn: Menu
+- assertVisible: History
+- tapOn: Log out
+
+- assertVisible: Welcome to
+- assertVisible: Tastopia
