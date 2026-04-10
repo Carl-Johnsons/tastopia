@@ -46,7 +46,7 @@ jobs:
           ./scripts/ci/detect-service-changed.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: ${{ github.ref_name }}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
   build:
     name: Build services
     runs-on: ubuntu-latest
