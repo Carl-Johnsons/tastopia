@@ -23,19 +23,19 @@ jobs:
         ref: improve-ci
     - name: Delete PR values file
       run: |
-        #!/bin/bash
-        
-        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          VALUES_FILE="k8s/helm/values-pr-${PR_NUMBER}.yaml"
-        fi
-
-        if [ -f "$VALUES_FILE" ]; then
-          echo "Values file exists, deleting..."
-          rm "$VALUES_FILE"
-        fi
+        PR_NUMBER="${{ github.event.pull_request.number }}"
+        VALUES_FILE="k8s/helm/values-pr-${PR_NUMBER}.yaml"
+        rm "$VALUES_FILE"
       env:
         BRANCH: ${{ github.head_ref || github.ref_name }}
+    - name: Delete Infisical manifests
+      run: |
+        cd k8s/bootstrap/infisical-operator/base
+        export SECRET_FILE=secrets/pr-${PR_NUMBER}-infisical-secrets.yaml"
+        rm "$SECRET_FILE"
+        yq -i 'del(.resources[] | select(. ==  strenv(SECRET_FILE)))' ./kustomization.yaml
+      env:
+        PR_NUMBER="${{ github.event.pull_request.number }}"
     - name: Commit & push
       run: |
         git config user.name "github-actions[bot]"
