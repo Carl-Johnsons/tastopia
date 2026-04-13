@@ -150,19 +150,21 @@ jobs:
       env:
         BRANCH: ${{ github.head_ref || github.ref_name }}
     - name: Setup Infisical for dev environment
-      if: github.event_name == 'pull_request' && github.event.action == 'opened'
+      if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'staging'
       run: |
         cd k8s/bootstrap/infisical-operator/base
 
         export SECRET_FILE="secrets/pr-${PR_NUMBER}-infisical-secrets.yaml"
         export APP_NAMESPACE="tastopia-pr-$PR_NUMBER"
         export MONITORING_NAMESPACE="monitoring-pr-$PR_NUMBER"
+        export SUFFIX="pr-${PR_NUMBER}"
 
         if [ ! -f "$SECRET_FILE" ]; then
           echo "Secrets file does not exist, creating..."
           yq '.spec.authentication.serviceToken.secretsScope.envSlug = "staging"' secrets/infisical-secrets.yaml \
             | yq '(.spec.managedKubeSecretReferences[] | select(.secretNamespace == "tastopia") | .secretNamespace) = strenv(APP_NAMESPACE)' \
             | yq '(.spec.managedKubeSecretReferences[] | select(.secretNamespace == "monitoring") | .secretNamespace) = strenv(MONITORING_NAMESPACE)' \
+            | yq '.metadata.name = .metadata.name + "-" + strenv(SUFFIX)' \
             > "$SECRET_FILE"
         fi
 
