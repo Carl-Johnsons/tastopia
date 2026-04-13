@@ -154,7 +154,7 @@ jobs:
       run: |
         cd k8s/bootstrap/infisical-operator/base
 
-        export SECRET_FILE="secrets/pr-${PR_NUMBER}-infisical-secrets.yaml"
+        export SECRET_FILE="secrets/infisical-secrets-pr-${PR_NUMBER}.yaml"
         export APP_NAMESPACE="tastopia-pr-$PR_NUMBER"
         export MONITORING_NAMESPACE="monitoring-pr-$PR_NUMBER"
         export SUFFIX="pr-${PR_NUMBER}"
