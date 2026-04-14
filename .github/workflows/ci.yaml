@@ -111,6 +111,51 @@ jobs:
         repository: ${{ secrets.GITOPS_REPO_NAME }}
         token: ${{ secrets.GITOPS_REPO_TOKEN }}
         ref: improve-ci
+    - name: Check if Infisical secret file exists
+      id: check_secret
+      if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'staging'
+      run: |
+        SECRET_FILE="k8s/bootstrap/infisical-operator/base/secrets/infisical-secrets-pr-${PR_NUMBER}.yaml"
+
+        if [ -f "$SECRET_FILE" ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+      env:
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+    - name: Setup Infisical for dev environment
+      if: github.event_name == 'pull_request' 
+        && github.event.pull_request.base.ref == 'staging'
+        && steps.check_secret.outputs.exists == 'false'
+      run: |
+        cd k8s/bootstrap/infisical-operator/base
+
+        export SECRET_FILE="secrets/infisical-secrets-pr-${PR_NUMBER}.yaml"
+        export APP_NAMESPACE="tastopia-pr-$PR_NUMBER"
+        export MONITORING_NAMESPACE="monitoring-pr-$PR_NUMBER"
+        export SUFFIX="pr-${PR_NUMBER}"
+
+        yq '.spec.authentication.serviceToken.secretsScope.envSlug = "staging"' secrets/infisical-secrets.yaml \
+          | yq '(.spec.managedKubeSecretReferences[] | select(.secretNamespace == "tastopia") | .secretNamespace) = strenv(APP_NAMESPACE)' \
+          | yq '(.spec.managedKubeSecretReferences[] | select(.secretNamespace == "monitoring") | .secretNamespace) = strenv(MONITORING_NAMESPACE)' \
+          | yq '.metadata.name = .metadata.name + "-" + strenv(SUFFIX)' \
+          > "$SECRET_FILE"
+
+        yq -i 'with(.resources; select(all_c(. != strenv(SECRET_FILE))) | . += strenv(SECRET_FILE))' ./kustomization.yaml
+
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit \
+          -m "Set up PR #${PR_NUMBER}" \
+          -m "PR #${PR_NUMBER}: ${PR_TITLE} (${PR_URL})" \
+          || echo "No changes"
+        git push
+      env:
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_TITLE: ${{ github.event.pull_request.title }}
+        PR_URL: ${{ github.event.pull_request.html_url }}
     - name: Update image tag
       run: |
         #!/bin/bash
@@ -149,28 +194,6 @@ jobs:
         done
       env:
         BRANCH: ${{ github.head_ref || github.ref_name }}
-    - name: Setup Infisical for dev environment
-      if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'staging'
-      run: |
-        cd k8s/bootstrap/infisical-operator/base
-
-        export SECRET_FILE="secrets/infisical-secrets-pr-${PR_NUMBER}.yaml"
-        export APP_NAMESPACE="tastopia-pr-$PR_NUMBER"
-        export MONITORING_NAMESPACE="monitoring-pr-$PR_NUMBER"
-        export SUFFIX="pr-${PR_NUMBER}"
-
-        if [ ! -f "$SECRET_FILE" ]; then
-          echo "Secrets file does not exist, creating..."
-          yq '.spec.authentication.serviceToken.secretsScope.envSlug = "staging"' secrets/infisical-secrets.yaml \
-            | yq '(.spec.managedKubeSecretReferences[] | select(.secretNamespace == "tastopia") | .secretNamespace) = strenv(APP_NAMESPACE)' \
-            | yq '(.spec.managedKubeSecretReferences[] | select(.secretNamespace == "monitoring") | .secretNamespace) = strenv(MONITORING_NAMESPACE)' \
-            | yq '.metadata.name = .metadata.name + "-" + strenv(SUFFIX)' \
-            > "$SECRET_FILE"
-        fi
-
-        yq -i 'with(.resources; select(all_c(. != strenv(SECRET_FILE))) | . += strenv(SECRET_FILE))' ./kustomization.yaml
-      env:
-        PR_NUMBER: ${{ github.event.pull_request.number }}
     - name: Commit & push
       run: |
         git config user.name "github-actions[bot]"
