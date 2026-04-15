@@ -97,13 +97,16 @@ jobs:
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT
           ./scripts/docker/build-services.sh -c $SHORT_SHA -le ${{ github.event.inputs.DEPLOY_ENV || 'staging' }} ${{ needs.detect.outputs.services }}
-  update-manifest:
-    name: Update service manifest in gitOps repository
+  setup-dev-env:
+    name: Setup dev environment manifests in gitOps repository
+    if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'staging'
     runs-on: ubuntu-latest
-    needs: [detect,build]
     env:
       GITOPS_REPO_NAME: ${{ secrets.GITOPS_REPO_NAME }}
       GITOPS_REPO_TOKEN: ${{ secrets.GITOPS_REPO_TOKEN }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_TITLE: ${{ github.event.pull_request.title }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
     steps:
     - name: Checkout GitOps repo
       uses: actions/checkout@v6
@@ -113,7 +116,6 @@ jobs:
         ref: improve-ci
     - name: Check if Infisical secret file exists
       id: check_secret
-      if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'staging'
       run: |
         SECRET_FILE="k8s/bootstrap/infisical-operator/base/secrets/infisical-secrets-pr-${PR_NUMBER}.yaml"
 
@@ -122,12 +124,8 @@ jobs:
         else
           echo "exists=false" >> $GITHUB_OUTPUT
         fi
-      env:
-        PR_NUMBER: ${{ github.event.pull_request.number }}
     - name: Setup Infisical for dev environment
-      if: github.event_name == 'pull_request' 
-        && github.event.pull_request.base.ref == 'staging'
-        && steps.check_secret.outputs.exists == 'false'
+      if: steps.check_secret.outputs.exists == 'false'
       run: |
         cd k8s/bootstrap/infisical-operator/base
 
@@ -143,7 +141,17 @@ jobs:
           > "$SECRET_FILE"
 
         yq -i 'with(.resources; select(all_c(. != strenv(SECRET_FILE))) | . += strenv(SECRET_FILE))' ./kustomization.yaml
+    - name: Ensure that value file exists
+      run: |
+        PR_NUMBER="${{ github.event.pull_request.number }}"
+        VALUES_FILE="k8s/helm/values-pr-${PR_NUMBER}.yaml"
 
+        if [ ! -f "$VALUES_FILE" ]; then
+          echo "Values file does not exist, creating..."
+          cp "k8s/helm/values-staging.yaml" "$VALUES_FILE"
+        fi
+    - name: Commit & push
+      run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add .
@@ -152,10 +160,18 @@ jobs:
           -m "PR #${PR_NUMBER}: ${PR_TITLE} (${PR_URL})" \
           || echo "No changes"
         git push
-      env:
-        PR_NUMBER: ${{ github.event.pull_request.number }}
-        PR_TITLE: ${{ github.event.pull_request.title }}
-        PR_URL: ${{ github.event.pull_request.html_url }}
+  update-manifest:
+    name: Update service manifest in gitOps repository
+    runs-on: ubuntu-latest
+    needs: [detect, build, setup-dev-env]
+    if: always() && needs.build.result == 'success'
+    steps:
+    - name: Checkout GitOps repo
+      uses: actions/checkout@v6
+      with:
+        repository: ${{ secrets.GITOPS_REPO_NAME }}
+        token: ${{ secrets.GITOPS_REPO_TOKEN }}
+        ref: improve-ci
     - name: Update image tag
       run: |
         #!/bin/bash
@@ -179,12 +195,8 @@ jobs:
         fi
 
         if [ ! -f "$VALUES_FILE" ]; then
-          if [ "$BRANCH" == "master" || "$BRANCH" == "staging" ]; then
-            echo "Values file does not exist, please add it before running the workflow..."
-            exit 1
-          fi
-          echo "Values file does not exist, creating..."
-          cp "k8s/helm/values-staging.yaml" "$VALUES_FILE"
+          echo "Values file does not exist, please add it before running the workflow..."
+          exit 1
         fi
 
         for SERVICE in ${{ needs.detect.outputs.services }}; do
@@ -194,6 +206,9 @@ jobs:
         done
       env:
         BRANCH: ${{ github.head_ref || github.ref_name }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_TITLE: ${{ github.event.pull_request.title }}
+        PR_URL: ${{ github.event.pull_request.html_url }}
     - name: Commit & push
       run: |
         git config user.name "github-actions[bot]"
