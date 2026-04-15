@@ -34,27 +34,32 @@ PREV=$(gh run list \
   --workflow '.github/workflows/ci.yaml' \
   --branch "$BRANCH" \
   --status success \
-  --limit 1 \
-  --json headSha -q '.[0].headSha' \
+  --limit 100 \
+  --json headSha -q '.[].headSha' \
   || echo ""
 )
 
 # validate commit is reachable from current HEAD
-if [[ -n "$PREV" ]] && ! git merge-base --is-ancestor "$PREV" HEAD; then
-  echo "Invalid or unrelated commit, fallback"
-  PREV=""
+VALID_PREV=""
+
+if [ -n "$PREV" ]; then
+  while read sha; do
+    if git merge-base --is-ancestor "$sha" HEAD; then
+      VALID_PREV="$sha"
+      break
+    fi
+  done <<< "$PREV"
 fi
 
-if [ -z "$PREV" ]; then
+if [ -z "$VALID_PREV" ]; then
   echo "No previous commit, build all services"
   services=$(echo $SERVICES_JSON | jq -r 'keys | join(" ")') 
-  echo "services=$services"
-  echo "services=$services" >> "$GITHUB_OUTPUT"
+  echo "services=$services" | tee -a "$GITHUB_OUTPUT"
   exit 0
 fi
 
 # Handle changed service commit
-CHANGED=$(git diff --name-only $PREV HEAD)
+CHANGED=$(git diff --name-only $VALID_PREV HEAD)
 RESULT=""
 
 for svc in $(echo $SERVICES_JSON | jq -r 'keys[]'); do
