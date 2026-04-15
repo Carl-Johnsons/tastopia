@@ -12,8 +12,9 @@ jobs:
     name: Clean up manifest in gitOps repository
     runs-on: ubuntu-latest
     env:
-      GITOPS_REPO_NAME: ${{ secrets.GITOPS_REPO_NAME }}
-      GITOPS_REPO_TOKEN: ${{ secrets.GITOPS_REPO_TOKEN }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      PR_TITLE: ${{ github.event.pull_request.title }}
+      PR_URL: ${{ github.event.pull_request.html_url }}
     steps:
     - name: Checkout GitOps repo
       uses: actions/checkout@v6
@@ -23,19 +24,14 @@ jobs:
         ref: improve-ci
     - name: Delete PR values file
       run: |
-        PR_NUMBER="${{ github.event.pull_request.number }}"
         VALUES_FILE="k8s/helm/values-pr-${PR_NUMBER}.yaml"
         rm -f "$VALUES_FILE"
-      env:
-        BRANCH: ${{ github.head_ref || github.ref_name }}
     - name: Delete Infisical manifests
       run: |
         cd k8s/bootstrap/infisical-operator/base
         export SECRET_FILE="secrets/infisical-secrets-pr-${PR_NUMBER}.yaml"
         rm -f "$SECRET_FILE"
         yq -i 'del(.resources[] | select(. ==  strenv(SECRET_FILE)))' ./kustomization.yaml
-      env:
-        PR_NUMBER: ${{ github.event.pull_request.number }}
     - name: Commit & push
       run: |
         git config user.name "github-actions[bot]"
@@ -47,7 +43,3 @@ jobs:
           -m "PR #${PR_NUMBER}: ${PR_TITLE} (${PR_URL})" \
           || echo "No changes"
         git push
-      env:
-        PR_NUMBER: ${{ github.event.pull_request.number }}
-        PR_TITLE: ${{ github.event.pull_request.title }}
-        PR_URL: ${{ github.event.pull_request.html_url }}

@@ -102,8 +102,6 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'staging'
     runs-on: ubuntu-latest
     env:
-      GITOPS_REPO_NAME: ${{ secrets.GITOPS_REPO_NAME }}
-      GITOPS_REPO_TOKEN: ${{ secrets.GITOPS_REPO_TOKEN }}
       PR_NUMBER: ${{ github.event.pull_request.number }}
       PR_TITLE: ${{ github.event.pull_request.title }}
       PR_URL: ${{ github.event.pull_request.html_url }}
@@ -143,7 +141,6 @@ jobs:
         yq -i 'with(.resources; select(all_c(. != strenv(SECRET_FILE))) | . += strenv(SECRET_FILE))' ./kustomization.yaml
     - name: Ensure that value file exists
       run: |
-        PR_NUMBER="${{ github.event.pull_request.number }}"
         VALUES_FILE="k8s/helm/values-pr-${PR_NUMBER}.yaml"
 
         if [ ! -f "$VALUES_FILE" ]; then
@@ -177,7 +174,6 @@ jobs:
         #!/bin/bash
         
         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          PR_NUMBER="${{ github.event.pull_request.number }}"
           VALUES_FILE="k8s/helm/values-pr-${PR_NUMBER}.yaml"
         else
           case "$BRANCH" in
