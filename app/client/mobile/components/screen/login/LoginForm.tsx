@@ -51,6 +51,7 @@ export const LoginForm = (props: LoginFormProps) => {
               onBlur={onBlur}
               onChangeText={onChange}
               placeholder='Your email, phone number or username'
+              testID='login-identifier-input'
             />
           )}
         />
@@ -71,6 +72,7 @@ export const LoginForm = (props: LoginFormProps) => {
               onChangeText={onChange}
               placeholder='Password'
               secureTextEntry
+              testID='login-password-input'
             />
           )}
         />
@@ -86,6 +88,7 @@ export const LoginForm = (props: LoginFormProps) => {
         </Pressable>
       </View>
       <Button
+        testID='login-submit-button'
         onPress={() => {
           animate();
           handleSubmit(onSubmit)();
@@ -115,7 +118,8 @@ export const CustomInput = ({
   placeholder,
   className,
   secureTextEntry,
-  inputMode
+  inputMode,
+  testID
 }: Pick<
   TextInputProps,
   | "onChangeText"
@@ -126,6 +130,7 @@ export const CustomInput = ({
   | "className"
   | "secureTextEntry"
   | "inputMode"
+  | "testID"
 >) => {
   const { gray, primary } = colors;
 
@@ -141,6 +146,7 @@ export const CustomInput = ({
       secureTextEntry={secureTextEntry}
       cursorColor={primary}
       inputMode={inputMode}
+      testID={testID}
     />
   );
 };

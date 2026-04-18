@@ -39,6 +39,7 @@ export const LogoutButton = () => {
         className='rounded-lg border border-gray-300 py-2.5'
         onPress={logout}
         style={[animatedStyles]}
+        testID='menu-logout-button'
       >
         <Text className='text-black_white text-center font-sans text-lg'>
           {role === ROLE.GUEST ? t("backToLogin") : t("logout")}

@@ -55,7 +55,7 @@ export default function HistoryList({ keyword }: HistoryListProps) {
       if (!history) return null;
 
       return (
-        <View testID='recipe'>
+        <View id='recipe'>
           <Recipe
             {...item}
             setCurrentRecipeId={setCurrentRecipeId}

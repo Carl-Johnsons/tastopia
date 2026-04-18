@@ -24,7 +24,10 @@ const SearchRecipeResult = ({
     });
   };
   return (
-    <TouchableWithoutFeedback onPress={handleOnPress}>
+    <TouchableWithoutFeedback
+      onPress={handleOnPress}
+      testID='search-recipe-item'
+    >
       <View className='bg-white_black100 rounded-3xl pb-4'>
         <View className='flex-between flex-row px-4 py-2'>
           {authorId && authorDisplayName && authorAvtUrl && (

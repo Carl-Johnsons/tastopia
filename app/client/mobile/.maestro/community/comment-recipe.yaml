@@ -1,0 +1,24 @@
+appId: com.tastopia.app
+onFlowStart:
+  - runFlow: ../common/login.yaml
+onFlowComplete:
+  - runFlow: ../common/logout.yaml
+---
+- assertVisible: "Community"
+- tapOn:
+    id: "COMMUNITY"
+- tapOn:
+    id: "recipe"
+    index: 0
+- scrollUntilVisible:
+    element:
+      id: "recipe-comment-input"
+    direction: DOWN
+    maxScrolls: 9999
+- tapOn:
+    id: "recipe-comment-input"
+- inputText: "test comment"
+- hideKeyboard
+- tapOn:
+    id: "submit-comment-button"
+    repeat: 2
