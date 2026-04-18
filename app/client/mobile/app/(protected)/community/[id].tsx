@@ -9,7 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   FlatList,
-  StatusBar
+  StatusBar,
+  Pressable
 } from "react-native";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { globalStyles } from "@/components/common/GlobalStyles";
@@ -282,12 +283,16 @@ const RecipeDetail = () => {
                         pathname: "/(protected)/community/cooking-mode",
                         params: { id: recipeDetailData.recipe.id }
                       }}
+                      asChild
                     >
-                      <View className='rounded-3xl bg-primary px-5 py-2'>
+                      <Pressable
+                        testID='recipe-cook-button'
+                        className='rounded-3xl bg-primary px-5 py-2'
+                      >
                         <Text className='body-semibold text-white_black'>
                           {t("cookButton")}
                         </Text>
-                      </View>
+                      </Pressable>
                     </Link>
                   </View>
 

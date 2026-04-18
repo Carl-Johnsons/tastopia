@@ -1,0 +1,19 @@
+appId: com.tastopia.app
+---
+- launchApp
+
+- extendedWaitUntil:
+    visible:
+      id: "MENU"
+    timeout: 20000 
+- tapOn:
+    id: "MENU"
+
+- hideKeyboard
+
+- assertVisible: History
+- tapOn:
+    id: "menu-logout-button"
+
+- assertVisible: Welcome to
+- assertVisible: Tastopia

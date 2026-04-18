@@ -1,5 +1,10 @@
-import { View, Image, ActivityIndicator, Alert } from "react-native";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import {
+  View,
+  Image,
+  ActivityIndicator,
+  Alert,
+  TouchableWithoutFeedback
+} from "react-native";
 import Input from "../Input";
 import { useCallback, useState } from "react";
 import { Feather } from "@expo/vector-icons";
@@ -60,11 +65,12 @@ const AddCommentSection = ({ recipeId, setParentState }: AddCommentSectionProps)
         onSubmitEditing={handleOnSubmit}
         returnKeyType='send'
         multiline={true}
+        testID='recipe-comment-input'
       />
 
       {comment.trim() !== "" && (
         <TouchableWithoutFeedback
-          testID='submit_comment_button'
+          testID='submit-comment-button'
           onPress={handleOnSubmit}
           disabled={isLoading}
         >

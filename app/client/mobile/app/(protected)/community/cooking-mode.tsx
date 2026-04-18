@@ -471,12 +471,18 @@ const CookingMode = () => {
 
             {/* Navigate buttons */}
             <View className='flex-center mb-4 flex-row gap-4 px-4'>
-              <TouchableWithoutFeedback onPress={handleBack}>
+              <TouchableWithoutFeedback
+                onPress={handleBack}
+                testID='cooking-back-button'
+              >
                 <View className='flex-center flex-1 rounded-3xl bg-gray-400 px-5 py-3'>
                   <Text className='body-semibold text-black'>{t("back")}</Text>
                 </View>
               </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback onPress={handleNext}>
+              <TouchableWithoutFeedback
+                onPress={handleNext}
+                testID='cooking-next-button'
+              >
                 <View className='flex-center flex-1 rounded-3xl bg-primary px-5 py-3'>
                   <Text className='body-semibold text-white_black'>{t("next")}</Text>
                 </View>

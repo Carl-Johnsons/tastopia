@@ -246,6 +246,7 @@ const SearchRecipe = ({ onFocus, setOnFocus }: SearchUserProps) => {
               color={c(black.DEFAULT, white.DEFAULT)}
             />
             <TextInput
+              testID='search-recipe-input'
               autoCapitalize='none'
               ref={textInputRef}
               className='h-full w-[86%]'

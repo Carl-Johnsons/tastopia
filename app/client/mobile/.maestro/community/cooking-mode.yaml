@@ -1,0 +1,22 @@
+appId: com.tastopia.app
+onFlowStart:
+  - runFlow: ../common/login.yaml
+onFlowComplete:
+  - runFlow: ../common/logout.yaml
+---
+- assertVisible: "Community"
+- tapOn:
+    id: "COMMUNITY"
+- tapOn:
+    id: "recipe"
+    index: 0
+- tapOn:
+    id: "recipe-cook-button"
+- tapOn:
+    id: "active-speaking-switch"
+- tapOn:
+    id: "active-speaking-switch"
+- tapOn:
+    id: "cooking-next-button"
+- tapOn:
+    id: "cooking-back-button"

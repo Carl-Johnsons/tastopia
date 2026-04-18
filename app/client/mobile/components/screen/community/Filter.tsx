@@ -60,6 +60,9 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
     handleSelect(value);
   };
 
+  const getFilterTestID = (value: string) =>
+    `community-filter-${value.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+
   useEffect(() => {
     refetch();
   }, [refetch]);
@@ -75,6 +78,7 @@ const Filter = ({ filterSelected, handleSelect }: FilterProps) => {
             <TouchableWithoutFeedback
               onPress={() => handleSelectItem(item.en)}
               key={valueBasedOnLanguage}
+              testID={getFilterTestID(item.en)}
             >
               <View
                 className={`flex-center flex-row gap-2 rounded-full border-2 border-primary px-2 py-1 pr-4 ${isSelected ? "bg-primary" : "bg-white_black"}`}

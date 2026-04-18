@@ -95,7 +95,10 @@ const User = ({
         </View>
         {isActiveUser && (
           <View>
-            <TouchableWithoutFeedback onPress={handleFollowUnFollow}>
+            <TouchableWithoutFeedback
+              onPress={handleFollowUnFollow}
+              testID='search-user-follow-button'
+            >
               <View className='rounded-3xl bg-primary px-6 py-2'>
                 <Text className='paragraph-bold text-white_black text-center'>
                   {followed ? t("unfollow") : t("follow")}

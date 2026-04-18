@@ -57,7 +57,7 @@ const CommentsTab = ({
     ({ item, index }: { item: IAccountRecipeCommentResponse; index: number }) => (
       <View
         className='w-full'
-        testID='comment'
+        id='comment'
       >
         <Comment
           {...item}

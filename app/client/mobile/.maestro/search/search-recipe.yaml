@@ -1,0 +1,16 @@
+appId: com.tastopia.app
+onFlowStart:
+  - runFlow: ../common/login.yaml
+onFlowComplete:
+  - runFlow: ../common/logout.yaml
+---
+- tapOn:
+    id: "SEARCH"
+- tapOn:
+    id: "search-recipe-input"
+- inputText: "a"
+- hideKeyboard
+- extendedWaitUntil:
+    visible:
+      id: "search-recipe-item"
+    timeout: 10000

@@ -1,0 +1,44 @@
+appId: com.tastopia.app
+onFlowStart:
+  - runFlow: ../common/login.yaml
+onFlowComplete:
+  - runFlow: ../common/logout.yaml
+---
+- assertVisible: "Community"
+- tapOn:
+    id: "COMMUNITY"
+- extendedWaitUntil:
+    visible:
+      id: "recipe"
+    timeout: 10000
+
+- tapOn:
+    id: "community-filter-noodles"
+- extendedWaitUntil:
+    visible:
+      id: "recipe"
+    timeout: 10000
+- tapOn:
+    id: "community-filter-spice"
+- extendedWaitUntil:
+    visible:
+      id: "recipe"
+    timeout: 10000
+- tapOn:
+    id: "community-filter-bbq"
+- extendedWaitUntil:
+    visible:
+      id: "recipe"
+    timeout: 10000
+- tapOn:
+    id: "community-filter-seafood"
+- extendedWaitUntil:
+    visible:
+      id: "recipe"
+    timeout: 10000
+- tapOn:
+    id: "community-filter-all"
+- extendedWaitUntil:
+    visible:
+      id: "recipe"
+    timeout: 10000

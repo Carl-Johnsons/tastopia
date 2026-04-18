@@ -60,7 +60,7 @@ const RecipesTab = ({
 
   const renderItem = useCallback(
     ({ item, index }: { item: RecipeType; index: number }) => (
-      <View testID='recipe'>
+      <View id='recipe'>
         <Recipe
           {...item}
           setCurrentRecipeId={setCurrentRecipeId}

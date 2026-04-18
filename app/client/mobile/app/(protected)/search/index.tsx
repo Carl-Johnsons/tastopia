@@ -40,7 +40,10 @@ const Search = () => {
       >
         <StatusBar backgroundColor={c(white.DEFAULT, black[100])} />
         <View className='flex-center pt-2'>
-          <TouchableWithoutFeedback onPress={handleChangeSearch}>
+          <TouchableWithoutFeedback
+            onPress={handleChangeSearch}
+            testID='search-mode-toggle-button'
+          >
             <View className='flex-center flex-row gap-2'>
               <Text className='h3-semibold text-black_white text-center'>
                 {isSearchingUser ? t("header.user") : t("header.recipe")}
