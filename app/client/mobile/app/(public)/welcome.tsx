@@ -142,7 +142,10 @@ const Welcome = () => {
               </Text>
             </Button>
 
-            <Pressable onPress={navigateToLoginScreen}>
+            <Pressable
+              onPress={navigateToLoginScreen}
+              testID='welcome-sign-in-button'
+            >
               <Text className='text-center font-medium text-lg text-gray-300'>
                 Already have an account?{" "}
                 <Text className='font-medium text-white underline'>Sign In</Text>

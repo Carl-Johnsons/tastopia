@@ -1,0 +1,39 @@
+appId: com.tastopia.app
+---
+- launchApp
+# - assertVisible: Welcome to
+# - assertVisible: Tastopia
+- tapOn:
+    id: "welcome-sign-in-button"
+
+# - assertVisible: Login
+# - assertVisible: LOG IN
+# - assertVisible: Please enter email or phone number.
+# - assertVisible: Please enter password.
+
+- assertVisible:
+    id: "login-identifier-input"
+- tapOn:
+    id: "login-identifier-input"
+- inputText: ${USERNAME}
+# - assertNotVisible: Please enter email or phone number.
+
+- hideKeyboard
+
+- assertVisible:
+    id: "login-password-input"
+- tapOn:
+    id: "login-password-input"
+- inputText: ${PASSWORD}
+# - assertNotVisible: Please enter password.
+
+- hideKeyboard
+
+- tapOn:
+    id: "login-submit-button"
+    delay: 500
+    repeat: 2
+- extendedWaitUntil:
+    visible:
+      id: "COMMUNITY"
+    timeout: 60000
