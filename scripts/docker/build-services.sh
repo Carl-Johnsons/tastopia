@@ -118,7 +118,7 @@ project="${project,,}" # make the name lowercase
 repo="taiduc113/tastopia"
 
 # Always build contract image first
-CONTRACT_HASH=$(git log -n 1 --pretty=format:%H -- app/server/Contract) # Get latest commit full SHA that touch app/server/Contract
+CONTRACT_HASH=$(git log -n 1 --pretty=format:%H -- app/server/Contract) # Get latest commit full SHA that touches app/server/Contract
 CONTRACT_REBUILT=0
 if docker manifest inspect ${repo}-contract:${CONTRACT_HASH} > /dev/null 2>&1; then
   echo "Contract image with hash ${CONTRACT_HASH} exists → skip"
