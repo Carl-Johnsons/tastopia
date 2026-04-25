@@ -159,11 +159,11 @@ case "$TARGET_ENV" in
     export -f pull_all_services generate_public_env
     
     if [ -n "$pFlag" ]; then
-      echo "dev staging production" | xargs -P0 -d ' ' -I {} bash -c 'pull_all_services {}'
-      echo "dev staging production" | xargs -P0 -d ' ' -I {} bash -c 'generate_public_env {}'
+      echo "dev staging production" | xargs -P0 -r -n1 bash -c 'pull_all_services "$1"' _
+      echo "dev staging production" | xargs -P0 -r -n1 bash -c 'generate_public_env "$1"' _
     else 
-      echo "dev staging production" | xargs -d ' ' -I {} bash -c 'pull_all_services {}'
-      echo "dev staging production" | xargs -d ' ' -I {} bash -c 'generate_public_env {}'
+      echo "dev staging production" | xargs -r -n1 bash -c 'pull_all_services "$1"' _
+      echo "dev staging production" | xargs -r -n1 bash -c 'generate_public_env "$1"' _
     fi
     ;;
   *)
