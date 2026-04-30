@@ -8,13 +8,15 @@ import Animated, {
   withTiming
 } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
-import { Platform, Pressable, Text, View } from "react-native";
+import { Alert, Platform, Pressable, Text, View } from "react-native";
 import GoogleButton from "@/components/GoogleButton";
 import Button from "@/components/Button";
 import { router } from "expo-router";
 import { useDispatch } from "react-redux";
 import { ROLE, saveAuthData } from "@/slices/auth.slice";
 import useLoginWithGoogle from "@/hooks/auth/useLoginWithGoogle";
+import { BUILD_ENV } from "@/constants/build";
+import { API_URI, IDENTITY_DISCOVERY_URL } from "@/constants/host";
 
 const Welcome = () => {
   const isAndroid = Platform.OS === "android";
@@ -77,6 +79,17 @@ const Welcome = () => {
     router.replace("/(protected)");
   };
 
+  const showDebugInfo = () => {
+    Alert.alert(
+      "Debug info",
+      [
+        `BUILD_ENV: ${BUILD_ENV}`,
+        `API_URI: ${API_URI}`,
+        `IDENTITY_DISCOVERY_URL: ${IDENTITY_DISCOVERY_URL}`
+      ].join("\n\n")
+    );
+  };
+
   return (
     <ImageBackground
       className='h-full'
@@ -85,6 +98,16 @@ const Welcome = () => {
     >
       <LinearGradient colors={["transparent", "#191b2f"]}>
         <View className='relative h-full px-3.5'>
+          {BUILD_ENV === "dev" && (
+            <Button
+              onPress={showDebugInfo}
+              className={`absolute left-[26px] ${
+                isAndroid ? "top-[2%]" : "top-[6%]"
+              } bg-white_black200 rounded-full px-4 py-3`}
+            >
+              <Text className='font-sans text-primary'>{BUILD_ENV}</Text>
+            </Button>
+          )}
           <Button
             onPress={browseAsGuest}
             className={`absolute right-[26px] ${isAndroid ? "top-[2%]" : "top-[6%]"} bg-white_black200 rounded-full px-4 py-3`}
