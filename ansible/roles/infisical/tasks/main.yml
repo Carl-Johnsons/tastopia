@@ -1,9 +1,10 @@
 ---
 - name: Check if infisical exists
-  stat:
-    path: /usr/bin/infisical
+  ansible.builtin.command: command -v infisical
   register: check
+  changed_when: false
+  failed_when: false
 
 - name: Load OS-specific tasks
   include_tasks: '{{ ansible_os_family | lower }}.yml'
-  when: not check.stat.exists
+  when: check.rc != 0

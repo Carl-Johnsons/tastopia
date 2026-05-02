@@ -18,6 +18,16 @@ on:
         required: true
         default: "staging"
 
+env:
+  ENV: >-
+    ${{ github.event.inputs.DEPLOY_ENV
+      || (github.ref_name == 'master' && 'production'
+      || github.ref_name == 'staging'
+         && (github.event_name == 'push' && 'staging' || 'dev')
+      || 'dev')
+    }}
+  PR_NUMBER: ${{ github.event.pull_request.number }}
+  BRANCH: ${{ github.head_ref || github.ref_name }}
 
 jobs:
   detect:
@@ -42,15 +52,72 @@ jobs:
             exit 0
           fi
 
-          ./scripts/ci/detect-service-changed.sh
+          ./scripts/ci/build/detect-service-changed.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: ${{ github.head_ref || github.ref_name }}
-  build:
-    name: Build services
+  build_app:
+    name: Build mobile application
     runs-on: ubuntu-latest
     needs: detect
-    if: ${{ needs.detect.outputs.services != '' }}
+    if: ${{ contains(needs.detect.outputs.services, 'mobile') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # The mobile building and testing flow have the same ansible dependencies
+      - name: Install dependencies
+        run: |
+            if ! pipx list | rg -q 'package ansible-core'; then
+              pipx install --include-deps ansible-core
+            fi
+
+            pipx runpip ansible-core install requests
+            cd ansible
+            ./run-build-fe.sh
+
+      - name: Setup ccache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ccache
+          key: ccache
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.14.1
+          cache: npm
+          cache-dependency-path: app/client/mobile/package-lock.json
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: false 
+      
+      - name: Retrieve secrets
+        run: |
+          echo "INFISICAL_TOKEN=${INFISICAL_TOKEN}" > .env.local
+          ./scripts/env/pull-env.sh
+          echo "$GOOGLE_SERVICES_CREDENTIALS" | base64 -d > app/client/mobile/google-services.json
+        env:
+          GOOGLE_SERVICES_CREDENTIALS: ${{ secrets.GOOGLE_SERVICES_CREDENTIALS }}
+          INFISICAL_TOKEN: ${{ secrets.INFISICAL_TOKEN }}
+
+      - name: Build Android application
+        run: ./scripts/ci/build/build-app.sh
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          IDENTITY_FQDN: ${{ secrets.IDENTITY_FQDN }}
+          API_GATEWAY_FQDN: ${{ secrets.API_GATEWAY_FQDN }}
     outputs:
       sha: ${{ steps.build_serv.outputs.sha }}
     env:

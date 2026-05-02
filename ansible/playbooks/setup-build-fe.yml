@@ -1,0 +1,6 @@
+---
+- name: Setup front-end build dependencies
+  become: true
+  hosts: localhost
+  roles:
+    - build_fe

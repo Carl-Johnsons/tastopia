@@ -1,0 +1,5 @@
+---
+- name: Install ccache
+  ansible.builtin.apt:
+    name: ccache
+    state: present

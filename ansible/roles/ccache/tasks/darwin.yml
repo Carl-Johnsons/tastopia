@@ -1,0 +1,5 @@
+---
+- name: Install ccache
+  community.general.homebrew:
+    name: ccache
+    state: present
