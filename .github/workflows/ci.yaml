@@ -118,6 +118,139 @@ jobs:
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
           IDENTITY_FQDN: ${{ secrets.IDENTITY_FQDN }}
           API_GATEWAY_FQDN: ${{ secrets.API_GATEWAY_FQDN }}
+  test:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    needs: build_app
+    env:
+      MAESTRO_VERSION: "1.1.14"
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Maestro runner cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.maestro-runner
+          key: maestro-runner-${{ runner.os }}-${{ env.MAESTRO_VERSION }}
+      
+      - name: Install dependencies
+        run: |
+            ./scripts/ci/test/install-testing-deps.sh
+            if ! pipx list | rg -q 'package ansible-core'; then
+              pipx install --include-deps ansible-core
+            fi
+            pipx runpip ansible-core install requests
+            cd ansible
+            ./run-test.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Retrieve secrets
+        run: |
+          echo "INFISICAL_TOKEN=${INFISICAL_TOKEN}" > .env.local
+          ./scripts/env/pull-env.sh
+        env:
+          INFISICAL_TOKEN: ${{ secrets.INFISICAL_TOKEN }}
+
+      - name: Enable KVM group perms
+        if: runner.os == 'Linux'
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: false 
+
+      - name: AVD cache
+        uses: actions/cache@v5
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-27
+
+      - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 27
+          target: google_apis_playstore
+          profile: medium_phone
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching"
+
+      - name: Run tests
+        id: run_tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 27
+          target: google_apis_playstore
+          profile: medium_phone
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            ./scripts/ci/test/install-app.sh
+            ./scripts/ci/test/test-e2e.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+          API_GATEWAY_FQDN: ${{ secrets.API_GATEWAY_FQDN }}
+          E2E_TEST_USERNAME: ${{ secrets.E2E_TEST_USERNAME }}
+          E2E_TEST_PASSWORD: ${{ secrets.E2E_TEST_PASSWORD }}
+
+      - name: Deploy test reports
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./app/client/mobile/reports
+          user_name: 'github-actions[bot]'
+          user_email: 'github-actions[bot]@users.noreply.github.com'
+          keep_files: true
+
+      - name: E2E report summary
+        if: always()
+        run: |
+          latest_report_dir=$(ls -1 app/client/mobile/reports/ 2>/dev/null | sort | tail -n 1)
+
+          if [ "${{ steps.run_tests.outcome }}" = "success" ]; then
+            STATUS="✅ Success"
+          else
+            STATUS="❌ Failed"
+          fi
+
+          REPORT_LINK="No report found"
+          DIR="N/A"
+
+          if [ -n "$latest_report_dir" ] && [ -d "app/client/mobile/reports/$latest_report_dir" ]; then
+            REPORT_LINK="[View report](https://carl-johnsons.github.io/tastopia/$latest_report_dir/report.html)"
+            DIR="\`$latest_report_dir\`"
+          fi
+
+          {
+            echo "### E2E Test Report"
+            echo ""
+            echo "| Status | Report | Directory |"
+            echo "|--------|--------|-----------|"
+            echo "| $STATUS | $REPORT_LINK | $DIR |"
+          } >> "$GITHUB_STEP_SUMMARY"
     outputs:
       sha: ${{ steps.build_serv.outputs.sha }}
     env:
