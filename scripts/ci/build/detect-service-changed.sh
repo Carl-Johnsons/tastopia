@@ -1,9 +1,12 @@
 #!/bin/bash
 
-set -x
+set -euo pipefail
+
+: "${BRANCH:?BRANCH is required}"
 
 SERVICES_JSON='{
     "website": ["app/client/website"],
+    "mobile": ["app/client/mobile"],
     "api-gateway": ["app/server/APIGateway"],
     "signalr": ["app/server/SignalRService"],
     "tracking-api": ["app/server/TrackingService"],

@@ -1,0 +1,12 @@
+---
+- name: Add infisical tap
+  become: false
+  community.general.homebrew_tap:
+    name: infisical/get-cli
+    state: present
+
+- name: Install Infisical
+  become: false
+  community.general.homebrew:
+    name: infisical/get-cli/infisical
+    state: present

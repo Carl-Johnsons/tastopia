@@ -144,12 +144,20 @@ fi
 # Build each service
 echo Building...
 for service in "${services[@]}"; do
+  if ! printf '%s\n' "${default_services[@]}" | grep -qxF "$service"; then
+    continue
+  fi
+
   echo "Building \"${service}\"..."
   docker compose build ${service} --build-arg CONTRACT_IMAGE=${repo}-contract:$CONTRACT_HASH 2>&1 | tee build.log
 done
 
 # Tag each built image into the same repo with different tags
 for service in "${services[@]}"; do
+  if ! printf '%s\n' "${default_services[@]}" | grep -qxF "$service"; then
+    continue
+  fi
+
   serviceRepo=${repo}-${service}
   echo "Pushing to repo ${serviceRepo} with tag ${commitHash}"
   docker tag ${project}-${service} ${serviceRepo}:${commitHash}
