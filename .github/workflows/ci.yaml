@@ -269,7 +269,7 @@ jobs:
         id: install_deps
         run: |
           echo "Begin install deps"
-          ./scripts/ci/install-deps.sh
+          ./scripts/ci/build/install-deps.sh
           echo "End install deps"
 
       - name: Retrieve secrets

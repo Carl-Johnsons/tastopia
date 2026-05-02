@@ -9,6 +9,6 @@
           - collection
           - install
           - -r
-          - requirements.yml
+          - build-requirements.yml
       register: out
       changed_when: out.rc == 0
