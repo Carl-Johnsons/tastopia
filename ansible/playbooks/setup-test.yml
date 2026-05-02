@@ -1,0 +1,6 @@
+---
+- name: Setup test dependencies
+  become: true
+  hosts: localhost
+  roles:
+    - setup-test
