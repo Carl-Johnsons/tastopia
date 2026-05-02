@@ -1,4 +1,0 @@
-﻿namespace TrackingService.Domain.Responses;
-
-public class PaginatedUserViewRecipeDetailListResponse : BasePaginatedResponse<SimpleRecipeResponse, AdvancePaginatedMetadata>;
-public class PaginatedAdminActivityLogListResponse : BasePaginatedResponse<AdminActivityLogResponse, NumberedPaginatedMetadata>;

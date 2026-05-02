@@ -1,6 +1,0 @@
----
-- name: Setup build dependencies
-  become: true
-  hosts: localhost
-  roles:
-    - setup-build

@@ -1,9 +1,0 @@
-export const MAIN_PATH = "index",
-  COMMUNITY_PATH = "community",
-  SEARCH_PATH = "search",
-  CAPTURE_PATH = "capture",
-  NOTIFICATION_PATH = "notification",
-  MENU_PATH = "menu",
-  USER_PATH = "user",
-  VERIFY_IDENTIFIER_PATH = "verify-identifier",
-  ADD_IDENTIFIER_PATH = "add-identifier";
