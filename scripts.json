@@ -10,6 +10,8 @@
     "Kill service bus": "./scripts/docker/kill-mq.sh",
     "Drop all postgres databases": "./scripts/local/drop-all-postgres-databases.sh",
     "Drop all mongo databases": "./scripts/local/drop-all-mongo-databases.sh",
-    "Setup capturing service": "./scripts/local/setup-capture-service.sh"
+    "Setup capturing service": "./scripts/local/setup-capture-service.sh",
+    "Pull act secret": "./scripts/env/pull-env.sh act",
+    "Test CI": "./scripts/ci/test/test-ci.sh"
   }
 }

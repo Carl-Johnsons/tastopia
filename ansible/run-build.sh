@@ -8,4 +8,4 @@ echo "Install ansible plugins"
 ansible-playbook "$script_dir/playbooks/init-build-requirements.yml"
 
 echo "Run setup scripts"
-ansible-playbook -K "$script_dir/site-build.yml"
+ansible-playbook "$script_dir/site-build.yml"
