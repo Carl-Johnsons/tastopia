@@ -330,7 +330,15 @@ jobs:
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT
           bash ./scripts/docker/build-services.sh -c $SHORT_SHA -le "$ENV" ${{ needs.detect.outputs.services }}
-  setup-dev-env:
+        env:
+          API_GATEWAY_FQDN: ${{ secrets.API_GATEWAY_FQDN }}
+          API_GATEWAY_PORT: ${{ secrets.API_GATEWAY_PORT }}
+          API_GATEWAY_SCHEME: ${{ secrets.API_GATEWAY_SCHEME }}
+          WEBSITE_FQDN: ${{ secrets.WEBSITE_FQDN }}
+          WEBSITE_SCHEME: ${{ secrets.WEBSITE_SCHEME }}
+          IDENTITY_FQDN: ${{ secrets.IDENTITY_FQDN }}
+          DUENDE_IDS6_ID: ${{ secrets.DUENDE_IDS6_ID }}
+  setup_dev_env:
     name: Setup dev environment manifests in gitOps repository
     if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'staging'
     runs-on: ubuntu-latest
@@ -429,7 +437,13 @@ jobs:
 
         for SERVICE in ${{ needs.detect.outputs.services }}; do
           echo "Updating $SERVICE..."
-          IMAGE="taiduc113/tastopia-${SERVICE}:${{ needs.build_backend.outputs.sha }}"
+          TAG="${{ needs.build_backend.outputs.sha }}"
+
+          if [ "$SERVICE" = "website" ]; then
+            TAG="${ENV}-${TAG}"
+          fi
+
+          IMAGE="taiduc113/tastopia-${SERVICE}:${TAG}"
           sed -i "s|taiduc113/tastopia-${SERVICE}:.*|${IMAGE}|g" "$VALUES_FILE"
         done
       env:
