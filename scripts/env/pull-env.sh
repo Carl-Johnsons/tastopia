@@ -141,14 +141,53 @@ pull_all_services() {
     xargs -P0 -I {} bash -c 'pull_env_file $@' _ {} $env
 }
 
+pull_act_secret() {
+  if [ ! -f ".env.ci" ]; then
+    cat <<EOF > .env.ci
+# Local environment variables
+# Get your infisical service token on your provided account
+INFISICAL_CI_TOKEN=''
+EOF
+    err_token_missing
+    exit
+  fi
+
+  source .env.ci
+
+  if [ -z "${INFISICAL_CI_TOKEN}" ]; then
+    printf "\n\t${LIGHT_RED}*** Infisical token is missing ❌${NC} *** . Please fill the value in .env.ci\n\n"
+    exit 1
+  fi
+
+  local folder_name="act"
+  local prefix_folder_path="/ci/"
+
+  PULLED_FILE=$(
+    INFISICAL_DISABLE_UPDATE_CHECK=true \
+    infisical export \
+      --token=$INFISICAL_CI_TOKEN \
+      --path=$prefix_folder_path$folder_name \
+      --env="dev" \
+    | sed -E "s/^([A-Z0-9_]+)='([0-9]+)'$/\1=\2/" \
+    | sed -E "s/^([A-Z0-9_]+)='(.*)'$/\1=\2/"
+  )
+  if [ -n "$PULLED_FILE" ]; then
+    echo "$PULLED_FILE" > ".secrets" 
+  fi
+}
+
 generate_public_env() {
-  ./scripts/env/generate-public-env.sh $1
+  bash ./scripts/env/generate-public-env.sh $1
 }
 
 export -f pull_env_file
 export INFISICAL_TOKEN sFlag PLATFORM
 
 case "$TARGET_ENV" in
+  "act")
+    printf "${INFO}Pulling act secrets...${NC}\n"
+    pull_act_secret
+    ;;
   "dev"|"staging"|"production")
     pull_all_services "$TARGET_ENV"
     generate_public_env "$TARGET_ENV"
