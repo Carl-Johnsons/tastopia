@@ -10,7 +10,7 @@ RUN --mount=source=$BASE_WEBSITE_PATH/package.json,target=package.json \
 
 FROM deps AS builder
 ARG BASE_WEBSITE_PATH=app/client/website
-ARG BUILD_ENV
+ARG BUILD_ENV=production
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 

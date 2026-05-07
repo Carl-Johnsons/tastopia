@@ -4,6 +4,7 @@
 set -eo pipefail
 
 ENV="staging"
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 
 while getopts le:c:h OPTS; do
   case $OPTS in
@@ -60,7 +61,6 @@ shift $((OPTIND - 1))
 export ENV
 
 if [ -n "$lFlag" ]; then
-  SCRIPT_DIR=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
   SUFFIX="" 
 
   if [ "$ENV" != "dev" ]; then
@@ -68,7 +68,7 @@ if [ -n "$lFlag" ]; then
   fi
 
   set -a
-  . "$SCRIPT_DIR/../../.env$SUFFIX"
+  . "$script_dir/../../.env$SUFFIX"
   set +a
   echo "loaded .env$SUFFIX file"
   unset SUFFIX
@@ -146,6 +146,11 @@ echo Building...
 for service in "${services[@]}"; do
   if ! printf '%s\n' "${default_services[@]}" | grep -qxF "$service"; then
     continue
+  fi
+
+  if [ "$service" = "website" ] && [ "$ENV" = "dev" ]; then
+    echo "Preparing website env for dev build..."
+    "$script_dir/../ci/build/setup-website-env.sh"
   fi
 
   echo "Building \"${service}\"..."
