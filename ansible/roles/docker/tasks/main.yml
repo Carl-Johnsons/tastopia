@@ -1,3 +1,6 @@
 ---
+- name: Skip docker role in act
+  meta: end_role
+  when: lookup('env', 'ACT') == 'true'
 - name: Load OS-specific tasks
   include_tasks: '{{ ansible_os_family | lower }}.yml'
