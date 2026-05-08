@@ -149,8 +149,8 @@ jobs:
         )
       ) != 'production' &&
       (needs.build_app.result == 'success' || needs.build_app.result == 'skipped') && 
-      (needs.update-backend-manifest.result == 'success' || needs.update-backend-manifest.result == 'skipped') && 
-      !(needs.build_app.result == 'skipped' && needs.update-backend-manifest.result == 'skipped')
+      (needs.update_backend_manifest.result == 'success' || needs.update_backend_manifest.result == 'skipped') && 
+      !(needs.build_app.result == 'skipped' && needs.update_backend_manifest.result == 'skipped')
     env:
       MAESTRO_VERSION: "1.1.14"
     permissions:
@@ -209,7 +209,7 @@ jobs:
 
       - name: AVD cache
         uses: actions/cache@v5
-        id: avd-cache
+        id: avd_cache
         with:
           path: |
             ~/.android/avd/*
@@ -217,7 +217,7 @@ jobs:
           key: avd-27
 
       - name: Create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
+        if: steps.avd_cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 27
@@ -411,14 +411,14 @@ jobs:
           -m "PR #${PR_NUMBER}: ${PR_TITLE} (${PR_URL})" \
           || echo "No changes"
         git push
-  update-backend-manifest:
+  update_backend_manifest:
     name: Update service manifest in gitOps repository
     runs-on: ubuntu-latest
     needs: [detect, build_backend, setup_dev_env]
     if: >-
       always() &&
       needs.build_backend.result == 'success' &&
-      (needs.setup-dev-env.result == 'success' || needs.setup-dev-env.result == 'skipped')
+      (needs.setup_dev_env.result == 'success' || needs.setup_dev_env.result == 'skipped')
     outputs:
       commit_sha: ${{ steps.commit_push.outputs.commit_sha }}
     steps:
@@ -478,15 +478,15 @@ jobs:
         git commit -m "Update image to ${{ needs.build_backend.outputs.sha }}" || echo "No changes"
         git push
         echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-  revert-manifest:
+  revert_manifest:
     name: Revert manifest update if tests fail
     runs-on: ubuntu-latest
     needs: [update_backend_manifest, test]
     if: >-
       always() &&
       needs.test.result == 'failure' && 
-      needs.update-backend-manifest.result == 'success' && 
-      needs.update-backend-manifest.outputs.commit_sha != ''
+      needs.update_backend_manifest.result == 'success' && 
+      needs.update_backend_manifest.outputs.commit_sha != ''
     steps:
     - name: Checkout GitOps repo
       uses: actions/checkout@v6
@@ -499,6 +499,6 @@ jobs:
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git revert ${{ needs.update-backend-manifest.outputs.commit_sha }} --no-edit
+        git revert ${{ needs.update_backend_manifest.outputs.commit_sha }} --no-edit
         git commit --amend -m "$(git log -1 --pretty=%B) due to failed test"
         git push
