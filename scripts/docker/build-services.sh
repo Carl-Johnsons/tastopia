@@ -141,30 +141,37 @@ if [ "$CONTRACT_REBUILT" -eq 1 ]; then
   done
 fi
 
-# Build each service
-echo Building...
-for service in "${services[@]}"; do
-  if ! printf '%s\n' "${default_services[@]}" | grep -qxF "$service"; then
-    continue
-  fi
-
-  if [ "$service" = "website" ] && [ "$ENV" = "dev" ]; then
-    echo "Preparing website env for dev build..."
-    "$script_dir/../ci/build/setup-website-env.sh"
-  fi
-
-  echo "Building \"${service}\"..."
-  docker compose build ${service} --build-arg CONTRACT_IMAGE=${repo}-contract:$CONTRACT_HASH 2>&1 | tee build.log
-done
-
-# Tag each built image into the same repo with different tags
+# Tag and push built images if they don't already exist on Docker Hub
 for service in "${services[@]}"; do
   if ! printf '%s\n' "${default_services[@]}" | grep -qxF "$service"; then
     continue
   fi
 
   serviceRepo=${repo}-${service}
-  echo "Pushing to repo ${serviceRepo} with tag ${commitHash}"
-  docker tag ${project}-${service} ${serviceRepo}:${commitHash}
-  docker push ${serviceRepo}:${commitHash}
+
+  if [ "$service" = "website" ]; then
+    tag="${ENV}-${commitHash}"
+  else
+    tag="${commitHash}"
+  fi
+
+  IMAGE="${serviceRepo}:${tag}"
+
+  if docker manifest inspect "$IMAGE" > /dev/null 2>&1; then
+    echo "Image ${IMAGE} already exists on Docker Hub → skipping build and push"
+    continue
+  fi
+
+  echo "Building and pushing \"${service}\" to ${IMAGE}..."
+  
+  if [ "$service" = "website" ] && [ "$ENV" = "dev" ]; then
+    echo "Preparing website env for dev build..."
+    "$script_dir/../ci/build/setup-website-env.sh"
+  fi
+
+  docker compose build ${service} --build-arg CONTRACT_IMAGE=${repo}-contract:$CONTRACT_HASH 2>&1 | tee build.log
+  
+  echo "Pushing ${IMAGE}..."
+  docker tag ${project}-${service} ${IMAGE}
+  docker push ${IMAGE}
 done
