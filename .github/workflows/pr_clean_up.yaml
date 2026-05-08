@@ -8,7 +8,7 @@ on:
       - closed
 
 jobs:
-  update-manifest:
+  update_manifest:
     name: Clean up manifest in gitOps repository
     runs-on: ubuntu-latest
     env:
