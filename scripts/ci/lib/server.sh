@@ -3,6 +3,7 @@
 set -euo pipefail
 
 ENV="${ENV:-dev}"
+FQDN_PREFIX="${HOST_PREFIX:+$HOST_PREFIX-}${ENV:+$ENV-}"
  
 get_api_endpoint() {
   : "${API_GATEWAY_FQDN:?API_GATEWAY_FQDN is missing}"
@@ -14,9 +15,9 @@ get_api_endpoint() {
   local endpoint
 
   if [ "$ENV" = "dev" ]; then
-    endpoint="https://pr-$PR_NUMBER-$API_GATEWAY_FQDN"
+    endpoint="https://pr-$PR_NUMBER-${FQDN_PREFIX}$API_GATEWAY_FQDN"
   else 
-    endpoint="https://$API_GATEWAY_FQDN"
+    endpoint="https://${FQDN_PREFIX}$API_GATEWAY_FQDN"
   fi
 
   echo "$endpoint"
@@ -32,21 +33,21 @@ get_api_fqdn() {
   local fqdn
 
   if [ "$ENV" = "dev" ]; then
-    fqdn="pr-$PR_NUMBER-$API_GATEWAY_FQDN"
+    fqdn="pr-$PR_NUMBER-${FQDN_PREFIX}$API_GATEWAY_FQDN"
   else 
-    fqdn="$API_GATEWAY_FQDN"
+    fqdn="${FQDN_PREFIX}$API_GATEWAY_FQDN"
   fi
 
   echo "$fqdn"
 }
 
 get_api_port() {
-  local port="${API_PORT:-443}"
+  local port="${API_GATEWAY_PORT:-443}"
   echo "$port"
 }
 
 get_api_scheme() {
-  local scheme="${API_SCHEME:-https}"
+  local scheme="${API_GATEWAY_SCHEME:-https}"
   echo "$scheme"
 }
 
@@ -61,9 +62,9 @@ get_client_base_url() {
   local fqdn
 
   if [ "$ENV" = "dev" ]; then
-    fqdn="pr-$PR_NUMBER-$WEBSITE_FQDN"
+    fqdn="pr-$PR_NUMBER-${FQDN_PREFIX}$WEBSITE_FQDN"
   else
-    fqdn="$WEBSITE_FQDN"
+    fqdn="${FQDN_PREFIX}$WEBSITE_FQDN"
   fi
 
   echo "${scheme}://$fqdn"
@@ -79,9 +80,9 @@ get_identity_discovery_url() {
   local endpoint
 
   if [ "$ENV" = "dev" ]; then
-    endpoint="https://pr-$PR_NUMBER-$IDENTITY_FQDN"
+    endpoint="https://pr-$PR_NUMBER-${FQDN_PREFIX}$IDENTITY_FQDN"
   else 
-    endpoint="https://$IDENTITY_FQDN"
+    endpoint="https://${FQDN_PREFIX}$IDENTITY_FQDN"
   fi
 
   echo "$endpoint"

@@ -55,6 +55,67 @@ load_env() {
   unset suffix
 }
 
+check_argocd_sync() {
+  : "${ARGOCD_AUTH_TOKEN:?ARGOCD_AUTH_TOKEN is required}"
+  : "${ARGOCD_SERVER_NAME:?ARGOCD_SERVER_NAME is required}"
+  : "${BUILT_IMAGES:?BUILT_IMAGES is required}"
+
+  local app_name
+  if [ "$ENV" = "dev" ]; then
+    : "${PR_NUMBER:?PR_NUMBER is required for dev environment}"
+    app_name="tastopia-pr-$PR_NUMBER"
+  elif [ "$ENV" = "staging" ] || [ "$ENV" = "production" ]; then
+    app_name="tastopia-$ENV"
+  else
+    echo "Invalid environment: $ENV"
+    exit 1
+  fi
+
+  echo "Checking ArgoCD sync state for $app_name..."
+
+  local timeout=300
+  local interval=10
+  local elapsed=0
+
+  IFS=',' read -ra images <<< "$BUILT_IMAGES"
+
+  while true; do
+    local app_yaml
+    if ! app_yaml=$(argocd app get "$app_name" -o yaml 2>/dev/null); then
+      echo "Failed to get ArgoCD app info for $app_name"
+    else
+      local all_deployed=true
+      for image in "${images[@]}"; do
+        if ! echo "$app_yaml" | yq -e ".status.summary.images | any_c(. == \"$image\")" > /dev/null 2>&1; then
+          echo "Image $image not yet deployed in $app_name"
+          all_deployed=false
+          break
+        fi
+      done
+
+      local sync_status=$(echo "$app_yaml" | yq '.status.sync.status')
+
+      if [ "$all_deployed" = true ] && [ "$sync_status" = "Synced" ]; then
+        echo "All built images are deployed and app $app_name is Synced"
+        return 0
+      fi
+
+      if [ "$all_deployed" = true ]; then
+        echo "Images are deployed but app $app_name is still $sync_status..."
+      fi
+    fi
+
+    if [ "$elapsed" -ge "$timeout" ]; then
+      echo "Timed out waiting for ArgoCD sync for $app_name"
+      return 1
+    fi
+
+    echo "Waiting for images to be deployed... ($((timeout - elapsed))s remaining)"
+    sleep "$interval"
+    elapsed=$((elapsed + interval))
+  done
+}
+
 wait_for_server() {
   local endpoint
 

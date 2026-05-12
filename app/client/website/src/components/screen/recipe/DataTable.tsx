@@ -109,6 +109,7 @@ export default function Table() {
           onChange={handleSearch}
           isLoading={isLoading || isFetching}
           placeholder={t("search")}
+          inputTestId='recipes-search-input'
         />
         <p className='text-black_white base-medium flex w-full flex-col gap-4'>
           {t("title")}
@@ -116,25 +117,27 @@ export default function Table() {
       </div>
 
       <DataTableProvider value={contextValue}>
-        <DataTable
-          customStyles={tableStyles}
-          columns={columns}
-          data={data}
-          responsive
-          striped
-          highlightOnHover
-          progressPending={isLoading || isFetching}
-          progressComponent={<Loader />}
-          noDataComponent={<NoRecord />}
-          pagination
-          paginationServer
-          onChangeRowsPerPage={handleChangeRowPerPage}
-          onChangePage={handleChangePage}
-          paginationTotalRows={totalRow}
-          sortServer
-          onSort={onSort}
-          paginationComponentOptions={tableLocale}
-        />
+        <div data-testid='recipes-data-table'>
+          <DataTable
+            customStyles={tableStyles}
+            columns={columns}
+            data={data}
+            responsive
+            striped
+            highlightOnHover
+            progressPending={isLoading || isFetching}
+            progressComponent={<Loader />}
+            noDataComponent={<NoRecord />}
+            pagination
+            paginationServer
+            onChangeRowsPerPage={handleChangeRowPerPage}
+            onChangePage={handleChangePage}
+            paginationTotalRows={totalRow}
+            sortServer
+            onSort={onSort}
+            paginationComponentOptions={tableLocale}
+          />
+        </div>
       </DataTableProvider>
     </>
   );
