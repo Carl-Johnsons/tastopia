@@ -47,7 +47,7 @@ VALID_PREV=""
 
 if [ -n "$PREV" ]; then
   while read sha; do
-    if git merge-base --is-ancestor "$sha" HEAD; then
+    if git merge-base --is-ancestor "$sha" HEAD &>/dev/null; then
       VALID_PREV="$sha"
       break
     fi
@@ -74,7 +74,7 @@ for svc in $(echo $SERVICES_JSON | jq -r 'keys[]'); do
   done
 done
 
-if [ -z $RESULT ]; then
+if [ -z "$RESULT" ]; then
   echo "No services changed"
   exit 0
 fi
