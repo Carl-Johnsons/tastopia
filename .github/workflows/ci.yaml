@@ -515,6 +515,7 @@ jobs:
         if [ ! -f "$VALUES_FILE" ]; then
           echo "Values file does not exist, creating..."
           cp "k8s/helm/values-staging.yaml" "$VALUES_FILE"
+          yq -i '.deployEnv = "dev"' "$VALUES_FILE"
         fi
     - name: Commit & push
       run: |
