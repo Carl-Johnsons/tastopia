@@ -3,3 +3,11 @@
 .flaskenv*
 !.env.project
 !.env.vault
+node_modules/
+
+# E2E test artifacts
+/test-results/
+/cypress/screenshots/
+/cypress/videos/
+/cypress/downloads/
+/cypress/reports/
