@@ -105,6 +105,7 @@ const DataTable = () => {
           onChange={handleSearch}
           isLoading={isLoading}
           placeholder={t("search")}
+          inputTestId='tags-search-input'
         />
         <p className='text-black_white base-medium flex w-full flex-col gap-4'>
           {t("title")}
@@ -115,16 +116,20 @@ const DataTable = () => {
             open={openCreateDialog}
             onOpenChange={setOpenCreateDialog}
           >
-            <DialogTrigger asChild>
-              <Button className='text-white_black bg-primary hover:bg-secondary'>
-                <Plus />
-                <p className='mt-1 max-sm:hidden'>{t("actions.create")}</p>
-              </Button>
-            </DialogTrigger>
-            <DialogContent
-              className='bg-white_black200 max-h-[90vh] overflow-y-scroll sm:max-w-[525px]'
-              onPointerDownOutside={e => e.preventDefault()}
-              style={{ maxHeight: height - 2 * PADDING_Y }}
+              <DialogTrigger asChild>
+                <Button
+                  data-testid='tags-create-btn'
+                  className='text-white_black bg-primary hover:bg-secondary'
+                >
+                  <Plus />
+                  <p className='mt-1 max-sm:hidden'>{t("actions.create")}</p>
+                </Button>
+              </DialogTrigger>
+              <DialogContent
+                data-testid='tags-create-dialog'
+                className='bg-white_black200 max-h-[90vh] overflow-y-scroll sm:max-w-[525px]'
+                onPointerDownOutside={e => e.preventDefault()}
+                style={{ maxHeight: height - 2 * PADDING_Y }}
             >
               <DialogHeader>
                 <DialogTitle className='text-black_white'>
@@ -160,23 +165,25 @@ const DataTable = () => {
         </div>
       </div>
 
-      <ReactDataTable
-        data={tags}
-        columns={tagsColumns(t, currentLanguage)}
-        customStyles={tableStyles}
-        striped
-        highlightOnHover
-        progressPending={isLoading}
-        pagination
-        paginationServer
-        paginationTotalRows={data?.metadata?.totalRow}
-        onChangePage={handlePageChange}
-        onChangeRowsPerPage={handlePerRowsChange}
-        onSort={handleSort}
-        progressComponent={<Loader />}
-        noDataComponent={<NoRecord />}
-        paginationComponentOptions={tableLocale}
-      />
+      <div data-testid='tags-data-table'>
+        <ReactDataTable
+          data={tags}
+          columns={tagsColumns(t, currentLanguage)}
+          customStyles={tableStyles}
+          striped
+          highlightOnHover
+          progressPending={isLoading}
+          pagination
+          paginationServer
+          paginationTotalRows={data?.metadata?.totalRow}
+          onChangePage={handlePageChange}
+          onChangeRowsPerPage={handlePerRowsChange}
+          onSort={handleSort}
+          progressComponent={<Loader />}
+          noDataComponent={<NoRecord />}
+          paginationComponentOptions={tableLocale}
+        />
+      </div>
     </>
   );
 };

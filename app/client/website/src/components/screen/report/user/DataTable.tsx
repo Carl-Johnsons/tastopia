@@ -98,6 +98,7 @@ const DataTable = () => {
           onChange={handleSearch}
           isLoading={isLoading}
           placeholder={t("search")}
+          inputTestId='report-users-search-input'
         />
         <div className='flex gap-2 self-start'>
           <span className='text-gray-500'>{t("title")}</span>
@@ -105,39 +106,41 @@ const DataTable = () => {
           <span className='text-black_white'>{t("subtitle")}</span>
         </div>
       </div>
-      <ReactDataTable
-        columns={reportColumns(t).map(column => {
-          if (column.name === t("columns.action")) {
-            return {
-              ...column,
-              cell: (report: IAdminUserReportResponse) => (
-                <ActionButtons
-                  key={report.reportId}
-                  reportId={report.reportId}
-                  reportedId={report.reportedId}
-                  status={report.status as ReportStatus}
-                  onStatusUpdate={handleStatusUpdate}
-                />
-              )
-            };
-          }
-          return column;
-        })}
-        data={tableData.slice(0, limit)}
-        customStyles={tableStyles}
-        striped
-        highlightOnHover
-        progressPending={isLoading}
-        pagination
-        paginationServer
-        paginationTotalRows={data?.metadata?.totalRow}
-        onChangePage={handlePageChange}
-        onChangeRowsPerPage={handlePerRowsChange}
-        onSort={handleSort}
-        progressComponent={<Loader />}
-        noDataComponent={<NoRecord />}
-        paginationComponentOptions={tableLocale}
-      />
+      <div data-testid='report-users-data-table'>
+        <ReactDataTable
+          columns={reportColumns(t).map(column => {
+            if (column.name === t("columns.action")) {
+              return {
+                ...column,
+                cell: (report: IAdminUserReportResponse) => (
+                  <ActionButtons
+                    key={report.reportId}
+                    reportId={report.reportId}
+                    reportedId={report.reportedId}
+                    status={report.status as ReportStatus}
+                    onStatusUpdate={handleStatusUpdate}
+                  />
+                )
+              };
+            }
+            return column;
+          })}
+          data={tableData.slice(0, limit)}
+          customStyles={tableStyles}
+          striped
+          highlightOnHover
+          progressPending={isLoading}
+          pagination
+          paginationServer
+          paginationTotalRows={data?.metadata?.totalRow}
+          onChangePage={handlePageChange}
+          onChangeRowsPerPage={handlePerRowsChange}
+          onSort={handleSort}
+          progressComponent={<Loader />}
+          noDataComponent={<NoRecord />}
+          paginationComponentOptions={tableLocale}
+        />
+      </div>
     </>
   );
 };

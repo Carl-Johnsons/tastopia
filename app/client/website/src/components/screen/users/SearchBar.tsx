@@ -5,9 +5,10 @@ type Props = {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   isLoading: boolean;
   placeholder?: string;
+  inputTestId?: string;
 };
 
-export default function SearchBar({ onChange, isLoading, placeholder }: Props) {
+export default function SearchBar({ onChange, isLoading, placeholder, inputTestId }: Props) {
   const ref = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -25,6 +26,7 @@ export default function SearchBar({ onChange, isLoading, placeholder }: Props) {
         ref={ref}
         type='text'
         placeholder={placeholder || "Search by username, name, gmail,..."}
+        data-testid={inputTestId}
         className='w-full bg-transparent text-primary outline-none placeholder:text-primary/50'
         onChange={onChange}
         onFocus={() => setIsFocused(true)}

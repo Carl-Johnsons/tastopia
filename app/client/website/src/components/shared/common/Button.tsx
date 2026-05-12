@@ -100,6 +100,7 @@ export const InteractiveButton = ({
     <TooltipProvider delayDuration={500}>
       <Tooltip>
         <TooltipTrigger
+          {...props}
           onClick={onClick}
           disabled={disabled}
           className={cn(

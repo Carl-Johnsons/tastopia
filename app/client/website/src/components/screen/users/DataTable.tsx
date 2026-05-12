@@ -95,43 +95,46 @@ const DataTable = () => {
           onChange={handleSearch}
           isLoading={isLoading}
           placeholder={t("search")}
+          inputTestId='users-search-input'
         />
         <p className='text-black_white base-medium flex w-full flex-col gap-4'>
           {t("title")}
         </p>
       </div>
-      <ReactDataTable
-        columns={usersColumns(t).map(column => {
-          if (column.name === t("columns.action")) {
-            return {
-              ...column,
-              cell: (user: IAdminGetUserResponse) => (
-                <ActionButtons
-                  key={user.accountId + user.isAccountActive}
-                  accountId={user.accountId}
-                  isActive={user.isAccountActive}
-                  onStatusUpdate={handleStatusUpdate}
-                />
-              )
-            };
-          }
-          return column;
-        })}
-        data={tableData}
-        customStyles={tableStyles}
-        striped
-        highlightOnHover
-        progressPending={isLoading}
-        pagination
-        paginationServer
-        paginationTotalRows={data?.metadata?.totalRow}
-        onChangePage={handlePageChange}
-        onChangeRowsPerPage={handlePerRowsChange}
-        onSort={handleSort}
-        progressComponent={<Loader />}
-        noDataComponent={<NoRecord />}
-        paginationComponentOptions={tableLocale}
-      />
+      <div data-testid='users-data-table'>
+        <ReactDataTable
+          columns={usersColumns(t).map(column => {
+            if (column.name === t("columns.action")) {
+              return {
+                ...column,
+                cell: (user: IAdminGetUserResponse) => (
+                  <ActionButtons
+                    key={user.accountId + user.isAccountActive}
+                    accountId={user.accountId}
+                    isActive={user.isAccountActive}
+                    onStatusUpdate={handleStatusUpdate}
+                  />
+                )
+              };
+            }
+            return column;
+          })}
+          data={tableData}
+          customStyles={tableStyles}
+          striped
+          highlightOnHover
+          progressPending={isLoading}
+          pagination
+          paginationServer
+          paginationTotalRows={data?.metadata?.totalRow}
+          onChangePage={handlePageChange}
+          onChangeRowsPerPage={handlePerRowsChange}
+          onSort={handleSort}
+          progressComponent={<Loader />}
+          noDataComponent={<NoRecord />}
+          paginationComponentOptions={tableLocale}
+        />
+      </div>
     </>
   );
 };
