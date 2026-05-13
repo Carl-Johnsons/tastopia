@@ -1,7 +1,11 @@
 #!/bin/bash
 
-MSG_FILE=$1
-MSG=$(cat "$MSG_FILE")
+MSG_FILE="$1"
+if [[ -z "$MSG_FILE" || ! -r "$MSG_FILE" ]]; then
+  echo "❌ commit-msg hook did not receive a readable message file."
+  exit 1
+fi
+MSG="$(cat "$MSG_FILE")"
 
 # Allow git fixup!/squash!/amend! commits
 if [[ $MSG =~ ^(fixup|squash|amend)!\ .+ ]]; then
