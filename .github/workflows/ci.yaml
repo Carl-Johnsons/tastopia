@@ -250,6 +250,9 @@ jobs:
           API_GATEWAY_FQDN: ${{ secrets.API_GATEWAY_FQDN }}
           E2E_TEST_USERNAME: ${{ secrets.MOBILE_E2E_TEST_USERNAME }}
           E2E_TEST_PASSWORD: ${{ secrets.MOBILE_E2E_TEST_PASSWORD }}
+          BUILT_IMAGES: ${{ needs.update_backend_manifest.outputs.images }}
+          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
 
       - name: Deploy test reports
         if: always()
@@ -341,6 +344,9 @@ jobs:
           API_GATEWAY_FQDN: ${{ secrets.API_GATEWAY_FQDN }}
           E2E_TEST_USERNAME: ${{ secrets.WEBSITE_E2E_TEST_USERNAME }}
           E2E_TEST_PASSWORD: ${{ secrets.WEBSITE_E2E_TEST_PASSWORD }}
+          BUILT_IMAGES: ${{ needs.update_backend_manifest.outputs.images }}
+          ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
+          ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
 
       - name: Prepare website report
         if: always()
@@ -537,6 +543,7 @@ jobs:
       (needs.setup_dev_env.result == 'success' || needs.setup_dev_env.result == 'skipped')
     outputs:
       commit_sha: ${{ steps.commit_push.outputs.commit_sha }}
+      images: ${{ steps.update_image.outputs.images }}
     steps:
     - name: Checkout GitOps repo
       uses: actions/checkout@v6
@@ -545,6 +552,7 @@ jobs:
         token: ${{ secrets.GITOPS_REPO_TOKEN }}
         ref: improve-ci
     - name: Update image tag
+      id: update_image
       run: |
         #!/bin/bash
         
@@ -570,7 +578,12 @@ jobs:
           exit 1
         fi
 
+        IMAGES=""
         for SERVICE in ${{ needs.detect.outputs.services }}; do
+          if [ "$SERVICE" = "mobile" ]; then
+            continue
+          fi
+
           echo "Updating $SERVICE..."
           TAG="${{ needs.build_backend.outputs.sha }}"
 
@@ -580,7 +593,9 @@ jobs:
 
           IMAGE="taiduc113/tastopia-${SERVICE}:${TAG}"
           sed -i "s|taiduc113/tastopia-${SERVICE}:.*|${IMAGE}|g" "$VALUES_FILE"
+          IMAGES="${IMAGES:+$IMAGES,}$IMAGE"
         done
+        echo "images=$IMAGES" >> $GITHUB_OUTPUT
       env:
         PR_TITLE: ${{ github.event.pull_request.title }}
         PR_URL: ${{ github.event.pull_request.html_url }}

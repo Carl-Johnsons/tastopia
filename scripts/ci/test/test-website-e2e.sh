@@ -6,6 +6,7 @@ script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 repo_root="$(cd -- "$script_dir/../../.." &> /dev/null && pwd)"
 
 . "$script_dir/../lib/server.sh"
+. "$script_dir/wait-for-backend.sh"
 
 ENV="${ENV:-dev}"
 
@@ -24,35 +25,7 @@ load_env() {
   set +a
 }
 
-wait_for_website() {
-  local endpoint
-
-  if ! endpoint="$(get_client_base_url)"; then
-    echo "Failed to get website endpoint"
-    exit 1
-  fi
-
-  local timeout=120
-  local interval=2
-  local elapsed=0
-
-  until curl -fsL --connect-timeout 2 --max-time 5 "$endpoint" >/dev/null; do
-    elapsed=$((elapsed + interval))
-
-    if [ "$elapsed" -ge "$timeout" ]; then
-      echo "Timed out waiting for website"
-      exit 1
-    fi
-
-    echo "Waiting for website..."
-    sleep "$interval"
-  done
-
-  echo "Website is online"
-}
-
 load_env
-bash "$script_dir/wait-for-backend.sh"
 wait_for_website
 
 export WEBSITE_URL="$(get_client_base_url)"

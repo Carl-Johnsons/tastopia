@@ -1,0 +1,10 @@
+---
+- name: Check if argocd exists
+  ansible.builtin.command: command -v argocd
+  register: check
+  changed_when: false
+  failed_when: false
+
+- name: Load OS-specific tasks
+  include_tasks: '{{ ansible_os_family | lower }}.yml'
+  when: check.rc != 0
