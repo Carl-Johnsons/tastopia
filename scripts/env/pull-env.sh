@@ -22,7 +22,7 @@ while getopts psh OPTS; do
       ;;
     h) cat <<EOF
 
-Usage: $0 [options] [dev|staging|production]
+Usage: $0 [options] [act|dev|staging|production]
 
 Options:
   -p    Fetch all environments at once. This behavior only
@@ -37,7 +37,7 @@ EOF
       exit 0
       ;;
     ?) 
-      echo "Unknown flag. Usage: $0 [-psh] [dev|staging|production]"
+      echo "Unknown flag. Usage: $0 [-psh] [act|dev|staging|production]"
       exit 1
       ;;
   esac
@@ -211,7 +211,7 @@ case "$TARGET_ENV" in
     ;;
   *)
     # Invalid argument
-    printf "${DANGER}Invalid argument: '$TARGET_ENV'. Usage: $0 [-psh] [dev|staging|production]${NC}\n"
+    printf "${DANGER}Invalid argument: '$TARGET_ENV'. Usage: $0 [-psh] [act|dev|staging|production]${NC}\n"
     exit 1
     ;;
 esac
