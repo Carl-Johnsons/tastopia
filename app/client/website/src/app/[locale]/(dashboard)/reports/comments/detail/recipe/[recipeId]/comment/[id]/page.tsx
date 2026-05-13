@@ -11,9 +11,10 @@ import { Link } from "@/i18n/navigation";
 import { CommentDetailParamProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useMemo } from "react";
+import { useMemo, use } from "react";
 
-export default function Page({ params }: CommentDetailParamProps) {
+export default function Page(props: CommentDetailParamProps) {
+  const params = use(props.params);
   const { id, recipeId } = params;
   const lang = useLocale();
   const t = useTranslations("administerReportComments");

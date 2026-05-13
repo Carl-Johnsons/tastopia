@@ -6,7 +6,8 @@ import ProfileInfo from "@/components/screen/profile/ProfileInfo";
 import SomeThingWentWrong from "@/components/shared/common/Error";
 import { getLocale } from "next-intl/server";
 
-export default async function UserProfile({ params }: ParamsProps) {
+export default async function UserProfile(props: ParamsProps) {
+  const params = await props.params;
   try {
     const currentLanguage = await getLocale();
     const currentUserResponse = await getUserById(params.id);

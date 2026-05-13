@@ -8,6 +8,7 @@ export default function Unauthorized() {
         src='/assets/images/auth-figure.png'
         className='hidden sm:block'
         fill
+        sizes="(max-width: 640px) 0px, 50vw"
         alt=''
       />
       <div className='flex-center flex-col gap-4 p-8'>

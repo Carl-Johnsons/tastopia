@@ -15,6 +15,8 @@ import useLocaleTable from "@/hooks/table/useLocaleTable";
 import useActivityLogTableColumns from "@/hooks/table/useActivityLogTableColumns";
 import { IAdminActivityLogResponse } from "@/generated/interfaces/tracking.interface";
 import { useGetActivityLogs } from "@/api/tracking";
+import { StyleSheetManager } from "styled-components";
+import isValidProp from "@emotion/is-prop-valid";
 
 export default function Table() {
   const [limit, setLimit] = useState(10);
@@ -61,7 +63,10 @@ export default function Table() {
   }, []);
 
   const onSort = useCallback(
-    (selectedColumn: TableColumn<IAdminActivityLogResponse>, sortDirection: SortOrder) => {
+    (
+      selectedColumn: TableColumn<IAdminActivityLogResponse>,
+      sortDirection: SortOrder
+    ) => {
       if (!selectedColumn.name) return;
 
       const sortBy = columnFieldMap[selectedColumn.name as string];
@@ -126,25 +131,27 @@ export default function Table() {
         </div>
       </div>
 
-      <DataTable
-        customStyles={tableStyles}
-        columns={columns}
-        data={data}
-        responsive
-        striped
-        highlightOnHover
-        progressPending={isLoading || isFetching}
-        progressComponent={<Loader />}
-        noDataComponent={<NoRecord />}
-        pagination
-        paginationServer
-        paginationComponentOptions={tableLocale}
-        onChangeRowsPerPage={handleChangeRowPerPage}
-        onChangePage={handleChangePage}
-        paginationTotalRows={totalRow}
-        sortServer
-        onSort={onSort}
-      />
+      <StyleSheetManager shouldForwardProp={isValidProp}>
+        <DataTable
+          customStyles={tableStyles}
+          columns={columns}
+          data={data}
+          responsive
+          striped
+          highlightOnHover
+          progressPending={isLoading || isFetching}
+          progressComponent={<Loader />}
+          noDataComponent={<NoRecord />}
+          pagination
+          paginationServer
+          paginationComponentOptions={tableLocale}
+          onChangeRowsPerPage={handleChangeRowPerPage}
+          onChangePage={handleChangePage}
+          paginationTotalRows={totalRow}
+          sortServer
+          onSort={onSort}
+        />
+      </StyleSheetManager>
     </DataTableProvider>
   );
 }

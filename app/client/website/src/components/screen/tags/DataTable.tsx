@@ -25,6 +25,8 @@ import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import { useLocale, useTranslations } from "next-intl";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
+import { StyleSheetManager } from "styled-components";
+import isValidProp from '@emotion/is-prop-valid';
 
 const DataTable = () => {
   const t = useTranslations("administerTags");
@@ -116,20 +118,20 @@ const DataTable = () => {
             open={openCreateDialog}
             onOpenChange={setOpenCreateDialog}
           >
-              <DialogTrigger asChild>
-                <Button
-                  data-testid='tags-create-btn'
-                  className='text-white_black bg-primary hover:bg-secondary'
-                >
-                  <Plus />
-                  <p className='mt-1 max-sm:hidden'>{t("actions.create")}</p>
-                </Button>
-              </DialogTrigger>
-              <DialogContent
-                data-testid='tags-create-dialog'
-                className='bg-white_black200 max-h-[90vh] overflow-y-scroll sm:max-w-[525px]'
-                onPointerDownOutside={e => e.preventDefault()}
-                style={{ maxHeight: height - 2 * PADDING_Y }}
+            <DialogTrigger asChild>
+              <Button
+                data-testid='tags-create-btn'
+                className='text-white_black bg-primary hover:bg-secondary'
+              >
+                <Plus />
+                <p className='mt-1 max-sm:hidden'>{t("actions.create")}</p>
+              </Button>
+            </DialogTrigger>
+            <DialogContent
+              data-testid='tags-create-dialog'
+              className='bg-white_black200 max-h-[90vh] overflow-y-scroll sm:max-w-[525px]'
+              onPointerDownOutside={e => e.preventDefault()}
+              style={{ maxHeight: height - 2 * PADDING_Y }}
             >
               <DialogHeader>
                 <DialogTitle className='text-black_white'>
@@ -166,23 +168,25 @@ const DataTable = () => {
       </div>
 
       <div data-testid='tags-data-table'>
-        <ReactDataTable
-          data={tags}
-          columns={tagsColumns(t, currentLanguage)}
-          customStyles={tableStyles}
-          striped
-          highlightOnHover
-          progressPending={isLoading}
-          pagination
-          paginationServer
-          paginationTotalRows={data?.metadata?.totalRow}
-          onChangePage={handlePageChange}
-          onChangeRowsPerPage={handlePerRowsChange}
-          onSort={handleSort}
-          progressComponent={<Loader />}
-          noDataComponent={<NoRecord />}
-          paginationComponentOptions={tableLocale}
-        />
+        <StyleSheetManager shouldForwardProp={isValidProp}>
+          <ReactDataTable
+            data={tags}
+            columns={tagsColumns(t, currentLanguage)}
+            customStyles={tableStyles}
+            striped
+            highlightOnHover
+            progressPending={isLoading}
+            pagination
+            paginationServer
+            paginationTotalRows={data?.metadata?.totalRow}
+            onChangePage={handlePageChange}
+            onChangeRowsPerPage={handlePerRowsChange}
+            onSort={handleSort}
+            progressComponent={<Loader />}
+            noDataComponent={<NoRecord />}
+            paginationComponentOptions={tableLocale}
+          />
+        </StyleSheetManager>
       </div>
     </>
   );

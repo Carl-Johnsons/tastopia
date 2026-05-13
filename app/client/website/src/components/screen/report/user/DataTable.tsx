@@ -14,6 +14,8 @@ import { ChevronRight } from "lucide-react";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import { useTranslations } from "next-intl";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
+import { StyleSheetManager } from "styled-components";
+import isValidProp from "@emotion/is-prop-valid";
 
 const DataTable = () => {
   const t = useTranslations("administerReportUsers");
@@ -107,39 +109,41 @@ const DataTable = () => {
         </div>
       </div>
       <div data-testid='report-users-data-table'>
-        <ReactDataTable
-          columns={reportColumns(t).map(column => {
-            if (column.name === t("columns.action")) {
-              return {
-                ...column,
-                cell: (report: IAdminUserReportResponse) => (
-                  <ActionButtons
-                    key={report.reportId}
-                    reportId={report.reportId}
-                    reportedId={report.reportedId}
-                    status={report.status as ReportStatus}
-                    onStatusUpdate={handleStatusUpdate}
-                  />
-                )
-              };
-            }
-            return column;
-          })}
-          data={tableData.slice(0, limit)}
-          customStyles={tableStyles}
-          striped
-          highlightOnHover
-          progressPending={isLoading}
-          pagination
-          paginationServer
-          paginationTotalRows={data?.metadata?.totalRow}
-          onChangePage={handlePageChange}
-          onChangeRowsPerPage={handlePerRowsChange}
-          onSort={handleSort}
-          progressComponent={<Loader />}
-          noDataComponent={<NoRecord />}
-          paginationComponentOptions={tableLocale}
-        />
+        <StyleSheetManager shouldForwardProp={isValidProp}>
+          <ReactDataTable
+            columns={reportColumns(t).map(column => {
+              if (column.name === t("columns.action")) {
+                return {
+                  ...column,
+                  cell: (report: IAdminUserReportResponse) => (
+                    <ActionButtons
+                      key={report.reportId}
+                      reportId={report.reportId}
+                      reportedId={report.reportedId}
+                      status={report.status as ReportStatus}
+                      onStatusUpdate={handleStatusUpdate}
+                    />
+                  )
+                };
+              }
+              return column;
+            })}
+            data={tableData.slice(0, limit)}
+            customStyles={tableStyles}
+            striped
+            highlightOnHover
+            progressPending={isLoading}
+            pagination
+            paginationServer
+            paginationTotalRows={data?.metadata?.totalRow}
+            onChangePage={handlePageChange}
+            onChangeRowsPerPage={handlePerRowsChange}
+            onSort={handleSort}
+            progressComponent={<Loader />}
+            noDataComponent={<NoRecord />}
+            paginationComponentOptions={tableLocale}
+          />
+        </StyleSheetManager>
       </div>
     </>
   );

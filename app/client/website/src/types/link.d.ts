@@ -3,13 +3,13 @@ export interface BaseParam {
 }
 
 export interface ParamsProps {
-  params: BaseParam;
+  params: Promise<BaseParam>;
 }
 
 export interface CommentDetailParamProps {
-  params: BaseParam & {
+  params: Promise<BaseParam & {
     recipeId: string;
-  };
+  }>;
 }
 
 export interface SidebarChildLink {

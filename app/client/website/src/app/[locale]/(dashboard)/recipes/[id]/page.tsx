@@ -1,4 +1,5 @@
-"use client";
+"use client";;
+import { use } from "react";
 
 import { useGetRecipeReport } from "@/api/recipe";
 import RecipeDetail from "@/components/screen/report/recipe/RecipeDetail";
@@ -11,7 +12,8 @@ import ReportList from "@/components/screen/report/common/ReportList";
 import { ReportType } from "@/generated/enums/recipe.enum";
 import Loading from "../../users/[id]/loading";
 
-export default function Page({ params }: ParamsProps) {
+export default function Page(props: ParamsProps) {
+  const params = use(props.params);
   const lang = useLocale();
   const t = useTranslations("administerRecipes");
 

@@ -12,6 +12,8 @@ import SearchBar from "./SearchBar";
 import { useTranslations } from "next-intl";
 import useDataTableStyles from "@/hooks/table/useDataTableStyle";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
+import { StyleSheetManager } from "styled-components";
+import isValidProp from "@emotion/is-prop-valid";
 
 const DataTable = () => {
   const t = useTranslations("administerUsers");
@@ -102,38 +104,40 @@ const DataTable = () => {
         </p>
       </div>
       <div data-testid='users-data-table'>
-        <ReactDataTable
-          columns={usersColumns(t).map(column => {
-            if (column.name === t("columns.action")) {
-              return {
-                ...column,
-                cell: (user: IAdminGetUserResponse) => (
-                  <ActionButtons
-                    key={user.accountId + user.isAccountActive}
-                    accountId={user.accountId}
-                    isActive={user.isAccountActive}
-                    onStatusUpdate={handleStatusUpdate}
-                  />
-                )
-              };
-            }
-            return column;
-          })}
-          data={tableData}
-          customStyles={tableStyles}
-          striped
-          highlightOnHover
-          progressPending={isLoading}
-          pagination
-          paginationServer
-          paginationTotalRows={data?.metadata?.totalRow}
-          onChangePage={handlePageChange}
-          onChangeRowsPerPage={handlePerRowsChange}
-          onSort={handleSort}
-          progressComponent={<Loader />}
-          noDataComponent={<NoRecord />}
-          paginationComponentOptions={tableLocale}
-        />
+        <StyleSheetManager shouldForwardProp={isValidProp}>
+          <ReactDataTable
+            columns={usersColumns(t).map(column => {
+              if (column.name === t("columns.action")) {
+                return {
+                  ...column,
+                  cell: (user: IAdminGetUserResponse) => (
+                    <ActionButtons
+                      key={user.accountId + user.isAccountActive}
+                      accountId={user.accountId}
+                      isActive={user.isAccountActive}
+                      onStatusUpdate={handleStatusUpdate}
+                    />
+                  )
+                };
+              }
+              return column;
+            })}
+            data={tableData}
+            customStyles={tableStyles}
+            striped
+            highlightOnHover
+            progressPending={isLoading}
+            pagination
+            paginationServer
+            paginationTotalRows={data?.metadata?.totalRow}
+            onChangePage={handlePageChange}
+            onChangeRowsPerPage={handlePerRowsChange}
+            onSort={handleSort}
+            progressComponent={<Loader />}
+            noDataComponent={<NoRecord />}
+            paginationComponentOptions={tableLocale}
+          />
+        </StyleSheetManager>
       </div>
     </>
   );
