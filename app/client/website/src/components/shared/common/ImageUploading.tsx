@@ -186,7 +186,7 @@ const ImagePreview = ({
       })}
 
       <AlertDialog>
-        <AlertDialogTrigger>
+        <AlertDialogTrigger asChild>
           <Button
             type='button'
             className='text-white_black w-fit cursor-pointer bg-primary hover:bg-secondary focus:ring'

@@ -2,8 +2,6 @@ import axios from "axios";
 import { auth } from "@/auth";
 import { API_URI, CLIENT_BASE_URL } from "./api";
 
-console.log("API gateways uri is " + API_URI);
-
 const defaultHeaders = {
   "Content-Type": "application/json",
 };
