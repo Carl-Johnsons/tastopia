@@ -57,7 +57,7 @@ load_env() {
 
 check_argocd_sync() {
   : "${ARGOCD_AUTH_TOKEN:?ARGOCD_AUTH_TOKEN is required}"
-  : "${ARGOCD_SERVER_NAME:?ARGOCD_SERVER_NAME is required}"
+  : "${ARGOCD_SERVER:?ARGOCD_SERVER is required}"
   : "${BUILT_IMAGES:?BUILT_IMAGES is required}"
 
   local app_name
@@ -81,7 +81,7 @@ check_argocd_sync() {
 
   while true; do
     local app_yaml
-    if ! app_yaml=$(argocd app get "$app_name" -o yaml 2>/dev/null); then
+    if ! app_yaml=$(argocd app get "$app_name" --grpc-web -o yaml); then
       echo "Failed to get ArgoCD app info for $app_name"
     else
       local all_deployed=true
@@ -124,6 +124,8 @@ wait_for_server() {
     exit 1
   fi
 
+  check_argocd_sync
+
   local timeout=60
   local interval=1
   local count=0
@@ -143,5 +145,36 @@ wait_for_server() {
   echo "Server is online"
 }
 
-load_env
-wait_for_server
+wait_for_website() {
+  local endpoint
+
+  if ! endpoint="$(get_client_base_url)"; then
+    echo "Failed to get website endpoint"
+    exit 1
+  fi
+
+  check_argocd_sync
+
+  local timeout=120
+  local interval=2
+  local elapsed=0
+
+  until curl -fsL --connect-timeout 2 --max-time 5 "$endpoint" >/dev/null; do
+    elapsed=$((elapsed + interval))
+
+    if [ "$elapsed" -ge "$timeout" ]; then
+      echo "Timed out waiting for website"
+      exit 1
+    fi
+
+    echo "Waiting for website..."
+    sleep "$interval"
+  done
+
+  echo "Website is online"
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+  load_env
+  wait_for_server
+fi
