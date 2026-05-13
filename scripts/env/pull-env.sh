@@ -6,6 +6,9 @@ set -e
 . ./scripts/lib.sh
 # Prevent git bash auto add root prefix (e.g /app/global => C:/Program File/app/global)
 MSYS_NO_PATHCONV=1
+ENV_LOCAL_FILE=".env.local"
+ENV_CI_FILE=".env.ci"
+
 export MSYS_NO_PATHCONV
 
 while getopts psh OPTS; do
@@ -46,21 +49,22 @@ shift $((OPTIND - 1))
 TARGET_ENV=$1
 
 err_token_missing() {
-  printf "\n\t${LIGHT_RED}*** Infisical token is missing ❌${NC} *** . Please fill the value in .env.local.\n\n"
+  file_name=$1
+  printf "\n\t${LIGHT_RED}*** Infisical token is missing ❌${NC} *** . Please fill the value in '${file_name}'.\n\n"
   exit 1
 }
 
-if [ ! -f ".env.local" ]; then
-    cat <<EOF > .env.local
+if [ ! -f "$ENV_LOCAL_FILE" ]; then
+    cat <<EOF > $ENV_LOCAL_FILE
 # Local environment variables
 # Get your infisical service token on your provided account
 INFISICAL_TOKEN=''
 EOF
-  err_token_missing
+  err_token_missing $ENV_LOCAL_FILE
   exit
 fi
 
-source .env.local
+source $ENV_LOCAL_FILE
 
 command -v infisical >/dev/null 2>&1 || {
   echo "infisical not installed"
@@ -68,8 +72,8 @@ command -v infisical >/dev/null 2>&1 || {
 }
 
 if [ -z "${INFISICAL_TOKEN}" ]; then
-  err_token_missing
-  exit
+  err_token_missing $ENV_LOCAL_FILE
+  exit 1
 fi
 
 
@@ -142,20 +146,20 @@ pull_all_services() {
 }
 
 pull_act_secret() {
-  if [ ! -f ".env.ci" ]; then
-    cat <<EOF > .env.ci
+  if [ ! -f "$ENV_CI_FILE" ]; then
+    cat <<EOF > $ENV_CI_FILE
 # Local environment variables
 # Get your infisical service token on your provided account
 INFISICAL_CI_TOKEN=''
 EOF
-    err_token_missing
-    exit
+    err_token_missing $ENV_CI_FILE
+    exit 1
   fi
 
-  source .env.ci
+  source $ENV_CI_FILE
 
   if [ -z "${INFISICAL_CI_TOKEN}" ]; then
-    printf "\n\t${LIGHT_RED}*** Infisical token is missing ❌${NC} *** . Please fill the value in .env.ci\n\n"
+    err_token_missing $ENV_CI_FILE
     exit 1
   fi
 
