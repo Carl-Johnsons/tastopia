@@ -18,6 +18,9 @@ on:
         required: true
         default: "staging"
 
+concurrency:
+  group: ci-${{ github.ref }}
+
 env:
   ENV: >-
     ${{ github.event.inputs.DEPLOY_ENV
@@ -131,9 +134,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-          HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
-          IDENTITY_FQDN: ${{ secrets.IDENTITY_FQDN }}
-          API_GATEWAY_FQDN: ${{ secrets.API_GATEWAY_FQDN }}
+          HOST_PREFIX: ${{ vars.HOST_PREFIX }}
+          IDENTITY_FQDN: ${{ vars.IDENTITY_FQDN }}
+          API_GATEWAY_FQDN: ${{ vars.API_GATEWAY_FQDN }}
+          API_GATEWAY_PORT: ${{ vars.API_GATEWAY_PORT }}
   mobile_test:
     name: Mobile E2E tests
     runs-on: ubuntu-latest
@@ -247,7 +251,9 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-          API_GATEWAY_FQDN: ${{ secrets.API_GATEWAY_FQDN }}
+          HOST_PREFIX: ${{ vars.HOST_PREFIX }}
+          API_GATEWAY_FQDN: ${{ vars.API_GATEWAY_FQDN }}
+          API_GATEWAY_PORT: ${{ vars.API_GATEWAY_PORT }}
           E2E_TEST_USERNAME: ${{ secrets.MOBILE_E2E_TEST_USERNAME }}
           E2E_TEST_PASSWORD: ${{ secrets.MOBILE_E2E_TEST_PASSWORD }}
           BUILT_IMAGES: ${{ needs.update_backend_manifest.outputs.images }}
@@ -339,9 +345,11 @@ jobs:
         id: run_website_tests
         run: bash ./scripts/ci/test/test-website-e2e.sh
         env:
-          WEBSITE_FQDN: ${{ secrets.WEBSITE_FQDN }}
-          IDENTITY_FQDN: ${{ secrets.IDENTITY_FQDN }}
-          API_GATEWAY_FQDN: ${{ secrets.API_GATEWAY_FQDN }}
+          HOST_PREFIX: ${{ vars.HOST_PREFIX }}
+          WEBSITE_FQDN: ${{ vars.WEBSITE_FQDN }}
+          IDENTITY_FQDN: ${{ vars.IDENTITY_FQDN }}
+          API_GATEWAY_FQDN: ${{ vars.API_GATEWAY_FQDN }}
+          API_GATEWAY_PORT: ${{ vars.API_GATEWAY_PORT }}
           E2E_TEST_USERNAME: ${{ secrets.WEBSITE_E2E_TEST_USERNAME }}
           E2E_TEST_PASSWORD: ${{ secrets.WEBSITE_E2E_TEST_PASSWORD }}
           BUILT_IMAGES: ${{ needs.update_backend_manifest.outputs.images }}
@@ -468,10 +476,11 @@ jobs:
           echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT
           bash ./scripts/docker/build-services.sh -c $SHORT_SHA -le "$ENV" ${{ needs.detect.outputs.services }}
         env:
-          API_GATEWAY_FQDN: ${{ secrets.API_GATEWAY_FQDN }}
-          HOST_PREFIX: ${{ secrets.HOST_PREFIX }}
-          WEBSITE_FQDN: ${{ secrets.WEBSITE_FQDN }}
-          IDENTITY_FQDN: ${{ secrets.IDENTITY_FQDN }}
+          HOST_PREFIX: ${{ vars.HOST_PREFIX }}
+          API_GATEWAY_FQDN: ${{ vars.API_GATEWAY_FQDN }}
+          API_GATEWAY_PORT: ${{ vars.API_GATEWAY_PORT }}
+          WEBSITE_FQDN: ${{ vars.WEBSITE_FQDN }}
+          IDENTITY_FQDN: ${{ vars.IDENTITY_FQDN }}
           DUENDE_IDS6_ID: ${{ secrets.DUENDE_IDS6_ID }}
   setup_dev_env:
     name: Setup dev environment manifests in gitOps repository
