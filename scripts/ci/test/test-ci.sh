@@ -5,7 +5,7 @@ set -euo pipefail
 script_dir=$(cd -- $(dirname -- "${BASH_SOURCE[0]}") && pwd)
 
 if ! command -v gh >/dev/null 2>&1; then
-    printf "\n\t*** ${LIGHT_RED}"gh" not found. Please install github cli${NC} ***\n\n"
+    printf "\n\t*** ${LIGHT_RED}'gh' not found. Please install github cli${NC} ***\n\n"
     exit 1
 fi
 
