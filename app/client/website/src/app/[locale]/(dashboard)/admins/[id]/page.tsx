@@ -1,4 +1,5 @@
-"use client";
+"use client";;
+import { use } from "react";
 
 import { useGetAdminById } from "@/api/admin";
 import ActivityFeed from "@/components/screen/admins/ActivityFeed";
@@ -11,7 +12,8 @@ import { ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Loading from "../../users/[id]/loading";
 
-export default function Page({ params }: ParamsProps) {
+export default function Page(props: ParamsProps) {
+  const params = use(props.params);
   const { id } = params;
   const t = useTranslations("administerAdmins");
   const { data: currentUser, isError, isLoading } = useGetAdminById(id);

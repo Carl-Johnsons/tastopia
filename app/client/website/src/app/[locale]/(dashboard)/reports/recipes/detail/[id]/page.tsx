@@ -1,4 +1,5 @@
-"use client";
+"use client";;
+import { use } from "react";
 
 import { useGetRecipeReport } from "@/api/recipe";
 import Loading from "@/app/[locale]/(dashboard)/users/[id]/loading";
@@ -11,7 +12,8 @@ import { ParamsProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 
-export default function Page({ params }: ParamsProps) {
+export default function Page(props: ParamsProps) {
+  const params = use(props.params);
   const recipeId = params.id;
 
   const lang = useLocale();

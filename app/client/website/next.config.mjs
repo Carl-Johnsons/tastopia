@@ -8,6 +8,7 @@ const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
   images: {
+    qualities: [75, 100],
     remotePatterns: [
       {
         protocol: "https",
@@ -17,9 +18,6 @@ const nextConfig = {
   },
   typescript: {
     ignoreBuildErrors: true
-  },
-  eslint: {
-    ignoreDuringBuilds: true
   }
 };
 

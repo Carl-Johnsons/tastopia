@@ -16,6 +16,8 @@ import { IAdminResponse } from "@/generated/interfaces/user.interface";
 import { useAppDispatch } from "@/store/hooks";
 import { createAdmin } from "@/slices/admin.slice";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
+import { StyleSheetManager } from "styled-components";
+import isValidProp from "@emotion/is-prop-valid";
 
 export default function Table() {
   const [limit, setLimit] = useState(10);
@@ -130,25 +132,27 @@ export default function Table() {
         />
       </div>
 
-      <DataTable
-        customStyles={tableStyles}
-        columns={columns}
-        data={data}
-        responsive
-        striped
-        highlightOnHover
-        progressPending={isLoading || isFetching}
-        progressComponent={<Loader />}
-        noDataComponent={<NoRecord />}
-        pagination
-        paginationServer
-        paginationComponentOptions={tableLocale}
-        onChangeRowsPerPage={handleChangeRowPerPage}
-        onChangePage={handleChangePage}
-        paginationTotalRows={totalRow}
-        sortServer
-        onSort={onSort}
-      />
+      <StyleSheetManager shouldForwardProp={isValidProp}>
+        <DataTable
+          customStyles={tableStyles}
+          columns={columns}
+          data={data}
+          responsive
+          striped
+          highlightOnHover
+          progressPending={isLoading || isFetching}
+          progressComponent={<Loader />}
+          noDataComponent={<NoRecord />}
+          pagination
+          paginationServer
+          paginationComponentOptions={tableLocale}
+          onChangeRowsPerPage={handleChangeRowPerPage}
+          onChangePage={handleChangePage}
+          paginationTotalRows={totalRow}
+          sortServer
+          onSort={onSort}
+        />
+      </StyleSheetManager>
     </DataTableProvider>
   );
 }

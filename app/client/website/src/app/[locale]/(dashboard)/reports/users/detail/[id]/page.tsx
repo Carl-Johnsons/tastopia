@@ -6,7 +6,8 @@ import ProfileInfo from "@/components/screen/profile/ProfileInfo";
 import SomeThingWentWrong from "@/components/shared/common/Error";
 import ReportList from "@/components/screen/report/user/ReportList";
 
-export default async function ReportedDetail({ params }: ParamsProps) {
+export default async function ReportedDetail(props: ParamsProps) {
+  const params = await props.params;
   try {
     const { ok: userOk, data: currentUser } = await getUserById(params.id);
     const { ok: activityOk, data: currentUserActivities } = await getUserActivitiesById(

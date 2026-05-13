@@ -7,7 +7,7 @@ type AuthData = {
 };
 
 export const setAuthCookies = async ({ accessToken, idToken }: AuthData) => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const config: Partial<ResponseCookie> = {
     httpOnly: true,
@@ -28,14 +28,14 @@ export const setAuthCookies = async ({ accessToken, idToken }: AuthData) => {
 };
 
 export const getAuthCookie = async (name: "accessToken" | "idToken") => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const value = cookieStore.get(name);
   console.log("Cookie found result for", name, value);
   return value;
 };
 
 export const deleteAuthCookie = async (name: "accessToken" | "idToken") => {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   try {
     cookieStore.delete(name);
