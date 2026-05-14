@@ -624,6 +624,7 @@ jobs:
     needs: [update_backend_manifest, mobile_test, website_test]
     if: >-
       always() &&
+      github.event_name != 'pull_request' &&
       needs.update_backend_manifest.result == 'success' && 
       needs.update_backend_manifest.outputs.commit_sha != '' &&
       (
