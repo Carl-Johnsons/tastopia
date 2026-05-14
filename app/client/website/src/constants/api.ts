@@ -3,9 +3,9 @@ export const SCOPE =
 
 export const CLIENT_BASE_URL = process.env.NEXT_PUBLIC_CLIENT_BASE_URL || "";
 
-export const DUENDE_IDS6_ISSUER = process.env.NEXT_PUBLIC_DUENDE_IDS6_ISSUER || "";
+export const DUENDE_IDS6_ISSUER = process.env.DUENDE_IDS6_ISSUER || "";
 export const DUENDE_IDENTITY_PROVIDER_NAME = "duende-identity-server6";
-export const DUENDE_IDS6_ID = process.env.NEXT_PUBLIC_DUENDE_IDS6_ID || "";
+export const DUENDE_IDS6_ID = process.env.DUENDE_IDS6_ID || "";
 
 export const API_GATEWAY_SCHEME = process.env.NEXT_PUBLIC_API_GATEWAY_SCHEME || "";
 export const API_GATEWAY_HOST = process.env.NEXT_PUBLIC_API_GATEWAY_HOST || "";
