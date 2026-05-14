@@ -79,5 +79,24 @@ if [ -z "$RESULT" ]; then
   exit 0
 fi
 
+CURRENT_RUN_ID="$GITHUB_RUN_ID"
+COUNT=$(gh run list \
+  --workflow '.github/workflows/ci.yaml' \
+  --branch "$BRANCH" \
+  --json databaseId \
+  --jq "
+    map(select(.databaseId < ($CURRENT_RUN_ID | tonumber)))
+    | length
+  "
+)
+
+if [[ "$COUNT" -eq 0 && "${ENV:-}" = 'dev' ]]; then
+  for svc in mobile website; do
+    if ! grep -qw "$svc" <<< "$RESULT"; then
+      RESULT="${RESULT:+$RESULT }$svc"
+    fi
+  done
+fi
+
 echo "services=$RESULT"
 echo "services=$RESULT" >> $GITHUB_OUTPUT
