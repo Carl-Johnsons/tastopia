@@ -9,6 +9,7 @@ export default function Unauthorized() {
         className='hidden sm:block'
         fill
         sizes="(max-width: 640px) 0px, 50vw"
+        loading="eager"
         alt=''
       />
       <div className='flex-center flex-col gap-4 p-8'>
