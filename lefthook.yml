@@ -40,6 +40,54 @@
 #
 #     - script: "hello.go"
 #       runner: go run
+pre-commit:
+  parallel: true
+
+  commands:
+    mobile-prettier:
+      root: "app/client/mobile"
+      run: npm run pretty
+
+    website-prettier:
+      root: "app/client/website"
+      run: npm run pretty
+
+    api-gateway-format:
+      root: "app/server/APIGateway"
+      run: dotnet format
+
+    contract-format:
+      root: "app/server/Contract"
+      run: dotnet format
+
+    identity-service-format:
+      root: "app/server/IdentityService"
+      run: dotnet format
+
+    notification-service-format:
+      root: "app/server/NotificationService"
+      run: dotnet format
+
+    recipe-service-format:
+      root: "app/server/RecipeService"
+      run: dotnet format
+
+    signalr-service-format:
+      root: "app/server/SignalRService"
+      run: dotnet format
+
+    tracking-service-format:
+      root: "app/server/TrackingService"
+      run: dotnet format
+
+    upload-file-service-format:
+      root: "app/server/UploadFileService"
+      run: dotnet format
+
+    user-service-format:
+      root: "app/server/UserService"
+      run: dotnet format
+      
 commit-msg:
   commands:
     validate:

@@ -15,7 +15,8 @@
     "build:ios": "npx expo prebuild --platform ios",
     "postinstall": "npx patch-package",
     "init-notification-service": "npx eas env:create --scope project --name GOOGLE_SERVICES_JSON --type file --value ./google-services.json --visibility secret --environment development --non-interactive --force",
-    "package:android": "EAS_NO_VCS=1 eas build --profile simulator  --platform android --local"
+    "package:android": "EAS_NO_VCS=1 eas build --profile simulator  --platform android --local",
+    "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
   },
   "jest": {
     "preset": "jest-expo"
