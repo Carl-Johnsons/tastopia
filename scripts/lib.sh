@@ -71,7 +71,7 @@ check_docker() {
     if ! docker info > /dev/null 2>&1; then
       err_docker
     fi
-  elif ! docker info > /dev/null 2>&1; then 
+  elif ! $SUDO_PREFIX docker info > /dev/null 2>&1; then 
    err_docker
   fi
 }
