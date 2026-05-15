@@ -18,8 +18,6 @@ const API_URI = transformPlatformURI(
   `${API_GATEWAY_SCHEME}://${API_GATEWAY_HOST}:${API_GATEWAY_PORT}`
 );
 
-console.log("API gateways uri is " + API_URI);
-
 const defaultHeaders = {
   "Content-Type": "application/json"
 };
