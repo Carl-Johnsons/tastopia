@@ -61,7 +61,7 @@ internal class MockupData
 
         var seedAccountFile = File.ReadAllText(Path.Combine(SeedDataPath, "accounts.json"));
         var seedAccounts = JsonConvert.DeserializeObject<List<SeedAccount>>(seedAccountFile) ?? new List<SeedAccount>();
-        var adminAccounts = seedAccounts.Where(sa => sa.RoleCode == Roles.Code.ADMIN.ToString() 
+        var adminAccounts = seedAccounts.Where(sa => sa.RoleCode == Roles.Code.ADMIN.ToString()
                                                  || sa.RoleCode == Roles.Code.SUPER_ADMIN.ToString()).ToList();
 
         seedAccounts = seedAccounts.Where(sa => sa.RoleCode == "USER").ToList();

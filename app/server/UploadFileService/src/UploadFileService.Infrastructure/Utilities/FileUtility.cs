@@ -60,7 +60,7 @@ public class FileUtility : IFileUtility
             return null;
         }
 
-        if(!url.Contains(foler))
+        if (!url.Contains(foler))
         {
             return null;
         }

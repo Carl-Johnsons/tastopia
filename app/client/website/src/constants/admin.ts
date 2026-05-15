@@ -38,26 +38,25 @@ const generatePaginatedAdminListResponse = (
   }
 });
 
-
 export const adminListData = generatePaginatedAdminListResponse(33);
 export const adminDetailData = generateRandomAdminDetailResponse();
 
 export enum ActivityEntityType {
-	RECIPE = "RECIPE",
-	COMMENT = "COMMENT",
-	TAG = "TAG",
-	USER = "USER",
-	ADMIN = "ADMIN",
-	REPORT_RECIPE = "REPORT_RECIPE",
-	REPORT_COMMENT = "REPORT_COMMENT",
-	REPORT_USER = "REPORT_USER"
-} 
+  RECIPE = "RECIPE",
+  COMMENT = "COMMENT",
+  TAG = "TAG",
+  USER = "USER",
+  ADMIN = "ADMIN",
+  REPORT_RECIPE = "REPORT_RECIPE",
+  REPORT_COMMENT = "REPORT_COMMENT",
+  REPORT_USER = "REPORT_USER"
+}
 
 export enum ActivityType {
-	CREATE = "CREATE",
-	UPDATE = "UPDATE",
-	DISABLE = "DISABLE",
-	RESTORE = "RESTORE",
-	MARK_COMPLETE = "MARK_COMPLETE",
-	REOPEN = "REOPEN"
+  CREATE = "CREATE",
+  UPDATE = "UPDATE",
+  DISABLE = "DISABLE",
+  RESTORE = "RESTORE",
+  MARK_COMPLETE = "MARK_COMPLETE",
+  REOPEN = "REOPEN"
 }

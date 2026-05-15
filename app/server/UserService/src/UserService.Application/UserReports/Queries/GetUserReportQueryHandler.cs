@@ -56,7 +56,7 @@ public class GetUserReportsQueryHandler : IRequestHandler<GetUserReportsQuery, R
         }
 
         var limit = request.paginatedDTO?.Limit ?? USER_CONSTANTS.ADMIN_USER_REPORT_LIMIT;
-        var totalRow =  resultQuery.Count();
+        var totalRow = resultQuery.Count();
         var totalPage = (totalRow + limit - 1) / limit;
 
         resultQuery = _paginateDataUtility.PaginateQuery(resultQuery, new PaginateParam

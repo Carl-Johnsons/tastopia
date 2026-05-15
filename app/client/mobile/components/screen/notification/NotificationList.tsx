@@ -23,7 +23,10 @@ import { useErrorHandler } from "@/hooks/useErrorHandler";
 import CustomTab, { ItemProps } from "@/components/common/Tab";
 import { TabView } from "@rneui/themed";
 import Header from "./Header";
-import { NotificationCategories, NotificationTemplateCode } from "@/constants/notifications";
+import {
+  NotificationCategories,
+  NotificationTemplateCode
+} from "@/constants/notifications";
 import { AntDesign, Feather } from "@expo/vector-icons";
 
 export default function NotificationList() {

@@ -11,7 +11,7 @@ public class AdminUserReportDetailResponse
     public string ReportedAvtUrl { get; set; } = null!;
     public string ReporterAvtUrl { get; set; } = null!;
     public List<string> ReportReason { get; set; } = [];
-    public string? AdditionalDetails { get; set; } 
+    public string? AdditionalDetails { get; set; }
     public DateTime CreatedAt { get; set; }
     public string Status { get; set; } = null!;
 }

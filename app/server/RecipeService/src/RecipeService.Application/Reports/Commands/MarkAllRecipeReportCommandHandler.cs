@@ -27,14 +27,14 @@ public class MarkAllRecipeReportCommandHandler : IRequestHandler<MarkAllRecipeRe
     public async Task<Result> Handle(MarkAllRecipeReportCommand request,
                                CancellationToken cancellationToken)
     {
-        if(request.RecipeId == Guid.Empty)
+        if (request.RecipeId == Guid.Empty)
         {
             return Result.Failure(ReportError.NullParameter, "RecipeId not found");
         }
 
         var reports = await _context.UserReportRecipes.Where(rp => rp.EntityId == request.RecipeId && rp.Status == (request.IsReopened ? ReportStatus.Done : ReportStatus.Pending)).ToListAsync();
         await Console.Out.WriteLineAsync(JsonConvert.SerializeObject(reports, Formatting.Indented));
-        if(reports == null || reports.Count == 0)
+        if (reports == null || reports.Count == 0)
         {
             return Result.Failure(ReportError.NotFound, "Not found recipe reports");
         }

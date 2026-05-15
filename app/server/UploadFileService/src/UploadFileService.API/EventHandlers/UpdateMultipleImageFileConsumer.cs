@@ -35,9 +35,9 @@ public sealed class UpdateMultipleImageFileConsumer : IConsumer<UpdateMultipleIm
 
         response.ThrowIfFailure();
         var result = new ListFileDTO();
-        if(response != null && response.Value!.Count != 0)
+        if (response != null && response.Value!.Count != 0)
         {
-            foreach(var file in response.Value)
+            foreach (var file in response.Value)
             {
                 result.Files.Add(_mapper.Map<FileDTO>(file));
             }

@@ -34,9 +34,9 @@ type Props = {
 
 /**
  * get the service uri from service discovery by selecting the first instance
- * 
+ *
  * TODO: implement round-robin if there are 2 or more instances
- * @param serviceName 
+ * @param serviceName
  * @returns service uri or undefined
  */
 const fetchServiceUri = async (serviceName: string) => {

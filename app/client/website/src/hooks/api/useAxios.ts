@@ -19,20 +19,20 @@ const useAxios = async () => {
   const API_URI = `${API_GATEWAY_SCHEME}://${API_GATEWAY_HOST}:${API_GATEWAY_PORT}`;
 
   const defaultHeaders = {
-    "Content-Type": "application/json",
+    "Content-Type": "application/json"
   };
 
   const defaultConfig = {
     baseURL: API_URI,
     withCredentials: true,
     headers: defaultHeaders,
-    timeout: 10000,
+    timeout: 10000
   };
 
   const axiosInstance = axios.create(defaultConfig);
   const protectedAxiosInstance = axios.create(defaultConfig);
 
-  protectedAxiosInstance.interceptors.request.use(async (config) => {
+  protectedAxiosInstance.interceptors.request.use(async config => {
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }

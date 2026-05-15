@@ -66,8 +66,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         sameSite: "lax",
         path: "/",
         // Set an expiration date (the cookie won’t clear when the browser closes)
-        maxAge: 30 * 24 * 60 * 60, // 30 days
-      },
-    },
-  },
+        maxAge: 30 * 24 * 60 * 60 // 30 days
+      }
+    }
+  }
 });

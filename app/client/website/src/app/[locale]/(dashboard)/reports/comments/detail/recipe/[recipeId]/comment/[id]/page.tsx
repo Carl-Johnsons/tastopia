@@ -6,7 +6,10 @@ import CommentDetail from "@/components/screen/report/comment/CommentDetail";
 import ReportList from "@/components/screen/report/common/ReportList";
 import SomethingWentWrong from "@/components/shared/common/Error";
 import { ReportType } from "@/constants/reports";
-import { ICommentDetailResponse, IReportRecipeResponse } from "@/generated/interfaces/recipe.interface";
+import {
+  ICommentDetailResponse,
+  IReportRecipeResponse
+} from "@/generated/interfaces/recipe.interface";
 import { Link } from "@/i18n/navigation";
 import { CommentDetailParamProps } from "@/types/link";
 import { ChevronRight } from "lucide-react";
@@ -32,7 +35,6 @@ export default function Page(props: CommentDetailParamProps) {
 
   if (isError) return <SomethingWentWrong />;
   if (isLoading || !data) return <Loading />;
-
 
   return (
     <div className='flex flex-col gap-10'>

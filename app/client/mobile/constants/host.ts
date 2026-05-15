@@ -45,7 +45,7 @@ axiosInstance.interceptors.request.use(
     if (config.method === "get") {
       config.paramsSerializer = {
         indexes: true
-      }
+      };
     }
 
     return config;
@@ -67,7 +67,7 @@ protectedAxiosInstance.interceptors.request.use(
     if (config.method === "get") {
       config.paramsSerializer = {
         indexes: true
-      }
+      };
     }
 
     return config;

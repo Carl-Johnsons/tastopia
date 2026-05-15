@@ -69,7 +69,8 @@ public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Resul
         if (request.Username != null)
         {
             var existUser = await _context.Users.SingleOrDefaultAsync(u => u.AccountUsername == request.Username && u.AccountId != request.AccountId);
-            if (existUser != null) {
+            if (existUser != null)
+            {
                 return Result.Failure(UserError.AlreadyExistUser, "Already exist user");
             }
             await _grpcAccountClient.UpdateAccountAsync(new GrpcUpdateAccountRequest

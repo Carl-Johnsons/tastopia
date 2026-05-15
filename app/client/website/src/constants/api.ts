@@ -1,5 +1,4 @@
-export const SCOPE =
-  "openid profile phone email offline_access IdentityServerApi";
+export const SCOPE = "openid profile phone email offline_access IdentityServerApi";
 
 export const CLIENT_BASE_URL = process.env.NEXT_PUBLIC_CLIENT_BASE_URL || "";
 

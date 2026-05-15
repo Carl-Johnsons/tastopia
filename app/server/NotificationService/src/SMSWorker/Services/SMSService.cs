@@ -20,7 +20,7 @@ public class SMSService : ISMSService
     {
         string url = $"{SPEEDSMS_API_URL}?to={phoneTo}&content={Uri.EscapeDataString(message)}&sender={SPEEDSMS_DEVICE_ID}";
         string authHeader = $"Basic {SPEEDSMS_API_TOKEN}";
-        await Console.Out.WriteLineAsync("Token:"+ SPEEDSMS_API_TOKEN);
+        await Console.Out.WriteLineAsync("Token:" + SPEEDSMS_API_TOKEN);
         using (HttpClient client = new HttpClient())
         {
             client.DefaultRequestHeaders.Add("Authorization", authHeader);

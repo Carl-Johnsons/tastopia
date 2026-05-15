@@ -26,14 +26,14 @@ public class SearchSimpleUserQueryHandler : IRequestHandler<SearchSimpleUserQuer
             return Result<List<Guid>?>.Failure(UserError.NullParameters, "Keyword is null!");
         }
         keyword = keyword.ToLower();
-        var result = await _context.Users.Where(u => u.IsAccountActive && !u.IsAdmin && 
+        var result = await _context.Users.Where(u => u.IsAccountActive && !u.IsAdmin &&
             (
                 u.AccountUsername.ToLower().Contains(keyword) ||
                 u.DisplayName.ToLower().Contains(keyword)
             )
         ).Select(u => u.AccountId).Distinct().ToListAsync();
-        
-        if(result == null || result.Count == 0)
+
+        if (result == null || result.Count == 0)
         {
             result = [];
         }

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 public class ReportTypeValidationAttribute : ValidationAttribute
 {
-    private static readonly string[] AllowedValues = { "Recipe", "Comment"};
+    private static readonly string[] AllowedValues = { "Recipe", "Comment" };
 
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {

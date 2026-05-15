@@ -5,502 +5,435 @@
 // Generated at: 10/15/2025 1:26:31 PM
 
 import {
-    IErrorResponseDTO,
-    IAdvancePaginatedMetadata,
-    ICommonPaginatedMetadata,
-    INumberedPaginatedMetadata
+  IErrorResponseDTO,
+  IAdvancePaginatedMetadata,
+  ICommonPaginatedMetadata,
+  INumberedPaginatedMetadata
 } from "./common.interface";
 
-import {
-    ActivityType,
-    ActivityEntityType,
-    SortType
-} from "../enums/common.enum";
-            
-import { ReportType } from '../enums/recipe.enum';
-import { ReportStatus } from '../enums/recipe.enum';
+import { ActivityType, ActivityEntityType, SortType } from "../enums/common.enum";
 
-export interface IDateStatisticEntity
-{
-	date: string;
-	number: number;
+import { ReportType } from "../enums/recipe.enum";
+import { ReportStatus } from "../enums/recipe.enum";
+
+export interface IDateStatisticEntity {
+  date: string;
+  number: number;
 }
-export interface IMonthStatisticEntity
-{
-	month: string;
-	number: number;
+export interface IMonthStatisticEntity {
+  month: string;
+  number: number;
 }
-export interface IHourStatisticEntity
-{
-	hour: string;
-	number: number;
+export interface IHourStatisticEntity {
+  hour: string;
+  number: number;
 }
-export interface IStatisticEntity
-{
-	number: number;
+export interface IStatisticEntity {
+  number: number;
 }
-export interface IAdminGetTagDetailDTO
-{
-	tagId: string;
+export interface IAdminGetTagDetailDTO {
+  tagId: string;
 }
-export interface ICreateTagDTO
-{
-	code: string;
-	en: string;
-	vi: string;
-	category: string;
-	tagImage: any;
+export interface ICreateTagDTO {
+  code: string;
+  en: string;
+  vi: string;
+  category: string;
+  tagImage: any;
 }
-export interface IUpdateTagDTO
-{
-	tagId: string;
-	code: string;
-	en: string;
-	vi: string;
-	status: string;
-	category: string;
-	tagImage?: any;
+export interface IUpdateTagDTO {
+  tagId: string;
+  code: string;
+  en: string;
+  vi: string;
+  status: string;
+  category: string;
+  tagImage?: any;
 }
-export interface IAdminTagResponse
-{
-	id: string;
-	code: string;
-	en: string;
-	vi: string;
-	category: string;
-	status: string;
-	imageUrl: string;
-	createdAt: string;
+export interface IAdminTagResponse {
+  id: string;
+  code: string;
+  en: string;
+  vi: string;
+  category: string;
+  status: string;
+  imageUrl: string;
+  createdAt: string;
 }
-export interface IPaginatedAdminTagListResponse
-{
-	paginatedData: IAdminTagResponse[];
-	metadata?: INumberedPaginatedMetadata;
+export interface IPaginatedAdminTagListResponse {
+  paginatedData: IAdminTagResponse[];
+  metadata?: INumberedPaginatedMetadata;
 }
-export interface IAccountRecipeCommentResponse
-{
-	id: string;
-	accountId: string;
-	recipeId: string;
-	displayName: string;
-	content: string;
-	recipeTitle: string;
-	createdAt: string;
-	updatedAt: string;
-	isActive: boolean;
+export interface IAccountRecipeCommentResponse {
+  id: string;
+  accountId: string;
+  recipeId: string;
+  displayName: string;
+  content: string;
+  recipeTitle: string;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
 }
-export interface IAdminGetUserActivityDTO
-{
-	skip?: number;
-	language: string;
-	accountId: string;
+export interface IAdminGetUserActivityDTO {
+  skip?: number;
+  language: string;
+  accountId: string;
 }
-export interface IAdminRecipeResponse
-{
-	id: string;
-	authorId: string;
-	title: string;
-	description: string;
-	ingredients: string;
-	authorAvatarURL: string;
-	authorDisplayName: string;
-	authorUsername: string;
-	isActive: boolean;
-	recipeImageUrl: string;
-	createdAt: string;
-	updatedAt: string;
+export interface IAdminRecipeResponse {
+  id: string;
+  authorId: string;
+  title: string;
+  description: string;
+  ingredients: string;
+  authorAvatarURL: string;
+  authorDisplayName: string;
+  authorUsername: string;
+  isActive: boolean;
+  recipeImageUrl: string;
+  createdAt: string;
+  updatedAt: string;
 }
-export interface IAdminReportRecipeDetailResponse
-{
-	recipe: IRecipe;
-	tags: ITag[];
-	authorUsername: string;
-	authorDisplayName: string;
-	authorAvtUrl: string;
-	authorNumberOfFollower: number;
-	reports: IReportRecipeResponse[];
+export interface IAdminReportRecipeDetailResponse {
+  recipe: IRecipe;
+  tags: ITag[];
+  authorUsername: string;
+  authorDisplayName: string;
+  authorAvtUrl: string;
+  authorNumberOfFollower: number;
+  reports: IReportRecipeResponse[];
 }
-export interface IAdminReportRecipeResponse
-{
-	reportId: string;
-	recipeId: string;
-	recipeTitle: string;
-	recipeOwnerUsername: string;
-	recipeImageURL: string;
-	reporterUsername: string;
-	reportReason: string;
-	createdAt: string;
-	status: string;
+export interface IAdminReportRecipeResponse {
+  reportId: string;
+  recipeId: string;
+  recipeTitle: string;
+  recipeOwnerUsername: string;
+  recipeImageURL: string;
+  reporterUsername: string;
+  reportReason: string;
+  createdAt: string;
+  status: string;
 }
-export interface IBookmarkRecipeDTO
-{
-	recipeId: string;
+export interface IBookmarkRecipeDTO {
+  recipeId: string;
 }
-export interface IComment
-{
-	content: string;
-	accountId: string;
-	isActive: boolean;
-	createdAt: string;
-	updatedAt: string;
-	id: string;
+export interface IComment {
+  content: string;
+  accountId: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 }
-export interface ICommentRecipeDTO
-{
-	recipeId: string;
-	content: string;
+export interface ICommentRecipeDTO {
+  recipeId: string;
+  content: string;
 }
-export interface ICommentVote
-{
-	commentId: string;
-	accountId: string;
-	isUpvote: boolean;
-	comment?: IComment;
-	id: string;
+export interface ICommentVote {
+  commentId: string;
+  accountId: string;
+  isUpvote: boolean;
+  comment?: IComment;
+  id: string;
 }
-export interface ICreateRecipeDTO
-{
-	recipeImage: any;
-	title: string;
-	description: string;
-	serves?: number;
-	cookTime?: string;
-	ingredients: string[];
-	steps: IStepDTO[];
-	tagValues?: string[];
+export interface ICreateRecipeDTO {
+  recipeImage: any;
+  title: string;
+  description: string;
+  serves?: number;
+  cookTime?: string;
+  ingredients: string[];
+  steps: IStepDTO[];
+  tagValues?: string[];
 }
-export interface IDeleteOwnRecipeDTO
-{
-	recipeId: string;
+export interface IDeleteOwnRecipeDTO {
+  recipeId: string;
 }
-export interface IEntityIdDTO
-{
-	id: string;
+export interface IEntityIdDTO {
+  id: string;
 }
-export interface IGetAccountRecipeCommentsDTO
-{
-	accountId: string;
-	skip?: number;
+export interface IGetAccountRecipeCommentsDTO {
+  accountId: string;
+  skip?: number;
 }
-export interface IGetRecipeBookmarkDTO
-{
-	skip?: number;
+export interface IGetRecipeBookmarkDTO {
+  skip?: number;
 }
-export interface IGetRecipeCommentsDTO
-{
-	recipeId: string;
-	skip?: number;
+export interface IGetRecipeCommentsDTO {
+  recipeId: string;
+  skip?: number;
 }
-export interface IGetRecipeDetailDTO
-{
-	recipeId: string;
+export interface IGetRecipeDetailDTO {
+  recipeId: string;
 }
-export interface IGetRecipeFeedsDTO
-{
-	skip?: number;
-	tagValues: string[];
+export interface IGetRecipeFeedsDTO {
+  skip?: number;
+  tagValues: string[];
 }
-export interface IGetRecipeStepsDTO
-{
-	recipeId: string;
+export interface IGetRecipeStepsDTO {
+  recipeId: string;
 }
-export interface IGetTagsDTO
-{
-	skip?: number;
-	keyword?: string;
-	tagCodes: string[];
-	category: string;
+export interface IGetTagsDTO {
+  skip?: number;
+  keyword?: string;
+  tagCodes: string[];
+  category: string;
 }
-export interface IPaginatedAccountRecipeCommentListResponse
-{
-	paginatedData: IAccountRecipeCommentResponse[];
-	metadata?: IAdvancePaginatedMetadata;
+export interface IPaginatedAccountRecipeCommentListResponse {
+  paginatedData: IAccountRecipeCommentResponse[];
+  metadata?: IAdvancePaginatedMetadata;
 }
-export interface IPaginatedAdminReportRecipeListResponse
-{
-	paginatedData: IAdminReportRecipeResponse[];
-	metadata?: INumberedPaginatedMetadata;
+export interface IPaginatedAdminReportRecipeListResponse {
+  paginatedData: IAdminReportRecipeResponse[];
+  metadata?: INumberedPaginatedMetadata;
 }
-export interface IPaginatedRecipeCommentListResponse
-{
-	paginatedData: IRecipeCommentResponse[];
-	metadata?: IAdvancePaginatedMetadata;
+export interface IPaginatedRecipeCommentListResponse {
+  paginatedData: IRecipeCommentResponse[];
+  metadata?: IAdvancePaginatedMetadata;
 }
-export interface IPaginatedUserActivityListResponse
-{
-	paginatedData: IUserActivityResponse[];
-	metadata?: IAdvancePaginatedMetadata;
+export interface IPaginatedUserActivityListResponse {
+  paginatedData: IUserActivityResponse[];
+  metadata?: IAdvancePaginatedMetadata;
 }
-export interface IPaginatedTagListResponse
-{
-	paginatedData: ITagResponse[];
-	metadata?: IAdvancePaginatedMetadata;
+export interface IPaginatedTagListResponse {
+  paginatedData: ITagResponse[];
+  metadata?: IAdvancePaginatedMetadata;
 }
-export interface ITagResponse
-{
-	id: string;
-	code: string;
-	en: string;
-	vi: string;
-	category: string;
-	status: string;
-	imageUrl: string;
-	createdAt: string;
+export interface ITagResponse {
+  id: string;
+  code: string;
+  en: string;
+  vi: string;
+  category: string;
+  status: string;
+  imageUrl: string;
+  createdAt: string;
 }
-export interface IRecipe
-{
-	authorId: string;
-	title: string;
-	description: string;
-	imageUrl: string;
-	ingredients: string[];
-	cookTime?: string;
-	serves?: number;
-	voteDiff: number;
-	numberOfComment: number;
-	isActive: boolean;
-	totalView: number;
-	steps: IStep[];
-	comments: IComment[];
-	recipeVotes: IRecipeVote[];
-	recipeTags: IRecipeTag[];
-	createdAt: string;
-	updatedAt: string;
-	id: string;
+export interface IRecipe {
+  authorId: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  ingredients: string[];
+  cookTime?: string;
+  serves?: number;
+  voteDiff: number;
+  numberOfComment: number;
+  isActive: boolean;
+  totalView: number;
+  steps: IStep[];
+  comments: IComment[];
+  recipeVotes: IRecipeVote[];
+  recipeTags: IRecipeTag[];
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 }
-export interface IRecipeCommentResponse
-{
-	id: string;
-	accountId: string;
-	displayName: string;
-	content: string;
-	avatarUrl: string;
-	createdAt: string;
-	updatedAt: string;
-	isActive: boolean;
+export interface IRecipeCommentResponse {
+  id: string;
+  accountId: string;
+  displayName: string;
+  content: string;
+  avatarUrl: string;
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
 }
-export interface IRecipeTag
-{
-	recipeId: string;
-	tagId: string;
-	recipe?: IRecipe;
-	tag?: ITag;
-	id: string;
+export interface IRecipeTag {
+  recipeId: string;
+  tagId: string;
+  recipe?: IRecipe;
+  tag?: ITag;
+  id: string;
 }
-export interface IRecipeVote
-{
-	accountId: string;
-	isUpvote: boolean;
-	createdAt: string;
-	updatedAt: string;
-	id: string;
+export interface IRecipeVote {
+  accountId: string;
+  isUpvote: boolean;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 }
-export interface IReportDTO
-{
-	reportId: string;
-	reportType: ReportType;
+export interface IReportDTO {
+  reportId: string;
+  reportType: ReportType;
 }
-export interface IReportReasonResponse
-{
-	code: string;
-	content: string;
+export interface IReportReasonResponse {
+  code: string;
+  content: string;
 }
-export interface IReportRecipeResponse
-{
-	id: string;
-	reporterId: string;
-	reporterUsername: string;
-	reporterDisplayName: string;
-	reporterAvtUrl: string;
-	reasons: string[];
-	additionalDetail?: string;
-	status: string;
-	createdAt: string;
+export interface IReportRecipeResponse {
+  id: string;
+  reporterId: string;
+  reporterUsername: string;
+  reporterDisplayName: string;
+  reporterAvtUrl: string;
+  reasons: string[];
+  additionalDetail?: string;
+  status: string;
+  createdAt: string;
 }
-export interface ISearchRecipesDTO
-{
-	skip?: number;
-	keyword?: string;
-	tagCodes?: string[];
+export interface ISearchRecipesDTO {
+  skip?: number;
+  keyword?: string;
+  tagCodes?: string[];
 }
-export interface IStep
-{
-	ordinalNumber: number;
-	content: string;
-	attachedImageUrls?: string[];
-	createdAt: string;
-	updatedAt: string;
-	id: string;
+export interface IStep {
+  ordinalNumber: number;
+  content: string;
+  attachedImageUrls?: string[];
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 }
-export interface IStepDTO
-{
-	ordinalNumber: number;
-	content: string;
-	images?: any[];
+export interface IStepDTO {
+  ordinalNumber: number;
+  content: string;
+  images?: any[];
 }
-export interface ITag
-{
-	value: any;
-	code: string;
-	category: number;
-	status: number;
-	imageUrl: string;
-	recipeTags: IRecipeTag[];
-	createdAt: string;
-	updatedAt: string;
-	id: string;
+export interface ITag {
+  value: any;
+  code: string;
+  category: number;
+  status: number;
+  imageUrl: string;
+  recipeTags: IRecipeTag[];
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 }
-export interface IUpdateRecipeDTO
-{
-	id: string;
-	recipeImage?: any;
-	title: string;
-	description: string;
-	serves?: number;
-	cookTime?: string;
-	ingredients: string[];
-	steps: IUpdateStepDTO[];
-	tagValues?: string[];
+export interface IUpdateRecipeDTO {
+  id: string;
+  recipeImage?: any;
+  title: string;
+  description: string;
+  serves?: number;
+  cookTime?: string;
+  ingredients: string[];
+  steps: IUpdateStepDTO[];
+  tagValues?: string[];
 }
-export interface IUpdateStepDTO
-{
-	stepId: string;
-	ordinalNumber: number;
-	content: string;
-	images?: any[];
-	deleteUrls?: string[];
+export interface IUpdateStepDTO {
+  stepId: string;
+  ordinalNumber: number;
+  content: string;
+  images?: any[];
+  deleteUrls?: string[];
 }
-export interface IUserActivityResponse
-{
-	type: number;
-	title: string;
-	description: string;
-	timeAgo: string;
-	time: string;
-	username?: string;
-	accountId?: string;
-	avtImageUrl?: string;
-	recipeId?: string;
-	recipeTitle?: string;
-	recipeAuthorUsername?: string;
-	recipeAuthorId?: string;
-	recipeImageUrl?: string;
-	recipeTimeAgo?: string;
-	recipeTime?: string;
-	recipeVoteDiff?: number;
-	commentId?: string;
-	commentContent?: string;
+export interface IUserActivityResponse {
+  type: number;
+  title: string;
+  description: string;
+  timeAgo: string;
+  time: string;
+  username?: string;
+  accountId?: string;
+  avtImageUrl?: string;
+  recipeId?: string;
+  recipeTitle?: string;
+  recipeAuthorUsername?: string;
+  recipeAuthorId?: string;
+  recipeImageUrl?: string;
+  recipeTimeAgo?: string;
+  recipeTime?: string;
+  recipeVoteDiff?: number;
+  commentId?: string;
+  commentContent?: string;
 }
-export interface IUserBookmarkRecipe
-{
-	accountId: string;
-	recipeId: string;
-	recipe?: IRecipe;
-	createdAt: string;
-	updatedAt: string;
-	id: string;
+export interface IUserBookmarkRecipe {
+  accountId: string;
+  recipeId: string;
+  recipe?: IRecipe;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 }
-export interface IUserReportComment
-{
-	recipeId: string;
-	accountId: string;
-	entityId: string;
-	reasonCodes: string[];
-	additionalDetails?: string;
-	status: ReportStatus;
-	createdAt: string;
-	updatedAt: string;
-	id: string;
+export interface IUserReportComment {
+  recipeId: string;
+  accountId: string;
+  entityId: string;
+  reasonCodes: string[];
+  additionalDetails?: string;
+  status: ReportStatus;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 }
-export interface IUserReportCommentDTO
-{
-	commentId: string;
-	recipeId: string;
-	reasonCodes: string[];
-	additionalDetails?: string;
+export interface IUserReportCommentDTO {
+  commentId: string;
+  recipeId: string;
+  reasonCodes: string[];
+  additionalDetails?: string;
 }
-export interface IUserReportCommentResponse
-{
-	report: IUserReportComment;
-	isRemoved: boolean;
+export interface IUserReportCommentResponse {
+  report: IUserReportComment;
+  isRemoved: boolean;
 }
-export interface IUserReportRecipe
-{
-	accountId: string;
-	entityId: string;
-	reasonCodes: string[];
-	additionalDetails?: string;
-	status: ReportStatus;
-	createdAt: string;
-	updatedAt: string;
-	id: string;
+export interface IUserReportRecipe {
+  accountId: string;
+  entityId: string;
+  reasonCodes: string[];
+  additionalDetails?: string;
+  status: ReportStatus;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 }
-export interface IUserReportRecipeDTO
-{
-	recipeId: string;
-	reasonCodes: string[];
-	additionalDetails?: string;
+export interface IUserReportRecipeDTO {
+  recipeId: string;
+  reasonCodes: string[];
+  additionalDetails?: string;
 }
-export interface IUserReportRecipeResponse
-{
-	report: IUserReportRecipe;
-	isRemoved: boolean;
+export interface IUserReportRecipeResponse {
+  report: IUserReportRecipe;
+  isRemoved: boolean;
 }
-export interface IVoteRecipeDTO
-{
-	isUpvote?: boolean;
-	recipeId?: string;
+export interface IVoteRecipeDTO {
+  isUpvote?: boolean;
+  recipeId?: string;
 }
-export interface IAdminReportCommentResponse
-{
-	reportId: string;
-	commentId: string;
-	recipeId: string;
-	commentOwnerUsername: string;
-	commentContent: string;
-	recipeTitle: string;
-	recipeImageURL: string;
-	reporterUsername: string;
-	reportReason: string;
-	createdAt: string;
-	status: string;
+export interface IAdminReportCommentResponse {
+  reportId: string;
+  commentId: string;
+  recipeId: string;
+  commentOwnerUsername: string;
+  commentContent: string;
+  recipeTitle: string;
+  recipeImageURL: string;
+  reporterUsername: string;
+  reportReason: string;
+  createdAt: string;
+  status: string;
 }
-export interface IPaginatedAdminReportCommentListResponse
-{
-	paginatedData: IAdminReportCommentResponse[];
-	metadata?: INumberedPaginatedMetadata;
+export interface IPaginatedAdminReportCommentListResponse {
+  paginatedData: IAdminReportCommentResponse[];
+  metadata?: INumberedPaginatedMetadata;
 }
-export interface IAdminReportCommentDetailResponse
-{
-	comment: ICommentDetailResponse;
-	recipe: IAdminRecipeResponse;
-	reports: IReportRecipeResponse[];
+export interface IAdminReportCommentDetailResponse {
+  comment: ICommentDetailResponse;
+  recipe: IAdminRecipeResponse;
+  reports: IReportRecipeResponse[];
 }
-export interface ICommentDetailResponse
-{
-	id: string;
-	authorId: string;
-	authorUsername: string;
-	authorDisplayName: string;
-	authorAvatarURL: string;
-	content: string;
-	isActive: boolean;
-	createdAt: string;
-	updatedAt: string;
+export interface ICommentDetailResponse {
+  id: string;
+  authorId: string;
+  authorUsername: string;
+  authorDisplayName: string;
+  authorAvatarURL: string;
+  content: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
-export interface IPaginatedAdminRecipeListResponse
-{
-	paginatedData: IAdminRecipeResponse[];
-	metadata?: INumberedPaginatedMetadata;
+export interface IPaginatedAdminRecipeListResponse {
+  paginatedData: IAdminRecipeResponse[];
+  metadata?: INumberedPaginatedMetadata;
 }
-export interface IMarkAllRecipeReportDTO
-{
-	recipeId: string;
-	isReopened: boolean;
+export interface IMarkAllRecipeReportDTO {
+  recipeId: string;
+  isReopened: boolean;
 }
-export interface IMarkAllCommentReportDTO
-{
-	recipeId: string;
-	commentId: string;
-	isReopened: boolean;
+export interface IMarkAllCommentReportDTO {
+  recipeId: string;
+  commentId: string;
+  isReopened: boolean;
 }

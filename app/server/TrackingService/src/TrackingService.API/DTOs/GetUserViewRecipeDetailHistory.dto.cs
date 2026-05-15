@@ -8,5 +8,5 @@ public class GetUserViewRecipeDetailHistoryDTO
     [Required]
     [JsonProperty("skip")]
     [Range(0, int.MaxValue)]
-    public int Skip { get; set; } 
+    public int Skip { get; set; }
 }

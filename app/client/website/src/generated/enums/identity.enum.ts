@@ -3,6 +3,6 @@
 //     the code is regenerated.
 
 export enum VerifyAccountMethod {
-	Verify = "Verify",
-	Unlink = "Unlink"
+  Verify = "Verify",
+  Unlink = "Unlink"
 }

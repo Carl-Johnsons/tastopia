@@ -1,11 +1,11 @@
 import createNextIntlPlugin from "next-intl/plugin";
-import 'dotenv/config';
+import "dotenv/config";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // update image remote later
   basePath: process.env.BASE_PATH,
-  output: 'standalone',
+  output: "standalone",
   reactStrictMode: true,
   images: {
     qualities: [75, 100],
@@ -14,7 +14,7 @@ const nextConfig = {
         protocol: "https",
         hostname: "**"
       }
-    ],
+    ]
   },
   typescript: {
     ignoreBuildErrors: true

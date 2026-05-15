@@ -7,9 +7,11 @@ export interface ParamsProps {
 }
 
 export interface CommentDetailParamProps {
-  params: Promise<BaseParam & {
-    recipeId: string;
-  }>;
+  params: Promise<
+    BaseParam & {
+      recipeId: string;
+    }
+  >;
 }
 
 export interface SidebarChildLink {

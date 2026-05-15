@@ -35,7 +35,7 @@ public static class DependencyInjection
         {
             options.Credentials = ChannelCredentials.Insecure;
         };
-    
+
         services.AddGrpcClient<GrpcRecipe.GrpcRecipeClient>(options =>
         {
             options.Address = consulService.GetGrpcServiceUri(DotNetEnv.Env.GetString("CONSUL_RECIPE", "Not Found"));

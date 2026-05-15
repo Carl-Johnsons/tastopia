@@ -49,6 +49,7 @@ export const UpdateProfileSlice = createSlice({
   }
 });
 
-export const { saveUpdateProfileData, saveIsDirtyFieldsData } = UpdateProfileSlice.actions;
+export const { saveUpdateProfileData, saveIsDirtyFieldsData } =
+  UpdateProfileSlice.actions;
 
 export default UpdateProfileSlice.reducer;

@@ -23,5 +23,5 @@ export type RecipeReport = {
 };
 
 export interface IErrorResponseDTO extends IBaseErrorResponseDTO {
-  message: RecipeError 
-};
+  message: RecipeError;
+}

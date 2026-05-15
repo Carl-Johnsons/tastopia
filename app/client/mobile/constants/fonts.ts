@@ -76,4 +76,3 @@ export const FONT_SECONDARY = {
   "secondary-ultralight": ["Helvetica Neue UltraLight", "sans-serif"],
   "secondary-ultralight-italic": ["Helvetica Neue UltraLight Italic", "sans-serif"]
 };
-

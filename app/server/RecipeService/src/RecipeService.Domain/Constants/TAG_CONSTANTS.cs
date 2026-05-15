@@ -17,7 +17,7 @@ public class TAG_CONSTANTS
 
     public static string GetTagCategoryTranslate(TagCategory category, string lang)
     {
-        if(lang == LanguageValidation.En)
+        if (lang == LanguageValidation.En)
         {
             return category.ToString();
         }

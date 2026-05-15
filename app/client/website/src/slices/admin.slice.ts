@@ -21,7 +21,7 @@ const initialState: AdminState = {
   isFormSubmiting: false,
   isSubmitDisabled: false,
   formType: "create",
-  isFormLoading: false,
+  isFormLoading: false
 };
 
 export const AdminSlice = createSlice({

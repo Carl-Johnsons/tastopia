@@ -29,7 +29,7 @@ public class UserData
                 BackgroundUrl = "https://res.cloudinary.com/dhphzuojz/image/upload/v1735024288/default_storage/nuyo1txfw4qontqlcca1.png",
                 TotalFollower = 1,
                 AccountUsername = "kian1234"
-                
+
 
             },
             new User{

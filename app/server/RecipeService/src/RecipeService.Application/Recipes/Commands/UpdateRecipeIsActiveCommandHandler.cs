@@ -28,7 +28,8 @@ public class UpdateRecipeIsActiveCommandHandler : IRequestHandler<UpdateRecipeIs
 
     public async Task<Result> Handle(UpdateRecipeIsActiveCommand request, CancellationToken cancellationToken)
     {
-        try {
+        try
+        {
             var recipeId = request.RecipeId;
             var isActive = request.IsActive;
             if (recipeId == Guid.Empty)
@@ -54,7 +55,8 @@ public class UpdateRecipeIsActiveCommandHandler : IRequestHandler<UpdateRecipeIs
             });
             return Result.Success();
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result.Failure(RecipeError.UpdateRecipeFail);
         }

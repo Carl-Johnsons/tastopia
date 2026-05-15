@@ -20,7 +20,8 @@ public class PublishUserSearchRecipeCommandHandler : IRequestHandler<PublishUser
     {
         var accountId = request.AccountId;
         var keyword = request.Keyword;
-        if(accountId == Guid.Empty || string.IsNullOrEmpty(keyword)) {
+        if (accountId == Guid.Empty || string.IsNullOrEmpty(keyword))
+        {
             return Result<string?>.Failure(RecipeError.NullParameter, "accountId or keyword is null");
         }
         await _serviceBus.Publish(new CreateUserSearchRecipeEvent

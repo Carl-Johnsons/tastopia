@@ -6,7 +6,7 @@ public record UpdateUserTotalRecipeCommand : IRequest<Result>
 {
     [Required]
     public Guid AccountId { get; init; }
-    public int Delta {  get; init; }
+    public int Delta { get; init; }
 }
 public class UpdateUserTotalRecipeCommandHandler : IRequestHandler<UpdateUserTotalRecipeCommand, Result>
 {

@@ -7,11 +7,11 @@ public class RecipeError
     public static Error NotFound =>
         new("RecipeError.NotFound",
            Message: "Recipe not found",
-           StatusCode: (int) HttpStatusCode.NotFound);
+           StatusCode: (int)HttpStatusCode.NotFound);
     public static Error AddRecipeFail =>
-        new("RecipeError.AddRecipeFail", 
+        new("RecipeError.AddRecipeFail",
             Message: "Add recipe fail",
-            StatusCode: (int) HttpStatusCode.InternalServerError);
+            StatusCode: (int)HttpStatusCode.InternalServerError);
     public static Error DeleteRecipeFail =>
         new("RecipeError.DeleteRecipeFail",
             Message: "Delete recipe fail",

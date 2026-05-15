@@ -36,7 +36,7 @@ export default function MiniRecipe({
   return (
     <TouchableWithoutFeedback onPress={handleOnPress}>
       <View
-        className={`bg-white_black dark:border dark:border-gray-600 h-[150px] w-[140px] rounded-3xl ${containerClassName}`}
+        className={`bg-white_black h-[150px] w-[140px] rounded-3xl dark:border dark:border-gray-600 ${containerClassName}`}
         style={Platform.select({
           ios: {
             shadowOffset: { width: 0, height: 2 },

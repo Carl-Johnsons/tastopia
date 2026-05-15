@@ -40,7 +40,7 @@ public class GetUserFollowingsQueryHandler : IRequestHandler<GetUserFollowingsQu
                 (follow, user) => user
         ).AsQueryable();
 
-        if(!string.IsNullOrEmpty(keyword))
+        if (!string.IsNullOrEmpty(keyword))
         {
             keyword = keyword.ToLower();
             userQuery = userQuery.Where(u => u.IsAccountActive && !u.IsAdmin &&

@@ -15,7 +15,7 @@ public class Recipe : BaseMongoDBAuditableEntity
     public string Title { get; set; } = null!;
 
     [Required]
-    [MaxLength (500)]
+    [MaxLength(500)]
     public string Description { get; set; } = null!;
 
     [Required]

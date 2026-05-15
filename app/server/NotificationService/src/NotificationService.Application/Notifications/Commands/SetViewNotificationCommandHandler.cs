@@ -21,7 +21,8 @@ public class SetViewNotificationCommandHandler : IRequestHandler<SetViewNotifica
 
     public async Task<Result<Recipient?>> Handle(SetViewNotificationCommand request, CancellationToken cancellationToken)
     {
-        try {
+        try
+        {
             var accountId = request.AccountId;
             var notificationId = request.NotificationId;
 

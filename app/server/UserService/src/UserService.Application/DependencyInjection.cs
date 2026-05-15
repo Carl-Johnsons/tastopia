@@ -25,7 +25,7 @@ public static class DependencyInjection
         AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
         var serviceProvider = services.BuildServiceProvider();
         var consulService = serviceProvider.GetRequiredService<IConsulRegistryService>();
-        
+
         Action<Grpc.Net.Client.GrpcChannelOptions> channelOptions = options =>
         {
             options.Credentials = ChannelCredentials.Insecure;

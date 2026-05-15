@@ -6,5 +6,5 @@ namespace Contract.Event.UserEvent;
 public class SearchUsersEvent
 {
     public HashSet<Guid>? AccountIds { get; set; }
-    public string? Keyword { get; set; } 
+    public string? Keyword { get; set; }
 }

@@ -3,5 +3,5 @@ export enum ActivityType {
   CreateRecipe = "CreateRecipe",
   UpvoteRecipe = "UpvoteRecipe",
   DownvoteRecipe = "DownvoteRecipe",
-  Ban = "Ban",
+  Ban = "Ban"
 }
