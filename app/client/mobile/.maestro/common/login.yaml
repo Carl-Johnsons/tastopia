@@ -15,7 +15,7 @@ appId: com.tastopia.app
     id: "login-identifier-input"
 - tapOn:
     id: "login-identifier-input"
-- inputText: ${USERNAME}
+- inputText: ${E2E_TEST_USERNAME}
 # - assertNotVisible: Please enter email or phone number.
 
 - hideKeyboard
@@ -24,7 +24,7 @@ appId: com.tastopia.app
     id: "login-password-input"
 - tapOn:
     id: "login-password-input"
-- inputText: ${PASSWORD}
+- inputText: ${E2E_TEST_PASSWORD}
 # - assertNotVisible: Please enter password.
 
 - hideKeyboard

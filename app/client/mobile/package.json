@@ -9,7 +9,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "test": "maestro test -e USERNAME=$USERNAME -e PASSWORD=$PASSWORD .maestro",
+    "test": "maestro test -e E2E_TEST_USERNAME=$E2E_TEST_USERNAME -e E2E_TEST_PASSWORD=$E2E_TEST_PASSWORD .maestro",
     "lint": "expo lint",
     "build:android": "npx expo prebuild --platform android",
     "build:ios": "npx expo prebuild --platform ios",
