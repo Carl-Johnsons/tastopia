@@ -2,8 +2,8 @@
 
 set -euo pipefail
 
-export USERNAME="${E2E_TEST_USERNAME:?E2E_TEST_USERNAME is required}"
-export PASSWORD="${E2E_TEST_PASSWORD:?E2E_TEST_PASSWORD is required}"
+: "${E2E_TEST_USERNAME:?E2E_TEST_USERNAME is required}"
+: "${E2E_TEST_PASSWORD:?E2E_TEST_PASSWORD is required}"
 : "${ENV:?ENV is required for testing}"
 
 script_dir=$(cd -- $(dirname -- "${BASH_SOURCE[0]}") && pwd)
