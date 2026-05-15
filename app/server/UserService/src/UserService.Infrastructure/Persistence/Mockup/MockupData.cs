@@ -65,7 +65,8 @@ internal class MockupData
         var seedAdminUsers = seedAllUsers.Where(u => u.RoleCode != "USER").ToList();
 
         Random random = new Random();
-        var users = seedUsers.Select(u => new User {
+        var users = seedUsers.Select(u => new User
+        {
             AccountId = Guid.Parse(u.Id),
             AccountUsername = u.UserName,
             DisplayName = u.DisplayName,
@@ -111,7 +112,7 @@ internal class MockupData
         _context.Users.AddRange(adminUsers);
         await _context.SaveChangesAsync();
     }
-   
+
 
     private async Task SeedUserFollowDataAsync()
     {
@@ -124,12 +125,13 @@ internal class MockupData
         var userIds = seedUsers.Where(u => u.RoleCode == "USER").Select(u => Guid.Parse(u.Id)).ToHashSet();
         var users = _context.Users.Where(u => userIds.Contains(u.AccountId)).ToList();
         Random random = new Random();
-        foreach ( var user in users ) {
+        foreach (var user in users)
+        {
             int numberOfFollowing = random.Next(25);
             user.TotalFollowing = numberOfFollowing;
             var allUsers = users.Where(u => u.AccountId != user.AccountId).ToList();
             var randomUsers = allUsers.OrderBy(u => random.Next()).Take(numberOfFollowing).ToList();
-            foreach(var u in randomUsers )
+            foreach (var u in randomUsers)
             {
                 u.TotalFollower = (u.TotalFollower ?? 0) + 1;
                 var follow = new UserFollow

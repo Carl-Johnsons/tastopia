@@ -2,7 +2,7 @@
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 namespace RecipeService.Application.Tags.Queries;
-public class GetTagDetailQuery: IRequest<Result<TagResponse?>>
+public class GetTagDetailQuery : IRequest<Result<TagResponse?>>
 {
     public Guid TagId { get; set; }
 }
@@ -19,7 +19,7 @@ public class GetTagDetailQueryHandler : IRequestHandler<GetTagDetailQuery, Resul
     public async Task<Result<TagResponse?>> Handle(GetTagDetailQuery request, CancellationToken cancellationToken)
     {
         var tagId = request.TagId;
-        if(tagId == Guid.Empty)
+        if (tagId == Guid.Empty)
         {
             return Result<TagResponse?>.Failure(TagError.NullParameter, "TagId is null.");
         }

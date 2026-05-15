@@ -14,7 +14,7 @@ export const setAuthCookies = async ({ accessToken, idToken }: AuthData) => {
     secure: true,
     expires: expiresAt,
     sameSite: "lax",
-    path: "/",
+    path: "/"
   };
 
   try {

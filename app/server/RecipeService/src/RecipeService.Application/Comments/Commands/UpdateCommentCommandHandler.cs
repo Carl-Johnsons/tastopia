@@ -39,14 +39,14 @@ public class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentCommand,
             }
 
             var query = _context.GetDatabase().GetCollection<Recipe>(nameof(Recipe)).AsQueryable()
-                          .SelectMany(r => r.Comments, (r, c) => new {RecipeId = r.Id, Comment = c}).Where(c => c.Comment.Id == commentId).SingleOrDefault();
+                          .SelectMany(r => r.Comments, (r, c) => new { RecipeId = r.Id, Comment = c }).Where(c => c.Comment.Id == commentId).SingleOrDefault();
 
             if (query == null || query.Comment == null)
             {
                 return Result<Comment?>.Failure(CommentError.NotFound, "Not found comment");
             }
 
-            if(query.Comment.AccountId != accountId)
+            if (query.Comment.AccountId != accountId)
             {
                 return Result<Comment?>.Failure(CommentError.UpdateCommentFail, "Permission deny. AuthorId of comment not equal current accountId.");
             }

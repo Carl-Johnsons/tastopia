@@ -27,13 +27,13 @@ public class MarkAllCommentReportCommandHandler : IRequestHandler<MarkAllComment
     public async Task<Result> Handle(MarkAllCommentReportCommand request,
                                CancellationToken cancellationToken)
     {
-        if(request.RecipeId == Guid.Empty || request.CommentId == Guid.Empty)
+        if (request.RecipeId == Guid.Empty || request.CommentId == Guid.Empty)
         {
             return Result.Failure(ReportError.NullParameter, "RecipeId or CommentId not found");
         }
 
         var reports = await _context.UserReportComments.Where(rp => (rp.RecipeId == request.RecipeId || rp.EntityId == request.CommentId) && rp.Status == (request.IsReopened ? ReportStatus.Done : ReportStatus.Pending)).ToListAsync();
-        if(reports == null || reports.Count == 0)
+        if (reports == null || reports.Count == 0)
         {
             return Result.Failure(ReportError.NotFound, "Not found comment reports");
         }

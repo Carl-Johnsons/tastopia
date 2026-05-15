@@ -27,7 +27,7 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
     {
         var skip = request.paginatedDTO.Skip;
         var keyword = request.paginatedDTO.Keyword;
-        if(skip == null || skip < 0)
+        if (skip == null || skip < 0)
         {
             return Result<PaginatedAdminRecipeListResponse?>.Failure(RecipeError.NullParameter, "Page is null");
         }
@@ -106,7 +106,7 @@ public class AdminGetRecipesQueryHandler : IRequestHandler<AdminGetRecipesQuery,
         var recipesResponseQuery = recipes.Select(r => r.Recipe).AsQueryable();
 
         var limit = RECIPE_CONSTANTS.ADMIN_RECIPE_LIMIT;
-        if(request.paginatedDTO.Limit != null)
+        if (request.paginatedDTO.Limit != null)
         {
             limit = request.paginatedDTO.Limit.Value;
         }

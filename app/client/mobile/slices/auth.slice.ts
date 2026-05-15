@@ -47,7 +47,8 @@ export const selectVerifyIdentifier = () =>
   useAppSelector(state => state.auth.verifyIdentifier);
 export const selectModifyIdentifierData = () =>
   useAppSelector(state => state.auth.modifyIdentifierData);
-export const selectAddIdentifierData = () => useAppSelector(state => state.auth.addIdentifierData);
+export const selectAddIdentifierData = () =>
+  useAppSelector(state => state.auth.addIdentifierData);
 export const selectResetModifyIdentifierForm = () =>
   useAppSelector(state => state.auth.resetModifyIdentifierForm);
 

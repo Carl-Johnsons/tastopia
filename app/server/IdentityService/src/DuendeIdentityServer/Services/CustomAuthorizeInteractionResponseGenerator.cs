@@ -42,7 +42,7 @@ public class CustomAuthorizeInteractionResponseGenerator : AuthorizeInteractionR
                 ["code_challenge"] = request.Raw.Get("code_challenge"),
                 ["code_challenge_method"] = request.Raw.Get("code_challenge_method")
             };
-            
+
             var returnUrl = QueryHelpers.AddQueryString(callbackPath, qsParams);
 
             Log.Information("Constructed Return URL: {ReturnUrl}", returnUrl.ToString());

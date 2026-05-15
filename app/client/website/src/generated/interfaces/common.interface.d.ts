@@ -2,33 +2,28 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
-import { SortType } from '../enums/common.enum';
+import { SortType } from "../enums/common.enum";
 
-export interface IErrorResponseDTO
-{
-	status: number;
-	code: string;
-	message: string;
+export interface IErrorResponseDTO {
+  status: number;
+  code: string;
+  message: string;
 }
-export interface IAdvancePaginatedMetadata
-{
-	hasNextPage: boolean;
-	totalPage: number;
+export interface IAdvancePaginatedMetadata {
+  hasNextPage: boolean;
+  totalPage: number;
 }
-export interface ICommonPaginatedMetadata
-{
-	totalPage: number;
+export interface ICommonPaginatedMetadata {
+  totalPage: number;
 }
-export interface INumberedPaginatedMetadata
-{
-	currentPage: number;
-	totalRow?: number;
-	totalPage: number;
+export interface INumberedPaginatedMetadata {
+  currentPage: number;
+  totalRow?: number;
+  totalPage: number;
 }
-export interface IPaginateParam
-{
-	offset: number;
-	limit: number;
-	sortOrder?: SortType;
-	sortBy?: string;
+export interface IPaginateParam {
+  offset: number;
+  limit: number;
+  sortOrder?: SortType;
+  sortBy?: string;
 }

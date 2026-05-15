@@ -14,7 +14,8 @@ public class MaxFileSizeAttribute : ValidationAttribute
 
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
-        if (value != null) {
+        if (value != null)
+        {
             if (value is IFormFile file)
             {
                 if (file.Length > _maxSizeInBytes)

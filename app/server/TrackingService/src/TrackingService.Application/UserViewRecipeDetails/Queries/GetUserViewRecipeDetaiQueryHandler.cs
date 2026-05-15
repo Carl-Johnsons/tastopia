@@ -13,7 +13,7 @@ public class GetUserViewRecipeDetaiQuery : IRequest<Result<PaginatedUserViewReci
 {
     public Guid AccountId { get; set; }
 
-    public int Skip { get; set;}
+    public int Skip { get; set; }
 }
 
 public class GetUserViewRecipeDetaiQueryHandler : IRequestHandler<GetUserViewRecipeDetaiQuery, Result<PaginatedUserViewRecipeDetailListResponse?>>

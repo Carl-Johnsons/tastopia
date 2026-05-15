@@ -7,8 +7,8 @@ namespace RecipeWorker.Services;
 
 public class OffensiveTextCheckerService : IOffensiveTextCheckerService
 {
-    private string apiKey {  get; init; }
-    private string endpoint {  get; init; }
+    private string apiKey { get; init; }
+    private string endpoint { get; init; }
     private readonly ILogger<OffensiveTextCheckerService> _logger;
 
     public OffensiveTextCheckerService(ILogger<OffensiveTextCheckerService> logger)
@@ -20,9 +20,10 @@ public class OffensiveTextCheckerService : IOffensiveTextCheckerService
 
     public async Task<string> CheckOffensiveText(string text)
     {
-        try {
+        try
+        {
 
-            if(apiKey == "Not found" || endpoint == "Not found")
+            if (apiKey == "Not found" || endpoint == "Not found")
             {
                 _logger.LogError("Not found api key or endpoint.");
                 return "";
@@ -51,7 +52,9 @@ public class OffensiveTextCheckerService : IOffensiveTextCheckerService
                 _logger.LogError(JsonConvert.SerializeObject("Error api", Formatting.Indented));
                 return "";
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return "";
         }

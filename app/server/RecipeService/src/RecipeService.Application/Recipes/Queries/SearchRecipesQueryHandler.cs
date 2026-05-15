@@ -83,7 +83,7 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
                 r.Ingredients.Any(ingredient => ingredient.ToLower().Contains(tag.Vi.ToLower()))
                 )
             );
-            
+
 
 
         }
@@ -94,7 +94,7 @@ public class SearchRecipesQueryHandler : IRequestHandler<SearchRecipesQuery, Res
                 Keyword = keyword,
             }, cancellationToken: cancellationToken);
 
-            await Console.Out.WriteLineAsync("Search user:"+ JsonConvert.SerializeObject(searchUserResponse.AccountIds, Formatting.Indented));
+            await Console.Out.WriteLineAsync("Search user:" + JsonConvert.SerializeObject(searchUserResponse.AccountIds, Formatting.Indented));
 
             var searchAuthorIds = searchUserResponse.AccountIds.ToHashSet();
 

@@ -293,7 +293,7 @@ const ReportSetting = ({ recipeId, changeSetting, closeModal }: ReportSettingPro
             Alert.alert(t("reportSuccessfully"));
             closeModal();
           },
-          onError: error => handleError(error),
+          onError: error => handleError(error)
         }
       );
     }

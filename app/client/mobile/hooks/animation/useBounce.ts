@@ -11,7 +11,7 @@ export type UseBounceResult = {
   animate: () => void;
 
   /** The styles to assign to the object. */
-  animatedStyles: DefaultStyle
+  animatedStyles: DefaultStyle;
 };
 
 export const useBounce = (): UseBounceResult => {

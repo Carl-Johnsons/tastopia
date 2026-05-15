@@ -10,9 +10,9 @@ export async function GET() {
       return Response.json(
         {
           accessToken,
-          idToken,
+          idToken
         },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     }
 
     const res = NextResponse.json(null, {
-      status: 200,
+      status: 200
     });
 
     res.cookies.set("accessToken", accessToken);

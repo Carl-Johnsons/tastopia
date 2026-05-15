@@ -26,6 +26,6 @@ export default defineConfig({
     charts: true,
     embeddedScreenshots: true,
     inlineAssets: true,
-    saveAllAttempts: false,
-  },
+    saveAllAttempts: false
+  }
 });

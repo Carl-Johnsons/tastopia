@@ -7,11 +7,11 @@ public class UserReportRecipeError
     public static Error NotFound =>
         new("UserReportRecipeError.NotFound",
            Message: "UserReportRecipe not found",
-           StatusCode: (int) HttpStatusCode.NotFound);
+           StatusCode: (int)HttpStatusCode.NotFound);
     public static Error AddUserReportRecipeFail =>
-        new("UserReportRecipeError.AddUserReportRecipeFail", 
+        new("UserReportRecipeError.AddUserReportRecipeFail",
             Message: "Add UserReportRecipe fail",
-            StatusCode: (int) HttpStatusCode.InternalServerError);
+            StatusCode: (int)HttpStatusCode.InternalServerError);
     public static Error DeleteUserReportRecipeFail =>
         new("UserReportRecipeError.DeleteUserReportRecipeFail",
             Message: "Delete UserReportRecipe fail",

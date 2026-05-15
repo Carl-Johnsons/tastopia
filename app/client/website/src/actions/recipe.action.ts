@@ -233,4 +233,3 @@ export async function getRecipeStatistic(): Promise<Response<StatisticDateItem[]
     return withErrorProcessor(error as AxiosError);
   }
 }
-

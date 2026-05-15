@@ -52,7 +52,8 @@ public class UserReportUserCommandHandler : IRequestHandler<UserReportUserComman
             var reporter = users.GetValueOrDefault(reporterId);
             var reported = users.GetValueOrDefault(reportedId);
 
-            if(reporter == null || reported == null) {
+            if (reporter == null || reported == null)
+            {
                 return Result<UserReportUserResponse?>.Failure(UserReportError.AddUserReportFail, "Not found reporter or reported");
             }
 

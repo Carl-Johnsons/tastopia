@@ -27,7 +27,8 @@ public class UpdateRecipeTagsCommandHandler : IRequestHandler<UpdateRecipeTagsCo
 
     public async Task<Result> Handle(UpdateRecipeTagsCommand request, CancellationToken cancellationToken)
     {
-        try {
+        try
+        {
             var recipeId = request.RecipeId;
             var tagCodes = request.TagCodes;
             if (recipeId == null || tagCodes == null || tagCodes.Count == 0)
@@ -57,7 +58,8 @@ public class UpdateRecipeTagsCommandHandler : IRequestHandler<UpdateRecipeTagsCo
             await _unitOfWork.SaveChangeAsync();
             return Result.Success();
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result.Failure(RecipeError.UpdateRecipeFail);
         }

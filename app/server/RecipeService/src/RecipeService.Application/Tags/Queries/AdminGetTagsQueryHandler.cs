@@ -3,7 +3,7 @@ using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 namespace RecipeService.Application.Tags.Queries;
 
-public class AdminGetTagsQuery: IRequest<Result<PaginatedAdminTagListResponse?>>
+public class AdminGetTagsQuery : IRequest<Result<PaginatedAdminTagListResponse?>>
 {
     public PaginatedDTO PaginatedDTO { get; set; } = null!;
     public string Lang { get; set; } = null!;
@@ -24,12 +24,12 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
         var paginatedDto = request.PaginatedDTO;
         var lang = request.Lang;
 
-        if(paginatedDto.Skip == null || string.IsNullOrEmpty(lang))
+        if (paginatedDto.Skip == null || string.IsNullOrEmpty(lang))
         {
             return Task.FromResult(Result<PaginatedAdminTagListResponse?>.Failure(TagError.NullParameter, "Skip or Language is null."));
         }
 
-        var tagsQuery = _context.Tags.AsEnumerable().Select(t => 
+        var tagsQuery = _context.Tags.AsEnumerable().Select(t =>
         new AdminTagResponse
         {
             Id = t.Id,
@@ -50,7 +50,7 @@ public class AdminGetTagsQueryHandler : IRequestHandler<AdminGetTagsQuery, Resul
         var totalRow = tagsQuery.Count();
 
         var limit = paginatedDto.Limit;
-        if(limit == null)
+        if (limit == null)
         {
             limit = TAG_CONSTANTS.ADMIN_TAG_LIMIT;
         }

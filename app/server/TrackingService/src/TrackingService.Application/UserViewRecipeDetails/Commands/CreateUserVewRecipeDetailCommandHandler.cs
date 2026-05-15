@@ -32,16 +32,18 @@ public class CreateUserVewRecipeDetailCommandHandler : IRequestHandler<CreateUse
         var recipeId = request.RecipeId;
         var viewTime = request.ViewTime;
 
-        if(accountId == null || accountId == Guid.Empty || recipeId == null || recipeId == Guid.Empty || viewTime == null)
+        if (accountId == null || accountId == Guid.Empty || recipeId == null || recipeId == Guid.Empty || viewTime == null)
         {
             return Result.Failure(UserViewRecipeDetailError.NotFound);
         }
 
-        try {
-            
+        try
+        {
+
             var view = await _context.UserViewRecipeDetails.Where(v => v.RecipeId == recipeId && v.AccountId == accountId).SingleOrDefaultAsync();
 
-            if (view == null) {
+            if (view == null)
+            {
                 view = new UserViewRecipeDetail
                 {
                     Id = Guid.NewGuid(),
@@ -60,7 +62,7 @@ public class CreateUserVewRecipeDetailCommandHandler : IRequestHandler<CreateUse
             await _unitOfWork.SaveChangeAsync();
             return Result.Success();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             _logger.LogError(JsonConvert.SerializeObject(ex));
             return Result.Failure(UserViewRecipeDetailError.AddUserViewRecipeDetailFail);

@@ -77,8 +77,8 @@ public class FollowUserCommandHandler : IRequestHandler<FollowUserCommand, Resul
                 isFollowing = false;
                 follower.TotalFollowing = (follower.TotalFollowing ?? 0) - 1;
                 following.TotalFollower = (following.TotalFollower ?? 0) - 1;
-                if(follower.TotalFollowing < 0) { follower.TotalFollowing = 0; }
-                if(following.TotalFollower < 0) { following.TotalFollower = 0; }
+                if (follower.TotalFollowing < 0) { follower.TotalFollowing = 0; }
+                if (following.TotalFollower < 0) { following.TotalFollower = 0; }
                 _context.Users.Update(follower);
                 _context.Users.Update(following);
                 _context.UserFollows.Remove(follow);

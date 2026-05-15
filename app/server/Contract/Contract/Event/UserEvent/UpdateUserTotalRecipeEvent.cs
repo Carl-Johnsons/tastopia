@@ -5,5 +5,5 @@ namespace Contract.Event.UserEvent;
 public class UpdateUserTotalRecipeEvent
 {
     public Guid AccountId { get; set; }
-    public int Delta { get; set; } 
+    public int Delta { get; set; }
 }

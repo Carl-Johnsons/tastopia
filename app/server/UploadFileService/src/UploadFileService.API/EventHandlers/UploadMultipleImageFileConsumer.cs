@@ -31,7 +31,8 @@ public sealed class UploadMultipleImageFileConsumer : IConsumer<UploadMultipleIm
         });
         response.ThrowIfFailure();
         var result = new ListFileDTO();
-        foreach(var file in response.Value!) {
+        foreach (var file in response.Value!)
+        {
             result.Files.Add(_mapper.Map<FileDTO>(file));
         }
         await context.RespondAsync(result);

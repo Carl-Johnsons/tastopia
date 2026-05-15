@@ -4,7 +4,9 @@ export type UpdateProfileContext = {
   triggerSubmit?: () => void;
   setTriggerSubmit?: Dispatch<SetStateAction<(() => void) | undefined>>;
   onChangeGenderValue?: (newValue: string) => void;
-  setOnChangeGenderValue?: Dispatch<SetStateAction<((newValue: string) => void) | undefined>>;
+  setOnChangeGenderValue?: Dispatch<
+    SetStateAction<((newValue: string) => void) | undefined>
+  >;
 };
 
 type UpdateProfileProviderProps = {

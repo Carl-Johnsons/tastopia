@@ -34,7 +34,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         await mockupData.SeedAllDataAsync();
         Console.WriteLine("✅ Seed data complete");
     }
-    
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         EnvUtility.LoadEnvFile();

@@ -12,5 +12,5 @@ public class UpdateRecipeTagsEvent
     public Guid RecipeId { get; set; }
 
     [Required]
-    public List<string> TagCodes { get; set; } = null!; 
+    public List<string> TagCodes { get; set; } = null!;
 }

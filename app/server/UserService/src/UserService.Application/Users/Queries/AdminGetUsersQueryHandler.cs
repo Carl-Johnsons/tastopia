@@ -39,7 +39,8 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
 
     public async Task<Result<PaginatedAdminGetUserListResponse?>> Handle(AdminGetUsersQuery request, CancellationToken cancellationToken)
     {
-        try {
+        try
+        {
             var accountId = request.AccountId;
             var paginatedDTO = request.PaginatedDTO;
 
@@ -146,7 +147,7 @@ public class AdminGetUsersQueryHandler : IRequestHandler<AdminGetUsersQuery, Res
 
             return Result<PaginatedAdminGetUserListResponse?>.Success(paginatedResponse);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             return Result<PaginatedAdminGetUserListResponse?>.Failure(UserError.UpdateUserFail, ex.Message);
 

@@ -56,9 +56,9 @@ public class GetUserReportDetailByAccountIdQueryHandler : IRequestHandler<GetUse
             AdditionalDetails = rp.AdditionalDetails,
             CreatedAt = rp.CreatedAt
         }).AsQueryable();
-        
 
-        var totalRow =  resultQuery.Count();
+
+        var totalRow = resultQuery.Count();
         var totalPage = (totalRow + USER_CONSTANTS.ADMIN_USER_REPORT_LIMIT - 1) / USER_CONSTANTS.ADMIN_USER_REPORT_LIMIT;
 
         resultQuery = _paginateDataUtility.PaginateQuery(resultQuery, new PaginateParam
@@ -71,7 +71,7 @@ public class GetUserReportDetailByAccountIdQueryHandler : IRequestHandler<GetUse
 
         var result = resultQuery.ToList();
 
-        if(result == null || result.Count == 0)
+        if (result == null || result.Count == 0)
         {
             return Result<PaginatedAdminUserReportDetailListResponse?>.Success(new PaginatedAdminUserReportDetailListResponse
             {

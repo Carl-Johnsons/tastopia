@@ -24,7 +24,7 @@ public class RsaKeyLoader
                       .Replace("-----END PUBLIC KEY-----", "")
                       .Trim();
         var keyBytes = Convert.FromBase64String(pemFormatted);
-        rsa.ImportPkcs8PrivateKey(keyBytes, out _); 
+        rsa.ImportPkcs8PrivateKey(keyBytes, out _);
         return rsa;
     }
 

@@ -12,6 +12,6 @@ public class SimpleRecipeResponse
     public int VoteDiff { get; set; }
     public int NumberOfComment { get; set; } = 0;
     public string Vote { get; set; } = "None";
-    public DateTime CreatedAt { get; set;}
-    public DateTime UpdatedAt { get; set;}
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }

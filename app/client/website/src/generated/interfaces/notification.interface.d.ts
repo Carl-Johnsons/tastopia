@@ -5,38 +5,31 @@
 // Generated at: 10/15/2025 1:26:34 PM
 
 import {
-    IErrorResponseDTO,
-    IAdvancePaginatedMetadata,
-    ICommonPaginatedMetadata,
-    INumberedPaginatedMetadata
+  IErrorResponseDTO,
+  IAdvancePaginatedMetadata,
+  ICommonPaginatedMetadata,
+  INumberedPaginatedMetadata
 } from "./common.interface";
 
-import {
-    ActivityType,
-    ActivityEntityType,
-    SortType
-} from "../enums/common.enum";
-            
-export interface IPaginatedNotificationListResponse
-{
-	paginatedData: INotificationsResponse[];
-	metadata?: INotificationListMetadata;
+import { ActivityType, ActivityEntityType, SortType } from "../enums/common.enum";
+
+export interface IPaginatedNotificationListResponse {
+  paginatedData: INotificationsResponse[];
+  metadata?: INotificationListMetadata;
 }
-export interface INotificationListMetadata
-{
-	unreadNotifications: number;
-	hasNextPage: boolean;
-	totalPage: number;
+export interface INotificationListMetadata {
+  unreadNotifications: number;
+  hasNextPage: boolean;
+  totalPage: number;
 }
-export interface INotificationsResponse
-{
-	id: string;
-	isViewed: boolean;
-	title?: string;
-	message: string;
-	code: string;
-	imageUrl?: string;
-	jsonData?: string;
-	createdAt: string;
-	updatedAt: string;
+export interface INotificationsResponse {
+  id: string;
+  isViewed: boolean;
+  title?: string;
+  message: string;
+  code: string;
+  imageUrl?: string;
+  jsonData?: string;
+  createdAt: string;
+  updatedAt: string;
 }

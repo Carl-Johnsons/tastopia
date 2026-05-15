@@ -42,7 +42,7 @@ public class AdminGetRankingTagsStatisticQueryHandler : IRequestHandler<AdminGet
             .ToListAsync(cancellationToken);
 
         var tagViewCounts = await recipesCollection.Aggregate()
-            .Unwind<Recipe>("RecipeTags") 
+            .Unwind<Recipe>("RecipeTags")
             .Group(r => r.RecipeTags.Select(rt => rt.TagId), g => new
             {
                 TagId = g.Key.FirstOrDefault(),

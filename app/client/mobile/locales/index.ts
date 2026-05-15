@@ -83,5 +83,5 @@ export default {
   verifyUpdateIdentifierEn,
   verifyUpdateIdentifierVi,
   historyEn,
-  historyVi,
+  historyVi
 };
