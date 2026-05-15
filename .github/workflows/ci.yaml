@@ -212,14 +212,14 @@ jobs:
         with:
           cache-read-only: false 
 
-      - name: AVD cache
-        uses: actions/cache@v5
-        id: avd_cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-27
+      # - name: AVD cache
+        # uses: actions/cache@v5
+        # id: avd_cache
+        # with:
+          # path: |
+            # ~/.android/avd/*
+            # ~/.android/adb*
+          # key: avd-27
 
       - name: Create AVD and generate snapshot for caching
         if: steps.avd_cache.outputs.cache-hit != 'true'
