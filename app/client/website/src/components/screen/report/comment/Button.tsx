@@ -80,7 +80,7 @@ export const ReopenReportButton = ({
   const queryClient = useQueryClient();
   const { invalidateCurrentAdminActivities } = useInvalidateAdmin();
   const t = useTranslations("report");
-  const {handleError} = useErrorHandler();
+  const { handleError } = useErrorHandler();
 
   const handleClick = useCallback(() => {
     mutate(

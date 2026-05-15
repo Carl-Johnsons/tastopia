@@ -24,7 +24,7 @@ public class GetRecipeStepsQueryHandler : IRequestHandler<GetRecipeStepsQuery, R
     {
         var recipeId = request.RecipeId;
 
-        if(recipeId == Guid.Empty)
+        if (recipeId == Guid.Empty)
         {
             return Result<List<Step>?>.Failure(RecipeError.NotFound);
         }

@@ -11,7 +11,7 @@ public class SearchUserViewRecipeDetaiQuery : IRequest<Result<PaginatedUserViewR
 {
     public Guid AccountId { get; set; }
 
-    public int Skip { get; set;}
+    public int Skip { get; set; }
 
     public string? Keyword { get; set; } = null!;
 }

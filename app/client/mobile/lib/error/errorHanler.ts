@@ -11,7 +11,7 @@ export const handleError = (error: any, t: (key: string) => string) => {
   if (!error.response || !error.response.data || !error.response.data.code) {
     Alert.alert(t("alertTitle"), t("General"));
     return;
-  };
+  }
 
   const data = error.response.data as IErrorResponseDTO;
   const { code } = data;

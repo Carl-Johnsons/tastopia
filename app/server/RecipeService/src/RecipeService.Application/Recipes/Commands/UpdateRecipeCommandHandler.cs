@@ -79,18 +79,19 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
             var authorId = request.AuthorId;
             var steps = request.Steps;
 
-            if(authorId == Guid.Empty || recipeId == Guid.Empty || steps == null || steps.Count == 0)
+            if (authorId == Guid.Empty || recipeId == Guid.Empty || steps == null || steps.Count == 0)
             {
                 return Result<Recipe?>.Failure(RecipeError.NullParameter);
             }
             var recipe = await _context.Recipes.Where(r => r.Id == recipeId && r.IsActive).SingleOrDefaultAsync();
 
-            if(recipe == null)
+            if (recipe == null)
             {
                 return Result<Recipe?>.Failure(RecipeError.NotFound, "Not found recipe");
             }
 
-            if (!recipe.AuthorId.Equals(authorId)) { 
+            if (!recipe.AuthorId.Equals(authorId))
+            {
                 return Result<Recipe?>.Failure(RecipeError.PermissionDeny);
 
             }
@@ -100,7 +101,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
 
             var images = await GetGrpcFileStreamDTOsAsync(request.RecipeImage, steps);
             var files = new RepeatedField<GrpcFileDTO>();
-            if(images != null && images.Count != 0)
+            if (images != null && images.Count != 0)
             {
                 var response = await _grpcUploadFileClient.UploadMultipleImageAsync(new GrpcUploadMultipleImageRequest
                 {
@@ -114,7 +115,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                 files = response.Files;
                 rollbaclUrls = response.Files.Select(f => f.Url).ToList();
             }
-            if(deleteUrls != null && deleteUrls.Count != 0)
+            if (deleteUrls != null && deleteUrls.Count != 0)
             {
                 await _serviceBus.Publish(new DeleteMultipleFileEvent
                 {
@@ -128,14 +129,16 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
             recipe.Description = request.Description;
             recipe.UpdatedAt = DateTime.Now;
 
-            if (request.RecipeImage != null) { 
+            if (request.RecipeImage != null)
+            {
                 recipe.ImageUrl = files[imageIndex["RecipeImage"]].Url;
             }
             var listSteps = new List<Step>();
             foreach (var step in steps)
             {
                 var s = recipe.Steps.Where(s => s.Id == step.StepId).SingleOrDefault();
-                if (s == null) {
+                if (s == null)
+                {
                     s = new Step();
                     s.Id = step.StepId != Guid.Empty ? step.StepId : Guid.NewGuid();
                     s.AttachedImageUrls = [];
@@ -152,7 +155,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                     {
                         listUrl.Add(files[imageIndex[$"Step{step.OrdinalNumber}|{i}"]].Url);
                     }
-                    if(s.AttachedImageUrls == null)
+                    if (s.AttachedImageUrls == null)
                     {
                         s.AttachedImageUrls = [];
                     }
@@ -214,7 +217,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
         Dictionary<string, int> map = new Dictionary<string, int>();
 
         int size = 0;
-        if(recipeImage != null)
+        if (recipeImage != null)
         {
             map.Add("RecipeImage", 0);
             size = 1;
@@ -244,7 +247,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
 
         var stepIds = steps.Where(s => s.StepId != Guid.Empty).Select(s => s.StepId).ToList();
 
-        foreach(var step in recipe.Steps)
+        foreach (var step in recipe.Steps)
         {
             //if update steps contain recipe step
             if (stepIds != null && stepIds.Count != 0 && stepIds.Contains(step.Id))
@@ -254,28 +257,31 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                 {
                     continue;
                 }
-                if(updateStep.DeleteUrls == null || updateStep.DeleteUrls.Count == 0)
+                if (updateStep.DeleteUrls == null || updateStep.DeleteUrls.Count == 0)
                 {
                     Console.WriteLine("bi null roi neeeeeeeeeeeeeeeeeeeeeeeeeee");
                     continue;
                 }
                 deleteUrls.AddRange(updateStep.DeleteUrls);
-                if(step.AttachedImageUrls == null || step.AttachedImageUrls.Count == 0)
+                if (step.AttachedImageUrls == null || step.AttachedImageUrls.Count == 0)
                 {
                     continue;
                 }
                 step.AttachedImageUrls.RemoveAll(s => updateStep.DeleteUrls.Contains(s));
                 continue;
             }
-            if (step.AttachedImageUrls != null && step.AttachedImageUrls.Count != 0) {
+            if (step.AttachedImageUrls != null && step.AttachedImageUrls.Count != 0)
+            {
                 deleteUrls.AddRange(step.AttachedImageUrls);
             }
         }
 
-        if (stepIds == null || stepIds.Count == 0) { 
+        if (stepIds == null || stepIds.Count == 0)
+        {
             recipe.Steps.Clear();
         }
-        else { 
+        else
+        {
             recipe.Steps.RemoveAll(s => !stepIds.Contains(s.Id));
         }
         return deleteUrls;
@@ -327,7 +333,7 @@ public class UpdateRecipeCommandHandler : IRequestHandler<UpdateRecipeCommand, R
                 });
             }));
         }
-   
+
         foreach (var step in steps)
         {
             if (step.Images != null && step.Images.Any())

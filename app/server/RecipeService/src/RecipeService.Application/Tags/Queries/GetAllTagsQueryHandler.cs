@@ -18,7 +18,7 @@ public class GetAllTagsQueryHandler : IRequestHandler<GetAllTagsQuery, Result<Li
     public async Task<Result<List<Tag>>> Handle(GetAllTagsQuery request, CancellationToken cancellationToken)
     {
         var tags = await _context.Tags.ToListAsync();
-        if(tags == null || tags.Count == 0)
+        if (tags == null || tags.Count == 0)
         {
             return Result<List<Tag>>.Success([]);
         }

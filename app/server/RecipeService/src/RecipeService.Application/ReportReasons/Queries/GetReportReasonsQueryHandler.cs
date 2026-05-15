@@ -27,7 +27,7 @@ public class GetReportReasonsQueryHandler : IRequestHandler<GetReportReasonsQuer
                 ? ReportReasonData.RecipeReportReasons.Select(r => new ReportReasonResponse { Code = r.Code, Content = r.En }).ToList()
                 : ReportReasonData.RecipeReportReasons.Select(r => new ReportReasonResponse { Code = r.Code, Content = r.Vi }).ToList();
 
-            if(reasons == null || reasons.Count == 0)
+            if (reasons == null || reasons.Count == 0)
             {
                 return Result<List<ReportReasonResponse>?>.Failure(RecipeError.NotFound, "Not found report recipe reason");
 

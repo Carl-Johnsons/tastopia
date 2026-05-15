@@ -7,7 +7,7 @@ public class RecipeDetailsDTO
 {
     [Required]
     public Guid Id { get; set; }
-    
+
     [Required]
     public Guid AuthorId { get; set; }
 
@@ -48,7 +48,8 @@ public class StepDTO
     public List<string>? AttachedImageUrls { get; set; }
 }
 
-public class CommentDTO {
+public class CommentDTO
+{
     [Required]
     public Guid Id { get; set; }
     [Required]

@@ -5,11 +5,11 @@ namespace RecipeService.Domain.Responses;
 public class UserActivityResponse
 {
     [JsonConverter(typeof(StringEnumConverter))]
-    public UserActivityType Type {  get; set; }
+    public UserActivityType Type { get; set; }
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
     public string TimeAgo { get; set; } = null!;
-    public DateTime Time {  get; set; }
+    public DateTime Time { get; set; }
     public string? Username { get; set; }
     public Guid? AccountId { get; set; }
     public string? AvtImageUrl { get; set; }

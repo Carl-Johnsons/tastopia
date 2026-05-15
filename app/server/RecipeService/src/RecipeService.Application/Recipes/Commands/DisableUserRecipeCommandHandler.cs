@@ -23,7 +23,8 @@ public class DisableUserRecipeCommandHandler : IRequestHandler<DisableUserRecipe
 
     public async Task<Result> Handle(DisableUserRecipeCommand request, CancellationToken cancellationToken)
     {
-        try {
+        try
+        {
             var accountId = request.AccountId;
             if (accountId == Guid.Empty)
             {
@@ -31,21 +32,21 @@ public class DisableUserRecipeCommandHandler : IRequestHandler<DisableUserRecipe
             }
 
             var recipes = await _context.Recipes
-                .Where(r => 
-                    r.AuthorId == accountId || 
+                .Where(r =>
+                    r.AuthorId == accountId ||
                     r.Comments.Any(c => c.AccountId == accountId)
                 ).ToListAsync();
 
-            foreach(var recipe in recipes)
+            foreach (var recipe in recipes)
             {
-                if(recipe.AuthorId == accountId && recipe.IsActive == true)
+                if (recipe.AuthorId == accountId && recipe.IsActive == true)
                 {
                     recipe.IsActive = false;
                 }
-                    await Console.Out.WriteLineAsync("update recipe:" + recipe.Title);
-                foreach(var comment in recipe.Comments)
+                await Console.Out.WriteLineAsync("update recipe:" + recipe.Title);
+                foreach (var comment in recipe.Comments)
                 {
-                    if(comment.AccountId == accountId)
+                    if (comment.AccountId == accountId)
                     {
                         await Console.Out.WriteLineAsync("           update recipe comment:" + comment.AccountId);
                         comment.IsActive = false;
@@ -57,7 +58,8 @@ public class DisableUserRecipeCommandHandler : IRequestHandler<DisableUserRecipe
             await _unitOfWork.SaveChangeAsync();
             return Result.Success();
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             return Result<Recipe?>.Failure(RecipeError.UpdateRecipeFail, ex.Message);
         }
     }

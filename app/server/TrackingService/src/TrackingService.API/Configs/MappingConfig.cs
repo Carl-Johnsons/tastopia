@@ -9,7 +9,7 @@ public class MappingConfig
         var mappingConfig = new MapperConfiguration(config =>
         {
 
-            
+
         });
 
         return mappingConfig;

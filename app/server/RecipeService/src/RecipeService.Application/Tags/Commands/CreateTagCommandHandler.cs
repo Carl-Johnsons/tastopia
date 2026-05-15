@@ -49,7 +49,7 @@ public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<
             {
                 return Result<TagResponse?>.Failure(TagError.AlreadyExist, $"Tag code : {request.Code} is already exist");
             }
-            
+
             var activeTagCounts = await _context.Tags.Where(t => (t.Category.ToString() == TagCategory.DishType.ToString()
                                                                 || t.Category.ToString() == TagCategory.All.ToString())
                                                                 && t.Status.ToString() == TagStatus.Active.ToString()).CountAsync();

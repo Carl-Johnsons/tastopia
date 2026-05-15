@@ -167,7 +167,7 @@ export const SignOutButton = ({ className }: Pick<DataTableButtonProps, "classNa
 
   return (
     <InteractiveButton
-      data-testid="sign-out-btn"
+      data-testid='sign-out-btn'
       title={t("signOut")}
       icon={<SignOutIcon className='text-white_black' />}
       onClick={handleClick}

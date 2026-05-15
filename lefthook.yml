@@ -46,47 +46,47 @@ pre-commit:
   commands:
     mobile-prettier:
       root: "app/client/mobile"
-      run: npm run pretty
+      run: npm run pretty -- --log-level error
 
     website-prettier:
       root: "app/client/website"
-      run: npm run pretty
+      run: npm run pretty -- --log-level error
 
     api-gateway-format:
       root: "app/server/APIGateway"
-      run: dotnet format
+      run: dotnet format -v quiet
 
     contract-format:
       root: "app/server/Contract"
-      run: dotnet format
+      run: dotnet format -v quiet
 
     identity-service-format:
       root: "app/server/IdentityService"
-      run: dotnet format
+      run: dotnet format -v quiet
 
     notification-service-format:
       root: "app/server/NotificationService"
-      run: dotnet format
+      run: dotnet format -v quiet
 
     recipe-service-format:
       root: "app/server/RecipeService"
-      run: dotnet format
+      run: dotnet format -v quiet
 
     signalr-service-format:
       root: "app/server/SignalRService"
-      run: dotnet format
+      run: dotnet format -v quiet
 
     tracking-service-format:
       root: "app/server/TrackingService"
-      run: dotnet format
+      run: dotnet format -v quiet
 
     upload-file-service-format:
       root: "app/server/UploadFileService"
-      run: dotnet format
+      run: dotnet format -v quiet
 
     user-service-format:
       root: "app/server/UserService"
-      run: dotnet format
+      run: dotnet format -v quiet
       
 commit-msg:
   commands:

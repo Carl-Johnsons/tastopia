@@ -14,7 +14,7 @@ import useLocaleTable from "@/hooks/table/useLocaleTable";
 import { useLocale, useTranslations } from "next-intl";
 import useRecipeTableColumns from "@/hooks/table/useRecipeTableColumns";
 import { StyleSheetManager } from "styled-components";
-import isValidProp from '@emotion/is-prop-valid';
+import isValidProp from "@emotion/is-prop-valid";
 
 export default function Table() {
   const [limit, setLimit] = useState(10);

@@ -29,9 +29,7 @@ export default function AuthChecker({ children }: { children: ReactNode }) {
 
   return (
     <div>
-      <div>
-        Session Token: {authenticated ? "Authenticated" : "Checking..."}
-      </div>
+      <div>Session Token: {authenticated ? "Authenticated" : "Checking..."}</div>
       {children}
     </div>
   );

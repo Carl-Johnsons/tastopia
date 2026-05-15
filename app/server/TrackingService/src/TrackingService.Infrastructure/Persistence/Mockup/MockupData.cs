@@ -43,9 +43,9 @@ internal class MockupData
         if (!_context.UserViewRecipeDetails.Any())
         {
             _logger.LogInformation("Begin seed user view recipe detail");
-            foreach(var accountId in UserViewRecipeDetailData.Accounts)
+            foreach (var accountId in UserViewRecipeDetailData.Accounts)
             {
-                foreach(var recipeId in UserViewRecipeDetailData.Recipes)
+                foreach (var recipeId in UserViewRecipeDetailData.Recipes)
                 {
                     var time = UserViewRecipeDetailData.GetRandomDateTime();
                     var view = new UserViewRecipeDetail

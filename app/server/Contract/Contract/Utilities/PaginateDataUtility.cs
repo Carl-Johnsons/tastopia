@@ -21,8 +21,8 @@ public class PaginateDataUtility<Type, ResponseMetadataType> : IPaginateDataUtil
 
     public IQueryable<Type> PaginateQuery(IQueryable<Type> query, PaginateParam param)
     {
-        if(param.SortOrder == null) param.SortOrder = SortType.DESC;
-        if(param.SortBy != null)
+        if (param.SortOrder == null) param.SortOrder = SortType.DESC;
+        if (param.SortBy != null)
         {
             var parameter = Expression.Parameter(typeof(Type), "x");
             var property = Expression.Property(parameter, param.SortBy);

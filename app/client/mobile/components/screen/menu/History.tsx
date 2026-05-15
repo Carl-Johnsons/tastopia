@@ -15,7 +15,12 @@ export default function History() {
         {role === ROLE.GUEST ? (
           <View />
         ) : (
-          <Pressable onPress={() => {router.push("/(protected)/menu/history")}} className='flex justify-center rounded-full border border-gray-200 px-4 py-1'>
+          <Pressable
+            onPress={() => {
+              router.push("/(protected)/menu/history");
+            }}
+            className='flex justify-center rounded-full border border-gray-200 px-4 py-1'
+          >
             <Text className='text-black_white font-sans text-lg'>{t("viewAll")}</Text>
           </Pressable>
         )}

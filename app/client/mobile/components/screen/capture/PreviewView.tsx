@@ -193,7 +193,7 @@ const PreviewView = ({
                 </>
               ) : (
                 <>
-                  <Text className='font-bold text-xl text-center text-primary'>
+                  <Text className='text-center font-bold text-xl text-primary'>
                     {t("invalidIngredient")}
                   </Text>
                   <Button

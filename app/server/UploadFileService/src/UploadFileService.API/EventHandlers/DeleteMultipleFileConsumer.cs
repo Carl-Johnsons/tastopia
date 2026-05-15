@@ -20,7 +20,7 @@ public sealed class DeleteMultipleFileConsumer : IConsumer<DeleteMultipleFileEve
     {
         var response = await _sender.Send(new DeleteMultipleImageFileCommand
         {
-            DeleteUrls = context.Message.DeleteUrl 
+            DeleteUrls = context.Message.DeleteUrl
         });
         response.ThrowIfFailure();
     }

@@ -57,7 +57,9 @@ const Instruction = ({ steps, cookTime = "Not specified" }: InstructionProps) =>
       <h2 className='text-black_white text-2xl font-semibold'>{t("instruction")}</h2>
       <div className='flex items-center gap-2'>
         <ClockIcon className='size-6 text-gray-600' />
-        <span className='text-sm text-gray-600'>{t("cookingTime")}: {cookTime}</span>
+        <span className='text-sm text-gray-600'>
+          {t("cookingTime")}: {cookTime}
+        </span>
       </div>
       <div className='flex flex-col gap-5'>
         {steps.map(({ id, content, ordinalNumber, attachedImageUrls }) => (

@@ -136,7 +136,8 @@ public class CreateRecipeCommandHandler : IRequestHandler<CreateRecipeCommand, R
 
             var ids = recipientId.AccountIds.Select(Guid.Parse).ToList();
 
-            if(ids != null && ids.Count != 0) {
+            if (ids != null && ids.Count != 0)
+            {
                 await _serviceBus.Publish(new NotifyUserEvent
                 {
                     PrimaryActors = [

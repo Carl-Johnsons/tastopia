@@ -143,7 +143,8 @@ public class UpdateMultipleImageFileCommandHandler : IRequestHandler<UpdateMulti
 
     private async Task DeleteMultipleImage(List<string> urls)
     {
-        try {
+        try
+        {
             var setPublicId = new HashSet<string?>();
             foreach (var url in urls)
             {
@@ -163,7 +164,8 @@ public class UpdateMultipleImageFileCommandHandler : IRequestHandler<UpdateMulti
             }).ToList();
             await Task.WhenAll(tasks);
             return;
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return;

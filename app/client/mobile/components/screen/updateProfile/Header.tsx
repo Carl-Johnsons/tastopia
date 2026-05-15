@@ -35,11 +35,7 @@ export default function Header() {
         height={28}
         onPress={router.back}
       />
-      <Text
-        className='text-black_white font-medium text-xl'
-      >
-        {t("updateProfile")}
-      </Text>
+      <Text className='text-black_white font-medium text-xl'>{t("updateProfile")}</Text>
       <Button
         onPress={handleSubmit}
         isLoading={isLoading}

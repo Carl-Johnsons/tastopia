@@ -31,7 +31,7 @@ public class GetRecipeDetailForServerQueryHandler : IRequestHandler<GetRecipeDet
     {
         var recipeId = request.RecipeId;
 
-        if(recipeId == Guid.Empty)
+        if (recipeId == Guid.Empty)
         {
             return Result<RecipeDetailsResponse?>.Failure(RecipeError.NotFound, "RecipeId not found.");
         }

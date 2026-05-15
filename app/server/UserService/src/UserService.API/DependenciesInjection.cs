@@ -35,7 +35,7 @@ public static class DependenciesInjection
     public static WebApplication UseAPIServices(this WebApplication app)
     {
         app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_USER", "Not Found"));
-        
+
         app.UseSwaggerServices();
         app.MapControllers();
         app.UseGrpcServices();

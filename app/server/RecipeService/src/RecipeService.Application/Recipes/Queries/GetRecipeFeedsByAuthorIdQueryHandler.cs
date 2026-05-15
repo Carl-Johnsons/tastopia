@@ -50,7 +50,8 @@ public class GetRecipeFeedsByAuthorIdQueryHandler : IRequestHandler<GetRecipeFee
             return Result<PaginatedRecipeFeedsListResponse>.Failure(RecipeError.NullParameter);
         }
 
-        if(accountId == null) {
+        if (accountId == null)
+        {
             accountId = Guid.Empty;
         }
 

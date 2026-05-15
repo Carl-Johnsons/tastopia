@@ -5,7 +5,10 @@ import UploadImage from "./UploadImage";
 import { transformPlatformURI } from "@/utils/functions";
 import { selectUser } from "@/slices/user.slice";
 import { useAppDispatch } from "@/store/hooks";
-import { saveIsDirtyFieldsData, saveUpdateProfileData } from "@/slices/menu/profile/updateProfileForm.slice";
+import {
+  saveIsDirtyFieldsData,
+  saveUpdateProfileData
+} from "@/slices/menu/profile/updateProfileForm.slice";
 
 export default function ImageChangingSection() {
   const { avatarUrl, backgroundUrl } = selectUser();

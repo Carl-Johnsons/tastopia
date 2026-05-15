@@ -33,7 +33,7 @@ public class GrpcUploadFileService : GrpcUploadFile.GrpcUploadFileBase
 
         var listFileResponse = new List<FileResponse>();
 
-        if(formFiles != null && formFiles.Count != 0)
+        if (formFiles != null && formFiles.Count != 0)
         {
             var response = await _sender.Send(new UpdateMultipleImageFileCommand
             {
@@ -60,7 +60,7 @@ public class GrpcUploadFileService : GrpcUploadFile.GrpcUploadFileBase
         }
         var result = new GrpcListFileDTO
         {
-            Files = {files}
+            Files = { files }
         };
         return result;
     }

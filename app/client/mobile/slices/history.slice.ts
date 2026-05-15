@@ -16,7 +16,7 @@ export type SaveHistoryDataAction = {
 const initialState: HistoryState = {
   isLoading: false,
   currentRecipeId: "",
-  currentAuthorId: "",
+  currentAuthorId: ""
 };
 
 export const selectHistory = () => useAppSelector(state => state.history);

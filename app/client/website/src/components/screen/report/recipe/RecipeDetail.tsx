@@ -29,7 +29,7 @@ export default function RecipeDetail({ recipe, className }: Props) {
 
   const { data: author, isError, isLoading } = useGetUserById(authorId);
 
-  if (isError) return <SomethingWentWrong/>;
+  if (isError) return <SomethingWentWrong />;
   if (isLoading || !author) return null;
 
   return (

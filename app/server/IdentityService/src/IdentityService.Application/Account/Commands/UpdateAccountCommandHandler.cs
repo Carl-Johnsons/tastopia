@@ -21,7 +21,7 @@ public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand,
 
     public async Task<Result> Handle(UpdateAccountCommand request, CancellationToken cancellationToken)
     {
-        var accounts = _userManager.Users.Where(acc => acc.Id == request.AccountId.ToString() 
+        var accounts = _userManager.Users.Where(acc => acc.Id == request.AccountId.ToString()
                                                  || acc.UserName == request.UserName).ToList();
 
         var account = accounts.SingleOrDefault(acc => acc.Id == request.AccountId.ToString());
@@ -41,7 +41,7 @@ public class UpdateAccountCommandHandler : IRequestHandler<UpdateAccountCommand,
             account.UserName = request.UserName;
         }
 
-        if(request.IsActive != null)
+        if (request.IsActive != null)
         {
             account.IsActive = request.IsActive.Value;
         }

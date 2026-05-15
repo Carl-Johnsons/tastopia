@@ -29,7 +29,8 @@ public class RestoreOwnRecipeCommandHandler : IRequestHandler<RestoreOwnRecipeCo
 
     public async Task<Result<Recipe?>> Handle(RestoreOwnRecipeCommand request, CancellationToken cancellationToken)
     {
-        try {
+        try
+        {
             var recipeId = request.RecipeId;
             var authorId = request.AuthorId;
             if (recipeId == Guid.Empty || request.AuthorId == Guid.Empty)
@@ -46,13 +47,13 @@ public class RestoreOwnRecipeCommandHandler : IRequestHandler<RestoreOwnRecipeCo
                 return Result<Recipe?>.Failure(RecipeError.NotFound);
             }
 
-            if(recipe.AuthorId != authorId)
+            if (recipe.AuthorId != authorId)
             {
                 _logger.LogError($"Recipe's AuthorId not the same current user AccountId!");
                 return Result<Recipe?>.Failure(RecipeError.PermissionDeny, "Recipe's AuthorId not the same current user AccountId!");
             }
 
-            if(recipe.IsActive)
+            if (recipe.IsActive)
             {
                 _logger.LogError($"This recipe not have been deleted, so it cannot be restored.");
                 return Result<Recipe?>.Failure(RecipeError.PermissionDeny, "This recipe not have been deleted, so it cannot be restored.");
@@ -78,7 +79,8 @@ public class RestoreOwnRecipeCommandHandler : IRequestHandler<RestoreOwnRecipeCo
             });
             return Result<Recipe?>.Success(recipe);
         }
-        catch (Exception ex) {
+        catch (Exception ex)
+        {
             _logger.LogError(JsonConvert.SerializeObject(ex, Formatting.Indented));
             return Result<Recipe?>.Failure(RecipeError.UpdateRecipeFail);
         }

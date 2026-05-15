@@ -31,23 +31,23 @@ public class MarkAllReportCommandHandler : IRequestHandler<MarkAllReportCommand,
         }
         var reports = await _context.UserReports.Where(rp => rp.ReportedId == request.AccountId && (rp.Status == (request.IsReopened ? ReportStatus.Done : ReportStatus.Pending))).ToListAsync();
 
-        if(reports == null || reports.Count == 0)
+        if (reports == null || reports.Count == 0)
         {
             return Result.Failure(UserReportError.NotFound, "Not found user report.");
         }
 
         if (reports != null && reports.Count != 0)
         {
-            foreach(var rp in reports)
+            foreach (var rp in reports)
             {
                 rp.Status = request.IsReopened ? ReportStatus.Pending : ReportStatus.Done;
             }
             _context.UserReports.UpdateRange(reports);
         }
-        
+
         await _unitOfWork.SaveChangeAsync();
 
-        foreach(var rs in reports!)
+        foreach (var rs in reports!)
         {
             await _serviceBus.Publish(new AddActivityLogEvent
             {

@@ -60,7 +60,9 @@ export default function Header() {
                   />
                 </View>
 
-                <Text className='font-semibold text-xl text-white me-20'>{displayName}</Text>
+                <Text className='me-20 font-semibold text-xl text-white'>
+                  {displayName}
+                </Text>
 
                 <View>
                   <Text className='font-secondary-roman text-sm text-white'>

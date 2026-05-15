@@ -18,7 +18,7 @@ const initialState: AuthState = {
   idToken: null,
   role: null,
   isVerifyingAccount: false,
-  verifyIdentifier: null,
+  verifyIdentifier: null
 };
 
 export const AuthSlice = createSlice({
@@ -28,33 +28,31 @@ export const AuthSlice = createSlice({
     saveAuthData: (state, { payload }: PayloadAction<Partial<AuthState>>) => {
       Object.assign(state, payload);
     },
-    clearAuthData: (state) => {
+    clearAuthData: state => {
       Object.assign(state, initialState);
-    },
+    }
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder.addCase(PURGE, () => {
       return initialState;
     });
-  },
+  }
 });
 
-export const useSelectAccessToken = () =>
-  useAppSelector((state) => state.auth.accessToken);
+export const useSelectAccessToken = () => useAppSelector(state => state.auth.accessToken);
 
 export const useSelectRefreshToken = () =>
-  useAppSelector((state) => state.auth.refreshToken);
+  useAppSelector(state => state.auth.refreshToken);
 
-export const useSelectIdToken = () =>
-  useAppSelector((state) => state.auth.idToken);
+export const useSelectIdToken = () => useAppSelector(state => state.auth.idToken);
 
-export const useSelectRole = () => useAppSelector((state) => state.auth.role);
+export const useSelectRole = () => useAppSelector(state => state.auth.role);
 
 export const useSelectIsVerifyingAccount = () =>
-  useAppSelector((state) => state.auth.isVerifyingAccount);
+  useAppSelector(state => state.auth.isVerifyingAccount);
 
 export const useSelectVerifyIdentifier = () =>
-  useAppSelector((state) => state.auth.verifyIdentifier);
+  useAppSelector(state => state.auth.verifyIdentifier);
 
 export const { saveAuthData, clearAuthData } = AuthSlice.actions;
 

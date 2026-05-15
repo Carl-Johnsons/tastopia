@@ -26,7 +26,7 @@ import { useLocale, useTranslations } from "next-intl";
 import useLocaleTable from "@/hooks/table/useLocaleTable";
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { StyleSheetManager } from "styled-components";
-import isValidProp from '@emotion/is-prop-valid';
+import isValidProp from "@emotion/is-prop-valid";
 
 const DataTable = () => {
   const t = useTranslations("administerTags");

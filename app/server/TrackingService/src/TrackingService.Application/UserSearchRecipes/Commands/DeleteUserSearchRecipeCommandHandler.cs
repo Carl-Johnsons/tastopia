@@ -29,7 +29,7 @@ public class DeleteUserSearchRecipeCommandHandler : IRequestHandler<DeleteUserSe
         var accountId = request.AccountId;
         var keyword = request.Keyword;
 
-        if(accountId == null || accountId == Guid.Empty || string.IsNullOrEmpty(keyword))
+        if (accountId == null || accountId == Guid.Empty || string.IsNullOrEmpty(keyword))
         {
             return Result<UserSearchRecipe?>.Failure(UserSearchRecipeError.NullParameter, "AccountId or Keyword is null.");
         }
