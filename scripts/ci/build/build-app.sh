@@ -13,7 +13,9 @@ ENV="${ENV:-dev}"
 
 bucket_name="tastopia-builds"
 
-while getopts e:h OPTS; do
+commit=""
+
+while getopts e:ht: OPTS; do
   case $OPTS in
     e) 
       if [ "$OPTARG" != "dev" ] && [ "$OPTARG" != "staging" ] && [ "$OPTARG" != "production" ]; then
@@ -23,6 +25,7 @@ while getopts e:h OPTS; do
 
       ENV="$OPTARG"
       ;;
+    t) commit="$OPTARG" ;;
     h) cat <<EOF
 
 Usage: $0 [options]
@@ -33,13 +36,16 @@ Options:
         are "dev", "staging" or "production". If omitted, 
         the default value is "staging".
 
+  -t [tag]
+        Explicitly specify the commit tag to use for the build.
+
   -h    Print this help.
 
 EOF
       exit 0
       ;;
     ?) 
-      echo "Unknown flag. Usage: $0 [-e dev|staging|production]"
+      echo "Unknown flag. Usage: $0 [-t tag] [-e dev|staging|production]"
       exit 1
       ;;
   esac
@@ -47,7 +53,10 @@ done
 
 shift $((OPTIND - 1))
 
-commit=$(git log -n 1 --pretty=format:%H -- app/client/mobile | cut -c1-8)
+if [ -z "$commit" ]; then
+  commit=$(git log -n 1 --pretty=format:%H -- app/client/mobile | cut -c1-8)
+fi
+
 file_name="build-$ENV-$commit.apk"
 
 
