@@ -85,8 +85,17 @@ check_argocd_sync() {
       echo "Failed to get ArgoCD app info for $app_name"
     else
       local all_deployed=true
+      local deployed_images=$(echo "$app_yaml" | yq '.status.summary.images[]')
+
       for image in "${images[@]}"; do
-        if ! echo "$app_yaml" | yq -e ".status.summary.images | any_c(. == \"$image\")" > /dev/null 2>&1; then
+        local service_name="${image%%:*}"
+        
+        if ! echo "$deployed_images" | grep -qE "^$service_name(:|$)"; then
+          echo "Service $service_name not found in $app_name, skipping..."
+          continue
+        fi
+
+        if ! echo "$deployed_images" | grep -qx "$image"; then
           echo "Image $image not yet deployed in $app_name"
           all_deployed=false
           break

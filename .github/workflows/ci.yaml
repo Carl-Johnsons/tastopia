@@ -10,9 +10,6 @@ on:
       - staging
   workflow_dispatch:
     inputs:
-      BUILD_SERVICES:
-        description: "space-separated services"
-        required: false
       DEPLOY_ENV:
         description: "'staging' or 'production'"
         required: true
@@ -33,11 +30,11 @@ env:
   BRANCH: ${{ github.head_ref || github.ref_name }}
 
 jobs:
-  detect:
-    name: Detect changes
+  derive-state:
+    name: Derive service state
     runs-on: ubuntu-latest
     outputs:
-      services: ${{ steps.detect.outputs.services }}
+      services: ${{ steps.derive.outputs.services }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,31 +45,22 @@ jobs:
         if: ${{ env.ACT }}
         run: |
           find scripts -type f -name "*.sh" -exec sed -i 's/\r$//' {} \;
-      # - name: Install GitHub CLI for act
-        # if: ${{ env.ACT }}
-        # run: |
-          # apt update
-          # apt install -y gh
 
-      - name: Detect services
-        id: detect
+      - name: Install GitHub CLI for act
+        if: ${{ env.ACT }}
         run: |
-          BUILD_SERVICES="${{ github.event.inputs.BUILD_SERVICES }}"
+          apt update
+          apt install -y gh
 
-          if [ "$BUILD_SERVICES" != "" ]; then
-            echo "Manual override: $BUILD_SERVICES"
-            echo "services=$BUILD_SERVICES" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          bash ./scripts/ci/build/detect-service-changed.sh
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Derive services
+        id: derive
+        run: |
+          SERVICES=$(python3 ./scripts/ci/build/derive-service-state.py)
+          echo "services=$SERVICES" >> $GITHUB_OUTPUT
   build_app:
     name: Build mobile application
     runs-on: ubuntu-latest
-    needs: detect
-    if: ${{ contains(needs.detect.outputs.services, 'mobile') }}
+    needs: derive-state
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -127,7 +115,9 @@ jobs:
           INFISICAL_TOKEN: ${{ secrets.INFISICAL_TOKEN }}
 
       - name: Build Android application
-        run: bash ./scripts/ci/build/build-app.sh
+        run: |
+          MOBILE_TAG=$(echo "${{ needs.derive-state.outputs.services }}" | grep -o 'mobile:[^ ]*' | cut -d: -f2)
+          bash ./scripts/ci/build/build-app.sh -t "$MOBILE_TAG"
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -421,8 +411,7 @@ jobs:
   build_backend:
     name: Build backend services
     runs-on: ubuntu-latest
-    needs: detect
-    if: ${{ needs.detect.outputs.services != '' && needs.detect.outputs.services != 'mobile' }}
+    needs: derive-state
     outputs:
       sha: ${{ steps.build_serv.outputs.sha }}
     steps:
@@ -475,7 +464,7 @@ jobs:
         run: |
           SHORT_SHA=$(git rev-parse --short HEAD)
           echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT
-          bash ./scripts/docker/build-services.sh -c $SHORT_SHA -le "$ENV" ${{ needs.detect.outputs.services }}
+          bash ./scripts/docker/build-services.sh -t -le "$ENV" ${{ needs.derive-state.outputs.services }}
         env:
           HOST_PREFIX: ${{ vars.HOST_PREFIX }}
           API_GATEWAY_FQDN: ${{ vars.API_GATEWAY_FQDN }}
@@ -546,7 +535,7 @@ jobs:
   update_backend_manifest:
     name: Update service manifest in gitOps repository
     runs-on: ubuntu-latest
-    needs: [detect, build_backend, setup_dev_env]
+    needs: [derive-state, build_backend, setup_dev_env]
     if: >-
       always() &&
       needs.build_backend.result == 'success' &&
@@ -589,13 +578,15 @@ jobs:
         fi
 
         IMAGES=""
-        for SERVICE in ${{ needs.detect.outputs.services }}; do
+        for IMAGE_STATE in ${{ needs.derive-state.outputs.services }}; do
+          SERVICE="${IMAGE_STATE%%:*}"
+          TAG="${IMAGE_STATE#*:}"
+
           if [ "$SERVICE" = "mobile" ]; then
             continue
           fi
 
           echo "Updating $SERVICE..."
-          TAG="${{ needs.build_backend.outputs.sha }}"
 
           if [ "$SERVICE" = "website" ]; then
             TAG="${ENV}-${TAG}"
