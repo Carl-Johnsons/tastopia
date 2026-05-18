@@ -1,0 +1,125 @@
+---
+- name: Get latest maestro-runner release
+  ansible.builtin.uri:
+    url: "{{ maestro_runner.github_api.maestro }}"
+    return_content: true
+  register: maestro_release
+  retries: 5
+  delay: 3
+  until:
+    - maestro_release.json is defined
+    - maestro_release.json.assets is defined
+
+- name: Get latest appium uiautomator2 release
+  ansible.builtin.uri:
+    url: "{{ maestro_runner.github_api.appium }}"
+    return_content: true
+  register: appium_release
+  retries: 5
+  delay: 3
+  until:
+    - appium_release.json is defined
+    - appium_release.json.assets is defined
+
+- name: Find maestro-runner linux amd64 asset
+  ansible.builtin.set_fact:
+    maestro_runner_url: >-
+      {{
+        maestro_release.json.assets
+        | selectattr('name', 'search', 'linux-amd64$')
+        | map(attribute='browser_download_url')
+        | first
+      }}
+
+- name: Find appium server APK asset
+  ansible.builtin.set_fact:
+    appium_server_apk_url: >-
+      {{
+        appium_release.json.assets
+        | selectattr('name', 'search', 'appium-uiautomator2-server-v.*\.apk$')
+        | map(attribute='browser_download_url')
+        | first
+      }}
+
+- name: Find appium test APK asset
+  ansible.builtin.set_fact:
+    appium_test_apk_url: >-
+      {{
+        appium_release.json.assets
+        | selectattr('name', 'search', 'appium-uiautomator2-server-debug-androidTest\.apk$')
+        | map(attribute='browser_download_url')
+        | first
+      }}
+
+- name: Validate release assets were found
+  ansible.builtin.assert:
+    that:
+      - maestro_runner_url is string
+      - maestro_runner_url | length > 0
+      - appium_server_apk_url is string
+      - appium_server_apk_url | length > 0
+      - appium_test_apk_url is string
+      - appium_test_apk_url | length > 0
+    fail_msg: "Missing required release asset URL(s) from GitHub API response."
+
+- name: Create maestro-runner directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ maestro_runner.bin_dir }}"
+    - "{{ maestro_runner.drivers_dir }}"
+
+- name: Check existing maestro-runner binary
+  ansible.builtin.stat:
+    path: "{{ maestro_runner.binary }}"
+  register: maestro_runner_binary_stat
+
+- name: Check existing appium server APK
+  ansible.builtin.stat:
+    path: "{{ maestro_runner.drivers_dir }}/appium-uiautomator2-server.apk"
+  register: appium_server_apk_stat
+
+- name: Check existing appium test APK
+  ansible.builtin.stat:
+    path: "{{ maestro_runner.drivers_dir }}/appium-uiautomator2-server-debug-androidTest.apk"
+  register: appium_test_apk_stat
+
+- name: Download latest maestro-runner
+  ansible.builtin.get_url:
+    url: "{{ maestro_runner_url }}"
+    dest: "{{ maestro_runner.binary }}"
+    mode: "0755"
+  when: not maestro_runner_binary_stat.stat.exists
+
+- name: Download latest appium server APK
+  ansible.builtin.get_url:
+    url: "{{ appium_server_apk_url }}"
+    dest: "{{ maestro_runner.drivers_dir }}/appium-uiautomator2-server.apk"
+    mode: "0644"
+  when: not appium_server_apk_stat.stat.exists
+
+- name: Download latest appium test APK
+  ansible.builtin.get_url:
+    url: "{{ appium_test_apk_url }}"
+    dest: "{{ maestro_runner.drivers_dir }}/appium-uiautomator2-server-debug-androidTest.apk"
+    mode: "0644"
+  when: not appium_test_apk_stat.stat.exists
+
+- name: Add maestro-runner to GitHub Actions PATH
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.GITHUB_PATH }}"
+    line: "{{ maestro_runner.bin_dir }}"
+    create: true
+    mode: "0644"
+  when: ansible_env.GITHUB_PATH is defined
+
+- name: Link maestro-runner to /usr/local/bin/maestro
+  ansible.builtin.file:
+    src: "{{ maestro_runner.binary }}"
+    dest: /usr/local/bin/maestro
+    state: link
+    force: true
+  become: true
+  when: ansible_env.GITHUB_PATH is not defined
