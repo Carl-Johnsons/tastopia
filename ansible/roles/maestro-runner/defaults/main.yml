@@ -1,0 +1,9 @@
+---
+maestro_runner:
+  home: "{{ ansible_user_dir }}/.maestro-runner"
+  bin_dir: "{{ maestro_runner.home }}/bin"
+  binary: "{{ maestro_runner.bin_dir }}/maestro{{ (ansible_os_family == 'Windows') | ternary('.exe', '') }}"
+  drivers_dir: "{{ maestro_runner.home }}/drivers/android"
+  github_api:
+    maestro: "https://api.github.com/repos/PhenChua29/maestro-runner/releases/latest"
+    appium: "https://api.github.com/repos/appium/appium-uiautomator2-server/releases/latest"
