@@ -1,0 +1,8 @@
+---
+- name: Install ArgoCD
+  ansible.windows.win_shell: >-
+    winget install argocd
+    -e
+    --id argoproj.argocd
+    --accept-package-agreements
+    --accept-source-agreements
