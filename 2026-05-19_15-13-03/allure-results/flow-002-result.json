@@ -1,0 +1,127 @@
+{
+  "uuid": "flow-002",
+  "historyId": "f6dec352",
+  "fullName": "cooking-mode",
+  "name": "cooking-mode",
+  "status": "failed",
+  "stage": "finished",
+  "start": 1779203678142,
+  "stop": 1779203718676,
+  "labels": [
+    {
+      "name": "suite",
+      "value": "cooking-mode"
+    },
+    {
+      "name": "parentSuite",
+      "value": "cooking-mode.yaml"
+    },
+    {
+      "name": "framework",
+      "value": "maestro"
+    },
+    {
+      "name": "severity",
+      "value": "normal"
+    },
+    {
+      "name": "host",
+      "value": "google Android SDK built for x86"
+    },
+    {
+      "name": "thread",
+      "value": "emulator-5554"
+    }
+  ],
+  "statusDetails": {
+    "message": "Element not found: context deadline exceeded: no such element: An element could not be located on the page using the given search parameters",
+    "trace": ""
+  },
+  "steps": [
+    {
+      "name": "assertVisible",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779203697474,
+      "stop": 1779203697499,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779203697500,
+      "stop": 1779203697592,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779203697593,
+      "stop": 1779203697864,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779203697865,
+      "stop": 1779203699678,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779203699679,
+      "stop": 1779203701302,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "failed",
+      "stage": "finished",
+      "start": 1779203701303,
+      "stop": 1779203718676,
+      "steps": [],
+      "attachments": [
+        {
+          "name": "After",
+          "source": "cmd-005-after.png",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "tapOn",
+      "status": "skipped",
+      "stage": "finished",
+      "start": 0,
+      "stop": 0,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "skipped",
+      "stage": "finished",
+      "start": 0,
+      "stop": 0,
+      "steps": [],
+      "attachments": null
+    }
+  ],
+  "attachments": [
+    {
+      "name": "Screenshot",
+      "source": "cmd-005-after.png",
+      "type": "image/png"
+    }
+  ]
+}
