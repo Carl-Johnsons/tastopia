@@ -3,7 +3,7 @@
 # Imports
 source ./scripts/lib.sh
 
-break_index=3
+break_index=4
 
 # Read the content of scripts.json
 json=$(<scripts.json)

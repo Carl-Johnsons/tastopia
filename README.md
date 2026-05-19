@@ -24,28 +24,21 @@ Commit rule:
 
 ## Back-end installation guide
 
-Ensure that you have: 
+Ensure that you have these system dependencies installed:
 - Docker
-- Dotnet Sdk 8.0 and Asp.Net Core 8.0
-  - On windows: Run `winget install --id=Microsoft.DotNet.SDK.8 -e`.
-  - On MacOS: Download the installation file on [this website](https://dotnet.microsoft.com/en-us/download/dotnet/8.0).
-  - When running the command `dotnet --list-runtimes`, it should list two items (ignore the x):
-    - Microsoft.AspNetCore.App 8.0.x
-    - Microsoft.NETCore.App 8.0.x
-- Node.js
+- Git Bash on Windows, or a regular terminal on macOS/Linux
 - Download google-service.json from Firebase project setting. Then put it in the `./app/client/mobile` directory.
 - Download google credential from Google cloud then put it into the EmailWorker service's root path: `./app/server/NotificationService/src/EmailWorker/`.
-- Infisical CLI ([installation]https://infisical.com/docs/cli/overview)
-  - Once you install infisical cli, you need to copy the "INFISICAL_READ_TOKEN" I already provided in the Secrets tab to fetch secrets
 
 0. Ensure that docker is running
-1. Run this line in Git Bash or a regular terminal if you use MacOS/Linux:
+1. Run this line in Git Bash on Windows, or a regular terminal on macOS/Linux:
 ``` bash
-./runScripts
+./runScripts.sh
 ```
-2. Choose the option `Generate SSL certificate` (Only do it once)
-3. Choose the option `Pulling environment variables`
-4. Choose the option `Setup back-end`
-5. After the setup is done, choose the option `Run all services`
-6. Enjoy 💃✨
-
+2. Choose the option `Set up project dependencies`.
+3. Run `./runScripts.sh` again.
+4. Choose the option `Pulling environment variables`.
+   - You need the `INFISICAL_READ_TOKEN` from the Secrets tab to fetch secrets.
+5. Choose the option `Setup back-end`.
+6. After the setup is done, choose the option `Run all services`.
+7. Enjoy 💃✨
