@@ -1,6 +1,0 @@
----
-- name: Install Infisical
-  ansible.windows.win_shell: >-
-    winget install infisical
-    --accept-package-agreements
-    --accept-source-agreements

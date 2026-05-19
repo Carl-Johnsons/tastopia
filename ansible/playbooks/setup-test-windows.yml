@@ -1,6 +1,0 @@
----
-- name: Setup test dependencies (Windows)
-  become: true
-  hosts: localhost
-  roles:
-    - setup-test

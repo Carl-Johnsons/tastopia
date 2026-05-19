@@ -1,23 +1,10 @@
 ---
 - name: Check maestro runner
   ansible.builtin.command: which maestro
-  register: maestro_runner_check_unix
+  register: maestro_runner_check
   changed_when: false
   failed_when: false
-  when: ansible_os_family != "Windows"
-
-- name: Check maestro runner
-  ansible.windows.win_shell: |
-    Get-Command maestro
-  register: maestro_runner_check_windows
-  changed_when: false
-  failed_when: false
-  when: ansible_os_family == "Windows"
 
 - name: Load OS-specific tasks
   ansible.builtin.include_tasks: "{{ ansible_os_family | lower }}.yml"
-  when:
-    - >
-      (ansible_os_family == "Windows" and maestro_runner_check_windows.rc != 0)
-      or
-      (ansible_os_family != "Windows" and maestro_runner_check_unix.rc != 0)
+  when: maestro_runner_check.rc != 0

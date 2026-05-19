@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "Set up project dependencies": "./scripts/utils/setup-mise.py --install-dependencies",
     "Pulling environment variables": "./scripts/env/pull-env.sh",
     "Setup back-end": "./scripts/local/setup-backend.sh",
     "Run all services": "./scripts/local/run-all-services.sh",

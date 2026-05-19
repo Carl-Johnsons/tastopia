@@ -1,23 +1,10 @@
 ---
-- name: Check infisical on Linux/macOS
+- name: Check infisical
   ansible.builtin.command: which infisical
-  register: infisical_check_unix
+  register: infisical_check
   changed_when: false
   failed_when: false
-  when: ansible_os_family != "Windows"
-
-- name: Check infisical on Windows
-  ansible.windows.win_shell: |
-    Get-Command infisical
-  register: infisical_check_windows
-  changed_when: false
-  failed_when: false
-  when: ansible_os_family == "Windows"
 
 - name: Load OS-specific tasks
   ansible.builtin.include_tasks: "{{ ansible_os_family | lower }}.yml"
-  when:
-    - >
-      (ansible_os_family == "Windows" and infisical_check_windows.rc != 0)
-      or
-      (ansible_os_family != "Windows" and infisical_check_unix.rc != 0)
+  when: infisical_check.rc != 0
