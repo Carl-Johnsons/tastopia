@@ -1,11 +1,15 @@
-[tool_alias]
-maestro-runner = "github:PhenChua29/maestro-runner"
-
 [tools]
 dotnet = "8"
 python = "3.11"
 node = "24"
-maestro-runner = { version = "latest", bin = "maestro" }
 docker-cli = "latest"
 infisical = "latest"
 mongosh = "latest"
+
+[tools."github:PhenChua29/maestro-runner"]
+version = "latest"
+
+[tools."github:PhenChua29/maestro-runner".platforms]
+windows-x64 = { bin = "maestro" }
+linux-x64   = { bin = "maestro" }
+macos-arm64 = { bin = "maestro" }

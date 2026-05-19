@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import argparse
 import os
@@ -20,6 +20,21 @@ class LinuxDistribution(StrEnum):
     @classmethod
     def _missing_(cls, value: object):
         return cls.UNSUPPORTED
+
+
+class Shell(StrEnum):
+    BASH = "bash"
+    WINDOWS_BASH = "bash.exe"
+    FISH = "fish"
+    ZSH = "zsh"
+    POWERSHELL = "powershell"
+    PWSH = "pwsh"
+
+
+class OS(StrEnum):
+    WINDOWS = "Windows"
+    LINUX = "Linux"
+    MACOS = "Darwin"
 
 
 def get_linux_distribution() -> LinuxDistribution:
@@ -64,9 +79,9 @@ def resolve_shell_name() -> str:
     if shell_path:
         return Path(shell_path).name
 
-    if platform.system() == "Windows":
-        if shutil.which("pwsh") or shutil.which("powershell"):
-            return "pwsh"
+    if platform.system() == OS.WINDOWS:
+        if shutil.which(Shell.PWSH) or shutil.which(Shell.POWERSHELL):
+            return Shell.PWSH
 
         raise RuntimeError("PowerShell is not found")
 
@@ -94,7 +109,7 @@ def install_for_linux_generic():
     shell = resolve_shell_name()
 
     match shell:
-        case "bash" | "zsh" | "fish":
+        case Shell.BASH | Shell.ZSH | Shell.FISH:
             url = f"https://mise.run/{shell}"
             script = fetch_http(url)
             subprocess.run(["sh"], input=script, check=True, text=True)
@@ -153,13 +168,13 @@ def install():
     os_name = platform.system()
 
     match os_name:
-        case "Linux":
+        case OS.LINUX:
             install_for_linux()
 
-        case "Windows":
+        case OS.WINDOWS:
             install_for_windows()
 
-        case "Darwin":
+        case OS.MACOS:
             install_for_macos()
 
         case _:
@@ -184,7 +199,7 @@ def resolve_mise_path(home_dir: Path) -> Path:
 
 
 def resolve_powershell_profile() -> Path:
-    for command in ("pwsh", "powershell"):
+    for command in (Shell.PWSH, Shell.POWERSHELL):
         if shutil.which(command) is None:
             continue
 
@@ -209,8 +224,8 @@ def format_powershell_path(path: Path) -> str:
 def is_windows_git_bash(shell: str) -> bool:
     os_name = platform.system()
 
-    return shell == "bash" and (
-        os_name == "Windows"
+    return shell == Shell.WINDOWS_BASH and (
+        os_name == OS.WINDOWS
         or os_name.startswith(("MINGW", "MSYS_NT"))
         or os.environ.get("OSTYPE") == "msys"
         or os.environ.get("MSYSTEM") is not None
@@ -220,18 +235,18 @@ def is_windows_git_bash(shell: str) -> bool:
 def format_activation_line(shell: str, mise_path: Path) -> str:
     if is_windows_git_bash(shell):
         return (
-            'eval "$(mise activate bash | sed \''
+            "eval \"$(mise activate bash | sed '"
             's|eval "$(mise hook-env -s bash)";|'
             '& export PATH="$(/usr/bin/cygpath -u -p "$PATH")";|'
-            '\')"'
+            "')\""
         )
 
-    if shell == "fish":
-        return f"{shlex.quote(str(mise_path))} activate fish | source"
+    if shell == Shell.FISH:
+        return f"{shlex.quote(str(mise_path))} activate {Shell.FISH} | source"
 
-    if shell == "pwsh":
+    if shell == Shell.PWSH:
         return (
-            f"(&{format_powershell_path(mise_path)} activate pwsh) | "
+            f"(&{format_powershell_path(mise_path)} activate {Shell.PWSH}) | "
             "Out-String | Invoke-Expression"
         )
 
@@ -240,20 +255,109 @@ def format_activation_line(shell: str, mise_path: Path) -> str:
 
 def resolve_shell_config_file(shell: str, home_dir: Path) -> Path:
     match shell:
-        case "bash":
+        case Shell.BASH | Shell.WINDOWS_BASH:
             return home_dir / ".bashrc"
-        case "zsh":
+        case Shell.ZSH:
             return home_dir / ".zshrc"
-        case "fish":
-            return home_dir / ".config" / "fish" / "config.fish"
-        case "pwsh":
+        case Shell.FISH:
+            return home_dir / ".config" / Shell.FISH / "config.fish"
+        case Shell.PWSH:
             return resolve_powershell_profile()
         case _:
             raise RuntimeError(f"Unsupported shell for activation: {shell}")
 
 
+def normalize_path(path: str):
+    path = path.strip()
+    path = os.path.expandvars(path)
+    path = os.path.expanduser(path)
+    path = os.path.normpath(path)
+
+    if platform.system() == OS.WINDOWS:
+        path = os.path.normcase(path)
+
+    return path
+
+
+def ensure_mise_shims_on_path():
+    """
+    Only intended to be used on Windows. This function adds the mise shim
+    path to the user's path if the path has not been added to the system.
+    """
+
+    os_name = platform.system()
+
+    if os_name != OS.WINDOWS:
+        raise RuntimeError("Adding shim path script currently only supports Windows")
+
+    if shutil.which(Shell.PWSH):
+        shell = Shell.PWSH
+    elif shutil.which(Shell.POWERSHELL):
+        shell = Shell.POWERSHELL
+    else:
+        raise RuntimeError(
+            "Powershell is required for adding mise shim path to the user path"
+        )
+
+    mise_shim_path = Path(os.environ["LOCALAPPDATA"]) / "mise" / "shims"
+    user_paths = []
+    user_path = subprocess.run(
+        [
+            shell,
+            "-NoProfile",
+            "-Command",
+            '[Environment]::GetEnvironmentVariable("Path", "User")',
+        ],
+        capture_output=True,
+        check=True,
+        text=True,
+    ).stdout.strip()
+
+    for p in user_path.split(os.pathsep):
+        stripped_path = p.strip()
+
+        if stripped_path:
+            user_paths.append(stripped_path)
+
+    normalized_paths = [
+        normalize_path(p)
+        for p in os.environ.get("PATH", "").split(os.pathsep)
+        if p.strip()
+    ]
+
+    if normalize_path(str(mise_shim_path)) in normalized_paths:
+        print("mise shim path has already been added to the user path")
+        return
+
+    new_path = os.pathsep.join([str(mise_shim_path), *user_paths])
+    subprocess.run(
+        [
+            shell,
+            "-NoProfile",
+            "-Command",
+            '[Environment]::SetEnvironmentVariable("Path", [Console]::In.ReadToEnd(), "User")',
+        ],
+        input=new_path,
+        text=True,
+        check=True,
+    )
+
+    os.environ["PATH"] = os.pathsep.join(
+        [str(mise_shim_path), os.environ.get("PATH", "")]
+    )
+
+    print("Added mise shim path to user path successfully")
+
+
 def ensure_activation():
+    os_name = platform.system()
     shell = resolve_shell_name()
+    print(f"Detected shell: {shell}")
+
+    if shell == Shell.WINDOWS_BASH and os_name == OS.WINDOWS:
+        ensure_mise_shims_on_path()
+        return
+
     home_dir = resolve_home_dir()
     mise_path = resolve_mise_path(home_dir)
     activation_line = format_activation_line(shell, mise_path)
@@ -287,7 +391,7 @@ def parse_args() -> Args:
         prog="setup-mise.py",
         description=(
             "Install mise, configure shell activation, and optionally set up "
-            "the project dependencies defined in mise.toml."
+            "the project dependencies defined in mise.toml"
         ),
     )
 
@@ -297,7 +401,7 @@ def parse_args() -> Args:
         help=(
             "Run 'mise install' after mise has been installed and shell "
             "activation has been configured, setting up the project toolchain "
-            "from mise.toml."
+            "from mise.toml"
         ),
     )
 
