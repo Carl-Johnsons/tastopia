@@ -1,0 +1,127 @@
+{
+  "uuid": "flow-002",
+  "historyId": "f6dec352",
+  "fullName": "cooking-mode",
+  "name": "cooking-mode",
+  "status": "failed",
+  "stage": "finished",
+  "start": 1779253677464,
+  "stop": 1779253727975,
+  "labels": [
+    {
+      "name": "suite",
+      "value": "cooking-mode"
+    },
+    {
+      "name": "parentSuite",
+      "value": "cooking-mode.yaml"
+    },
+    {
+      "name": "framework",
+      "value": "maestro"
+    },
+    {
+      "name": "severity",
+      "value": "normal"
+    },
+    {
+      "name": "host",
+      "value": "google Android SDK built for x86"
+    },
+    {
+      "name": "thread",
+      "value": "emulator-5554"
+    }
+  ],
+  "statusDetails": {
+    "message": "Failed to tap: send request: Post \"http://localhost/session/6f403397-7bc5-44ba-ba2c-e36a4dbf4612/element/00000000-0000-0010-ffff-ffff00000195/click\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+    "trace": ""
+  },
+  "steps": [
+    {
+      "name": "assertVisible",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779253694205,
+      "stop": 1779253694225,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779253694225,
+      "stop": 1779253694312,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779253694312,
+      "stop": 1779253694479,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779253694479,
+      "stop": 1779253696039,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779253696040,
+      "stop": 1779253697515,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "failed",
+      "stage": "finished",
+      "start": 1779253697516,
+      "stop": 1779253727974,
+      "steps": [],
+      "attachments": [
+        {
+          "name": "After",
+          "source": "cmd-005-after.png",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "tapOn",
+      "status": "skipped",
+      "stage": "finished",
+      "start": 0,
+      "stop": 0,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "skipped",
+      "stage": "finished",
+      "start": 0,
+      "stop": 0,
+      "steps": [],
+      "attachments": null
+    }
+  ],
+  "attachments": [
+    {
+      "name": "Screenshot",
+      "source": "cmd-005-after.png",
+      "type": "image/png"
+    }
+  ]
+}
