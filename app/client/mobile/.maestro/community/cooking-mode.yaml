@@ -14,6 +14,16 @@ onFlowComplete:
     id: "recipe-cook-button"
 - tapOn:
     id: "active-speaking-switch"
+- runFlow:
+    when:
+      visible: "English"
+    commands:
+      - tapOn: "English"
+- runFlow:
+    when:
+      visible: "Tiếng Anh"
+    commands:
+      - tapOn: "Tiếng Anh"
 - tapOn:
     id: "active-speaking-switch"
 - tapOn:
