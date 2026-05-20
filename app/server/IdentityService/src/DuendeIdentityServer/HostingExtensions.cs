@@ -1,3 +1,4 @@
+using System.Net;
 using Contract.Extension;
 using Contract.Utilities;
 using Duende.IdentityServer;
@@ -124,11 +125,17 @@ internal static class HostingExtensions
 
     public static async Task<WebApplication> ConfigurePipelineAsync(this WebApplication app)
     {
-        if (EnvUtility.IsProduction())
+        if (EnvUtility.IsProduction() || EnvUtility.IsStaging())
         {
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost,
+                KnownNetworks = {
+                  new Microsoft.AspNetCore.HttpOverrides.IPNetwork(
+                      IPAddress.Parse("10.42.0.0"),
+                      16
+                  )
+                }
             });
         }
 
@@ -176,6 +183,11 @@ internal static class HostingExtensions
         });
 
         app.UseSignalRServiceAsync();
+        app.Use(async (context, next) =>
+        {
+            Console.WriteLine($"RemoteIp: {context.Connection.RemoteIpAddress}");
+            await next();
+        });
 
         return app;
     }
