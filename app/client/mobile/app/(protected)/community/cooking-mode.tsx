@@ -36,6 +36,10 @@ import { ROLE } from "@/slices/auth.slice";
 import Unauthorize from "@/components/common/Unauthorize";
 
 const REPEAT_AFTER = 10000;
+const supportedDetectedLanguages = ["english", "vietnamese"];
+
+const getAppLanguage = () =>
+  i18n.languages[0] === LANGUAGE_CODES.EN ? LANGUAGE_CODES.EN : LANGUAGE_CODES.VI;
 
 const CookingMode = () => {
   const { hasAccess } = useRouteGuardExclude([ROLE.GUEST]);
@@ -98,17 +102,22 @@ const CookingMode = () => {
     const stepLanguage = detectLanguage.detect(
       (sortedSteps && sortedSteps[currentStep - 1]?.content) ?? ""
     )[0];
+    const detectedLanguage = stepLanguage?.[0]?.toLowerCase();
+    const appLanguage = getAppLanguage();
+
+    if (!detectedLanguage || !supportedDetectedLanguages.includes(detectedLanguage)) {
+      setSelectedLanguage(appLanguage);
+      setIsActiveSpeaking(prev => !prev);
+      return;
+    }
+
     const isSameLanguage = compareLanguages(
       i18n.languages[0].toLowerCase(),
-      stepLanguage[0].toLowerCase()
+      detectedLanguage
     );
+    const shouldAskLanguage = !isSameLanguage && !selectedLanguage;
 
-    if (isSameLanguage || selectedLanguage) {
-      setIsActiveSpeaking(prev => !prev);
-      setSelectedLanguage(
-        i18n.languages[0] === LANGUAGE_CODES.EN ? LANGUAGE_CODES.EN : LANGUAGE_CODES.VI
-      );
-    } else if (!isSameLanguage && !selectedLanguage) {
+    if (shouldAskLanguage) {
       Alert.alert(t("titleChangeLanguage"), t("descriptionChangeLanguage"), [
         {
           text: t("english"),
@@ -125,7 +134,14 @@ const CookingMode = () => {
           }
         }
       ]);
+      return;
     }
+
+    if (!selectedLanguage) {
+      setSelectedLanguage(appLanguage);
+    }
+
+    setIsActiveSpeaking(prev => !prev);
   };
 
   /** Command by voice */
