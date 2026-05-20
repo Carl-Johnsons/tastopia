@@ -1,0 +1,78 @@
+cypress/e2e/recipes-data.cy.ts:
+    Recipes data exploration -> renders recipe data table and accepts search input
+        cy:command (K): visit	/ -> 307: https://pr-257-tastopia-dev-dashboard.phenchua.dev/en
+        cy:command (K): contains	button, /Sign in/i
+        cy:command (K): click
+          cy:fetch (K): GET https://pr-257-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+          cy:fetch (!): POST https://pr-257-tastopia-dev-dashboard.phenchua.dev/en
+                        Status: 303
+        cy:command (K): env	E2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER
+        cy:command (K): location	origin
+        cy:command (K): assert	expected **https://pr-257-tastopia-dev-dashboard.phenchua.dev** to equal **https://pr-257-tastopia-dev-identity.phenchua.dev**
+                        Actual: 	"https://pr-257-tastopia-dev-dashboard.phenchua.dev"
+                        Expected: 	"https://pr-257-tastopia-dev-identity.phenchua.dev"
+        cy:command (X): page load	--waiting for new page to load--
+          cy:fetch (K): GET https://pr-257-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+
+
+
+cypress/e2e/reports-users-data.cy.ts:
+    User reports data exploration -> renders user reports table and accepts search input
+        cy:command (K): visit	/ -> 307: https://pr-257-tastopia-dev-dashboard.phenchua.dev/en
+          cy:fetch (K): GET https://pr-257-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+        cy:command (K): contains	button, /Sign in/i
+        cy:command (K): click
+          cy:fetch (!): POST https://pr-257-tastopia-dev-dashboard.phenchua.dev/en
+                        Status: 303
+        cy:command (K): env	E2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER
+        cy:command (K): location	origin
+        cy:command (K): assert	expected **https://pr-257-tastopia-dev-dashboard.phenchua.dev** to equal **https://pr-257-tastopia-dev-identity.phenchua.dev**
+                        Actual: 	"https://pr-257-tastopia-dev-dashboard.phenchua.dev"
+                        Expected: 	"https://pr-257-tastopia-dev-identity.phenchua.dev"
+          cy:fetch (K): GET https://pr-257-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+        cy:command (X): page load	--waiting for new page to load--
+
+
+
+cypress/e2e/tags-data.cy.ts:
+    Tags data exploration -> renders tag data table and opens create dialog
+        cy:command (K): visit	/ -> 307: https://pr-257-tastopia-dev-dashboard.phenchua.dev/en
+        cy:command (K): contains	button, /Sign in/i
+        cy:command (K): click
+          cy:fetch (K): GET https://pr-257-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+          cy:fetch (!): POST https://pr-257-tastopia-dev-dashboard.phenchua.dev/en
+                        Status: 303
+        cy:command (K): env	E2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER
+        cy:command (K): location	origin
+        cy:command (K): assert	expected **https://pr-257-tastopia-dev-dashboard.phenchua.dev** to equal **https://pr-257-tastopia-dev-identity.phenchua.dev**
+                        Actual: 	"https://pr-257-tastopia-dev-dashboard.phenchua.dev"
+                        Expected: 	"https://pr-257-tastopia-dev-identity.phenchua.dev"
+          cy:fetch (K): GET https://pr-257-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+        cy:command (X): page load	--waiting for new page to load--
+
+
+
+cypress/e2e/users-data.cy.ts:
+    Users data exploration -> renders user data table and accepts search input
+        cy:command (K): visit	/ -> 307: https://pr-257-tastopia-dev-dashboard.phenchua.dev/en
+          cy:fetch (K): GET https://pr-257-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+        cy:command (K): contains	button, /Sign in/i
+        cy:command (K): click
+          cy:fetch (K): GET https://pr-257-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+          cy:fetch (!): POST https://pr-257-tastopia-dev-dashboard.phenchua.dev/en
+                        Status: 303
+        cy:command (K): env	E2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER
+        cy:command (K): location	origin
+        cy:command (K): assert	expected **https://pr-257-tastopia-dev-dashboard.phenchua.dev** to equal **https://pr-257-tastopia-dev-identity.phenchua.dev**
+                        Actual: 	"https://pr-257-tastopia-dev-dashboard.phenchua.dev"
+                        Expected: 	"https://pr-257-tastopia-dev-identity.phenchua.dev"
+        cy:command (X): page load	--waiting for new page to load--
+
