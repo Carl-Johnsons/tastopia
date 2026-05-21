@@ -184,13 +184,6 @@ jobs:
           AWS_ENDPOINT_URL: ${{ secrets.AWS_ENDPOINT_URL }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
 
-      - name: Retrieve secrets
-        run: |
-          echo "INFISICAL_TOKEN=${INFISICAL_TOKEN}" > .env.local
-          bash ./scripts/env/pull-env.sh
-        env:
-          INFISICAL_TOKEN: ${{ secrets.INFISICAL_TOKEN }}
-
       - name: Enable KVM group perms
         if: runner.os == 'Linux'
         run: |
@@ -320,13 +313,6 @@ jobs:
       - name: Install dependencies
         working-directory: ansible
         run: ./run-test.sh
-
-      - name: Retrieve secrets
-        run: |
-          echo "INFISICAL_TOKEN=${INFISICAL_TOKEN}" > .env.local
-          bash ./scripts/env/pull-env.sh
-        env:
-          INFISICAL_TOKEN: ${{ secrets.INFISICAL_TOKEN }}
 
       - name: Install dependencies
         working-directory: app/client/website

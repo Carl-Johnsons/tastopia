@@ -13,19 +13,6 @@ ENV="${ENV:-dev}"
 : "${E2E_TEST_USERNAME:?E2E_TEST_USERNAME is required}"
 : "${E2E_TEST_PASSWORD:?E2E_TEST_PASSWORD is required}"
 
-load_env() {
-  local suffix=""
-
-  if [ "$ENV" != "dev" ]; then
-    suffix=".$ENV"
-  fi
-
-  set -a
-  . "$repo_root/.env$suffix"
-  set +a
-}
-
-load_env
 wait_for_website
 
 export WEBSITE_URL="$(get_client_base_url)"

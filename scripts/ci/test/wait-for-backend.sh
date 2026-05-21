@@ -42,20 +42,6 @@ done
 
 shift $((OPTIND - 1))
 
-load_env() {
-  local script_dir=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
-  suffix="" 
-
-  if [ "$ENV" != "dev" ]; then
-    suffix=".$ENV"
-  fi
-
-  set -a
-  . "$script_dir/../../../.env$suffix"
-  set +a
-  unset suffix
-}
-
 check_argocd_sync() {
   : "${ARGOCD_AUTH_TOKEN:?ARGOCD_AUTH_TOKEN is required}"
   : "${ARGOCD_SERVER:?ARGOCD_SERVER is required}"
@@ -205,6 +191,5 @@ wait_for_website() {
 }
 
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-  load_env
   wait_for_server
 fi
