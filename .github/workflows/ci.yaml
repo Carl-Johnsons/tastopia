@@ -610,30 +610,3 @@ jobs:
         git commit -m "Update image to ${{ needs.build_backend.outputs.sha }}" || echo "No changes"
         git push
         echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-  revert_manifest:
-    name: Revert manifest update if tests fail
-    runs-on: ubuntu-latest
-    needs: [update_backend_manifest, mobile_test, website_test]
-    if: >-
-      always() &&
-      github.event_name != 'pull_request' &&
-      needs.update_backend_manifest.result == 'success' && 
-      needs.update_backend_manifest.outputs.commit_sha != '' &&
-      (
-        needs.mobile_test.result == 'failure' ||
-        needs.website_test.result == 'failure'
-      )
-    steps:
-    - name: Checkout GitOps repo
-      uses: actions/checkout@v6
-      with:
-        repository: ${{ secrets.GITOPS_REPO_NAME }}
-        token: ${{ secrets.GITOPS_REPO_TOKEN }}
-        ref: improve-ci
-        fetch-depth: 0
-    - name: Revert commit
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git revert ${{ needs.update_backend_manifest.outputs.commit_sha }} --no-edit
-        git push
