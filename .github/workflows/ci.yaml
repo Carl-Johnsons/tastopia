@@ -579,8 +579,13 @@ jobs:
           fi
 
           IMAGE="taiduc113/tastopia-${SERVICE}:${TAG}"
+          BEFORE_CHECKSUM="$(sha256sum "$VALUES_FILE" | cut -d ' ' -f 1)"
           sed -i "s|taiduc113/tastopia-${SERVICE}:.*|${IMAGE}|g" "$VALUES_FILE"
-          IMAGES="${IMAGES:+$IMAGES,}$IMAGE"
+          AFTER_CHECKSUM="$(sha256sum "$VALUES_FILE" | cut -d ' ' -f 1)"
+
+          if [ "$BEFORE_CHECKSUM" != "$AFTER_CHECKSUM" ]; then
+            IMAGES="${IMAGES:+$IMAGES,}$IMAGE"
+          fi
         done
         echo "images=$IMAGES" >> $GITHUB_OUTPUT
       env:
