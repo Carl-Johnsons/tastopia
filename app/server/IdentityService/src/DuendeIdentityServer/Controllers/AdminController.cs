@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using static Duende.IdentityServer.IdentityServerConstants;
 namespace DuendeIdentityServer.Controllers;
+
 [Route("api/admin/account")]
 [ApiController]
 [Authorize(LocalApi.PolicyName)]

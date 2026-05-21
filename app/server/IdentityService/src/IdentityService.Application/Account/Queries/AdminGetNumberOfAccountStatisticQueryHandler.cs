@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 namespace IdentityService.Application.Account.Queries;
+
 public class AdminGetNumberOfAccountStatisticQuery : IRequest<Result<List<StatisticEntity>?>>
 {
 }

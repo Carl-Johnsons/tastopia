@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 namespace DuendeIdentityServer.DTOs;
+
 public class AdminGetAccountStatisticDTO
 {
     [Required]
