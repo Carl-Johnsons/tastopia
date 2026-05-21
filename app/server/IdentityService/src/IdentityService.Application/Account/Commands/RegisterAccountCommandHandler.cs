@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using UserProto;
 namespace IdentityService.Application.Account.Commands;
+
 public record RegisterAccountCommand : IRequest<Result<TokenResponse?>>
 {
     [Required]
