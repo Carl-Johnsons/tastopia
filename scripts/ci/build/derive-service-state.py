@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
+import subprocess
 from dataclasses import dataclass, field
 from enum import StrEnum
 from functools import cache
-import subprocess
 
 
 class ServiceName(StrEnum):
@@ -164,15 +164,15 @@ def get_service_by_name(service_name: ServiceName) -> Service:
     return next(s for s in all_services if s.name == service_name)
 
 
-def TagLength(val) -> int:
-    val = int(val)
+def TagLength(val: str) -> int:
+    parsed_val = int(val)
 
-    if not 8 <= val <= 40:
+    if not 8 <= parsed_val <= 40:
         raise argparse.ArgumentTypeError(
             "Tag length must be between 8 and 40 (inclusive)"
         )
 
-    return val
+    return parsed_val
 
 
 class Args(argparse.Namespace):
