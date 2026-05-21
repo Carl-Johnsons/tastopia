@@ -31,11 +31,19 @@ class Service:
     name: ServiceName
     paths: tuple[str, ...]
     dependencies: tuple["Service", ...] = field(default_factory=tuple)
+    exclude_paths: tuple[str, ...] = field(default_factory=tuple)
 
 
 contract = Service(ServiceName.CONTRACT, ("app/server/Contract",))
-website = Service(ServiceName.WEBSITE, ("app/client/website",))
-mobile = Service(ServiceName.MOBILE, ("app/client/mobile",))
+website = Service(
+    ServiceName.WEBSITE,
+    ("app/client/website",),
+    exclude_paths=(
+        "app/client/website/cypress/**",
+        "app/client/website/cypress.config.ts",
+    ),
+)
+mobile = Service(ServiceName.MOBILE, ("app/client/mobile",), exclude_paths=("app/client/mobile/.maestro",))
 api_gateway = Service(ServiceName.API_GATEWAY, ("app/server/APIGateway",), (contract,))
 signalr = Service(ServiceName.SIGNALR, ("app/server/SignalRService",), (contract,))
 tracking_api = Service(
@@ -121,6 +129,16 @@ def get_paths(service: Service) -> frozenset[str]:
     return frozenset(paths)
 
 
+@cache
+def get_exclude_paths(service: Service) -> frozenset[str]:
+    exclude_paths = set(service.exclude_paths)
+
+    for dependency in service.dependencies:
+        exclude_paths.update(get_exclude_paths(dependency))
+
+    return frozenset(exclude_paths)
+
+
 def get_latest_service_tag(service: Service, tag_length: int = 8) -> str:
     """
     Returns the latest tag based on the current state of the Git commit tree.
@@ -131,8 +149,9 @@ def get_latest_service_tag(service: Service, tag_length: int = 8) -> str:
     """
 
     paths = get_paths(service)
+    exclude_paths = [f":(exclude,glob){p}" for p in get_exclude_paths(service)]
     latest_sha = subprocess.run(
-        ["git", "log", "-1", "--pretty=format:%H", "--", *paths],
+        ["git", "log", "-1", "--pretty=format:%H", "--", *paths, *exclude_paths],
         capture_output=True,
         check=True,
         text=True,
