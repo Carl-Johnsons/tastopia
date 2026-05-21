@@ -46,7 +46,7 @@ done
 # Shift parsed options
 shift $((OPTIND - 1))
 
-TARGET_ENV=$1
+TARGET_ENV="${1:-${ENV:-}}"
 
 err_token_missing() {
   file_name=$1
