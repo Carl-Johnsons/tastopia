@@ -1,3 +1,6 @@
+x-build-labels: &build-labels
+  org.opencontainers.image.source: https://github.com/Carl-Johnsons/tastopia
+
 services:
   nginx:
     image: nginx:latest
@@ -143,19 +146,21 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/contract/Dockerfile.prod
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:contract-buildcache
+        - ghcr.io/carl-johnsons/tastopia-contract:buildcache
       cache_to:
-        - taiduc113/tastopia:contract-buildcache
+        - ghcr.io/carl-johnsons/tastopia-contract:buildcache
 
   api-gateway:
     build:
       context: .
       dockerfile: ./dockerfiles/api-gateway/Dockerfile.${DOCKERFILE_API_GATEWAY_ENV:-prod}
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:api-gateway-buildcache
+        - ghcr.io/carl-johnsons/tastopia-api-gateway:buildcache
       cache_to:
-        - taiduc113/tastopia:api-gateway-buildcache
+        - ghcr.io/carl-johnsons/tastopia-api-gateway:buildcache
     container_name: apigateway
     networks:
       - back-end
@@ -179,10 +184,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/identity-api/Dockerfile.${DOCKERFILE_IDENTITY_ENV:-prod}
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:identity-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-identity-api:buildcache
       cache_to:
-        - taiduc113/tastopia:identity-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-identity-api:buildcache
     container_name: identity-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -212,10 +218,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/recipe-api/Dockerfile.${DOCKERFILE_RECIPE_ENV:-prod}
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:recipe-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-recipe-api:buildcache
       cache_to:
-        - taiduc113/tastopia:recipe-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-recipe-api:buildcache
     container_name: recipe-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -245,10 +252,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/user-api/Dockerfile.${DOCKERFILE_USER_ENV:-prod}
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:user-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-user-api:buildcache
       cache_to:
-        - taiduc113/tastopia:user-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-user-api:buildcache
     container_name: user-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -276,10 +284,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/notification-api/Dockerfile.${DOCKERFILE_NOTIFICATION_ENV:-prod}
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:notification-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-notification-api:buildcache
       cache_to:
-        - taiduc113/tastopia:notification-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-notification-api:buildcache
     container_name: notification-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -309,10 +318,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/upload-api/Dockerfile.${DOCKERFILE_UPLOAD_ENV:-prod}
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:upload-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-upload-api:buildcache
       cache_to:
-        - taiduc113/tastopia:upload-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-upload-api:buildcache
     container_name: upload-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -338,10 +348,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/tracking-api/Dockerfile.${DOCKERFILE_UPLOAD_ENV:-prod}
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:tracking-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-tracking-api:buildcache
       cache_to:
-        - taiduc113/tastopia:tracking-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-tracking-api:buildcache
     container_name: tracking-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -370,10 +381,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/ingredient-predict-api/Dockerfile.prod
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:ingredient-predict-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-ingredient-predict-api:buildcache
       cache_to:
-        - taiduc113/tastopia:ingredient-predict-api-buildcache
+        - ghcr.io/carl-johnsons/tastopia-ingredient-predict-api:buildcache
       args:
         PYTHON_ENV: ${ENV:-production}
     container_name: ingredient-predict-service
@@ -397,10 +409,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/signalr/Dockerfile.prod
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:signalr-buildcache
+        - ghcr.io/carl-johnsons/tastopia-signalr:buildcache
       cache_to:
-        - taiduc113/tastopia:signalr-buildcache
+        - ghcr.io/carl-johnsons/tastopia-signalr:buildcache
     container_name: signalr-service
     volumes:
       - ./data/nuget:/src/nuget
@@ -424,10 +437,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/website/Dockerfile.prod
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:website-buildcache
+        - ghcr.io/carl-johnsons/tastopia-website:buildcache
       cache_to:
-        - taiduc113/tastopia:website-buildcache
+        - ghcr.io/carl-johnsons/tastopia-website:buildcache
       args:
         BUILD_ENV: ${ENV:-production}
     container_name: website-dashboard
@@ -441,10 +455,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/email-worker/Dockerfile.prod
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:email-worker-buildcache
+        - ghcr.io/carl-johnsons/tastopia-email-worker:buildcache
       cache_to:
-        - taiduc113/tastopia:email-worker-buildcache
+        - ghcr.io/carl-johnsons/tastopia-email-worker:buildcache
     container_name: email-worker
     depends_on:
       rabbitmq:
@@ -459,10 +474,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/sms-worker/Dockerfile.prod
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:sms-worker-buildcache
+        - ghcr.io/carl-johnsons/tastopia-sms-worker:buildcache
       cache_to:
-        - taiduc113/tastopia:sms-worker-buildcache
+        - ghcr.io/carl-johnsons/tastopia-sms-worker:buildcache
     container_name: sms-worker
     depends_on:
       rabbitmq:
@@ -477,10 +493,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/push-notification-worker/Dockerfile.prod
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:push-notification-worker-buildcache
+        - ghcr.io/carl-johnsons/tastopia-push-notification-worker:buildcache
       cache_to:
-        - taiduc113/tastopia:push-notification-worker-buildcache
+        - ghcr.io/carl-johnsons/tastopia-push-notification-worker:buildcache
     container_name: push-notification-worker
     depends_on:
       rabbitmq:
@@ -495,10 +512,11 @@ services:
     build:
       context: .
       dockerfile: ./dockerfiles/recipe-worker/Dockerfile.prod
+      labels: *build-labels
       cache_from:
-        - taiduc113/tastopia:recipe-worker-buildcache
+        - ghcr.io/carl-johnsons/tastopia-recipe-worker:buildcache
       cache_to:
-        - taiduc113/tastopia:recipe-worker-buildcache
+        - ghcr.io/carl-johnsons/tastopia-recipe-worker:buildcache
     container_name: recipe-worker
     depends_on:
       rabbitmq:

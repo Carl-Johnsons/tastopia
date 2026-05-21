@@ -4,7 +4,6 @@
 set -eo pipefail
 
 ENV="staging"
-script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 
 while getopts let:c:h OPTS; do
   case $OPTS in
@@ -57,10 +56,50 @@ done
 # Shift parsed options
 shift $((OPTIND - 1))
 
+# Returns 0 if the image exists in the registry AND is a real container image
+# (not an SLSA in-toto attestation artifact). Attestation manifests only
+# contain a single layer with mediaType "application/vnd.in-toto+json",
+# so any manifest that contains that string is skipped and treated as missing.
+is_real_image() {
+  local image="$1"
+  local manifest
+  manifest=$(docker manifest inspect "$image" 2>/dev/null) || return 1
+  echo "$manifest" | grep -q 'in-toto' && return 1
+  return 0
+}
+
+
+retry_push() {
+  local image="$1"
+  local max_attempts=3
+  local delay=5
+
+  for attempt in $(seq 1 $max_attempts); do
+    echo "Pushing ${image} (attempt ${attempt}/${max_attempts})..."
+
+    if docker push "${image}"; then
+      if is_real_image "${image}"; then
+        return 0
+      fi
+      echo "WARNING: Push succeeded but ${image} resolved to an attestation artifact, not a real image. Retrying..."
+    fi
+
+    if [ "$attempt" -lt "$max_attempts" ]; then
+      echo "Push failed. Retrying in ${delay}s..."
+      sleep "$delay"
+      delay=$((delay * 2))
+    fi
+  done
+
+  echo "ERROR: Failed to push ${image} after ${max_attempts} attempts."
+  return 1
+}
+
+script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 services=("$@")
 project="$(basename $(pwd))"
 project="${project,,}" # make the name lowercase
-repo="taiduc113/tastopia"
+repo="ghcr.io/carl-johnsons/tastopia"
 
 if [ ${#services[@]} -eq 0 ]; then
   echo Please specify the services to build >&2
@@ -83,6 +122,7 @@ default_services=(
   "recipe-worker"
   "sms-worker"
 )
+
 
 # Build services in the standard way. In this mode, inputs are expected to be a 
 # simple list. For example, "website recipe-worker identity-api".
@@ -113,13 +153,14 @@ build_services_legacy() {
   # Always build contract image first
   CONTRACT_HASH=$(git log -n 1 --pretty=format:%H -- app/server/Contract) # Get latest commit full SHA that touches app/server/Contract
   CONTRACT_REBUILT=0
-  if docker manifest inspect ${repo}-contract:${CONTRACT_HASH} > /dev/null 2>&1; then
+
+  if docker manifest inspect "${repo}-contract:${CONTRACT_HASH}" > /dev/null 2>&1; then
     echo "Contract image with hash ${CONTRACT_HASH} exists → skip"
   else
     echo "Contract image with hash ${CONTRACT_HASH} not found → build"
     docker compose build contract
     docker tag ${project}-contract ${repo}-contract:${CONTRACT_HASH}
-    docker push ${repo}-contract:${CONTRACT_HASH}
+    retry_push ${repo}-contract:${CONTRACT_HASH}
     CONTRACT_REBUILT=1
   fi
 
@@ -134,7 +175,7 @@ build_services_legacy() {
     done
   fi
 
-  # Tag and push built images if they don't already exist on Docker Hub
+  # Tag and push built images if they don't already exist in the container registry
   for service in "${services[@]}"; do
     if ! printf '%s\n' "${default_services[@]}" | grep -qxF "$service"; then
       continue
@@ -150,8 +191,8 @@ build_services_legacy() {
 
     image="${serviceRepo}:${tag}"
 
-    if docker manifest inspect "$image" > /dev/null 2>&1; then
-      echo "Image ${image} already exists on Docker Hub → skipping build and push"
+    if is_real_image "$image"; then
+      echo "Image ${image} already exists in the container registry → skipping build and push"
       continue
     fi
 
@@ -166,7 +207,7 @@ build_services_legacy() {
     
     echo "Pushing ${image}..."
     docker tag ${project}-${service} ${image}
-    docker push ${image}
+    retry_push ${image}
   done
 }
 
@@ -203,16 +244,16 @@ build_services() {
     contract_hash="$(git log -n 1 --pretty=format:%H -- app/server/Contract)"
   fi
 
-  if docker manifest inspect ${repo}-contract:${contract_hash} &>/dev/null; then
+  if docker manifest inspect "${repo}-contract:${contract_hash}" > /dev/null 2>&1; then
     echo "Contract image with hash ${contract_hash} exists → skip"
   else
     echo "Contract image with hash ${contract_hash} not found → build"
     docker compose build contract
     docker tag ${project}-contract ${repo}-contract:${contract_hash}
-    docker push ${repo}-contract:${contract_hash}
+    retry_push ${repo}-contract:${contract_hash}
   fi
   
-  # Tag and push built images if they don't already exist on Docker Hub
+  # Tag and push built images if they don't already exist in the container registry
   for image in "${services[@]}"; do
     service="${image%%:*}"
 
@@ -231,8 +272,8 @@ build_services() {
 
     image="${serviceRepo}:${tag}"
 
-    if docker manifest inspect "$image" > /dev/null 2>&1; then
-      echo "Image ${image} already exists on Docker Hub → skipping build and push"
+    if is_real_image "$image"; then
+      echo "Image ${image} already exists in the container registry → skipping build and push"
       continue
     fi
 
@@ -247,7 +288,7 @@ build_services() {
     
     echo "Pushing ${image}..."
     docker tag ${project}-${service} ${image}
-    docker push ${image}
+    retry_push ${image}
   done
 }
 
