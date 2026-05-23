@@ -21,7 +21,7 @@ jobs:
       with:
         repository: ${{ secrets.GITOPS_REPO_NAME }}
         token: ${{ secrets.GITOPS_REPO_TOKEN }}
-        ref: improve-ci
+        ref: master
     - name: Delete PR values file
       run: |
         VALUES_FILE="k8s/helm/values-pr-${PR_NUMBER}.yaml"
