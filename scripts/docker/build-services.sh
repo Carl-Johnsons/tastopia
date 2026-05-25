@@ -3,7 +3,7 @@
 # Exit on failure
 set -eo pipefail
 
-ENV="staging"
+ENV="${ENV:-staging}"
 
 while getopts let:c:h OPTS; do
   case $OPTS in
