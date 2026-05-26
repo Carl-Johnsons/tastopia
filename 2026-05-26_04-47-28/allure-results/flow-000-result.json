@@ -1,0 +1,115 @@
+{
+  "uuid": "flow-000",
+  "historyId": "db49b4d2",
+  "fullName": "comment-recipe",
+  "name": "comment-recipe",
+  "status": "passed",
+  "stage": "finished",
+  "start": 1779770854734,
+  "stop": 1779770894244,
+  "labels": [
+    {
+      "name": "suite",
+      "value": "comment-recipe"
+    },
+    {
+      "name": "parentSuite",
+      "value": "comment-recipe.yaml"
+    },
+    {
+      "name": "framework",
+      "value": "maestro"
+    },
+    {
+      "name": "severity",
+      "value": "normal"
+    },
+    {
+      "name": "host",
+      "value": "google Android SDK built for x86"
+    },
+    {
+      "name": "thread",
+      "value": "emulator-5554"
+    }
+  ],
+  "statusDetails": {
+    "message": "",
+    "trace": ""
+  },
+  "steps": [
+    {
+      "name": "assertVisible",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779770874926,
+      "stop": 1779770875216,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779770875217,
+      "stop": 1779770876432,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779770876433,
+      "stop": 1779770876717,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "scrollUntilVisible",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779770876718,
+      "stop": 1779770888204,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779770888204,
+      "stop": 1779770888521,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "inputText",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779770888521,
+      "stop": 1779770890042,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "hideKeyboard",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779770890043,
+      "stop": 1779770890054,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1779770890055,
+      "stop": 1779770894243,
+      "steps": [],
+      "attachments": null
+    }
+  ],
+  "attachments": null
+}
