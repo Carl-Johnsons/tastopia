@@ -43,7 +43,11 @@ website = Service(
         "app/client/website/cypress.config.ts",
     ),
 )
-mobile = Service(ServiceName.MOBILE, ("app/client/mobile",), exclude_paths=("app/client/mobile/.maestro",))
+mobile = Service(
+    ServiceName.MOBILE,
+    ("app/client/mobile",),
+    exclude_paths=("app/client/mobile/.maestro",),
+)
 api_gateway = Service(ServiceName.API_GATEWAY, ("app/server/APIGateway",), (contract,))
 signalr = Service(ServiceName.SIGNALR, ("app/server/SignalRService",), (contract,))
 tracking_api = Service(
@@ -97,7 +101,9 @@ push_worker = Service(
     (contract,),
 )
 recipe_worker = Service(
-    ServiceName.RECIPE_WORKER, ("app/server/RecipeService/src/RecipeWorker",), (contract,)
+    ServiceName.RECIPE_WORKER,
+    ("app/server/RecipeService/src/RecipeWorker",),
+    (contract,),
 )
 
 all_services: tuple[Service, ...] = (
@@ -141,7 +147,7 @@ def get_exclude_paths(service: Service) -> frozenset[str]:
 
 def get_latest_service_commit_sha(service: Service, tag_length: int = 8) -> str:
     """
-    Returns the latest commit sha of the service based on the current state of the 
+    Returns the latest commit sha of the service based on the current state of the
     Git commit tree.
 
     Args:
