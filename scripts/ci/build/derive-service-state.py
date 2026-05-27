@@ -139,9 +139,10 @@ def get_exclude_paths(service: Service) -> frozenset[str]:
     return frozenset(exclude_paths)
 
 
-def get_latest_service_tag(service: Service, tag_length: int = 8) -> str:
+def get_latest_service_commit_sha(service: Service, tag_length: int = 8) -> str:
     """
-    Returns the latest tag based on the current state of the Git commit tree.
+    Returns the latest commit sha of the service based on the current state of the 
+    Git commit tree.
 
     Args:
         service - The targeted service
@@ -212,7 +213,7 @@ def main():
         services = all_services
 
     for service in services:
-        tag = get_latest_service_tag(service=service, tag_length=args.tag_length)
+        tag = get_latest_service_commit_sha(service=service, tag_length=args.tag_length)
         if not tag:
             continue
 
