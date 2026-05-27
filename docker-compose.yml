@@ -2,26 +2,6 @@ x-build-labels: &build-labels
   org.opencontainers.image.source: https://github.com/Carl-Johnsons/tastopia
 
 services:
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl/certs/chain-server-cert.crt:/etc/ssl/certs/server-cert.crt
-      - ./ssl/private-key/server.key:/etc/ssl/private/server.key
-      - ./ssl/certs/self-root-ca.crt:/etc/ssl/certs/root-ca.crt
-    ports:
-      - "80:80"
-      - "443:443"
-      - "2053:2053"
-      - "2083:2083"
-    depends_on:
-      - identity-api
-      - api-gateway
-    networks:
-      - back-end
-      - front-end
-
   redis:
     image: redis:alpine
     container_name: redis
