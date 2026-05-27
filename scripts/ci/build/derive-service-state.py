@@ -186,6 +186,7 @@ def get_latest_service_commit_sha(service: Service, tag_length: int = 8) -> str:
         capture_output=True,
         check=True,
         text=True,
+        cwd=_REPO_ROOT,
     ).stdout[:tag_length]
 
     return latest_sha
