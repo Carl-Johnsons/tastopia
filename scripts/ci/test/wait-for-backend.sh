@@ -45,6 +45,7 @@ shift $((OPTIND - 1))
 check_argocd_sync() {
   : "${ARGOCD_AUTH_TOKEN:?ARGOCD_AUTH_TOKEN is required}"
   : "${ARGOCD_SERVER:?ARGOCD_SERVER is required}"
+  : "${BUILT_IMAGES:?BUILT_IMAGES is required}"
 
   local app_name
   if [ "$ENV" = "dev" ]; then
@@ -63,7 +64,30 @@ check_argocd_sync() {
   local interval=10
   local elapsed=0
 
-  IFS=',' read -ra images <<<"$BUILT_IMAGES"
+  local -a images=()
+  local -a service_names=()
+  local image_state service tag
+
+  for image_state in $BUILT_IMAGES; do
+    service="${image_state%%:*}"
+    tag="${image_state#*:}"
+
+    if [ -z "$service" ] || [ -z "$tag" ] || [ "$service" = "$tag" ]; then
+      echo "Invalid image state: $image_state"
+      return 1
+    fi
+
+    if [ "$service" = "mobile" ]; then
+      continue
+    fi
+
+    if [ "$service" = "website" ]; then
+      tag="${ENV}-${tag}"
+    fi
+
+    service_names+=("$service")
+    images+=("ghcr.io/carl-johnsons/tastopia-${service}:${tag}")
+  done
 
   while true; do
     local app_yaml
@@ -75,11 +99,13 @@ check_argocd_sync() {
       local deployed_images
       deployed_images=$(echo "$app_yaml" | yq '.status.summary.images[]')
       local -a deployed_services=()
+      local i
 
-      for image in "${images[@]}"; do
-        local service_name="${image%%:*}"
+      for i in "${!images[@]}"; do
+        local image="${images[$i]}"
+        local service_name="${service_names[$i]}"
 
-        if ! echo "$deployed_images" | grep -qE "^$service_name(:|$)"; then
+        if ! echo "$deployed_images" | grep -Fq "ghcr.io/carl-johnsons/tastopia-${service_name}:"; then
           echo "Service $service_name not found in $app_name, skipping..."
           continue
         fi
