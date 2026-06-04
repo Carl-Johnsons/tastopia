@@ -168,7 +168,7 @@ wait_for_server() {
 
   check_argocd_sync
 
-  local timeout=60
+  local timeout=300
   local interval=1
   local count=0
 
@@ -197,7 +197,7 @@ wait_for_website() {
 
   check_argocd_sync
 
-  local timeout=120
+  local timeout=300
   local interval=2
   local elapsed=0
 
