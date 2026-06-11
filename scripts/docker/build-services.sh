@@ -261,16 +261,9 @@ build_services() {
       continue
     fi
 
-    commitHash="${image#*:}"
+    service_tag="${image#*:}"
     serviceRepo=${repo}-${service}
-
-    if [ "$service" = "website" ]; then
-      tag="${ENV}-${commitHash}"
-    else
-      tag="${commitHash}"
-    fi
-
-    image="${serviceRepo}:${tag}"
+    image="${serviceRepo}:${service_tag}"
 
     if is_real_image "$image"; then
       echo "Image ${image} already exists in the container registry → skipping build and push"
