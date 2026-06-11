@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 
 import argparse
+import os
 import subprocess
 from dataclasses import dataclass, field
 from enum import StrEnum
 from functools import cache
+
+_ENV = os.environ.get("ENV")
+_PR_NUMBER = os.environ.get("PR_NUMBER")
 
 
 class ServiceName(StrEnum):
@@ -32,6 +36,7 @@ class Service:
     paths: tuple[str, ...]
     dependencies: tuple["Service", ...] = field(default_factory=tuple)
     exclude_paths: tuple[str, ...] = field(default_factory=tuple)
+    isClient: bool = False
 
 
 contract = Service(ServiceName.CONTRACT, ("app/server/Contract",))
@@ -42,8 +47,14 @@ website = Service(
         "app/client/website/cypress/**",
         "app/client/website/cypress.config.ts",
     ),
+    isClient=True,
 )
-mobile = Service(ServiceName.MOBILE, ("app/client/mobile",), exclude_paths=("app/client/mobile/.maestro",))
+mobile = Service(
+    ServiceName.MOBILE,
+    ("app/client/mobile",),
+    exclude_paths=("app/client/mobile/.maestro",),
+    isClient=True,
+)
 api_gateway = Service(ServiceName.API_GATEWAY, ("app/server/APIGateway",), (contract,))
 signalr = Service(ServiceName.SIGNALR, ("app/server/SignalRService",), (contract,))
 tracking_api = Service(
@@ -97,7 +108,9 @@ push_worker = Service(
     (contract,),
 )
 recipe_worker = Service(
-    ServiceName.RECIPE_WORKER, ("app/server/RecipeService/src/RecipeWorker",), (contract,)
+    ServiceName.RECIPE_WORKER,
+    ("app/server/RecipeService/src/RecipeWorker",),
+    (contract,),
 )
 
 all_services: tuple[Service, ...] = (
@@ -139,7 +152,7 @@ def get_exclude_paths(service: Service) -> frozenset[str]:
     return frozenset(exclude_paths)
 
 
-def get_latest_service_tag(service: Service, tag_length: int = 8) -> str:
+def _get_latest_service_tag(service: Service, tag_length: int = 8) -> str:
     """
     Returns the latest tag based on the current state of the Git commit tree.
 
@@ -158,6 +171,43 @@ def get_latest_service_tag(service: Service, tag_length: int = 8) -> str:
     ).stdout[:tag_length]
 
     return latest_sha
+
+
+def get_tag(service: Service, tag_length: int = 8) -> str:
+    """
+    Returns the latest tag based on the current state of the Git commit tree and
+    the current build environment.
+
+    Args:
+        service - The targeted service
+        tag_length - The length of the tag result
+    """
+    tag = ""
+
+    if not service.isClient:
+        return _get_latest_service_tag(service, tag_length)
+
+    if not (_ENV and _PR_NUMBER):
+        raise RuntimeError(f"""
+        Either ENV or PR_NUMBER has to be specified to get tag of {service.name.name} service
+                           """)
+
+    if (not _ENV or _ENV == "dev") and not _PR_NUMBER:
+        raise RuntimeError(
+            f"PR_NUMBER has to be specified to get a unique dev tag for {service.name.value}"
+        )
+
+    if _ENV:
+        tag += f"{_ENV}-"
+    elif _PR_NUMBER:
+        tag += "dev-"
+
+    if _PR_NUMBER and (not _ENV or _ENV == "dev"):
+        tag += f"{_PR_NUMBER}-"
+
+    tag += _get_latest_service_tag(service, tag_length)
+
+    return tag
 
 
 def get_service_by_name(service_name: ServiceName) -> Service:
@@ -212,7 +262,7 @@ def main():
         services = all_services
 
     for service in services:
-        tag = get_latest_service_tag(service=service, tag_length=args.tag_length)
+        tag = get_tag(service=service, tag_length=args.tag_length)
         if not tag:
             continue
 
