@@ -1,0 +1,88 @@
+{
+  "uuid": "flow-003",
+  "historyId": "e03a365f",
+  "fullName": "search-recipe",
+  "name": "search-recipe",
+  "status": "passed",
+  "stage": "finished",
+  "start": 1781194989866,
+  "stop": 1781195013794,
+  "labels": [
+    {
+      "name": "suite",
+      "value": "search-recipe"
+    },
+    {
+      "name": "parentSuite",
+      "value": "search-recipe.yaml"
+    },
+    {
+      "name": "framework",
+      "value": "maestro"
+    },
+    {
+      "name": "severity",
+      "value": "normal"
+    },
+    {
+      "name": "host",
+      "value": "google Android SDK built for x86"
+    },
+    {
+      "name": "thread",
+      "value": "emulator-5554"
+    }
+  ],
+  "statusDetails": {
+    "message": "",
+    "trace": ""
+  },
+  "steps": [
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781195009617,
+      "stop": 1781195009705,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781195009705,
+      "stop": 1781195010839,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "inputText",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781195010840,
+      "stop": 1781195010892,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "hideKeyboard",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781195010893,
+      "stop": 1781195010910,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "extendedWaitUntil",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781195010911,
+      "stop": 1781195013793,
+      "steps": [],
+      "attachments": null
+    }
+  ],
+  "attachments": null
+}
