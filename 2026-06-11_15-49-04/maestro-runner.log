@@ -1,0 +1,104 @@
+15:49:04.612949 [INFO] === Test execution started ===
+15:49:04.612966 [INFO] Output directory: reports/2026-06-11_15-49-04
+15:49:04.612970 [INFO] Platform: 
+15:49:04.612972 [INFO] Driver: uiautomator2
+15:49:04.615133 [INFO] Validated 5 flow(s)
+15:49:04.615165 [INFO] Single device execution mode
+15:49:04.615168 [INFO] Starting flow execution (parallel: false, devices: [])
+15:49:04.615172 [INFO] Creating driver for single device execution
+15:49:04.615179 [INFO] Auto-detecting Android device...
+15:49:04.663534 [INFO] Device info: google Android SDK built for x86, SDK 27, Serial emulator-5554, Emulator: true
+15:49:09.002132 [INFO] Starting UIAutomator2 server on device emulator-5554
+15:49:09.804336 [WARN] failed to remove default socket forward for /tmp/uia2-emulator-5554.sock: adb forward --remove localfilesystem:/tmp/uia2-emulator-5554.sock: exit status 1: adb: error: listener 'localfilesystem:/tmp/uia2-emulator-5554.sock' not found
+15:49:09.806475 [WARN] failed to remove adb forward for tcp:6790: adb forward --remove tcp:6790: exit status 1: adb: error: listener 'tcp:6790' not found
+15:49:10.988738 [INFO] Creating UIAutomator2 session with capabilities: Platform=Android, Device=Android SDK built for x86
+15:49:11.028938 [INFO] Session created successfully: 176dc6e0-d100-425b-afb1-4f03570f17b3
+15:49:11.123553 [INFO] Driver created: android on google Android SDK built for x86
+15:49:11.132395 [INFO] === Starting flow: comment-recipe ===
+15:49:11.132403 [INFO] Flow file: .maestro/community/comment-recipe.yaml
+15:49:11.132405 [INFO] Total steps: 8
+15:49:16.101128 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+15:49:18.535899 [DEBUG] Flutter: parallel search (text="", id="welcome-sign-in-button")
+15:49:19.581790 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:20.583473 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:21.551289 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:22.405321 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:22.989866 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:23.467616 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:23.941416 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:24.315293 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:24.615247 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:24.965062 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:25.300373 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:25.625992 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:25.934643 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:26.116409 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:26.405701 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:26.616319 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:26.796249 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:27.130604 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:27.437767 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:27.651497 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:27.857567 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:28.064502 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:28.358063 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:28.605534 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:28.784747 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:28.964721 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:29.145010 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:29.322716 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:29.515690 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:29.830063 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:30.138523 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:30.420317 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:30.608481 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:30.881018 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:31.152199 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:31.493462 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:31.764317 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:31.998122 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:32.274250 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:32.479949 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:32.689788 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:32.963570 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:33.140890 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:33.323905 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:33.552162 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:33.742636 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:33.961417 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:34.150505 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:34.334575 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:34.499719 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:34.751245 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:34.958878 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:35.142829 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:35.361732 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:35.595827 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+15:49:43.086433 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+15:50:06.707613 [INFO] === Starting flow: community ===
+15:50:06.707621 [INFO] Flow file: .maestro/community/community.yaml
+15:50:06.707625 [INFO] Total steps: 13
+15:50:12.196477 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+15:50:38.364857 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+15:51:01.974838 [INFO] === Starting flow: cooking-mode ===
+15:51:01.974850 [INFO] Flow file: .maestro/community/cooking-mode.yaml
+15:51:01.974855 [INFO] Total steps: 10
+15:51:07.525532 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+15:51:33.603114 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+15:51:57.257067 [INFO] === Starting flow: search-recipe ===
+15:51:57.257074 [INFO] Flow file: .maestro/search/search-recipe.yaml
+15:51:57.257078 [INFO] Total steps: 5
+15:52:02.722533 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+15:52:28.633658 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+15:52:52.255293 [INFO] === Starting flow: search-user ===
+15:52:52.255301 [INFO] Flow file: .maestro/search/search-user.yaml
+15:52:52.255305 [INFO] Total steps: 10
+15:52:57.639896 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+15:53:24.870487 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+15:53:49.255837 [WARN] failed to remove default socket forward for /tmp/uia2-emulator-5554.sock: adb forward --remove localfilesystem:/tmp/uia2-emulator-5554.sock: exit status 1: adb: error: listener 'localfilesystem:/tmp/uia2-emulator-5554.sock' not found
+15:53:49.257943 [WARN] failed to remove adb forward for tcp:6790: adb forward --remove tcp:6790: exit status 1: adb: error: listener 'tcp:6790' not found
+15:53:49.257957 [INFO] Flow execution completed: 0 passed, 5 failed, 0 skipped
+15:53:49.259042 [INFO] Generating reports...
+15:53:49.265242 [INFO] Shutting down devices started by maestro-runner...
+15:53:49.265259 [INFO] Shutting down all tracked emulators
+15:53:49.265266 [INFO] Shutting down all tracked simulators
