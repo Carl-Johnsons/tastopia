@@ -1,4 +1,6 @@
 using Contract.Constants;
+using Microsoft.EntityFrameworkCore;
+using Duende.IdentityServer.EntityFramework.DbContexts;
 using IdentityService.Domain.Interfaces;
 using IdentityService.Infrastructure;
 
@@ -29,6 +31,7 @@ public static class AppCommandHandler
             {
                 case COMMAND_ARGS.MIGRATE:
                     dbContext.MigrateDb(sp);
+                    sp.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
                     break;
                 case COMMAND_ARGS.SEED:
                     dbContext.SeedDb(sp).GetAwaiter().GetResult();

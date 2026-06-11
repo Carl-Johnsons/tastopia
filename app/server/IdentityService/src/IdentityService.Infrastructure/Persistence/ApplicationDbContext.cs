@@ -26,8 +26,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationAccount>, IAppl
 
     public void MigrateDb(IServiceProvider serviceProvider)
     {
-        var db = serviceProvider.GetRequiredService<ApplicationDbContext>();
-        db.Database.Migrate();
+        serviceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
         Console.WriteLine("✅ Database migrated successfully.");
     }
 
