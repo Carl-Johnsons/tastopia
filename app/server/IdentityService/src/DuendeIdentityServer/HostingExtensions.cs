@@ -10,6 +10,7 @@ using IdentityService.Infrastructure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
 namespace DuendeIdentityServer;
@@ -67,6 +68,15 @@ internal static class HostingExtensions
                 options.KeyManagement.PropagationTime = TimeSpan.FromDays(2);
                 //   keep old key for 7 days in discovery for validation of tokens
                 options.KeyManagement.RetentionDuration = TimeSpan.FromDays(7);
+            })
+            .AddOperationalStore(options =>
+            {
+                options.ConfigureDbContext = builder =>
+                    builder.UseNpgsql(EnvUtility.GetConnectionString(), 
+                                        sql => sql.MigrationsAssembly("IdentityService.Infrastructure"));
+
+                options.EnableTokenCleanup = true;
+                options.TokenCleanupInterval = 3600;
             })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
