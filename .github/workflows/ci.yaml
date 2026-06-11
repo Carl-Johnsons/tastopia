@@ -223,7 +223,8 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            bash ./scripts/ci/test/install-app.sh
+            MOBILE_TAG=$(printf "%s\n" "${SERVICES}" | grep -o "mobile:[^ ]*" | cut -d: -f2 | head -n1 || true)
+            bash ./scripts/ci/test/install-app.sh -t "$MOBILE_TAG"
             bash ./scripts/ci/test/test-e2e.sh
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -556,10 +557,6 @@ jobs:
           fi
 
           echo "Updating $SERVICE..."
-
-          if [ "$SERVICE" = "website" ]; then
-            TAG="${ENV}-${TAG}"
-          fi
 
           IMAGE="ghcr.io/carl-johnsons/tastopia-${SERVICE}:${TAG}"
           BEFORE_CHECKSUM="$(sha256sum "$VALUES_FILE" | cut -d ' ' -f 1)"

@@ -49,7 +49,12 @@ done
 shift $((OPTIND - 1))
 
 commit=$(git log -n 1 --pretty=format:%H -- app/client/mobile | cut -c1-8)
-file_name="build-$ENV-$commit.apk"
+if [ "$ENV" = "dev" ]; then
+  : "${PR_NUMBER:?PR_NUMBER env value is required for dev environment}"
+  file_name="build-$ENV-$PR_NUMBER-$commit.apk"
+else
+  file_name="build-$ENV-$commit.apk"
+fi
 
 install_maestro() {
   if command -v maestro-runner >/dev/null 2>&1 && maestro-runner --version | grep -q "$MAESTRO_VERSION"; then

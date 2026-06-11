@@ -13,7 +13,7 @@ ENV="${ENV:-dev}"
 
 bucket_name="tastopia-builds"
 
-commit=""
+tag=""
 
 while getopts e:ht: OPTS; do
   case $OPTS in
@@ -25,7 +25,7 @@ while getopts e:ht: OPTS; do
 
       ENV="$OPTARG"
       ;;
-    t) commit="$OPTARG" ;;
+    t) tag="$OPTARG" ;;
     h) cat <<EOF
 
 Usage: $0 [options]
@@ -37,7 +37,7 @@ Options:
         the default value is "staging".
 
   -t [tag]
-        Explicitly specify the commit tag to use for the build.
+        Explicitly specify the tag to use for the build.
 
   -h    Print this help.
 
@@ -53,12 +53,18 @@ done
 
 shift $((OPTIND - 1))
 
-if [ -z "$commit" ]; then
-  commit=$(git log -n 1 --pretty=format:%H -- app/client/mobile | cut -c1-8)
+if [ -z "$tag" ]; then
+  commit_hash=$(git log -n 1 --pretty=format:%H -- app/client/mobile | cut -c1-8)
+
+  if [ "$ENV" = "dev" ]; then
+    : "${PR_NUMBER:?PR_NUMBER env value is required for dev environment}"
+    file_name="build-$ENV-$PR_NUMBER-$commit_hash.apk"
+  else
+    file_name="build-$ENV-$commit_hash.apk"
+  fi
+else
+  file_name="build-${tag}.apk"
 fi
-
-file_name="build-$ENV-$commit.apk"
-
 
 is_build_exists() {
   if ! aws s3api head-bucket --bucket "$bucket_name" >/dev/null 2>&1; then
