@@ -24,7 +24,6 @@
 		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.11" />
 		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.11" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
-
 		<!-- Reinforce.Typing dependencies -->
 		<PackageReference Include="Reinforced.Typings" Version="1.6.5" />
 		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.7.1">
@@ -34,7 +33,11 @@
 
 		<!-- Swagger dependency -->
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
-
+		<!-- Just for duendeidentity server to generate migration -->
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
+				<PrivateAssets>all</PrivateAssets>
+				<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<!-- SignalR client dependency -->
 
 		<!-- Other dependecies -->
