@@ -1,0 +1,183 @@
+{
+  "version": "1.0.0",
+  "updateSeq": 42,
+  "status": "failed",
+  "startTime": "2026-06-11T15:45:10.97172472Z",
+  "endTime": "2026-06-11T15:50:09.577673762Z",
+  "lastUpdated": "2026-06-11T15:50:09.596161072Z",
+  "device": {
+    "id": "emulator-5554",
+    "name": "google Android SDK built for x86",
+    "platform": "android",
+    "osVersion": "27",
+    "isSimulator": true
+  },
+  "app": {
+    "id": "com.tastopia.app",
+    "version": "1.0.0"
+  },
+  "maestroRunner": {
+    "version": "v1.1.14",
+    "driver": "uiautomator2"
+  },
+  "summary": {
+    "total": 5,
+    "passed": 4,
+    "failed": 1,
+    "skipped": 0,
+    "running": 0,
+    "pending": 0
+  },
+  "flows": [
+    {
+      "index": 0,
+      "id": "flow-000",
+      "name": "comment-recipe",
+      "sourceFile": ".maestro/community/comment-recipe.yaml",
+      "device": {
+        "id": "emulator-5554",
+        "name": "google Android SDK built for x86",
+        "platform": "android",
+        "osVersion": "27",
+        "isSimulator": true
+      },
+      "dataFile": "flows/flow-000.json",
+      "assetsDir": "assets/flow-000",
+      "status": "passed",
+      "updateSeq": 9,
+      "startTime": "2026-06-11T15:45:10.984057475Z",
+      "endTime": "2026-06-11T15:45:55.395912141Z",
+      "duration": 44411,
+      "lastUpdated": "2026-06-11T15:45:55.396279053Z",
+      "commands": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "running": 0,
+        "pending": 0
+      },
+      "attempts": 0
+    },
+    {
+      "index": 1,
+      "id": "flow-001",
+      "name": "community",
+      "sourceFile": ".maestro/community/community.yaml",
+      "device": {
+        "id": "emulator-5554",
+        "name": "google Android SDK built for x86",
+        "platform": "android",
+        "osVersion": "27",
+        "isSimulator": true
+      },
+      "dataFile": "flows/flow-001.json",
+      "assetsDir": "assets/flow-001",
+      "status": "passed",
+      "updateSeq": 10,
+      "startTime": "2026-06-11T15:46:10.405044028Z",
+      "endTime": "2026-06-11T15:46:36.993775899Z",
+      "duration": 26588,
+      "lastUpdated": "2026-06-11T15:46:36.994091707Z",
+      "commands": {
+        "total": 13,
+        "passed": 13,
+        "failed": 0,
+        "skipped": 0,
+        "running": 0,
+        "pending": 0
+      },
+      "attempts": 0
+    },
+    {
+      "index": 2,
+      "id": "flow-002",
+      "name": "cooking-mode",
+      "sourceFile": ".maestro/community/cooking-mode.yaml",
+      "device": {
+        "id": "emulator-5554",
+        "name": "google Android SDK built for x86",
+        "platform": "android",
+        "osVersion": "27",
+        "isSimulator": true
+      },
+      "dataFile": "flows/flow-002.json",
+      "assetsDir": "assets/flow-002",
+      "status": "passed",
+      "updateSeq": 9,
+      "startTime": "2026-06-11T15:46:51.177838504Z",
+      "endTime": "2026-06-11T15:47:31.220237344Z",
+      "duration": 40042,
+      "lastUpdated": "2026-06-11T15:47:31.220561868Z",
+      "commands": {
+        "total": 10,
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0,
+        "running": 0,
+        "pending": 0
+      },
+      "attempts": 0
+    },
+    {
+      "index": 3,
+      "id": "flow-003",
+      "name": "search-recipe",
+      "sourceFile": ".maestro/search/search-recipe.yaml",
+      "device": {
+        "id": "emulator-5554",
+        "name": "google Android SDK built for x86",
+        "platform": "android",
+        "osVersion": "27",
+        "isSimulator": true
+      },
+      "dataFile": "flows/flow-003.json",
+      "assetsDir": "assets/flow-003",
+      "status": "failed",
+      "updateSeq": 2,
+      "startTime": "2026-06-11T15:47:46.121186039Z",
+      "endTime": "2026-06-11T15:49:00.127715019Z",
+      "duration": 74006,
+      "lastUpdated": "2026-06-11T15:49:00.127956679Z",
+      "commands": {
+        "total": 5,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "running": 0,
+        "pending": 5
+      },
+      "attempts": 0
+    },
+    {
+      "index": 4,
+      "id": "flow-004",
+      "name": "search-user",
+      "sourceFile": ".maestro/search/search-user.yaml",
+      "device": {
+        "id": "emulator-5554",
+        "name": "google Android SDK built for x86",
+        "platform": "android",
+        "osVersion": "27",
+        "isSimulator": true
+      },
+      "dataFile": "flows/flow-004.json",
+      "assetsDir": "assets/flow-004",
+      "status": "passed",
+      "updateSeq": 7,
+      "startTime": "2026-06-11T15:49:29.035429326Z",
+      "endTime": "2026-06-11T15:49:55.284799066Z",
+      "duration": 26249,
+      "lastUpdated": "2026-06-11T15:49:55.285086792Z",
+      "commands": {
+        "total": 10,
+        "passed": 10,
+        "failed": 0,
+        "skipped": 0,
+        "running": 0,
+        "pending": 0
+      },
+      "attempts": 0
+    }
+  ]
+}
