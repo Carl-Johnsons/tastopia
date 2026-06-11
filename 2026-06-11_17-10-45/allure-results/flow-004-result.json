@@ -1,0 +1,133 @@
+{
+  "uuid": "flow-004",
+  "historyId": "fa2ff137",
+  "fullName": "search-user",
+  "name": "search-user",
+  "status": "passed",
+  "stage": "finished",
+  "start": 1781198044229,
+  "stop": 1781198070564,
+  "labels": [
+    {
+      "name": "suite",
+      "value": "search-user"
+    },
+    {
+      "name": "parentSuite",
+      "value": "search-user.yaml"
+    },
+    {
+      "name": "framework",
+      "value": "maestro"
+    },
+    {
+      "name": "severity",
+      "value": "normal"
+    },
+    {
+      "name": "host",
+      "value": "google Android SDK built for x86"
+    },
+    {
+      "name": "thread",
+      "value": "emulator-5554"
+    }
+  ],
+  "statusDetails": {
+    "message": "",
+    "trace": ""
+  },
+  "steps": [
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781198065040,
+      "stop": 1781198065139,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781198065139,
+      "stop": 1781198066042,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781198066043,
+      "stop": 1781198066979,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "inputText",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781198066979,
+      "stop": 1781198067008,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "hideKeyboard",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781198067009,
+      "stop": 1781198067021,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "assertVisible",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781198067021,
+      "stop": 1781198069322,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781198069322,
+      "stop": 1781198069838,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "assertVisible",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781198069839,
+      "stop": 1781198069923,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781198069924,
+      "stop": 1781198070539,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "assertVisible",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1781198070539,
+      "stop": 1781198070563,
+      "steps": [],
+      "attachments": null
+    }
+  ],
+  "attachments": null
+}
