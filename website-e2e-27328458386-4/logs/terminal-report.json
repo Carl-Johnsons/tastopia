@@ -1,0 +1,298 @@
+{
+  "cypress/e2e/recipes-data.cy.ts": {
+    "Recipes data exploration -> renders recipe data table and accepts search input": [
+      {
+        "type": "cy:command",
+        "message": "visit\t/ -> 307: https://pr-266-tastopia-dev-dashboard.phenchua.dev/en",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://pr-266-tastopia-dev-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://pr-266-tastopia-dev-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /Sign in/i",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "POST https://pr-266-tastopia-dev-dashboard.phenchua.dev/en\nStatus: 303",
+        "severity": "warning"
+      },
+      {
+        "type": "cy:command",
+        "message": "env\tE2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://pr-266-tastopia-dev-identity.phenchua.dev** to equal **https://pr-266-tastopia-dev-identity.phenchua.dev**\nActual: \t\"https://pr-266-tastopia-dev-identity.phenchua.dev\"\nExpected: \t\"https://pr-266-tastopia-dev-identity.phenchua.dev\"",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://pr-266-tastopia-dev-identity.phenchua.dev/home/error?errorId=CfDJ8AkR4Faomy5BqJg_rY26RMoLfgvTFvaCg4d7sMfh6ZbgHcSIoWLT17zqlkC-I0phPTLeaulxfM4x5X8OiKMAWLHhYaIfmxaEjx_QDbOvRWGt1ih5mzhJ6ErHNQyqdMCgGX4gCpGz6QFlVK3eKrGHw7Ife7RDXhi2J-vb6ezjpckVppHm4DMR1BAggTu5iQn6vCeoonTow8K793jFYvWcgp4t8EiNO5d9j82uOMaQAGjShlWpHDKDKbf_crpUUVz9nscmJ_Qoihr7mWicrnL_h7yJCw7Kjlmk8A66n7xXy7g8QUGMgmrLFvmH0tP4uISGr6ccPE4UV30OBEBsXklcl9g7DrvsabksQtdm5tNrPTiKwAUibtm7aI7FgfEuJEGlusUL7j3BYmvBfdZ1Tpek5gMRQ94vxKyYHzSX8myNUJN4",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "origin\thttps://pr-266-tastopia-dev-identity.phenchua.dev",
+        "severity": "error"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\th1",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tWelcome to",
+        "severity": "error"
+      }
+    ]
+  },
+  "cypress/e2e/reports-users-data.cy.ts": {
+    "User reports data exploration -> renders user reports table and accepts search input": [
+      {
+        "type": "cy:command",
+        "message": "visit\t/ -> 307: https://pr-266-tastopia-dev-dashboard.phenchua.dev/en",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://pr-266-tastopia-dev-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /Sign in/i",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "POST https://pr-266-tastopia-dev-dashboard.phenchua.dev/en\nStatus: 303",
+        "severity": "warning"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://pr-266-tastopia-dev-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "env\tE2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://pr-266-tastopia-dev-identity.phenchua.dev** to equal **https://pr-266-tastopia-dev-identity.phenchua.dev**\nActual: \t\"https://pr-266-tastopia-dev-identity.phenchua.dev\"\nExpected: \t\"https://pr-266-tastopia-dev-identity.phenchua.dev\"",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://pr-266-tastopia-dev-identity.phenchua.dev/home/error?errorId=CfDJ8AkR4Faomy5BqJg_rY26RMpTp8of5RRloJVAubnjpgxnt1eH6-MX9gtgM4UFWgEyPG3d0M38LZS4O0U7l9jAo4YcuRAB48WK87FLL0LocrLC8NTUr8tbiYkhmXNgk12vN2tgm4xOmxwxJmrLPD7FjoIVPvDhn9_mxWZWO52JxpEs0_2eP60HXROP8R7wHKnvZjapyAW9gNCUIAvfZQFrDTsCbTHnQ-27X6JZJPDRyB1T8Nt7ycS00B-aDyQKzMDk7H4s_Vo0wiCfj7it0bPoUTabFVokqiu7nhiI5HVDxnjIQKkH-Qs3di2ttNejrQguenat1XeixvbQK9NWTJD1_pDTUUdie_tPjTNR-l4mdVYAsLcLlpl1owre-L9ammsUrZdpqwsDmkpNZHZcIKPghgM_V-R_Q179PjKnFWy75lMe",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "origin\thttps://pr-266-tastopia-dev-identity.phenchua.dev",
+        "severity": "error"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\th1",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tWelcome to",
+        "severity": "error"
+      }
+    ]
+  },
+  "cypress/e2e/tags-data.cy.ts": {
+    "Tags data exploration -> renders tag data table and opens create dialog": [
+      {
+        "type": "cy:command",
+        "message": "visit\t/ -> 307: https://pr-266-tastopia-dev-dashboard.phenchua.dev/en",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://pr-266-tastopia-dev-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /Sign in/i",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "POST https://pr-266-tastopia-dev-dashboard.phenchua.dev/en\nStatus: 303",
+        "severity": "warning"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://pr-266-tastopia-dev-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "env\tE2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://pr-266-tastopia-dev-identity.phenchua.dev** to equal **https://pr-266-tastopia-dev-identity.phenchua.dev**\nActual: \t\"https://pr-266-tastopia-dev-identity.phenchua.dev\"\nExpected: \t\"https://pr-266-tastopia-dev-identity.phenchua.dev\"",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://pr-266-tastopia-dev-identity.phenchua.dev/home/error?errorId=CfDJ8AkR4Faomy5BqJg_rY26RMrEjrLtyrrd4S8y2luhR9oLXSIFZ3AEVHTAvm2n0-BwQAOCx5bi8US9sX4k2qv-NHF9Q5BpI92k4iN1UcJd27rTmECHd5CyXEL6cWtvws3QMieZlNi6nw3xfaQ5Mf4knzIcYy0KnmS4AW91gHif6YoLQvJ6ZkxGrh52crAW8ZfmqwR6MFzYQKzCm2O_Q8ECk-pZoZPEdGkxcHQrQtZMnX3vQY4J88BPiZBri4QIwlo0ekN1aqOP_uYgK5DKiU9bMzV7OixUaTEbdkX8udt9ocaVPXKetDQcg1VX-wB3SHf169h1ViRdFViT26aVL8Z8A_V6VWzz_FLEFjRK6-1bAP7qz3CCqXtupkgraQZLXJrHb76TE67u4pYG9X-eNMnCt9iNd0Lbzav2sTOi4RwMMZ2U",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "origin\thttps://pr-266-tastopia-dev-identity.phenchua.dev",
+        "severity": "error"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\th1",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tWelcome to",
+        "severity": "error"
+      }
+    ]
+  },
+  "cypress/e2e/users-data.cy.ts": {
+    "Users data exploration -> renders user data table and accepts search input": [
+      {
+        "type": "cy:command",
+        "message": "visit\t/ -> 307: https://pr-266-tastopia-dev-dashboard.phenchua.dev/en",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://pr-266-tastopia-dev-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /Sign in/i",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://pr-266-tastopia-dev-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "POST https://pr-266-tastopia-dev-dashboard.phenchua.dev/en\nStatus: 303",
+        "severity": "warning"
+      },
+      {
+        "type": "cy:command",
+        "message": "env\tE2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://pr-266-tastopia-dev-identity.phenchua.dev** to equal **https://pr-266-tastopia-dev-identity.phenchua.dev**\nActual: \t\"https://pr-266-tastopia-dev-identity.phenchua.dev\"\nExpected: \t\"https://pr-266-tastopia-dev-identity.phenchua.dev\"",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://pr-266-tastopia-dev-identity.phenchua.dev/home/error?errorId=CfDJ8AkR4Faomy5BqJg_rY26RMoK0xsNUpFHVKy3KETkyprQ1Frdz1DuyBYI03CiteMvagGWYrEiuhVHRStXYOy0MGaon539kKlgOjynfB_pGDt6eLNucVcPVMN4rzM2sC70gztpg4lqbjsRR0USlyIEgGrD2Z8s0HyY1ES0x-OkN8w5tP7QSkT1Tq04j3Rb3oX-GMCkcLphamukXKfVqAG_oNOXdmvP5lSMC_FpaXUIkpzyhy4y0pmc4k5my3yD8VG1Fr7QYWi6RqfWPoz0Yf5hMtCk2yL9dP72WeJy5HbP5hX1Y0zh0KCb7u8-ZL7-nP-0p4nasqGTngVabnT79Ercksrh3CK1anbtFZnCoeSQV58bhwP9uFEPvSn8BafaYFf4BYGB6f6EcaYZf8H65aW1FGHd5Nbp0bDN9gqPaM4DhGbv",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "origin\thttps://pr-266-tastopia-dev-identity.phenchua.dev",
+        "severity": "error"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\th1",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tWelcome to",
+        "severity": "error"
+      }
+    ]
+  }
+}
