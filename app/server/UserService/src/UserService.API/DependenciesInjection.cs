@@ -19,8 +19,9 @@ public static class DependenciesInjection
 
         builder.ConfigureCommonAPIServices();
 
-        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddAutoMapper(
+            cfg => { },
+            AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddInfrastructureServices();
         services.AddApplicationServices();

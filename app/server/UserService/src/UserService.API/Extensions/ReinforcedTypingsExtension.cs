@@ -1,6 +1,7 @@
 ﻿using Contract.DTOs;
 using Contract.Extension;
 using RecipeService.API.DTOs;
+using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using UserService.API.DTOs;
 using UserService.Domain.Entities;
@@ -26,6 +27,7 @@ public static class ReinforcedTypingsExtension
 
         Directory.CreateDirectory(EXPORT_FILE_PATH);
         builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
+        builder.Substitute(typeof(IFormFile), new RtSimpleTypeName("any"));
 
         // DTO and Entites
         builder.ExportAsInterfaces([

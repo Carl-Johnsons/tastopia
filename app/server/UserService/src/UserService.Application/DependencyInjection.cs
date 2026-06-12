@@ -14,9 +14,9 @@ public static class DependencyInjection
     {
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         // Register automapper
-        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
-        services.AddSingleton(mapper);
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddAutoMapper(
+            cfg => { },
+            AppDomain.CurrentDomain.GetAssemblies());
         services.AddGrpcClientService();
         return services;
     }
