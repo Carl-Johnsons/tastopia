@@ -34,7 +34,7 @@ public class TrackingController : BaseApiController
             Skip = getUserViewRecipeDetailHistoryDTO.Skip,
         });
         result.ThrowIfFailure();
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     [HttpPost("search-user-view-recipe-detail-history")]
@@ -52,7 +52,7 @@ public class TrackingController : BaseApiController
             Keyword = searchUserViewRecipeDetailHistoryDTO.Keyword
         });
         result.ThrowIfFailure();
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     [HttpGet("get-user-search-recipe-history")]
@@ -68,7 +68,7 @@ public class TrackingController : BaseApiController
             AccountId = Guid.Parse(subjectId!),
         });
         result.ThrowIfFailure();
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     [HttpGet("get-user-search-user-history")]
@@ -84,7 +84,7 @@ public class TrackingController : BaseApiController
             AccountId = Guid.Parse(subjectId!),
         });
         result.ThrowIfFailure();
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     [HttpPost("delete-user-search-user-history")]
@@ -101,7 +101,7 @@ public class TrackingController : BaseApiController
             Keyword = deleteUserSearchUserKeywordDTO.Keyword,
         });
         result.ThrowIfFailure();
-        return Ok(result);
+        return Ok(result.Value);
     }
 
     [HttpPost("delete-user-search-recipe-history")]
@@ -118,6 +118,6 @@ public class TrackingController : BaseApiController
             Keyword = deleteUserSearchRecipeKeywordDTO.Keyword,
         });
         result.ThrowIfFailure();
-        return Ok(result);
+        return Ok(result.Value);
     }
 }
