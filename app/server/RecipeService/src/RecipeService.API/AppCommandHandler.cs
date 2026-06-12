@@ -6,7 +6,7 @@ namespace RecipeService.API;
 
 public static class AppCommandHandler
 {
-    public static async Task<bool> TryHandleAsync(this WebApplicationBuilder builder, string[] args)
+    public static Task<bool> TryHandleAsync(this WebApplicationBuilder builder, string[] args)
     {
         var uniqueArgs = args
             .Where(COMMAND_ARGS.All.Contains)
@@ -14,7 +14,7 @@ public static class AppCommandHandler
             .ToArray();
         if (uniqueArgs.Length == 0)
         {
-            return false;
+            return Task.FromResult(false);
         }
 
         builder.Services.AddMinimalInfrastructureServices();
@@ -31,6 +31,6 @@ public static class AppCommandHandler
                     break;
             }
         }
-        return true;
+        return Task.FromResult(true);
     }
 }

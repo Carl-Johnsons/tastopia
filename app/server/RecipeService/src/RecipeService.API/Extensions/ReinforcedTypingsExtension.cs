@@ -4,6 +4,7 @@ using RecipeService.API.DTOs;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
+using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 namespace RecipeService.API.Extensions;
@@ -26,6 +27,8 @@ public static class ReinforcedTypingsExtension
         Directory.CreateDirectory(EXPORT_FILE_PATH);
         builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
 
+        builder.Substitute(typeof(IFormFile), new RtSimpleTypeName("any"));
+        builder.Substitute(typeof(TagValue), new RtSimpleTypeName("any"));
         // DTO and Entites
         builder.ExportAsInterfaces([
             typeof(DateStatisticEntity),
