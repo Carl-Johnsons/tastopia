@@ -12,8 +12,7 @@ public class MappingConfig
         {
             config.CreateMap(typeof(List<>), typeof(RepeatedField<>)).ConvertUsing(typeof(ListToRepeatedFieldConverter<,>));
             config.CreateMap(typeof(RepeatedField<>), typeof(List<>)).ConvertUsing(typeof(RepeatedFieldToListConverter<,>));
-        });
-
+        }, null);
 
         return mappingConfig;
     }

@@ -13,7 +13,7 @@ try
 
     var app = await builder
         .ConfigureServices()
-        .ConfigurePipelineAsync();
+        .ConfigurePipeline();
 
     app.Start();
 

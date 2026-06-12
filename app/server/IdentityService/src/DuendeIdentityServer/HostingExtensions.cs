@@ -44,9 +44,11 @@ internal static class HostingExtensions
         });
 
         // Register automapper
-        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
-        services.AddSingleton(mapper);
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        // IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
+        // services.AddSingleton(mapper);
+        services.AddAutoMapper(
+            cfg => { },
+            AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddCommonAPIWithoutAuthServices();
         services
@@ -138,7 +140,7 @@ internal static class HostingExtensions
         return builder.Build();
     }
 
-    public static async Task<WebApplication> ConfigurePipelineAsync(this WebApplication app)
+    public static Task<WebApplication> ConfigurePipeline(this WebApplication app)
     {
         if (EnvUtility.IsProduction() || EnvUtility.IsStaging())
         {
@@ -199,11 +201,11 @@ internal static class HostingExtensions
 
         app.UseSignalRServiceAsync();
         app.Use(async (context, next) =>
-        {
-            Console.WriteLine($"RemoteIp: {context.Connection.RemoteIpAddress}");
-            await next();
-        });
+            {
+                Console.WriteLine($"RemoteIp: {context.Connection.RemoteIpAddress}");
+                await next();
+            });
 
-        return app;
+        return Task.FromResult(app);
     }
 }
