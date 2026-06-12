@@ -15,9 +15,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<!-- Utility libraries -->
-		<PackageReference Include="AutoMapper" Version="16.1.1" />
-
 		<!-- Identity dependencies -->
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.11" />

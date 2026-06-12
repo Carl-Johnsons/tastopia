@@ -25,7 +25,10 @@ public static class DependenciesInjection
 
         // Register automapper
         services.AddAutoMapper(
-            cfg => { },
+            cfg =>
+            {
+                cfg.LicenseKey = DotNetEnv.Env.GetString("LUCKYPENNYSOFTWARE_LICENSE_KEY", "Not Found");
+            },
             AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddCommonAPIServices();
