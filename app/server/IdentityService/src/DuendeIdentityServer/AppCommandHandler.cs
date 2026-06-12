@@ -34,7 +34,7 @@ public static class AppCommandHandler
                     sp.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
                     break;
                 case COMMAND_ARGS.SEED:
-                    dbContext.SeedDb(sp).GetAwaiter().GetResult();
+                    await dbContext.SeedDb(sp);
                     break;
             }
         }

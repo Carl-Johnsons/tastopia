@@ -71,7 +71,7 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
                               externalUser.FindFirst(ClaimTypes.NameIdentifier) ??
                               throw new InvalidOperationException("Unknown userid");
 
-            var provider = result.Properties.Items["scheme"] ?? throw new InvalidOperationException("Null scheme in authentiation properties");
+            var provider = result.Properties?.Items["scheme"] ?? throw new InvalidOperationException("Null scheme in authentiation properties");
             var providerUserId = userIdClaim.Value;
 
             // find external user
@@ -87,7 +87,7 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
                     Provider = provider,
                     ProviderUserId = providerUserId,
                     Claims = externalUser.Claims,
-                    AccessToken = accessToken
+                    AccessToken = accessToken!
                 });
                 response.ThrowIfFailure();
                 user = response.Value;
