@@ -139,7 +139,12 @@ public static class DependenciesInjection
 
     private static bool Authorize(HttpContext ctx)
     {
-        if (ctx.Items.DownstreamRoute().AuthenticationOptions.AuthenticationProviderKey == null) return true;
+        if (ctx.Items.DownstreamRoute()
+                .AuthenticationOptions
+                .AuthenticationProviderKeys?.Length == 0)
+        {
+            return true;
+        }
         else
         {
             bool auth = false;
