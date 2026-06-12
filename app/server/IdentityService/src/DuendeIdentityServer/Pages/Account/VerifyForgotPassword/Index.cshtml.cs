@@ -30,7 +30,7 @@ public class Index : PageModel
         _sender = sender;
     }
 
-    public async Task<IActionResult> OnGet(string returnUrl, string identifier)
+    public Task<IActionResult> OnGet(string returnUrl, string identifier)
     {
         Input = new InputModel
         {
@@ -45,7 +45,7 @@ public class Index : PageModel
             IsValidOTP = false,
         };
 
-        return Page();
+        return Task.FromResult<IActionResult>(Page());
     }
 
     public async Task<IActionResult> OnPost()
@@ -176,7 +176,7 @@ public class Index : PageModel
                             Identifier = Input.Identifier,
                             OTP = Input.OTP!,
                             Method = IdentifierUtility.Check(Input.Identifier),
-                            Password = Input.Password
+                            Password = Input.Password!
                         });
 
                         result.ThrowIfFailure();

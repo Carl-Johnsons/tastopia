@@ -42,7 +42,7 @@ public class Index : PageModel
         _sender = sender;
     }
 
-    public async Task<IActionResult> OnGet(string returnUrl, string identifier)
+    public Task<IActionResult> OnGet(string returnUrl, string identifier)
     {
         Input = new InputModel
         {
@@ -53,7 +53,7 @@ public class Index : PageModel
 
         ViewData["ReturnUrl"] = encodedRedirectUri;
 
-        return Page();
+        return Task.FromResult<IActionResult>(Page());
     }
 
     public async Task<IActionResult> OnPost()

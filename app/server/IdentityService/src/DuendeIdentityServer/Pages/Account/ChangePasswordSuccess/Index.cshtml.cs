@@ -11,11 +11,11 @@ public class Index : PageModel
     public Index()
     {
     }
-    public async Task<IActionResult> OnGet(string returnUrl)
+    public Task<IActionResult> OnGet(string returnUrl)
     {
         var encodedRedirectUri = WebUtility.UrlEncode(returnUrl);
 
         ViewData["ReturnUrl"] = encodedRedirectUri;
-        return Page();
+        return Task.FromResult<IActionResult>(Page());
     }
 }

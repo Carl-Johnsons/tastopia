@@ -1,5 +1,6 @@
 ﻿using Contract.Extension;
 using IdentityService.Domain.Errors;
+using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
 using ConfigurationBuilder = Reinforced.Typings.Fluent.ConfigurationBuilder;
 namespace DuendeIdentityServer.Extensions;
@@ -19,6 +20,10 @@ public static class ReinforcedTypingsExtension
         ];
 
         builder.ConfigCommonReinforcedTypings(EXPORT_FILE_PATH, FILE_NAME, errorsTypes);
+
+        builder.Substitute(typeof(DateTimeOffset), new RtSimpleTypeName("string"));
+        builder.Substitute(typeof(Microsoft.AspNetCore.Identity.IdentityRole), new RtSimpleTypeName("any"));
+        builder.Substitute(typeof(IFormFile), new RtSimpleTypeName("any"));
 
         // DTO and Entities
         builder.ExportAsInterfaces([
