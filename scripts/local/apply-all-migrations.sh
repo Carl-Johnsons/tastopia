@@ -39,12 +39,13 @@ update_database() {
     local project=$2
     local name=$3
 
-    if [ -f $env_path ]; then
-        # Export each line as an environment variable
-        export $(grep -v '^#' $env_path | xargs)
-    else
+    if [[ ! -f "$env_path" ]]; then
         echo "$env_path file not found."
+        return 1
     fi
+    
+    # Export each line as an environment variable
+    export $(grep -v '^#' $env_path | xargs)
 
     if [[ " ${POSTGRES_REQUIRED_SERVICES[@]} " =~ " ${name} " ]]; then
         echo -e "${INFO}Running Postgresql migrations for ${name}...${NC}"
