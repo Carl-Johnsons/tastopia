@@ -27,16 +27,22 @@ public static class DependencyInjection
 
     public static IServiceCollection AddMinimalInfrastructureServices(this IServiceCollection services)
     {
+        var connectionString = Contract.Utilities.EnvUtility.GetConnectionString();
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         services.AddDbContext<IApplicationDbContext, ApplicationDbContext>(options =>
-                options.UseNpgsql(Contract.Utilities.EnvUtility.GetConnectionString()));
+                options.UseNpgsql(connectionString));
         services.AddIdentityServer()
                 .AddOperationalStore(options =>
                 {
-                    options.ConfigureDbContext = b =>
-                        b.UseNpgsql(
-                            Contract.Utilities.EnvUtility.GetConnectionString(),
-                            sql => sql.MigrationsAssembly("IdentityService.Infrastructure"));
+                    options.ConfigureDbContext = builder =>
+                        builder.UseNpgsql(connectionString,
+                                            options => options.MigrationsAssembly("IdentityService.Infrastructure")
+                                                                .EnableRetryOnFailure(
+                                                                    maxRetryCount: 10,
+                                                                    maxRetryDelay: TimeSpan.FromSeconds(15),
+                                                                    errorCodesToAdd: null
+                                                                ));
+
                 });
         services.AddIdentity<ApplicationAccount, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
