@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="0" skipped="0" errors="0" time="243.762">
+  <testsuite name="maestro-runner" tests="5" failures="0" skipped="0" errors="0" time="243.762" timestamp="2026-06-12T08:16:20Z">
+    <testcase name="comment-recipe" classname="comment-recipe" time="45.279">
+      <properties>
+        <property name="file" value="comment-recipe.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+    </testcase>
+    <testcase name="community" classname="community" time="25.298">
+      <properties>
+        <property name="file" value="community.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+    </testcase>
+    <testcase name="cooking-mode" classname="cooking-mode" time="40.013">
+      <properties>
+        <property name="file" value="cooking-mode.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+    </testcase>
+    <testcase name="search-recipe" classname="search-recipe" time="25.529">
+      <properties>
+        <property name="file" value="search-recipe.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+    </testcase>
+    <testcase name="search-user" classname="search-user" time="26.664">
+      <properties>
+        <property name="file" value="search-user.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+    </testcase>
+  </testsuite>
+</testsuites>
