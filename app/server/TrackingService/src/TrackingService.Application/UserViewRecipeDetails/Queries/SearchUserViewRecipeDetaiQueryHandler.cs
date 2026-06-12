@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Google.Protobuf.Collections;
+using Microsoft.EntityFrameworkCore;
 using RecipeProto;
 using TrackingService.Domain.Entities;
 using TrackingService.Domain.Errors;
@@ -43,8 +44,12 @@ public class SearchUserViewRecipeDetaiQueryHandler : IRequestHandler<SearchUserV
         }
         var viewsQuery = _context.UserViewRecipeDetails.Where(v => v.AccountId == accountId).OrderByDescending(v => v.UpdatedAt).AsQueryable();
 
-        var views = viewsQuery.ToHashSet();
-        var viewsMap = viewsQuery.ToDictionary(v => v.RecipeId.ToString());
+        var views = await viewsQuery.ToListAsync(cancellationToken);
+        var viewsMap = views
+            .GroupBy(v => v.RecipeId)
+            .ToDictionary(
+                g => g.Key.ToString(),
+                g => g.OrderByDescending(x => x.UpdatedAt).First());
 
         if (views == null || views.Count == 0)
         {
