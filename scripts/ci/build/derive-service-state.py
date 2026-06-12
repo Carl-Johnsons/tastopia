@@ -90,7 +90,6 @@ user_api = Service(ServiceName.USER_API, ("app/server/UserService",), (contract,
 ingredient_predict_api = Service(
     ServiceName.INGREDIENT_PREDICT_API,
     ("app/server/IngredientPredictService",),
-    (contract,),
 )
 email_worker = Service(
     ServiceName.EMAIL_WORKER,
