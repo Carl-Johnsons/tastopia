@@ -12,7 +12,10 @@ public static class DependencyInjection
     {
         // Register automapper
         services.AddAutoMapper(
-            cfg => { },
+            cfg =>
+            {
+                cfg.LicenseKey = DotNetEnv.Env.GetString("LUCKYPENNYSOFTWARE_LICENSE_KEY", "Not Found");
+            },
             AppDomain.CurrentDomain.GetAssemblies());
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         services.AddGrpcClientService();

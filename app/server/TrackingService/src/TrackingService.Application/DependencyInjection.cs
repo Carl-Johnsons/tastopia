@@ -16,7 +16,10 @@ public static class DependencyInjection
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         // Register automapper
         services.AddAutoMapper(
-            cfg => { },
+            cfg =>
+            {
+                cfg.LicenseKey = DotNetEnv.Env.GetString("LUCKYPENNYSOFTWARE_LICENSE_KEY", "Not Found");
+            },
             AppDomain.CurrentDomain.GetAssemblies());
 
         //Grpc

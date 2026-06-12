@@ -44,10 +44,11 @@ internal static class HostingExtensions
         });
 
         // Register automapper
-        // IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
-        // services.AddSingleton(mapper);
         services.AddAutoMapper(
-            cfg => { },
+            cfg =>
+            {
+                cfg.LicenseKey = DotNetEnv.Env.GetString("LUCKYPENNYSOFTWARE_LICENSE_KEY", "Not Found");
+            },
             AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddCommonAPIWithoutAuthServices();
