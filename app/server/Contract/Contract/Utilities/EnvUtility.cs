@@ -54,7 +54,11 @@ public class EnvUtility
         var db = DotNetEnv.Env.GetString("DB", "Not found").Trim();
         var user = DotNetEnv.Env.GetString("POSTGRES_USER", "Not found").Trim();
         var pwd = DotNetEnv.Env.GetString("POSTGRES_PASSWORD", "Not found").Trim();
-        var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={pwd};SSL Mode=Require;Trust Server Certificate=true;";
+        var connectionString = $"Host={host};Port={port};Database={db};Username={user};Password={pwd};";
+        if (IsProduction())
+        {
+            connectionString = $"{connectionString}SSL Mode=Require;Trust Server Certificate=true;";
+        }
         return connectionString;
     }
 
