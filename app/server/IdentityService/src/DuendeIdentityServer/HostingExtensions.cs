@@ -72,8 +72,13 @@ internal static class HostingExtensions
             .AddOperationalStore(options =>
             {
                 options.ConfigureDbContext = builder =>
-                    builder.UseNpgsql(EnvUtility.GetConnectionString(), 
-                                        sql => sql.MigrationsAssembly("IdentityService.Infrastructure"));
+                    builder.UseNpgsql(EnvUtility.GetConnectionString(),
+                                        options => options.MigrationsAssembly("IdentityService.Infrastructure")
+                                                            .EnableRetryOnFailure(
+                                                                maxRetryCount: 10,
+                                                                maxRetryDelay: TimeSpan.FromSeconds(15),
+                                                                errorCodesToAdd: null
+                                                            ));
 
                 options.EnableTokenCleanup = true;
                 options.TokenCleanupInterval = 3600;
