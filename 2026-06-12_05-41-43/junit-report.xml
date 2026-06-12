@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="4" skipped="0" errors="0" time="457.621">
+  <testsuite name="maestro-runner" tests="5" failures="4" skipped="0" errors="0" time="457.621" timestamp="2026-06-12T05:41:50Z">
+    <testcase name="comment-recipe" classname="comment-recipe" time="75.269">
+      <properties>
+        <property name="file" value="comment-recipe.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+      <failure message="" type="TestError"></failure>
+    </testcase>
+    <testcase name="community" classname="community" time="74.865">
+      <properties>
+        <property name="file" value="community.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+      <failure message="" type="TestError"></failure>
+    </testcase>
+    <testcase name="cooking-mode" classname="cooking-mode" time="73.859">
+      <properties>
+        <property name="file" value="cooking-mode.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+      <failure message="" type="TestError"></failure>
+    </testcase>
+    <testcase name="search-recipe" classname="search-recipe" time="74.094">
+      <properties>
+        <property name="file" value="search-recipe.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+      <failure message="" type="TestError"></failure>
+    </testcase>
+    <testcase name="search-user" classname="search-user" time="28.855">
+      <properties>
+        <property name="file" value="search-user.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+    </testcase>
+  </testsuite>
+</testsuites>
