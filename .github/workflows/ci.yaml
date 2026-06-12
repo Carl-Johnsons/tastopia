@@ -2,12 +2,26 @@ name: CI Pipeline
 
 on:
   pull_request:
-    branches: 
+    branches:
       - staging
+    paths:
+      - "app/**"
+      - "scripts/**"
+      - "dockerfiles/**"
+      - "ansible/**"
+      - "docker-compose.yml"
+      - ".github/workflows/ci.yaml"
   push:
-    branches: 
+    branches:
       - master
       - staging
+    paths:
+      - "app/**"
+      - "scripts/**"
+      - "dockerfiles/**"
+      - "ansible/**"
+      - "docker-compose.yml"
+      - ".github/workflows/ci.yaml"
   workflow_dispatch:
     inputs:
       DEPLOY_ENV:
