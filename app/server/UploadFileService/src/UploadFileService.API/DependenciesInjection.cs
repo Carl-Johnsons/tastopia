@@ -24,9 +24,9 @@ public static class DependenciesInjection
         services.AddSwaggerServices();
 
         // Register automapper
-        IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
-        services.AddSingleton(mapper);
-        services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        services.AddAutoMapper(
+            cfg => { },
+            AppDomain.CurrentDomain.GetAssemblies());
 
         services.AddCommonAPIServices();
 

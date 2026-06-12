@@ -27,7 +27,7 @@ public class MappingConfig
                     .MapFrom(src => ByteString.CopyFrom(src.Stream)));
 
             config.CreateMap<GrpcFileDTO, FileResponse>().ReverseMap();
-        });
+        }, null);
         //mappingConfig.AssertConfigurationIsValid();
 
         return mappingConfig;
