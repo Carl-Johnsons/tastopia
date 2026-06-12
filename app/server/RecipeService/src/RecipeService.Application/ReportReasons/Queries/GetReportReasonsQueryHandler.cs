@@ -11,14 +11,14 @@ public class GetReportReasonsQuery : IRequest<Result<List<ReportReasonResponse>?
 
 public class GetReportReasonsQueryHandler : IRequestHandler<GetReportReasonsQuery, Result<List<ReportReasonResponse>?>>
 {
-    public async Task<Result<List<ReportReasonResponse>?>> Handle(GetReportReasonsQuery request, CancellationToken cancellationToken)
+    public Task<Result<List<ReportReasonResponse>?>> Handle(GetReportReasonsQuery request, CancellationToken cancellationToken)
     {
         var lang = request.Language;
         var type = request.ReportType;
 
         if (string.IsNullOrEmpty(lang) || string.IsNullOrEmpty(type))
         {
-            return Result<List<ReportReasonResponse>?>.Failure(RecipeError.NullParameter);
+            return Task.FromResult(Result<List<ReportReasonResponse>?>.Failure(RecipeError.NullParameter));
         }
 
         if (type == "Recipe")
@@ -29,10 +29,10 @@ public class GetReportReasonsQueryHandler : IRequestHandler<GetReportReasonsQuer
 
             if (reasons == null || reasons.Count == 0)
             {
-                return Result<List<ReportReasonResponse>?>.Failure(RecipeError.NotFound, "Not found report recipe reason");
+                return Task.FromResult(Result<List<ReportReasonResponse>?>.Failure(RecipeError.NotFound, "Not found report recipe reason"));
 
             }
-            return Result<List<ReportReasonResponse>?>.Success(reasons);
+            return Task.FromResult(Result<List<ReportReasonResponse>?>.Success(reasons));
         }
 
         if (type == "Comment")
@@ -43,12 +43,12 @@ public class GetReportReasonsQueryHandler : IRequestHandler<GetReportReasonsQuer
 
             if (reasons == null || reasons.Count == 0)
             {
-                return Result<List<ReportReasonResponse>?>.Failure(RecipeError.NotFound, "Not found report comment reason");
+                return Task.FromResult(Result<List<ReportReasonResponse>?>.Failure(RecipeError.NotFound, "Not found report comment reason"));
 
             }
-            return Result<List<ReportReasonResponse>?>.Success(reasons);
+            return Task.FromResult(Result<List<ReportReasonResponse>?>.Success(reasons));
         }
 
-        return Result<List<ReportReasonResponse>?>.Failure(RecipeError.NotFound);
+        return Task.FromResult(Result<List<ReportReasonResponse>?>.Failure(RecipeError.NotFound));
     }
 }
