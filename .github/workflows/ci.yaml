@@ -208,7 +208,7 @@ jobs:
           target: google_apis_playstore
           profile: medium_phone
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu software -noaudio -no-boot-anim -camera-back none
           disable-animations: false
           script: echo "Generated AVD snapshot for caching"
 
@@ -220,7 +220,7 @@ jobs:
           target: google_apis_playstore
           profile: medium_phone
           force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-snapshot-save -no-window -gpu software -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
             MOBILE_TAG=$(printf "%s\n" "${SERVICES}" | grep -o "mobile:[^ ]*" | cut -d: -f2 | head -n1 || true)
