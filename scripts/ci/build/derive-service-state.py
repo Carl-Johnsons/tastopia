@@ -187,7 +187,7 @@ def get_tag(service: Service, tag_length: int = 8) -> str:
     if not service.isClient:
         return _get_latest_service_tag(service, tag_length)
 
-    if not (_ENV and _PR_NUMBER):
+    if not (_ENV or _PR_NUMBER):
         raise RuntimeError(f"""
         Either ENV or PR_NUMBER has to be specified to get tag of {service.name.name} service
                            """)
