@@ -155,12 +155,13 @@ jobs:
     name: Mobile E2E tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: [build_app, update_backend_manifest]
+    needs: [derive-state, build_app, build_backend]
     if: >-
       always() && 
+      needs.derive-state.result == 'success' &&
       (needs.build_app.result == 'success' || needs.build_app.result == 'skipped') && 
-      (needs.update_backend_manifest.result == 'success' || needs.update_backend_manifest.result == 'skipped') && 
-      !(needs.build_app.result == 'skipped' && needs.update_backend_manifest.result == 'skipped')
+      (needs.build_backend.result == 'success' || needs.build_backend.result == 'skipped') &&
+      !(needs.build_app.result == 'skipped' && needs.build_backend.result == 'skipped')
     env:
       MAESTRO_VERSION: "1.1.14"
     permissions:
@@ -255,7 +256,7 @@ jobs:
           API_GATEWAY_PORT: ${{ vars.API_GATEWAY_PORT }}
           E2E_TEST_USERNAME: ${{ secrets.MOBILE_E2E_TEST_USERNAME }}
           E2E_TEST_PASSWORD: ${{ secrets.MOBILE_E2E_TEST_PASSWORD }}
-          BUILT_IMAGES: ${{ needs.update_backend_manifest.outputs.images }}
+          BUILT_IMAGES: ${{ needs.derive-state.outputs.services }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
           ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
 
@@ -298,10 +299,11 @@ jobs:
   website_test:
     name: Website E2E tests
     runs-on: ubuntu-latest
-    needs: [update_backend_manifest]
+    needs: [derive-state, build_backend]
     if: >-
       always() &&
-      needs.update_backend_manifest.result == 'success'
+      needs.derive-state.result == 'success' &&
+      needs.build_backend.result == 'success'
     permissions:
       contents: write
     steps:
@@ -335,7 +337,7 @@ jobs:
           API_GATEWAY_PORT: ${{ vars.API_GATEWAY_PORT }}
           E2E_TEST_USERNAME: ${{ secrets.WEBSITE_E2E_TEST_USERNAME }}
           E2E_TEST_PASSWORD: ${{ secrets.WEBSITE_E2E_TEST_PASSWORD }}
-          BUILT_IMAGES: ${{ needs.update_backend_manifest.outputs.images }}
+          BUILT_IMAGES: ${{ needs.derive-state.outputs.services }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
           ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
 
@@ -461,142 +463,3 @@ jobs:
           WEBSITE_FQDN: ${{ vars.WEBSITE_FQDN }}
           IDENTITY_FQDN: ${{ vars.IDENTITY_FQDN }}
           DUENDE_IDS6_ID: ${{ secrets.DUENDE_IDS6_ID }}
-  setup_dev_env:
-    name: Setup dev environment manifests in gitOps repository
-    if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'staging'
-    runs-on: ubuntu-latest
-    env:
-      PR_TITLE: ${{ github.event.pull_request.title }}
-      PR_URL: ${{ github.event.pull_request.html_url }}
-    steps:
-    - name: Checkout GitOps repo
-      uses: actions/checkout@v6
-      with:
-        repository: ${{ secrets.GITOPS_REPO_NAME }}
-        token: ${{ secrets.GITOPS_REPO_TOKEN }}
-        ref: master
-    - name: Check if Infisical secret file exists
-      id: check_secret
-      run: |
-        SECRET_FILE="k8s/bootstrap/infisical-operator/base/secrets/infisical-secrets-pr-${PR_NUMBER}.yaml"
-
-        if [ -f "$SECRET_FILE" ]; then
-          echo "exists=true" >> $GITHUB_OUTPUT
-        else
-          echo "exists=false" >> $GITHUB_OUTPUT
-        fi
-    - name: Setup Infisical for dev environment
-      if: steps.check_secret.outputs.exists == 'false'
-      run: |
-        cd k8s/bootstrap/infisical-operator/base
-
-        export SECRET_FILE="secrets/infisical-secrets-pr-${PR_NUMBER}.yaml"
-        export APP_NAMESPACE="tastopia-pr-$PR_NUMBER"
-        export MONITORING_NAMESPACE="monitoring-pr-$PR_NUMBER"
-        export SUFFIX="pr-${PR_NUMBER}"
-
-        yq '.spec.authentication.serviceToken.secretsScope.envSlug = "staging"' secrets/infisical-secrets.yaml \
-          | yq '(.spec.managedKubeSecretReferences[] | select(.secretNamespace == "tastopia") | .secretNamespace) = strenv(APP_NAMESPACE)' \
-          | yq '(.spec.managedKubeSecretReferences[] | select(.secretNamespace == "monitoring") | .secretNamespace) = strenv(MONITORING_NAMESPACE)' \
-          | yq '.metadata.name = .metadata.name + "-" + strenv(SUFFIX)' \
-          > "$SECRET_FILE"
-
-        yq -i 'with(.resources; select(all_c(. != strenv(SECRET_FILE))) | . += strenv(SECRET_FILE))' ./kustomization.yaml
-    - name: Ensure that value file exists
-      run: |
-        VALUES_FILE="k8s/helm/values-pr-${PR_NUMBER}.yaml"
-
-        if [ ! -f "$VALUES_FILE" ]; then
-          echo "Values file does not exist, creating..."
-          cp "k8s/helm/values-staging.yaml" "$VALUES_FILE"
-          yq -i '.deployEnv = "dev"' "$VALUES_FILE"
-        fi
-    - name: Commit & push
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add .
-        git commit \
-          -m "Set up PR #${PR_NUMBER}" \
-          -m "PR #${PR_NUMBER}: ${PR_TITLE} (${PR_URL})" \
-          || echo "No changes"
-        git push
-  update_backend_manifest:
-    name: Update service manifest in gitOps repository
-    runs-on: ubuntu-latest
-    needs: [derive-state, build_backend, setup_dev_env]
-    if: >-
-      always() &&
-      needs.build_backend.result == 'success' &&
-      (needs.setup_dev_env.result == 'success' || needs.setup_dev_env.result == 'skipped')
-    outputs:
-      commit_sha: ${{ steps.commit_push.outputs.commit_sha }}
-      images: ${{ steps.update_image.outputs.images }}
-    steps:
-    - name: Checkout GitOps repo
-      uses: actions/checkout@v6
-      with:
-        repository: ${{ secrets.GITOPS_REPO_NAME }}
-        token: ${{ secrets.GITOPS_REPO_TOKEN }}
-        ref: master
-    - name: Update image tag
-      id: update_image
-      run: |
-        #!/bin/bash
-        
-        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          VALUES_FILE="k8s/helm/values-pr-${PR_NUMBER}.yaml"
-        else
-          case "$BRANCH" in
-            master) 
-              VALUES_FILE="k8s/helm/values-production.yaml"
-              ;;
-            staging) 
-              VALUES_FILE="k8s/helm/values-staging.yaml"
-              ;;
-            *) 
-              echo Unsupported branch
-              exit 1
-              ;;
-          esac
-        fi
-
-        if [ ! -f "$VALUES_FILE" ]; then
-          echo "Values file does not exist, please add it before running the workflow..."
-          exit 1
-        fi
-
-        IMAGES=""
-        for IMAGE_STATE in ${{ needs.derive-state.outputs.services }}; do
-          SERVICE="${IMAGE_STATE%%:*}"
-          TAG="${IMAGE_STATE#*:}"
-
-          if [ "$SERVICE" = "mobile" ]; then
-            continue
-          fi
-
-          echo "Updating $SERVICE..."
-
-          IMAGE="ghcr.io/carl-johnsons/tastopia-${SERVICE}:${TAG}"
-          BEFORE_CHECKSUM="$(sha256sum "$VALUES_FILE" | cut -d ' ' -f 1)"
-          sed -i -E "s@(taiduc113/tastopia|ghcr\.io/carl-johnsons/tastopia)-${SERVICE}:.*@${IMAGE}@g" "$VALUES_FILE"
-          AFTER_CHECKSUM="$(sha256sum "$VALUES_FILE" | cut -d ' ' -f 1)"
-
-          if [ "$BEFORE_CHECKSUM" != "$AFTER_CHECKSUM" ]; then
-            IMAGES="${IMAGES:+$IMAGES,}$IMAGE"
-          fi
-        done
-        echo "images=$IMAGES" >> $GITHUB_OUTPUT
-      env:
-        PR_TITLE: ${{ github.event.pull_request.title }}
-        PR_URL: ${{ github.event.pull_request.html_url }}
-    - name: Commit & push
-      id: commit_push
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-
-        git add .
-        git commit -m "Update image to ${{ needs.build_backend.outputs.sha }}" || echo "No changes"
-        git push
-        echo "commit_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
