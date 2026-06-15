@@ -29,9 +29,6 @@ public class RecipeProfile : Profile
 
         CreateMap<DTOs.UpdateStepDTO, Application.Recipes.Commands.UpdateStepDTO>().ReverseMap();
 
-        CreateMap<RecipeDetailsDTO, Recipe>()
-            .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps)).ReverseMap();
-
         //Grpc mapping
         CreateMap<GrpcRecipeDetailsDTO, Recipe>()
             .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Steps))
