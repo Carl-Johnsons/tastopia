@@ -128,7 +128,8 @@ public class Index : PageModel
                     }
                     catch (Exception ex)
                     {
-                        ModelState.AddModelError(string.Empty, $"Send OTP failed! Please try again ({ex.Message})");
+                        ModelState.AddModelError(string.Empty, "Send OTP failed! Please try again.");
+                        Console.WriteLine(ex.Message);
                     }
                     break;
                 case "ReturnFind":
