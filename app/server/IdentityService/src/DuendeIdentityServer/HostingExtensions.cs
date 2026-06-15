@@ -201,11 +201,11 @@ internal static class HostingExtensions
         });
 
         app.UseSignalRServiceAsync();
-        app.Use(async (context, next) =>
-            {
-                Console.WriteLine($"RemoteIp: {context.Connection.RemoteIpAddress}");
-                await next();
-            });
+        // app.Use(async (context, next) =>
+        //     {
+        //         Console.WriteLine($"RemoteIp: {context.Connection.RemoteIpAddress}");
+        //         await next();
+        //     });
 
         return Task.FromResult(app);
     }
