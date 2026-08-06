@@ -9,6 +9,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   providers: [
     DuendeIDS6Provider({
       clientId: DUENDE_IDS6_ID as string,
