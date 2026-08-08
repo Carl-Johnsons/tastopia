@@ -1,0 +1,178 @@
+cypress/e2e/recipes-data.cy.ts:
+    Recipes data exploration -> renders recipe data table and accepts search input
+        cy:command (K): visit	/ -> 307: https://pr-278-tastopia-dev-dashboard.phenchua.dev/en
+            cy:xhr (K): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/8eb6d5cd556e/0.437223102448706:1786176031:XyyzNFxyOtfA07rI_iyo5Ux9crpfaCYp2NrEpv8nwBE/a27d5bcbccb5d6c9
+                        Status: 200
+          cy:fetch (K): GET https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+        cy:command (K): contains	button, /Sign in/i
+        cy:command (K): click
+            cy:xhr (K): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/rum?
+                        Status: 204
+          cy:fetch (!): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/en
+                        Status: 303
+          cy:fetch (K): GET https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+        cy:command (K): env	E2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER
+        cy:command (K): location	origin
+        cy:command (K): assert	expected **https://pr-278-tastopia-dev-identity.phenchua.dev** to equal **https://pr-278-tastopia-dev-identity.phenchua.dev**
+                        Actual: 	"https://pr-278-tastopia-dev-identity.phenchua.dev"
+                        Expected: 	"https://pr-278-tastopia-dev-identity.phenchua.dev"
+        cy:command (K): page load	--page loaded--
+            cy:xhr (K): POST https://pr-278-tastopia-dev-identity.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/8eb6d5cd556e/0.437223102448706:1786176031:XyyzNFxyOtfA07rI_iyo5Ux9crpfaCYp2NrEpv8nwBE/a27d5bf1ea87d6d1
+                        Status: 200
+        cy:command (K): new url	https://pr-278-tastopia-dev-identity.phenchua.dev/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fscope%3Dopenid%2520profile%2520phone%2520email%2520offline_access%2520IdentityServerApi%26redirect_uri%3Dhttps%253A%252F%252Fpr-278-tastopia-dev-dashboard.phenchua.dev%252Fapi%252Fauth%252Fcallback%252Fduende-identity-server6%26response_type%3Dcode%26client_id%3DnextJS%26code_challenge%3D5hRf2NN8_p-TVe20I_3So3tiQJz92W-GRLBIfqQCrPw%26code_challenge_method%3DS256%26nonce%3D4om1TXtKTIbuZ1t1Qt6v5vgORhflIw9vxS815QI1llE
+            cy:xhr (K): POST https://pr-278-tastopia-dev-identity.phenchua.dev/cdn-cgi/rum?
+                        Status: 204
+        cy:command (K): origin	https://pr-278-tastopia-dev-identity.phenchua.dev
+        cy:command (K): get	h1
+        cy:command (K): contains	Welcome to
+        cy:command (K): get	input[placeholder="Your email or phone number"]
+        cy:command (K): type	admin2025
+        cy:command (K): get	input[placeholder="Password"]
+        cy:command (K): first
+        cy:command (K): type	Pass123$
+        cy:command (K): contains	button, /^Login$/
+        cy:command (K): click
+        cy:command (K): form sub	--submitting form--
+        cy:command (K): page load	--page loaded--
+        cy:command (K): new url	https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/callback/duende-identity-server6?code=6D5AD983FD07F1B362190654F87081975441709903A9EF9555D376C2D6078502-1&scope=openid%20profile%20phone%20email%20offline_access%20IdentityServerApi&session_state=Z60mIFn0padUdafTDNNG3MGDHDeuPyy5oruqjijYZgc.84B183FCC13DE7BC4F5AE37D7E2A5784&iss=https%3A%2F%2Fpr-278-tastopia-dev-identity.phenchua.dev
+        cy:command (K): location	origin
+        cy:command (K): url
+        cy:command (X): assert	expected **https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/callback/duende-identity-server6?code=6D5AD983FD07F1B362190654F87081975441709903A9EF9555D376C2D6078502-1&scope=openid%20profile%20phone%20email%20offline_access%20IdentityServerApi&session_state=Z60mIFn0padUdafTDNNG3MGDHDeuPyy5oruqjijYZgc.84B183FCC13DE7BC4F5AE37D7E2A5784&iss=https%3A%2F%2Fpr-278-tastopia-dev-identity.phenchua.dev** to match /\/en\/(recipes|statistics|admins)/
+
+
+
+cypress/e2e/reports-users-data.cy.ts:
+    User reports data exploration -> renders user reports table and accepts search input
+        cy:command (K): visit	/ -> 307: https://pr-278-tastopia-dev-dashboard.phenchua.dev/en
+            cy:xhr (K): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/8eb6d5cd556e/0.437223102448706:1786176031:XyyzNFxyOtfA07rI_iyo5Ux9crpfaCYp2NrEpv8nwBE/a27d5c467b02c97f
+                        Status: 200
+          cy:fetch (K): GET https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+          cy:fetch (K): GET https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+        cy:command (K): contains	button, /Sign in/i
+        cy:command (K): click
+            cy:xhr (K): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/rum?
+                        Status: 204
+          cy:fetch (!): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/en
+                        Status: 303
+        cy:command (K): env	E2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER
+        cy:command (K): location	origin
+        cy:command (K): assert	expected **https://pr-278-tastopia-dev-identity.phenchua.dev** to equal **https://pr-278-tastopia-dev-identity.phenchua.dev**
+                        Actual: 	"https://pr-278-tastopia-dev-identity.phenchua.dev"
+                        Expected: 	"https://pr-278-tastopia-dev-identity.phenchua.dev"
+        cy:command (K): page load	--page loaded--
+        cy:command (K): new url	https://pr-278-tastopia-dev-identity.phenchua.dev/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fscope%3Dopenid%2520profile%2520phone%2520email%2520offline_access%2520IdentityServerApi%26redirect_uri%3Dhttps%253A%252F%252Fpr-278-tastopia-dev-dashboard.phenchua.dev%252Fapi%252Fauth%252Fcallback%252Fduende-identity-server6%26response_type%3Dcode%26client_id%3DnextJS%26code_challenge%3DcbTwiPfU5zdRaV86vKJ1hvfJUoLV2DIZz8oXTIEFgQo%26code_challenge_method%3DS256%26nonce%3DTXJR7fSHbnppKHve-NR1CozXwMhUZ4sghaP3SgNXe_c
+            cy:xhr (K): POST https://pr-278-tastopia-dev-identity.phenchua.dev/cdn-cgi/rum?
+                        Status: 204
+        cy:command (K): origin	https://pr-278-tastopia-dev-identity.phenchua.dev
+            cy:xhr (K): POST https://pr-278-tastopia-dev-identity.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/8eb6d5cd556e/0.437223102448706:1786176031:XyyzNFxyOtfA07rI_iyo5Ux9crpfaCYp2NrEpv8nwBE/a27d5c5948ad6060
+                        Status: 200
+        cy:command (K): get	h1
+        cy:command (K): contains	Welcome to
+        cy:command (K): get	input[placeholder="Your email or phone number"]
+        cy:command (K): type	admin2025
+        cy:command (K): get	input[placeholder="Password"]
+        cy:command (K): first
+        cy:command (K): type	Pass123$
+        cy:command (K): contains	button, /^Login$/
+        cy:command (K): click
+        cy:command (K): form sub	--submitting form--
+        cy:command (K): page load	--page loaded--
+        cy:command (K): new url	https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/callback/duende-identity-server6?code=5E1FD7C4F18C09E9A7DA6F2D8A55588F8BED4A60D2ABAB2E90034A6C33D41631-1&scope=openid%20profile%20phone%20email%20offline_access%20IdentityServerApi&session_state=mn5_PL28Kv_RmjN0aiTquEusXLomyAXHQ86tDmetEjU.23C9F143588DE311ACE09DEF659C4E8C&iss=https%3A%2F%2Fpr-278-tastopia-dev-identity.phenchua.dev
+        cy:command (K): location	origin
+        cy:command (K): url
+        cy:command (X): assert	expected **https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/callback/duende-identity-server6?code=5E1FD7C4F18C09E9A7DA6F2D8A55588F8BED4A60D2ABAB2E90034A6C33D41631-1&scope=openid%20profile%20phone%20email%20offline_access%20IdentityServerApi&session_state=mn5_PL28Kv_RmjN0aiTquEusXLomyAXHQ86tDmetEjU.23C9F143588DE311ACE09DEF659C4E8C&iss=https%3A%2F%2Fpr-278-tastopia-dev-identity.phenchua.dev** to match /\/en\/(recipes|statistics|admins)/
+
+
+
+cypress/e2e/tags-data.cy.ts:
+    Tags data exploration -> renders tag data table and opens create dialog
+        cy:command (K): visit	/ -> 307: https://pr-278-tastopia-dev-dashboard.phenchua.dev/en
+            cy:xhr (K): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/8eb6d5cd556e/0.437223102448706:1786176031:XyyzNFxyOtfA07rI_iyo5Ux9crpfaCYp2NrEpv8nwBE/a27d5c9e4ef5d633
+                        Status: 200
+          cy:fetch (K): GET https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+          cy:fetch (K): GET https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+        cy:command (K): contains	button, /Sign in/i
+        cy:command (K): click
+            cy:xhr (K): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/rum?
+                        Status: 204
+          cy:fetch (!): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/en
+                        Status: 303
+        cy:command (K): env	E2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER
+        cy:command (K): location	origin
+        cy:command (K): assert	expected **https://pr-278-tastopia-dev-identity.phenchua.dev** to equal **https://pr-278-tastopia-dev-identity.phenchua.dev**
+                        Actual: 	"https://pr-278-tastopia-dev-identity.phenchua.dev"
+                        Expected: 	"https://pr-278-tastopia-dev-identity.phenchua.dev"
+        cy:command (K): page load	--page loaded--
+        cy:command (K): new url	https://pr-278-tastopia-dev-identity.phenchua.dev/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fscope%3Dopenid%2520profile%2520phone%2520email%2520offline_access%2520IdentityServerApi%26redirect_uri%3Dhttps%253A%252F%252Fpr-278-tastopia-dev-dashboard.phenchua.dev%252Fapi%252Fauth%252Fcallback%252Fduende-identity-server6%26response_type%3Dcode%26client_id%3DnextJS%26code_challenge%3DHliG1KF1CASGFvuVkQ8FhnZXQsN5J0J8muyAbXDqLgQ%26code_challenge_method%3DS256%26nonce%3DoaEDyS-TX0fv72-2DqxN8BMY1qbRDmlXMR8di7sDdnc
+            cy:xhr (K): POST https://pr-278-tastopia-dev-identity.phenchua.dev/cdn-cgi/rum?
+                        Status: 204
+        cy:command (K): origin	https://pr-278-tastopia-dev-identity.phenchua.dev
+            cy:xhr (K): POST https://pr-278-tastopia-dev-identity.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/8eb6d5cd556e/0.437223102448706:1786176031:XyyzNFxyOtfA07rI_iyo5Ux9crpfaCYp2NrEpv8nwBE/a27d5cac4c9c1d4c
+                        Status: 200
+        cy:command (K): get	h1
+        cy:command (K): contains	Welcome to
+        cy:command (K): get	input[placeholder="Your email or phone number"]
+        cy:command (K): type	admin2025
+        cy:command (K): get	input[placeholder="Password"]
+        cy:command (K): first
+        cy:command (K): type	Pass123$
+        cy:command (K): contains	button, /^Login$/
+        cy:command (K): click
+        cy:command (K): form sub	--submitting form--
+        cy:command (K): page load	--page loaded--
+        cy:command (K): new url	https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/callback/duende-identity-server6?code=A7204FEF98480106AC0B7829016CD3D819C6C69B865E127C4806EA70B22D0C8F-1&scope=openid%20profile%20phone%20email%20offline_access%20IdentityServerApi&session_state=kcE5uwJJF6m1HfvnyZHET5vZA73gnde7jOcZPTuzOw8.A2F43CEC20A97EFF65E92DD708B78EDB&iss=https%3A%2F%2Fpr-278-tastopia-dev-identity.phenchua.dev
+        cy:command (K): location	origin
+        cy:command (K): url
+        cy:command (X): assert	expected **https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/callback/duende-identity-server6?code=A7204FEF98480106AC0B7829016CD3D819C6C69B865E127C4806EA70B22D0C8F-1&scope=openid%20profile%20phone%20email%20offline_access%20IdentityServerApi&session_state=kcE5uwJJF6m1HfvnyZHET5vZA73gnde7jOcZPTuzOw8.A2F43CEC20A97EFF65E92DD708B78EDB&iss=https%3A%2F%2Fpr-278-tastopia-dev-identity.phenchua.dev** to match /\/en\/(recipes|statistics|admins)/
+
+
+
+cypress/e2e/users-data.cy.ts:
+    Users data exploration -> renders user data table and accepts search input
+        cy:command (K): visit	/ -> 307: https://pr-278-tastopia-dev-dashboard.phenchua.dev/en
+            cy:xhr (K): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/8eb6d5cd556e/0.437223102448706:1786176031:XyyzNFxyOtfA07rI_iyo5Ux9crpfaCYp2NrEpv8nwBE/a27d5cefee57b4c2
+                        Status: 200
+          cy:fetch (K): GET https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+          cy:fetch (K): GET https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+        cy:command (K): contains	button, /Sign in/i
+        cy:command (K): click
+            cy:xhr (K): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/rum?
+                        Status: 204
+          cy:fetch (!): POST https://pr-278-tastopia-dev-dashboard.phenchua.dev/en
+                        Status: 303
+        cy:command (K): env	E2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER
+        cy:command (K): location	origin
+        cy:command (K): assert	expected **https://pr-278-tastopia-dev-identity.phenchua.dev** to equal **https://pr-278-tastopia-dev-identity.phenchua.dev**
+                        Actual: 	"https://pr-278-tastopia-dev-identity.phenchua.dev"
+                        Expected: 	"https://pr-278-tastopia-dev-identity.phenchua.dev"
+        cy:command (K): page load	--page loaded--
+        cy:command (K): new url	https://pr-278-tastopia-dev-identity.phenchua.dev/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fscope%3Dopenid%2520profile%2520phone%2520email%2520offline_access%2520IdentityServerApi%26redirect_uri%3Dhttps%253A%252F%252Fpr-278-tastopia-dev-dashboard.phenchua.dev%252Fapi%252Fauth%252Fcallback%252Fduende-identity-server6%26response_type%3Dcode%26client_id%3DnextJS%26code_challenge%3DgW16mREdb6-kT0E6KcEc-O0uKbZBkK3pnB_ZcfQvDgw%26code_challenge_method%3DS256%26nonce%3DTAEkSSP3MEe-mVaaVfIsSm151L-3oz2sIOFv2Sdnxtw
+            cy:xhr (K): POST https://pr-278-tastopia-dev-identity.phenchua.dev/cdn-cgi/rum?
+                        Status: 204
+        cy:command (K): origin	https://pr-278-tastopia-dev-identity.phenchua.dev
+            cy:xhr (K): POST https://pr-278-tastopia-dev-identity.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/8eb6d5cd556e/0.437223102448706:1786176031:XyyzNFxyOtfA07rI_iyo5Ux9crpfaCYp2NrEpv8nwBE/a27d5cfd4d1b1d4c
+                        Status: 200
+        cy:command (K): get	h1
+        cy:command (K): contains	Welcome to
+        cy:command (K): get	input[placeholder="Your email or phone number"]
+        cy:command (K): type	admin2025
+        cy:command (K): get	input[placeholder="Password"]
+        cy:command (K): first
+        cy:command (K): type	Pass123$
+        cy:command (K): contains	button, /^Login$/
+        cy:command (K): click
+        cy:command (K): form sub	--submitting form--
+        cy:command (K): page load	--page loaded--
+        cy:command (K): new url	https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/callback/duende-identity-server6?code=E5C98605B49A29B62C6B61AB176381767F48BBDC3EEEA674AC2DC745834C4A66-1&scope=openid%20profile%20phone%20email%20offline_access%20IdentityServerApi&session_state=YhLbz5CltHs31_MVmtJ00MWds--PA0fBVyVfBb23d20.D57DD6F7291DCAF5C652452A6F9D8A34&iss=https%3A%2F%2Fpr-278-tastopia-dev-identity.phenchua.dev
+        cy:command (K): location	origin
+        cy:command (K): url
+        cy:command (X): assert	expected **https://pr-278-tastopia-dev-dashboard.phenchua.dev/api/auth/callback/duende-identity-server6?code=E5C98605B49A29B62C6B61AB176381767F48BBDC3EEEA674AC2DC745834C4A66-1&scope=openid%20profile%20phone%20email%20offline_access%20IdentityServerApi&session_state=YhLbz5CltHs31_MVmtJ00MWds--PA0fBVyVfBb23d20.D57DD6F7291DCAF5C652452A6F9D8A34&iss=https%3A%2F%2Fpr-278-tastopia-dev-identity.phenchua.dev** to match /\/en\/(recipes|statistics|admins)/
+
