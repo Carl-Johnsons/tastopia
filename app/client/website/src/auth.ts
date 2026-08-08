@@ -6,7 +6,6 @@ import {
   DUENDE_IDS6_ISSUER,
   SCOPE
 } from "./constants/api";
-import { v4 as uuidv4 } from "uuid";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
@@ -22,7 +21,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         url: `${DUENDE_IDS6_ISSUER}/connect/authorize`,
         params: {
           scope: SCOPE,
-          nonce: uuidv4(),
           redirect_uri: `${CLIENT_BASE_URL}/api/auth/callback/duende-identity-server6`
         }
       },
