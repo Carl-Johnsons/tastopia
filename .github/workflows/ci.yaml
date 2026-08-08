@@ -156,6 +156,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     needs: [derive-state, build_app, build_backend]
+    outputs:
+      status: ${{ steps.mobile_summary.outputs.status }}
+      report_dir: ${{ steps.mobile_summary.outputs.report_dir }}
     if: >-
       always() && 
       needs.derive-state.result == 'success' &&
@@ -271,6 +274,7 @@ jobs:
           keep_files: true
 
       - name: E2E report summary
+        id: mobile_summary
         if: always()
         run: |
           latest_report_dir=$(ls -1 app/client/mobile/reports/ 2>/dev/null | sort | tail -n 1)
@@ -287,7 +291,10 @@ jobs:
           if [ -n "$latest_report_dir" ] && [ -d "app/client/mobile/reports/$latest_report_dir" ]; then
             REPORT_LINK="[View report](https://carl-johnsons.github.io/tastopia/$latest_report_dir/report.html)"
             DIR="\`$latest_report_dir\`"
+            echo "report_dir=$latest_report_dir" >> "$GITHUB_OUTPUT"
           fi
+
+          echo "status=${{ steps.run_tests.outcome }}" >> "$GITHUB_OUTPUT"
 
           {
             echo "### Mobile E2E Test Report"
@@ -300,6 +307,9 @@ jobs:
     name: Website E2E tests
     runs-on: ubuntu-latest
     needs: [derive-state, build_backend]
+    outputs:
+      status: ${{ steps.website_summary.outputs.status }}
+      report_dir: ${{ steps.prepare_website_report.outputs.report_dir }}
     if: >-
       always() &&
       needs.derive-state.result == 'success' &&
@@ -378,6 +388,7 @@ jobs:
           keep_files: true
 
       - name: E2E report summary
+        id: website_summary
         if: always()
         run: |
           if [ "${{ steps.run_website_tests.outcome }}" = "success" ]; then
@@ -395,6 +406,8 @@ jobs:
             DIR="\`$WEBSITE_REPORT_DIR\`"
           fi
 
+          echo "status=${{ steps.run_website_tests.outcome }}" >> "$GITHUB_OUTPUT"
+
           {
             echo "### Website E2E Test Report"
             echo ""
@@ -402,6 +415,106 @@ jobs:
             echo "|--------|--------|-----------|"
             echo "| $STATUS | $REPORT_LINK | $DIR |"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  comment_test_results:
+    name: Comment E2E test results on PR
+    runs-on: ubuntu-latest
+    needs: [mobile_test, website_test]
+    if: always() && github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Update PR comment with test status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const markerId = "e2e-test-status-report";
+            const marker = `<!-- bot-comment-id: ${markerId} -->`;
+
+            const mobileResult = "${{ needs.mobile_test.result }}";
+            const mobileStepOutcome = "${{ needs.mobile_test.outputs.status }}";
+            const mobileReportDir = "${{ needs.mobile_test.outputs.report_dir }}";
+
+            const websiteResult = "${{ needs.website_test.result }}";
+            const websiteStepOutcome = "${{ needs.website_test.outputs.status }}";
+            const websiteReportDir = "${{ needs.website_test.outputs.report_dir }}";
+
+            function getStatusAndLink(jobResult, stepOutcome, reportDir, reportType) {
+              let status = "⏭️ Skipped";
+              let reportLink = "N/A";
+              let reportStatus = "N/A";
+
+              const effectiveOutcome = stepOutcome || jobResult;
+              if (effectiveOutcome === "success") {
+                status = "✅ Success";
+              } else if (effectiveOutcome === "failure") {
+                status = "❌ Failed";
+              } else if (effectiveOutcome === "cancelled") {
+                status = "⚠️ Cancelled";
+              }
+
+              if (reportDir && reportDir !== "N/A") {
+                let rawUrl = "";
+                if (reportType === "mobile") {
+                  rawUrl = `https://carl-johnsons.github.io/tastopia/${reportDir}/report.html`;
+                } else if (reportType === "website") {
+                  rawUrl = `https://carl-johnsons.github.io/tastopia/${reportDir}/index.html`;
+                }
+                const encodedUrl = encodeURIComponent(rawUrl);
+                reportLink = `[View report](${rawUrl})`;
+                reportStatus = `![Report Status](https://img.shields.io/website?url=${encodedUrl}&up_message=Ready&down_message=Deploying...&up_color=brightgreen&down_color=yellow&label=Report)`;
+              }
+
+              return { status, reportStatus, reportLink };
+            }
+
+            const mobile = getStatusAndLink(mobileResult, mobileStepOutcome, mobileReportDir, "mobile");
+            const website = getStatusAndLink(websiteResult, websiteStepOutcome, websiteReportDir, "website");
+
+            const newContent =
+              `${marker}\n` +
+              `### 🧪 E2E Test Report Summary\n\n` +
+              `| Platform | Test Status | Report Deployment Status | Link |\n` +
+              `|---|---|---|---|\n` +
+              `| 📱 Mobile | ${mobile.status} | ${mobile.reportStatus} | ${mobile.reportLink} |\n` +
+              `| 🌐 Website | ${website.status} | ${website.reportStatus} | ${website.reportLink} |\n`;
+
+            const issueNumber = context.issue.number || context.payload.pull_request?.number;
+
+            if (!issueNumber) {
+              console.log("No PR number found. Skipping PR comment.");
+              return;
+            }
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+            });
+
+            const botComment = comments.find(
+              (comment) => comment.body && comment.body.includes(marker),
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: newContent,
+              });
+              console.log(`Updated existing comment: ${botComment.id}`);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                body: newContent,
+              });
+              console.log("Created new comment!");
+            }
   build_backend:
     name: Build backend services
     runs-on: ubuntu-latest
