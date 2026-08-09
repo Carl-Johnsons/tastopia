@@ -1,0 +1,369 @@
+{
+  "id": "flow-003",
+  "name": "search-recipe",
+  "sourceFile": ".maestro/search/search-recipe.yaml",
+  "device": {
+    "id": "emulator-5554",
+    "name": "google Android SDK built for x86",
+    "platform": "android",
+    "osVersion": "27",
+    "isSimulator": true
+  },
+  "startTime": "2026-08-09T07:17:23.23823439Z",
+  "endTime": "2026-08-09T07:17:44.821428991Z",
+  "duration": 21583,
+  "onFlowStartCommands": [
+    {
+      "id": "sub-0",
+      "index": 0,
+      "type": "runFlow",
+      "yaml": "runFlow: ../common/login.yaml",
+      "status": "passed",
+      "startTime": "2026-08-09T07:17:23.238443463Z",
+      "endTime": "2026-08-09T07:17:41.086430096Z",
+      "duration": 17847,
+      "artifacts": {},
+      "subCommands": [
+        {
+          "id": "sub-0",
+          "index": 0,
+          "type": "launchApp",
+          "yaml": "launchApp",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:23.238764425Z",
+          "endTime": "2026-08-09T07:17:30.37276426Z",
+          "duration": 7133,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-1",
+          "index": 1,
+          "type": "tapOn",
+          "yaml": "tapOn: id=\"welcome-sign-in-button\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:30.372772592Z",
+          "endTime": "2026-08-09T07:17:31.547855801Z",
+          "duration": 1175,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-2",
+          "index": 2,
+          "type": "assertVisible",
+          "yaml": "assertVisible: id=\"login-identifier-input\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:31.547862401Z",
+          "endTime": "2026-08-09T07:17:32.33282214Z",
+          "duration": 784,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-3",
+          "index": 3,
+          "type": "tapOn",
+          "yaml": "tapOn: id=\"login-identifier-input\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:32.332827848Z",
+          "endTime": "2026-08-09T07:17:32.644761709Z",
+          "duration": 311,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-4",
+          "index": 4,
+          "type": "inputText",
+          "yaml": "inputText: \"***\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:32.644764893Z",
+          "endTime": "2026-08-09T07:17:33.632029388Z",
+          "duration": 987,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-5",
+          "index": 5,
+          "type": "hideKeyboard",
+          "yaml": "hideKeyboard",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:33.6320375Z",
+          "endTime": "2026-08-09T07:17:33.640877502Z",
+          "duration": 8,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-6",
+          "index": 6,
+          "type": "assertVisible",
+          "yaml": "assertVisible: id=\"login-password-input\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:33.640881318Z",
+          "endTime": "2026-08-09T07:17:34.219204482Z",
+          "duration": 578,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-7",
+          "index": 7,
+          "type": "tapOn",
+          "yaml": "tapOn: id=\"login-password-input\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:34.219207827Z",
+          "endTime": "2026-08-09T07:17:34.895355658Z",
+          "duration": 676,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-8",
+          "index": 8,
+          "type": "inputText",
+          "yaml": "inputText: \"***\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:34.895358662Z",
+          "endTime": "2026-08-09T07:17:35.672669857Z",
+          "duration": 775,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-9",
+          "index": 9,
+          "type": "hideKeyboard",
+          "yaml": "hideKeyboard",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:35.672679692Z",
+          "endTime": "2026-08-09T07:17:35.678572222Z",
+          "duration": 5,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-10",
+          "index": 10,
+          "type": "tapOn",
+          "yaml": "tapOn: id=\"login-submit-button\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:35.678575176Z",
+          "endTime": "2026-08-09T07:17:36.983600687Z",
+          "duration": 1305,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-11",
+          "index": 11,
+          "type": "extendedWaitUntil",
+          "yaml": "extendedWaitUntil: visible id=\"COMMUNITY\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:36.983605124Z",
+          "endTime": "2026-08-09T07:17:41.086425609Z",
+          "duration": 4102,
+          "artifacts": {}
+        }
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "id": "cmd-000",
+      "index": 0,
+      "type": "tapOn",
+      "yaml": "tapOn: id=\"SEARCH\"",
+      "status": "passed",
+      "startTime": "2026-08-09T07:17:41.086443105Z",
+      "endTime": "2026-08-09T07:17:41.175502869Z",
+      "duration": 89,
+      "params": {
+        "selector": {
+          "type": "id",
+          "value": "SEARCH"
+        }
+      },
+      "element": {
+        "found": true,
+        "id": "00000000-0000-0014-ffff-ffff000000a3",
+        "bounds": {
+          "x": 232,
+          "y": 2136,
+          "width": 205,
+          "height": 93
+        }
+      },
+      "artifacts": {}
+    },
+    {
+      "id": "cmd-001",
+      "index": 1,
+      "type": "tapOn",
+      "yaml": "tapOn: id=\"search-recipe-input\"",
+      "status": "passed",
+      "startTime": "2026-08-09T07:17:41.175964923Z",
+      "endTime": "2026-08-09T07:17:42.318354032Z",
+      "duration": 1142,
+      "params": {
+        "selector": {
+          "type": "id",
+          "value": "search-recipe-input"
+        }
+      },
+      "element": {
+        "found": true,
+        "id": "00000000-0000-0014-ffff-ffff00000105",
+        "text": "Enter recipe name...",
+        "bounds": {
+          "x": 142,
+          "y": 185,
+          "width": 709,
+          "height": 103
+        }
+      },
+      "artifacts": {}
+    },
+    {
+      "id": "cmd-002",
+      "index": 2,
+      "type": "inputText",
+      "yaml": "inputText: \"a\"",
+      "status": "passed",
+      "startTime": "2026-08-09T07:17:42.318820402Z",
+      "endTime": "2026-08-09T07:17:42.37885288Z",
+      "duration": 60,
+      "params": {
+        "text": "a"
+      },
+      "artifacts": {}
+    },
+    {
+      "id": "cmd-003",
+      "index": 3,
+      "type": "hideKeyboard",
+      "yaml": "hideKeyboard",
+      "status": "passed",
+      "startTime": "2026-08-09T07:17:42.379297517Z",
+      "endTime": "2026-08-09T07:17:42.39593797Z",
+      "duration": 16,
+      "artifacts": {}
+    },
+    {
+      "id": "cmd-004",
+      "index": 4,
+      "type": "extendedWaitUntil",
+      "yaml": "extendedWaitUntil: visible id=\"search-recipe-item\"",
+      "status": "passed",
+      "startTime": "2026-08-09T07:17:42.396272512Z",
+      "endTime": "2026-08-09T07:17:44.821039456Z",
+      "duration": 2424,
+      "element": {
+        "found": true,
+        "id": "00000000-0000-0014-ffff-ffff00000124",
+        "bounds": {
+          "x": 42,
+          "y": 468,
+          "width": 996,
+          "height": 1011
+        }
+      },
+      "artifacts": {}
+    }
+  ],
+  "onFlowCompleteCommands": [
+    {
+      "id": "sub-0",
+      "index": 0,
+      "type": "runFlow",
+      "yaml": "runFlow: ../common/logout.yaml",
+      "status": "passed",
+      "startTime": "2026-08-09T07:17:44.827851196Z",
+      "endTime": "2026-08-09T07:17:57.472119989Z",
+      "duration": 12644,
+      "artifacts": {},
+      "subCommands": [
+        {
+          "id": "sub-0",
+          "index": 0,
+          "type": "launchApp",
+          "yaml": "launchApp",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:44.828021181Z",
+          "endTime": "2026-08-09T07:17:51.829290971Z",
+          "duration": 7001,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-1",
+          "index": 1,
+          "type": "extendedWaitUntil",
+          "yaml": "extendedWaitUntil: visible id=\"MENU\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:51.829298312Z",
+          "endTime": "2026-08-09T07:17:53.505892371Z",
+          "duration": 1676,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-2",
+          "index": 2,
+          "type": "tapOn",
+          "yaml": "tapOn: id=\"MENU\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:53.505902266Z",
+          "endTime": "2026-08-09T07:17:53.582986824Z",
+          "duration": 77,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-3",
+          "index": 3,
+          "type": "hideKeyboard",
+          "yaml": "hideKeyboard",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:53.582993885Z",
+          "endTime": "2026-08-09T07:17:53.58597046Z",
+          "duration": 2,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-4",
+          "index": 4,
+          "type": "assertVisible",
+          "yaml": "assertVisible: text=\"History\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:53.585973244Z",
+          "endTime": "2026-08-09T07:17:55.711731917Z",
+          "duration": 2125,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-5",
+          "index": 5,
+          "type": "tapOn",
+          "yaml": "tapOn: id=\"menu-logout-button\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:55.711739799Z",
+          "endTime": "2026-08-09T07:17:55.774023783Z",
+          "duration": 62,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-6",
+          "index": 6,
+          "type": "assertVisible",
+          "yaml": "assertVisible: text=\"Welcome to\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:55.774026548Z",
+          "endTime": "2026-08-09T07:17:57.458004313Z",
+          "duration": 1683,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-7",
+          "index": 7,
+          "type": "assertVisible",
+          "yaml": "assertVisible: text=\"Tastopia\"",
+          "status": "passed",
+          "startTime": "2026-08-09T07:17:57.458007638Z",
+          "endTime": "2026-08-09T07:17:57.472115342Z",
+          "duration": 14,
+          "artifacts": {}
+        }
+      ]
+    }
+  ],
+  "artifacts": {}
+}
