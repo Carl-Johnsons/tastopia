@@ -9,6 +9,18 @@ import {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
+  debug: process.env.NODE_ENV !== "production",
+  logger: {
+    error(code, ...metadata) {
+      console.error(`[NextAuth Error] ${code}`, ...metadata);
+    },
+    warn(code, ...metadata) {
+      console.warn(`[NextAuth Warn] ${code}`, ...metadata);
+    },
+    debug(code, ...metadata) {
+      console.debug(`[NextAuth Debug] ${code}`, ...metadata);
+    }
+  },
   providers: [
     DuendeIDS6Provider({
       clientId: DUENDE_IDS6_ID as string,
