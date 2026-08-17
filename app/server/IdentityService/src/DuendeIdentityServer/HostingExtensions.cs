@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace DuendeIdentityServer;
 
@@ -124,11 +125,60 @@ internal static class HostingExtensions
 
         services.AddScoped<IAuthorizeInteractionResponseGenerator, CustomAuthorizeInteractionResponseGenerator>();
 
-        // Config data protection
-        services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo(Directory.GetCurrentDirectory() + "/keys"))
-            .SetApplicationName("tastopia");
+        // Config data protection persisted to Redis for multi-instance support
+        var redis = ConnectionMultiplexer.Connect(
+            new ConfigurationOptions
+            {
+                EndPoints =
+                {
+                    $"{DotNetEnv.Env.GetString("REDIS_HOST", "Not Found")}:{DotNetEnv.Env.GetString("REDIS_PORT", "Not Found")}"
+                },
+                Password = DotNetEnv.Env.GetString("REDIS_PASSWORD", ""),
+                AbortOnConnectFail = false
+            }
+        );
+        redis.ConnectionFailed += (_, e) =>
+        {
+            Serilog.Log.Error(
+                $"Redis connection failed: {e.EndPoint}, {e.FailureType}, {e.Exception?.Message}"
+            );
+        };
 
+        redis.ConnectionRestored += (_, e) =>
+        {
+            Serilog.Log.Information(
+                $"Redis connection restored: {e.EndPoint}"
+            );
+        };
+
+        if (redis.IsConnected)
+        {
+            try
+            {
+                var latency = redis.GetDatabase().Ping();
+
+                Serilog.Log.Information(
+                    "Redis connected successfully. Endpoint: {Endpoints}, Ping: {Latency}",
+                    string.Join(", ", redis.GetEndPoints().Select(x => x.ToString())),
+                    latency
+                );
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(ex, "Redis connection test failed.");
+            }
+        }
+        else
+        {
+            Serilog.Log.Warning(
+                "Redis multiplexer created, but Redis is not currently connected."
+            );
+        }
+        services.AddDataProtection()
+            .PersistKeysToStackExchangeRedis(redis, "tastopia-identity-dataprotection-keys")
+            .SetApplicationName("tastopia-identity");
+
+        // CORS policy config
         services.AddCors(o => o.AddPolicy("AllowSpecificOrigins", builder =>
         {
             builder.WithOrigins(websiteUrl, "http://api-gateway", "http://localhost:5000")
