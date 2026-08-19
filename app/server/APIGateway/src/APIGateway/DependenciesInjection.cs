@@ -1,15 +1,15 @@
-﻿using Ocelot.DependencyInjection;
-using Ocelot.Middleware;
-using Contract.Utilities;
-using APIGateway.Extensions;
-using Ocelot.Provider.Consul;
+﻿using APIGateway.Extensions;
+using CacheManager.Core;
 using Contract.Extension;
+using Contract.Utilities;
+using Ocelot.Cache.CacheManager;
+using Ocelot.DependencyInjection;
+using Ocelot.Middleware;
+using Ocelot.Provider.Consul;
+using Serilog;
 using System.Net;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
-using Serilog;
-using Ocelot.Cache.CacheManager;
-using CacheManager.Core;
 
 namespace APIGateway;
 
@@ -24,9 +24,14 @@ public static class DependenciesInjection
         var services = builder.Services;
         var host = builder.Host;
         var env = builder.Environment;
+        EnvUtility.LoadEnvFile();
 
-        builder.ConfigureCommonAPIServices();
-        services.AddConsulRegistryService();
+        builder.ConfigureLoggingService();
+        builder.ConfigureKestrel();
+        builder.ConfigureHealthCheck();
+
+        services.AddServiceDiscoveryService()
+                .AddSignalR();
 
         config.SetBasePath(env.ContentRootPath)
               .AddEnvironmentVariables();
@@ -74,14 +79,14 @@ public static class DependenciesInjection
                            .AllowCredentials();
                 });
         });
-        services.AddSignalR();
+
         return builder;
     }
 
     public static WebApplication UseAPIServices(this WebApplication app)
     {
-        app.UseSerilogServices();
-        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_API_GATEWAY", "Not Found"));
+        app.UseLoggingServices()
+           .UseServiceDiscoveryService(DotNetEnv.Env.GetString("CONSUL_API_GATEWAY", "Not Found"));
 
         app.UseRouting();
         app.UseCustomHealthCheck();
