@@ -1,10 +1,8 @@
-﻿using RecipeService.Application;
-using RecipeService.Infrastructure;
-using AutoMapper;
-using RecipeService.API.Configs;
+﻿using Contract.Extension;
 using Contract.Utilities;
 using RecipeService.API.Extensions;
-using Contract.Extension;
+using RecipeService.Application;
+using RecipeService.Infrastructure;
 
 namespace RecipeService.API;
 
@@ -16,12 +14,14 @@ public static class DependenciesInjection
         EnvUtility.LoadEnvFile();
         var services = builder.Services;
 
-        builder.ConfigureCommonAPIServices();
+        builder.ConfigureLoggingService()
+               .ConfigureKestrel()
+               .ConfigureHealthCheck();
 
-        services.AddInfrastructureServices();
-        services.AddApplicationServices();
-        services.AddGrpcServices();
-        services.AddSwaggerServices();
+        services.AddInfrastructureServices()
+                .AddApplicationServices()
+                .AddGrpcServices()
+                .AddSwaggerServices();
 
         // Register automapper
         services.AddAutoMapper(
@@ -31,27 +31,25 @@ public static class DependenciesInjection
             },
             AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddCommonAPIServices();
+        services.AddCommonAPIServices()
+                .AddCustomDownstreamAuthentication();
 
-        services.AddEndpointsApiExplorer();
         return builder;
     }
 
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
-        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_RECIPE", "Not Found"));
+        app.UseInfrastructureServices()
+           .UseSwaggerServices();
 
-        app.UseSwaggerServices();
-
-        // app.UseHttpsRedirection();
-
+        app.UseRouting();
         app.MapControllers();
-
-        app.UseGrpcServices();
-
         app.UseAuthentication();
-
         app.UseAuthorization();
+
+        app.UseGrpcServices()
+           .UseCustomHealthCheck()
+           .UseCommonAPIMiddleware();
 
         await app.UseSignalRServiceAsync();
 

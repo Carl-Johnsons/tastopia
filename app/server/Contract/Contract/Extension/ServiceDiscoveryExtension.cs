@@ -1,4 +1,6 @@
 ﻿using Consul;
+using Contract.Interfaces;
+using Contract.Services;
 using Contract.Utilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,9 +9,30 @@ using Serilog;
 
 namespace Contract.Extension;
 
-public static class ConsulExtension
+public static class ServiceDiscoveryExtension
 {
-    public static WebApplication UseConsulServiceDiscovery(this WebApplication app, string serviceName, bool IsSecure = true)
+    /**
+     * <summary>
+     *   Add Service discovery by using Consul under the hood, only usable for api gateway and signalR service
+     * </summary>
+     */
+    public static IServiceCollection AddServiceDiscoveryService(this IServiceCollection services)
+    {
+        services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
+        {
+            return new ConsulClient(config =>
+            {
+                var scheme = DotNetEnv.Env.GetString("CONSUL_SCHEME", "Not found");
+                var host = DotNetEnv.Env.GetString("CONSUL_HOST", "Not found");
+                var port = DotNetEnv.Env.GetString("CONSUL_PORT", "Not found");
+                config.Address = new Uri($"{scheme}://{host}:{port}");
+            });
+        });
+        services.AddSingleton<IConsulRegistryService, ConsulRegistryService>();
+        return services;
+    }
+
+    public static WebApplication UseServiceDiscoveryService(this WebApplication app, string serviceName, bool IsSecure = true)
     {
 
         var consulClient = app.Services.GetRequiredService<IConsulClient>();

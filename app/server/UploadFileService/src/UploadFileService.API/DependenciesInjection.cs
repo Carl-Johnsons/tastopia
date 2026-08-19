@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using Contract.Extension;
+﻿using Contract.Extension;
 using Contract.Utilities;
-using UploadFileService.API.Configs;
 using UploadFileService.API.Extensions;
 using UploadFileService.Application;
 using UploadFileService.Infrastructure;
@@ -16,12 +14,14 @@ public static class DependenciesInjection
         EnvUtility.LoadEnvFile();
         var services = builder.Services;
 
-        builder.ConfigureCommonAPIServices();
+        builder.ConfigureLoggingService()
+               .ConfigureKestrel()
+               .ConfigureHealthCheck();
 
-        services.AddInfrastructureServices();
-        services.AddApplicationServices();
-        services.AddGrpcServices();
-        services.AddSwaggerServices();
+        services.AddInfrastructureServices()
+                .AddApplicationServices()
+                .AddGrpcServices()
+                .AddSwaggerServices();
 
         // Register automapper
         services.AddAutoMapper(
@@ -38,17 +38,18 @@ public static class DependenciesInjection
 
     public static WebApplication UseAPIServices(this WebApplication app)
     {
-        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_UPLOAD", "Not Found"));
-        app.UseSwaggerServices();
+        app.UseInfrastructureServices()
+           .UseSwaggerServices();
 
         // app.UseHttpsRedirection();
-
-        app.MapControllers();
-
-        app.UseGrpcServices();
-
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.MapControllers();
+
+        app.UseGrpcServices()
+           .UseCustomHealthCheck()
+           .UseCommonAPIMiddleware();
 
         return app;
     }

@@ -1,46 +1,33 @@
-﻿using Consul;
-using Contract.Interfaces;
-using Contract.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Contract.Utilities;
-using Contract.Common;
-using MassTransit;
-using System.Reflection;
-using Microsoft.AspNetCore.Builder;
-using Newtonsoft.Json;
-using Serilog;
-using Microsoft.IdentityModel.Tokens;
-using Polly;
+﻿using Contract.Common;
 using Contract.DTOs;
+using Contract.Interfaces;
+using Contract.Middleware;
+using Contract.Utilities;
+using MassTransit;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Polly;
+using Reinforced.Typings;
+using Reinforced.Typings.Ast;
 using Reinforced.Typings.Ast.TypeNames;
 using Reinforced.Typings.Fluent;
-using System.Text;
-using Reinforced.Typings.Ast;
 using Reinforced.Typings.Generators;
-using Reinforced.Typings;
 using Reinforced.Typings.Visitors.TypeScript;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Logging;
-using Serilog.Events;
-using Contract.Middleware;
+using Serilog;
+using System.Reflection;
+using System.Text;
 
 namespace Contract.Extension;
 
 public static class CommonExtension
 {
-    public static WebApplicationBuilder ConfigureCommonAPIServices(this WebApplicationBuilder builder)
-    {
-        EnvUtility.LoadEnvFile();
-
-        builder.ConfigureSerilog();
-        builder.ConfigureKestrel();
-        builder.ConfigureHealthCheck();
-        return builder;
-    }
-
     /**
      * <summary>
-     *   Add ErrorValidation, Controller, HttpContextAccessor and Authentication
+     *   Add ErrorValidation, Controller and HttpContextAccessor
      * </summary>
      */
     public static IServiceCollection AddCommonAPIServices(this IServiceCollection services)
@@ -60,82 +47,6 @@ public static class CommonExtension
 
         services.AddHttpContextAccessor();
 
-        services.AddCustomDownstreamAuthentication();
-
-        return services;
-    }
-
-    /**
-     * <summary>
-     *   Only usable for Identity server
-     *   Add ErrorValidation, Controller, HttpContextAccessor
-     * </summary>
-     */
-    public static IServiceCollection AddCommonAPIWithoutAuthServices(this IServiceCollection services)
-    {
-        services.AddErrorValidation();
-        services.AddControllers()
-            // Prevent circular JSON reach max depth of the object when serialization
-            //.AddJsonOptions(options =>
-            //{
-            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-            //    options.JsonSerializerOptions.WriteIndented = true;
-            //})
-            .AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
-            });
-
-        services.AddHttpContextAccessor();
-
-        return services;
-    }
-
-
-    /**
-     * <summary>
-     *   Add Consul, MassTransit and PaginateDataUtility
-     * </summary>
-     */
-    public static IServiceCollection AddCommonInfrastructureServices(this IServiceCollection services, string apiPrjName)
-    {
-        services.AddScoped(typeof(IPaginateDataUtility<,>), typeof(PaginateDataUtility<,>));
-        services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
-        {
-            return new ConsulClient(config =>
-            {
-                var scheme = DotNetEnv.Env.GetString("CONSUL_SCHEME", "Not found");
-                var host = DotNetEnv.Env.GetString("CONSUL_HOST", "Not found");
-                var port = DotNetEnv.Env.GetString("CONSUL_PORT", "Not found");
-                config.Address = new Uri($"{scheme}://{host}:{port}");
-            });
-        });
-        services.AddSingleton<IConsulRegistryService, ConsulRegistryService>();
-        services.AddMassTransitService(apiPrjName);
-
-        return services;
-    }
-
-    /**
-     * <summary>
-     *   Add ConsulRegistryService for service discovery, only usable for api gateway and signalR service
-     * </summary>
-     */
-    public static IServiceCollection AddConsulRegistryService(this IServiceCollection services)
-    {
-        services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
-        {
-            return new ConsulClient(config =>
-            {
-                var scheme = DotNetEnv.Env.GetString("CONSUL_SCHEME", "Not found");
-                var host = DotNetEnv.Env.GetString("CONSUL_HOST", "Not found");
-                var port = DotNetEnv.Env.GetString("CONSUL_PORT", "Not found");
-
-                config.Address = new Uri($"{scheme}://{host}:{port}");
-            });
-        });
-        services.AddSingleton<IConsulRegistryService, ConsulRegistryService>();
-
         return services;
     }
 
@@ -154,7 +65,7 @@ public static class CommonExtension
 
     private static IServiceCollection AddCustomAuthentication(this IServiceCollection services)
     {
-        var retryPolicy = Polly.Policy.Handle<Exception>()
+        var retryPolicy = Policy.Handle<Exception>()
             .WaitAndRetryAsync(
                 retryCount: 100,
                 sleepDurationProvider: attempt => TimeSpan.FromSeconds(attempt),
@@ -228,7 +139,7 @@ public static class CommonExtension
      *  Authenticate for downstream service, ignore jwt validation because api gateway does all the heavy work
      * </summary>
      */
-    private static IServiceCollection AddCustomDownstreamAuthentication(this IServiceCollection services)
+    public static IServiceCollection AddCustomDownstreamAuthentication(this IServiceCollection services)
     {
 
         services.AddAuthentication(option =>
@@ -270,76 +181,16 @@ public static class CommonExtension
         return services;
     }
 
-    public static WebApplication UseCommonServices(this WebApplication app, string serviceName)
+    /// <summary>
+    ///  Use middleware for global error handling and request validation
+    /// </summary>
+    /// <param name="app"></param>
+    /// <returns></returns>
+    public static WebApplication UseCommonAPIMiddleware(this WebApplication app)
     {
-        app.UseSerilogServices();
-        app.UseConsulServiceDiscovery(serviceName);
-
-        app.UseRouting();
-        app.UseCustomHealthCheck();
-
-        app.UseMiddleware<GlobalHandlingErrorMiddleware>();
-        app.UseMiddleware<ValidateGatewayRequestMiddleware>();
-
+        app.UseMiddleware<GlobalHandlingErrorMiddleware>()
+           .UseMiddleware<ValidateGatewayRequestMiddleware>();
         return app;
-    }
-
-    // ================ Config masstransit ==========================================
-    private static IServiceCollection AddMassTransitService(this IServiceCollection services, string apiPrjName)
-    {
-        services.AddMassTransit(busConfig =>
-        {
-            busConfig.SetKebabCaseEndpointNameFormatter();
-
-            var applicationAssembly = AppDomain.CurrentDomain.Load(apiPrjName);
-            busConfig.AddConsumers(applicationAssembly);
-
-            busConfig.UsingRabbitMq((context, config) =>
-            {
-                var username = DotNetEnv.Env.GetString("RABBITMQ_DEFAULT_USER", "admin");
-                var password = DotNetEnv.Env.GetString("RABBITMQ_DEFAULT_PASS", "pass");
-                var rabbitMQHost = DotNetEnv.Env.GetString("RABBITMQ_HOST", "localhost:5672");
-
-                config.Host(new Uri($"amqp://{rabbitMQHost}/"), h =>
-                {
-                    h.Username(username);
-                    h.Password(password);
-
-                    h.Heartbeat(TimeSpan.FromSeconds(10));
-                });
-
-                config.UseMessageRetry(retryConfig =>
-                {
-                    retryConfig.Incremental(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2));
-                });
-
-                RegisterEndpointsFromAttributes(context, config, applicationAssembly);
-
-                config.ConfigureEndpoints(context);
-            });
-        });
-        services.AddScoped<IServiceBus, MassTransitServiceBus>();
-        return services;
-    }
-
-    private static void RegisterEndpointsFromAttributes(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator config, Assembly assembly)
-    {
-        var consumerTypes = assembly.GetTypes().Where(t => t.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IConsumer<>)));
-
-        foreach (var consumerType in consumerTypes)
-        {
-            var queueNameAttribute = consumerType.GetCustomAttribute<QueueNameAttribute>();
-            if (queueNameAttribute == null)
-            {
-                continue;
-            }
-            config.ReceiveEndpoint(queueNameAttribute.QueueName, endpoint =>
-            {
-                endpoint.ConfigureConsumer(context, consumerType);
-
-                endpoint.Bind(queueNameAttribute.ExchangeName);
-            });
-        }
     }
 
     // ================ Config reinforcedTyping =================

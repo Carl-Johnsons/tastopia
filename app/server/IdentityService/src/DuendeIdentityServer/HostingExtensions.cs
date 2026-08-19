@@ -1,4 +1,3 @@
-using System.Net;
 using Contract.Extension;
 using Contract.Utilities;
 using Duende.IdentityServer;
@@ -11,8 +10,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using StackExchange.Redis;
+using System.Net;
 
 namespace DuendeIdentityServer;
 
@@ -26,23 +25,19 @@ internal static class HostingExtensions
         var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");
         var services = builder.Services;
 
-        builder.ConfigureCommonAPIServices();
+        builder.ConfigureLoggingService()
+               .ConfigureKestrel()
+               .ConfigureHealthCheck();
 
-
-        services.AddInfrastructureServices();
-        services.AddApplicationServices();
-        services.AddErrorValidation();
-        services.AddGrpcServices();
-        services.AddSwaggerServices();
+        services.AddInfrastructureServices()
+                .AddApplicationServices()
+                .AddGrpcServices()
+                .AddSwaggerServices();
 
         services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
 
-
-        services.AddControllers().AddNewtonsoftJson(options =>
-        {
-            options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
-        });
+        services.AddCommonAPIServices();
 
         // Register automapper
         services.AddAutoMapper(
@@ -52,7 +47,6 @@ internal static class HostingExtensions
             },
             AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddCommonAPIWithoutAuthServices();
         services
             .AddIdentityServer(options =>
             {
@@ -97,29 +91,29 @@ internal static class HostingExtensions
         //  .AddDeveloperSigningCredential(); // not recommended for production
 
         services.AddAuthentication()
-            .AddGoogle(options =>
-            {
-                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                .AddGoogle(options =>
+                {
+                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
 
-                // register your IdentityServer with Google at https://console.developers.google.com
-                // enable the Google+ API
-                // set the redirect URI to https://localhost:5001/signin-google
-                options.ClientId = DotNetEnv.Env.GetString("GOOGLE_CLIENT_ID", "");
-                options.ClientSecret = DotNetEnv.Env.GetString("GOOGLE_CLIENT_SECRET", "");
+                    // register your IdentityServer with Google at https://console.developers.google.com
+                    // enable the Google+ API
+                    // set the redirect URI to https://localhost:5001/signin-google
+                    options.ClientId = DotNetEnv.Env.GetString("GOOGLE_CLIENT_ID", "");
+                    options.ClientSecret = DotNetEnv.Env.GetString("GOOGLE_CLIENT_SECRET", "");
 
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
-                options.Scope.Add("email");
+                    options.Scope.Add("openid");
+                    options.Scope.Add("profile");
+                    options.Scope.Add("email");
 
-                // Map google picture's claim to simple claim for easier query
-                options.ClaimActions.MapJsonKey("picture", "picture");
+                    // Map google picture's claim to simple claim for easier query
+                    options.ClaimActions.MapJsonKey("picture", "picture");
 
-                options.SaveTokens = true;
+                    options.SaveTokens = true;
 
-                // Config cookie
-                options.CorrelationCookie.SameSite = SameSiteMode.Lax;
-                options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.None;
-            });
+                    // Config cookie
+                    options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+                    options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.None;
+                });
 
         services.AddLocalApiAuthentication();
 
@@ -216,9 +210,8 @@ internal static class HostingExtensions
             await next();
         });
 
-
-        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
-        app.UseSwaggerServices();
+        app.UseInfrastructureServices()
+            .UseSwaggerServices();
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
@@ -234,12 +227,17 @@ internal static class HostingExtensions
         //});
 
         app.UseCors("AllowSpecificOrigins");
-
         app.UseStaticFiles();
+
         // UseIdentityServer already call UseAuthenticate()
-        app.UseGrpcServices();
+        app.UseRouting();
         app.UseIdentityServer();
         app.UseAuthorization();
+
+        app.UseGrpcServices()
+           .UseCustomHealthCheck()
+           .UseCommonAPIMiddleware();
+
         app.MapRazorPages();
 
         // Add a user api endpoint so this will not be a minimal API
