@@ -13,7 +13,7 @@ public static class ServiceDiscoveryExtension
 {
     /**
      * <summary>
-     *   Add Service discovery by using Consul under the hood, only usable for api gateway and signalR service
+     *   Register the Consul client and the Consul registry service. Used by every service that resolves or registers instances.
      * </summary>
      */
     public static IServiceCollection AddServiceDiscoveryService(this IServiceCollection services)
