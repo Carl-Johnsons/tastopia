@@ -20,27 +20,27 @@ public static class MessagingExtension
 
             busConfig.UsingRabbitMq((context, config) =>
             {
-                  var username = DotNetEnv.Env.GetString("RABBITMQ_DEFAULT_USER", "admin");
-                  var password = DotNetEnv.Env.GetString("RABBITMQ_DEFAULT_PASS", "pass");
-                  var rabbitMQHost = DotNetEnv.Env.GetString("RABBITMQ_HOST", "localhost:5672");
+                var username = DotNetEnv.Env.GetString("RABBITMQ_DEFAULT_USER", "admin");
+                var password = DotNetEnv.Env.GetString("RABBITMQ_DEFAULT_PASS", "pass");
+                var rabbitMQHost = DotNetEnv.Env.GetString("RABBITMQ_HOST", "localhost:5672");
 
-                  config.Host(new Uri($"amqp://{rabbitMQHost}/"), h =>
-                  {
-                        h.Username(username);
-                        h.Password(password);
+                config.Host(new Uri($"amqp://{rabbitMQHost}/"), h =>
+                {
+                    h.Username(username);
+                    h.Password(password);
 
-                        h.Heartbeat(TimeSpan.FromSeconds(10));
-                    });
+                    h.Heartbeat(TimeSpan.FromSeconds(10));
+                });
 
-                  config.UseMessageRetry(retryConfig =>
-                  {
-                        retryConfig.Incremental(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2));
-                    });
+                config.UseMessageRetry(retryConfig =>
+                {
+                    retryConfig.Incremental(3, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(2));
+                });
 
-                  RegisterEndpointsFromAttributes(context, config, applicationAssembly);
+                RegisterEndpointsFromAttributes(context, config, applicationAssembly);
 
-                  config.ConfigureEndpoints(context);
-              });
+                config.ConfigureEndpoints(context);
+            });
         });
         services.AddScoped<IServiceBus, MassTransitServiceBus>();
         return services;

@@ -32,7 +32,8 @@ public static class DependenciesInjection
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
         app.UseInfrastructureServices()
-           .UseSwaggerServices();
+           .UseSwaggerServices()
+           .UseCommonAPIMiddleware();
 
         // app.UseHttpsRedirection();
         app.UseRouting();
@@ -40,8 +41,7 @@ public static class DependenciesInjection
         app.UseAuthorization();
         app.MapControllers();
 
-        app.UseCustomHealthCheck()
-           .UseCommonAPIMiddleware();
+        app.UseCustomHealthCheck();
 
         await app.UseSignalRServiceAsync();
         return app;
