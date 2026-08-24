@@ -1,0 +1,51 @@
+18:16:27.957922 [INFO] === Test execution started ===
+18:16:27.957937 [INFO] Output directory: reports/2026-08-24_18-16-27
+18:16:27.957940 [INFO] Platform: 
+18:16:27.957942 [INFO] Driver: uiautomator2
+18:16:27.961893 [INFO] Validated 5 flow(s)
+18:16:27.961924 [INFO] Single device execution mode
+18:16:27.961928 [INFO] Starting flow execution (parallel: false, devices: [])
+18:16:27.961932 [INFO] Creating driver for single device execution
+18:16:27.961939 [INFO] Auto-detecting Android device...
+18:16:28.006115 [INFO] Device info: google Android SDK built for x86, SDK 27, Serial emulator-5554, Emulator: true
+18:16:32.684167 [INFO] Starting UIAutomator2 server on device emulator-5554
+18:16:33.413151 [WARN] failed to remove default socket forward for /tmp/uia2-emulator-5554.sock: adb forward --remove localfilesystem:/tmp/uia2-emulator-5554.sock: exit status 1: adb: error: listener 'localfilesystem:/tmp/uia2-emulator-5554.sock' not found
+18:16:33.415413 [WARN] failed to remove adb forward for tcp:6790: adb forward --remove tcp:6790: exit status 1: adb: error: listener 'tcp:6790' not found
+18:16:34.596594 [INFO] Creating UIAutomator2 session with capabilities: Platform=Android, Device=Android SDK built for x86
+18:16:34.632282 [INFO] Session created successfully: f38c2113-6fdd-4c50-8335-c6a26aba6cc7
+18:16:34.731613 [INFO] Driver created: android on google Android SDK built for x86
+18:16:34.739774 [INFO] === Starting flow: comment-recipe ===
+18:16:34.739781 [INFO] Flow file: .maestro/community/comment-recipe.yaml
+18:16:34.739783 [INFO] Total steps: 8
+18:16:39.732938 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+18:16:41.603751 [DEBUG] Flutter: parallel search (text="", id="welcome-sign-in-button")
+18:16:42.414632 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+18:16:43.345387 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+18:17:55.972648 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+18:18:19.944659 [INFO] === Starting flow: community ===
+18:18:19.944667 [INFO] Flow file: .maestro/community/community.yaml
+18:18:19.944671 [INFO] Total steps: 13
+18:18:25.375557 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+18:19:40.008567 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+18:20:03.800674 [INFO] === Starting flow: cooking-mode ===
+18:20:03.800686 [INFO] Flow file: .maestro/community/cooking-mode.yaml
+18:20:03.800690 [INFO] Total steps: 10
+18:20:08.944762 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+18:21:23.493960 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+18:21:47.288428 [INFO] === Starting flow: search-recipe ===
+18:21:47.288436 [INFO] Flow file: .maestro/search/search-recipe.yaml
+18:21:47.288440 [INFO] Total steps: 5
+18:21:52.463064 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+18:23:07.999623 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+18:23:31.952523 [INFO] === Starting flow: search-user ===
+18:23:31.952531 [INFO] Flow file: .maestro/search/search-user.yaml
+18:23:31.952535 [INFO] Total steps: 10
+18:23:37.131122 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+18:24:52.254407 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+18:25:16.587679 [WARN] failed to remove default socket forward for /tmp/uia2-emulator-5554.sock: adb forward --remove localfilesystem:/tmp/uia2-emulator-5554.sock: exit status 1: adb: error: listener 'localfilesystem:/tmp/uia2-emulator-5554.sock' not found
+18:25:16.589669 [WARN] failed to remove adb forward for tcp:6790: adb forward --remove tcp:6790: exit status 1: adb: error: listener 'tcp:6790' not found
+18:25:16.589682 [INFO] Flow execution completed: 0 passed, 5 failed, 0 skipped
+18:25:16.591325 [INFO] Generating reports...
+18:25:16.598098 [INFO] Shutting down devices started by maestro-runner...
+18:25:16.598284 [INFO] Shutting down all tracked emulators
+18:25:16.598294 [INFO] Shutting down all tracked simulators
