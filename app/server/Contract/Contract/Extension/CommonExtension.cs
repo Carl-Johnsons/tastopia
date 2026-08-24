@@ -182,7 +182,7 @@ public static class CommonExtension
     }
 
     /// <summary>
-    ///  Use middleware for global error handling and request validation
+    ///  Use middleware for global error handling and request validation, use before UseRouting() and UseAuthentication()
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
