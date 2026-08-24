@@ -41,7 +41,8 @@ public static class DependenciesInjection
     public static WebApplication UseAPIServices(this WebApplication app)
     {
         app.UseInfrastructureServices()
-           .UseSwaggerServices();
+           .UseSwaggerServices()
+           .UseCommonAPIMiddleware();
 
         app.UseRouting();
         app.UseAuthentication();
@@ -49,8 +50,7 @@ public static class DependenciesInjection
         app.MapControllers();
 
         app.UseGrpcServices()
-           .UseCustomHealthCheck()
-           .UseCommonAPIMiddleware();
+           .UseCustomHealthCheck();
 
         return app;
     }

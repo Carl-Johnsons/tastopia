@@ -39,16 +39,15 @@ public static class DependenciesInjection
     public static WebApplication UseAPIServices(this WebApplication app)
     {
         app.UseInfrastructureServices()
-           .UseSwaggerServices();
+           .UseSwaggerServices()
+           .UseCommonAPIMiddleware();
 
-        // app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
 
-        app.UseCustomHealthCheck()
-           .UseCommonAPIMiddleware();
+        app.UseCustomHealthCheck();
 
         return app;
     }

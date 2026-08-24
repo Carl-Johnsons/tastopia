@@ -211,7 +211,8 @@ internal static class HostingExtensions
         });
 
         app.UseInfrastructureServices()
-            .UseSwaggerServices();
+           .UseSwaggerServices()
+           .UseCommonAPIMiddleware();
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
@@ -235,8 +236,7 @@ internal static class HostingExtensions
         app.UseAuthorization();
 
         app.UseGrpcServices()
-           .UseCustomHealthCheck()
-           .UseCommonAPIMiddleware();
+           .UseCustomHealthCheck();
 
         app.MapRazorPages();
 
