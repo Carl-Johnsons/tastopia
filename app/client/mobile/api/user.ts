@@ -4,7 +4,7 @@ import { useInfiniteQuery, useMutation, useQuery } from "react-query";
 import { InferType } from "yup";
 import { CLIENT_ID, SCOPE } from "@/constants/api";
 import { AxiosError } from "axios";
-import { selectAccessToken } from "@/slices/auth.slice";
+import { selectAccessToken, selectIdToken } from "@/slices/auth.slice";
 import { UserState } from "@/slices/user.slice";
 import { SETTING_KEY, SETTING_VALUE } from "@/constants/settings";
 import {
@@ -56,6 +56,18 @@ export const useLogin = () => {
       });
 
       return data;
+    }
+  });
+};
+
+export const useLogout = () => {
+  const idToken = selectIdToken();
+
+  return useMutation<void, Error>({
+    mutationKey: ["logout"],
+    mutationFn: async () => {
+      const logoutUrl = `/connect/endsession?id_token_hint=${idToken}`;
+      await axiosInstance.get(logoutUrl);
     }
   });
 };
