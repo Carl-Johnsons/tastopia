@@ -44,7 +44,6 @@ export const deleteAuthCookie = async (name: "accessToken" | "idToken") => {
   }
 };
 
-export const deleteAllAuthCookies = () => {
-  deleteAuthCookie("accessToken");
-  deleteAuthCookie("idToken");
+export const deleteAllAuthCookies = async () => {
+  await Promise.all([deleteAuthCookie("accessToken"), deleteAuthCookie("idToken")]);
 };
