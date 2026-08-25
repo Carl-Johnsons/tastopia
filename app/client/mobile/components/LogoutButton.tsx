@@ -8,22 +8,30 @@ import Button from "./Button";
 import Protected from "./Protected";
 import { ROLE, selectRole } from "@/slices/auth.slice";
 import { selectPushToken } from "@/slices/notification.slice";
+import { useLogout } from "@/api/user";
 
 export const LogoutButton = () => {
   const role = selectRole();
   const { t } = useTranslation("menu");
   const { animate, animatedStyles } = useBounce();
   const pushNotificationToken = selectPushToken();
+  const { mutateAsync: logoutServer } = useLogout();
 
   const logout = async () => {
     animate();
 
     try {
-      if (role !== ROLE.GUEST && pushNotificationToken) {
-        if (Platform.OS === "android")
-          await protectedAxiosInstance.delete("api/notification/expo-push-token/android");
-        else if (Platform.OS === "ios")
-          await protectedAxiosInstance.delete("api/notification/expo-push-token/ios");
+      if (role !== ROLE.GUEST) {
+        if (pushNotificationToken) {
+          if (Platform.OS === "android")
+            await protectedAxiosInstance.delete(
+              "api/notification/expo-push-token/android"
+            );
+          else if (Platform.OS === "ios")
+            await protectedAxiosInstance.delete("api/notification/expo-push-token/ios");
+        }
+
+        await logoutServer();
       }
     } catch (error) {
       console.log("error", error);
