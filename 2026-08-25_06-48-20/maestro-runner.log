@@ -1,0 +1,148 @@
+06:48:20.433568 [INFO] === Test execution started ===
+06:48:20.433584 [INFO] Output directory: reports/2026-08-25_06-48-20
+06:48:20.433587 [INFO] Platform: 
+06:48:20.433590 [INFO] Driver: uiautomator2
+06:48:20.438613 [INFO] Validated 5 flow(s)
+06:48:20.438662 [INFO] Single device execution mode
+06:48:20.438668 [INFO] Starting flow execution (parallel: false, devices: [])
+06:48:20.438672 [INFO] Creating driver for single device execution
+06:48:20.438678 [INFO] Auto-detecting Android device...
+06:48:20.486054 [INFO] Device info: google Android SDK built for x86, SDK 27, Serial emulator-5554, Emulator: true
+06:48:25.158788 [INFO] Starting UIAutomator2 server on device emulator-5554
+06:48:26.056424 [WARN] failed to remove default socket forward for /tmp/uia2-emulator-5554.sock: adb forward --remove localfilesystem:/tmp/uia2-emulator-5554.sock: exit status 1: adb: error: listener 'localfilesystem:/tmp/uia2-emulator-5554.sock' not found
+06:48:26.058481 [WARN] failed to remove adb forward for tcp:6790: adb forward --remove tcp:6790: exit status 1: adb: error: listener 'tcp:6790' not found
+06:48:27.237895 [INFO] Creating UIAutomator2 session with capabilities: Platform=Android, Device=Android SDK built for x86
+06:48:27.269489 [INFO] Session created successfully: 3a8cccae-0c18-45f2-a887-646347b34b94
+06:48:27.362451 [INFO] Driver created: android on google Android SDK built for x86
+06:48:27.369989 [INFO] === Starting flow: comment-recipe ===
+06:48:27.369996 [INFO] Flow file: .maestro/community/comment-recipe.yaml
+06:48:27.369998 [INFO] Total steps: 8
+06:48:32.185016 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+06:48:33.948567 [DEBUG] Flutter: parallel search (text="", id="welcome-sign-in-button")
+06:48:34.803290 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+06:48:35.674729 [DEBUG] Flutter fallback: failed to get trees: no Flutter VM service found
+06:48:46.470888 [DEBUG] Executing step 0: assertVisible: text="Community"
+06:48:46.504583 [DEBUG] Step 0 completed successfully (33ms): assertVisible: text="Community"
+06:48:46.505118 [DEBUG] Executing step 1: tapOn: id="COMMUNITY"
+06:48:46.632870 [DEBUG] Step 1 completed successfully (127ms): tapOn: id="COMMUNITY"
+06:48:46.633419 [DEBUG] Executing step 2: tapOn: id="recipe"
+06:48:51.179468 [DEBUG] Step 2 completed successfully (4546ms): tapOn: id="recipe"
+06:48:51.179977 [DEBUG] Executing step 3: scrollUntilVisible: id="recipe-comment-input"
+06:49:01.513237 [DEBUG] Step 3 completed successfully (10333ms): scrollUntilVisible: id="recipe-comment-input"
+06:49:01.513749 [DEBUG] Executing step 4: tapOn: id="recipe-comment-input"
+06:49:01.802883 [DEBUG] Step 4 completed successfully (289ms): tapOn: id="recipe-comment-input"
+06:49:01.803329 [DEBUG] Executing step 5: inputText: "test comment"
+06:49:03.730418 [DEBUG] Step 5 completed successfully (1927ms): inputText: "test comment"
+06:49:03.731194 [DEBUG] Executing step 6: hideKeyboard
+06:49:03.742618 [DEBUG] Step 6 completed successfully (11ms): hideKeyboard
+06:49:03.743027 [DEBUG] Executing step 7: tapOn: id="submit-comment-button"
+06:49:08.110844 [DEBUG] Step 7 completed successfully (4367ms): tapOn: id="submit-comment-button"
+06:49:08.118062 [INFO] === Flow completed: comment-recipe (status: passed, duration: 40748ms, passed: 20, failed: 0, skipped: 0) ===
+06:49:13.622326 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+06:49:20.010009 [INFO] === Starting flow: community ===
+06:49:20.010020 [INFO] Flow file: .maestro/community/community.yaml
+06:49:20.010025 [INFO] Total steps: 13
+06:49:25.278754 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+06:49:38.754262 [DEBUG] Executing step 0: assertVisible: text="Community"
+06:49:38.780234 [DEBUG] Step 0 completed successfully (25ms): assertVisible: text="Community"
+06:49:38.780730 [DEBUG] Executing step 1: tapOn: id="COMMUNITY"
+06:49:38.891074 [DEBUG] Step 1 completed successfully (110ms): tapOn: id="COMMUNITY"
+06:49:38.891577 [DEBUG] Executing step 2: extendedWaitUntil: visible id="recipe"
+06:49:39.076748 [DEBUG] Step 2 completed successfully (185ms): extendedWaitUntil: visible id="recipe"
+06:49:39.077620 [DEBUG] Executing step 3: tapOn: id="community-filter-noodles"
+06:49:39.216728 [DEBUG] Step 3 completed successfully (139ms): tapOn: id="community-filter-noodles"
+06:49:39.217210 [DEBUG] Executing step 4: extendedWaitUntil: visible id="recipe"
+06:49:39.296925 [DEBUG] Step 4 completed successfully (79ms): extendedWaitUntil: visible id="recipe"
+06:49:39.297405 [DEBUG] Executing step 5: tapOn: id="community-filter-spice"
+06:49:39.382291 [DEBUG] Step 5 completed successfully (84ms): tapOn: id="community-filter-spice"
+06:49:39.383080 [DEBUG] Executing step 6: extendedWaitUntil: visible id="recipe"
+06:49:41.678087 [DEBUG] Step 6 completed successfully (2295ms): extendedWaitUntil: visible id="recipe"
+06:49:41.678926 [DEBUG] Executing step 7: tapOn: id="community-filter-bbq"
+06:49:41.751696 [DEBUG] Step 7 completed successfully (72ms): tapOn: id="community-filter-bbq"
+06:49:41.752196 [DEBUG] Executing step 8: extendedWaitUntil: visible id="recipe"
+06:49:41.825901 [DEBUG] Step 8 completed successfully (73ms): extendedWaitUntil: visible id="recipe"
+06:49:41.826438 [DEBUG] Executing step 9: tapOn: id="community-filter-seafood"
+06:49:41.900401 [DEBUG] Step 9 completed successfully (73ms): tapOn: id="community-filter-seafood"
+06:49:41.900932 [DEBUG] Executing step 10: extendedWaitUntil: visible id="recipe"
+06:49:41.981448 [DEBUG] Step 10 completed successfully (80ms): extendedWaitUntil: visible id="recipe"
+06:49:41.981917 [DEBUG] Executing step 11: tapOn: id="community-filter-all"
+06:49:42.510274 [DEBUG] Step 11 completed successfully (528ms): tapOn: id="community-filter-all"
+06:49:42.510817 [DEBUG] Executing step 12: extendedWaitUntil: visible id="recipe"
+06:49:43.517816 [DEBUG] Step 12 completed successfully (1006ms): extendedWaitUntil: visible id="recipe"
+06:49:43.523940 [INFO] === Flow completed: community (status: passed, duration: 23513ms, passed: 25, failed: 0, skipped: 0) ===
+06:49:48.903331 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+06:49:57.117337 [INFO] === Starting flow: cooking-mode ===
+06:49:57.117346 [INFO] Flow file: .maestro/community/cooking-mode.yaml
+06:49:57.117350 [INFO] Total steps: 10
+06:50:02.671567 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+06:50:16.541725 [DEBUG] Executing step 0: assertVisible: text="Community"
+06:50:16.563181 [DEBUG] Step 0 completed successfully (21ms): assertVisible: text="Community"
+06:50:16.563549 [DEBUG] Executing step 1: tapOn: id="COMMUNITY"
+06:50:16.660723 [DEBUG] Step 1 completed successfully (97ms): tapOn: id="COMMUNITY"
+06:50:16.661074 [DEBUG] Executing step 2: tapOn: id="recipe"
+06:50:16.912156 [DEBUG] Step 2 completed successfully (251ms): tapOn: id="recipe"
+06:50:16.912653 [DEBUG] Executing step 3: tapOn: id="recipe-cook-button"
+06:50:19.343776 [DEBUG] Step 3 completed successfully (2431ms): tapOn: id="recipe-cook-button"
+06:50:19.344253 [DEBUG] Executing step 4: tapOn: id="active-speaking-switch"
+06:50:20.925761 [DEBUG] Step 4 completed successfully (1581ms): tapOn: id="active-speaking-switch"
+06:50:20.926246 [DEBUG] Executing step 5: runFlow
+06:50:28.089555 [DEBUG] Step 5 completed successfully (7163ms): runFlow
+06:50:28.090074 [DEBUG] Executing step 6: runFlow
+06:50:35.213731 [DEBUG] Step 6 completed successfully (7123ms): runFlow
+06:50:35.214112 [DEBUG] Executing step 7: tapOn: id="active-speaking-switch"
+06:50:35.271952 [DEBUG] Step 7 completed successfully (57ms): tapOn: id="active-speaking-switch"
+06:50:35.272549 [DEBUG] Executing step 8: tapOn: id="cooking-next-button"
+06:50:35.827116 [DEBUG] Step 8 completed successfully (554ms): tapOn: id="cooking-next-button"
+06:50:35.827618 [DEBUG] Executing step 9: tapOn: id="cooking-back-button"
+06:50:35.897869 [DEBUG] Step 9 completed successfully (70ms): tapOn: id="cooking-back-button"
+06:50:35.907587 [INFO] === Flow completed: cooking-mode (status: passed, duration: 38790ms, passed: 20, failed: 0, skipped: 0) ===
+06:50:41.274945 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+06:50:49.546197 [INFO] === Starting flow: search-recipe ===
+06:50:49.546209 [INFO] Flow file: .maestro/search/search-recipe.yaml
+06:50:49.546213 [INFO] Total steps: 5
+06:50:54.801198 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+06:51:07.384021 [DEBUG] Executing step 0: tapOn: id="SEARCH"
+06:51:07.478217 [DEBUG] Step 0 completed successfully (94ms): tapOn: id="SEARCH"
+06:51:07.478592 [DEBUG] Executing step 1: tapOn: id="search-recipe-input"
+06:51:08.579840 [DEBUG] Step 1 completed successfully (1101ms): tapOn: id="search-recipe-input"
+06:51:08.580268 [DEBUG] Executing step 2: inputText: "a"
+06:51:08.615836 [DEBUG] Step 2 completed successfully (35ms): inputText: "a"
+06:51:08.616418 [DEBUG] Executing step 3: hideKeyboard
+06:51:08.630226 [DEBUG] Step 3 completed successfully (13ms): hideKeyboard
+06:51:08.630457 [DEBUG] Executing step 4: extendedWaitUntil: visible id="search-recipe-item"
+06:51:11.398195 [DEBUG] Step 4 completed successfully (2767ms): extendedWaitUntil: visible id="search-recipe-item"
+06:51:11.412522 [INFO] === Flow completed: search-recipe (status: passed, duration: 21866ms, passed: 17, failed: 0, skipped: 0) ===
+06:51:16.707620 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+06:51:25.170138 [INFO] === Starting flow: search-user ===
+06:51:25.170150 [INFO] Flow file: .maestro/search/search-user.yaml
+06:51:25.170155 [INFO] Total steps: 10
+06:51:30.561315 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+06:51:43.587426 [DEBUG] Executing step 0: tapOn: id="SEARCH"
+06:51:43.700503 [DEBUG] Step 0 completed successfully (113ms): tapOn: id="SEARCH"
+06:51:43.700931 [DEBUG] Executing step 1: tapOn: id="search-mode-toggle-button"
+06:51:44.660219 [DEBUG] Step 1 completed successfully (959ms): tapOn: id="search-mode-toggle-button"
+06:51:44.660629 [DEBUG] Executing step 2: tapOn: id="search-user-input"
+06:51:45.638013 [DEBUG] Step 2 completed successfully (977ms): tapOn: id="search-user-input"
+06:51:45.638726 [DEBUG] Executing step 3: inputText: "a"
+06:51:45.674349 [DEBUG] Step 3 completed successfully (35ms): inputText: "a"
+06:51:45.674821 [DEBUG] Executing step 4: hideKeyboard
+06:51:45.682167 [DEBUG] Step 4 completed successfully (7ms): hideKeyboard
+06:51:45.682525 [DEBUG] Executing step 5: assertVisible: id="search-user-follow-button"
+06:51:47.883872 [DEBUG] Step 5 completed successfully (2201ms): assertVisible: id="search-user-follow-button"
+06:51:47.884407 [DEBUG] Executing step 6: tapOn: id="search-user-follow-button"
+06:51:48.519655 [DEBUG] Step 6 completed successfully (635ms): tapOn: id="search-user-follow-button"
+06:51:48.520388 [DEBUG] Executing step 7: assertVisible: text="Unfollow"
+06:51:49.272229 [DEBUG] Step 7 completed successfully (751ms): assertVisible: text="Unfollow"
+06:51:49.272755 [DEBUG] Executing step 8: tapOn: id="search-user-follow-button"
+06:51:49.334206 [DEBUG] Step 8 completed successfully (61ms): tapOn: id="search-user-follow-button"
+06:51:49.334695 [DEBUG] Executing step 9: assertVisible: text="Follow"
+06:51:49.389744 [DEBUG] Step 9 completed successfully (55ms): assertVisible: text="Follow"
+06:51:49.404354 [INFO] === Flow completed: search-user (status: passed, duration: 24234ms, passed: 22, failed: 0, skipped: 0) ===
+06:51:54.777430 [WARN] launchApp via server failed for com.tastopia.app: unknown command: The requested resource could not be found, or a request was received using an HTTP method that is not supported by the mapped resource — falling back to shell commands
+06:52:01.445413 [WARN] failed to remove default socket forward for /tmp/uia2-emulator-5554.sock: adb forward --remove localfilesystem:/tmp/uia2-emulator-5554.sock: exit status 1: adb: error: listener 'localfilesystem:/tmp/uia2-emulator-5554.sock' not found
+06:52:01.447523 [WARN] failed to remove adb forward for tcp:6790: adb forward --remove tcp:6790: exit status 1: adb: error: listener 'tcp:6790' not found
+06:52:01.447536 [INFO] Flow execution completed: 5 passed, 0 failed, 0 skipped
+06:52:01.449816 [INFO] Generating reports...
+06:52:01.456477 [INFO] Shutting down devices started by maestro-runner...
+06:52:01.456650 [INFO] Shutting down all tracked emulators
+06:52:01.456660 [INFO] Shutting down all tracked simulators
