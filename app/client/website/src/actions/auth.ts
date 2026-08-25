@@ -22,6 +22,6 @@ export const handleSignOut = async () => {
     redirect: false
   });
 
-  deleteAllAuthCookies();
+  await deleteAllAuthCookies();
   redirect(logoutUrl);
 };
