@@ -1,30 +1,19 @@
-import { handleSignIn, handleSignOut } from "@/actions/auth";
-import { auth } from "@/auth";
+"use client";
 
-export default async function LoginForm() {
-  const session = await auth();
+import { DUENDE_IDENTITY_PROVIDER_NAME } from "@/constants/api";
+import { signIn } from "next-auth/react";
 
-  if (session) {
-    return (
-      <form
-        action={handleSignOut}
-        className='rounded-lg border border-gray-200 p-1 hover:bg-gray-200'
-      >
-        <button type='submit'>
-          Sign out from <span className='text-primary'>Tastopia</span>
-        </button>
-      </form>
-    );
-  }
+export default function LoginForm() {
+  const handleSignIn = () => {
+    console.log("SignIn to", DUENDE_IDENTITY_PROVIDER_NAME);
+    signIn(DUENDE_IDENTITY_PROVIDER_NAME);
+  };
 
   return (
-    <form
-      action={handleSignIn}
-      className='rounded-lg border border-gray-200 p-1 hover:bg-gray-200'
-    >
-      <button type='submit'>
+    <div className='rounded-lg border border-gray-200 p-1 hover:bg-gray-200'>
+      <button onClick={handleSignIn}>
         Sign in with <span className='text-primary'>Tastopia account</span>
       </button>
-    </form>
+    </div>
   );
 }
