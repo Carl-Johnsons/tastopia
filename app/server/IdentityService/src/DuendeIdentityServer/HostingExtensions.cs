@@ -187,19 +187,13 @@ internal static class HostingExtensions
 
     public static Task<WebApplication> ConfigurePipeline(this WebApplication app)
     {
-        if (EnvUtility.IsProduction() || EnvUtility.IsStaging())
+        var forwardedHeadersOptions = new ForwardedHeadersOptions
         {
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost,
-                KnownNetworks = {
-                  new Microsoft.AspNetCore.HttpOverrides.IPNetwork(
-                      IPAddress.Parse("10.42.0.0"),
-                      16
-                  )
-                }
-            });
-        }
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+        };
+        forwardedHeadersOptions.KnownNetworks.Clear();
+        forwardedHeadersOptions.KnownProxies.Clear();
+        app.UseForwardedHeaders(forwardedHeadersOptions);
 
         app.Use(async (context, next) =>
         {
