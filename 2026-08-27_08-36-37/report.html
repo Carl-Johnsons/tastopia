@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Report</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --text-primary: #000000;
+            --text-secondary: rgb(75, 85, 99);
+            --text-muted: rgb(107, 114, 128);
+            --border-color: #e5e7eb;
+            --passed: #22c55e;
+            --passed-bg: rgba(34, 197, 94, 0.1);
+            --failed: #ef4444;
+            --failed-bg: rgba(239, 68, 68, 0.08);
+            --skipped: #eab308;
+            --skipped-bg: rgba(234, 179, 8, 0.1);
+            --running: #06b6d4;
+            --pending: #6b7280;
+            --accent: #06b6d4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+         
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 24px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .brand-by {
+            font-size: 11px;
+            color: var(--text-primary);
+        }
+
+        .brand-link {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .brand-link:hover {
+            text-decoration: underline;
+        }
+
+        .header-divider {
+            width: 1px;
+            height: 28px;
+            background: var(--border-color);
+        }
+
+        .header-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-title-main {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .header-title-sub {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .platform-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--accent);
+            color: white;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .platform-badge svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .github-star {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: border-color 0.2s;
+        }
+
+        .github-star:hover {
+            border-color: var(--accent);
+        }
+
+        .github-star svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .github-star .star-icon {
+            fill: #f59e0b;
+        }
+
+         
+        .dashboard {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+         
+        .chart-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .pie-chart {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .pie-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg-secondary);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chart-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.passed { background: var(--passed); }
+        .legend-dot.failed { background: var(--failed); }
+        .legend-dot.skipped { background: var(--skipped); }
+
+         
+        .env-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px 24px;
+            font-size: 13px;
+        }
+
+        .env-item {
+            display: flex;
+            gap: 8px;
+        }
+
+        .env-label {
+            color: var(--text-muted);
+            min-width: 60px;
+        }
+
+        .env-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+         
+        .main-container {
+            display: flex;
+            height: calc(100vh - 160px);
+        }
+
+         
+        .flow-list {
+            width: 400px;
+            border-right: 1px solid var(--border-color);
+            overflow-y: auto;
+            background: var(--bg-secondary);
+        }
+
+        .search-box {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            z-index: 10;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+            background: var(--bg-primary);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .filters {
+            padding: 8px 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            position: sticky;
+            top: 49px;
+            z-index: 10;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+
+        .filters::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+
+        .filters::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        .filter-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            align-self: center;
+            white-space: nowrap;
+        }
+
+        .filter-btn {
+            padding: 4px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: var(--bg-primary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .filter-btn.failed.active {
+            background: var(--failed);
+            border-color: var(--failed);
+        }
+
+        .keyboard-hint {
+            padding: 6px 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .keyboard-hint kbd {
+            background: var(--bg-primary);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            font-family: inherit;
+            font-size: 10px;
+        }
+
+        .flow-items {
+            padding: 8px;
+        }
+
+        .flow-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .flow-item:hover {
+            border-color: var(--accent);
+        }
+
+        .flow-item.selected {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+        }
+
+        .flow-item.failed {
+            background: linear-gradient(90deg, var(--failed-bg) 0%, var(--bg-primary) 50%);
+        }
+
+        .flow-item-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .status-dot.passed { background: var(--passed); }
+        .status-dot.failed { background: var(--failed); }
+        .status-dot.skipped { background: var(--skipped); }
+        .status-dot.running {
+            background: transparent;
+            border: 2.5px solid var(--running);
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+        .status-dot.pending { background: var(--pending); }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .flow-name {
+            font-size: 14px;
+            font-weight: 500;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .flow-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .flow-tags {
+            display: flex;
+            gap: 4px;
+            margin-top: 4px;
+            flex-wrap: wrap;
+            max-height: 20px;
+            overflow: hidden;
+        }
+
+        .flow-tag {
+            font-size: 10px;
+            padding: 2px 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .flow-tag.more-tags {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 2px 4px;
+        }
+
+        .flow-device {
+            font-size: 10px;
+            padding: 2px 8px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .device-icon {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .device-icon.android {
+            background: #3DDC84;
+        }
+
+        .device-icon.ios {
+            background: #147EFB;
+        }
+
+        .duration-bar {
+            flex: 1;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .duration-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+         
+        .detail-panel {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .detail-header {
+            margin-bottom: 24px;
+        }
+
+        .detail-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .detail-info {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+         
+        .command-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .hook-section {
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hook-summary {
+            padding: 10px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            user-select: none;
+        }
+
+        .hook-commands {
+            background: var(--bg-primary);
+        }
+
+        .command-item {
+            background: var(--bg-primary);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .command-item:hover {
+            background: var(--bg-secondary);
+        }
+
+        .command-item.failed {
+            background: var(--failed-bg);
+        }
+
+        .command-item.failed:hover {
+            background: rgba(239, 68, 68, 0.12);
+        }
+
+        .command-summary {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            gap: 8px;
+        }
+
+        .command-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .command-status.passed { background: var(--passed); }
+        .command-status.failed { background: var(--failed); }
+        .command-status.skipped { background: var(--skipped); }
+        .command-status.running {
+            background: transparent;
+            border: 2px solid var(--running);
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+        .command-status.pending { background: var(--pending); }
+
+        .command-type {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--passed);
+            min-width: 100px;
+        }
+
+        .command-item.failed .command-type {
+            color: var(--failed);
+        }
+
+        .command-value {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .command-duration {
+            font-size: 12px;
+            color: var(--text-muted);
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .command-screenshot-icon {
+            margin-left: 6px;
+            color: #FF7F00;
+            opacity: 0.85;
+            display: inline-flex;
+            vertical-align: middle;
+        }
+        .command-screenshot-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .command-expand-icon {
+            color: var(--text-muted);
+            font-size: 10px;
+            transition: transform 0.2s;
+        }
+
+        .command-item.expanded .command-expand-icon {
+            transform: rotate(90deg);
+        }
+
+        .command-details {
+            display: none;
+            padding: 0 12px 12px 28px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        .command-item.expanded > .command-details {
+            display: block;
+        }
+
+         
+        .command-details:has(> .sub-commands:only-child) {
+            padding: 0;
+            border-top: none;
+            background: transparent;
+        }
+
+        .sub-commands {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            background: var(--border-color);
+            margin-left: 24px;
+        }
+
+        .command-yaml {
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+            white-space: pre-wrap;
+            word-break: break-all;
+            background: var(--bg-tertiary);
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .command-error {
+            margin-top: 8px;
+            padding: 10px;
+            background: var(--failed-bg);
+            border: 1px solid var(--failed);
+            border-radius: 6px;
+        }
+
+        .error-type {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--failed);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .error-message {
+            font-size: 13px;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .error-suggestion {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .command-screenshots {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .screenshot {
+            max-width: 150px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+
+        .screenshot:hover {
+            border-color: var(--accent);
+        }
+
+        .command-element {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .command-element span {
+            color: var(--text-secondary);
+        }
+
+         
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+         
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .image-modal.active {
+            display: flex;
+        }
+
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+        }
+
+    </style>
+</head>
+<body>
+    
+    <div class="header">
+        <div class="header-top">
+            <div class="header-left">
+                <div class="brand">
+                    <div class="brand-icon">
+                        <img src="data:image/jpeg;base64,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" alt="DeviceLab" style="width:32px;height:32px;" />
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">maestro-runner</span>
+                        <span class="brand-by">by <a href="https://devicelab.dev/" target="_blank" class="brand-link">DeviceLab</a></span>
+                    </div>
+                </div>
+                <div class="header-divider"></div>
+                <div class="header-title">
+                    <span class="header-title-main">Test Report</span>
+                    <span class="header-title-sub">2026-08-27 08:39:46</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="platform-badge">
+                    
+                    <svg viewBox="0 0 24 24"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-1.4-.59-2.95-.92-4.62-.92-1.67 0-3.22.33-4.62.92L5.26 5.67c-.18-.28-.54-.37-.83-.22-.3.16-.42.54-.26.85L6.4 9.48C3.3 11.25 1.28 14.44 1 18h22c-.28-3.56-2.3-6.75-5.4-8.52zM7 15.25c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm10 0c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"/></svg>
+                    
+                    <span>Android</span>
+                </div>
+                <a href="https://github.com/devicelab-dev/maestro-runner" target="_blank" class="github-star">
+                    <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                    <svg class="star-icon" viewBox="0 0 16 16"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+                    <span>Star</span>
+                </a>
+            </div>
+        </div>
+        <div class="dashboard">
+            
+            <div class="chart-container">
+                <div class="pie-chart" id="pie-chart"></div>
+                <div class="chart-legend" id="chart-legend">
+                    <div class="legend-item" id="legend-running" style="display: none;">
+                        <span class="legend-dot" style="background: var(--running);"></span>
+                        <span>0 running</span>
+                    </div>
+                    <div class="legend-item" id="legend-passed">
+                        <span class="legend-dot passed"></span>
+                        <span>5 passed</span>
+                    </div>
+                    <div class="legend-item" id="legend-failed">
+                        <span class="legend-dot failed"></span>
+                        <span>0 failed</span>
+                    </div>
+                    <div class="legend-item" id="legend-skipped" style="display: none;">
+                        <span class="legend-dot skipped"></span>
+                        <span>0 skipped</span>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="env-card">
+                <div class="env-item">
+                    <span class="env-label">Device</span>
+                    <span class="env-value">google Android SDK built for x86</span>
+                </div>
+                <div class="env-item">
+                    <span class="env-label">Platform</span>
+                    <span class="env-value">android 27</span>
+                </div>
+                <div class="env-item">
+                    <span class="env-label">App</span>
+                    <span class="env-value">com.tastopia.app v1.0.0</span>
+                </div>
+                <div class="env-item">
+                    <span class="env-label">Driver</span>
+                    <span class="env-value">uiautomator2</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="main-container">
+        
+        <div class="flow-list">
+            <div class="search-box">
+                <input type="text" class="search-input" id="search-input" placeholder="Search tests... (Press /)" />
+            </div>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All (5)</button>
+                <button class="filter-btn failed" data-filter="failed">Failed (0)</button>
+                <button class="filter-btn" data-filter="passed">Passed (5)</button>
+            </div>
+            <div class="filters" id="tag-filters" style="display: none;">
+                
+            </div>
+            <div class="filters" id="device-filters" style="display: none;">
+                
+            </div>
+            <div class="keyboard-hint">
+                <kbd>j</kbd>/<kbd>k</kbd> navigate &nbsp; <kbd>n</kbd> next failure &nbsp; <kbd>Enter</kbd> expand
+            </div>
+            <div class="flow-items" id="flow-items">
+                
+                <div class="flow-item passed"
+                     data-flow-index="0"
+                     data-status="passed"
+                     data-name="comment-recipe"
+                     data-tags=""
+                     data-platform="android"
+                     data-os-version="27">
+                    <div class="flow-item-header">
+                        <span class="status-dot passed"></span>
+                        <span class="flow-name">comment-recipe</span>
+                    </div>
+                    
+                    <div class="flow-tags">
+                        
+                        <span class="flow-device">
+                            <span class="device-icon android"></span>
+                            google Android SDK built for x86 (27)
+                        </span>
+                        
+                        
+                        
+                    </div>
+                    
+                    <div class="flow-meta">
+                        <span>8 steps</span>
+                        <div class="duration-bar">
+                            <div class="duration-fill" style="width: 74.6%"></div>
+                        </div>
+                        <span>28.0s</span>
+                    </div>
+                </div>
+                
+                <div class="flow-item passed"
+                     data-flow-index="1"
+                     data-status="passed"
+                     data-name="community"
+                     data-tags=""
+                     data-platform="android"
+                     data-os-version="27">
+                    <div class="flow-item-header">
+                        <span class="status-dot passed"></span>
+                        <span class="flow-name">community</span>
+                    </div>
+                    
+                    <div class="flow-tags">
+                        
+                        <span class="flow-device">
+                            <span class="device-icon android"></span>
+                            google Android SDK built for x86 (27)
+                        </span>
+                        
+                        
+                        
+                    </div>
+                    
+                    <div class="flow-meta">
+                        <span>13 steps</span>
+                        <div class="duration-bar">
+                            <div class="duration-fill" style="width: 55.8%"></div>
+                        </div>
+                        <span>21.0s</span>
+                    </div>
+                </div>
+                
+                <div class="flow-item passed"
+                     data-flow-index="2"
+                     data-status="passed"
+                     data-name="cooking-mode"
+                     data-tags=""
+                     data-platform="android"
+                     data-os-version="27">
+                    <div class="flow-item-header">
+                        <span class="status-dot passed"></span>
+                        <span class="flow-name">cooking-mode</span>
+                    </div>
+                    
+                    <div class="flow-tags">
+                        
+                        <span class="flow-device">
+                            <span class="device-icon android"></span>
+                            google Android SDK built for x86 (27)
+                        </span>
+                        
+                        
+                        
+                    </div>
+                    
+                    <div class="flow-meta">
+                        <span>10 steps</span>
+                        <div class="duration-bar">
+                            <div class="duration-fill" style="width: 100.0%"></div>
+                        </div>
+                        <span>37.5s</span>
+                    </div>
+                </div>
+                
+                <div class="flow-item passed"
+                     data-flow-index="3"
+                     data-status="passed"
+                     data-name="search-recipe"
+                     data-tags=""
+                     data-platform="android"
+                     data-os-version="27">
+                    <div class="flow-item-header">
+                        <span class="status-dot passed"></span>
+                        <span class="flow-name">search-recipe</span>
+                    </div>
+                    
+                    <div class="flow-tags">
+                        
+                        <span class="flow-device">
+                            <span class="device-icon android"></span>
+                            google Android SDK built for x86 (27)
+                        </span>
+                        
+                        
+                        
+                    </div>
+                    
+                    <div class="flow-meta">
+                        <span>5 steps</span>
+                        <div class="duration-bar">
+                            <div class="duration-fill" style="width: 51.9%"></div>
+                        </div>
+                        <span>19.5s</span>
+                    </div>
+                </div>
+                
+                <div class="flow-item passed"
+                     data-flow-index="4"
+                     data-status="passed"
+                     data-name="search-user"
+                     data-tags=""
+                     data-platform="android"
+                     data-os-version="27">
+                    <div class="flow-item-header">
+                        <span class="status-dot passed"></span>
+                        <span class="flow-name">search-user</span>
+                    </div>
+                    
+                    <div class="flow-tags">
+                        
+                        <span class="flow-device">
+                            <span class="device-icon android"></span>
+                            google Android SDK built for x86 (27)
+                        </span>
+                        
+                        
+                        
+                    </div>
+                    
+                    <div class="flow-meta">
+                        <span>10 steps</span>
+                        <div class="duration-bar">
+                            <div class="duration-fill" style="width: 50.0%"></div>
+                        </div>
+                        <span>18.8s</span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        
+        <div class="detail-panel" id="detail-panel">
+            <div class="empty-state" id="empty-state">
+                <div class="empty-state-icon">📋</div>
+                <div>Select a test to view details</div>
+            </div>
+            <div id="detail-content" style="display: none;">
+                <div class="detail-header">
+                    <div class="detail-title" id="detail-title"></div>
+                </div>
+                <div class="detail-info" id="detail-info"></div>
+                <div class="command-list" id="command-list"></div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="image-modal" id="image-modal" onclick="closeModal()">
+        <img id="modal-image" src="" alt="Screenshot">
+    </div>
+
+
+    <script>
+        
+        let reportData = {"flows":[{"id":"flow-000","name":"comment-recipe","sourceFile":".maestro/community/comment-recipe.yaml","device":{"id":"emulator-5554","name":"google Android SDK built for x86","platform":"android","osVersion":"27","isSimulator":true},"startTime":"2026-08-27T08:36:40.594387975Z","endTime":"2026-08-27T08:37:08.60531857Z","duration":28010,"onFlowStartCommands":[{"id":"sub-0","index":0,"type":"runFlow","yaml":"runFlow: ../common/login.yaml","status":"passed","startTime":"2026-08-27T08:36:40.594570918Z","endTime":"2026-08-27T08:36:56.370118756Z","duration":15775,"artifacts":{},"subCommands":[{"id":"sub-0","index":0,"type":"launchApp","yaml":"launchApp","status":"passed","startTime":"2026-08-27T08:36:40.594825858Z","endTime":"2026-08-27T08:36:44.668890647Z","duration":4074,"artifacts":{}},{"id":"sub-1","index":1,"type":"tapOn","yaml":"tapOn: id=\"welcome-sign-in-button\"","status":"passed","startTime":"2026-08-27T08:36:44.668898419Z","endTime":"2026-08-27T08:36:45.707436017Z","duration":1038,"artifacts":{}},{"id":"sub-2","index":2,"type":"assertVisible","yaml":"assertVisible: id=\"login-identifier-input\"","status":"passed","startTime":"2026-08-27T08:36:45.707441896Z","endTime":"2026-08-27T08:36:46.422778482Z","duration":715,"artifacts":{}},{"id":"sub-3","index":3,"type":"tapOn","yaml":"tapOn: id=\"login-identifier-input\"","status":"passed","startTime":"2026-08-27T08:36:46.422784066Z","endTime":"2026-08-27T08:36:46.725078813Z","duration":302,"artifacts":{}},{"id":"sub-4","index":4,"type":"inputText","yaml":"inputText: \"***\"","status":"passed","startTime":"2026-08-27T08:36:46.725082542Z","endTime":"2026-08-27T08:36:47.512086384Z","duration":786,"artifacts":{}},{"id":"sub-5","index":5,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:36:47.512093236Z","endTime":"2026-08-27T08:36:47.526715555Z","duration":14,"artifacts":{}},{"id":"sub-6","index":6,"type":"assertVisible","yaml":"assertVisible: id=\"login-password-input\"","status":"passed","startTime":"2026-08-27T08:36:47.526731514Z","endTime":"2026-08-27T08:36:48.069471776Z","duration":542,"artifacts":{}},{"id":"sub-7","index":7,"type":"tapOn","yaml":"tapOn: id=\"login-password-input\"","status":"passed","startTime":"2026-08-27T08:36:48.069474905Z","endTime":"2026-08-27T08:36:48.798564957Z","duration":729,"artifacts":{}},{"id":"sub-8","index":8,"type":"inputText","yaml":"inputText: \"***\"","status":"passed","startTime":"2026-08-27T08:36:48.798568573Z","endTime":"2026-08-27T08:36:49.117954493Z","duration":319,"artifacts":{}},{"id":"sub-9","index":9,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:36:49.118067696Z","endTime":"2026-08-27T08:36:49.130962268Z","duration":12,"artifacts":{}},{"id":"sub-10","index":10,"type":"tapOn","yaml":"tapOn: id=\"login-submit-button\"","status":"passed","startTime":"2026-08-27T08:36:49.130965662Z","endTime":"2026-08-27T08:36:50.426298289Z","duration":1295,"artifacts":{}},{"id":"sub-11","index":11,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"COMMUNITY\"","status":"passed","startTime":"2026-08-27T08:36:50.426302524Z","endTime":"2026-08-27T08:36:56.370110322Z","duration":5943,"artifacts":{}}]}],"commands":[{"id":"cmd-000","index":0,"type":"assertVisible","yaml":"assertVisible: text=\"Community\"","status":"passed","startTime":"2026-08-27T08:36:56.370129895Z","endTime":"2026-08-27T08:36:56.384364076Z","duration":14,"params":{"selector":{"type":"text","value":"Community"}},"element":{"found":true,"id":"00000000-0000-0007-ffff-ffff00000097","bounds":{"x":0,"y":0,"width":0,"height":0}},"artifacts":{}},{"id":"cmd-001","index":1,"type":"tapOn","yaml":"tapOn: id=\"COMMUNITY\"","status":"passed","startTime":"2026-08-27T08:36:56.384750151Z","endTime":"2026-08-27T08:36:56.446002364Z","duration":61,"params":{"selector":{"type":"id","value":"COMMUNITY"}},"element":{"found":true,"id":"00000000-0000-0007-ffff-ffff00000095","bounds":{"x":26,"y":2136,"width":206,"height":94}},"artifacts":{}},{"id":"cmd-002","index":2,"type":"tapOn","yaml":"tapOn: id=\"recipe\"","status":"passed","startTime":"2026-08-27T08:36:56.446235303Z","endTime":"2026-08-27T08:36:56.724092402Z","duration":277,"params":{"selector":{"type":"id","value":"recipe"}},"element":{"found":true,"id":"00000000-0000-0007-ffff-ffff000000ed","bounds":{"x":0,"y":997,"width":1080,"height":1070}},"artifacts":{}},{"id":"cmd-003","index":3,"type":"scrollUntilVisible","yaml":"scrollUntilVisible: id=\"recipe-comment-input\"","status":"passed","startTime":"2026-08-27T08:36:56.724614821Z","endTime":"2026-08-27T08:37:03.313828858Z","duration":6589,"params":{"selector":{"type":"id","value":"recipe-comment-input"},"direction":"DOWN"},"element":{"found":true,"id":"00000000-0000-0007-ffff-ffff00000110","text":"Add a comment...","bounds":{"x":127,"y":2097,"width":917,"height":9}},"artifacts":{}},{"id":"cmd-004","index":4,"type":"tapOn","yaml":"tapOn: id=\"recipe-comment-input\"","status":"passed","startTime":"2026-08-27T08:37:03.314198082Z","endTime":"2026-08-27T08:37:03.597911304Z","duration":283,"params":{"selector":{"type":"id","value":"recipe-comment-input"}},"element":{"found":true,"id":"00000000-0000-0007-ffff-ffff00000110","text":"Add a comment...","bounds":{"x":127,"y":2097,"width":917,"height":9}},"artifacts":{}},{"id":"cmd-005","index":5,"type":"inputText","yaml":"inputText: \"test comment\"","status":"passed","startTime":"2026-08-27T08:37:03.598284604Z","endTime":"2026-08-27T08:37:04.804944717Z","duration":1206,"params":{"text":"test comment"},"artifacts":{}},{"id":"cmd-006","index":6,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:37:04.805368056Z","endTime":"2026-08-27T08:37:04.80937519Z","duration":4,"artifacts":{}},{"id":"cmd-007","index":7,"type":"tapOn","yaml":"tapOn: id=\"submit-comment-button\"","status":"passed","startTime":"2026-08-27T08:37:04.810834815Z","endTime":"2026-08-27T08:37:08.604938057Z","duration":3794,"params":{"selector":{"type":"id","value":"submit-comment-button"}},"element":{"found":true,"id":"00000000-0000-0007-ffff-ffff000001d2","text":"","bounds":{"x":980,"y":1454,"width":63,"height":64}},"artifacts":{}}],"onFlowCompleteCommands":[{"id":"sub-0","index":0,"type":"runFlow","yaml":"runFlow: ../common/logout.yaml","status":"failed","startTime":"2026-08-27T08:37:08.609518599Z","endTime":"2026-08-27T08:37:33.254336793Z","duration":24494,"error":{"type":"execution","message":"context deadline exceeded: no such element: An element could not be located on the page using the given search parameters"},"artifacts":{"screenshotAfter":"assets/flow-000/cmd-009-after.png","viewHierarchy":"assets/flow-000/cmd-009-hierarchy.xml"},"subCommands":[{"id":"sub-0","index":0,"type":"launchApp","yaml":"launchApp","status":"passed","startTime":"2026-08-27T08:37:08.609766139Z","endTime":"2026-08-27T08:37:13.514630181Z","duration":4904,"artifacts":{}},{"id":"sub-1","index":1,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"MENU\"","status":"passed","startTime":"2026-08-27T08:37:13.514637513Z","endTime":"2026-08-27T08:37:14.898808595Z","duration":1384,"artifacts":{}},{"id":"sub-2","index":2,"type":"tapOn","yaml":"tapOn: id=\"MENU\"","status":"passed","startTime":"2026-08-27T08:37:14.89881263Z","endTime":"2026-08-27T08:37:14.956826971Z","duration":58,"artifacts":{}},{"id":"sub-3","index":3,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:37:14.956830388Z","endTime":"2026-08-27T08:37:14.961527517Z","duration":4,"artifacts":{}},{"id":"sub-4","index":4,"type":"assertVisible","yaml":"assertVisible: text=\"History\"","status":"passed","startTime":"2026-08-27T08:37:14.961529593Z","endTime":"2026-08-27T08:37:15.883465236Z","duration":921,"artifacts":{}},{"id":"sub-5","index":5,"type":"tapOn","yaml":"tapOn: id=\"menu-logout-button\"","status":"passed","startTime":"2026-08-27T08:37:15.883471061Z","endTime":"2026-08-27T08:37:15.922164022Z","duration":38,"artifacts":{}},{"id":"sub-6","index":6,"type":"assertVisible","yaml":"assertVisible: text=\"Welcome to\"","status":"failed","startTime":"2026-08-27T08:37:15.922166611Z","endTime":"2026-08-27T08:37:33.103543154Z","duration":17020,"error":{"type":"execution","message":"context deadline exceeded: no such element: An element could not be located on the page using the given search parameters"},"artifacts":{"screenshotAfter":"assets/flow-000/cmd-008-after.png","viewHierarchy":"assets/flow-000/cmd-008-hierarchy.xml"}}]}],"artifacts":{}},{"id":"flow-001","name":"community","sourceFile":".maestro/community/community.yaml","device":{"id":"emulator-5554","name":"google Android SDK built for x86","platform":"android","osVersion":"27","isSimulator":true},"startTime":"2026-08-27T08:37:33.256844079Z","endTime":"2026-08-27T08:37:54.220813993Z","duration":20963,"onFlowStartCommands":[{"id":"sub-0","index":0,"type":"runFlow","yaml":"runFlow: ../common/login.yaml","status":"passed","startTime":"2026-08-27T08:37:33.257024893Z","endTime":"2026-08-27T08:37:48.197898594Z","duration":14940,"artifacts":{},"subCommands":[{"id":"sub-0","index":0,"type":"launchApp","yaml":"launchApp","status":"passed","startTime":"2026-08-27T08:37:33.257253874Z","endTime":"2026-08-27T08:37:37.409896717Z","duration":4152,"artifacts":{}},{"id":"sub-1","index":1,"type":"tapOn","yaml":"tapOn: id=\"welcome-sign-in-button\"","status":"passed","startTime":"2026-08-27T08:37:37.409905556Z","endTime":"2026-08-27T08:37:38.214124278Z","duration":804,"artifacts":{}},{"id":"sub-2","index":2,"type":"assertVisible","yaml":"assertVisible: id=\"login-identifier-input\"","status":"passed","startTime":"2026-08-27T08:37:38.214130132Z","endTime":"2026-08-27T08:37:38.790355273Z","duration":576,"artifacts":{}},{"id":"sub-3","index":3,"type":"tapOn","yaml":"tapOn: id=\"login-identifier-input\"","status":"passed","startTime":"2026-08-27T08:37:38.790362119Z","endTime":"2026-08-27T08:37:39.321994271Z","duration":531,"artifacts":{}},{"id":"sub-4","index":4,"type":"inputText","yaml":"inputText: \"***\"","status":"passed","startTime":"2026-08-27T08:37:39.321997909Z","endTime":"2026-08-27T08:37:39.699859235Z","duration":377,"artifacts":{}},{"id":"sub-5","index":5,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:37:39.69986967Z","endTime":"2026-08-27T08:37:39.718668605Z","duration":18,"artifacts":{}},{"id":"sub-6","index":6,"type":"assertVisible","yaml":"assertVisible: id=\"login-password-input\"","status":"passed","startTime":"2026-08-27T08:37:39.718672044Z","endTime":"2026-08-27T08:37:40.270564594Z","duration":551,"artifacts":{}},{"id":"sub-7","index":7,"type":"tapOn","yaml":"tapOn: id=\"login-password-input\"","status":"passed","startTime":"2026-08-27T08:37:40.270570961Z","endTime":"2026-08-27T08:37:40.975004091Z","duration":704,"artifacts":{}},{"id":"sub-8","index":8,"type":"inputText","yaml":"inputText: \"***\"","status":"passed","startTime":"2026-08-27T08:37:40.975007807Z","endTime":"2026-08-27T08:37:41.164864005Z","duration":189,"artifacts":{}},{"id":"sub-9","index":9,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:37:41.164871475Z","endTime":"2026-08-27T08:37:41.171108301Z","duration":6,"artifacts":{}},{"id":"sub-10","index":10,"type":"tapOn","yaml":"tapOn: id=\"login-submit-button\"","status":"passed","startTime":"2026-08-27T08:37:41.171112884Z","endTime":"2026-08-27T08:37:42.379550987Z","duration":1208,"artifacts":{}},{"id":"sub-11","index":11,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"COMMUNITY\"","status":"passed","startTime":"2026-08-27T08:37:42.379555733Z","endTime":"2026-08-27T08:37:48.197892239Z","duration":5818,"artifacts":{}}]}],"commands":[{"id":"cmd-000","index":0,"type":"assertVisible","yaml":"assertVisible: text=\"Community\"","status":"passed","startTime":"2026-08-27T08:37:48.197912683Z","endTime":"2026-08-27T08:37:48.20784977Z","duration":9,"params":{"selector":{"type":"text","value":"Community"}},"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff00000097","bounds":{"x":0,"y":0,"width":0,"height":0}},"artifacts":{}},{"id":"cmd-001","index":1,"type":"tapOn","yaml":"tapOn: id=\"COMMUNITY\"","status":"passed","startTime":"2026-08-27T08:37:48.208480803Z","endTime":"2026-08-27T08:37:48.297053357Z","duration":88,"params":{"selector":{"type":"id","value":"COMMUNITY"}},"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff00000095","bounds":{"x":26,"y":2136,"width":206,"height":94}},"artifacts":{}},{"id":"cmd-002","index":2,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"recipe\"","status":"passed","startTime":"2026-08-27T08:37:48.29734799Z","endTime":"2026-08-27T08:37:49.939402418Z","duration":1642,"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff000000f0","bounds":{"x":0,"y":997,"width":1080,"height":1070}},"artifacts":{}},{"id":"cmd-003","index":3,"type":"tapOn","yaml":"tapOn: id=\"community-filter-noodles\"","status":"passed","startTime":"2026-08-27T08:37:49.939705108Z","endTime":"2026-08-27T08:37:50.017077563Z","duration":77,"params":{"selector":{"type":"id","value":"community-filter-noodles"}},"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff000000d3","bounds":{"x":340,"y":571,"width":351,"height":162}},"artifacts":{}},{"id":"cmd-004","index":4,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"recipe\"","status":"passed","startTime":"2026-08-27T08:37:50.017328814Z","endTime":"2026-08-27T08:37:50.092216796Z","duration":74,"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff000000f0","bounds":{"x":0,"y":997,"width":1080,"height":1070}},"artifacts":{}},{"id":"cmd-005","index":5,"type":"tapOn","yaml":"tapOn: id=\"community-filter-spice\"","status":"passed","startTime":"2026-08-27T08:37:50.092513063Z","endTime":"2026-08-27T08:37:50.136434937Z","duration":43,"params":{"selector":{"type":"id","value":"community-filter-spice"}},"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff000000d9","bounds":{"x":719,"y":571,"width":309,"height":162}},"artifacts":{}},{"id":"cmd-006","index":6,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"recipe\"","status":"passed","startTime":"2026-08-27T08:37:50.136785146Z","endTime":"2026-08-27T08:37:52.190965529Z","duration":2054,"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff000000f0","bounds":{"x":0,"y":997,"width":1080,"height":1109}},"artifacts":{}},{"id":"cmd-007","index":7,"type":"tapOn","yaml":"tapOn: id=\"community-filter-bbq\"","status":"passed","startTime":"2026-08-27T08:37:52.191296135Z","endTime":"2026-08-27T08:37:52.299769527Z","duration":108,"params":{"selector":{"type":"id","value":"community-filter-bbq"}},"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff000000df","bounds":{"x":200,"y":761,"width":293,"height":163}},"artifacts":{}},{"id":"cmd-008","index":8,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"recipe\"","status":"passed","startTime":"2026-08-27T08:37:52.300075538Z","endTime":"2026-08-27T08:37:52.328143388Z","duration":28,"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff00000108","bounds":{"x":0,"y":997,"width":1080,"height":1109}},"artifacts":{}},{"id":"cmd-009","index":9,"type":"tapOn","yaml":"tapOn: id=\"community-filter-seafood\"","status":"passed","startTime":"2026-08-27T08:37:52.32840915Z","endTime":"2026-08-27T08:37:52.389621454Z","duration":61,"params":{"selector":{"type":"id","value":"community-filter-seafood"}},"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff000000e5","bounds":{"x":521,"y":761,"width":359,"height":163}},"artifacts":{}},{"id":"cmd-010","index":10,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"recipe\"","status":"passed","startTime":"2026-08-27T08:37:52.389977193Z","endTime":"2026-08-27T08:37:54.078557036Z","duration":1688,"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff00000108","bounds":{"x":0,"y":997,"width":1080,"height":1109}},"artifacts":{}},{"id":"cmd-011","index":11,"type":"tapOn","yaml":"tapOn: id=\"community-filter-all\"","status":"passed","startTime":"2026-08-27T08:37:54.078935457Z","endTime":"2026-08-27T08:37:54.130765324Z","duration":51,"params":{"selector":{"type":"id","value":"community-filter-all"}},"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff000000cc","bounds":{"x":52,"y":571,"width":260,"height":162}},"artifacts":{}},{"id":"cmd-012","index":12,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"recipe\"","status":"passed","startTime":"2026-08-27T08:37:54.131118717Z","endTime":"2026-08-27T08:37:54.162421883Z","duration":31,"element":{"found":true,"id":"00000000-0000-000c-ffff-ffff00000123","bounds":{"x":0,"y":997,"width":1080,"height":1109}},"artifacts":{}}],"onFlowCompleteCommands":[{"id":"sub-0","index":0,"type":"runFlow","yaml":"runFlow: ../common/logout.yaml","status":"passed","startTime":"2026-08-27T08:37:54.230976729Z","endTime":"2026-08-27T08:38:04.197261555Z","duration":9966,"artifacts":{},"subCommands":[{"id":"sub-0","index":0,"type":"launchApp","yaml":"launchApp","status":"passed","startTime":"2026-08-27T08:37:54.231193786Z","endTime":"2026-08-27T08:37:58.474306126Z","duration":4243,"artifacts":{}},{"id":"sub-1","index":1,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"MENU\"","status":"passed","startTime":"2026-08-27T08:37:58.474315514Z","endTime":"2026-08-27T08:37:59.684162791Z","duration":1209,"artifacts":{}},{"id":"sub-2","index":2,"type":"tapOn","yaml":"tapOn: id=\"MENU\"","status":"passed","startTime":"2026-08-27T08:37:59.684168939Z","endTime":"2026-08-27T08:37:59.737472533Z","duration":53,"artifacts":{}},{"id":"sub-3","index":3,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:37:59.737477755Z","endTime":"2026-08-27T08:37:59.739568803Z","duration":2,"artifacts":{}},{"id":"sub-4","index":4,"type":"assertVisible","yaml":"assertVisible: text=\"History\"","status":"passed","startTime":"2026-08-27T08:37:59.739570953Z","endTime":"2026-08-27T08:38:00.754290987Z","duration":1014,"artifacts":{}},{"id":"sub-5","index":5,"type":"tapOn","yaml":"tapOn: id=\"menu-logout-button\"","status":"passed","startTime":"2026-08-27T08:38:00.754297445Z","endTime":"2026-08-27T08:38:00.84553247Z","duration":90,"artifacts":{}},{"id":"sub-6","index":6,"type":"assertVisible","yaml":"assertVisible: text=\"Welcome to\"","status":"passed","startTime":"2026-08-27T08:38:00.845537099Z","endTime":"2026-08-27T08:38:03.668549166Z","duration":2822,"artifacts":{}},{"id":"sub-7","index":7,"type":"assertVisible","yaml":"assertVisible: text=\"Tastopia\"","status":"passed","startTime":"2026-08-27T08:38:03.668552744Z","endTime":"2026-08-27T08:38:04.197255518Z","duration":528,"artifacts":{}}]}],"artifacts":{}},{"id":"flow-002","name":"cooking-mode","sourceFile":".maestro/community/cooking-mode.yaml","device":{"id":"emulator-5554","name":"google Android SDK built for x86","platform":"android","osVersion":"27","isSimulator":true},"startTime":"2026-08-27T08:38:04.200606928Z","endTime":"2026-08-27T08:38:41.746067628Z","duration":37545,"onFlowStartCommands":[{"id":"sub-0","index":0,"type":"runFlow","yaml":"runFlow: ../common/login.yaml","status":"passed","startTime":"2026-08-27T08:38:04.200789724Z","endTime":"2026-08-27T08:38:21.327184724Z","duration":17126,"artifacts":{},"subCommands":[{"id":"sub-0","index":0,"type":"launchApp","yaml":"launchApp","status":"passed","startTime":"2026-08-27T08:38:04.200990223Z","endTime":"2026-08-27T08:38:08.4453559Z","duration":4244,"artifacts":{}},{"id":"sub-1","index":1,"type":"tapOn","yaml":"tapOn: id=\"welcome-sign-in-button\"","status":"passed","startTime":"2026-08-27T08:38:08.445362943Z","endTime":"2026-08-27T08:38:09.208672575Z","duration":763,"artifacts":{}},{"id":"sub-2","index":2,"type":"assertVisible","yaml":"assertVisible: id=\"login-identifier-input\"","status":"passed","startTime":"2026-08-27T08:38:09.208675151Z","endTime":"2026-08-27T08:38:10.023276701Z","duration":814,"artifacts":{}},{"id":"sub-3","index":3,"type":"tapOn","yaml":"tapOn: id=\"login-identifier-input\"","status":"passed","startTime":"2026-08-27T08:38:10.023282786Z","endTime":"2026-08-27T08:38:10.311909014Z","duration":288,"artifacts":{}},{"id":"sub-4","index":4,"type":"inputText","yaml":"inputText: \"***\"","status":"passed","startTime":"2026-08-27T08:38:10.311912191Z","endTime":"2026-08-27T08:38:10.9603448Z","duration":648,"artifacts":{}},{"id":"sub-5","index":5,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:38:10.960350889Z","endTime":"2026-08-27T08:38:10.963690537Z","duration":3,"artifacts":{}},{"id":"sub-6","index":6,"type":"assertVisible","yaml":"assertVisible: id=\"login-password-input\"","status":"passed","startTime":"2026-08-27T08:38:10.963693692Z","endTime":"2026-08-27T08:38:11.436048478Z","duration":472,"artifacts":{}},{"id":"sub-7","index":7,"type":"tapOn","yaml":"tapOn: id=\"login-password-input\"","status":"passed","startTime":"2026-08-27T08:38:11.436053444Z","endTime":"2026-08-27T08:38:12.116978168Z","duration":680,"artifacts":{}},{"id":"sub-8","index":8,"type":"inputText","yaml":"inputText: \"***\"","status":"passed","startTime":"2026-08-27T08:38:12.116981482Z","endTime":"2026-08-27T08:38:12.537609234Z","duration":420,"artifacts":{}},{"id":"sub-9","index":9,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:38:12.537617101Z","endTime":"2026-08-27T08:38:12.540879676Z","duration":2,"artifacts":{}},{"id":"sub-10","index":10,"type":"tapOn","yaml":"tapOn: id=\"login-submit-button\"","status":"passed","startTime":"2026-08-27T08:38:12.540884835Z","endTime":"2026-08-27T08:38:13.746903549Z","duration":1205,"artifacts":{}},{"id":"sub-11","index":11,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"COMMUNITY\"","status":"passed","startTime":"2026-08-27T08:38:13.746909079Z","endTime":"2026-08-27T08:38:21.327180557Z","duration":7580,"artifacts":{}}]}],"commands":[{"id":"cmd-000","index":0,"type":"assertVisible","yaml":"assertVisible: text=\"Community\"","status":"passed","startTime":"2026-08-27T08:38:21.327214321Z","endTime":"2026-08-27T08:38:21.337511949Z","duration":10,"params":{"selector":{"type":"text","value":"Community"}},"element":{"found":true,"id":"00000000-0000-0010-ffff-ffff00000097","bounds":{"x":0,"y":0,"width":0,"height":0}},"artifacts":{}},{"id":"cmd-001","index":1,"type":"tapOn","yaml":"tapOn: id=\"COMMUNITY\"","status":"passed","startTime":"2026-08-27T08:38:21.401563841Z","endTime":"2026-08-27T08:38:21.488938716Z","duration":87,"params":{"selector":{"type":"id","value":"COMMUNITY"}},"element":{"found":true,"id":"00000000-0000-0010-ffff-ffff00000095","bounds":{"x":26,"y":2136,"width":206,"height":94}},"artifacts":{}},{"id":"cmd-002","index":2,"type":"tapOn","yaml":"tapOn: id=\"recipe\"","status":"passed","startTime":"2026-08-27T08:38:21.489185887Z","endTime":"2026-08-27T08:38:21.680886756Z","duration":191,"params":{"selector":{"type":"id","value":"recipe"}},"element":{"found":true,"id":"00000000-0000-0010-ffff-ffff000000ee","bounds":{"x":0,"y":997,"width":1080,"height":1070}},"artifacts":{}},{"id":"cmd-003","index":3,"type":"tapOn","yaml":"tapOn: id=\"recipe-cook-button\"","status":"passed","startTime":"2026-08-27T08:38:21.681250906Z","endTime":"2026-08-27T08:38:25.128520803Z","duration":3447,"params":{"selector":{"type":"id","value":"recipe-cook-button"}},"element":{"found":true,"id":"00000000-0000-0010-ffff-ffff00000128","bounds":{"x":865,"y":743,"width":179,"height":84}},"artifacts":{}},{"id":"cmd-004","index":4,"type":"tapOn","yaml":"tapOn: id=\"active-speaking-switch\"","status":"passed","startTime":"2026-08-27T08:38:25.128998574Z","endTime":"2026-08-27T08:38:26.395950808Z","duration":1266,"params":{"selector":{"type":"id","value":"active-speaking-switch"}},"element":{"found":true,"id":"00000000-0000-0010-ffff-ffff000001e3","text":"OFF","bounds":{"x":628,"y":263,"width":122,"height":71}},"artifacts":{}},{"id":"cmd-005","index":5,"type":"runFlow","yaml":"runFlow","status":"passed","startTime":"2026-08-27T08:38:26.396380908Z","endTime":"2026-08-27T08:38:33.466031659Z","duration":7069,"artifacts":{}},{"id":"cmd-006","index":6,"type":"runFlow","yaml":"runFlow","status":"passed","startTime":"2026-08-27T08:38:33.466406458Z","endTime":"2026-08-27T08:38:40.537416185Z","duration":7071,"artifacts":{}},{"id":"cmd-007","index":7,"type":"tapOn","yaml":"tapOn: id=\"active-speaking-switch\"","status":"passed","startTime":"2026-08-27T08:38:40.537714115Z","endTime":"2026-08-27T08:38:40.571198289Z","duration":33,"params":{"selector":{"type":"id","value":"active-speaking-switch"}},"element":{"found":true,"id":"00000000-0000-0010-ffff-ffff000001e3","text":"ON","bounds":{"x":628,"y":263,"width":122,"height":71}},"artifacts":{}},{"id":"cmd-008","index":8,"type":"tapOn","yaml":"tapOn: id=\"cooking-next-button\"","status":"passed","startTime":"2026-08-27T08:38:40.5714717Z","endTime":"2026-08-27T08:38:41.1171019Z","duration":545,"params":{"selector":{"type":"id","value":"cooking-next-button"}},"element":{"found":true,"id":"00000000-0000-0010-ffff-ffff000001fc","bounds":{"x":558,"y":1966,"width":485,"height":103}},"artifacts":{}},{"id":"cmd-009","index":9,"type":"tapOn","yaml":"tapOn: id=\"cooking-back-button\"","status":"passed","startTime":"2026-08-27T08:38:41.11740433Z","endTime":"2026-08-27T08:38:41.745277736Z","duration":627,"params":{"selector":{"type":"id","value":"cooking-back-button"}},"element":{"found":true,"id":"00000000-0000-0010-ffff-ffff000001fa","bounds":{"x":37,"y":1966,"width":485,"height":103}},"artifacts":{}}],"onFlowCompleteCommands":[{"id":"sub-0","index":0,"type":"runFlow","yaml":"runFlow: ../common/logout.yaml","status":"passed","startTime":"2026-08-27T08:38:41.750258757Z","endTime":"2026-08-27T08:38:50.379209002Z","duration":8628,"artifacts":{},"subCommands":[{"id":"sub-0","index":0,"type":"launchApp","yaml":"launchApp","status":"passed","startTime":"2026-08-27T08:38:41.75043117Z","endTime":"2026-08-27T08:38:45.987812996Z","duration":4237,"artifacts":{}},{"id":"sub-1","index":1,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"MENU\"","status":"passed","startTime":"2026-08-27T08:38:45.98782177Z","endTime":"2026-08-27T08:38:47.274621345Z","duration":1286,"artifacts":{}},{"id":"sub-2","index":2,"type":"tapOn","yaml":"tapOn: id=\"MENU\"","status":"passed","startTime":"2026-08-27T08:38:47.274627572Z","endTime":"2026-08-27T08:38:47.323239203Z","duration":48,"artifacts":{}},{"id":"sub-3","index":3,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:38:47.323245573Z","endTime":"2026-08-27T08:38:47.324528113Z","duration":1,"artifacts":{}},{"id":"sub-4","index":4,"type":"assertVisible","yaml":"assertVisible: text=\"History\"","status":"passed","startTime":"2026-08-27T08:38:47.324530054Z","endTime":"2026-08-27T08:38:48.18878794Z","duration":864,"artifacts":{}},{"id":"sub-5","index":5,"type":"tapOn","yaml":"tapOn: id=\"menu-logout-button\"","status":"passed","startTime":"2026-08-27T08:38:48.188793679Z","endTime":"2026-08-27T08:38:48.228826734Z","duration":40,"artifacts":{}},{"id":"sub-6","index":6,"type":"assertVisible","yaml":"assertVisible: text=\"Welcome to\"","status":"passed","startTime":"2026-08-27T08:38:48.228830152Z","endTime":"2026-08-27T08:38:50.375951117Z","duration":2147,"artifacts":{}},{"id":"sub-7","index":7,"type":"assertVisible","yaml":"assertVisible: text=\"Tastopia\"","status":"passed","startTime":"2026-08-27T08:38:50.37595423Z","endTime":"2026-08-27T08:38:50.379204745Z","duration":3,"artifacts":{}}]}],"artifacts":{}},{"id":"flow-003","name":"search-recipe","sourceFile":".maestro/search/search-recipe.yaml","device":{"id":"emulator-5554","name":"google Android SDK built for x86","platform":"android","osVersion":"27","isSimulator":true},"startTime":"2026-08-27T08:38:50.381099876Z","endTime":"2026-08-27T08:39:09.862115623Z","duration":19481,"onFlowStartCommands":[{"id":"sub-0","index":0,"type":"runFlow","yaml":"runFlow: ../common/login.yaml","status":"passed","startTime":"2026-08-27T08:38:50.381240258Z","endTime":"2026-08-27T08:39:05.801330494Z","duration":15420,"artifacts":{},"subCommands":[{"id":"sub-0","index":0,"type":"launchApp","yaml":"launchApp","status":"passed","startTime":"2026-08-27T08:38:50.381507521Z","endTime":"2026-08-27T08:38:54.565839822Z","duration":4184,"artifacts":{}},{"id":"sub-1","index":1,"type":"tapOn","yaml":"tapOn: id=\"welcome-sign-in-button\"","status":"passed","startTime":"2026-08-27T08:38:54.565848154Z","endTime":"2026-08-27T08:38:55.395144878Z","duration":829,"artifacts":{}},{"id":"sub-2","index":2,"type":"assertVisible","yaml":"assertVisible: id=\"login-identifier-input\"","status":"passed","startTime":"2026-08-27T08:38:55.395150651Z","endTime":"2026-08-27T08:38:56.300835636Z","duration":905,"artifacts":{}},{"id":"sub-3","index":3,"type":"tapOn","yaml":"tapOn: id=\"login-identifier-input\"","status":"passed","startTime":"2026-08-27T08:38:56.300842391Z","endTime":"2026-08-27T08:38:56.569544441Z","duration":268,"artifacts":{}},{"id":"sub-4","index":4,"type":"inputText","yaml":"inputText: \"***\"","status":"passed","startTime":"2026-08-27T08:38:56.569547851Z","endTime":"2026-08-27T08:38:56.897546593Z","duration":327,"artifacts":{}},{"id":"sub-5","index":5,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:38:56.897552119Z","endTime":"2026-08-27T08:38:56.911207845Z","duration":13,"artifacts":{}},{"id":"sub-6","index":6,"type":"assertVisible","yaml":"assertVisible: id=\"login-password-input\"","status":"passed","startTime":"2026-08-27T08:38:56.911211264Z","endTime":"2026-08-27T08:38:57.532824591Z","duration":621,"artifacts":{}},{"id":"sub-7","index":7,"type":"tapOn","yaml":"tapOn: id=\"login-password-input\"","status":"passed","startTime":"2026-08-27T08:38:57.532827862Z","endTime":"2026-08-27T08:38:58.21204789Z","duration":679,"artifacts":{}},{"id":"sub-8","index":8,"type":"inputText","yaml":"inputText: \"***\"","status":"passed","startTime":"2026-08-27T08:38:58.212051485Z","endTime":"2026-08-27T08:38:58.39047008Z","duration":177,"artifacts":{}},{"id":"sub-9","index":9,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:38:58.390480907Z","endTime":"2026-08-27T08:38:58.393018671Z","duration":2,"artifacts":{}},{"id":"sub-10","index":10,"type":"tapOn","yaml":"tapOn: id=\"login-submit-button\"","status":"passed","startTime":"2026-08-27T08:38:58.393021212Z","endTime":"2026-08-27T08:38:59.187308279Z","duration":794,"artifacts":{}},{"id":"sub-11","index":11,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"COMMUNITY\"","status":"passed","startTime":"2026-08-27T08:38:59.187310784Z","endTime":"2026-08-27T08:39:05.801322928Z","duration":6613,"artifacts":{}}]}],"commands":[{"id":"cmd-000","index":0,"type":"tapOn","yaml":"tapOn: id=\"SEARCH\"","status":"passed","startTime":"2026-08-27T08:39:05.801341301Z","endTime":"2026-08-27T08:39:05.863649908Z","duration":62,"params":{"selector":{"type":"id","value":"SEARCH"}},"element":{"found":true,"id":"00000000-0000-0014-ffff-ffff000000a1","bounds":{"x":232,"y":2136,"width":205,"height":93}},"artifacts":{}},{"id":"cmd-001","index":1,"type":"tapOn","yaml":"tapOn: id=\"search-recipe-input\"","status":"passed","startTime":"2026-08-27T08:39:05.864047183Z","endTime":"2026-08-27T08:39:07.340115531Z","duration":1476,"params":{"selector":{"type":"id","value":"search-recipe-input"}},"element":{"found":true,"id":"00000000-0000-0014-ffff-ffff00000104","text":"Enter recipe name...","bounds":{"x":142,"y":185,"width":709,"height":103}},"artifacts":{}},{"id":"cmd-002","index":2,"type":"inputText","yaml":"inputText: \"a\"","status":"passed","startTime":"2026-08-27T08:39:07.340437621Z","endTime":"2026-08-27T08:39:07.398904757Z","duration":58,"params":{"text":"a"},"artifacts":{}},{"id":"cmd-003","index":3,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:39:07.399249665Z","endTime":"2026-08-27T08:39:07.408083134Z","duration":8,"artifacts":{}},{"id":"cmd-004","index":4,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"search-recipe-item\"","status":"passed","startTime":"2026-08-27T08:39:07.408677518Z","endTime":"2026-08-27T08:39:09.861796014Z","duration":2453,"element":{"found":true,"id":"00000000-0000-0014-ffff-ffff00000123","bounds":{"x":42,"y":468,"width":996,"height":1011}},"artifacts":{}}],"onFlowCompleteCommands":[{"id":"sub-0","index":0,"type":"runFlow","yaml":"runFlow: ../common/logout.yaml","status":"passed","startTime":"2026-08-27T08:39:09.867561804Z","endTime":"2026-08-27T08:39:18.578983336Z","duration":8711,"artifacts":{},"subCommands":[{"id":"sub-0","index":0,"type":"launchApp","yaml":"launchApp","status":"passed","startTime":"2026-08-27T08:39:09.867708772Z","endTime":"2026-08-27T08:39:14.259672619Z","duration":4391,"artifacts":{}},{"id":"sub-1","index":1,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"MENU\"","status":"passed","startTime":"2026-08-27T08:39:14.259681233Z","endTime":"2026-08-27T08:39:15.439497038Z","duration":1179,"artifacts":{}},{"id":"sub-2","index":2,"type":"tapOn","yaml":"tapOn: id=\"MENU\"","status":"passed","startTime":"2026-08-27T08:39:15.43950281Z","endTime":"2026-08-27T08:39:15.497241952Z","duration":57,"artifacts":{}},{"id":"sub-3","index":3,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:39:15.497248078Z","endTime":"2026-08-27T08:39:15.504004074Z","duration":6,"artifacts":{}},{"id":"sub-4","index":4,"type":"assertVisible","yaml":"assertVisible: text=\"History\"","status":"passed","startTime":"2026-08-27T08:39:15.504006499Z","endTime":"2026-08-27T08:39:15.883259104Z","duration":378,"artifacts":{}},{"id":"sub-5","index":5,"type":"tapOn","yaml":"tapOn: id=\"menu-logout-button\"","status":"passed","startTime":"2026-08-27T08:39:15.883268558Z","endTime":"2026-08-27T08:39:16.679655095Z","duration":796,"artifacts":{}},{"id":"sub-6","index":6,"type":"assertVisible","yaml":"assertVisible: text=\"Welcome to\"","status":"passed","startTime":"2026-08-27T08:39:16.679658856Z","endTime":"2026-08-27T08:39:18.574847146Z","duration":1895,"artifacts":{}},{"id":"sub-7","index":7,"type":"assertVisible","yaml":"assertVisible: text=\"Tastopia\"","status":"passed","startTime":"2026-08-27T08:39:18.574850583Z","endTime":"2026-08-27T08:39:18.578978887Z","duration":4,"artifacts":{}}]}],"artifacts":{}},{"id":"flow-004","name":"search-user","sourceFile":".maestro/search/search-user.yaml","device":{"id":"emulator-5554","name":"google Android SDK built for x86","platform":"android","osVersion":"27","isSimulator":true},"startTime":"2026-08-27T08:39:18.591361154Z","endTime":"2026-08-27T08:39:37.379012566Z","duration":18787,"onFlowStartCommands":[{"id":"sub-0","index":0,"type":"runFlow","yaml":"runFlow: ../common/login.yaml","status":"passed","startTime":"2026-08-27T08:39:18.591569537Z","endTime":"2026-08-27T08:39:31.987468409Z","duration":13395,"artifacts":{},"subCommands":[{"id":"sub-0","index":0,"type":"launchApp","yaml":"launchApp","status":"passed","startTime":"2026-08-27T08:39:18.591831804Z","endTime":"2026-08-27T08:39:22.767926035Z","duration":4176,"artifacts":{}},{"id":"sub-1","index":1,"type":"tapOn","yaml":"tapOn: id=\"welcome-sign-in-button\"","status":"passed","startTime":"2026-08-27T08:39:22.76793274Z","endTime":"2026-08-27T08:39:23.627987222Z","duration":860,"artifacts":{}},{"id":"sub-2","index":2,"type":"assertVisible","yaml":"assertVisible: id=\"login-identifier-input\"","status":"passed","startTime":"2026-08-27T08:39:23.62799297Z","endTime":"2026-08-27T08:39:24.384023302Z","duration":755,"artifacts":{}},{"id":"sub-3","index":3,"type":"tapOn","yaml":"tapOn: id=\"login-identifier-input\"","status":"passed","startTime":"2026-08-27T08:39:24.384030404Z","endTime":"2026-08-27T08:39:24.646970074Z","duration":262,"artifacts":{}},{"id":"sub-4","index":4,"type":"inputText","yaml":"inputText: \"***\"","status":"passed","startTime":"2026-08-27T08:39:24.646973462Z","endTime":"2026-08-27T08:39:25.266928187Z","duration":619,"artifacts":{}},{"id":"sub-5","index":5,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:39:25.266936121Z","endTime":"2026-08-27T08:39:25.273811933Z","duration":6,"artifacts":{}},{"id":"sub-6","index":6,"type":"assertVisible","yaml":"assertVisible: id=\"login-password-input\"","status":"passed","startTime":"2026-08-27T08:39:25.273814855Z","endTime":"2026-08-27T08:39:25.816774123Z","duration":542,"artifacts":{}},{"id":"sub-7","index":7,"type":"tapOn","yaml":"tapOn: id=\"login-password-input\"","status":"passed","startTime":"2026-08-27T08:39:25.816777332Z","endTime":"2026-08-27T08:39:26.497690433Z","duration":680,"artifacts":{}},{"id":"sub-8","index":8,"type":"inputText","yaml":"inputText: \"***\"","status":"passed","startTime":"2026-08-27T08:39:26.497694098Z","endTime":"2026-08-27T08:39:26.746674618Z","duration":248,"artifacts":{}},{"id":"sub-9","index":9,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:39:26.746680758Z","endTime":"2026-08-27T08:39:26.748741022Z","duration":2,"artifacts":{}},{"id":"sub-10","index":10,"type":"tapOn","yaml":"tapOn: id=\"login-submit-button\"","status":"passed","startTime":"2026-08-27T08:39:26.748743701Z","endTime":"2026-08-27T08:39:27.65873773Z","duration":909,"artifacts":{}},{"id":"sub-11","index":11,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"COMMUNITY\"","status":"passed","startTime":"2026-08-27T08:39:27.658744467Z","endTime":"2026-08-27T08:39:31.987459562Z","duration":4328,"artifacts":{}}]}],"commands":[{"id":"cmd-000","index":0,"type":"tapOn","yaml":"tapOn: id=\"SEARCH\"","status":"passed","startTime":"2026-08-27T08:39:31.987484405Z","endTime":"2026-08-27T08:39:32.276979943Z","duration":289,"params":{"selector":{"type":"id","value":"SEARCH"}},"element":{"found":true,"id":"00000000-0000-0018-ffff-ffff00000072","bounds":{"x":232,"y":2136,"width":205,"height":93}},"artifacts":{}},{"id":"cmd-001","index":1,"type":"tapOn","yaml":"tapOn: id=\"search-mode-toggle-button\"","status":"passed","startTime":"2026-08-27T08:39:32.277316229Z","endTime":"2026-08-27T08:39:33.06265931Z","duration":785,"params":{"selector":{"type":"id","value":"search-mode-toggle-button"}},"element":{"found":true,"id":"00000000-0000-0018-ffff-ffff0000010e","bounds":{"x":342,"y":81,"width":396,"height":66}},"artifacts":{}},{"id":"cmd-002","index":2,"type":"tapOn","yaml":"tapOn: id=\"search-user-input\"","status":"passed","startTime":"2026-08-27T08:39:33.063002879Z","endTime":"2026-08-27T08:39:34.408707474Z","duration":1345,"params":{"selector":{"type":"id","value":"search-user-input"}},"element":{"found":true,"id":"00000000-0000-0018-ffff-ffff00000119","text":"Enter username or display name...","bounds":{"x":142,"y":185,"width":808,"height":103}},"artifacts":{}},{"id":"cmd-003","index":3,"type":"inputText","yaml":"inputText: \"a\"","status":"passed","startTime":"2026-08-27T08:39:34.40906456Z","endTime":"2026-08-27T08:39:34.444299835Z","duration":35,"params":{"text":"a"},"artifacts":{}},{"id":"cmd-004","index":4,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:39:34.444707634Z","endTime":"2026-08-27T08:39:34.496007699Z","duration":51,"artifacts":{}},{"id":"cmd-005","index":5,"type":"assertVisible","yaml":"assertVisible: id=\"search-user-follow-button\"","status":"passed","startTime":"2026-08-27T08:39:34.496329875Z","endTime":"2026-08-27T08:39:36.608299838Z","duration":2111,"params":{"selector":{"type":"id","value":"search-user-follow-button"}},"element":{"found":true,"id":"00000000-0000-0018-ffff-ffff00000139","bounds":{"x":0,"y":0,"width":0,"height":0}},"artifacts":{}},{"id":"cmd-006","index":6,"type":"tapOn","yaml":"tapOn: id=\"search-user-follow-button\"","status":"passed","startTime":"2026-08-27T08:39:36.608638375Z","endTime":"2026-08-27T08:39:36.6495485Z","duration":40,"params":{"selector":{"type":"id","value":"search-user-follow-button"}},"element":{"found":true,"id":"00000000-0000-0018-ffff-ffff00000139","bounds":{"x":760,"y":431,"width":278,"height":91}},"artifacts":{}},{"id":"cmd-007","index":7,"type":"assertVisible","yaml":"assertVisible: text=\"Unfollow\"","status":"passed","startTime":"2026-08-27T08:39:36.649873081Z","endTime":"2026-08-27T08:39:36.691312045Z","duration":41,"params":{"selector":{"type":"text","value":"Unfollow"}},"element":{"found":true,"id":"00000000-0000-0018-ffff-ffff0000013d","bounds":{"x":0,"y":0,"width":0,"height":0}},"artifacts":{}},{"id":"cmd-008","index":8,"type":"tapOn","yaml":"tapOn: id=\"search-user-follow-button\"","status":"passed","startTime":"2026-08-27T08:39:36.691612535Z","endTime":"2026-08-27T08:39:37.364860494Z","duration":673,"params":{"selector":{"type":"id","value":"search-user-follow-button"}},"element":{"found":true,"id":"00000000-0000-0018-ffff-ffff00000139","bounds":{"x":760,"y":431,"width":278,"height":91}},"artifacts":{}},{"id":"cmd-009","index":9,"type":"assertVisible","yaml":"assertVisible: text=\"Follow\"","status":"passed","startTime":"2026-08-27T08:39:37.365230878Z","endTime":"2026-08-27T08:39:37.378701978Z","duration":13,"params":{"selector":{"type":"text","value":"Follow"}},"element":{"found":true,"id":"00000000-0000-0018-ffff-ffff0000013d","bounds":{"x":0,"y":0,"width":0,"height":0}},"artifacts":{}}],"onFlowCompleteCommands":[{"id":"sub-0","index":0,"type":"runFlow","yaml":"runFlow: ../common/logout.yaml","status":"passed","startTime":"2026-08-27T08:39:37.388429217Z","endTime":"2026-08-27T08:39:46.029100356Z","duration":8640,"artifacts":{},"subCommands":[{"id":"sub-0","index":0,"type":"launchApp","yaml":"launchApp","status":"passed","startTime":"2026-08-27T08:39:37.388592183Z","endTime":"2026-08-27T08:39:41.678543008Z","duration":4289,"artifacts":{}},{"id":"sub-1","index":1,"type":"extendedWaitUntil","yaml":"extendedWaitUntil: visible id=\"MENU\"","status":"passed","startTime":"2026-08-27T08:39:41.678548977Z","endTime":"2026-08-27T08:39:42.867622778Z","duration":1189,"artifacts":{}},{"id":"sub-2","index":2,"type":"tapOn","yaml":"tapOn: id=\"MENU\"","status":"passed","startTime":"2026-08-27T08:39:42.867629292Z","endTime":"2026-08-27T08:39:42.919288996Z","duration":51,"artifacts":{}},{"id":"sub-3","index":3,"type":"hideKeyboard","yaml":"hideKeyboard","status":"passed","startTime":"2026-08-27T08:39:42.919294723Z","endTime":"2026-08-27T08:39:42.92228451Z","duration":2,"artifacts":{}},{"id":"sub-4","index":4,"type":"assertVisible","yaml":"assertVisible: text=\"History\"","status":"passed","startTime":"2026-08-27T08:39:42.922288994Z","endTime":"2026-08-27T08:39:43.888278083Z","duration":965,"artifacts":{}},{"id":"sub-5","index":5,"type":"tapOn","yaml":"tapOn: id=\"menu-logout-button\"","status":"passed","startTime":"2026-08-27T08:39:43.888285215Z","endTime":"2026-08-27T08:39:44.13553602Z","duration":247,"artifacts":{}},{"id":"sub-6","index":6,"type":"assertVisible","yaml":"assertVisible: text=\"Welcome to\"","status":"passed","startTime":"2026-08-27T08:39:44.135538276Z","endTime":"2026-08-27T08:39:46.025223718Z","duration":1889,"artifacts":{}},{"id":"sub-7","index":7,"type":"assertVisible","yaml":"assertVisible: text=\"Tastopia\"","status":"passed","startTime":"2026-08-27T08:39:46.025228153Z","endTime":"2026-08-27T08:39:46.029095187Z","duration":3,"artifacts":{}}]}],"artifacts":{}}],"index":{"version":"1.0.0","updateSeq":42,"status":"passed","startTime":"2026-08-27T08:36:40.528662591Z","endTime":"2026-08-27T08:39:46.029497264Z","lastUpdated":"2026-08-27T08:39:46.033919003Z","device":{"id":"emulator-5554","name":"google Android SDK built for x86","platform":"android","osVersion":"27","isSimulator":true},"app":{"id":"com.tastopia.app","version":"1.0.0"},"maestroRunner":{"version":"v1.1.14","driver":"uiautomator2"},"summary":{"total":5,"passed":5,"failed":0,"skipped":0,"running":0,"pending":0},"flows":[{"index":0,"id":"flow-000","name":"comment-recipe","sourceFile":".maestro/community/comment-recipe.yaml","device":{"id":"emulator-5554","name":"google Android SDK built for x86","platform":"android","osVersion":"27","isSimulator":true},"dataFile":"flows/flow-000.json","assetsDir":"assets/flow-000","status":"passed","updateSeq":7,"startTime":"2026-08-27T08:36:40.594387975Z","endTime":"2026-08-27T08:37:08.60531857Z","duration":28010,"lastUpdated":"2026-08-27T08:37:08.605585016Z","commands":{"total":8,"passed":8,"failed":0,"skipped":0,"running":0,"pending":0},"attempts":0},{"index":1,"id":"flow-001","name":"community","sourceFile":".maestro/community/community.yaml","device":{"id":"emulator-5554","name":"google Android SDK built for x86","platform":"android","osVersion":"27","isSimulator":true},"dataFile":"flows/flow-001.json","assetsDir":"assets/flow-001","status":"passed","updateSeq":9,"startTime":"2026-08-27T08:37:33.256844079Z","endTime":"2026-08-27T08:37:54.220813993Z","duration":20963,"lastUpdated":"2026-08-27T08:37:54.22244606Z","commands":{"total":13,"passed":13,"failed":0,"skipped":0,"running":0,"pending":0},"attempts":0},{"index":2,"id":"flow-002","name":"cooking-mode","sourceFile":".maestro/community/cooking-mode.yaml","device":{"id":"emulator-5554","name":"google Android SDK built for x86","platform":"android","osVersion":"27","isSimulator":true},"dataFile":"flows/flow-002.json","assetsDir":"assets/flow-002","status":"passed","updateSeq":10,"startTime":"2026-08-27T08:38:04.200606928Z","endTime":"2026-08-27T08:38:41.746067628Z","duration":37545,"lastUpdated":"2026-08-27T08:38:41.746563355Z","commands":{"total":10,"passed":10,"failed":0,"skipped":0,"running":0,"pending":0},"attempts":0},{"index":3,"id":"flow-003","name":"search-recipe","sourceFile":".maestro/search/search-recipe.yaml","device":{"id":"emulator-5554","name":"google Android SDK built for x86","platform":"android","osVersion":"27","isSimulator":true},"dataFile":"flows/flow-003.json","assetsDir":"assets/flow-003","status":"passed","updateSeq":4,"startTime":"2026-08-27T08:38:50.381099876Z","endTime":"2026-08-27T08:39:09.862115623Z","duration":19481,"lastUpdated":"2026-08-27T08:39:09.86237695Z","commands":{"total":5,"passed":5,"failed":0,"skipped":0,"running":0,"pending":0},"attempts":0},{"index":4,"id":"flow-004","name":"search-user","sourceFile":".maestro/search/search-user.yaml","device":{"id":"emulator-5554","name":"google Android SDK built for x86","platform":"android","osVersion":"27","isSimulator":true},"dataFile":"flows/flow-004.json","assetsDir":"assets/flow-004","status":"passed","updateSeq":7,"startTime":"2026-08-27T08:39:18.591361154Z","endTime":"2026-08-27T08:39:37.379012566Z","duration":18787,"lastUpdated":"2026-08-27T08:39:37.379223359Z","commands":{"total":10,"passed":10,"failed":0,"skipped":0,"running":0,"pending":0},"attempts":0}]}};
+        let selectedFlowIndex = -1;
+
+        
+        let lastUpdateSeq = reportData.index.updateSeq || 0;
+        let lastFlowSeq = {};
+        reportData.index.flows.forEach(f => { lastFlowSeq[f.id] = f.updateSeq || 0; });
+        let isPolling = true;
+        const POLL_INTERVAL = 500; 
+
+        
+        let activeFilters = {
+            status: 'all',
+            tags: new Set(),
+            platforms: new Set(),
+            osVersions: new Set()
+        };
+
+        
+        function initializeFilters() {
+            const tags = new Set();
+            const platforms = new Set();
+            const osVersions = new Set();
+
+            reportData.index.flows.forEach(flow => {
+                
+                if (flow.tags && flow.tags.length > 0) {
+                    flow.tags.forEach(tag => tags.add(tag));
+                }
+
+                
+                if (flow.device && flow.device.platform) {
+                    platforms.add(flow.device.platform);
+                }
+
+                
+                if (flow.device && flow.device.osVersion) {
+                    osVersions.add(flow.device.osVersion);
+                }
+            });
+
+            
+            if (tags.size > 0) {
+                const tagFiltersDiv = document.getElementById('tag-filters');
+                tagFiltersDiv.style.display = 'flex';
+                const label = document.createElement('span');
+                label.className = 'filter-label';
+                label.textContent = 'Tags:';
+                tagFiltersDiv.appendChild(label);
+
+                Array.from(tags).sort().forEach(tag => {
+                    const btn = document.createElement('button');
+                    btn.className = 'filter-btn';
+                    btn.textContent = tag;
+                    btn.dataset.filterType = 'tag';
+                    btn.dataset.filterValue = tag;
+                    btn.addEventListener('click', () => toggleFilter('tags', tag, btn));
+                    tagFiltersDiv.appendChild(btn);
+                });
+            }
+
+            
+            if (platforms.size > 1 || osVersions.size > 1) {
+                const deviceFiltersDiv = document.getElementById('device-filters');
+                deviceFiltersDiv.style.display = 'flex';
+                const label = document.createElement('span');
+                label.className = 'filter-label';
+                label.textContent = 'Device:';
+                deviceFiltersDiv.appendChild(label);
+
+                
+                if (platforms.size > 1) {
+                    Array.from(platforms).sort().forEach(platform => {
+                        const btn = document.createElement('button');
+                        btn.className = 'filter-btn';
+                        btn.textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
+                        btn.dataset.filterType = 'platform';
+                        btn.dataset.filterValue = platform;
+                        btn.addEventListener('click', () => toggleFilter('platforms', platform, btn));
+                        deviceFiltersDiv.appendChild(btn);
+                    });
+                }
+
+                
+                if (osVersions.size > 1) {
+                    Array.from(osVersions).sort().forEach(version => {
+                        const btn = document.createElement('button');
+                        btn.className = 'filter-btn';
+                        btn.textContent = version;
+                        btn.dataset.filterType = 'osVersion';
+                        btn.dataset.filterValue = version;
+                        btn.addEventListener('click', () => toggleFilter('osVersions', version, btn));
+                        deviceFiltersDiv.appendChild(btn);
+                    });
+                }
+            }
+        }
+
+        
+        function toggleFilter(filterType, value, button) {
+            const filterSet = activeFilters[filterType];
+            if (filterSet.has(value)) {
+                filterSet.delete(value);
+                button.classList.remove('active');
+            } else {
+                filterSet.add(value);
+                button.classList.add('active');
+            }
+            applyAllFilters();
+        }
+
+        
+        function applyAllFilters() {
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+
+            document.querySelectorAll('.flow-item').forEach(item => {
+                let visible = true;
+
+                
+                if (activeFilters.status !== 'all' && item.dataset.status !== activeFilters.status) {
+                    visible = false;
+                }
+
+                
+                if (searchQuery && !item.dataset.name.toLowerCase().includes(searchQuery)) {
+                    visible = false;
+                }
+
+                
+                if (activeFilters.tags.size > 0) {
+                    const itemTags = item.dataset.tags ? item.dataset.tags.split(',') : [];
+                    const hasMatchingTag = itemTags.some(tag => activeFilters.tags.has(tag));
+                    if (!hasMatchingTag) {
+                        visible = false;
+                    }
+                }
+
+                
+                if (activeFilters.platforms.size > 0) {
+                    const platform = item.dataset.platform;
+                    if (!activeFilters.platforms.has(platform)) {
+                        visible = false;
+                    }
+                }
+
+                
+                if (activeFilters.osVersions.size > 0) {
+                    const osVersion = item.dataset.osVersion;
+                    if (!activeFilters.osVersions.has(osVersion)) {
+                        visible = false;
+                    }
+                }
+
+                item.style.display = visible ? '' : 'none';
+            });
+        }
+
+        
+        function updatePieChart() {
+            const total = reportData.index.summary.total || 1;
+            const passed = reportData.index.summary.passed || 0;
+            const failed = reportData.index.summary.failed || 0;
+            const skipped = reportData.index.summary.skipped || 0;
+            const running = reportData.index.summary.running || 0;
+
+            const passedPct = (passed / total) * 100;
+            const failedPct = (failed / total) * 100;
+            const skippedPct = (skipped / total) * 100;
+            const runningPct = (running / total) * 100;
+
+            const pieChart = document.getElementById('pie-chart');
+            pieChart.style.background = 'conic-gradient(' +
+                'var(--passed) 0% ' + passedPct + '%, ' +
+                'var(--failed) ' + passedPct + '% ' + (passedPct + failedPct) + '%, ' +
+                'var(--running) ' + (passedPct + failedPct) + '% ' + (passedPct + failedPct + runningPct) + '%, ' +
+                'var(--skipped) ' + (passedPct + failedPct + runningPct) + '% ' + (passedPct + failedPct + runningPct + skippedPct) + '%, ' +
+                'var(--pending) ' + (passedPct + failedPct + runningPct + skippedPct) + '% 100%)';
+
+            pieChart.innerHTML = '<div class="pie-center">' + Math.round(passedPct) + '%</div>';
+
+            
+            document.getElementById('legend-passed').querySelector('span:last-child').textContent = passed + ' passed';
+            document.getElementById('legend-failed').querySelector('span:last-child').textContent = failed + ' failed';
+
+            const runningEl = document.getElementById('legend-running');
+            if (running > 0) {
+                runningEl.style.display = '';
+                runningEl.querySelector('span:last-child').textContent = running + ' running';
+            } else {
+                runningEl.style.display = 'none';
+            }
+
+            const skippedEl = document.getElementById('legend-skipped');
+            if (skipped > 0) {
+                skippedEl.style.display = '';
+                skippedEl.querySelector('span:last-child').textContent = skipped + ' skipped';
+            } else {
+                skippedEl.style.display = 'none';
+            }
+        }
+        updatePieChart();
+
+        
+        function updateFlowList() {
+            const flowItems = document.querySelectorAll('.flow-item');
+            flowItems.forEach((item, i) => {
+                const entry = reportData.index.flows[i];
+                if (!entry) return;
+
+                
+                const oldStatus = item.dataset.status;
+                const newStatus = entry.status;
+                if (oldStatus !== newStatus) {
+                    item.classList.remove(oldStatus);
+                    item.classList.add(newStatus);
+                    item.dataset.status = newStatus;
+
+                    
+                    const dot = item.querySelector('.status-dot');
+                    if (dot) {
+                        dot.classList.remove(oldStatus);
+                        dot.classList.add(newStatus);
+                    }
+                }
+
+                
+                const durationSpan = item.querySelector('.flow-meta span:last-child');
+                if (durationSpan && entry.duration) {
+                    durationSpan.textContent = formatDuration(entry.duration);
+                }
+            });
+
+            
+            const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+            const failedBtn = document.querySelector('.filter-btn[data-filter="failed"]');
+            const passedBtn = document.querySelector('.filter-btn[data-filter="passed"]');
+            if (allBtn) allBtn.textContent = 'All (' + reportData.index.summary.total + ')';
+            if (failedBtn) failedBtn.textContent = 'Failed (' + reportData.index.summary.failed + ')';
+            if (passedBtn) passedBtn.textContent = 'Passed (' + reportData.index.summary.passed + ')';
+        }
+
+        
+        function updateDetailIfNeeded(changedFlowIds) {
+            if (selectedFlowIndex < 0) return;
+            const selectedFlow = reportData.index.flows[selectedFlowIndex];
+            if (selectedFlow && changedFlowIds.includes(selectedFlow.id)) {
+                renderDetail(selectedFlowIndex);
+            }
+        }
+
+        
+        async function poll() {
+            if (!isPolling) return;
+
+            try {
+                
+                const indexResp = await fetch('report.json?t=' + Date.now());
+                if (!indexResp.ok) {
+                    schedulePoll();
+                    return;
+                }
+                const newIndex = await indexResp.json();
+
+                
+                if (newIndex.updateSeq === lastUpdateSeq) {
+                    schedulePoll();
+                    return;
+                }
+
+                
+                const changedFlowIds = [];
+                for (const entry of newIndex.flows) {
+                    const oldSeq = lastFlowSeq[entry.id] || 0;
+                    if (entry.updateSeq > oldSeq) {
+                        changedFlowIds.push(entry.id);
+                        lastFlowSeq[entry.id] = entry.updateSeq;
+                    }
+                }
+
+                
+                for (const flowId of changedFlowIds) {
+                    const flowIdx = newIndex.flows.findIndex(f => f.id === flowId);
+                    if (flowIdx >= 0) {
+                        const flowResp = await fetch(newIndex.flows[flowIdx].dataFile + '?t=' + Date.now());
+                        if (flowResp.ok) {
+                            reportData.flows[flowIdx] = await flowResp.json();
+                        }
+                    }
+                }
+
+                
+                reportData.index = newIndex;
+                lastUpdateSeq = newIndex.updateSeq;
+
+                
+                updatePieChart();
+                updateFlowList();
+                updateDetailIfNeeded(changedFlowIds);
+
+                
+                if (isTerminalStatus(newIndex.status)) {
+                    isPolling = false;
+                    return;
+                }
+            } catch (e) {
+                
+            }
+
+            schedulePoll();
+        }
+
+        function isTerminalStatus(status) {
+            return status === 'passed' || status === 'failed' || status === 'skipped';
+        }
+
+        function schedulePoll() {
+            if (isPolling) {
+                setTimeout(poll, POLL_INTERVAL);
+            }
+        }
+
+        
+        if (window.location.protocol !== 'file:' && !isTerminalStatus(reportData.index.status)) {
+            schedulePoll();
+        } else {
+            isPolling = false;
+        }
+
+        
+        document.querySelectorAll('.flow-item').forEach(item => {
+            item.addEventListener('click', () => selectFlow(parseInt(item.dataset.flowIndex)));
+        });
+
+        
+        initializeFilters();
+
+        
+        document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn[data-filter]').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeFilters.status = btn.dataset.filter;
+                applyAllFilters();
+            });
+        });
+
+        
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            applyAllFilters();
+        });
+
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT') {
+                if (e.key === 'Escape') e.target.blur();
+                return;
+            }
+
+            const visibleFlows = Array.from(document.querySelectorAll('.flow-item')).filter(f => f.style.display !== 'none');
+            const currentIdx = visibleFlows.findIndex(f => f.classList.contains('selected'));
+
+            switch (e.key) {
+                case '/':
+                    e.preventDefault();
+                    document.getElementById('search-input').focus();
+                    break;
+                case 'j':
+                    if (currentIdx < visibleFlows.length - 1) {
+                        selectFlow(parseInt(visibleFlows[currentIdx + 1].dataset.flowIndex));
+                    } else if (currentIdx === -1 && visibleFlows.length > 0) {
+                        selectFlow(parseInt(visibleFlows[0].dataset.flowIndex));
+                    }
+                    break;
+                case 'k':
+                    if (currentIdx > 0) {
+                        selectFlow(parseInt(visibleFlows[currentIdx - 1].dataset.flowIndex));
+                    }
+                    break;
+                case 'n':
+                    const failedFlows = visibleFlows.filter(f => f.dataset.status === 'failed');
+                    if (failedFlows.length > 0) {
+                        const currentFailedIdx = failedFlows.findIndex(f => f.classList.contains('selected'));
+                        const nextIdx = (currentFailedIdx + 1) % failedFlows.length;
+                        selectFlow(parseInt(failedFlows[nextIdx].dataset.flowIndex));
+                    }
+                    break;
+                case 'Escape':
+                    closeModal();
+                    break;
+            }
+        });
+
+        function selectFlow(index) {
+            selectedFlowIndex = index;
+            document.querySelectorAll('.flow-item').forEach(f => f.classList.remove('selected'));
+            const item = document.querySelector('.flow-item[data-flow-index="' + index + '"]');
+            if (item) {
+                item.classList.add('selected');
+                item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            
+            window.location.hash = 'flow-' + index;
+
+            renderDetail(index);
+        }
+
+        function renderDetail(flowIndex) {
+            const flow = reportData.flows[flowIndex];
+            const indexEntry = reportData.index.flows[flowIndex];
+            if (!flow) return;
+
+            document.getElementById('empty-state').style.display = 'none';
+            document.getElementById('detail-content').style.display = '';
+
+            document.getElementById('detail-title').textContent = flow.name;
+
+            
+            let infoHtml = '<div class="info-item"><span class="info-label">Status</span><span class="info-value">' + indexEntry.status + '</span></div>' +
+                '<div class="info-item"><span class="info-label">Duration</span><span class="info-value">' + formatDuration(indexEntry.duration) + '</span></div>' +
+                '<div class="info-item"><span class="info-label">Steps</span><span class="info-value">' + flow.commands.length + '</span></div>';
+
+            
+            if (flow.device && flow.device.name) {
+                infoHtml += '<div class="info-item"><span class="info-label">Device</span><span class="info-value">' +
+                    escapeHtml(flow.device.name) +
+                    (flow.device.osVersion ? ' (' + escapeHtml(flow.device.osVersion) + ')' : '') +
+                    '</span></div>';
+            }
+
+            infoHtml += '<div class="info-item"><span class="info-label">Source</span><span class="info-value">' + flow.sourceFile + '</span></div>';
+            document.getElementById('detail-info').innerHTML = infoHtml;
+
+            
+            let commandsHtml = '';
+            if (flow.onFlowStartCommands && flow.onFlowStartCommands.length > 0) {
+                commandsHtml += renderHookSection('onFlowStart hook', flow.onFlowStartCommands, flowIndex, 'hook-onFlowstart');
+            }
+            commandsHtml += renderCommands(flow.commands, flowIndex, 0, 'main');
+            if (flow.onFlowCompleteCommands && flow.onFlowCompleteCommands.length > 0) {
+                commandsHtml += renderHookSection('onFlowComplete hook', flow.onFlowCompleteCommands, flowIndex, 'hook-');
+            }
+            document.getElementById('command-list').innerHTML = commandsHtml;
+        }
+
+        function renderHookSection(title, commands, flowIndex, sectionKey) {
+            let html = '<details class="hook-section">' +
+                '<summary class="hook-summary">' + escapeHtml(title) + ' (' + commands.length + ')</summary>' +
+                '<div class="hook-commands">';
+            html += renderCommands(commands, flowIndex, 0, sectionKey);
+            html += '</div></details>';
+            return html;
+        }
+
+        function renderCommands(commands, flowIndex, depth, pathPrefix) {
+            let html = '';
+            commands.forEach((cmd, i) => {
+                html += renderCommand(cmd, flowIndex, i, depth, pathPrefix);
+            });
+            return html;
+        }
+
+        function renderCommand(cmd, flowIndex, index, depth, pathPrefix) {
+            const status = cmd.status || 'pending';
+            const keyValue = extractKeyValue(cmd);
+            const hasSubCommands = cmd.subCommands && cmd.subCommands.length > 0;
+            const hasScreenshots = cmd.artifacts && (cmd.artifacts.screenshotBefore || cmd.artifacts.screenshotAfter);
+            const hasDetails = cmd.yaml || cmd.error || hasScreenshots;
+            const isExpandable = hasDetails || hasSubCommands;
+            const commandPath = pathPrefix + '-' + index;
+
+            let html = '<div class="command-item ' + status + (hasSubCommands ? ' has-subcommands' : '') + '" id="flow-' + flowIndex + '-cmd-' + commandPath + '-d' + depth + '" onclick="toggleCommand(this, event)">';
+
+            
+            html += '<div class="command-summary">' +
+                '<span class="command-status ' + status + '"></span>' +
+                '<span class="command-type">' + escapeHtml(cmd.type) + '</span>' +
+                '<span class="command-value">' + escapeHtml(keyValue) + '</span>' +
+                '<span class="command-duration">' + formatDuration(cmd.duration) + '</span>';
+            if (hasScreenshots) {
+                html += '<span class="command-screenshot-icon" title="Screenshot available"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span>';
+            }
+            if (isExpandable) {
+                html += '<span class="command-expand-icon">▶</span>';
+            }
+            html += '</div>';
+
+            
+            if (isExpandable) {
+                html += '<div class="command-details">';
+
+                if (cmd.yaml && !hasSubCommands) {
+                    html += '<div class="command-yaml">' + escapeHtml(cmd.yaml) + '</div>';
+                }
+
+                if (cmd.error) {
+                    html += '<div class="command-error">' +
+                        '<div class="error-type">' + escapeHtml(cmd.error.type) + '</div>' +
+                        '<div class="error-message">' + escapeHtml(cmd.error.message) + '</div>';
+                    if (cmd.error.suggestion) {
+                        html += '<div class="error-suggestion">💡 ' + escapeHtml(cmd.error.suggestion) + '</div>';
+                    }
+                    html += '</div>';
+                }
+
+                if (cmd.artifacts && (cmd.artifacts.screenshotBefore || cmd.artifacts.screenshotAfter)) {
+                    html += '<div class="command-screenshots">';
+                    if (cmd.artifacts.screenshotBefore) {
+                        html += '<img class="screenshot" src="' + cmd.artifacts.screenshotBefore + '" onclick="event.stopPropagation(); openModal(this.src)" title="Before">';
+                    }
+                    if (cmd.artifacts.screenshotAfter) {
+                        html += '<img class="screenshot" src="' + cmd.artifacts.screenshotAfter + '" onclick="event.stopPropagation(); openModal(this.src)" title="After">';
+                    }
+                    html += '</div>';
+                }
+
+                
+                if (hasSubCommands) {
+                    html += '<div class="sub-commands">';
+                    html += renderCommands(cmd.subCommands, flowIndex, depth + 1, commandPath);
+                    html += '</div>';
+                }
+
+                html += '</div>';
+            }
+
+            html += '</div>';
+            return html;
+        }
+
+        function extractKeyValue(cmd) {
+            
+            if (cmd.params) {
+                if (cmd.params.selector && cmd.params.selector.value) {
+                    return cmd.params.selector.value;
+                }
+                if (cmd.params.text) {
+                    return cmd.params.text;
+                }
+                if (cmd.params.direction) {
+                    return cmd.params.direction;
+                }
+            }
+            
+            if (cmd.label && cmd.label !== cmd.type) {
+                return cmd.label;
+            }
+            return '';
+        }
+
+        function toggleCommand(element, event) {
+            if (event) event.stopPropagation();
+            element.classList.toggle('expanded');
+        }
+
+        function formatDuration(ms) {
+            if (!ms) return '-';
+            if (ms < 1000) return ms + 'ms';
+            if (ms < 60000) return (ms / 1000).toFixed(1) + 's';
+            return Math.floor(ms / 60000) + 'm ' + Math.floor((ms % 60000) / 1000) + 's';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function openModal(src) {
+            document.getElementById('modal-image').src = src;
+            document.getElementById('image-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('image-modal').classList.remove('active');
+        }
+
+        
+        function handleHash() {
+            const hash = window.location.hash;
+            if (hash.startsWith('#flow-')) {
+                const parts = hash.substring(1).split('-');
+                if (parts.length >= 2) {
+                    const flowIndex = parseInt(parts[1]);
+                    selectFlow(flowIndex);
+
+                    if (parts.length >= 4 && parts[2] === 'cmd') {
+                        const cmdIndex = parseInt(parts[3]);
+                        setTimeout(() => {
+                            const cmdEl = document.getElementById('flow-' + flowIndex + '-cmd-' + cmdIndex);
+                            if (cmdEl) {
+                                cmdEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                cmdEl.style.boxShadow = '0 0 0 2px var(--accent)';
+                            }
+                        }, 100);
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('hashchange', handleHash);
+
+        
+        if (!window.location.hash && reportData.flows.length > 0) {
+            selectFlow(0);
+        } else {
+            handleHash();
+        }
+    </script>
+</body>
+</html>
