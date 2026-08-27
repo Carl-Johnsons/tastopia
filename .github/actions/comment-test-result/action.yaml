@@ -17,7 +17,7 @@ inputs:
     required: false
     default: ""
   github_token:
-    description: "GitHub Token with pull-requests: write and issues: write permissions"
+    description: "GitHub Token with pull-requests: write, issues: write, and actions: read permissions"
     required: false
     default: ${{ github.token }}
 
@@ -89,6 +89,64 @@ runs:
             ? /^\|\s*📱\s*Mobile\s*\|.*$/m
             : /^\|\s*🌐\s*Website\s*\|.*$/m;
 
+          const otherDisplayName = isMobile ? "🌐 Website" : "📱 Mobile";
+          const otherRowRegex = isMobile
+            ? /^\|\s*🌐\s*Website\s*\|.*$/m
+            : /^\|\s*📱\s*Mobile\s*\|.*$/m;
+
+          let otherStatus = "⏳ In Progress";
+          let otherReportStatus = "N/A";
+          let otherReportLink = "N/A";
+          let otherJob = null;
+
+          try {
+            const { data } = await github.rest.actions.listJobsForWorkflowRun({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+            });
+
+            otherJob = data.jobs.find((j) =>
+              isMobile
+                ? j.name.toLowerCase().includes("website")
+                : j.name.toLowerCase().includes("mobile")
+            );
+
+            if (otherJob) {
+              if (otherJob.conclusion === "skipped") {
+                otherStatus = "⏭️ Skipped";
+              } else if (otherJob.conclusion === "failure") {
+                otherStatus = "❌ Failed";
+              } else if (otherJob.conclusion === "cancelled") {
+                otherStatus = "⚠️ Cancelled";
+              } else if (otherJob.conclusion === "success") {
+                otherStatus = "✅ Success";
+              } else if (
+                otherJob.status === "in_progress" ||
+                otherJob.status === "queued" ||
+                otherJob.status === "waiting"
+              ) {
+                otherStatus = "⏳ In Progress";
+              }
+            } else {
+              otherStatus = "⏭️ Skipped";
+            }
+          } catch (err) {
+            console.log("Could not query workflow run jobs:", err.message);
+          }
+
+          const defaultOtherRow = `| ${otherDisplayName} | ${otherStatus} | ${otherReportStatus} | ${otherReportLink} |`;
+          const defaultMobile = isMobile ? targetRow : defaultOtherRow;
+          const defaultWebsite = isWebsite ? targetRow : defaultOtherRow;
+
+          const initialContent =
+            `${marker}\n` +
+            `### 🧪 E2E Test Report Summary\n\n` +
+            `| Platform | Test Status | Report Deployment Status | Link |\n` +
+            `|---|---|---|---|\n` +
+            `${defaultMobile}\n` +
+            `${defaultWebsite}\n`;
+
           const issueNumber = context.issue.number || context.payload.pull_request?.number;
 
           if (!issueNumber) {
@@ -106,21 +164,13 @@ runs:
             (comment) => comment.body && comment.body.includes(marker),
           );
 
-          const defaultMobile = isMobile ? targetRow : "| 📱 Mobile | ⏳ In Progress | N/A | N/A |";
-          const defaultWebsite = isWebsite ? targetRow : "| 🌐 Website | ⏳ In Progress | N/A | N/A |";
-
-          const initialContent =
-            `${marker}\n` +
-            `### 🧪 E2E Test Report Summary\n\n` +
-            `| Platform | Test Status | Report Deployment Status | Link |\n` +
-            `|---|---|---|---|\n` +
-            `${defaultMobile}\n` +
-            `${defaultWebsite}\n`;
-
           if (botComment) {
             let newContent = "";
             if (rowRegex.test(botComment.body)) {
               newContent = botComment.body.replace(rowRegex, targetRow);
+              if (otherJob && otherJob.conclusion === "skipped" && newContent.includes("⏳ In Progress")) {
+                newContent = newContent.replace(otherRowRegex, defaultOtherRow);
+              }
             } else {
               newContent = initialContent;
             }
