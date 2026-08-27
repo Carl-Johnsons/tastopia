@@ -50,6 +50,28 @@ runs:
             return;
           }
 
+          function formatJobStatus(status, conclusion) {
+            if (conclusion) {
+              if (conclusion === "success") return "✅ Success";
+              if (conclusion === "failure") return "❌ Failed";
+              if (conclusion === "cancelled") return "⚠️ Cancelled";
+              if (conclusion === "skipped") return "⏭️ Skipped";
+              if (conclusion === "timed_out") return "⏰ Timed Out";
+              if (conclusion === "action_required") return "🔘 Action Required";
+              if (conclusion === "neutral") return "⚪ Neutral";
+              return conclusion;
+            }
+            if (status) {
+              if (status === "in_progress") return "⏳ In Progress";
+              if (status === "queued") return "⏳ Queued";
+              if (status === "waiting") return "⏳ Waiting";
+              if (status === "requested") return "⏳ Requested";
+              if (status === "pending") return "⏳ Pending";
+              return status;
+            }
+            return "N/A";
+          }
+
           function getStatus(stepOutcome, jobResult) {
             const effectiveOutcome = stepOutcome || jobResult;
             if (effectiveOutcome === "success") {
@@ -113,21 +135,7 @@ runs:
             );
 
             if (otherJob) {
-              if (otherJob.conclusion === "skipped") {
-                otherStatus = "⏭️ Skipped";
-              } else if (otherJob.conclusion === "failure") {
-                otherStatus = "❌ Failed";
-              } else if (otherJob.conclusion === "cancelled") {
-                otherStatus = "⚠️ Cancelled";
-              } else if (otherJob.conclusion === "success") {
-                otherStatus = "✅ Success";
-              } else if (
-                otherJob.status === "in_progress" ||
-                otherJob.status === "queued" ||
-                otherJob.status === "waiting"
-              ) {
-                otherStatus = "⏳ In Progress";
-              }
+              otherStatus = formatJobStatus(otherJob.status, otherJob.conclusion);
             } else {
               otherStatus = "⏭️ Skipped";
             }
@@ -168,7 +176,13 @@ runs:
             let newContent = "";
             if (rowRegex.test(botComment.body)) {
               newContent = botComment.body.replace(rowRegex, targetRow);
-              if (otherJob && otherJob.conclusion === "skipped" && newContent.includes("⏳ In Progress")) {
+              const isOtherPending =
+                newContent.includes("⏳ In Progress") ||
+                newContent.includes("⏳ Queued") ||
+                newContent.includes("⏳ Waiting") ||
+                newContent.includes("⏳ Pending") ||
+                newContent.includes("⏳ Requested");
+              if (otherJob && isOtherPending && otherJob.conclusion) {
                 newContent = newContent.replace(otherRowRegex, defaultOtherRow);
               }
             } else {
