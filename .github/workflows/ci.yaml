@@ -82,19 +82,8 @@ jobs:
           SERVICES=$(python3 ./scripts/ci/build/derive-service-state.py)
           echo "services=$SERVICES" >> $GITHUB_OUTPUT
 
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BASE_REF="origin/${{ github.base_ref }}"
-          elif [ "${{ github.event_name }}" = "push" ] && [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            BASE_REF="${{ github.event.before }}"
-          else
-            BASE_REF="HEAD~1"
-          fi
-
-          if git diff --name-only "$BASE_REF...HEAD" -- app/client/mobile ':(exclude)app/client/mobile/.maestro' 2>/dev/null | grep -q .; then
-            echo "mobile_changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "mobile_changed=false" >> $GITHUB_OUTPUT
-          fi
+          MOBILE_CHANGED=$(python3 ./scripts/ci/build/derive-service-state.py --check-changed mobile)
+          echo "mobile_changed=$MOBILE_CHANGED" >> $GITHUB_OUTPUT
   build_app:
     name: Build mobile application
     runs-on: ubuntu-latest
