@@ -1,0 +1,143 @@
+name: "Comment E2E Test Results"
+description: "Updates PR comment with E2E test results for a specific platform"
+inputs:
+  platform:
+    description: "The platform being tested ('mobile' or 'website')"
+    required: true
+  status:
+    description: "The outcome of the test step ('success', 'failure', 'cancelled', 'skipped')"
+    required: false
+    default: ""
+  job_status:
+    description: "Overall job status ('success', 'failure', 'cancelled')"
+    required: false
+    default: ""
+  report_dir:
+    description: "The directory name where the report was published"
+    required: false
+    default: ""
+  github_token:
+    description: "GitHub Token with pull-requests: write and issues: write permissions"
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Update PR comment with test status
+      uses: actions/github-script@v7
+      env:
+        PLATFORM: ${{ inputs.platform }}
+        TEST_STATUS: ${{ inputs.status }}
+        JOB_STATUS: ${{ inputs.job_status }}
+        REPORT_DIR: ${{ inputs.report_dir }}
+      with:
+        github-token: ${{ inputs.github_token }}
+        script: |
+          const markerId = "e2e-test-status-report";
+          const marker = `<!-- bot-comment-id: ${markerId} -->`;
+
+          const platform = (process.env.PLATFORM || "").toLowerCase().trim();
+          const testStatus = (process.env.TEST_STATUS || "").trim();
+          const jobStatus = (process.env.JOB_STATUS || "").trim();
+          const reportDir = (process.env.REPORT_DIR || "").trim();
+
+          const isMobile = platform.includes("mobile");
+          const isWebsite = platform.includes("website");
+
+          if (!isMobile && !isWebsite) {
+            console.log(`Unknown platform: ${platform}. Skipping comment.`);
+            return;
+          }
+
+          function getStatus(stepOutcome, jobResult) {
+            const effectiveOutcome = stepOutcome || jobResult;
+            if (effectiveOutcome === "success") {
+              return "✅ Success";
+            } else if (effectiveOutcome === "failure") {
+              return "❌ Failed";
+            } else if (effectiveOutcome === "cancelled") {
+              return "⚠️ Cancelled";
+            } else if (effectiveOutcome === "skipped") {
+              return "⏭️ Skipped";
+            }
+            return effectiveOutcome || "N/A";
+          }
+
+          function getReportLinkAndStatus(dir, isMob) {
+            if (!dir || dir === "N/A") {
+              return { reportLink: "N/A", reportStatus: "N/A" };
+            }
+            let rawUrl = "";
+            if (isMob) {
+              rawUrl = `https://carl-johnsons.github.io/tastopia/${dir}/report.html`;
+            } else {
+              rawUrl = `https://carl-johnsons.github.io/tastopia/${dir}/index.html`;
+            }
+            const encodedUrl = encodeURIComponent(rawUrl);
+            const reportLink = `[View report](${rawUrl})`;
+            const reportStatus = `![Report Status](https://img.shields.io/website?url=${encodedUrl}&up_message=Ready&down_message=Deploying...&up_color=brightgreen&down_color=yellow&label=Report)`;
+            return { reportLink, reportStatus };
+          }
+
+          const status = getStatus(testStatus, jobStatus);
+          const { reportLink, reportStatus } = getReportLinkAndStatus(reportDir, isMobile);
+
+          const displayName = isMobile ? "📱 Mobile" : "🌐 Website";
+          const targetRow = `| ${displayName} | ${status} | ${reportStatus} | ${reportLink} |`;
+          const rowRegex = isMobile
+            ? /^\|\s*📱\s*Mobile\s*\|.*$/m
+            : /^\|\s*🌐\s*Website\s*\|.*$/m;
+
+          const issueNumber = context.issue.number || context.payload.pull_request?.number;
+
+          if (!issueNumber) {
+            console.log("No PR number found. Skipping PR comment.");
+            return;
+          }
+
+          const comments = await github.paginate(github.rest.issues.listComments, {
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: issueNumber,
+          });
+
+          const botComment = comments.find(
+            (comment) => comment.body && comment.body.includes(marker),
+          );
+
+          const defaultMobile = isMobile ? targetRow : "| 📱 Mobile | ⏳ In Progress | N/A | N/A |";
+          const defaultWebsite = isWebsite ? targetRow : "| 🌐 Website | ⏳ In Progress | N/A | N/A |";
+
+          const initialContent =
+            `${marker}\n` +
+            `### 🧪 E2E Test Report Summary\n\n` +
+            `| Platform | Test Status | Report Deployment Status | Link |\n` +
+            `|---|---|---|---|\n` +
+            `${defaultMobile}\n` +
+            `${defaultWebsite}\n`;
+
+          if (botComment) {
+            let newContent = "";
+            if (rowRegex.test(botComment.body)) {
+              newContent = botComment.body.replace(rowRegex, targetRow);
+            } else {
+              newContent = initialContent;
+            }
+
+            await github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: newContent,
+            });
+            console.log(`Updated existing comment: ${botComment.id}`);
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: initialContent,
+            });
+            console.log("Created new comment!");
+          }
