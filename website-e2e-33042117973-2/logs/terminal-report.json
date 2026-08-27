@@ -1,0 +1,748 @@
+{
+  "cypress/e2e/recipes-data.cy.ts": {
+    "Recipes data exploration -> renders recipe data table and accepts search input": [
+      {
+        "type": "cy:command",
+        "message": "visit\t/ -> 307: https://tastopia-staging-dashboard.phenchua.dev/en",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/e694063b5082/0.6414586744978186:1787811013:mCu1QdtrZ8hcICHKOpHmdLRGTE0lEXLvfvk5v71GnuA/a31916ccee8f90fe\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /Sign in/i",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/cdn-cgi/rum?\nStatus: 204",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/en\nStatus: 303",
+        "severity": "warning"
+      },
+      {
+        "type": "cy:command",
+        "message": "env\tE2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://tastopia-staging-identity.phenchua.dev** to equal **https://tastopia-staging-identity.phenchua.dev**\nActual: \t\"https://tastopia-staging-identity.phenchua.dev\"\nExpected: \t\"https://tastopia-staging-identity.phenchua.dev\"",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-identity.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/e694063b5082/0.6414586744978186:1787811013:mCu1QdtrZ8hcICHKOpHmdLRGTE0lEXLvfvk5v71GnuA/a319170e2c556a2d\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://tastopia-staging-identity.phenchua.dev/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fscope%3Dopenid%2520profile%2520phone%2520email%2520offline_access%2520IdentityServerApi%26nonce%3DLYn4IqFBOWszGVz_d3AxtNSGHGo5c5kBd_bj3ZaM_Dk%26redirect_uri%3Dhttps%253A%252F%252Ftastopia-staging-dashboard.phenchua.dev%252Fapi%252Fauth%252Fcallback%252Fduende-identity-server6%26response_type%3Dcode%26client_id%3DnextJS%26code_challenge%3DW75-GfkNbyZACoM7NSDtsByg4GFcwJIjYveIZmZLtfc%26code_challenge_method%3DS256",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-identity.phenchua.dev/cdn-cgi/rum?\nStatus: 204",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "origin\thttps://tastopia-staging-identity.phenchua.dev",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\th1",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tWelcome to",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\tinput[placeholder=\"Your email or phone number\"]",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "type\tadmin2025",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\tinput[placeholder=\"Password\"]",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "first\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "type\tPass123$",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /^Login$/",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "form sub\t--submitting form--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://tastopia-staging-identity.phenchua.dev/Account/ChangePassword?returnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fscope%3Dopenid%2520profile%2520phone%2520email%2520offline_access%2520IdentityServerApi%26nonce%3DLYn4IqFBOWszGVz_d3AxtNSGHGo5c5kBd_bj3ZaM_Dk%26redirect_uri%3Dhttps%253A%252F%252Ftastopia-staging-dashboard.phenchua.dev%252Fapi%252Fauth%252Fcallback%252Fduende-identity-server6%26response_type%3Dcode%26client_id%3DnextJS%26code_challenge%3DW75-GfkNbyZACoM7NSDtsByg4GFcwJIjYveIZmZLtfc%26code_challenge_method%3DS256&identifier=admin2025",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-identity.phenchua.dev/cdn-cgi/rum?\nStatus: 204",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\tbody",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\tinput[placeholder=\"Password\"]",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "first\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "clear\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "type\tPass123$",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\tinput[placeholder=\"Retype password\"]",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "type\tPass123$",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /^Change Password$/",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "form sub\t--submitting form--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://tastopia-staging-dashboard.phenchua.dev/en?error=Configuration",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "url\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://tastopia-staging-dashboard.phenchua.dev/en?error=Configuration** to match /\\/en\\/(recipes|statistics|admins)/",
+        "severity": "error"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      }
+    ]
+  },
+  "cypress/e2e/reports-users-data.cy.ts": {
+    "User reports data exploration -> renders user reports table and accepts search input": [
+      {
+        "type": "cy:command",
+        "message": "visit\t/ -> 307: https://tastopia-staging-dashboard.phenchua.dev/en",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/e694063b5082/0.6414586744978186:1787811013:mCu1QdtrZ8hcICHKOpHmdLRGTE0lEXLvfvk5v71GnuA/a3191795afd590fe\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /Sign in/i",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/cdn-cgi/rum?\nStatus: 204",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/en\nStatus: 303",
+        "severity": "warning"
+      },
+      {
+        "type": "cy:command",
+        "message": "env\tE2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://tastopia-staging-identity.phenchua.dev** to equal **https://tastopia-staging-identity.phenchua.dev**\nActual: \t\"https://tastopia-staging-identity.phenchua.dev\"\nExpected: \t\"https://tastopia-staging-identity.phenchua.dev\"",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-identity.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/e694063b5082/0.6414586744978186:1787811013:mCu1QdtrZ8hcICHKOpHmdLRGTE0lEXLvfvk5v71GnuA/a31917ae9f056a2d\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://tastopia-staging-identity.phenchua.dev/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fscope%3Dopenid%2520profile%2520phone%2520email%2520offline_access%2520IdentityServerApi%26nonce%3DOubFKnjxDMDiDB9ud8O393Xien_FAhsJ0BDUAZkc3EQ%26redirect_uri%3Dhttps%253A%252F%252Ftastopia-staging-dashboard.phenchua.dev%252Fapi%252Fauth%252Fcallback%252Fduende-identity-server6%26response_type%3Dcode%26client_id%3DnextJS%26code_challenge%3DZzskIKfg1B0tThRqn5CBvEy2G7skEknI9EO1UBPYlIc%26code_challenge_method%3DS256",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-identity.phenchua.dev/cdn-cgi/rum?\nStatus: 204",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "origin\thttps://tastopia-staging-identity.phenchua.dev",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\th1",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tWelcome to",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\tinput[placeholder=\"Your email or phone number\"]",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "type\tadmin2025",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\tinput[placeholder=\"Password\"]",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "first\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "type\tPass123$",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /^Login$/",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "form sub\t--submitting form--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://tastopia-staging-dashboard.phenchua.dev/en?error=Configuration",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "url\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://tastopia-staging-dashboard.phenchua.dev/en?error=Configuration** to match /\\/en\\/(recipes|statistics|admins)/",
+        "severity": "error"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      }
+    ]
+  },
+  "cypress/e2e/tags-data.cy.ts": {
+    "Tags data exploration -> renders tag data table and opens create dialog": [
+      {
+        "type": "cy:command",
+        "message": "visit\t/ -> 307: https://tastopia-staging-dashboard.phenchua.dev/en",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/e694063b5082/0.6414586744978186:1787811013:mCu1QdtrZ8hcICHKOpHmdLRGTE0lEXLvfvk5v71GnuA/a31917fd2f051172\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /Sign in/i",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/cdn-cgi/rum?\nStatus: 204",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/en\nStatus: 303",
+        "severity": "warning"
+      },
+      {
+        "type": "cy:command",
+        "message": "env\tE2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://tastopia-staging-identity.phenchua.dev** to equal **https://tastopia-staging-identity.phenchua.dev**\nActual: \t\"https://tastopia-staging-identity.phenchua.dev\"\nExpected: \t\"https://tastopia-staging-identity.phenchua.dev\"",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://tastopia-staging-identity.phenchua.dev/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fscope%3Dopenid%2520profile%2520phone%2520email%2520offline_access%2520IdentityServerApi%26nonce%3Dcs1kVaakPiEvS6cnos07R4kwbtTe0p0fYF668IPyH78%26redirect_uri%3Dhttps%253A%252F%252Ftastopia-staging-dashboard.phenchua.dev%252Fapi%252Fauth%252Fcallback%252Fduende-identity-server6%26response_type%3Dcode%26client_id%3DnextJS%26code_challenge%3DvbKk1C5kqdIYyiaez85kl1ujKTeKfKpaVTgG5nJimgs%26code_challenge_method%3DS256",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-identity.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/e694063b5082/0.6414586744978186:1787811013:mCu1QdtrZ8hcICHKOpHmdLRGTE0lEXLvfvk5v71GnuA/a319181c5abe889a\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-identity.phenchua.dev/cdn-cgi/rum?\nStatus: 204",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "origin\thttps://tastopia-staging-identity.phenchua.dev",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\th1",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tWelcome to",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\tinput[placeholder=\"Your email or phone number\"]",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "type\tadmin2025",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\tinput[placeholder=\"Password\"]",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "first\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "type\tPass123$",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /^Login$/",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "form sub\t--submitting form--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://tastopia-staging-dashboard.phenchua.dev/en?error=Configuration",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "url\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://tastopia-staging-dashboard.phenchua.dev/en?error=Configuration** to match /\\/en\\/(recipes|statistics|admins)/",
+        "severity": "error"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      }
+    ]
+  },
+  "cypress/e2e/users-data.cy.ts": {
+    "Users data exploration -> renders user data table and accepts search input": [
+      {
+        "type": "cy:command",
+        "message": "visit\t/ -> 307: https://tastopia-staging-dashboard.phenchua.dev/en",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/e694063b5082/0.6414586744978186:1787811013:mCu1QdtrZ8hcICHKOpHmdLRGTE0lEXLvfvk5v71GnuA/a3191860fe4df554\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /Sign in/i",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/cdn-cgi/rum?\nStatus: 204",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/en\nStatus: 303",
+        "severity": "warning"
+      },
+      {
+        "type": "cy:command",
+        "message": "env\tE2E_TEST_USERNAME, E2E_TEST_PASSWORD, DUENDE_IDS6_ISSUER",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://tastopia-staging-identity.phenchua.dev** to equal **https://tastopia-staging-identity.phenchua.dev**\nActual: \t\"https://tastopia-staging-identity.phenchua.dev\"\nExpected: \t\"https://tastopia-staging-identity.phenchua.dev\"",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://tastopia-staging-identity.phenchua.dev/Account/Login?ReturnUrl=%2Fconnect%2Fauthorize%2Fcallback%3Fscope%3Dopenid%2520profile%2520phone%2520email%2520offline_access%2520IdentityServerApi%26nonce%3DdVD5d3i3FZv7xZtlOZWVDCl5QjwdOeRLVuFRCiSstAc%26redirect_uri%3Dhttps%253A%252F%252Ftastopia-staging-dashboard.phenchua.dev%252Fapi%252Fauth%252Fcallback%252Fduende-identity-server6%26response_type%3Dcode%26client_id%3DnextJS%26code_challenge%3DC_6HQ99vEamB2_PJFTtLsoI6PJMp2hislNyCyAxK1-Y%26code_challenge_method%3DS256",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-identity.phenchua.dev/cdn-cgi/rum?\nStatus: 204",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "origin\thttps://tastopia-staging-identity.phenchua.dev",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-identity.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/e694063b5082/0.6414586744978186:1787811013:mCu1QdtrZ8hcICHKOpHmdLRGTE0lEXLvfvk5v71GnuA/a3191875aa4a2b99\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\th1",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tWelcome to",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\tinput[placeholder=\"Your email or phone number\"]",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "type\tadmin2025",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "get\tinput[placeholder=\"Password\"]",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "first\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "type\tPass123$",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "contains\tbutton, /^Login$/",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "click\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "form sub\t--submitting form--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "page load\t--page loaded--",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "new url\thttps://tastopia-staging-dashboard.phenchua.dev/en?error=Configuration",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "location\torigin",
+        "severity": "success"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://tastopia-staging-dashboard.phenchua.dev/cdn-cgi/rum?\nStatus: 204",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "url\t",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "assert\texpected **https://tastopia-staging-dashboard.phenchua.dev/en?error=Configuration** to match /\\/en\\/(recipes|statistics|admins)/",
+        "severity": "error"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://tastopia-staging-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      }
+    ]
+  }
+}
