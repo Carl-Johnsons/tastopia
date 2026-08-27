@@ -19,7 +19,7 @@ inputs:
   github_token:
     description: "GitHub Token with pull-requests: write, issues: write, and actions: read permissions"
     required: false
-    default: ${{ github.token }}
+    default: ""
 
 runs:
   using: "composite"
@@ -32,7 +32,7 @@ runs:
         JOB_STATUS: ${{ inputs.job_status }}
         REPORT_DIR: ${{ inputs.report_dir }}
       with:
-        github-token: ${{ inputs.github_token }}
+        github-token: ${{ inputs.github_token || github.token }}
         script: |
           const markerId = "e2e-test-status-report";
           const marker = `<!-- bot-comment-id: ${markerId} -->`;
