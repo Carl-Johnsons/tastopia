@@ -172,14 +172,10 @@ jobs:
     timeout-minutes: 20
     needs: [derive-state, build_app, build_backend]
     if: >-
-      always() && 
+      always() &&
       needs.derive-state.result == 'success' &&
       needs.build_app.result == 'success' &&
-      (needs.build_backend.result == 'success' || needs.build_backend.result == 'skipped') &&
-      (
-        needs.derive-state.outputs.mobile_changed == 'true' ||
-        needs.derive-state.outputs.backend_changed == 'true'
-      )
+      (needs.build_backend.result == 'success' || needs.build_backend.result == 'skipped')
     env:
       MAESTRO_VERSION: "1.1.14"
     permissions:
