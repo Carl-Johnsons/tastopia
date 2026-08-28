@@ -259,7 +259,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu software -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            MOBILE_TAG=$(printf "%s\n" "${SERVICES}" | grep -o "mobile:[^ ]*" | cut -d: -f2 | head -n1 || true)
+            MOBILE_TAG=$(printf "%s\n" "${BUILT_IMAGES}" | grep -o "mobile:[^ ]*" | cut -d: -f2 | head -n1 || true)
             bash ./scripts/ci/test/install-app.sh -t "$MOBILE_TAG"
             bash ./scripts/ci/test/test-e2e.sh
         env:
