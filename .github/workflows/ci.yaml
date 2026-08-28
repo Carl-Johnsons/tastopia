@@ -58,6 +58,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       services: ${{ steps.derive.outputs.services }}
+      mobile_changed: ${{ steps.derive.outputs.mobile_changed }}
+      backend_changed: ${{ steps.derive.outputs.backend_changed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -80,10 +82,19 @@ jobs:
         run: |
           SERVICES=$(python3 ./scripts/ci/build/derive-service-state.py)
           echo "services=$SERVICES" >> $GITHUB_OUTPUT
+
+          MOBILE_CHANGED=$(python3 ./scripts/ci/build/derive-service-state.py --check-changed mobile)
+          echo "mobile_changed=$MOBILE_CHANGED" >> $GITHUB_OUTPUT
+
+          BACKEND_CHANGED=$(python3 ./scripts/ci/build/derive-service-state.py --check-changed backend)
+          echo "backend_changed=$BACKEND_CHANGED" >> $GITHUB_OUTPUT
   build_app:
     name: Build mobile application
     runs-on: ubuntu-latest
-    needs: derive-state
+    needs: [derive-state]
+    if: >-
+      needs.derive-state.outputs.mobile_changed == 'true' ||
+      needs.derive-state.outputs.backend_changed == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -159,9 +170,7 @@ jobs:
     if: >-
       always() && 
       needs.derive-state.result == 'success' &&
-      (needs.build_app.result == 'success' || needs.build_app.result == 'skipped') && 
-      (needs.build_backend.result == 'success' || needs.build_backend.result == 'skipped') &&
-      !(needs.build_app.result == 'skipped' && needs.build_backend.result == 'skipped')
+      needs.build_app.result == 'success'
     env:
       MAESTRO_VERSION: "1.1.14"
     permissions:
@@ -440,6 +449,7 @@ jobs:
     needs: derive-state
     outputs:
       sha: ${{ steps.build_serv.outputs.sha }}
+      backend_built: ${{ steps.build_serv.outputs.backend_built }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
