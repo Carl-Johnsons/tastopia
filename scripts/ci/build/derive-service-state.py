@@ -221,6 +221,7 @@ def is_valid_git_ref(ref: str) -> bool:
     res = subprocess.run(
         ["git", "cat-file", "-e", f"{ref}^{{commit}}"],
         capture_output=True,
+        check=False,
     )
 
     return res.returncode == 0
