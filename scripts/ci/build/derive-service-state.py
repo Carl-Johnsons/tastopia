@@ -29,6 +29,7 @@ class ServiceName(StrEnum):
     PUSH_WORKER = "push-notification-worker"
     RECIPE_WORKER = "recipe-worker"
     CONTRACT = "contract"
+    BACKEND = "backend"
 
 
 @dataclass(frozen=True)
@@ -112,6 +113,7 @@ recipe_worker = Service(
     ("app/server/RecipeService/src/RecipeWorker",),
     (contract,),
 )
+backend = Service(ServiceName.BACKEND, ("app/server",))
 
 all_services: tuple[Service, ...] = (
     website,
@@ -211,6 +213,8 @@ def get_tag(service: Service, tag_length: int = 8) -> str:
 
 
 def get_service_by_name(service_name: ServiceName) -> Service:
+    if service_name == ServiceName.BACKEND:
+        return backend
     return next(s for s in all_services if s.name == service_name)
 
 

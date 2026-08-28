@@ -59,6 +59,7 @@ jobs:
     outputs:
       services: ${{ steps.derive.outputs.services }}
       mobile_changed: ${{ steps.derive.outputs.mobile_changed }}
+      backend_changed: ${{ steps.derive.outputs.backend_changed }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -84,13 +85,16 @@ jobs:
 
           MOBILE_CHANGED=$(python3 ./scripts/ci/build/derive-service-state.py --check-changed mobile)
           echo "mobile_changed=$MOBILE_CHANGED" >> $GITHUB_OUTPUT
+
+          BACKEND_CHANGED=$(python3 ./scripts/ci/build/derive-service-state.py --check-changed backend)
+          echo "backend_changed=$BACKEND_CHANGED" >> $GITHUB_OUTPUT
   build_app:
     name: Build mobile application
     runs-on: ubuntu-latest
-    needs: [derive-state, build_backend]
+    needs: [derive-state]
     if: >-
       needs.derive-state.outputs.mobile_changed == 'true' ||
-      needs.build_backend.outputs.backend_built == 'true'
+      needs.derive-state.outputs.backend_changed == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
