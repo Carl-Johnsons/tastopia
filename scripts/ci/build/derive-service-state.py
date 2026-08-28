@@ -293,7 +293,7 @@ def TagLength(val: str) -> int:
 class Args(argparse.Namespace):
     services: list[ServiceName]
     tag_length: int
-    check_changed: list[ServiceName] | None
+    check_list: list[ServiceName] | None
     base_ref: str | None
 
 
@@ -318,6 +318,8 @@ def parse_args() -> Args:
     )
     parser.add_argument(
         "--check-changed",
+        dest="check_list",
+        metavar="SERVICE",
         nargs="+",
         type=ServiceName,
         default=None,
@@ -336,15 +338,15 @@ def parse_args() -> Args:
 def main():
     args = parse_args()
 
-    if args.check_changed is not None:
+    if args.check_list is not None:
         base_ref = args.base_ref if args.base_ref else get_base_ref()
         changed_services = [
             svc.name
-            for svc in [get_service_by_name(name) for name in args.check_changed]
+            for svc in [get_service_by_name(name) for name in args.check_list]
             if is_service_changed(svc, base_ref)
         ]
 
-        if len(args.check_changed) == 1:
+        if len(args.check_list) == 1:
             print("true" if changed_services else "false")
         else:
             print(" ".join(changed_services))
