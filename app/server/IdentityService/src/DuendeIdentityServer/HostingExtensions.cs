@@ -24,10 +24,12 @@ internal static class HostingExtensions
         var websiteUrl = DotNetEnv.Env.GetString("WEBSITE_CLIENT_URL", "http://localhost:3000");
         var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");
         var services = builder.Services;
+        var databaseName = DotNetEnv.Env.GetString("DB");
 
         builder.ConfigureLoggingService()
                .ConfigureKestrel()
-               .ConfigureHealthCheck();
+               .ConfigureLivenessCheck()
+               .ConfigurePostgresHealthCheck(databaseName);
 
         services.AddInfrastructureServices()
                 .AddApplicationServices()
