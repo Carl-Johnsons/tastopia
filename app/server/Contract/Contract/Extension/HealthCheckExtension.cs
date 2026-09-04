@@ -74,6 +74,8 @@ public static class HealthCheckExtension
      */
     public static WebApplication UseCustomHealthCheck(this WebApplication app)
     {
+        app.MapHealthChecks("/health");
+
         app.MapHealthChecks("/health/live", new HealthCheckOptions
         {
             Predicate = check => check.Tags.Contains("live")
