@@ -13,58 +13,68 @@ public static class HealthCheckExtension
 {
     public static WebApplicationBuilder ConfigureLivenessCheck(this WebApplicationBuilder builder)
     {
-      builder.Services.AddHealthChecks()
-        .AddCheck(
-          "self",
-          () => HealthCheckResult.Healthy()
+        builder.Services.AddHealthChecks()
+          .AddCheck(
+            "self",
+            () => HealthCheckResult.Healthy()
 
-          , tags: ["live"]);
-      return builder;
+            , tags: ["live"]);
+        return builder;
     }
 
-    public static WebApplicationBuilder ConfigureMongoDBHealthCheck(this WebApplicationBuilder builder, string databaseName, string? connectionString = null) {
-      var connStr = connectionString ?? EnvUtility.GetMongoDBConnectionString();
-      var client = new MongoClient(connStr);
-      var db = client.GetDatabase(databaseName);
+    public static WebApplicationBuilder ConfigureMongoDBHealthCheck(this WebApplicationBuilder builder, string databaseName, string? connectionString = null)
+    {
+        var connStr = connectionString ?? EnvUtility.GetMongoDBConnectionString();
+        var client = new MongoClient(connStr);
+        var db = client.GetDatabase(databaseName);
 
-      builder.Services.AddHealthChecks().AddAsyncCheck(
-          $"mongodb-{databaseName}",
-          async () => {
-            try {
-              await db.RunCommandAsync((Command<BsonDocument>)"{ping:1}");
-              return HealthCheckResult.Healthy($"MongoDB '{databaseName}' is healthy");
-            } catch (Exception ex) {
-              return HealthCheckResult.Unhealthy($"MongoDB '{databaseName}' is unreachable: {ex.Message}");
-            }
-          },
-          tags: ["ready"]
-          );
+        builder.Services.AddHealthChecks().AddAsyncCheck(
+            $"mongodb-{databaseName}",
+            async () =>
+            {
+                try
+                {
+                    await db.RunCommandAsync((Command<BsonDocument>)"{ping:1}");
+                    return HealthCheckResult.Healthy($"MongoDB '{databaseName}' is healthy");
+                }
+                catch (Exception ex)
+                {
+                    return HealthCheckResult.Unhealthy($"MongoDB '{databaseName}' is unreachable: {ex.Message}");
+                }
+            },
+            tags: ["ready"]
+            );
 
-      return builder;
+        return builder;
     }
 
-    public static WebApplicationBuilder ConfigurePostgresHealthCheck(this WebApplicationBuilder builder, string databaseName, string? connectionString = null) {
-      var connStr = connectionString ?? EnvUtility.GetConnectionString();
+    public static WebApplicationBuilder ConfigurePostgresHealthCheck(this WebApplicationBuilder builder, string databaseName, string? connectionString = null)
+    {
+        var connStr = connectionString ?? EnvUtility.GetConnectionString();
 
-      builder.Services.AddHealthChecks().AddAsyncCheck(
-          $"postgres-{databaseName}",
-          async () => {
-            try {
-              await using var conn = new NpgsqlConnection(connStr);
-              await conn.OpenAsync();
+        builder.Services.AddHealthChecks().AddAsyncCheck(
+            $"postgres-{databaseName}",
+            async () =>
+            {
+                try
+                {
+                    await using var conn = new NpgsqlConnection(connStr);
+                    await conn.OpenAsync();
 
-              await using var cmd = new NpgsqlCommand("SELECT 1;", conn);
-              await cmd.ExecuteScalarAsync();
+                    await using var cmd = new NpgsqlCommand("SELECT 1;", conn);
+                    await cmd.ExecuteScalarAsync();
 
-              return HealthCheckResult.Healthy($"Postgres '{databaseName}' is healthy");
-            } catch (Exception ex) {
-              return HealthCheckResult.Unhealthy($"Postgres '{databaseName}' is unreachable: {ex.Message}");
-            }
-          },
-          tags: ["ready"]
-          );
+                    return HealthCheckResult.Healthy($"Postgres '{databaseName}' is healthy");
+                }
+                catch (Exception ex)
+                {
+                    return HealthCheckResult.Unhealthy($"Postgres '{databaseName}' is unreachable: {ex.Message}");
+                }
+            },
+            tags: ["ready"]
+            );
 
-      return builder;
+        return builder;
     }
 
     /**
