@@ -16,7 +16,7 @@ public static class DependenciesInjection
 
         builder.ConfigureLoggingService()
                .ConfigureKestrel()
-               .ConfigureHealthCheck();
+               .ConfigureLivenessCheck();
 
         services.AddInfrastructureServices()
                 .AddApplicationServices()

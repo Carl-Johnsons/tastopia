@@ -157,7 +157,7 @@ check_argocd_sync() {
 wait_for_server() {
   local endpoint
 
-  if ! endpoint="$(get_api_endpoint)/health"; then
+  if ! endpoint="$(get_api_endpoint)/health/live"; then
     echo "Failed to get API endpoint"
     exit 1
   fi
