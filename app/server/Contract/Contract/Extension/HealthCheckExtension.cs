@@ -6,6 +6,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Npgsql;
+using StackExchange.Redis;
 
 namespace Contract.Extension;
 
@@ -69,6 +70,51 @@ public static class HealthCheckExtension
                 catch (Exception ex)
                 {
                     return HealthCheckResult.Unhealthy($"Postgres '{databaseName}' is unreachable: {ex.Message}");
+                }
+            },
+            tags: ["ready"]
+            );
+
+        return builder;
+    }
+
+    public static WebApplicationBuilder ConfigureRedisHealthCheck(this WebApplicationBuilder builder, string? connectionString = null)
+    {
+        var connStr = connectionString ?? EnvUtility.GetRedisConnectionString();
+        ConnectionMultiplexer? connection = null;
+
+        builder.Services.AddHealthChecks().AddAsyncCheck(
+            "redis",
+            async () =>
+            {
+                try
+                {
+                    if (connection == null || !connection.IsConnected)
+                    {
+                        try
+                        {
+                            connection?.Dispose();
+                        }
+                        catch
+                        {
+                        }
+
+                        connection = await ConnectionMultiplexer.ConnectAsync(connStr);
+                    }
+
+                    if (!connection.IsConnected)
+                    {
+                        return HealthCheckResult.Unhealthy("Redis is not connected");
+                    }
+
+                    var db = connection.GetDatabase();
+                    var latency = await db.PingAsync();
+                    return HealthCheckResult.Healthy($"Redis is healthy (latency: {latency.TotalMilliseconds}ms)");
+                }
+                catch (Exception ex)
+                {
+                    connection = null;
+                    return HealthCheckResult.Unhealthy($"Redis is unreachable: {ex.Message}");
                 }
             },
             tags: ["ready"]

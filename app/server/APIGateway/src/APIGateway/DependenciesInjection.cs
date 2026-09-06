@@ -28,7 +28,8 @@ public static class DependenciesInjection
 
         builder.ConfigureLoggingService()
                .ConfigureKestrel()
-               .ConfigureLivenessCheck();
+               .ConfigureLivenessCheck()
+               .ConfigureRedisHealthCheck();
 
         services.AddServiceDiscoveryService()
                 .AddSignalR();

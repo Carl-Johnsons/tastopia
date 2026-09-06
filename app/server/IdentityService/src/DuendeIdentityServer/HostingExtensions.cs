@@ -29,7 +29,8 @@ internal static class HostingExtensions
         builder.ConfigureLoggingService()
                .ConfigureKestrel()
                .ConfigureLivenessCheck()
-               .ConfigurePostgresHealthCheck(databaseName);
+               .ConfigurePostgresHealthCheck(databaseName)
+               .ConfigureRedisHealthCheck();
 
         services.AddInfrastructureServices()
                 .AddApplicationServices()
