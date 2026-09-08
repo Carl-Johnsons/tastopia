@@ -3,7 +3,9 @@ from EnvUtility import get_mongodb_connection_string, is_development, load_env
 from MongoClient import MongoClient
 from ModelLoader import get_clip_model, get_clip_preprocessor, get_model, get_model_tokenizer
 from RedisManager import RedisManager
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, status
+from fastapi.responses import JSONResponse
+from health import check_liveness, check_readiness
 from PIL import Image, ImageOps
 # from ultralytics import YOLO
 import httpx
@@ -151,9 +153,9 @@ async def lifespan(app: FastAPI):
     consul_deregister_url = f"{consul_base_address}/v1/agent/service/deregister/{service_id}"
 
     if(is_development()):
-        health_check_url = f"http://host.docker.internal:{service_port}/health"
+        health_check_url = f"http://host.docker.internal:{service_port}/health/ready"
     else:
-        health_check_url = f"http://{service_host}:{service_port}/health"
+        health_check_url = f"http://{service_host}:{service_port}/health/ready"
         
     logging.info(f"Start instance {service_id}")
     service_registration = {
@@ -194,9 +196,26 @@ scheduler.start()
 app = FastAPI(lifespan=lifespan, redirect_slashes=False)
 # app = FastAPI(redirect_slashes=False)
 
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
+@app.get("/health/live")
+async def health_live():
+    report = check_liveness()
+    return JSONResponse(status_code=status.HTTP_200_OK, content=report)
+
+@app.get("/health/ready")
+async def health_ready():
+    report = check_readiness(
+        redis_manager=redisManager,
+        mongo_client=mongo_client,
+        convnext_model=convnext_model,
+        clip_model=clip_model,
+        index=index,
+    )
+    status_code = (
+        status.HTTP_200_OK
+        if report["status"] == "Healthy"
+        else status.HTTP_503_SERVICE_UNAVAILABLE
+    )
+    return JSONResponse(status_code=status_code, content=report)
 
 def cal_mix_clip_cnn(a, b):
     scores = dict()
@@ -483,4 +502,5 @@ async def get_tags():
 async def root():
     return {"message": "FastAPI is running!"}
 
-uvicorn.run(app, host="0.0.0.0", port=service_port,log_config=log_config)
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=service_port, log_config=log_config)

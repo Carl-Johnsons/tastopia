@@ -50,8 +50,8 @@ public static class ServiceDiscoveryExtension
         var scheme = IsSecure ? "https" : "http";
 
         var healthCheckEndpoint = EnvUtility.IsDevelopment()
-                            ? $"{scheme}://host.docker.internal:{httpPort}/health"
-                            : $"{scheme}://{serviceHost}:{httpPort}/health";
+                            ? $"{scheme}://host.docker.internal:{httpPort}/health/ready"
+                            : $"{scheme}://{serviceHost}:{httpPort}/health/ready";
 
         var registration = new AgentServiceRegistration()
         {

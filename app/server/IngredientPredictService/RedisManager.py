@@ -17,6 +17,11 @@ class RedisManager:
     password = os.getenv("REDIS_PASSWORD")
     self.redis = redis.Redis(host=host, port=port, password=password)     
   
+  def ping(self) -> bool:
+    if self.redis is None:
+      self.connect_redis()
+    return bool(self.redis.ping())
+  
   def get_prediction_from_cache(self, phash: str):
       key = f"prediction_img:{phash}"
       data = self.redis.get(key)

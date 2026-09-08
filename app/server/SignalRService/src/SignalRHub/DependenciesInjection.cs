@@ -20,9 +20,9 @@ public static class DependenciesInjection
         var services = builder.Services;
         var host = builder.Host;
 
-        builder.ConfigureLoggingService();
-        builder.ConfigureKestrel();
-        builder.ConfigureHealthCheck();
+        builder.ConfigureLoggingService()
+               .ConfigureKestrel()
+               .ConfigureLivenessCheck();
 
         services.AddExternalInfrastructureServices();
 

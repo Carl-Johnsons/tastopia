@@ -13,10 +13,12 @@ public static class DependenciesInjection
     {
         EnvUtility.LoadEnvFile();
         var services = builder.Services;
+        var databaseName = DotNetEnv.Env.GetString("DB");
 
         builder.ConfigureLoggingService()
                .ConfigureKestrel()
-               .ConfigureHealthCheck();
+               .ConfigureLivenessCheck()
+               .ConfigureMongoDBHealthCheck(databaseName);
 
         services.AddInfrastructureServices()
                 .AddApplicationServices()

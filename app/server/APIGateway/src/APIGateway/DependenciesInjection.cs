@@ -26,9 +26,10 @@ public static class DependenciesInjection
         var env = builder.Environment;
         EnvUtility.LoadEnvFile();
 
-        builder.ConfigureLoggingService();
-        builder.ConfigureKestrel();
-        builder.ConfigureHealthCheck();
+        builder.ConfigureLoggingService()
+               .ConfigureKestrel()
+               .ConfigureLivenessCheck()
+               .ConfigureRedisHealthCheck();
 
         services.AddServiceDiscoveryService()
                 .AddSignalR();
