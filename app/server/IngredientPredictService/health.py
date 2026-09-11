@@ -1,9 +1,14 @@
+import logging
 from typing import TYPE_CHECKING, Any, NotRequired, TypedDict
 
 from RedisManager import RedisManager
 
 if TYPE_CHECKING:
     from pymongo.mongo_client import MongoClient as PyMongoClient
+
+logger = logging.getLogger(__name__)
+
+MONGODB_PING_TIMEOUT_MS = 2000
 
 
 class HealthReport(TypedDict):
@@ -30,9 +35,11 @@ def check_redis_readiness(redis_manager: RedisManager) -> HealthReport:
     """
     try:
         if not redis_manager.ping():
-            return {"status": "Unhealthy", "reason": "Redis is unreachable"}
-    except Exception as e:  # noqa: BLE001
-        return {"status": "Unhealthy", "reason": f"Redis error: {e}"}
+            logger.error("Redis ping returned False")
+            return {"status": "Unhealthy", "reason": "Redis readiness check failed"}
+    except Exception as e:
+        logger.exception(f"Redis readiness check failed: {e}")  # noqa: TRY401
+        return {"status": "Unhealthy", "reason": "Redis readiness check failed"}
     return {"status": "Healthy"}
 
 
@@ -52,9 +59,10 @@ def check_mongodb_readiness(
         return {"status": "Unhealthy", "reason": "MongoDB client is not initialized"}
 
     try:
-        mongo_client.admin.command("ping")
-    except Exception as e:  # noqa: BLE001
-        return {"status": "Unhealthy", "reason": f"MongoDB error: {e}"}
+        mongo_client.admin.command("ping", maxTimeMS=MONGODB_PING_TIMEOUT_MS)
+    except Exception as e:
+        logger.exception(f"MongoDB readiness check failed: {e}")  # noqa: TRY401
+        return {"status": "Unhealthy", "reason": "MongoDB readiness check failed"}
 
     return {"status": "Healthy"}
 
