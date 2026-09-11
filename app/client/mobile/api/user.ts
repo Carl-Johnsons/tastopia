@@ -66,6 +66,10 @@ export const useLogout = () => {
   return useMutation<void, Error>({
     mutationKey: ["logout"],
     mutationFn: async () => {
+      if (!idToken) {
+        throw new Error("ID token is required for logout");
+      }
+
       const logoutUrl = `/connect/endsession?id_token_hint=${idToken}`;
       await axiosInstance.get(logoutUrl);
     }
