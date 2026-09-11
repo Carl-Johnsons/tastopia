@@ -130,8 +130,8 @@ runs:
 
             otherJob = data.jobs.find((j) =>
               isMobile
-                ? j.name.toLowerCase().includes("website")
-                : j.name.toLowerCase().includes("mobile")
+                ? j.name === "Website E2E tests"
+                : j.name === "Mobile E2E tests"
             );
 
             if (otherJob) {
