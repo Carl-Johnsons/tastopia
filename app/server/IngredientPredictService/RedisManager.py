@@ -6,6 +6,10 @@ import os
 import io
 import imagehash
 
+REDIS_SOCKET_TIMEOUT = 2.0
+REDIS_CONNECT_TIMEOUT = 2.0
+
+
 class RedisManager:
   def __init__(self):
     self.redis = None
@@ -15,7 +19,13 @@ class RedisManager:
     host = os.getenv("REDIS_HOST")
     port = os.getenv("REDIS_PORT")
     password = os.getenv("REDIS_PASSWORD")
-    self.redis = redis.Redis(host=host, port=port, password=password)     
+    self.redis = redis.Redis(
+        host=host,
+        port=port,
+        password=password,
+        socket_timeout=REDIS_SOCKET_TIMEOUT,
+        socket_connect_timeout=REDIS_CONNECT_TIMEOUT,
+    )     
   
   def ping(self) -> bool:
     if self.redis is None:

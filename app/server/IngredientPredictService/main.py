@@ -202,7 +202,7 @@ async def health_live():
     return JSONResponse(status_code=status.HTTP_200_OK, content=report)
 
 @app.get("/health/ready")
-async def health_ready():
+def health_ready():
     report = check_readiness(
         redis_manager=redisManager,
         mongo_client=mongo_client,
