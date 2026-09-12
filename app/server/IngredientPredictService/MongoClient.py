@@ -1,6 +1,11 @@
 import logging
 import pymongo
 
+MONGODB_SERVER_SELECTION_TIMEOUT_MS = 2000
+MONGODB_SOCKET_TIMEOUT_MS = 2000
+MONGODB_CONNECT_TIMEOUT_MS = 2000
+
+
 class MongoClient:
   def __init__(self, mongodb_url):
     self.mongo_client = None
@@ -16,5 +21,10 @@ class MongoClient:
       logging.error("Missing mongodb url")
       return
     logging.info(f"Connect to mongodb")
-    self.mongo_client = pymongo.MongoClient(self.mongodb_url)
+    self.mongo_client = pymongo.MongoClient(
+        self.mongodb_url,
+        serverSelectionTimeoutMS=MONGODB_SERVER_SELECTION_TIMEOUT_MS,
+        socketTimeoutMS=MONGODB_SOCKET_TIMEOUT_MS,
+        connectTimeoutMS=MONGODB_CONNECT_TIMEOUT_MS,
+    )
     logging.info("Mongodb connect successfully!!")

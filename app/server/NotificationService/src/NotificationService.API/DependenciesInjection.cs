@@ -13,36 +13,37 @@ public static class DependenciesInjection
     {
         EnvUtility.LoadEnvFile();
         var services = builder.Services;
-        var config = builder.Configuration;
-        var host = builder.Host;
+        var databaseName = DotNetEnv.Env.GetString("DB");
 
-        builder.ConfigureCommonAPIServices();
+        builder.ConfigureLoggingService()
+               .ConfigureKestrel()
+               .ConfigureLivenessCheck()
+               .ConfigureMongoDBHealthCheck(databaseName);
 
-        services.AddInfrastructureServices();
-        services.AddApplicationServices();
-        services.AddGrpcServices();
-        services.AddSwaggerServices();
+        services.AddInfrastructureServices()
+                .AddApplicationServices()
+                .AddGrpcServices()
+                .AddSwaggerServices();
 
-        services.AddCommonAPIServices();
-
-        services.AddEndpointsApiExplorer();
+        services.AddCommonAPIServices()
+                .AddCustomDownstreamAuthentication();
 
         return builder;
     }
 
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
-        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_NOTIFICATION", "Not Found"));
-        app.UseSwaggerServices();
+        app.UseInfrastructureServices()
+           .UseSwaggerServices()
+           .UseCommonAPIMiddleware();
 
         // app.UseHttpsRedirection();
-
-        app.MapControllers();
-
-        app.UseGrpcServices();
-
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.MapControllers();
+
+        app.UseCustomHealthCheck();
 
         await app.UseSignalRServiceAsync();
         return app;

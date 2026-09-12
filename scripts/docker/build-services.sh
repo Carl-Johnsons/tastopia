@@ -236,6 +236,8 @@ load_env() {
 # This mode allow services to be built with their respective tag, allowing 
 # the image tags to reflect the right commit sha that modified the service.
 build_services() {
+  local backend_built=false
+
   # Always build contract image first
   if grep -q 'contract' <<< "${services[*]}" 2>/dev/null; then
     image=$(printf '%s\n' "${services[@]}" | grep '^contract:')
@@ -251,6 +253,7 @@ build_services() {
     docker compose build contract
     docker tag ${project}-contract ${repo}-contract:${contract_hash}
     retry_push ${repo}-contract:${contract_hash}
+    backend_built=true
   fi
   
   # Tag and push built images if they don't already exist in the container registry
@@ -282,7 +285,15 @@ build_services() {
     echo "Pushing ${image}..."
     docker tag ${project}-${service} ${image}
     retry_push ${image}
+
+    if [ "$service" != "website" ]; then
+      backend_built=true
+    fi
   done
+
+  if [ -n "${GITHUB_OUTPUT:-}" ]; then
+    echo "backend_built=$backend_built" >> "$GITHUB_OUTPUT"
+  fi
 }
 
 load_env

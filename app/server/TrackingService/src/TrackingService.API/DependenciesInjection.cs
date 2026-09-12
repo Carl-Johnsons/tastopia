@@ -1,8 +1,8 @@
-﻿using TrackingService.Infrastructure;
-using TrackingService.Application;
+﻿using Contract.Extension;
 using Contract.Utilities;
 using TrackingService.API.Extensions;
-using Contract.Extension;
+using TrackingService.Application;
+using TrackingService.Infrastructure;
 
 namespace TrackingService.API;
 
@@ -13,13 +13,16 @@ public static class DependenciesInjection
     {
         EnvUtility.LoadEnvFile();
         var services = builder.Services;
+        var databaseName = DotNetEnv.Env.GetString("DB");
 
-        builder.ConfigureCommonAPIServices();
+        builder.ConfigureLoggingService()
+               .ConfigureKestrel()
+               .ConfigureLivenessCheck()
+               .ConfigureMongoDBHealthCheck(databaseName);
 
-        services.AddInfrastructureServices();
-        services.AddApplicationServices();
-        services.AddErrorValidation();
-        services.AddSwaggerServices();
+        services.AddInfrastructureServices()
+                .AddApplicationServices()
+                .AddSwaggerServices();
 
         // Register automapper
         services.AddAutoMapper(
@@ -29,25 +32,24 @@ public static class DependenciesInjection
             },
             AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddCommonAPIServices();
-
-        services.AddEndpointsApiExplorer();
+        services.AddCommonAPIServices()
+                .AddCustomDownstreamAuthentication();
 
         return builder;
     }
 
     public static WebApplication UseAPIServices(this WebApplication app)
     {
-        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_TRACKING", "Not Found"));
+        app.UseInfrastructureServices()
+           .UseSwaggerServices()
+           .UseCommonAPIMiddleware();
 
-        app.UseSwaggerServices();
-
-        // app.UseHttpsRedirection();
-
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-
         app.MapControllers();
+
+        app.UseCustomHealthCheck();
 
         return app;
     }

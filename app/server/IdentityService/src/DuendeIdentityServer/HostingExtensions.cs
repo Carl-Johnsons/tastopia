@@ -1,4 +1,3 @@
-using System.Net;
 using Contract.Extension;
 using Contract.Utilities;
 using Duende.IdentityServer;
@@ -11,7 +10,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using StackExchange.Redis;
+using System.Net;
 
 namespace DuendeIdentityServer;
 
@@ -24,24 +24,23 @@ internal static class HostingExtensions
         var websiteUrl = DotNetEnv.Env.GetString("WEBSITE_CLIENT_URL", "http://localhost:3000");
         var issuer = DotNetEnv.Env.GetString("ISSUER", "http://localhost:5001");
         var services = builder.Services;
+        var databaseName = DotNetEnv.Env.GetString("DB");
 
-        builder.ConfigureCommonAPIServices();
+        builder.ConfigureLoggingService()
+               .ConfigureKestrel()
+               .ConfigureLivenessCheck()
+               .ConfigurePostgresHealthCheck(databaseName)
+               .ConfigureRedisHealthCheck();
 
-
-        services.AddInfrastructureServices();
-        services.AddApplicationServices();
-        services.AddErrorValidation();
-        services.AddGrpcServices();
-        services.AddSwaggerServices();
+        services.AddInfrastructureServices()
+                .AddApplicationServices()
+                .AddGrpcServices()
+                .AddSwaggerServices();
 
         services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
 
-
-        services.AddControllers().AddNewtonsoftJson(options =>
-        {
-            options.SerializerSettings.MissingMemberHandling = MissingMemberHandling.Error;
-        });
+        services.AddCommonAPIServices();
 
         // Register automapper
         services.AddAutoMapper(
@@ -51,7 +50,6 @@ internal static class HostingExtensions
             },
             AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddCommonAPIWithoutAuthServices();
         services
             .AddIdentityServer(options =>
             {
@@ -96,39 +94,88 @@ internal static class HostingExtensions
         //  .AddDeveloperSigningCredential(); // not recommended for production
 
         services.AddAuthentication()
-            .AddGoogle(options =>
-            {
-                options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
+                .AddGoogle(options =>
+                {
+                    options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
 
-                // register your IdentityServer with Google at https://console.developers.google.com
-                // enable the Google+ API
-                // set the redirect URI to https://localhost:5001/signin-google
-                options.ClientId = DotNetEnv.Env.GetString("GOOGLE_CLIENT_ID", "");
-                options.ClientSecret = DotNetEnv.Env.GetString("GOOGLE_CLIENT_SECRET", "");
+                    // register your IdentityServer with Google at https://console.developers.google.com
+                    // enable the Google+ API
+                    // set the redirect URI to https://localhost:5001/signin-google
+                    options.ClientId = DotNetEnv.Env.GetString("GOOGLE_CLIENT_ID", "");
+                    options.ClientSecret = DotNetEnv.Env.GetString("GOOGLE_CLIENT_SECRET", "");
 
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
-                options.Scope.Add("email");
+                    options.Scope.Add("openid");
+                    options.Scope.Add("profile");
+                    options.Scope.Add("email");
 
-                // Map google picture's claim to simple claim for easier query
-                options.ClaimActions.MapJsonKey("picture", "picture");
+                    // Map google picture's claim to simple claim for easier query
+                    options.ClaimActions.MapJsonKey("picture", "picture");
 
-                options.SaveTokens = true;
+                    options.SaveTokens = true;
 
-                // Config cookie
-                options.CorrelationCookie.SameSite = SameSiteMode.Lax;
-                options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.None;
-            });
+                    // Config cookie
+                    options.CorrelationCookie.SameSite = SameSiteMode.Lax;
+                    options.CorrelationCookie.SecurePolicy = CookieSecurePolicy.None;
+                });
 
         services.AddLocalApiAuthentication();
 
         services.AddScoped<IAuthorizeInteractionResponseGenerator, CustomAuthorizeInteractionResponseGenerator>();
 
-        // Config data protection
-        services.AddDataProtection()
-            .PersistKeysToFileSystem(new DirectoryInfo(Directory.GetCurrentDirectory() + "/keys"))
-            .SetApplicationName("tastopia");
+        // Config data protection persisted to Redis for multi-instance support
+        var redis = ConnectionMultiplexer.Connect(
+            new ConfigurationOptions
+            {
+                EndPoints =
+                {
+                    $"{DotNetEnv.Env.GetString("REDIS_HOST", "Not Found")}:{DotNetEnv.Env.GetString("REDIS_PORT", "Not Found")}"
+                },
+                Password = DotNetEnv.Env.GetString("REDIS_PASSWORD", ""),
+                AbortOnConnectFail = false
+            }
+        );
+        redis.ConnectionFailed += (_, e) =>
+        {
+            Serilog.Log.Error(
+                $"Redis connection failed: {e.EndPoint}, {e.FailureType}, {e.Exception?.Message}"
+            );
+        };
 
+        redis.ConnectionRestored += (_, e) =>
+        {
+            Serilog.Log.Information(
+                $"Redis connection restored: {e.EndPoint}"
+            );
+        };
+
+        if (redis.IsConnected)
+        {
+            try
+            {
+                var latency = redis.GetDatabase().Ping();
+
+                Serilog.Log.Information(
+                    "Redis connected successfully. Endpoint: {Endpoints}, Ping: {Latency}",
+                    string.Join(", ", redis.GetEndPoints().Select(x => x.ToString())),
+                    latency
+                );
+            }
+            catch (Exception ex)
+            {
+                Serilog.Log.Error(ex, "Redis connection test failed.");
+            }
+        }
+        else
+        {
+            Serilog.Log.Warning(
+                "Redis multiplexer created, but Redis is not currently connected."
+            );
+        }
+        services.AddDataProtection()
+            .PersistKeysToStackExchangeRedis(redis, "tastopia-identity-dataprotection-keys")
+            .SetApplicationName("tastopia-identity");
+
+        // CORS policy config
         services.AddCors(o => o.AddPolicy("AllowSpecificOrigins", builder =>
         {
             builder.WithOrigins(websiteUrl, "http://api-gateway", "http://localhost:5000")
@@ -143,19 +190,13 @@ internal static class HostingExtensions
 
     public static Task<WebApplication> ConfigurePipeline(this WebApplication app)
     {
-        if (EnvUtility.IsProduction() || EnvUtility.IsStaging())
+        var forwardedHeadersOptions = new ForwardedHeadersOptions
         {
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost,
-                KnownNetworks = {
-                  new Microsoft.AspNetCore.HttpOverrides.IPNetwork(
-                      IPAddress.Parse("10.42.0.0"),
-                      16
-                  )
-                }
-            });
-        }
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
+        };
+        forwardedHeadersOptions.KnownNetworks.Clear();
+        forwardedHeadersOptions.KnownProxies.Clear();
+        app.UseForwardedHeaders(forwardedHeadersOptions);
 
         app.Use(async (context, next) =>
         {
@@ -166,9 +207,9 @@ internal static class HostingExtensions
             await next();
         });
 
-
-        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_IDENTITY", "Not Found"));
-        app.UseSwaggerServices();
+        app.UseInfrastructureServices()
+           .UseSwaggerServices()
+           .UseCommonAPIMiddleware();
 
         // Chrome using SameSite.None with https scheme. But host is4 with http scheme so SameSiteMode.Lax is required
         app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
@@ -184,12 +225,16 @@ internal static class HostingExtensions
         //});
 
         app.UseCors("AllowSpecificOrigins");
-
         app.UseStaticFiles();
+
         // UseIdentityServer already call UseAuthenticate()
-        app.UseGrpcServices();
+        app.UseRouting();
         app.UseIdentityServer();
         app.UseAuthorization();
+
+        app.UseGrpcServices()
+           .UseCustomHealthCheck();
+
         app.MapRazorPages();
 
         // Add a user api endpoint so this will not be a minimal API

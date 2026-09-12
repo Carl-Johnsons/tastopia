@@ -104,12 +104,13 @@ export const useLoginWithGoogle = (): UseLoginWithGoogleResult => {
 
   const saveData = async (tokens: TokenResponse) => {
     console.log("Tokens", stringify(tokens));
-    const { accessToken, refreshToken } = tokens;
+    const { accessToken, refreshToken, idToken } = tokens;
 
     dispatch(
       saveAuthData({
         accessToken,
         refreshToken,
+        idToken: idToken!,
         role: ROLE.USER
       })
     );

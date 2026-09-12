@@ -5,9 +5,9 @@ using Serilog.Events;
 
 namespace Contract.Extension;
 
-public static class SerilogExtension
+public static class LoggingExtension
 {
-    public static WebApplicationBuilder ConfigureSerilog(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder ConfigureLoggingService(this WebApplicationBuilder builder)
     {
         var outputTemplate = "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}";
 
@@ -23,7 +23,7 @@ public static class SerilogExtension
         return builder;
     }
 
-    public static WebApplication UseSerilogServices(this WebApplication app)
+    public static WebApplication UseLoggingServices(this WebApplication app)
     {
         app.UseSerilogRequestLogging(options =>
         {

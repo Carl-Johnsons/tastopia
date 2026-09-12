@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<!--
 		This is a workaround for Reinforced.Typing to compile and generate typescript without corrupt entire project
 		Ref: https://github.com/reinforced/Reinforced.Typings/issues/231
@@ -57,6 +57,8 @@
 		<PackageReference Include="Reinforced.Typings" Version="1.6.5" />
 		<!-- SignalR client dependencies -->
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.5" />
+		<!-- Redis dependencies -->
+		<PackageReference Include="StackExchange.Redis" Version="2.7.27" />
 
 	</ItemGroup>
 
