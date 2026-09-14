@@ -1,4 +1,4 @@
-﻿using Contract.Extension;
+using Contract.Extension;
 using Contract.Utilities;
 using UploadFileService.API.Extensions;
 using UploadFileService.Application;
@@ -21,7 +21,8 @@ public static class DependenciesInjection
         services.AddInfrastructureServices()
                 .AddApplicationServices()
                 .AddGrpcServices()
-                .AddSwaggerServices();
+                .AddSwaggerServices()
+                .AddOpenTelemetry("UploadFileService");
 
         // Register automapper
         services.AddAutoMapper(

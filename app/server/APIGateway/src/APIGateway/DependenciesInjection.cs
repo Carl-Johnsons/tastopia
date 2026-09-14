@@ -1,4 +1,4 @@
-﻿using APIGateway.Extensions;
+using APIGateway.Extensions;
 using CacheManager.Core;
 using Contract.Extension;
 using Contract.Utilities;
@@ -32,6 +32,7 @@ public static class DependenciesInjection
                .ConfigureRedisHealthCheck();
 
         services.AddServiceDiscoveryService()
+                .AddOpenTelemetry("APIGateway")
                 .AddSignalR();
 
         config.SetBasePath(env.ContentRootPath)

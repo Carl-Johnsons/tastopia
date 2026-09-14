@@ -35,7 +35,8 @@ internal static class HostingExtensions
         services.AddInfrastructureServices()
                 .AddApplicationServices()
                 .AddGrpcServices()
-                .AddSwaggerServices();
+                .AddSwaggerServices()
+                .AddOpenTelemetry("IdentityService");
 
         services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
