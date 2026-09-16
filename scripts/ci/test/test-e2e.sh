@@ -12,5 +12,38 @@ mobile_dir="$script_dir/../../../app/client/mobile"
 $script_dir/wait-for-backend.sh
 
 cd "$mobile_dir"
-echo Running tests...
+
+if command -v adb &> /dev/null; then
+  adb logcat -c || true
+fi
+
+echo "Running tests..."
+set +e
 npm run test
+TEST_EXIT_CODE=$?
+set -e
+
+if command -v adb &> /dev/null; then
+  mkdir -p reports
+  adb logcat -d | grep "\[OTEL_TRACE\]" > reports/otel-traces.log || true
+
+  if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -s reports/otel-traces.log ]; then
+    {
+      echo "### Mobile E2E OTEL Traces"
+      echo "| Test | Trace ID |"
+      echo "|---|---|"
+      awk -F' ' '{
+        test=""; traceId="";
+        for(i=1; i<=NF; i++) {
+          if ($i ~ /^test=/) test=substr($i, 6);
+          if ($i ~ /^traceId=/) traceId=substr($i, 9);
+        }
+        if (traceId != "") {
+          printf "| `%s` | `%s` |\n", (test != "" ? test : "Unknown"), traceId;
+        }
+      }' reports/otel-traces.log | sort -u
+    } >> "$GITHUB_STEP_SUMMARY"
+  fi
+fi
+
+exit "$TEST_EXIT_CODE"
