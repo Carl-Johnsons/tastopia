@@ -2,6 +2,7 @@ import "server-only";
 
 import axios from "axios";
 import { auth } from "@/auth";
+import { propagation, context } from "@opentelemetry/api";
 
 /**
  * Create axios instances for making API requests.
@@ -37,6 +38,8 @@ const useAxios = async () => {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
+    config.headers = config.headers ?? {};
+    propagation.inject(context.active(), config.headers);
     return config;
   });
 
