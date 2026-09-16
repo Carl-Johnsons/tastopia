@@ -5,6 +5,7 @@ import { stringify } from "@/utils/debug";
 import { refreshAccessToken } from "@/api/tokens";
 import { transformPlatformURI } from "@/utils/functions";
 import Constants from "expo-constants";
+import { generateTraceparent } from "@/utils/telemetry";
 
 const { expoConfig } = Constants;
 
@@ -46,6 +47,7 @@ axiosInstance.interceptors.request.use(
       };
     }
 
+    config.headers.set("traceparent", generateTraceparent());
     return config;
   },
   error => {
@@ -68,6 +70,7 @@ protectedAxiosInstance.interceptors.request.use(
       };
     }
 
+    config.headers.set("traceparent", generateTraceparent());
     return config;
   },
   error => {
