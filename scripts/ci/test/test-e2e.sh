@@ -5,6 +5,8 @@ set -euo pipefail
 : "${E2E_TEST_USERNAME:?E2E_TEST_USERNAME is required}"
 : "${E2E_TEST_PASSWORD:?E2E_TEST_PASSWORD is required}"
 : "${ENV:?ENV is required for testing}"
+export ENV="${ENV}"
+export GITHUB_RUN_ID="${GITHUB_RUN_ID:-}"
 
 script_dir=$(cd -- $(dirname -- "${BASH_SOURCE[0]}") && pwd)
 mobile_dir="$script_dir/../../../app/client/mobile"
