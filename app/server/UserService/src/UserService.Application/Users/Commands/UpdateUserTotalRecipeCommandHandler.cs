@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using UserService.Domain.Errors;
 namespace UserService.Application.Users.Commands;
+
 public record UpdateUserTotalRecipeCommand : IRequest<Result>
 {
     [Required]

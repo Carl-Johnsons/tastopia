@@ -6,6 +6,7 @@ using MassTransit;
 using UploadFileService.Application.Files.Commands;
 
 namespace UploadFileService.API.EventHandlers;
+
 [QueueName(RabbitMQConstant.QUEUE.NAME.UPDATE_MULTIPLE_IMAGE_FILE,
 exchangeName: RabbitMQConstant.EXCHANGE.NAME.UPDATE_MULTIPLE_IMAGE_FILE)]
 public sealed class UpdateMultipleImageFileConsumer : IConsumer<UpdateMultipleImageFileEvent>

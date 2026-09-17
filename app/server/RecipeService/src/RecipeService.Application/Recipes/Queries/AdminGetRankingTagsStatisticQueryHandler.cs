@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 namespace RecipeService.Application.Recipes.Queries;
+
 public class AdminGetRankingTagsStatisticQuery : IRequest<Result<List<RankingStatisticEntity>?>>
 {
     public string Lang { get; set; } = null!;

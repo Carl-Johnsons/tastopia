@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Converters;
 
 namespace RecipeService.Domain.Responses;
+
 public class UserActivityResponse
 {
     [JsonConverter(typeof(StringEnumConverter))]

@@ -1,5 +1,6 @@
 ﻿using UserService.Domain.Entities;
 namespace UserService.Domain.Responses;
+
 public class AdminBanUserResponse
 {
     public Guid AdminId { get; set; }

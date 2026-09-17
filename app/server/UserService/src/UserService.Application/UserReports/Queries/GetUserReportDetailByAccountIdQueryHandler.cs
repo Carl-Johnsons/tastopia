@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using UserService.Domain.Errors;
 using UserService.Domain.Responses;
 namespace UserService.Application.UserReports.Queries;
+
 public record GetUserReportDetailByAccountIdQuery : IRequest<Result<PaginatedAdminUserReportDetailListResponse?>>
 {
     public string Lang { get; init; } = "en";
