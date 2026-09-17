@@ -3,7 +3,7 @@
 import "./commands";
 import "cypress-mochawesome-reporter/register";
 import installLogsCollector from "cypress-terminal-report/src/installLogsCollector";
-import { generateTraceparent, generateBaggage } from "@/utils/telemetry";
+import { generateTraceparent, generateBaggage } from "../../src/utils/telemetry";
 
 installLogsCollector();
 
