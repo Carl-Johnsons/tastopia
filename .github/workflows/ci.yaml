@@ -301,7 +301,7 @@ jobs:
         id: mobile_summary
         if: always()
         run: |
-          latest_report_dir=$(ls -1 app/client/mobile/reports/ 2>/dev/null | sort | tail -n 1)
+          latest_report_dir=$(find app/client/mobile/reports/ -mindepth 1 -maxdepth 1 -type d -exec basename {} \; 2>/dev/null | sort | tail -n 1)
 
           if [ "${{ steps.run_tests.outcome }}" = "success" ]; then
             STATUS="✅ Success"
