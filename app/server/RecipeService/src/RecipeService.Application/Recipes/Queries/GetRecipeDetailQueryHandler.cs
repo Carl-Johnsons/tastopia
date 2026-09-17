@@ -8,6 +8,7 @@ using RecipeService.Domain.Responses;
 using System.ComponentModel.DataAnnotations;
 using UserProto;
 namespace RecipeService.Application.Recipes.Queries;
+
 public class GetRecipeDetailQuery : IRequest<Result<RecipeDetailsResponse?>>
 {
     [Required]

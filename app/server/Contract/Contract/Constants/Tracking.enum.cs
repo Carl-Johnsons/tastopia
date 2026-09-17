@@ -1,4 +1,5 @@
 ﻿namespace Contract.Constants;
+
 public enum TrackingAction
 {
     CREATE,

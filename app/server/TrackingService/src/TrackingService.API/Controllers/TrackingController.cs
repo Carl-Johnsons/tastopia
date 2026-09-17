@@ -11,6 +11,7 @@ using TrackingService.Application.UserViewRecipeDetails.Queries;
 using TrackingService.Domain.Entities;
 using TrackingService.Domain.Responses;
 namespace TrackingService.API.Controllers;
+
 [Route("api/tracking")]
 [ApiController]
 [Authorize]

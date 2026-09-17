@@ -10,7 +10,7 @@ export const handleSignOut = async () => {
   const idToken = session?.idToken;
   const logoutUrl = `${DUENDE_IDS6_ISSUER}/connect/endsession?id_token_hint=${idToken}&post_logout_redirect_uri=${encodeURIComponent(CLIENT_BASE_URL as string)}`;
 
-  await signOut({ 
+  await signOut({
     redirect: false
   });
 

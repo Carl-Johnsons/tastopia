@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.ComponentModel.DataAnnotations;
 namespace RecipeService.API.ValidationAttributes;
+
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
 public class MaxLengthListAttribute : ValidationAttribute
 {

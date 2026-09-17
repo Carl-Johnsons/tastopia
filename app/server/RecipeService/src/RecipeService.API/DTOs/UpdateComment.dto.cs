@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.API.DTOs;
+
 public class UpdateCommentDTO
 {
     [Required]

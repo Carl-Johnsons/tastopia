@@ -3,6 +3,7 @@ using Contract.Utilities;
 using UserService.Domain.Responses;
 
 namespace UserService.Application.UserReports.Queries;
+
 public record GetUserReportQueryByHashSet : IRequest<Result<Dictionary<Guid, AdminGrpcUserReportResponse>?>>
 {
     public string Lang { get; init; } = "en";

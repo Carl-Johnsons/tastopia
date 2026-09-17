@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using UserService.Domain.Errors;
 using UserService.Domain.Responses;
 namespace UserService.Application.Users.Commands;
+
 public class BanAdminCommand : IRequest<Result<AdminBanUserResponse?>>
 {
     public Guid AccountId { get; set; }

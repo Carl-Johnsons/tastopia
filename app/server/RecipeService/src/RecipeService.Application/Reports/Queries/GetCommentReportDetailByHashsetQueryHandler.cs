@@ -10,6 +10,7 @@ using RecipeService.Domain.Responses;
 using UserProto;
 
 namespace RecipeService.Application.Reports.Queries;
+
 public record GetCommentReportDetailByHashSetQuery : IRequest<Result<Dictionary<Guid, AdminSingleReportCommentDetailResponse>?>>
 {
     public string Lang { get; init; } = null!;

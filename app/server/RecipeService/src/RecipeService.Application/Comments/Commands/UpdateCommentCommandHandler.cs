@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 namespace RecipeService.Application.Comments.Commands;
+
 public class UpdateCommentCommand : IRequest<Result<Comment?>>
 {
     public Guid? CommentId { get; init; }

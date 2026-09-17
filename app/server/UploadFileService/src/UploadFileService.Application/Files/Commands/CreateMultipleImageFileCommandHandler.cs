@@ -9,6 +9,7 @@ using UploadFileService.Application.Utilities;
 using UploadFileService.Domain.Responses;
 
 namespace UploadFileService.Application.Files.Commands;
+
 public record CreateMultipleImageFileCommand : IRequest<Result<List<FileResponse>?>>
 {
     [Required]
