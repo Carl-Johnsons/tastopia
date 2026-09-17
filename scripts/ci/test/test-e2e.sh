@@ -26,10 +26,10 @@ TEST_EXIT_CODE=$?
 set -e
 
 if command -v adb &> /dev/null; then
-  mkdir -p reports
-  adb logcat -d | grep "\[OTEL_TRACE\]" > reports/otel-traces.log || true
+  mkdir -p logs
+  adb logcat -d | grep "\[OTEL_TRACE\]" > logs/otel-traces.log || true
 
-  if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -s reports/otel-traces.log ]; then
+  if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -s logs/otel-traces.log ]; then
     {
       echo "### Mobile E2E OTEL Traces"
       echo "| Test | Trace ID |"
@@ -43,7 +43,7 @@ if command -v adb &> /dev/null; then
         if (traceId != "") {
           printf "| `%s` | `%s` |\n", (test != "" ? test : "Unknown"), traceId;
         }
-      }' reports/otel-traces.log | sort -u
+      }' logs/otel-traces.log | sort -u
     } >> "$GITHUB_STEP_SUMMARY"
   fi
 fi
