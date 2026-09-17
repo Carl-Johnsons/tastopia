@@ -1,4 +1,4 @@
-﻿using Contract.Extension;
+using Contract.Extension;
 using Contract.Utilities;
 using UserService.API.Extensions;
 using UserService.Application;
@@ -23,7 +23,8 @@ public static class DependenciesInjection
         services.AddInfrastructureServices()
                 .AddApplicationServices()
                 .AddGrpcServices()
-                .AddSwaggerServices();
+                .AddSwaggerServices()
+                .AddOpenTelemetry("UserService");
 
         services.AddAutoMapper(
             cfg =>

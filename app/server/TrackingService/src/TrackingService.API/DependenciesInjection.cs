@@ -1,4 +1,4 @@
-﻿using Contract.Extension;
+using Contract.Extension;
 using Contract.Utilities;
 using TrackingService.API.Extensions;
 using TrackingService.Application;
@@ -22,7 +22,8 @@ public static class DependenciesInjection
 
         services.AddInfrastructureServices()
                 .AddApplicationServices()
-                .AddSwaggerServices();
+                .AddSwaggerServices()
+                .AddOpenTelemetry("TrackingService");
 
         // Register automapper
         services.AddAutoMapper(

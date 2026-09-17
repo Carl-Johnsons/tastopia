@@ -1,4 +1,5 @@
-﻿using Contract.Common;
+using Contract.Common;
+using Contract.Extension;
 using MassTransit;
 using System.Reflection;
 
@@ -8,6 +9,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddWorkerServices(this IServiceCollection services)
     {
+        services.AddOpenTelemetry("EmailWorker");
         services.AddMassTransitService();
 
         return services;

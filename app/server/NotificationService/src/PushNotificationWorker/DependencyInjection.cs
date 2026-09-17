@@ -1,4 +1,5 @@
-﻿using Contract.Common;
+using Contract.Common;
+using Contract.Extension;
 using Expo.Server.Client;
 using MassTransit;
 using PushNotificationWorker.Interfaces;
@@ -11,6 +12,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddWorkerServices(this IServiceCollection services)
     {
+        services.AddOpenTelemetry("PushNotificationWorker");
         services.AddSingleton<PushApiClient>();
         services.AddSingleton<IPushNotificationService, ExpoPushNotificationService>();
         services.AddMassTransitService();

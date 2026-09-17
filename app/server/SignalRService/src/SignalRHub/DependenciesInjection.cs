@@ -1,4 +1,4 @@
-﻿using Contract.Extension;
+using Contract.Extension;
 using Contract.Utilities;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
@@ -24,7 +24,8 @@ public static class DependenciesInjection
                .ConfigureKestrel()
                .ConfigureLivenessCheck();
 
-        services.AddExternalInfrastructureServices();
+        services.AddExternalInfrastructureServices()
+                .AddOpenTelemetry("SignalRService");
 
         var apiGatewayUrl = DotNetEnv.Env.GetString("API_GATEWAY_URL", "https://localhost:7000");
 

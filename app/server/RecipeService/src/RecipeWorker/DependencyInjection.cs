@@ -1,5 +1,6 @@
-﻿using Consul;
+using Consul;
 using Contract.Common;
+using Contract.Extension;
 using Contract.Interfaces;
 using Contract.Services;
 using Grpc.Core;
@@ -15,6 +16,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddWorkerServices(this IServiceCollection services)
     {
+        services.AddOpenTelemetry("RecipeWorker");
         services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
         {
             return new ConsulClient(config =>

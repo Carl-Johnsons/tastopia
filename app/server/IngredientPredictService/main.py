@@ -1,10 +1,12 @@
 from contextlib import asynccontextmanager
+
 from EnvUtility import get_mongodb_connection_string, is_development, load_env
 from MongoClient import MongoClient
 from ModelLoader import get_clip_model, get_clip_preprocessor, get_model, get_model_tokenizer
 from RedisManager import RedisManager
 from fastapi import FastAPI, File, UploadFile, status
 from fastapi.responses import JSONResponse
+import TelemetryUtility
 from health import check_liveness, check_readiness
 from PIL import Image, ImageOps
 # from ultralytics import YOLO
@@ -35,6 +37,8 @@ logging.addLevelName(logging.INFO, "Information")
 logging.addLevelName(logging.WARNING, "Warning")
 
 load_env()
+TelemetryUtility.init("IngredientPredictService")
+
 # Define utility
 mongoClient = MongoClient(get_mongodb_connection_string())
 redisManager = RedisManager()
@@ -185,6 +189,8 @@ async def lifespan(app: FastAPI):
         else:
             logging.error("Deregistration failed:", response.text)
 
+    TelemetryUtility.shutdown()
+
 # Set up the scheduler
 scheduler = BackgroundScheduler()
 trigger = CronTrigger(hour=0, minute=0)  # midnight every day
@@ -195,6 +201,7 @@ scheduler.start()
 
 app = FastAPI(lifespan=lifespan, redirect_slashes=False)
 # app = FastAPI(redirect_slashes=False)
+TelemetryUtility.configure_fastapi(app)
 
 @app.get("/health/live")
 async def health_live():

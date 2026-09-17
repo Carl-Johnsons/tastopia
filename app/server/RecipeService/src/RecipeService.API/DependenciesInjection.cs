@@ -1,4 +1,4 @@
-﻿using Contract.Extension;
+using Contract.Extension;
 using Contract.Utilities;
 using RecipeService.API.Extensions;
 using RecipeService.Application;
@@ -23,7 +23,8 @@ public static class DependenciesInjection
         services.AddInfrastructureServices()
                 .AddApplicationServices()
                 .AddGrpcServices()
-                .AddSwaggerServices();
+                .AddSwaggerServices()
+                .AddOpenTelemetry("RecipeService");
 
         // Register automapper
         services.AddAutoMapper(
