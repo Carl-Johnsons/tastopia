@@ -13,6 +13,7 @@ using RecipeService.Domain.Responses;
 using UserProto;
 
 namespace RecipeService.Application.Comments.Commands;
+
 public class CommentRecipeCommand : IRequest<Result<RecipeCommentResponse?>>
 {
     public Guid? RecipeId { get; init; }

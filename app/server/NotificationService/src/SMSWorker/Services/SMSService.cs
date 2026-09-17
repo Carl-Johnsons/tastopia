@@ -2,6 +2,7 @@
 using SMSWorker.Interfaces;
 using System.Text;
 namespace SMSWorker.Services;
+
 public class SMSService : ISMSService
 {
     private readonly string SPEEDSMS_DEVICE_ID;
