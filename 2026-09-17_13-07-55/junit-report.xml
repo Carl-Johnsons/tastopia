@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="1" skipped="0" errors="0" time="182.243">
+  <testsuite name="maestro-runner" tests="5" failures="1" skipped="0" errors="0" time="182.243" timestamp="2026-09-17T13:07:58Z">
+    <testcase name="comment-recipe" classname="comment-recipe" time="31.488">
+      <properties>
+        <property name="file" value="comment-recipe.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+    </testcase>
+    <testcase name="community" classname="community" time="18.363">
+      <properties>
+        <property name="file" value="community.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+    </testcase>
+    <testcase name="cooking-mode" classname="cooking-mode" time="32.526">
+      <properties>
+        <property name="file" value="cooking-mode.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+    </testcase>
+    <testcase name="search-recipe" classname="search-recipe" time="17.626">
+      <properties>
+        <property name="file" value="search-recipe.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+    </testcase>
+    <testcase name="search-user" classname="search-user" time="34.618">
+      <properties>
+        <property name="file" value="search-user.yaml"/>
+        <property name="device.name" value="google Android SDK built for x86"/>
+        <property name="device.id" value="emulator-5554"/>
+        <property name="device.platform" value="android"/>
+      </properties>
+      <failure message="Element not visible: context deadline exceeded: no such element: An element could not be located on the page using the given search parameters" type="AssertionError">assertVisible</failure>
+    </testcase>
+  </testsuite>
+</testsuites>
