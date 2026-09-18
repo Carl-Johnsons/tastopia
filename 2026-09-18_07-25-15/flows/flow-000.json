@@ -1,0 +1,345 @@
+{
+  "id": "flow-000",
+  "name": "comment-recipe",
+  "sourceFile": ".maestro/community/comment-recipe.yaml",
+  "device": {
+    "id": "emulator-5554",
+    "name": "google Android SDK built for x86",
+    "platform": "android",
+    "osVersion": "27",
+    "isSimulator": true
+  },
+  "startTime": "2026-09-18T07:25:22.798837561Z",
+  "endTime": "2026-09-18T07:26:39.456159326Z",
+  "duration": 76657,
+  "onFlowStartCommands": [
+    {
+      "id": "sub-0",
+      "index": 0,
+      "type": "runFlow",
+      "yaml": "runFlow: ../common/login.yaml",
+      "status": "failed",
+      "startTime": "2026-09-18T07:25:22.799089522Z",
+      "endTime": "2026-09-18T07:26:39.456150062Z",
+      "duration": 76346,
+      "error": {
+        "type": "execution",
+        "message": "context deadline exceeded"
+      },
+      "artifacts": {
+        "screenshotAfter": "assets/flow-000/cmd-009-after.png",
+        "viewHierarchy": "assets/flow-000/cmd-009-hierarchy.xml"
+      },
+      "subCommands": [
+        {
+          "id": "sub-0",
+          "index": 0,
+          "type": "launchApp",
+          "yaml": "launchApp",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:22.799394252Z",
+          "endTime": "2026-09-18T07:25:29.691088795Z",
+          "duration": 6891,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-1",
+          "index": 1,
+          "type": "openLink",
+          "yaml": "openLink",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:29.69109822Z",
+          "endTime": "2026-09-18T07:25:29.816067924Z",
+          "duration": 124,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-2",
+          "index": 2,
+          "type": "tapOn",
+          "yaml": "tapOn: id=\"welcome-sign-in-button\"",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:29.816076727Z",
+          "endTime": "2026-09-18T07:25:32.155317541Z",
+          "duration": 2339,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-3",
+          "index": 3,
+          "type": "assertVisible",
+          "yaml": "assertVisible: id=\"login-identifier-input\"",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:32.155325443Z",
+          "endTime": "2026-09-18T07:25:32.972127729Z",
+          "duration": 816,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-4",
+          "index": 4,
+          "type": "tapOn",
+          "yaml": "tapOn: id=\"login-identifier-input\"",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:32.972130443Z",
+          "endTime": "2026-09-18T07:25:33.43820667Z",
+          "duration": 466,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-5",
+          "index": 5,
+          "type": "inputText",
+          "yaml": "inputText: \"***\"",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:33.438214322Z",
+          "endTime": "2026-09-18T07:25:35.570202515Z",
+          "duration": 2131,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-6",
+          "index": 6,
+          "type": "hideKeyboard",
+          "yaml": "hideKeyboard",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:35.570206551Z",
+          "endTime": "2026-09-18T07:25:35.58779353Z",
+          "duration": 17,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-7",
+          "index": 7,
+          "type": "assertVisible",
+          "yaml": "assertVisible: id=\"login-password-input\"",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:35.587800251Z",
+          "endTime": "2026-09-18T07:25:36.092177141Z",
+          "duration": 504,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-8",
+          "index": 8,
+          "type": "tapOn",
+          "yaml": "tapOn: id=\"login-password-input\"",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:36.092180616Z",
+          "endTime": "2026-09-18T07:25:36.42872933Z",
+          "duration": 336,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-9",
+          "index": 9,
+          "type": "inputText",
+          "yaml": "inputText: \"***\"",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:36.428736591Z",
+          "endTime": "2026-09-18T07:25:37.375037576Z",
+          "duration": 946,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-10",
+          "index": 10,
+          "type": "hideKeyboard",
+          "yaml": "hideKeyboard",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:37.375041632Z",
+          "endTime": "2026-09-18T07:25:37.402267889Z",
+          "duration": 27,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-11",
+          "index": 11,
+          "type": "tapOn",
+          "yaml": "tapOn: id=\"login-submit-button\"",
+          "status": "passed",
+          "startTime": "2026-09-18T07:25:37.402271805Z",
+          "endTime": "2026-09-18T07:25:38.793480636Z",
+          "duration": 1390,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-12",
+          "index": 12,
+          "type": "extendedWaitUntil",
+          "yaml": "extendedWaitUntil: visible id=\"COMMUNITY\"",
+          "status": "failed",
+          "startTime": "2026-09-18T07:25:38.793487075Z",
+          "endTime": "2026-09-18T07:26:39.145249598Z",
+          "duration": 60003,
+          "error": {
+            "type": "execution",
+            "message": "context deadline exceeded"
+          },
+          "artifacts": {
+            "screenshotAfter": "assets/flow-000/cmd-008-after.png",
+            "viewHierarchy": "assets/flow-000/cmd-008-hierarchy.xml"
+          }
+        }
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "id": "cmd-000",
+      "index": 0,
+      "type": "assertVisible",
+      "yaml": "assertVisible: text=\"Community\"",
+      "status": "pending",
+      "params": {
+        "selector": {
+          "type": "text",
+          "value": "Community"
+        }
+      },
+      "artifacts": {}
+    },
+    {
+      "id": "cmd-001",
+      "index": 1,
+      "type": "tapOn",
+      "yaml": "tapOn: id=\"COMMUNITY\"",
+      "status": "pending",
+      "params": {
+        "selector": {
+          "type": "id",
+          "value": "COMMUNITY"
+        }
+      },
+      "artifacts": {}
+    },
+    {
+      "id": "cmd-002",
+      "index": 2,
+      "type": "tapOn",
+      "yaml": "tapOn: id=\"recipe\"",
+      "status": "pending",
+      "params": {
+        "selector": {
+          "type": "id",
+          "value": "recipe"
+        }
+      },
+      "artifacts": {}
+    },
+    {
+      "id": "cmd-003",
+      "index": 3,
+      "type": "scrollUntilVisible",
+      "yaml": "scrollUntilVisible: id=\"recipe-comment-input\"",
+      "status": "pending",
+      "params": {
+        "selector": {
+          "type": "id",
+          "value": "recipe-comment-input"
+        },
+        "direction": "DOWN"
+      },
+      "artifacts": {}
+    },
+    {
+      "id": "cmd-004",
+      "index": 4,
+      "type": "tapOn",
+      "yaml": "tapOn: id=\"recipe-comment-input\"",
+      "status": "pending",
+      "params": {
+        "selector": {
+          "type": "id",
+          "value": "recipe-comment-input"
+        }
+      },
+      "artifacts": {}
+    },
+    {
+      "id": "cmd-005",
+      "index": 5,
+      "type": "inputText",
+      "yaml": "inputText: \"test comment\"",
+      "status": "pending",
+      "params": {
+        "text": "test comment"
+      },
+      "artifacts": {}
+    },
+    {
+      "id": "cmd-006",
+      "index": 6,
+      "type": "hideKeyboard",
+      "yaml": "hideKeyboard",
+      "status": "pending",
+      "artifacts": {}
+    },
+    {
+      "id": "cmd-007",
+      "index": 7,
+      "type": "tapOn",
+      "yaml": "tapOn: id=\"submit-comment-button\"",
+      "status": "pending",
+      "params": {
+        "selector": {
+          "type": "id",
+          "value": "submit-comment-button"
+        }
+      },
+      "artifacts": {}
+    }
+  ],
+  "onFlowCompleteCommands": [
+    {
+      "id": "sub-0",
+      "index": 0,
+      "type": "runFlow",
+      "yaml": "runFlow: ../common/logout.yaml",
+      "status": "failed",
+      "startTime": "2026-09-18T07:26:39.460963806Z",
+      "endTime": "2026-09-18T07:27:08.811399609Z",
+      "duration": 28263,
+      "error": {
+        "type": "execution",
+        "message": "context deadline exceeded"
+      },
+      "artifacts": {
+        "screenshotAfter": "assets/flow-000/cmd-011-after.png",
+        "viewHierarchy": "assets/flow-000/cmd-011-hierarchy.xml"
+      },
+      "subCommands": [
+        {
+          "id": "sub-0",
+          "index": 0,
+          "type": "launchApp",
+          "yaml": "launchApp",
+          "status": "passed",
+          "startTime": "2026-09-18T07:26:39.461116757Z",
+          "endTime": "2026-09-18T07:26:46.634889312Z",
+          "duration": 7173,
+          "artifacts": {}
+        },
+        {
+          "id": "sub-1",
+          "index": 1,
+          "type": "extendedWaitUntil",
+          "yaml": "extendedWaitUntil: visible id=\"MENU\"",
+          "status": "failed",
+          "startTime": "2026-09-18T07:26:46.634898195Z",
+          "endTime": "2026-09-18T07:27:07.724159556Z",
+          "duration": 20007,
+          "error": {
+            "type": "execution",
+            "message": "context deadline exceeded"
+          },
+          "artifacts": {
+            "screenshotAfter": "assets/flow-000/cmd-010-after.png",
+            "viewHierarchy": "assets/flow-000/cmd-010-hierarchy.xml"
+          }
+        }
+      ]
+    }
+  ],
+  "artifacts": {}
+}
