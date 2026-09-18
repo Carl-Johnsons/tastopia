@@ -15,8 +15,22 @@ $script_dir/wait-for-backend.sh
 
 cd "$mobile_dir"
 
+LOGCAT_PID=""
+stop_logcat() {
+  if [ -n "$LOGCAT_PID" ]; then
+    kill "$LOGCAT_PID" 2>/dev/null || true
+    wait "$LOGCAT_PID" 2>/dev/null || true
+    LOGCAT_PID=""
+  fi
+}
+trap stop_logcat EXIT
+
 if command -v adb &> /dev/null; then
+  mkdir -p logs
   adb logcat -c || true
+  adb logcat -P "" || true
+  adb logcat -v time > logs/raw-logcat.log 2>&1 &
+  LOGCAT_PID=$!
 fi
 
 echo "Running tests..."
@@ -26,8 +40,13 @@ TEST_EXIT_CODE=$?
 set -e
 
 if command -v adb &> /dev/null; then
-  mkdir -p logs
-  adb logcat -d | grep "\[OTEL_TRACE\]" > logs/otel-traces.log || true
+  stop_logcat
+
+  if [ -s logs/raw-logcat.log ]; then
+    grep "\[OTEL_TRACE\]" logs/raw-logcat.log > logs/otel-traces.log || true
+  else
+    adb logcat -d | grep "\[OTEL_TRACE\]" > logs/otel-traces.log || true
+  fi
 
   if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -s logs/otel-traces.log ]; then
     {
