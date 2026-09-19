@@ -16,7 +16,7 @@ public static class LoggingExtension
         Log.Logger = new LoggerConfiguration()
             .Enrich.FromLogContext()
             .WriteTo.Console(outputTemplate: outputTemplate)
-            .CreateBootstrapLogger();
+            .CreateLogger();
 
         builder.UseSerilog((ctx, lc) => lc
             .WriteTo.Console(outputTemplate: outputTemplate)
