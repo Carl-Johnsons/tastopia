@@ -30,7 +30,7 @@ public static class LoggingExtension
                 };
             })
             .Enrich.FromLogContext()
-            .ReadFrom.Configuration(ctx.Configuration), preserveStaticLogger: true);
+            .ReadFrom.Configuration(ctx.Configuration));
         return builder;
     }
 
