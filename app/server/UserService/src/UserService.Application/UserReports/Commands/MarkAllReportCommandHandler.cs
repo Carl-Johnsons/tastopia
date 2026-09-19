@@ -3,6 +3,7 @@ using Contract.Event.TrackingEvent;
 using Microsoft.EntityFrameworkCore;
 using UserService.Domain.Errors;
 namespace RecipeService.Application.Reports.Commands;
+
 public record MarkAllReportCommand : IRequest<Result>
 {
     public Guid AccountId { get; set; }

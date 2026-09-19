@@ -1,4 +1,5 @@
 ﻿namespace UserService.Domain.Constants;
+
 public class ReportReasonData
 {
     public static List<ReportUserReason> ReportUserReasons = new List<ReportUserReason>

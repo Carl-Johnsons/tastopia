@@ -19,6 +19,8 @@ export WEBSITE_URL="$(get_client_base_url)"
 export DUENDE_IDS6_ISSUER="$(get_duende_ids6_issuer)"
 export TEST_USERNAME="$E2E_TEST_USERNAME"
 export TEST_PASSWORD="$E2E_TEST_PASSWORD"
+export ENV="${ENV}"
+export GITHUB_RUN_ID="${GITHUB_RUN_ID:-}"
 
 cd "$repo_root/app/client/website"
 echo "Running website E2E tests..."

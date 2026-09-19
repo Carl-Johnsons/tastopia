@@ -1,10 +1,11 @@
-import axios from "axios";
+import axios, { InternalAxiosRequestConfig } from "axios";
 import { store } from "@/store";
 import { saveAuthData } from "@/slices/auth.slice";
 import { stringify } from "@/utils/debug";
 import { refreshAccessToken } from "@/api/tokens";
 import { transformPlatformURI } from "@/utils/functions";
 import Constants from "expo-constants";
+import { setupTelemetryHeaders, isCi, getTestName } from "@/utils/telemetry";
 
 const { expoConfig } = Constants;
 
@@ -38,6 +39,15 @@ const protectedAxiosInstance = axios.create({
   maxBodyLength: Infinity
 });
 
+function setUpTelemetryHeader(config: InternalAxiosRequestConfig<any>) {
+  const { traceId } = setupTelemetryHeaders(config.headers);
+
+  if (__DEV__ || isCi()) {
+    const test = getTestName() ?? "unknown";
+    console.log(`[OTEL_TRACE] test=${test} traceId=${traceId}`);
+  }
+}
+
 axiosInstance.interceptors.request.use(
   config => {
     if (config.method === "get") {
@@ -46,6 +56,7 @@ axiosInstance.interceptors.request.use(
       };
     }
 
+    setUpTelemetryHeader(config);
     return config;
   },
   error => {
@@ -68,6 +79,7 @@ protectedAxiosInstance.interceptors.request.use(
       };
     }
 
+    setUpTelemetryHeader(config);
     return config;
   },
   error => {

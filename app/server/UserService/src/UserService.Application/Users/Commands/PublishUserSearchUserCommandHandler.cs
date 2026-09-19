@@ -2,6 +2,7 @@
 using UserService.Domain.Errors;
 
 namespace UserService.Application.Users.Commands;
+
 public class PublishUserSearchUserCommand : IRequest<Result<string?>>
 {
     public Guid AccountId { get; init; }

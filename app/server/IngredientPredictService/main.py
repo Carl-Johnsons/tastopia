@@ -1,10 +1,20 @@
 from contextlib import asynccontextmanager
+
 from EnvUtility import get_mongodb_connection_string, is_development, load_env
 from MongoClient import MongoClient
-from ModelLoader import get_clip_model, get_clip_preprocessor, get_model, get_model_tokenizer
+from ModelLoader import (
+    get_clip_model,
+    get_clip_preprocessor,
+    get_model,
+    get_model_tokenizer,
+)
 from RedisManager import RedisManager
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, status
+from fastapi.responses import JSONResponse
+import TelemetryUtility
+from health import check_liveness, check_readiness
 from PIL import Image, ImageOps
+
 # from ultralytics import YOLO
 import httpx
 import io
@@ -17,8 +27,12 @@ import numpy as np
 import torch
 import cv2
 import faiss
-from apscheduler.schedulers.background import BackgroundScheduler  # runs tasks in the background
-from apscheduler.triggers.cron import CronTrigger  # allows us to specify a recurring time for execution
+from apscheduler.schedulers.background import (
+    BackgroundScheduler,
+)  # runs tasks in the background
+from apscheduler.triggers.cron import (
+    CronTrigger,
+)  # allows us to specify a recurring time for execution
 import asyncio
 import aiohttp
 import requests
@@ -33,6 +47,8 @@ logging.addLevelName(logging.INFO, "Information")
 logging.addLevelName(logging.WARNING, "Warning")
 
 load_env()
+TelemetryUtility.init("IngredientPredictService")
+
 # Define utility
 mongoClient = MongoClient(get_mongodb_connection_string())
 redisManager = RedisManager()
@@ -41,40 +57,44 @@ redisManager = RedisManager()
 convnext_model = get_model()
 # yolo_model = YOLO("./model/yolo_best_f.pt")
 clip_model = get_clip_model()
-preprocess = get_clip_preprocessor() 
+preprocess = get_clip_preprocessor()
 tokenizer = get_model_tokenizer()
 
 # device = torch.device('cuda:0' if torch.backends.cuda.is_built() else 'cpu')
-device = torch.device('cpu')
+device = torch.device("cpu")
 clip_model = clip_model.to(device)
 
 service_host = os.getenv("SERVICE_HOST")
 service_port = int(os.getenv("PORT"))
 
-ai_kaggle_server_url = ''
+ai_kaggle_server_url = ""
 
 # Load tag from MongoDB
 mongo_client = mongoClient.get_mongo_client()
 # print(mongo_client.list_database_names())
 recipe_db = mongo_client["RecipeDB"]
 tag_collection = recipe_db["Tag"]
-tag_list = tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list()
+tag_list = tag_collection.find({"Status": "Active", "Category": "Ingredient"}).to_list()
 
 if not tag_list:
     logging.error("Empty tag list detected. Please check database and try again")
     raise Exception("Empty tag list detected")
 
+
 def sync_ai_kaggle_server_url():
     global ai_kaggle_server_url
-    ai_kaggle_server_url = requests.get('https://script.google.com/macros/s/AKfycbyVK0wd-G_kuZXrQ0dGDC86xBkhfuHFTm5bXXe0hyL39IND815GSHpli4_v99Cb2KeZFg/exec').text
-    
+    ai_kaggle_server_url = requests.get(
+        "https://script.google.com/macros/s/AKfycbyVK0wd-G_kuZXrQ0dGDC86xBkhfuHFTm5bXXe0hyL39IND815GSHpli4_v99Cb2KeZFg/exec"
+    ).text
+
     logging.info(f"AI Kaggle Server URL: {ai_kaggle_server_url}")
+
 
 def load_clip_features(names: dict, tag_dict: dict):
     # Load feature
-    features = np.load('clip_feature/features.npy')
+    features = np.load("clip_feature/features.npy")
     features = features.reshape(features.shape[0], features.shape[2])
-    filename_index = np.load('clip_feature/features_index.npy')
+    filename_index = np.load("clip_feature/features_index.npy")
 
     if not tag_dict or not names:
         print("Filter clip features failed")
@@ -83,12 +103,12 @@ def load_clip_features(names: dict, tag_dict: dict):
     filename_index_list = []
     for i in range(filename_index.shape[0]):
         new_index = len(filename_index_list)
-        class_label = filename_index[i].split('/')[1]
+        class_label = filename_index[i].split("/")[1]
         class_code = names[class_label][2]
         if not tag_dict.get(class_code):
             continue
 
-        new_filename = filename_index[i].split(' ')[0] + ' ' + str(new_index)
+        new_filename = filename_index[i].split(" ")[0] + " " + str(new_index)
         features_list.append(features[i])
         filename_index_list.append(new_filename)
 
@@ -96,28 +116,31 @@ def load_clip_features(names: dict, tag_dict: dict):
     filename_index_list = np.array(filename_index_list)
     return features_list, filename_index_list
 
+
 def sync_tags_and_load_faiss():
-    logging.info('Begin sync_tags_and_load_faiss')
+    logging.info("Begin sync_tags_and_load_faiss")
     global tag_dict, names, index, filename_index, text_features, tag_codes
 
     # Load tags from MongoDB
     tag_dict = dict()
-    tag_list = tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list()
+    tag_list = tag_collection.find(
+        {"Status": "Active", "Category": "Ingredient"}
+    ).to_list()
 
     for tag in tag_list:
-        tag_dict[tag['Code']] = {
-            'En': tag['Value']['En'],
-            'Vi': tag['Value']['Vi'],
-            'Pretrained': False,
+        tag_dict[tag["Code"]] = {
+            "En": tag["Value"]["En"],
+            "Vi": tag["Value"]["Vi"],
+            "Pretrained": False,
         }
 
     # Load names from file
     names = dict()
-    for i in open("name_edited.txt", encoding='utf-8').read().splitlines():
-        code = i.split('_')[2].replace(' ', '_').upper()
-        names[i.split('_')[0]] = [i.split('_')[2], i.split('_')[4], code]
+    for i in open("name_edited.txt", encoding="utf-8").read().splitlines():
+        code = i.split("_")[2].replace(" ", "_").upper()
+        names[i.split("_")[0]] = [i.split("_")[2], i.split("_")[4], code]
         if tag_dict.get(code):
-            tag_dict[code]['Pretrained'] = True
+            tag_dict[code]["Pretrained"] = True
 
     # Load feature
     features, filename_index = load_clip_features(names, tag_dict)
@@ -126,17 +149,18 @@ def sync_tags_and_load_faiss():
 
     # Process text features
     tag_codes = [i for i in tag_dict.keys()]
-    labels_list = [tag_dict[i]['En'] for i in tag_codes]
+    labels_list = [tag_dict[i]["En"] for i in tag_codes]
     text = tokenizer(labels_list, context_length=clip_model.context_length)
     text = torch.as_tensor(text, device=device)
     with torch.no_grad():
         text_features = clip_model.encode_text(text)
-    logging.info('sync_tags_and_load_faiss End')
-    
+    logging.info("sync_tags_and_load_faiss End")
+
 
 # Initialize the index, tags and load features
 sync_tags_and_load_faiss()
 sync_ai_kaggle_server_url()
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -148,13 +172,15 @@ async def lifespan(app: FastAPI):
     consul_base_address = f"{consul_scheme}://{consul_host}:{consul_port}"
 
     consul_register_url = f"{consul_base_address}/v1/agent/service/register"
-    consul_deregister_url = f"{consul_base_address}/v1/agent/service/deregister/{service_id}"
+    consul_deregister_url = (
+        f"{consul_base_address}/v1/agent/service/deregister/{service_id}"
+    )
 
-    if(is_development()):
-        health_check_url = f"http://host.docker.internal:{service_port}/health"
+    if is_development():
+        health_check_url = f"http://host.docker.internal:{service_port}/health/ready"
     else:
-        health_check_url = f"http://{service_host}:{service_port}/health"
-        
+        health_check_url = f"http://{service_host}:{service_port}/health/ready"
+
     logging.info(f"Start instance {service_id}")
     service_registration = {
         "ID": service_id,
@@ -165,8 +191,8 @@ async def lifespan(app: FastAPI):
         "Check": {
             "HTTP": health_check_url,
             "Interval": "10s",
-            "DeregisterCriticalServiceAfter": "1m"
-        }
+            "DeregisterCriticalServiceAfter": "1m",
+        },
     }
     async with httpx.AsyncClient() as client:
         response = await client.put(consul_register_url, json=service_registration)
@@ -183,20 +209,44 @@ async def lifespan(app: FastAPI):
         else:
             logging.error("Deregistration failed:", response.text)
 
+    TelemetryUtility.shutdown()
+
+
 # Set up the scheduler
 scheduler = BackgroundScheduler()
 trigger = CronTrigger(hour=0, minute=0)  # midnight every day
 scheduler.add_job(sync_tags_and_load_faiss, trigger)
-sync_ai_url_trigger = CronTrigger(minute='*/10')  # every 10 minutes
+sync_ai_url_trigger = CronTrigger(minute="*/10")  # every 10 minutes
 scheduler.add_job(sync_ai_kaggle_server_url, sync_ai_url_trigger)
 scheduler.start()
 
 app = FastAPI(lifespan=lifespan, redirect_slashes=False)
 # app = FastAPI(redirect_slashes=False)
+TelemetryUtility.configure_fastapi(app)
 
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
+
+@app.get("/health/live")
+async def health_live():
+    report = check_liveness()
+    return JSONResponse(status_code=status.HTTP_200_OK, content=report)
+
+
+@app.get("/health/ready")
+def health_ready():
+    report = check_readiness(
+        redis_manager=redisManager,
+        mongo_client=mongo_client,
+        convnext_model=convnext_model,
+        clip_model=clip_model,
+        index=index,
+    )
+    status_code = (
+        status.HTTP_200_OK
+        if report["status"] == "Healthy"
+        else status.HTTP_503_SERVICE_UNAVAILABLE
+    )
+    return JSONResponse(status_code=status_code, content=report)
+
 
 def cal_mix_clip_cnn(a, b):
     scores = dict()
@@ -215,7 +265,7 @@ def cal_mix_clip_cnn(a, b):
         if scores[key] > score:
             score = scores[key]
             ans = key
-    
+
     indexs = [i for i in scores.keys()]
     probs = [scores[i] for i in scores.keys()]
 
@@ -223,6 +273,7 @@ def cal_mix_clip_cnn(a, b):
     indexs, probs = zip(*sorted_pairs)
 
     return list(indexs), list(probs)
+
 
 def get_raw_convnext_predict(image):
     image_size = (224, 224)
@@ -232,6 +283,7 @@ def get_raw_convnext_predict(image):
     image_nps = np.expand_dims(image_np, axis=0)
     results = convnext_model.predict(image_nps)
     return results.tolist()
+
 
 def chose_res_clip(a):
     scores = dict()
@@ -245,55 +297,69 @@ def chose_res_clip(a):
         if scores[key] > score:
             score = scores[key]
             ans = key
-    
+
     return ans
+
 
 def encode_image_by_clip(image):
     image = preprocess(image).unsqueeze(0).to(device)
     image_features = clip_model.encode_image(image)
     return image_features
 
+
 def get_raw_clip_predict(image_features, no_sample=12):
     image_features = image_features.cpu().detach().numpy()
 
     clip_pred_raw = []
     D, I = index.search(np.array(image_features), no_sample)
-    pred_class = [int(filename_index[i].split('/')[1]) - 1 for i in I[0]]
+    pred_class = [int(filename_index[i].split("/")[1]) - 1 for i in I[0]]
     clip_pred_raw.append(pred_class)
     return clip_pred_raw
 
+
 def get_raw_clip_text_predict(image_features):
-    res = (image_features @ text_features.T)
+    res = image_features @ text_features.T
     res = res[0].tolist()
 
-    sorted_pairs = sorted(zip([i for i in range(len(res))], res), key=lambda x: x[1], reverse=True)
+    sorted_pairs = sorted(
+        zip([i for i in range(len(res))], res), key=lambda x: x[1], reverse=True
+    )
     indexs, probs = zip(*sorted_pairs)
 
     max_pretrained = 0
     for i in range(len(indexs)):
-        if tag_dict.get(tag_codes[indexs[i]])['Pretrained']:
+        if tag_dict.get(tag_codes[indexs[i]])["Pretrained"]:
             max_pretrained = probs[i]
             break
 
     if probs[0] < 0.6:
         return indexs[:1], probs[:1]
 
-    if probs[0] > max_pretrained * 1.2 and not tag_dict.get(tag_codes[indexs[0]])['Pretrained']:
+    if (
+        probs[0] > max_pretrained * 1.2
+        and not tag_dict.get(tag_codes[indexs[0]])["Pretrained"]
+    ):
         return indexs, probs
     return [], []
+
 
 async def predict_server(image_bytes: bytes):
     try:
         async with aiohttp.ClientSession() as session:
             data = aiohttp.FormData()
-            data.add_field('file', image_bytes, filename="image.jpg", content_type="image/jpeg")
+            data.add_field(
+                "file", image_bytes, filename="image.jpg", content_type="image/jpeg"
+            )
 
-            async with session.post(ai_kaggle_server_url + '/api/ingredient-predict', data=data, timeout=30) as resp:
+            async with session.post(
+                ai_kaggle_server_url + "/api/ingredient-predict", data=data, timeout=30
+            ) as resp:
                 if resp.status == 200:
                     return await resp.json()
     except Exception as e:
         print(f"[Server Error] {e}")
     return None
+
 
 async def predict_local(image_bytes: bytes):
     try:
@@ -305,47 +371,58 @@ async def predict_local(image_bytes: bytes):
 
         # Predict with pretrained and not pretrained text
         image_features = await asyncio.to_thread(encode_image_by_clip, image)
-        indexs, probs = await asyncio.to_thread(get_raw_clip_text_predict, image_features)
+        indexs, probs = await asyncio.to_thread(
+            get_raw_clip_text_predict, image_features
+        )
         if len(indexs) > 0:
-            if (len(indexs) == 1 and probs[0] < 0.6):
+            if len(indexs) == 1 and probs[0] < 0.6:
                 pass
             else:
                 for class_index, conf in zip(indexs[:5], probs[:5]):
-                    class_label = '0'
-                    classifications.append({
-                        "class": class_label,
-                        "confidence": float(conf),
-                        "name": {
-                            'en': tag_dict.get(tag_codes[class_index])['En'],
-                            'vi': tag_dict.get(tag_codes[class_index])['Vi']
-                        },
-                        "code": tag_codes[class_index],
-                    })
+                    class_label = "0"
+                    classifications.append(
+                        {
+                            "class": class_label,
+                            "confidence": float(conf),
+                            "name": {
+                                "en": tag_dict.get(tag_codes[class_index])["En"],
+                                "vi": tag_dict.get(tag_codes[class_index])["Vi"],
+                            },
+                            "code": tag_codes[class_index],
+                        }
+                    )
         else:
             # Predict with pretrained class
             clip_task = asyncio.to_thread(get_raw_clip_predict, image_features, 50)
             convnext_task = asyncio.to_thread(get_raw_convnext_predict, image)
 
-            clip_pred_raw, convnext_pred_raw = await asyncio.gather(clip_task, convnext_task)
-            indexs, probs = await asyncio.to_thread(cal_mix_clip_cnn, clip_pred_raw[0], convnext_pred_raw[0])
+            clip_pred_raw, convnext_pred_raw = await asyncio.gather(
+                clip_task, convnext_task
+            )
+            indexs, probs = await asyncio.to_thread(
+                cal_mix_clip_cnn, clip_pred_raw[0], convnext_pred_raw[0]
+            )
 
             for class_index, conf in zip(indexs[:5], probs[:5]):
                 class_label = str(class_index + 1).zfill(3)
-                classifications.append({
-                    "class": class_label,
-                    "confidence": float(conf),
-                    "name": {
-                        'en': names[class_label][0],
-                        'vi': names[class_label][1]
-                    },
-                    "code": '_'.join(names[class_label][0].split(' ')).upper(),
-                })
+                classifications.append(
+                    {
+                        "class": class_label,
+                        "confidence": float(conf),
+                        "name": {
+                            "en": names[class_label][0],
+                            "vi": names[class_label][1],
+                        },
+                        "code": "_".join(names[class_label][0].split(" ")).upper(),
+                    }
+                )
 
         # results = box_model(image, verbose=False)
         return {"classifications": classifications, "boxes": []}
     except Exception as e:
         print(f"[Server Error] {e}")
     return None
+
 
 @app.post("/api/ingredient-predict-v2")
 async def predict_v2(file: UploadFile = File(...)):
@@ -361,7 +438,7 @@ async def predict_v2(file: UploadFile = File(...)):
 
     task_server = asyncio.create_task(predict_server(image_bytes))
     task_local = asyncio.create_task(predict_local(image_bytes))
-    
+
     done, pending = await asyncio.wait(
         [task_server, task_local], return_when=asyncio.FIRST_COMPLETED
     )
@@ -381,6 +458,7 @@ async def predict_v2(file: UploadFile = File(...)):
     logging.info(f"Save image from remote cache with phash {phash}")
 
     return result
+
 
 @app.post("/api/ingredient-predict-v2/multi")
 async def predict_v2_multi(files: list[UploadFile] = File(...)):
@@ -421,6 +499,7 @@ async def predict_v2_multi(files: list[UploadFile] = File(...)):
             results.append(result)
 
     return {"predictions": results}
+
 
 # @app.post("/api/ingredient-predict")
 # async def predict(file: UploadFile = File(...)):
@@ -472,15 +551,21 @@ async def predict_v2_multi(files: list[UploadFile] = File(...)):
 #     # results = box_model(image, verbose=False)
 #     return {"classifications": classifications, "boxes": []}
 
+
 @app.get("/api/tags")
 async def get_tags():
     ans = []
-    for tag in tag_collection.find({'Status': 'Active', 'Category': 'Ingredient'}).to_list():
-        ans.append([tag['Code'], tag['Value']['En'], tag['Value']['Vi']])
+    for tag in tag_collection.find(
+        {"Status": "Active", "Category": "Ingredient"}
+    ).to_list():
+        ans.append([tag["Code"], tag["Value"]["En"], tag["Value"]["Vi"]])
     return ans
+
 
 @app.get("/")
 async def root():
     return {"message": "FastAPI is running!"}
 
-uvicorn.run(app, host="0.0.0.0", port=service_port,log_config=log_config)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=service_port, log_config=None)

@@ -1,5 +1,6 @@
 ﻿using RecipeService.Domain.Entities;
 namespace RecipeService.Domain.Responses;
+
 public class RecipeDetailsResponse
 {
     public Recipe Recipe { get; set; } = null!;
