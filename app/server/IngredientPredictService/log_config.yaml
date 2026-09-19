@@ -1,5 +1,5 @@
 version: 1
-disable_existing_loggers: True
+disable_existing_loggers: false
 formatters:
   colored:
     "()": colorlog.ColoredFormatter
@@ -24,13 +24,9 @@ filters:
 loggers:
   uvicorn.error:
     level: INFO
-    handlers: [console]
-    propagate: no
   uvicorn.access:
     level: INFO
     filters: [health_filter]
-    handlers: [console]
-    propagate: no
   pymongo:
     level: WARNING
   redis:

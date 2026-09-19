@@ -76,7 +76,6 @@ def _configure_logging_handler(logger_provider: LoggerProvider) -> None:
 
     handler = LoggingHandler(level=otel_log_level, logger_provider=logger_provider)
     root_logger.addHandler(handler)
-    logging.getLogger("uvicorn.error").addHandler(handler)
 
 
 def shutdown() -> None:
