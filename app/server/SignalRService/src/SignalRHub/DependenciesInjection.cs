@@ -20,12 +20,14 @@ public static class DependenciesInjection
         var services = builder.Services;
         var host = builder.Host;
 
-        builder.ConfigureLoggingService()
+        const string serviceName = "SignalRService";
+
+        builder.ConfigureLoggingService(serviceName)
                .ConfigureKestrel()
                .ConfigureLivenessCheck();
 
         services.AddExternalInfrastructureServices()
-                .AddOpenTelemetry("SignalRService");
+                .AddOpenTelemetry(serviceName);
 
         var apiGatewayUrl = DotNetEnv.Env.GetString("API_GATEWAY_URL", "https://localhost:7000");
 

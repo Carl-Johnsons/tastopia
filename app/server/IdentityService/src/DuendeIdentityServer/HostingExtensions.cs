@@ -26,7 +26,9 @@ internal static class HostingExtensions
         var services = builder.Services;
         var databaseName = DotNetEnv.Env.GetString("DB");
 
-        builder.ConfigureLoggingService()
+        const string serviceName = "IdentityService";
+
+        builder.ConfigureLoggingService(serviceName)
                .ConfigureKestrel()
                .ConfigureLivenessCheck()
                .ConfigurePostgresHealthCheck(databaseName)
@@ -36,7 +38,7 @@ internal static class HostingExtensions
                 .AddApplicationServices()
                 .AddGrpcServices()
                 .AddSwaggerServices()
-                .AddOpenTelemetry("IdentityService");
+                .AddOpenTelemetry(serviceName);
 
         services.AddRazorPages()
                 .AddRazorRuntimeCompilation();

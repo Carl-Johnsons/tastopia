@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.OpenTelemetry;
 
 namespace Contract.Extension;
 
 public static class LoggingExtension
 {
-    public static WebApplicationBuilder ConfigureLoggingService(this WebApplicationBuilder builder)
+    public static IHostBuilder ConfigureLoggingService(this IHostBuilder builder, string serviceName)
     {
         var outputTemplate = "[{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}";
 
@@ -16,10 +18,25 @@ public static class LoggingExtension
             .WriteTo.Console(outputTemplate: outputTemplate)
             .CreateBootstrapLogger();
 
-        builder.Host.UseSerilog((ctx, lc) => lc
+        builder.UseSerilog((ctx, lc) => lc
             .WriteTo.Console(outputTemplate: outputTemplate)
+            .WriteTo.OpenTelemetry(options =>
+            {
+                options.Endpoint = Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT") ?? "http://localhost:4317";
+                options.Protocol = OtlpProtocol.Grpc;
+                options.ResourceAttributes = new Dictionary<string, object>
+                {
+                    ["service.name"] = serviceName
+                };
+            })
             .Enrich.FromLogContext()
             .ReadFrom.Configuration(ctx.Configuration), preserveStaticLogger: true);
+        return builder;
+    }
+
+    public static WebApplicationBuilder ConfigureLoggingService(this WebApplicationBuilder builder, string serviceName)
+    {
+        builder.Host.ConfigureLoggingService(serviceName);
         return builder;
     }
 

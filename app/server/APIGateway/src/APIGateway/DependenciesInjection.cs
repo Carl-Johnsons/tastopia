@@ -26,13 +26,15 @@ public static class DependenciesInjection
         var env = builder.Environment;
         EnvUtility.LoadEnvFile();
 
-        builder.ConfigureLoggingService()
+        const string serviceName = "APIGateway";
+
+        builder.ConfigureLoggingService(serviceName)
                .ConfigureKestrel()
                .ConfigureLivenessCheck()
                .ConfigureRedisHealthCheck();
 
         services.AddServiceDiscoveryService()
-                .AddOpenTelemetry("APIGateway")
+                .AddOpenTelemetry(serviceName)
                 .AddSignalR();
 
         config.SetBasePath(env.ContentRootPath)

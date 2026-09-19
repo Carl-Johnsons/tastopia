@@ -31,6 +31,18 @@ loggers:
     filters: [health_filter]
     handlers: [console]
     propagate: no
+  pymongo:
+    level: WARNING
+  redis:
+    level: WARNING
+  urllib3:
+    level: WARNING
+  httpx:
+    level: WARNING
+  httpcore:
+    level: WARNING
+  asyncio:
+    level: WARNING
 root:
   level: INFO
   handlers: [console]

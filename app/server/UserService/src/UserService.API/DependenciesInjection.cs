@@ -15,7 +15,9 @@ public static class DependenciesInjection
         var config = builder.Configuration;
         var databaseName = DotNetEnv.Env.GetString("DB");
 
-        builder.ConfigureLoggingService()
+        const string serviceName = "UserService";
+
+        builder.ConfigureLoggingService(serviceName)
                .ConfigureKestrel()
                .ConfigureLivenessCheck()
                .ConfigurePostgresHealthCheck(databaseName);
@@ -24,7 +26,7 @@ public static class DependenciesInjection
                 .AddApplicationServices()
                 .AddGrpcServices()
                 .AddSwaggerServices()
-                .AddOpenTelemetry("UserService");
+                .AddOpenTelemetry(serviceName);
 
         services.AddAutoMapper(
             cfg =>

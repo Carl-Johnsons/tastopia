@@ -1,16 +1,18 @@
+using Contract.Extension;
 using Contract.Utilities;
 using SMSWorker;
-using SMSWorker.Extensions;
 using SMSWorker.Interfaces;
 using SMSWorker.Services;
 
 EnvUtility.LoadEnvFile();
 
+const string serviceName = "SMSWorker";
+
 var builder = Host.CreateDefaultBuilder(args)
-    .ConfigureSerilog()
+    .ConfigureLoggingService(serviceName)
     .ConfigureServices((context, services) =>
     {
-        services.AddWorkerServices();
+        services.AddWorkerServices(serviceName);
         services.AddTransient<ISMSService, SMSService>();
         services.AddHostedService<Worker>();
     });
