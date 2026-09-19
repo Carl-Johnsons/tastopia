@@ -15,7 +15,9 @@ public static class DependenciesInjection
         var services = builder.Services;
         var databaseName = DotNetEnv.Env.GetString("DB");
 
-        builder.ConfigureLoggingService()
+        const string serviceName = "NotificationService";
+
+        builder.ConfigureLoggingService(serviceName)
                .ConfigureKestrel()
                .ConfigureLivenessCheck()
                .ConfigureMongoDBHealthCheck(databaseName);
@@ -24,7 +26,7 @@ public static class DependenciesInjection
                 .AddApplicationServices()
                 .AddGrpcServices()
                 .AddSwaggerServices()
-                .AddOpenTelemetry("NotificationService");
+                .AddOpenTelemetry(serviceName);
 
         services.AddCommonAPIServices()
                 .AddCustomDownstreamAuthentication();

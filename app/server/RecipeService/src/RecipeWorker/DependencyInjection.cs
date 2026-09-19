@@ -14,9 +14,9 @@ namespace RecipeWorker;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddWorkerServices(this IServiceCollection services)
+    public static IServiceCollection AddWorkerServices(this IServiceCollection services, string serviceName = "RecipeWorker")
     {
-        services.AddOpenTelemetry("RecipeWorker");
+        services.AddOpenTelemetry(serviceName);
         services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
         {
             return new ConsulClient(config =>

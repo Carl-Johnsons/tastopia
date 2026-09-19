@@ -15,7 +15,9 @@ public static class DependenciesInjection
         var services = builder.Services;
         var databaseName = DotNetEnv.Env.GetString("DB");
 
-        builder.ConfigureLoggingService()
+        const string serviceName = "RecipeService";
+
+        builder.ConfigureLoggingService(serviceName)
                .ConfigureKestrel()
                .ConfigureLivenessCheck()
                .ConfigureMongoDBHealthCheck(databaseName);
@@ -24,7 +26,7 @@ public static class DependenciesInjection
                 .AddApplicationServices()
                 .AddGrpcServices()
                 .AddSwaggerServices()
-                .AddOpenTelemetry("RecipeService");
+                .AddOpenTelemetry(serviceName);
 
         // Register automapper
         services.AddAutoMapper(

@@ -7,9 +7,9 @@ namespace EmailWorker;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddWorkerServices(this IServiceCollection services)
+    public static IServiceCollection AddWorkerServices(this IServiceCollection services, string serviceName = "EmailWorker")
     {
-        services.AddOpenTelemetry("EmailWorker");
+        services.AddOpenTelemetry(serviceName);
         services.AddMassTransitService();
 
         return services;

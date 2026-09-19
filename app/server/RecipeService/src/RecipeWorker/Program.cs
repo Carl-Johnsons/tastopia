@@ -1,16 +1,19 @@
+using Contract.Extension;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using RecipeWorker;
 using RecipeWorker.Extensions;
 
+const string serviceName = "RecipeWorker";
+
 var builder = Host.CreateDefaultBuilder(args)
-    .ConfigureSerilog()
+    .ConfigureLoggingService(serviceName)
     .ConfigureWebHostDefaults(webBuilder =>
     {
         webBuilder.ConfigureKestrel();
         webBuilder.ConfigureServices(services =>
         {
-            services.AddWorkerServices();
+            services.AddWorkerServices(serviceName);
         });
         webBuilder.Configure(app =>
         {

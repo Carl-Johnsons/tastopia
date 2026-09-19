@@ -568,4 +568,4 @@ async def root():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=service_port, log_config=log_config)
+    uvicorn.run(app, host="0.0.0.0", port=service_port, log_config=None)

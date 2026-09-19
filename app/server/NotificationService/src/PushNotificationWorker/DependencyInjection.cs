@@ -10,9 +10,9 @@ namespace PushNotificationWorker;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddWorkerServices(this IServiceCollection services)
+    public static IServiceCollection AddWorkerServices(this IServiceCollection services, string serviceName = "PushNotificationWorker")
     {
-        services.AddOpenTelemetry("PushNotificationWorker");
+        services.AddOpenTelemetry(serviceName);
         services.AddSingleton<PushApiClient>();
         services.AddSingleton<IPushNotificationService, ExpoPushNotificationService>();
         services.AddMassTransitService();

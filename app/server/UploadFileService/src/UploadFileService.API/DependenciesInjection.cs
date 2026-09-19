@@ -14,7 +14,9 @@ public static class DependenciesInjection
         EnvUtility.LoadEnvFile();
         var services = builder.Services;
 
-        builder.ConfigureLoggingService()
+        const string serviceName = "UploadFileService";
+
+        builder.ConfigureLoggingService(serviceName)
                .ConfigureKestrel()
                .ConfigureLivenessCheck();
 
@@ -22,7 +24,7 @@ public static class DependenciesInjection
                 .AddApplicationServices()
                 .AddGrpcServices()
                 .AddSwaggerServices()
-                .AddOpenTelemetry("UploadFileService");
+                .AddOpenTelemetry(serviceName);
 
         // Register automapper
         services.AddAutoMapper(
