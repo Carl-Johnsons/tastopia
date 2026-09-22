@@ -106,11 +106,15 @@ export const useLoginWithGoogle = (): UseLoginWithGoogleResult => {
     console.log("Tokens", stringify(tokens));
     const { accessToken, refreshToken, idToken } = tokens;
 
+    if (!idToken) {
+      throw new Error("ID token is required");
+    }
+
     dispatch(
       saveAuthData({
         accessToken,
         refreshToken,
-        idToken: idToken!,
+        idToken,
         role: ROLE.USER
       })
     );
