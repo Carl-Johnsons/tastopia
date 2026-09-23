@@ -284,6 +284,7 @@ jobs:
           HOST_PREFIX: ${{ vars.HOST_PREFIX }}
           API_GATEWAY_FQDN: ${{ vars.API_GATEWAY_FQDN }}
           API_GATEWAY_PORT: ${{ vars.API_GATEWAY_PORT }}
+          GRAFANA_FQDN: ${{ vars.GRAFANA_FQDN }}
           E2E_TEST_USERNAME: ${{ secrets.MOBILE_E2E_TEST_USERNAME }}
           E2E_TEST_PASSWORD: ${{ secrets.MOBILE_E2E_TEST_PASSWORD }}
           BUILT_IMAGES: ${{ needs.derive-state.outputs.services }}
@@ -396,6 +397,7 @@ jobs:
           IDENTITY_FQDN: ${{ vars.IDENTITY_FQDN }}
           API_GATEWAY_FQDN: ${{ vars.API_GATEWAY_FQDN }}
           API_GATEWAY_PORT: ${{ vars.API_GATEWAY_PORT }}
+          GRAFANA_FQDN: ${{ vars.GRAFANA_FQDN }}
           E2E_TEST_USERNAME: ${{ secrets.WEBSITE_E2E_TEST_USERNAME }}
           E2E_TEST_PASSWORD: ${{ secrets.WEBSITE_E2E_TEST_PASSWORD }}
           BUILT_IMAGES: ${{ needs.derive-state.outputs.services }}

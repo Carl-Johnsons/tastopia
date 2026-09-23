@@ -49,10 +49,24 @@ if command -v adb &> /dev/null; then
   fi
 
   if [ -n "${GITHUB_STEP_SUMMARY:-}" ] && [ -s logs/otel-traces.log ]; then
+    if [ -n "${GRAFANA_FQDN:-}" ]; then
+      GRAFANA_TRACE_BASE="https://$GRAFANA_FQDN/a/grafana-exploretraces-app/explore?traceId="
+    else
+      GRAFANA_TRACE_BASE=""
+    fi
+
+    export GRAFANA_TRACE_BASE
+
     {
-      echo "### Mobile E2E OTEL Traces"
-      echo "| Test | Trace ID |"
-      echo "|---|---|"
+      if [ -n "$GRAFANA_TRACE_BASE" ]; then
+        echo "### Mobile E2E OTEL Traces"
+        echo "| Test | Trace ID | Trace |"
+        echo "|---|---|---|"
+      else
+        echo "### Mobile E2E OTEL Traces"
+        echo "| Test | Trace ID |"
+        echo "|---|---|"
+      fi
       awk -F' ' '{
         test=""; traceId="";
         for(i=1; i<=NF; i++) {
@@ -60,7 +74,12 @@ if command -v adb &> /dev/null; then
           if ($i ~ /^traceId=/) traceId=substr($i, 9);
         }
         if (traceId != "") {
-          printf "| `%s` | `%s` |\n", (test != "" ? test : "Unknown"), traceId;
+          base=ENVIRON["GRAFANA_TRACE_BASE"];
+          if (base != "") {
+            printf "| `%s` | `%s` | [View trace](%s%s) |\n", (test != "" ? test : "Unknown"), traceId, base, traceId;
+          } else {
+            printf "| `%s` | `%s` |\n", (test != "" ? test : "Unknown"), traceId;
+          }
         }
       }' logs/otel-traces.log | sort -u
     } >> "$GITHUB_STEP_SUMMARY"
