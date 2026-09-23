@@ -5,6 +5,7 @@ export default defineConfig({
   env: {
     ENV: process.env.ENV ?? "dev",
     GITHUB_RUN_ID: process.env.GITHUB_RUN_ID ?? "",
+    GRAFANA_FQDN: process.env.GRAFANA_FQDN ?? "",
     DUENDE_IDS6_ISSUER: process.env.DUENDE_IDS6_ISSUER ?? "http://localhost:5001",
     E2E_TEST_USERNAME: process.env.E2E_TEST_USERNAME,
     E2E_TEST_PASSWORD: process.env.E2E_TEST_PASSWORD
