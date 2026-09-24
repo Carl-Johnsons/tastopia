@@ -108,6 +108,23 @@ const Welcome = () => {
               <Text className='font-sans text-primary'>{BUILD_ENV}</Text>
             </Button>
           )}
+          {BUILD_ENV === "dev" ||
+            (!BUILD_ENV && (
+              <View className='absolute left-1/2 flex -translate-x-1/2 flex-col gap-2'>
+                <Text
+                  className={`${isAndroid ? "top-[2%]" : "top-[6%]"} bg-white_black200 rounded-full px-4 py-3 font-sans text-primary`}
+                >
+                  Env: {process.env.EXPO_PUBLIC_APP_ENV}
+                </Text>
+
+                <Text
+                  className={`${isAndroid ? "top-[2%]" : "top-[6%]"} bg-white_black200 rounded-full px-4 py-3 font-sans text-primary`}
+                >
+                  Build Env: {BUILD_ENV}
+                </Text>
+              </View>
+            ))}
+
           <Button
             onPress={browseAsGuest}
             className={`absolute right-[26px] ${isAndroid ? "top-[2%]" : "top-[6%]"} bg-white_black200 rounded-full px-4 py-3`}
