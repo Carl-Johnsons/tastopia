@@ -6,7 +6,7 @@
     "start": "expo start",
     "dev": "npx expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo run:android",
+    "android": "node scripts/android.mjs",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "maestro test -e E2E_TEST_USERNAME=$E2E_TEST_USERNAME -e E2E_TEST_PASSWORD=$E2E_TEST_PASSWORD -e ENV=${ENV:-dev} -e GITHUB_RUN_ID=${GITHUB_RUN_ID:-} .maestro",
@@ -95,6 +95,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@inquirer/prompts": "^8.7.2",
     "@types/date-fns": "^2.6.0",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.3.12",
