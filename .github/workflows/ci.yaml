@@ -133,9 +133,6 @@ jobs:
           cache: npm
           cache-dependency-path: app/client/mobile/package-lock.json
 
-      - name: Install EAS CLI
-        run: npm install -g eas-cli
-
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
