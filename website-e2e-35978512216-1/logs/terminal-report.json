@@ -1,0 +1,143 @@
+{
+  "cypress/e2e/recipes-data.cy.ts": {
+    "Recipes data exploration -> renders recipe data table and accepts search input": [
+      {
+        "type": "cy:command",
+        "message": "env\tGITHUB_RUN_ID, ENV, GRAFANA_FQDN",
+        "severity": "success"
+      },
+      {
+        "type": "cy:intercept",
+        "message": "Matcher: \"**\"\nMocked Response: req => {\n            req.headers[\"traceparent\"] = traceparent;\n            if (baggage) {\n                req.headers[\"baggage\"] = baggage;\n            }\n        }",
+        "severity": "success"
+      },
+      {
+        "type": "cy:log",
+        "message": "[OTEL] Trace ID: d977430792c09529b97a4840da471735",
+        "severity": "success"
+      },
+      {
+        "type": "cy:log",
+        "message": "[OTEL] Trace: https://tastopia-grafana.phenchua.dev/a/grafana-exploretraces-app/explore?traceId=d977430792c09529b97a4840da471735",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "visit\t/",
+        "severity": "error"
+      }
+    ]
+  },
+  "cypress/e2e/reports-users-data.cy.ts": {
+    "User reports data exploration -> renders user reports table and accepts search input": [
+      {
+        "type": "cy:command",
+        "message": "env\tGITHUB_RUN_ID, ENV, GRAFANA_FQDN",
+        "severity": "success"
+      },
+      {
+        "type": "cy:intercept",
+        "message": "Matcher: \"**\"\nMocked Response: req => {\n            req.headers[\"traceparent\"] = traceparent;\n            if (baggage) {\n                req.headers[\"baggage\"] = baggage;\n            }\n        }",
+        "severity": "success"
+      },
+      {
+        "type": "cy:log",
+        "message": "[OTEL] Trace ID: 0a5420f43c3d7f6e76078d6624462fd6",
+        "severity": "success"
+      },
+      {
+        "type": "cy:log",
+        "message": "[OTEL] Trace: https://tastopia-grafana.phenchua.dev/a/grafana-exploretraces-app/explore?traceId=0a5420f43c3d7f6e76078d6624462fd6",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "visit\t/ -> 307: https://pr-322-tastopia-dev-dashboard.phenchua.dev/en",
+        "severity": "error"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://pr-322-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/d76008a69eab/0.11713856729855876:1790240425:c3Mbwwkf7Zypt9TVmBCuSeenQLEMGPmRgLhni2yr4-o/a400b959795da265\nStatus: 200",
+        "severity": "success"
+      }
+    ]
+  },
+  "cypress/e2e/tags-data.cy.ts": {
+    "Tags data exploration -> renders tag data table and opens create dialog": [
+      {
+        "type": "cy:command",
+        "message": "env\tGITHUB_RUN_ID, ENV, GRAFANA_FQDN",
+        "severity": "success"
+      },
+      {
+        "type": "cy:intercept",
+        "message": "Matcher: \"**\"\nMocked Response: req => {\n            req.headers[\"traceparent\"] = traceparent;\n            if (baggage) {\n                req.headers[\"baggage\"] = baggage;\n            }\n        }",
+        "severity": "success"
+      },
+      {
+        "type": "cy:log",
+        "message": "[OTEL] Trace ID: 407b4fcdcfbec28cc16ada83ff822128",
+        "severity": "success"
+      },
+      {
+        "type": "cy:log",
+        "message": "[OTEL] Trace: https://tastopia-grafana.phenchua.dev/a/grafana-exploretraces-app/explore?traceId=407b4fcdcfbec28cc16ada83ff822128",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "visit\t/ -> 307: https://pr-322-tastopia-dev-dashboard.phenchua.dev/en",
+        "severity": "error"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://pr-322-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/d76008a69eab/0.11713856729855876:1790240425:c3Mbwwkf7Zypt9TVmBCuSeenQLEMGPmRgLhni2yr4-o/a400bb02694b15e4\nStatus: 200",
+        "severity": "success"
+      }
+    ]
+  },
+  "cypress/e2e/users-data.cy.ts": {
+    "Users data exploration -> renders user data table and accepts search input": [
+      {
+        "type": "cy:command",
+        "message": "env\tGITHUB_RUN_ID, ENV, GRAFANA_FQDN",
+        "severity": "success"
+      },
+      {
+        "type": "cy:intercept",
+        "message": "Matcher: \"**\"\nMocked Response: req => {\n            req.headers[\"traceparent\"] = traceparent;\n            if (baggage) {\n                req.headers[\"baggage\"] = baggage;\n            }\n        }",
+        "severity": "success"
+      },
+      {
+        "type": "cy:log",
+        "message": "[OTEL] Trace ID: f2d28f045bd6320435dcfcf0879fe75f",
+        "severity": "success"
+      },
+      {
+        "type": "cy:log",
+        "message": "[OTEL] Trace: https://tastopia-grafana.phenchua.dev/a/grafana-exploretraces-app/explore?traceId=f2d28f045bd6320435dcfcf0879fe75f",
+        "severity": "success"
+      },
+      {
+        "type": "cy:command",
+        "message": "visit\t/ -> 307: https://pr-322-tastopia-dev-dashboard.phenchua.dev/en",
+        "severity": "error"
+      },
+      {
+        "type": "cy:xhr",
+        "message": "POST https://pr-322-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/d76008a69eab/0.11713856729855876:1790240425:c3Mbwwkf7Zypt9TVmBCuSeenQLEMGPmRgLhni2yr4-o/a400bcd89c7d2052\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://pr-322-tastopia-dev-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      },
+      {
+        "type": "cy:fetch",
+        "message": "GET https://pr-322-tastopia-dev-dashboard.phenchua.dev/api/auth/session\nStatus: 200",
+        "severity": "success"
+      }
+    ]
+  }
+}

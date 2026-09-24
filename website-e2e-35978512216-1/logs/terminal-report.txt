@@ -1,0 +1,72 @@
+cypress/e2e/recipes-data.cy.ts:
+    Recipes data exploration -> renders recipe data table and accepts search input
+        cy:command (K): env	GITHUB_RUN_ID, ENV, GRAFANA_FQDN
+      cy:intercept (K): Matcher: "**"
+                        Mocked Response: req => {
+                                    req.headers["traceparent"] = traceparent;
+                                    if (baggage) {
+                                        req.headers["baggage"] = baggage;
+                                    }
+                                }
+            cy:log (K): [OTEL] Trace ID: d977430792c09529b97a4840da471735
+            cy:log (K): [OTEL] Trace: https://tastopia-grafana.phenchua.dev/a/grafana-exploretraces-app/explore?traceId=d977430792c09529b97a4840da471735
+        cy:command (X): visit	/
+
+
+
+cypress/e2e/reports-users-data.cy.ts:
+    User reports data exploration -> renders user reports table and accepts search input
+        cy:command (K): env	GITHUB_RUN_ID, ENV, GRAFANA_FQDN
+      cy:intercept (K): Matcher: "**"
+                        Mocked Response: req => {
+                                    req.headers["traceparent"] = traceparent;
+                                    if (baggage) {
+                                        req.headers["baggage"] = baggage;
+                                    }
+                                }
+            cy:log (K): [OTEL] Trace ID: 0a5420f43c3d7f6e76078d6624462fd6
+            cy:log (K): [OTEL] Trace: https://tastopia-grafana.phenchua.dev/a/grafana-exploretraces-app/explore?traceId=0a5420f43c3d7f6e76078d6624462fd6
+        cy:command (X): visit	/ -> 307: https://pr-322-tastopia-dev-dashboard.phenchua.dev/en
+            cy:xhr (K): POST https://pr-322-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/d76008a69eab/0.11713856729855876:1790240425:c3Mbwwkf7Zypt9TVmBCuSeenQLEMGPmRgLhni2yr4-o/a400b959795da265
+                        Status: 200
+
+
+
+cypress/e2e/tags-data.cy.ts:
+    Tags data exploration -> renders tag data table and opens create dialog
+        cy:command (K): env	GITHUB_RUN_ID, ENV, GRAFANA_FQDN
+      cy:intercept (K): Matcher: "**"
+                        Mocked Response: req => {
+                                    req.headers["traceparent"] = traceparent;
+                                    if (baggage) {
+                                        req.headers["baggage"] = baggage;
+                                    }
+                                }
+            cy:log (K): [OTEL] Trace ID: 407b4fcdcfbec28cc16ada83ff822128
+            cy:log (K): [OTEL] Trace: https://tastopia-grafana.phenchua.dev/a/grafana-exploretraces-app/explore?traceId=407b4fcdcfbec28cc16ada83ff822128
+        cy:command (X): visit	/ -> 307: https://pr-322-tastopia-dev-dashboard.phenchua.dev/en
+            cy:xhr (K): POST https://pr-322-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/d76008a69eab/0.11713856729855876:1790240425:c3Mbwwkf7Zypt9TVmBCuSeenQLEMGPmRgLhni2yr4-o/a400bb02694b15e4
+                        Status: 200
+
+
+
+cypress/e2e/users-data.cy.ts:
+    Users data exploration -> renders user data table and accepts search input
+        cy:command (K): env	GITHUB_RUN_ID, ENV, GRAFANA_FQDN
+      cy:intercept (K): Matcher: "**"
+                        Mocked Response: req => {
+                                    req.headers["traceparent"] = traceparent;
+                                    if (baggage) {
+                                        req.headers["baggage"] = baggage;
+                                    }
+                                }
+            cy:log (K): [OTEL] Trace ID: f2d28f045bd6320435dcfcf0879fe75f
+            cy:log (K): [OTEL] Trace: https://tastopia-grafana.phenchua.dev/a/grafana-exploretraces-app/explore?traceId=f2d28f045bd6320435dcfcf0879fe75f
+        cy:command (X): visit	/ -> 307: https://pr-322-tastopia-dev-dashboard.phenchua.dev/en
+            cy:xhr (K): POST https://pr-322-tastopia-dev-dashboard.phenchua.dev/cdn-cgi/challenge-platform/h/b/jsd/oneshot/d76008a69eab/0.11713856729855876:1790240425:c3Mbwwkf7Zypt9TVmBCuSeenQLEMGPmRgLhni2yr4-o/a400bcd89c7d2052
+                        Status: 200
+          cy:fetch (K): GET https://pr-322-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+          cy:fetch (K): GET https://pr-322-tastopia-dev-dashboard.phenchua.dev/api/auth/session
+                        Status: 200
+
