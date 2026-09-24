@@ -81,29 +81,40 @@ public static class HealthCheckExtension
     public static WebApplicationBuilder ConfigureRedisHealthCheck(this WebApplicationBuilder builder, string? connectionString = null)
     {
         var connStr = connectionString ?? EnvUtility.GetRedisConnectionString();
+        var semaphore = new SemaphoreSlim(1, 1);
         ConnectionMultiplexer? connection = null;
+
+        void DisposeConnection()
+        {
+            try
+            {
+                connection?.Dispose();
+            }
+            catch
+            {
+            }
+            finally
+            {
+                connection = null;
+            }
+        }
 
         builder.Services.AddHealthChecks().AddAsyncCheck(
             "redis",
             async () =>
             {
+                await semaphore.WaitAsync();
                 try
                 {
-                    if (connection == null || !connection.IsConnected)
+                    if (connection?.IsConnected != true)
                     {
-                        try
-                        {
-                            connection?.Dispose();
-                        }
-                        catch
-                        {
-                        }
-
+                        DisposeConnection();
                         connection = await ConnectionMultiplexer.ConnectAsync(connStr);
                     }
 
                     if (!connection.IsConnected)
                     {
+                        DisposeConnection();
                         return HealthCheckResult.Unhealthy("Redis is not connected");
                     }
 
@@ -113,8 +124,12 @@ public static class HealthCheckExtension
                 }
                 catch (Exception ex)
                 {
-                    connection = null;
+                    DisposeConnection();
                     return HealthCheckResult.Unhealthy($"Redis is unreachable: {ex.Message}");
+                }
+                finally
+                {
+                    semaphore.Release();
                 }
             },
             tags: ["ready"]
