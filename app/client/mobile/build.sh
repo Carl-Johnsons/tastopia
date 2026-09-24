@@ -73,10 +73,17 @@ rm -rf /tmp/metro-*
 # rm -rf ./android
 
 echo "Building..."
-time npx eas build \
-  --platform android \
-  --profile simulator \
-  --local
+if command -v eas &> /dev/null; then
+  time eas build \
+    --platform android \
+    --profile simulator \
+    --local
+else
+  time npx --yes eas-cli build \
+    --platform android \
+    --profile simulator \
+    --local
+fi
 
 echo "Restoring app.json..."
 mv app.json.bak app.json
