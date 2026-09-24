@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -x
+
 cd "$(dirname "$0")/.."
 
 stop=false
@@ -7,14 +9,14 @@ stop=false
 trap 'stop=true' INT TERM
 
 while true; do
-    echo "Starting Expo..."
+  echo "Starting Expo..."
 
-    npx expo start --android
+  npx expo start --android
 
-    if $stop; then
-        break
-    fi
+  if $stop; then
+    break
+  fi
 
-    echo "Expo stopped. Restarting..."
-    sleep 1
+  echo "Expo stopped. Restarting..."
+  sleep 1
 done

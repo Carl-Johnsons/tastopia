@@ -142,7 +142,7 @@ function startMacTerminal(script) {
 }
 
 function startLinuxTerminal(script) {
-  const process = spawn("x-terminal-emulator", ["-e", `bash "${script}"`], {
+  const process = spawn("bash", [script], {
     detached: true,
     stdio: "ignore"
   });
