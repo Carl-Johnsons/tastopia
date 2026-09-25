@@ -142,7 +142,7 @@ function startMacTerminal(script) {
 }
 
 function startLinuxTerminal(script) {
-  const process = spawn("bash", [script], {
+  const process = spawn("kitty", ["bash", script], {
     detached: true,
     stdio: "ignore"
   });
