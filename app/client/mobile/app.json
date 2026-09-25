@@ -7,6 +7,11 @@
     "icon": "./assets/icon.png",
     "scheme": "tastopia",
     "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.tastopia.app"
@@ -18,9 +23,7 @@
       },
       "package": "com.tastopia.app",
       "softwareKeyboardLayoutMode": "pan",
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ],
+      "permissions": ["android.permission.RECORD_AUDIO"],
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -41,30 +44,16 @@
         {
           "microphonePermission": "Allow Tastopia to use the microphone.",
           "speechRecognitionPermission": "Allow Tastopia to use speech recognition.",
-          "androidSpeechServicePackages": [
-            "com.google.android.googlequicksearchbox"
-          ]
+          "androidSpeechServicePackages": ["com.google.android.googlequicksearchbox"]
         }
       ],
       "expo-font",
-      "expo-asset",
-      "@react-native-community/datetimepicker",
-      "expo-image",
-      "expo-sharing",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/splash.png",
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
-        }
-      ],
-      "expo-status-bar",
-      "expo-web-browser"
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true
     },
+    "newArchEnabled": true,
     "extra": {
       "router": {
         "origin": false
