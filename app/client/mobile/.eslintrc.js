@@ -6,7 +6,8 @@ module.exports = {
   plugins: ["prettier", "import"],
   rules: {
     quotes: ["off", "single"],
-    "no-unused-vars": "warn",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
     "no-custom-class": "off",
     "no-restricted-imports": [
       "error",
@@ -29,8 +30,8 @@ module.exports = {
   ],
   settings: {
     "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"],
-      "import/internal-regex": "^@"
-    }
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/internal-regex": "^@"
   }
 };
