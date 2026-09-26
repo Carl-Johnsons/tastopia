@@ -33,7 +33,7 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@rneui/base": "^4.0.0-rc.7",
     "@rneui/themed": "^4.0.0-rc.8",
-    "@shopify/react-native-skia": "1.5.0",
+    "@shopify/react-native-skia": "v2.0.0-next.4",
     "axios": "^1.7.9",
     "date-fns": "^3.6.0",
     "expo": "~53.0.27",
@@ -121,11 +121,6 @@
     "typescript": "~5.8.3"
   },
   "expo": {
-    "install": {
-      "exclude": [
-        "@shopify/react-native-skia"
-      ]
-    },
     "doctor": {
       "reactNativeDirectoryCheck": {
         "listUnknownPackages": false,
