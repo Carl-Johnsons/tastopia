@@ -4,17 +4,14 @@ import { saveAuthData } from "@/slices/auth.slice";
 import { stringify } from "@/utils/debug";
 import { refreshAccessToken } from "@/api/tokens";
 import { transformPlatformURI } from "@/utils/functions";
-import Constants from "expo-constants";
 import { setupTelemetryHeaders, isCi, getTestName } from "@/utils/telemetry";
 
-const { expoConfig } = Constants;
-
 const API_GATEWAY_SCHEME = process.env.EXPO_PUBLIC_API_GATEWAY_SCHEME;
-const API_GATEWAY_HOST =
-  process.env.EXPO_PUBLIC_API_GATEWAY_HOST ?? expoConfig?.hostUri?.split(":")[0];
+const API_GATEWAY_HOST = process.env.EXPO_PUBLIC_API_GATEWAY_HOST;
 const API_GATEWAY_PORT = process.env.EXPO_PUBLIC_API_GATEWAY_PORT;
-const IDENTITY_DISCOVERY_URL =
-  process.env.EXPO_PUBLIC_IDENTITY_DISCOVERY_URL ?? `http://${API_GATEWAY_HOST}:5001`;
+const IDENTITY_DISCOVERY_URL = transformPlatformURI(
+  process.env.EXPO_PUBLIC_IDENTITY_DISCOVERY_URL ?? `http://${API_GATEWAY_HOST}:5001`
+);
 const API_URI = transformPlatformURI(
   `${API_GATEWAY_SCHEME}://${API_GATEWAY_HOST}:${API_GATEWAY_PORT}`
 );
