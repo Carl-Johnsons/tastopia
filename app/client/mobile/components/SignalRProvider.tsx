@@ -54,6 +54,12 @@ const SignalRHubProvider = ({ children }: Props) => {
   }, [unsubscribeAllEvents]);
 
   useEffect(() => {
+    if (!currentUserId && connectionRef.current) {
+      stopConnection();
+      connectionRef.current = null;
+      return;
+    }
+
     if (connectionRef.current || !currentUserId) {
       return;
     }
@@ -74,6 +80,7 @@ const SignalRHubProvider = ({ children }: Props) => {
     currentUserId,
     hubUrl,
     startConnection,
+    stopConnection,
     subscribeAllEvents,
     waitingToReconnect
   ]);
