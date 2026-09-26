@@ -41,7 +41,7 @@ function setUpTelemetryHeader(config: InternalAxiosRequestConfig<any>) {
 
   if (__DEV__ || isCi()) {
     const test = getTestName() ?? "unknown";
-    console.log(`[OTEL_TRACE] test=${test} traceId=${traceId}`);
+    console.log(`[OTEL_TRACE] ${test ?? `test=${test}`} traceId=${traceId}`);
   }
 }
 
