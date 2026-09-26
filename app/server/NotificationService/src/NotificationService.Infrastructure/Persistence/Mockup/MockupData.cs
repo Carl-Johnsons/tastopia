@@ -1,5 +1,5 @@
-﻿using NotificationService.Infrastructure.Persistence.Mockup.Data;
-using Serilog;
+using Microsoft.Extensions.Logging;
+using NotificationService.Infrastructure.Persistence.Mockup.Data;
 
 namespace NotificationService.Infrastructure.Persistence.Mockup;
 
@@ -7,10 +7,13 @@ internal class MockupData
 {
     private readonly ApplicationDbContext _context;
     private readonly IUnitOfWork _unitOfWork;
-    public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork)
+    private readonly ILogger<MockupData> _logger;
+
+    public MockupData(ApplicationDbContext context, IUnitOfWork unitOfWork, ILogger<MockupData> logger)
     {
         _context = context;
         _unitOfWork = unitOfWork;
+        _logger = logger;
     }
 
     public async Task SeedAllDataAsync()
@@ -22,7 +25,7 @@ internal class MockupData
     {
         if (!_context.NotificationTemplates.Any())
         {
-            Log.Information("Seed notification template");
+            _logger.LogInformation("Seed notification template");
             await _context.NotificationTemplates.AddRangeAsync(NotificationTemplateMockup.Data);
             await _unitOfWork.SaveChangeAsync();
         }
@@ -32,7 +35,7 @@ internal class MockupData
     {
         if (!_context.Notifications.Any())
         {
-            Log.Information("Seed notifications");
+            _logger.LogInformation("Seed notifications");
             await _context.Notifications.AddRangeAsync(NotificationMockup.GenerateRandomNotifications());
             await _unitOfWork.SaveChangeAsync();
         }

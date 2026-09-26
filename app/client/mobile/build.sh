@@ -73,7 +73,7 @@ rm -rf /tmp/metro-*
 # rm -rf ./android
 
 echo "Building..."
-time npx eas build \
+time npx --yes eas-cli build \
   --platform android \
   --profile simulator \
   --local

@@ -1,4 +1,5 @@
 ﻿namespace Contract.DTOs.UserDTO;
+
 public class UserDetailsDTO
 {
     public Guid AccountId { get; set; }

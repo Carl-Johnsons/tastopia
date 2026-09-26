@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace Contract.ValidationAttributes;
+
 public class StatisticRangeValidationAttribute : ValidationAttribute
 {
     private static readonly string[] AllowedValues = { "24h", "7d", "30d", "3M", "12M", "24M" };
