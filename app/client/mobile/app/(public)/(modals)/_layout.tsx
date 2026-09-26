@@ -9,7 +9,7 @@ export default function ModalLayout() {
       }}
     >
       <Stack.Screen
-        name='termAndServices'
+        name='termOfServices'
         options={{
           presentation: "modal"
         }}
