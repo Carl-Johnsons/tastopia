@@ -1,0 +1,145 @@
+{
+  "uuid": "flow-004",
+  "historyId": "fa2ff137",
+  "fullName": "search-user",
+  "name": "search-user",
+  "status": "failed",
+  "stage": "finished",
+  "start": 1790427252779,
+  "stop": 1790427292659,
+  "labels": [
+    {
+      "name": "suite",
+      "value": "search-user"
+    },
+    {
+      "name": "parentSuite",
+      "value": "search-user.yaml"
+    },
+    {
+      "name": "framework",
+      "value": "maestro"
+    },
+    {
+      "name": "severity",
+      "value": "normal"
+    },
+    {
+      "name": "host",
+      "value": "google Android SDK built for x86"
+    },
+    {
+      "name": "thread",
+      "value": "emulator-5554"
+    }
+  ],
+  "statusDetails": {
+    "message": "Element not visible: context deadline exceeded: no such element: An element could not be located on the page using the given search parameters",
+    "trace": ""
+  },
+  "steps": [
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1790427270184,
+      "stop": 1790427270269,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1790427270269,
+      "stop": 1790427271416,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1790427271417,
+      "stop": 1790427272524,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "inputText",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1790427272525,
+      "stop": 1790427272689,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "hideKeyboard",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1790427272690,
+      "stop": 1790427272706,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "assertVisible",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1790427272707,
+      "stop": 1790427274186,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "tapOn",
+      "status": "passed",
+      "stage": "finished",
+      "start": 1790427274187,
+      "stop": 1790427275018,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "assertVisible",
+      "status": "failed",
+      "stage": "finished",
+      "start": 1790427275019,
+      "stop": 1790427292659,
+      "steps": [],
+      "attachments": [
+        {
+          "name": "After",
+          "source": "cmd-007-after.png",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "tapOn",
+      "status": "skipped",
+      "stage": "finished",
+      "start": 0,
+      "stop": 0,
+      "steps": [],
+      "attachments": null
+    },
+    {
+      "name": "assertVisible",
+      "status": "skipped",
+      "stage": "finished",
+      "start": 0,
+      "stop": 0,
+      "steps": [],
+      "attachments": null
+    }
+  ],
+  "attachments": [
+    {
+      "name": "Screenshot",
+      "source": "cmd-007-after.png",
+      "type": "image/png"
+    }
+  ]
+}
