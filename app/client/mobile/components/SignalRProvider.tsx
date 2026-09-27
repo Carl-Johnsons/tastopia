@@ -25,6 +25,9 @@ const SignalRHubProvider = ({ children }: Props) => {
   const currentUserId = selectUserId();
   const accessToken = selectAccessToken();
 
+  const accessTokenRef = useRef(accessToken);
+  accessTokenRef.current = accessToken;
+
   const { subscribeAllEvents, unsubscribeAllEvents } = useSubscribeSignalREvents();
 
   const connectionRef = useRef<HubConnection | null>(null);
@@ -66,7 +69,7 @@ const SignalRHubProvider = ({ children }: Props) => {
 
     connectionRef.current = new HubConnectionBuilder()
       .withUrl(`${hubUrl}?userId=${currentUserId}`, {
-        accessTokenFactory: () => accessToken ?? ""
+        accessTokenFactory: () => accessTokenRef.current ?? ""
       })
       .withAutomaticReconnect()
       .configureLogging(
@@ -76,7 +79,6 @@ const SignalRHubProvider = ({ children }: Props) => {
 
     startConnection();
   }, [
-    accessToken,
     currentUserId,
     hubUrl,
     startConnection,
