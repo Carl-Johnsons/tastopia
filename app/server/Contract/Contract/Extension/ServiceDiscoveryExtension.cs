@@ -1,4 +1,6 @@
 ﻿using Consul;
+using Contract.Interfaces;
+using Contract.Services;
 using Contract.Utilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,9 +9,30 @@ using Serilog;
 
 namespace Contract.Extension;
 
-public static class ConsulExtension
+public static class ServiceDiscoveryExtension
 {
-    public static WebApplication UseConsulServiceDiscovery(this WebApplication app, string serviceName, bool IsSecure = true)
+    /**
+     * <summary>
+     *   Register the Consul client and the Consul registry service. Used by every service that resolves or registers instances.
+     * </summary>
+     */
+    public static IServiceCollection AddServiceDiscoveryService(this IServiceCollection services)
+    {
+        services.AddSingleton<IConsulClient, ConsulClient>(serviceProvider =>
+        {
+            return new ConsulClient(config =>
+            {
+                var scheme = DotNetEnv.Env.GetString("CONSUL_SCHEME", "Not found");
+                var host = DotNetEnv.Env.GetString("CONSUL_HOST", "Not found");
+                var port = DotNetEnv.Env.GetString("CONSUL_PORT", "Not found");
+                config.Address = new Uri($"{scheme}://{host}:{port}");
+            });
+        });
+        services.AddSingleton<IConsulRegistryService, ConsulRegistryService>();
+        return services;
+    }
+
+    public static WebApplication UseServiceDiscoveryService(this WebApplication app, string serviceName, bool IsSecure = true)
     {
 
         var consulClient = app.Services.GetRequiredService<IConsulClient>();
@@ -27,8 +50,8 @@ public static class ConsulExtension
         var scheme = IsSecure ? "https" : "http";
 
         var healthCheckEndpoint = EnvUtility.IsDevelopment()
-                            ? $"{scheme}://host.docker.internal:{httpPort}/health"
-                            : $"{scheme}://{serviceHost}:{httpPort}/health";
+                            ? $"{scheme}://host.docker.internal:{httpPort}/health/ready"
+                            : $"{scheme}://{serviceHost}:{httpPort}/health/ready";
 
         var registration = new AgentServiceRegistration()
         {

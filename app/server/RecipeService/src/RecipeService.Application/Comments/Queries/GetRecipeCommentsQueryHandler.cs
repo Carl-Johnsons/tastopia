@@ -8,6 +8,7 @@ using RecipeService.Domain.Responses;
 using UserProto;
 
 namespace RecipeService.Application.Comments.Queries;
+
 public class GetRecipeCommentsQuery : IRequest<Result<PaginatedRecipeCommentListResponse?>>
 {
     public Guid? RecipeId { get; init; }

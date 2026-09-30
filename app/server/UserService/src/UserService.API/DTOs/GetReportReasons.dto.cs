@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using UserService.API.ValidationAttributes;
 namespace UserService.API.DTOs;
+
 public class GetReportReasonsDTO
 {
     [Required]

@@ -8,7 +8,7 @@ import {
 } from "./constants/api";
 import { v4 as uuidv4 } from "uuid";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+export const { handlers, signOut, auth } = NextAuth({
   providers: [
     DuendeIDS6Provider({
       clientId: DUENDE_IDS6_ID as string,

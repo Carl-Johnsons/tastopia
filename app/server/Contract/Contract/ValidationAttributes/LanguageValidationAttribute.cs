@@ -1,6 +1,7 @@
 ﻿using Contract.Constants;
 using System.ComponentModel.DataAnnotations;
 namespace Contract.ValidationAttributes;
+
 public class LanguageValidationAttribute : ValidationAttribute
 {
     private static readonly string[] AllowedValues = { LanguageValidation.En, LanguageValidation.Vi };

@@ -5,6 +5,7 @@ using UploadFileService.Application.Files.Commands;
 
 
 namespace UploadFileService.API.EventHandlers;
+
 [QueueName(RabbitMQConstant.QUEUE.NAME.DELETE_MULTIPLE_IMAGE_FILE,
 exchangeName: RabbitMQConstant.EXCHANGE.NAME.DELETE_MULTIPLE_IMAGE_FILE)]
 public sealed class DeleteMultipleFileConsumer : IConsumer<DeleteMultipleFileEvent>

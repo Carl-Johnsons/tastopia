@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 namespace RecipeService.Application.Recipes.Queries;
+
 public class AdminGetTotalUserNumberQuery : IRequest<Result<int?>>
 {
 }

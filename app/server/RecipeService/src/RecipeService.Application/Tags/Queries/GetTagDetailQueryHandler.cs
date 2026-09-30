@@ -2,6 +2,7 @@
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 namespace RecipeService.Application.Tags.Queries;
+
 public class GetTagDetailQuery : IRequest<Result<TagResponse?>>
 {
     public Guid TagId { get; set; }

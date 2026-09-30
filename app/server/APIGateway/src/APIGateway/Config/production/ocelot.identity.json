@@ -78,6 +78,19 @@
         "Type": "LeastConnection"
       },
       "DownstreamScheme": "http",
+      "DownstreamPathTemplate": "/connect/endsession",
+      "UpstreamHttpMethod": [
+        "GET"
+      ],
+      "UpstreamPathTemplate": "/connect/endsession",
+      "SwaggerKey": "identity"
+    },
+    {
+      "ServiceName": "identity-service",
+      "LoadBalancerOptions": {
+        "Type": "LeastConnection"
+      },
+      "DownstreamScheme": "http",
       "DownstreamPathTemplate": "/api/account/register/{everything}",
       "UpstreamHttpMethod": [
         "POST"

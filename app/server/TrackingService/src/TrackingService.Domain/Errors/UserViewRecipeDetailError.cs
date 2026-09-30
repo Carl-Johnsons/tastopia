@@ -1,5 +1,6 @@
 ﻿using System.Net;
 namespace TrackingService.Domain.Errors;
+
 public class UserViewRecipeDetailError
 {
     public static Error NotFound =>

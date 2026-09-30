@@ -1,6 +1,9 @@
 appId: com.tastopia.app
 onFlowStart:
-  - runFlow: ../common/login.yaml
+  - runFlow:
+      file: ../common/login.yaml
+      env:
+        TEST_NAME: "comment-recipe"
 onFlowComplete:
   - runFlow: ../common/logout.yaml
 ---

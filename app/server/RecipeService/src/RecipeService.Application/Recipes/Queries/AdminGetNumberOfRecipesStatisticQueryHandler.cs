@@ -3,6 +3,7 @@ using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using System.Globalization;
 namespace RecipeService.Application.Recipes.Queries;
+
 public class AdminGetNumberOfRecipesStatisticQuery : IRequest<Result<List<StatisticEntity>?>>
 {
 }

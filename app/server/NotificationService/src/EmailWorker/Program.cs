@@ -1,16 +1,18 @@
+using Contract.Extension;
 using Contract.Utilities;
 using EmailWorker;
-using EmailWorker.Extensions;
 using EmailWorker.Interfaces;
 using EmailWorker.Services;
 
 EnvUtility.LoadEnvFile();
 
+const string serviceName = "EmailWorker";
+
 var builder = Host.CreateDefaultBuilder(args)
-    .ConfigureSerilog()
+    .ConfigureLoggingService(serviceName)
     .ConfigureServices((context, services) =>
     {
-        services.AddWorkerServices();
+        services.AddWorkerServices(serviceName);
         services.AddTransient<IEmailService, GmailEmailService>();
         services.AddHostedService<Worker>();
     });

@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using UserProto;
 
 namespace RecipeService.Application.Reports.Queries;
+
 public record GetRecipeReportsQuery : IRequest<Result<PaginatedAdminReportRecipeListResponse>>
 {
     public string Lang { get; init; } = "en";

@@ -13,6 +13,7 @@ using RecipeService.Domain.Responses;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace RecipeService.API.Controllers;
+
 [Route("api/admin/recipe")]
 [ApiController]
 [Authorize]

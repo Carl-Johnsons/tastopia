@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using TrackingService.Application.UserSearchRecipes.Queries;
 using TrackingService.Domain.Errors;
 namespace TrackingService.Application.UserSearchUsers.Queries;
+
 public class GetUserSearchUserQuery : IRequest<Result<List<string>?>>
 {
     public Guid AccountId { get; set; }

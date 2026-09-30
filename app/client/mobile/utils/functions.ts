@@ -1,4 +1,5 @@
-import { Platform } from "react-native";
+import Constants from "expo-constants";
+
 export type BasicOptionFields = {
   id: string;
   name?: string;
@@ -23,10 +24,9 @@ export const transformListWithIndex = <T>(objectList: T[], startWith: number = 0
       );
 
 export const transformPlatformURI = (uri: string) => {
-  return Platform.select({
-    ios: uri,
-    android: uri?.replace("localhost", "10.0.2.2.nip.io")
-  }) as string;
+  const { expoConfig } = Constants;
+  const localhost = expoConfig?.hostUri?.split(":")[0] ?? "10.0.2.2";
+  return uri?.replace("localhost", localhost);
 };
 
 export const isFalsy = (

@@ -7,10 +7,4 @@ public static class GrpcExtension
         services.AddGrpc();
         return services;
     }
-
-    public static WebApplication UseGrpcServices(this WebApplication app)
-    {
-        app.UseRouting();
-        return app;
-    }
 }

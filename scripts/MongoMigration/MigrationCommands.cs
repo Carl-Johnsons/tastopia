@@ -12,7 +12,8 @@ internal class MigrationCommands
     [Command("add")]
     public void Add([Argument] string migrationName, [Option] string? outputFolder)
     {
-        if (outputFolder == null) {
+        if (outputFolder == null)
+        {
             outputFolder = "Migrations";
         }
 

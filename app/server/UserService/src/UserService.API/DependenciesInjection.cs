@@ -1,10 +1,8 @@
-﻿using UserService.Application;
-using UserService.Infrastructure;
-using AutoMapper;
-using UserService.API.Configs;
+using Contract.Extension;
 using Contract.Utilities;
 using UserService.API.Extensions;
-using Contract.Extension;
+using UserService.Application;
+using UserService.Infrastructure;
 
 namespace UserService.API;
 
@@ -15,9 +13,20 @@ public static class DependenciesInjection
         EnvUtility.LoadEnvFile();
         var services = builder.Services;
         var config = builder.Configuration;
-        var host = builder.Host;
+        var databaseName = DotNetEnv.Env.GetString("DB");
 
-        builder.ConfigureCommonAPIServices();
+        const string serviceName = "UserService";
+
+        builder.ConfigureLoggingService(serviceName)
+               .ConfigureKestrel()
+               .ConfigureLivenessCheck()
+               .ConfigurePostgresHealthCheck(databaseName);
+
+        services.AddInfrastructureServices()
+                .AddApplicationServices()
+                .AddGrpcServices()
+                .AddSwaggerServices()
+                .AddOpenTelemetry(serviceName);
 
         services.AddAutoMapper(
             cfg =>
@@ -26,26 +35,26 @@ public static class DependenciesInjection
             },
             AppDomain.CurrentDomain.GetAssemblies());
 
-        services.AddInfrastructureServices();
-        services.AddApplicationServices();
-        services.AddGrpcServices();
-        services.AddSwaggerServices();
 
-        services.AddCommonAPIServices();
+        services.AddCommonAPIServices()
+                .AddCustomDownstreamAuthentication();
 
         return builder;
     }
 
     public static WebApplication UseAPIServices(this WebApplication app)
     {
-        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_USER", "Not Found"));
+        app.UseInfrastructureServices()
+           .UseSwaggerServices()
+           .UseCommonAPIMiddleware();
 
-        app.UseSwaggerServices();
-        app.MapControllers();
-        app.UseGrpcServices();
-
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.MapControllers();
+
+        app.UseGrpcServices()
+           .UseCustomHealthCheck();
 
         return app;
     }

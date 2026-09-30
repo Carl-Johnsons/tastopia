@@ -1,5 +1,6 @@
 ﻿using MassTransit;
 namespace Contract.Event.UserEvent;
+
 [EntityName("UpdateUserTotalRecipeEvent")]
 public class UpdateUserTotalRecipeEvent
 {

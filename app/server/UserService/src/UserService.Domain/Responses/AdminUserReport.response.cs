@@ -1,6 +1,7 @@
 ﻿using Contract.DTOs.UserDTO;
 
 namespace UserService.Domain.Responses;
+
 public class AdminUserReportResponse
 {
     public Guid ReportId { get; set; }

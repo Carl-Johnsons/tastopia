@@ -95,6 +95,21 @@ public class EnvUtility
     }
 
     /// <summary>
+    ///  Get Redis connection string from env
+    /// </summary>
+    public static string GetRedisConnectionString()
+    {
+        LoadEnvFile();
+        var host = DotNetEnv.Env.GetString("REDIS_HOST", "localhost").Trim();
+        var port = DotNetEnv.Env.GetString("REDIS_PORT", "6379").Trim();
+        var pwd = DotNetEnv.Env.GetString("REDIS_PASSWORD", "").Trim();
+
+        return string.IsNullOrEmpty(pwd)
+            ? $"{host}:{port},abortConnect=false"
+            : $"{host}:{port},password={pwd},abortConnect=false";
+    }
+
+    /// <summary>
     /// </summary>
     /// <param name="folderName"></param>
     /// <param name="envFileName"></param>

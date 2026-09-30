@@ -1,4 +1,5 @@
 ﻿namespace Contract.Common;
+
 public class ResultException : Exception
 {
     public IEnumerable<Error> Errors { get; }

@@ -16,6 +16,7 @@ using System.ComponentModel.DataAnnotations;
 using UploadFileProto;
 using UserProto;
 namespace RecipeService.Application.Recipes.Commands;
+
 public record CreateRecipeCommand : IRequest<Result<Recipe?>>
 {
     public Guid AuthorId { get; set; }

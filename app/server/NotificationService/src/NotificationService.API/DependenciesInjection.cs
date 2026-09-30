@@ -1,4 +1,4 @@
-﻿using Contract.Extension;
+using Contract.Extension;
 using Contract.Utilities;
 using NotificationService.API.Extensions;
 using NotificationService.Application;
@@ -13,36 +13,40 @@ public static class DependenciesInjection
     {
         EnvUtility.LoadEnvFile();
         var services = builder.Services;
-        var config = builder.Configuration;
-        var host = builder.Host;
+        var databaseName = DotNetEnv.Env.GetString("DB");
 
-        builder.ConfigureCommonAPIServices();
+        const string serviceName = "NotificationService";
 
-        services.AddInfrastructureServices();
-        services.AddApplicationServices();
-        services.AddGrpcServices();
-        services.AddSwaggerServices();
+        builder.ConfigureLoggingService(serviceName)
+               .ConfigureKestrel()
+               .ConfigureLivenessCheck()
+               .ConfigureMongoDBHealthCheck(databaseName);
 
-        services.AddCommonAPIServices();
+        services.AddInfrastructureServices()
+                .AddApplicationServices()
+                .AddGrpcServices()
+                .AddSwaggerServices()
+                .AddOpenTelemetry(serviceName);
 
-        services.AddEndpointsApiExplorer();
+        services.AddCommonAPIServices()
+                .AddCustomDownstreamAuthentication();
 
         return builder;
     }
 
     public static async Task<WebApplication> UseAPIServicesAsync(this WebApplication app)
     {
-        app.UseCommonServices(DotNetEnv.Env.GetString("CONSUL_NOTIFICATION", "Not Found"));
-        app.UseSwaggerServices();
+        app.UseInfrastructureServices()
+           .UseSwaggerServices()
+           .UseCommonAPIMiddleware();
 
         // app.UseHttpsRedirection();
-
-        app.MapControllers();
-
-        app.UseGrpcServices();
-
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
+        app.MapControllers();
+
+        app.UseCustomHealthCheck();
 
         await app.UseSignalRServiceAsync();
         return app;

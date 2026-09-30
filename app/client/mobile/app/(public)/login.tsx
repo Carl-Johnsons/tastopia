@@ -44,9 +44,10 @@ const Login = () => {
       onSuccess: async data => {
         const accessToken = data.access_token;
         const refreshToken = data.refresh_token;
+        const idToken = data.id_token;
         const role = ROLE.USER;
 
-        dispatch(saveAuthData({ accessToken, refreshToken, role }));
+        dispatch(saveAuthData({ accessToken, refreshToken, idToken, role }));
 
         await fetchUser();
         await fetchSettings();

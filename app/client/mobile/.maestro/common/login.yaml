@@ -1,6 +1,7 @@
 appId: com.tastopia.app
 ---
 - launchApp
+- openLink: "tastopia://?ci=true&test=${TEST_NAME || 'Unknown'}&env=${ENV || 'dev'}&runId=${GITHUB_RUN_ID || ''}"
 # - assertVisible: Welcome to
 # - assertVisible: Tastopia
 - tapOn:

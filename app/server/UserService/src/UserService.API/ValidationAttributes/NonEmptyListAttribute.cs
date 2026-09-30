@@ -1,4 +1,5 @@
 ﻿namespace UserService.API.ValidationAttributes;
+
 using System.ComponentModel.DataAnnotations;
 public class NonEmptyListAttribute : ValidationAttribute
 {

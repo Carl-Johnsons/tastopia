@@ -8,6 +8,7 @@ using RecipeService.Domain.Responses;
 using UserProto;
 
 namespace RecipeService.Application.Reports.Queries;
+
 public record GetCommentDetailQuery : IRequest<Result<Dictionary<string, CommentDetailResponse>?>>
 {
     // Key syntax is "recipeId~commentId"

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 namespace RecipeService.API.DTOs;
+
 public class ReportDTO
 {
     [Required]

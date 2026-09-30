@@ -9,11 +9,13 @@ internal class Program
 
         var app = builder.Build();
 
-        app.AddSubCommand("migrations", sub => {
+        app.AddSubCommand("migrations", sub =>
+        {
             sub.AddCommands<MigrationCommands>();
         });
 
-        app.AddSubCommand("database", sub => {
+        app.AddSubCommand("database", sub =>
+        {
             sub.AddCommands<DatabaseCommands>();
         });
 

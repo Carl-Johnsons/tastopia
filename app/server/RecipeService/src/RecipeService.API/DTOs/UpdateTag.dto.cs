@@ -3,6 +3,7 @@ using RecipeService.API.ValidationAttributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace RecipeService.API.DTOs;
+
 public class UpdateTagDTO
 {
     [Required]

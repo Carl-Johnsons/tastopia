@@ -1,4 +1,5 @@
 ﻿namespace UserService.API.ValidationAttributes;
+
 using System.ComponentModel.DataAnnotations;
 using Contract.Constants;
 

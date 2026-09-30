@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 import os
 import subprocess
 from dataclasses import dataclass, field
@@ -28,6 +29,7 @@ class ServiceName(StrEnum):
     PUSH_WORKER = "push-notification-worker"
     RECIPE_WORKER = "recipe-worker"
     CONTRACT = "contract"
+    BACKEND = "backend"
 
 
 @dataclass(frozen=True)
@@ -111,6 +113,7 @@ recipe_worker = Service(
     ("app/server/RecipeService/src/RecipeWorker",),
     (contract,),
 )
+backend = Service(ServiceName.BACKEND, ("app/server",))
 
 all_services: tuple[Service, ...] = (
     website,
@@ -210,7 +213,74 @@ def get_tag(service: Service, tag_length: int = 8) -> str:
 
 
 def get_service_by_name(service_name: ServiceName) -> Service:
+    if service_name == ServiceName.BACKEND:
+        return backend
     return next(s for s in all_services if s.name == service_name)
+
+
+def is_valid_git_ref(ref: str) -> bool:
+    if not ref or all(c == "0" for c in ref):
+        return False
+
+    res = subprocess.run(
+        ["git", "cat-file", "-e", f"{ref}^{{commit}}"],
+        capture_output=True,
+        check=False,
+    )
+
+    return res.returncode == 0
+
+
+def get_base_ref() -> str | None:
+    event_name = os.environ.get("GITHUB_EVENT_NAME")
+
+    if not event_name:
+        return "HEAD~1"
+
+    if event_name == "workflow_dispatch":
+        return None
+
+    if event_name == "pull_request":
+        base_ref = os.environ.get("GITHUB_BASE_REF")
+        return f"origin/{base_ref}" if base_ref else None
+
+    event_path = os.environ.get("GITHUB_EVENT_PATH")
+
+    if event_name == "push" and event_path and os.path.exists(event_path):
+        with open(event_path, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+            before = payload.get("before")
+
+            if before and is_valid_git_ref(before):
+                return before
+
+    return "HEAD~1"
+
+
+def is_service_changed(service: Service, base_ref: str | None = None) -> bool:
+    if base_ref is None:
+        return True
+
+    paths = get_paths(service)
+    exclude_paths = [f":(exclude,glob){p}" for p in get_exclude_paths(service)]
+    try:
+        proc = subprocess.run(
+            [
+                "git",
+                "diff",
+                "--name-only",
+                f"{base_ref}...HEAD",
+                "--",
+                *paths,
+                *exclude_paths,
+            ],
+            capture_output=True,
+            check=True,
+            text=True,
+        )
+        return bool(proc.stdout.strip())
+    except subprocess.CalledProcessError:
+        return True
 
 
 def TagLength(val: str) -> int:
@@ -227,6 +297,8 @@ def TagLength(val: str) -> int:
 class Args(argparse.Namespace):
     services: list[ServiceName]
     tag_length: int
+    check_list: list[ServiceName] | None
+    base_ref: str | None
 
 
 def parse_args() -> Args:
@@ -248,12 +320,42 @@ def parse_args() -> Args:
         default=8,
         help="Trim the length of each tag to the provided integer. The value must be bettween 8 and 40 (inclusive)",
     )
+    parser.add_argument(
+        "--check-changed",
+        dest="check_list",
+        metavar="SERVICE",
+        nargs="+",
+        type=ServiceName,
+        default=None,
+        help="Check if one or more services changed compared to base ref",
+    )
+    parser.add_argument(
+        "--base-ref",
+        type=str,
+        default=None,
+        help="Explicit base git ref to diff against",
+    )
 
     return parser.parse_args(namespace=Args())
 
 
 def main():
     args = parse_args()
+
+    if args.check_list is not None:
+        base_ref = args.base_ref if args.base_ref else get_base_ref()
+        changed_services = [
+            svc.name
+            for svc in [get_service_by_name(name) for name in args.check_list]
+            if is_service_changed(svc, base_ref)
+        ]
+
+        if len(args.check_list) == 1:
+            print("true" if changed_services else "false")
+        else:
+            print(" ".join(changed_services))
+        return
+
     result: list[str] = []
     services = [get_service_by_name(name) for name in args.services]
 

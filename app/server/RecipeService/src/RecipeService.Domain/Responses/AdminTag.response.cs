@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 namespace RecipeService.Domain.Responses;
+
 public class AdminTagResponse
 {
     [Required]

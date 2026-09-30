@@ -4,6 +4,7 @@ using RecipeService.Domain.Entities;
 using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 namespace RecipeService.Application.Reports.Commands;
+
 public class UserReportCommentCommand : IRequest<Result<UserReportCommentResponse?>>
 {
     public Guid ReporterId { get; set; }
