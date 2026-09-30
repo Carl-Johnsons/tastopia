@@ -53,7 +53,9 @@ done
 
 shift $((OPTIND - 1))
 
-if [ -z "$tag" ]; then
+if [ -n "$BUILD_NAME" ]; then
+  file_name="$BUILD_NAME.apk"
+else if [ -z "$tag" ]; then
   commit_hash=$(git log -n 1 --pretty=format:%H -- app/client/mobile | cut -c1-8)
 
   if [ "$ENV" = "dev" ]; then
