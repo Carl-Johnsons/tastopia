@@ -49,7 +49,7 @@ shift $((OPTIND - 1))
 
 if [ -n "$BUILD_NAME" ]; then
   file_name="$BUILD_NAME.apk"
-else if [ -z "$tag" ]; then
+elif [ -z "$tag" ]; then
   file_name="build-${tag}.apk"
 else
   commit=$(git log -n 1 --pretty=format:%H -- app/client/mobile | cut -c1-8)
