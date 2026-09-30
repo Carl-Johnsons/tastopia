@@ -82,11 +82,9 @@ const Welcome = () => {
   const showDebugInfo = () => {
     Alert.alert(
       "Debug info",
-      [
-        `BUILD_ENV: ${BUILD_ENV}`,
-        `API_URI: ${API_URI}`,
-        `IDENTITY_DISCOVERY_URL: ${IDENTITY_DISCOVERY_URL}`
-      ].join("\n\n")
+      [`API_URI: ${API_URI}`, `IDENTITY_DISCOVERY_URL: ${IDENTITY_DISCOVERY_URL}`].join(
+        "\n\n"
+      )
     );
   };
 
@@ -98,16 +96,20 @@ const Welcome = () => {
     >
       <LinearGradient colors={["transparent", "#191b2f"]}>
         <View className='relative h-full px-3.5'>
-          {BUILD_ENV === "dev" && (
-            <Button
-              onPress={showDebugInfo}
-              className={`absolute left-[26px] ${
-                isAndroid ? "top-[2%]" : "top-[6%]"
-              } bg-white_black200 rounded-full px-4 py-3`}
-            >
-              <Text className='font-sans text-primary'>{BUILD_ENV}</Text>
-            </Button>
-          )}
+          {BUILD_ENV === "dev" ||
+            (!BUILD_ENV && (
+              <Button
+                onPress={showDebugInfo}
+                className='absolute left-1/2 flex -translate-x-1/2 flex-col gap-2'
+              >
+                <Text
+                  className={`${isAndroid ? "top-[2%]" : "top-[6%]"} bg-white_black200 rounded-full px-4 py-3 font-sans text-primary`}
+                >
+                  Env: {process.env.EXPO_PUBLIC_APP_ENV}
+                </Text>
+              </Button>
+            ))}
+
           <Button
             onPress={browseAsGuest}
             className={`absolute right-[26px] ${isAndroid ? "top-[2%]" : "top-[6%]"} bg-white_black200 rounded-full px-4 py-3`}
@@ -140,11 +142,11 @@ const Welcome = () => {
 
           <View className='absolute bottom-[6vh] left-3.5 flex w-full gap-4'>
             <View className='flex-row items-center justify-center gap-5'>
-              <View className='h-[1px] grow bg-gray-300 dark:bg-black-200' />
+              <View className='h-px grow bg-gray-300 dark:bg-black-200' />
               <Animated.Text className='text-center font-medium text-lg text-gray-300'>
                 Sign in with
               </Animated.Text>
-              <View className='h-[1px] grow bg-gray-300 dark:bg-black-200' />
+              <View className='h-px grow bg-gray-300 dark:bg-black-200' />
             </View>
 
             <View className='flex items-center'>
