@@ -28,6 +28,10 @@ on:
         description: "'staging' or 'production'"
         required: true
         default: "staging"
+      BUILD_NAME:
+        description: "build name"
+        required: false
+        default: ""
 
 concurrency:
   group: >-
@@ -166,6 +170,8 @@ jobs:
           IDENTITY_FQDN: ${{ vars.IDENTITY_FQDN }}
           API_GATEWAY_FQDN: ${{ vars.API_GATEWAY_FQDN }}
           API_GATEWAY_PORT: ${{ vars.API_GATEWAY_PORT }}
+          BUILD_NAME: ${{ github.event.inputs.BUILD_NAME }}
+
   mobile_test:
     name: Mobile E2E tests
     runs-on: ubuntu-latest
@@ -288,6 +294,7 @@ jobs:
           E2E_TEST_USERNAME: ${{ secrets.MOBILE_E2E_TEST_USERNAME }}
           E2E_TEST_PASSWORD: ${{ secrets.MOBILE_E2E_TEST_PASSWORD }}
           BUILT_IMAGES: ${{ needs.derive-state.outputs.services }}
+          BUILD_NAME: ${{ github.event.inputs.BUILD_NAME }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
           ARGOCD_SERVER: ${{ secrets.ARGOCD_SERVER }}
 
