@@ -11,6 +11,8 @@ WORKDIR /src
 # Copy pre-build lib
 COPY ["./data/nuget", "./nuget"]
 
+COPY ["./app/server/UserService/Directory.Packages.props", "./"]
+COPY ["./app/server/UserService/Directory.Build.targets", "./"]
 COPY ["./app/server/UserService/src/UserService.API/UserService.API.csproj", "UserService.API/"]
 COPY ["./app/server/UserService/src/UserService.Application/UserService.Application.csproj", "UserService.Application/"]
 COPY ["./app/server/UserService/src/UserService.Infrastructure/UserService.Infrastructure.csproj", "UserService.Infrastructure/"]

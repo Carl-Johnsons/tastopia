@@ -11,6 +11,8 @@ WORKDIR /src
 # Copy pre-build lib
 COPY ["./data/nuget", "./nuget"]
 
+COPY ["./app/server/APIGateway/Directory.Packages.props", "./"]
+COPY ["./app/server/APIGateway/Directory.Build.targets", "./"]
 COPY ["./app/server/APIGateway/src/APIGateway/APIGateway.csproj", "./APIGateway/"]
 WORKDIR "/src/APIGateway"
 RUN dotnet restore --packages "../nuget" --verbosity normal

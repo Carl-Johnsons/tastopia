@@ -9,6 +9,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 COPY --from=contract /publish ./Contract
+COPY ["./app/server/NotificationService/Directory.Packages.props", "./"]
+COPY ["./app/server/NotificationService/Directory.Build.targets", "./"]
 COPY ["./app/server/NotificationService/src/EmailWorker/EmailWorker.csproj", "EmailWorker/"]
 
 # Building the services

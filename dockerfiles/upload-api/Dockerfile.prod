@@ -9,6 +9,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 COPY --from=contract /publish ./Contract
+COPY ["./app/server/UploadFileService/Directory.Packages.props", "./"]
+COPY ["./app/server/UploadFileService/Directory.Build.targets", "./"]
 COPY ["./app/server/UploadFileService/src/UploadFileService.API/UploadFileService.API.csproj", "./UploadFileService.API/"]
 COPY ["./app/server/UploadFileService/src/UploadFileService.Application/UploadFileService.Application.csproj", "./UploadFileService.Application/"]
 COPY ["./app/server/UploadFileService/src/UploadFileService.Domain/UploadFileService.Domain.csproj", "./UploadFileService.Domain/"]
