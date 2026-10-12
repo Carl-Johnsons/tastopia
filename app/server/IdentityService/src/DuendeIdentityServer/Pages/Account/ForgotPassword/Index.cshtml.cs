@@ -3,7 +3,7 @@ using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Google.Protobuf.Collections;
 using IdentityService.Application.Account.Commands;
-using IdentityService.Infrastructure.Utilities;
+using IdentityService.Application.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;

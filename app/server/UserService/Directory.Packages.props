@@ -1,0 +1,60 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- ═══════════════ Shared Dependencies ═══════════════ -->
+    <PackageVersion Include="DotNetEnv" Version="3.0.0" />
+
+    <!-- ═══════════════ Domain Dependencies ═══════════════  -->
+
+    <!-- ◆ Entity Framework Core -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
+    <PackageVersion Include="MongoDB.EntityFrameworkCore" Version="8.2.1" />
+
+    <!-- ◆ JSON -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+
+    <!-- ◆ Message queue -->
+    <PackageVersion Include="MassTransit" Version="8.2.2" />
+
+    <!-- ═══════════════ Infrastructure Dependencies ═══════════════ -->
+
+    <!-- ◆ Database -->
+		<PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11" />
+
+    <!-- ◆ Logging -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageVersion Include="Serilog" Version="4.1.0" />
+
+    <!-- ◆ Service discovery -->
+    <PackageVersion Include="Consul" Version="1.7.14.1" />
+
+    <!-- ═══════════════ Application Dependencies ═══════════════ -->
+    
+    <!-- ◆ CQRS -->
+    <PackageVersion Include="MediatR" Version="12.2.0" />
+
+    <!-- ◆ gRPC -->
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.67.0" />
+
+    <!-- ◆ Other -->
+    <PackageVersion Include="AutoMapper" Version="16.1.1" />
+
+    <!-- ═══════════════ API Dependencies ═══════════════ -->
+
+    <!-- ◆ Identity -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+
+    <!-- ◆ Swagger -->
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+
+    <!-- ◆ TypeScript Generator -->
+    <PackageVersion Include="Microsoft.TypeScript.MSBuild" Version="5.7.1" />
+    <PackageVersion Include="Reinforced.Typings" Version="1.6.5" />
+    
+    <!-- ◆ Other -->
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.4" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- ═══════════════ Core Dependencies ═══════════════  -->
+
+    <!-- ◆ Identity -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+
+    <!-- ◆ JSON -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+
+    <!-- ◆ Logging -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageVersion Include="Serilog" Version="4.1.0" />
+
+    <!-- ◆ Service discovery -->
+    <PackageVersion Include="Consul" Version="1.7.14.1" />
+
+    <!-- ◆ Other -->
+    <PackageVersion Include="DotNetEnv" Version="3.0.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="8.0.5" />
+  </ItemGroup>
+</Project>

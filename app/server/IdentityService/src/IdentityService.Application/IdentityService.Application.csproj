@@ -1,25 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseContractReference>true</UseContractReference>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="16.1.1" />
-	</ItemGroup>
+  <ItemGroup>
+    <!-- ◆ CQRS -->
+    <PackageReference Include="MediatR" />
 
-	<ItemGroup>
-		<ProjectReference Include="..\IdentityService.Domain\IdentityService.Domain.csproj" />
-		<ProjectReference Include="..\IdentityService.Infrastructure\IdentityService.Infrastructure.csproj" />
-	</ItemGroup>
+    <!-- ◆ gRPC -->
+    <PackageReference Include="Grpc.AspNetCore" />
 
-	<ItemGroup>
-		<Reference Include="Contract">
-			<HintPath Condition="Exists('..\..\..\Contract\Contract\bin\Release\net8.0\Contract.dll')">..\..\..\Contract\Contract\bin\Release\net8.0\Contract.dll</HintPath>
-			<HintPath Condition="Exists('..\..\..\Contract\Contract\Published\Contract.dll')">..\..\..\Contract\Contract\Published\Contract.dll</HintPath>
-			<HintPath Condition="Exists('..\Contract\Contract.dll')">..\Contract\Contract.dll</HintPath>
-		</Reference>
-	</ItemGroup>
+    <!-- ◆ Other -->
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="DotNetEnv" />
+    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" />
+  </ItemGroup>
+
+  <!-- Application use Domain for business logic -->
+  <ItemGroup>
+    <ProjectReference Include="..\IdentityService.Domain\IdentityService.Domain.csproj" />
+  </ItemGroup>
 </Project>

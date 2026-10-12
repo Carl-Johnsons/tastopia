@@ -1,10 +1,10 @@
 ﻿using System.Security.Cryptography;
 
-namespace IdentityService.Infrastructure.Utilities;
+namespace IdentityService.Application.Utilities;
 
 public class OTPUtility
 {
-    private static int BASE_LENGTH = 6;
+    private static readonly int BASE_LENGTH = 6;
 
     /// <summary>
     /// Generates a 6 length numeric OTP.
