@@ -11,6 +11,8 @@ WORKDIR /src
 # Copy pre-build lib
 COPY ["./data/nuget", "./nuget"]
 
+COPY ["./app/server/UploadFileService/Directory.Packages.props", "./"]
+COPY ["./app/server/UploadFileService/Directory.Build.targets", "./"]
 COPY ["./app/server/UploadFileService/src/UploadFileService.API/UploadFileService.API.csproj", "./UploadFileService.API/"]
 COPY ["./app/server/UploadFileService/src/UploadFileService.Application/UploadFileService.Application.csproj", "./UploadFileService.Application/"]
 COPY ["./app/server/UploadFileService/src/UploadFileService.Domain/UploadFileService.Domain.csproj", "./UploadFileService.Domain/"]

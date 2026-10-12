@@ -9,6 +9,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 COPY --from=contract /publish ./Contract
+COPY ["./app/server/RecipeService/Directory.Packages.props", "./"]
+COPY ["./app/server/RecipeService/Directory.Build.targets", "./"]
 COPY ["./app/server/RecipeService/src/RecipeService.API/RecipeService.API.csproj", "RecipeService.API/"]
 COPY ["./app/server/RecipeService/src/RecipeService.Application/RecipeService.Application.csproj", "RecipeService.Application/"]
 COPY ["./app/server/RecipeService/src/RecipeService.Infrastructure/RecipeService.Infrastructure.csproj", "RecipeService.Infrastructure/"]

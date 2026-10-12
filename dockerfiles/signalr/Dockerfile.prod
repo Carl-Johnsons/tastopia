@@ -12,6 +12,8 @@ RUN apk update && \
 apk add --no-cache curl
 
 COPY --from=contract /publish ./Contract
+COPY ["./app/server/SignalRService/Directory.Packages.props", "./"]
+COPY ["./app/server/SignalRService/Directory.Build.targets", "./"]
 COPY ["./app/server/SignalRService/src/SignalRHub/SignalRHub.csproj", "SignalRHub/"]
 
 # Building the services

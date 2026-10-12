@@ -10,6 +10,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 COPY --from=contract /publish ./Contract
+COPY ["./app/server/IdentityService/Directory.Packages.props", "./"]
+COPY ["./app/server/IdentityService/Directory.Build.targets", "./"]
 COPY ["./app/server/IdentityService/src/DuendeIdentityServer/DuendeIdentityServer.csproj", "DuendeIdentityServer/"]
 COPY ["./app/server/IdentityService/src/IdentityService.Application/IdentityService.Application.csproj", "IdentityService.Application/"]
 COPY ["./app/server/IdentityService/src/IdentityService.Domain/IdentityService.Domain.csproj", "IdentityService.Domain/"]

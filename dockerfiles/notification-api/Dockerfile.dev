@@ -11,6 +11,8 @@ WORKDIR /src
 # Copy pre-build lib
 COPY ["./data/nuget", "./nuget"]
 
+COPY ["./app/server/NotificationService/Directory.Packages.props", "./"]
+COPY ["./app/server/NotificationService/Directory.Build.targets", "./"]
 COPY ["./app/server/NotificationService/src/NotificationService.API/NotificationService.API.csproj", "NotificationService.API/"]
 COPY ["./app/server/NotificationService/src/NotificationService.Application/NotificationService.Application.csproj", "NotificationService.Application/"]
 COPY ["./app/server/NotificationService/src/NotificationService.Infrastructure/NotificationService.Infrastructure.csproj", "NotificationService.Infrastructure/"]

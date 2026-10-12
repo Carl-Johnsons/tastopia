@@ -10,6 +10,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 COPY --from=contract /publish ./Contract
+COPY ["./app/server/APIGateway/Directory.Packages.props", "./"]
+COPY ["./app/server/APIGateway/Directory.Build.targets", "./"]
 COPY ["./app/server/APIGateway/src/APIGateway/APIGateway.csproj", "./APIGateway/"]
 
 WORKDIR "/src/APIGateway"

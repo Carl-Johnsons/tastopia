@@ -9,6 +9,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
 COPY --from=contract /publish ./Contract
+COPY ["./app/server/TrackingService/Directory.Packages.props", "./"]
+COPY ["./app/server/TrackingService/Directory.Build.targets", "./"]
 COPY ["./app/server/TrackingService/src/TrackingService.API/TrackingService.API.csproj", "TrackingService.API/"]
 COPY ["./app/server/TrackingService/src/TrackingService.Application/TrackingService.Application.csproj", "TrackingService.Application/"]
 COPY ["./app/server/TrackingService/src/TrackingService.Infrastructure/TrackingService.Infrastructure.csproj", "TrackingService.Infrastructure/"]
