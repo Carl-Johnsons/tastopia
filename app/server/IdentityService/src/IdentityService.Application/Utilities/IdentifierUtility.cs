@@ -2,7 +2,7 @@
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 
-namespace IdentityService.Infrastructure.Utilities;
+namespace IdentityService.Application.Utilities;
 
 public static class IdentifierUtility
 {

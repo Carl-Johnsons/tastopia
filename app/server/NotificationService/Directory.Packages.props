@@ -1,0 +1,70 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- ═══════════════ Shared Dependencies ═══════════════ -->
+    <PackageVersion Include="DotNetEnv" Version="3.0.0" />
+    <!-- ═══════════════ Domain Dependencies ═══════════════  -->
+
+    <!-- ◆ Entity Framework Core -->
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
+    <PackageVersion Include="MongoDB.EntityFrameworkCore" Version="8.2.1" />
+
+    <!-- ◆ JSON -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+
+    <!-- ◆ Message queue -->
+    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.2.2" />
+    <PackageVersion Include="MassTransit" Version="8.2.2" />
+
+    <!-- ◆ SignalR client  -->
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.5" />
+
+    <!-- ═══════════════ Infrastructure Dependencies ═══════════════ -->
+
+    <!-- ◆ Database -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11" />
+
+    <!-- ◆ Logging -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageVersion Include="Serilog" Version="4.1.0" />
+
+    <!-- ◆ Service discovery -->
+    <PackageVersion Include="Consul" Version="1.7.14.1" />
+
+    <!-- ═══════════════ Application Dependencies ═══════════════ -->
+    <!-- ◆ CQRS -->
+    <PackageVersion Include="MediatR" Version="12.2.0" />
+
+    <!-- ◆ gRPC -->
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.67.0" />
+
+    <!-- ◆ Other -->
+    <PackageVersion Include="AutoMapper" Version="16.1.1" />
+    <PackageVersion Include="SmartFormat.NET" Version="3.5.3" />
+
+    <!-- ═══════════════ API Dependencies ═══════════════ -->
+
+    <!-- ◆ Identity -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+
+    <!-- ◆ Swagger -->
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+
+    <!-- ◆ TypeScript Generator -->
+    <PackageVersion Include="Microsoft.TypeScript.MSBuild" Version="5.7.1" />
+    <PackageVersion Include="Reinforced.Typings" Version="1.6.5" />
+
+    <!-- ═══════════════ Push notification worker Dependencies ═══════════════ -->
+    <PackageVersion Include="Expo.Server.SDK" Version="1.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+
+    <!-- ═══════════════ Email worker Dependencies ═══════════════ -->
+    <PackageVersion Include="Google.Apis.Auth" Version="1.68.0" />
+    <PackageVersion Include="Google.Apis.Gmail.v1" Version="1.68.0.3427" />
+    <PackageVersion Include="MimeKit" Version="4.17.0" />
+
+  </ItemGroup>
+</Project>

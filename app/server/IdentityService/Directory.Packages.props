@@ -1,0 +1,82 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- ═══════════════ Shared Dependencies ═══════════════  -->
+  
+    <PackageVersion Include="DotNetEnv" Version="3.0.0" />
+  
+    <!-- ═══════════════ Domain Dependencies ═══════════════  -->
+
+    <!-- ◆ Entity Framework Core -->
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
+
+    <!-- ◆ JSON -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+
+    <!-- ◆ Message queue -->
+    <PackageVersion Include="MassTransit" Version="8.2.2" />
+
+    <!-- ◆ SignalR client  -->
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.5" />
+
+    <!-- ═══════════════ Infrastructure Dependencies ═══════════════ -->
+
+    <!-- ◆ Database -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+
+    <!-- ◆ IdentityServer -->
+    <PackageVersion Include="Duende.IdentityServer.EntityFramework" Version="7.0.4" />
+
+    <!-- ◆ Logging -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageVersion Include="Serilog" Version="4.1.0" />
+
+    <!-- ◆ Service discovery -->
+    <PackageVersion Include="Consul" Version="1.7.14.1" />
+
+    <!-- ═══════════════ Application Dependencies ═══════════════ -->
+
+    <!-- ◆ CQRS -->
+    <PackageVersion Include="MediatR" Version="12.2.0" />
+
+    <!-- ◆ gRPC -->
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.67.0" />
+
+    <!-- ◆ IdentityServer -->
+    <PackageVersion Include="Duende.IdentityServer.AspNetIdentity" Version="7.0.4" />
+    
+    <!-- ◆ Other -->
+    <PackageVersion Include="AutoMapper" Version="16.1.1" />
+
+    <!-- ═══════════════ API Dependencies ═══════════════ -->
+
+    <!-- ◆ Cache -->
+    <PackageVersion Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.11" />
+
+    <!-- ◆ EF Core Migration Tooling -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11" />
+
+    <!-- ◆ Identity -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+
+    <!-- ◆ Swagger -->
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+
+    <!-- ◆ TypeScript Generator -->
+    <PackageVersion Include="Microsoft.TypeScript.MSBuild" Version="5.7.1" />
+    <PackageVersion Include="Reinforced.Typings" Version="1.6.5" />
+
+    <!-- ◆ Other -->
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="8.0.8" />
+    <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
+  </ItemGroup>
+</Project>
