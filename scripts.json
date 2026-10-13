@@ -2,17 +2,27 @@
   "scripts": {
     "Set up project dependencies": "./scripts/utils/setup-mise.py --install-dependencies",
     "Pulling environment variables": "./scripts/env/pull-env.sh",
-    "Setup back-end": "./scripts/local/setup-backend.sh",
     "Run all services": "./scripts/local/run-all-services.sh",
-    "Build all services": "./scripts/local/build-all-services.sh",
-    "Restore all services": "./scripts/local/restore-all-services.sh",
-    "Apply all migrations": "./scripts/local/apply-all-migrations.sh",
+    "Setup": {
+      "Setup back-end": "./scripts/local/setup-backend.sh",
+      "Build all services": "./scripts/local/build-all-services.sh",
+      "Restore all services": "./scripts/local/restore-all-services.sh",
+      "Apply all migrations": "./scripts/local/apply-all-migrations.sh",
+      "Setup capturing service": "./scripts/local/setup-capture-service.sh"
+    },
     "Rebuild docker services": "./scripts/docker/rebuild-service.sh",
     "Kill service bus": "./scripts/docker/kill-mq.sh",
-    "Drop all postgres databases": "./scripts/local/drop-all-postgres-databases.sh",
-    "Drop all mongo databases": "./scripts/local/drop-all-mongo-databases.sh",
-    "Setup capturing service": "./scripts/local/setup-capture-service.sh",
-    "Pull act secret": "./scripts/env/pull-env.sh act",
-    "Test CI": "./scripts/ci/test/test-ci.sh"
+    "Drop database": {
+      "Postgres": "./scripts/local/drop-all-postgres-databases.sh",
+      "MongoDB": "./scripts/local/drop-all-mongo-databases.sh"
+    },
+    "Act": {
+      "Pull secret": "./scripts/env/pull-env.sh act",
+      "Test CI": "./scripts/ci/test/test-ci.sh"
+    },
+    "Doctor": {
+      "Diagnose back-end": "./scripts/local/diagnose-be.sh",
+      "Diagnose front-end": "./scripts/local/diagnose-fe.sh"
+    }
   }
 }
