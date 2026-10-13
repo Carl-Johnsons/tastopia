@@ -3,6 +3,7 @@
 set -euo pipefail
 
 ENV="${ENV:-dev}"
+BUILD_NAME="${BUILD_NAME:-}"
 tag=""
 
 script_dir=$(cd -- $(dirname -- "${BASH_SOURCE[0]}") && pwd)
