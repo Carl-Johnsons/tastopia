@@ -9,10 +9,7 @@ build_service() {
   local service_name=$2
   echo -e "${PURPLE}Building $service_name service ...${NC}"
 
-  dotnet build --no-incremental --packages "$project_root/data/nuget" $service_path 2>&1 |
-    sed -E \
-      -e "/(warning|warn|wrn)/I s/.*/$(printf "${WARNING}&${NC}")/" \
-      -e "/(error|err)/I s/.*/$(printf "${DANGER}&${NC}")/"
+  dotnet build --no-incremental --packages "$project_root/data/nuget" $service_path 
 }
 
 [[ "$PLATFORM" != "windows" ]] && sudo chmod 777 data -R && echo -e "${GREEN}Run chmod 777 for ./data directory successfully${NC}"
@@ -25,7 +22,6 @@ dotnet publish --packages "$project_root/data/nuget" -o ./app/server/Contract/Co
 cp -r ./app/server/NotificationService/src/EmailWorker/bin/*/Debug/net8.0/Auth.Store ./data
 
 build_service "./app/server/APIGateway/src/APIGateway" "api gateway" &&
-  build_service "./app/server/Contract/Contract" "contract" &&
   build_service "./app/server/IdentityService/src/DuendeIdentityServer" "identity" &&
   build_service "./app/server/UploadFileService/src/UploadFileService.API" "upload" &&
   build_service "./app/server/UserService/src/UserService.API" "user" &&

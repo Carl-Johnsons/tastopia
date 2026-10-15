@@ -2,7 +2,7 @@
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Validation;
 using Microsoft.AspNetCore.Identity;
-using static IdentityModel.OidcConstants;
+using static Duende.IdentityModel.OidcConstants;
 
 namespace DuendeIdentityServer.Services;
 
@@ -17,8 +17,9 @@ public class CustomResourceOwnerPasswordValidator : IResourceOwnerPasswordValida
         _signInManager = signInManager;
     }
     // User name can be username or email or phone
-    public async Task ValidateAsync(ResourceOwnerPasswordValidationContext context)
+    public async Task ValidateAsync(ResourceOwnerPasswordValidationContext context, CancellationToken ct)
     {
+        ct.ThrowIfCancellationRequested();
         ApplicationAccount? user;
         if (context.UserName.Contains("@"))
         {

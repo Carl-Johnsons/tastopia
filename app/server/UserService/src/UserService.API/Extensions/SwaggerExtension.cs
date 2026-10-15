@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 
 namespace UserService.API.Extensions;
 
@@ -18,19 +18,9 @@ public static class SwaggerExtension
                 Description = "Input your Bearer token in the following format: `Bearer {your_token}`"
             });
 
-            config.AddSecurityRequirement(new OpenApiSecurityRequirement
+            config.AddSecurityRequirement(document => new OpenApiSecurityRequirement
             {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
+                [new OpenApiSecuritySchemeReference("Bearer", document)] = []
             });
         });
         return services;

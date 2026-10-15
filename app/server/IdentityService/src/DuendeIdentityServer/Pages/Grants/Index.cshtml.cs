@@ -35,15 +35,15 @@ namespace DuendeIdentityServer.Pages.Grants
 
         public async Task OnGet()
         {
-            var grants = await _interaction.GetAllUserGrantsAsync();
+            var grants = await _interaction.GetAllUserGrantsAsync(HttpContext.RequestAborted);
 
             var list = new List<GrantViewModel>();
             foreach (var grant in grants)
             {
-                var client = await _clients.FindClientByIdAsync(grant.ClientId);
+                var client = await _clients.FindClientByIdAsync(grant.ClientId, HttpContext.RequestAborted);
                 if (client != null)
                 {
-                    var resources = await _resources.FindResourcesByScopeAsync(grant.Scopes);
+                    var resources = await _resources.FindResourcesByScopeAsync(grant.Scopes, HttpContext.RequestAborted);
 
                     var item = new GrantViewModel()
                     {
@@ -73,8 +73,8 @@ namespace DuendeIdentityServer.Pages.Grants
 
         public async Task<IActionResult> OnPost()
         {
-            await _interaction.RevokeUserConsentAsync(ClientId);
-            await _events.RaiseAsync(new GrantsRevokedEvent(User.GetSubjectId(), ClientId));
+            await _interaction.RevokeUserConsentAsync(ClientId, HttpContext.RequestAborted);
+            await _events.RaiseAsync(new GrantsRevokedEvent(User.GetSubjectId(), ClientId), HttpContext.RequestAborted);
             Telemetry.Metrics.GrantsRevoked(ClientId);
 
             return RedirectToPage("/Grants/Index");

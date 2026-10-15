@@ -1,4 +1,3 @@
-using Duende.IdentityServer;
 using Duende.IdentityServer.Configuration;
 using Duende.IdentityServer.ResponseHandling;
 using Duende.IdentityServer.Services;
@@ -11,21 +10,25 @@ namespace DuendeIdentityServer.Services;
 
 public class CustomAuthorizeInteractionResponseGenerator : AuthorizeInteractionResponseGenerator
 {
-    public CustomAuthorizeInteractionResponseGenerator(IdentityServerOptions options, IClock clock, ILogger<AuthorizeInteractionResponseGenerator> logger, IConsentService consent, IProfileService profile) : base(options, clock, logger, consent, profile)
+    public CustomAuthorizeInteractionResponseGenerator(
+        IdentityServerOptions options,
+        TimeProvider timeProvider,
+        ILogger<AuthorizeInteractionResponseGenerator> logger,
+        IConsentService consent,
+        IProfileService profile)
+        : base(options, timeProvider, logger, consent, profile)
     {
-
     }
-    protected override async Task<InteractionResponse> ProcessLoginAsync(ValidatedAuthorizeRequest request)
+
+    protected override async Task<InteractionResponse> ProcessLoginAsync(ValidatedAuthorizeRequest request, CancellationToken ct)
     {
-        var response = await base.ProcessLoginAsync(request);
+        var response = await base.ProcessLoginAsync(request, ct);
 
         if (response.IsLogin && request.ClientId == "react.native")
         {
             Logger.LogInformation("Login to provider instead default login page:)");
 
             var externalProvider = "Google";
-            var codeChallenge = request.Raw.Get("code_challenge");
-            var codeChallengeMethod = request.Raw.Get("code_challenge_method");
 
             Logger.LogInformation("Authorize request details: ClientId={ClientId}, RedirectUri={RedirectUri}, ResponseType={ResponseType}, State={State}, RequestedScopes={RequestedScopes}",
                            request.ClientId, request.RedirectUri, request.ResponseType, request.State, string.Join(", ", request.RequestedScopes));

@@ -101,14 +101,8 @@ display() {
         fi
     done
 }
-for i in "${!script_keys[@]}"; do
-    printf 'DEBUG index=%s key=[%s] command=[%s]\n' \
-        "$i" "${script_keys[$i]}" "${script_commands[$i]}"
-done
-
 
 display
-
 
 while true; do
     read -rp "Enter the index of the script to run: " idx

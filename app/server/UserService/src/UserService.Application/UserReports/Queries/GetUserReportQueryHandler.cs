@@ -1,7 +1,6 @@
 ﻿using Contract.Constants;
 using Contract.DTOs;
 using Contract.Utilities;
-using MongoDB.Driver;
 using UserService.Domain.Responses;
 
 namespace UserService.Application.UserReports.Queries;

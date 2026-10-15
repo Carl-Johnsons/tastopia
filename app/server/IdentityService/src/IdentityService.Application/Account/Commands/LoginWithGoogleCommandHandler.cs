@@ -1,5 +1,5 @@
 ﻿using Contract.Constants;
-using IdentityModel;
+using Duende.IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;

@@ -1,35 +1,36 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
     <!-- ═══════════════ Shared Dependencies ═══════════════ -->
-    <PackageVersion Include="DotNetEnv" Version="3.0.0" />
+    <PackageVersion Include="DotNetEnv" Version="3.2.0" />
 
     <!-- ═══════════════ Domain Dependencies ═══════════════  -->
 
     <!-- ◆ Entity Framework Core -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
-    <PackageVersion Include="MongoDB.EntityFrameworkCore" Version="8.2.1" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.13" />
+    <PackageVersion Include="MongoDB.EntityFrameworkCore" Version="10.0.4" />
 
     <!-- ◆ JSON -->
-    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
 
     <!-- ◆ Message queue -->
-    <PackageVersion Include="MassTransit" Version="8.2.2" />
-    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.2.2" />
+    <PackageVersion Include="MassTransit" Version="8.5.11" />
+    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.5.11" />
 
     <!-- ◆ SignalR client  -->
-    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.5" />
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.13" />
 
     <!-- ═══════════════ Infrastructure Dependencies ═══════════════ -->
 
     <!-- ◆ Database -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.11" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.13" />
 
     <!-- ◆ Logging -->
-    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.3" />
-    <PackageVersion Include="Serilog" Version="4.1.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageVersion Include="Serilog" Version="4.4.0" />
 
     <!-- ◆ Service discovery -->
     <PackageVersion Include="Consul" Version="1.7.14.1" />
@@ -40,24 +41,27 @@
     <PackageVersion Include="MediatR" Version="12.2.0" />
 
     <!-- ◆ gRPC -->
-    <PackageVersion Include="Grpc.AspNetCore" Version="2.67.0" />
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.84.0" />
 
     <!-- ◆ Other -->
-    <PackageVersion Include="AutoMapper" Version="16.1.1" />
+    <PackageVersion Include="AutoMapper" Version="16.2.0" />
 
     <!-- ═══════════════ API Dependencies ═══════════════ -->
 
     <!-- ◆ Identity -->
-    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.13" />
 
     <!-- ◆ Swagger -->
-    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.3.0" />
 
     <!-- ◆ TypeScript Generator -->
-    <PackageVersion Include="Microsoft.TypeScript.MSBuild" Version="5.7.1" />
-    <PackageVersion Include="Reinforced.Typings" Version="1.6.5" />
+    <PackageVersion Include="Microsoft.TypeScript.MSBuild" Version="7.0.1" />
+    <PackageVersion Include="Reinforced.Typings" Version="1.6.7" />
     
     <!-- ◆ Other -->
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.4" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.13" />
+
+    <!-- ═══════════════ Transitive package ═══════════════ -->
+    <PackageVersion Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.19.2" />
   </ItemGroup>
 </Project>

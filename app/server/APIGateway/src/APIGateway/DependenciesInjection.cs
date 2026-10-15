@@ -5,7 +5,7 @@ using Contract.Utilities;
 using Ocelot.Cache.CacheManager;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Ocelot.Provider.Consul;
+using Ocelot.Discovery.Consul;
 using Serilog;
 using System.Net;
 using System.Security.Claims;
@@ -57,7 +57,7 @@ public static class DependenciesInjection
         // Configure service
         services.AddOcelot()
                 .AddDelegatingHandler<SecretHeaderHandler>(global: true)
-                .AddConsul()
+                .AddConsul<ConsulServiceBuilder>()
                 .AddCacheManager(x =>
                 {
                     x.WithJsonSerializer()

@@ -56,7 +56,7 @@ public class Index : PageModel
 
     public async Task<IActionResult> OnPost()
     {
-        var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
+        var context = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl, HttpContext.RequestAborted);
 
         // the user clicked the "cancel" button
         if (Input.Button == "Cancel")
@@ -103,7 +103,7 @@ public class Index : PageModel
                 var loginResult = await _signInManager.PasswordSignInAsync(account.UserName!, Input.Password!, isPersistent: true, lockoutOnFailure: false);
                 if (loginResult.Succeeded)
                 {
-                    await _events.RaiseAsync(new UserLoginSuccessEvent(account!.UserName, account.Id, account.UserName, clientId: context?.Client.ClientId));
+                    await _events.RaiseAsync(new UserLoginSuccessEvent(account!.UserName, account.Id, account.UserName, clientId: context?.Client.ClientId), HttpContext.RequestAborted);
 
                     Telemetry.Metrics.UserLogin(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider);
 
@@ -141,7 +141,7 @@ public class Index : PageModel
                 else
                 {
                     const string error = "invalid credentials";
-                    await _events.RaiseAsync(new UserLoginFailureEvent(account.UserName, error, clientId: context?.Client.ClientId));
+                    await _events.RaiseAsync(new UserLoginFailureEvent(account.UserName, error, clientId: context?.Client.ClientId), HttpContext.RequestAborted);
                     Telemetry.Metrics.UserLoginFailure(context?.Client.ClientId, IdentityServerConstants.LocalIdentityProvider, error);
                     ModelState.AddModelError(string.Empty, Options.InvalidCredentialError);
                 }
@@ -168,7 +168,7 @@ public class Index : PageModel
     private async Task<IActionResult> DenyAuthorization(string? returnUrl)
     {
         // check if we are in the context of an authorization request
-        var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+        var context = await _interaction.GetAuthorizationContextAsync(returnUrl, HttpContext.RequestAborted);
         if (context != null)
         {
             // This "can't happen", because if the ReturnUrl was null, then the context would be null
@@ -177,7 +177,7 @@ public class Index : PageModel
             // if the user cancels, send a result back into IdentityServer as if they 
             // denied the consent (even if this client does not require consent).
             // this will send back an access denied OIDC error response to the client.
-            await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
+            await _interaction.DenyAuthorizationAsync(context, InteractionError.AccessDenied, HttpContext.RequestAborted);
 
             // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
             if (context.IsNativeClient())
