@@ -6,7 +6,7 @@ using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Validation;
-using IdentityModel;
+using Duende.IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -54,7 +54,7 @@ namespace DuendeIdentityServer.Pages.Consent
         public async Task<IActionResult> OnPost()
         {
             // validate return url is still valid
-            var request = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl);
+            var request = await _interaction.GetAuthorizationContextAsync(Input.ReturnUrl, HttpContext.RequestAborted);
             if (request == null) return RedirectToPage("/Home/Error/Index");
 
             ConsentResponse? grantedConsent = null;
@@ -62,10 +62,10 @@ namespace DuendeIdentityServer.Pages.Consent
             // user clicked 'no' - send back the standard 'access_denied' response
             if (Input.Button == "no")
             {
-                grantedConsent = new ConsentResponse { Error = AuthorizationError.AccessDenied };
+                grantedConsent = new ConsentResponse { Error = InteractionError.AccessDenied };
 
                 // emit event
-                await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues));
+                await _events.RaiseAsync(new ConsentDeniedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues), HttpContext.RequestAborted);
                 Telemetry.Metrics.ConsentDenied(request.Client.ClientId, request.ValidatedResources.ParsedScopes.Select(s => s.ParsedName));
             }
             // user clicked 'yes' - validate the data
@@ -88,7 +88,7 @@ namespace DuendeIdentityServer.Pages.Consent
                     };
 
                     // emit event
-                    await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues, grantedConsent.ScopesValuesConsented, grantedConsent.RememberConsent));
+                    await _events.RaiseAsync(new ConsentGrantedEvent(User.GetSubjectId(), request.Client.ClientId, request.ValidatedResources.RawScopeValues, grantedConsent.ScopesValuesConsented, grantedConsent.RememberConsent), HttpContext.RequestAborted);
                     Telemetry.Metrics.ConsentGranted(request.Client.ClientId, grantedConsent.ScopesValuesConsented, grantedConsent.RememberConsent);
                     var denied = request.ValidatedResources.ParsedScopes.Select(s => s.ParsedName).Except(grantedConsent.ScopesValuesConsented);
                     Telemetry.Metrics.ConsentDenied(request.Client.ClientId, denied);
@@ -108,7 +108,7 @@ namespace DuendeIdentityServer.Pages.Consent
                 ArgumentNullException.ThrowIfNull(Input.ReturnUrl, nameof(Input.ReturnUrl));
 
                 // communicate outcome of consent back to identityserver
-                await _interaction.GrantConsentAsync(request, grantedConsent);
+                await _interaction.GrantConsentAsync(request, grantedConsent, HttpContext.RequestAborted);
 
                 // redirect back to authorization endpoint
                 if (request.IsNativeClient() == true)
@@ -133,7 +133,7 @@ namespace DuendeIdentityServer.Pages.Consent
         {
             ArgumentNullException.ThrowIfNull(returnUrl);
 
-            var request = await _interaction.GetAuthorizationContextAsync(returnUrl);
+            var request = await _interaction.GetAuthorizationContextAsync(returnUrl, HttpContext.RequestAborted);
             if (request != null)
             {
                 View = CreateConsentViewModel(request);

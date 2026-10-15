@@ -34,7 +34,11 @@ public class AccountController : BaseApiController
         command.Method = accountMethod;
         var result = await _sender.Send(command);
         result.ThrowIfFailure();
-        return Ok(JToken.Parse(result.Value?.Json.GetRawText()!));
+        return Ok(JToken.Parse(
+            result.Value.Json is JsonElement json
+                ? json.GetRawText()
+                : "null"
+        ));
     }
 
     [HttpPost("verify/{method}")]

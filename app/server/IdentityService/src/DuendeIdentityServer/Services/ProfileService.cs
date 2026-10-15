@@ -1,7 +1,7 @@
 ﻿using Duende.IdentityServer.Extensions;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
-using IdentityModel;
+using Duende.IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 
@@ -18,8 +18,9 @@ public class ProfileService : IProfileService
         _userManager = userManager;
     }
 
-    public async Task GetProfileDataAsync(ProfileDataRequestContext context)
+    public async Task GetProfileDataAsync(ProfileDataRequestContext context, CancellationToken ct)
     {
+        ct.ThrowIfCancellationRequested();
         var sub = context.Subject.GetSubjectId();
         var user = await _userManager.FindByIdAsync(sub);
         if (user == null)
@@ -54,10 +55,12 @@ public class ProfileService : IProfileService
             claims.Remove(existingClaim);
         }
     }
-    public async Task IsActiveAsync(IsActiveContext context)
+    public async Task IsActiveAsync(IsActiveContext context, CancellationToken ct)
     {
+        ct.ThrowIfCancellationRequested();
         var sub = context.Subject.GetSubjectId();
         var user = await _userManager.FindByIdAsync(sub);
         context.IsActive = user?.IsActive ?? false;
     }
+
 }
