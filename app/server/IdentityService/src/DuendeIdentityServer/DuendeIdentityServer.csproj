@@ -6,7 +6,7 @@
   <Target Name="CompileTypeScript" />
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>55ba8883-210e-4d88-832e-4676bd759c94</UserSecretsId>
@@ -31,7 +31,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
 
     <!-- ◆ Swagger -->
     <PackageReference Include="Swashbuckle.AspNetCore" />
@@ -46,7 +45,6 @@
     <!-- ◆ Other -->
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
   </ItemGroup>
 
   <ItemGroup>

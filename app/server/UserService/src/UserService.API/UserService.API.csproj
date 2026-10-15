@@ -6,7 +6,7 @@
   <Target Name="CompileTypeScript" />
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>5fbd38f4-9da2-4a02-a5cd-d8fd83de54ff</UserSecretsId>
@@ -31,8 +31,6 @@
     </PackageReference>
     <PackageReference Include="Reinforced.Typings" />
 
-    <!-- ◆ Other -->
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" />
   </ItemGroup>
 
   <!-- API Layer use Application and Infrastructure projects -->
