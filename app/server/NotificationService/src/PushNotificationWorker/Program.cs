@@ -1,16 +1,18 @@
+using Contract.Extension;
 using Contract.Utilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using PushNotificationWorker;
-using PushNotificationWorker.Extensions;
 
 EnvUtility.LoadEnvFile();
 
+const string serviceName = "PushNotificationWorker";
+
 var builder = Host.CreateDefaultBuilder(args)
-    .ConfigureSerilog()
+    .ConfigureLoggingService(serviceName)
     .ConfigureServices((context, services) =>
     {
-        services.AddWorkerServices();
+        services.AddWorkerServices(serviceName);
         services.AddHostedService<Worker>();
     });
 

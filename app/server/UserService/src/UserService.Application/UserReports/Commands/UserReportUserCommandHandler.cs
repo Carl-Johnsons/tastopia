@@ -5,6 +5,7 @@ using UserService.Domain.Entities;
 using UserService.Domain.Errors;
 using UserService.Domain.Responses;
 namespace UserService.Application.UserReports.Commands;
+
 public class UserReportUserCommand : IRequest<Result<UserReportUserResponse?>>
 {
     public Guid ReporterId { get; set; }

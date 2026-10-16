@@ -1,0 +1,58 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <!-- ═══════════════ Contract Dependencies ═══════════════ -->
+  <ItemGroup>
+    <!-- ◆ Cache -->
+    <PackageVersion Include="StackExchange.Redis" Version="2.7.27" />
+    
+		<!-- ◆ Entity Framework Core -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.13" />
+    <PackageVersion Include="MongoDB.EntityFrameworkCore" Version="10.0.4" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    
+		<!-- ◆ Extension -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.13" />
+    
+		<!-- ◆ gRPC -->
+    <PackageVersion Include="Grpc.AspNetCore" Version="2.84.0" />
+    
+		<!-- ◆ Instrumentation -->
+    <PackageVersion Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" Version="3.0.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.19.1" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.19.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.9.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.9.0" />
+    <PackageVersion Include="Serilog.Sinks.OpenTelemetry" Version="4.2.0" />
+    
+		<!-- ◆ JSON -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+    
+		<!-- ◆ Logging -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageVersion Include="Serilog" Version="4.4.0" />
+    
+		<!-- ◆ Message queue -->
+    <PackageVersion Include="MassTransit.RabbitMQ" Version="8.5.11" />
+    <PackageVersion Include="MassTransit" Version="8.5.11" />
+    
+		<!-- ◆ Retry -->
+    <PackageVersion Include="Polly" Version="8.8.0" />
+    
+		<!-- ◆ Service Discovery -->
+    <PackageVersion Include="Consul" Version="1.7.14.1" />
+    
+		<!-- ◆ SignalR client -->
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.13" />
+
+    <!-- ◆ TypeScript Generator -->
+    <PackageVersion Include="Reinforced.Typings" Version="1.6.7" />
+
+    <!-- ◆ Other -->
+    <PackageVersion Include="DotNetEnv" Version="3.2.0" />
+  </ItemGroup>
+</Project>

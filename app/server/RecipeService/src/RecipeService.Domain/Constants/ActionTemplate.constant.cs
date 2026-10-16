@@ -1,5 +1,6 @@
 ﻿using Contract.Constants;
 namespace RecipeService.Domain.Constants;
+
 public static class ActionTemplateConstant
 {
     public static readonly List<ActionTemplate> Data = [

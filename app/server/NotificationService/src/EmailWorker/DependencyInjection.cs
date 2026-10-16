@@ -1,4 +1,5 @@
-﻿using Contract.Common;
+using Contract.Common;
+using Contract.Extension;
 using MassTransit;
 using System.Reflection;
 
@@ -6,8 +7,9 @@ namespace EmailWorker;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddWorkerServices(this IServiceCollection services)
+    public static IServiceCollection AddWorkerServices(this IServiceCollection services, string serviceName = "EmailWorker")
     {
+        services.AddOpenTelemetry(serviceName);
         services.AddMassTransitService();
 
         return services;

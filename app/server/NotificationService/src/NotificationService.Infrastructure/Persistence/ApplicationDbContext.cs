@@ -1,4 +1,5 @@
-﻿using Contract.Utilities;
+using Contract.Extension;
+using Contract.Utilities;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
@@ -35,7 +36,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         var db = DotNetEnv.Env.GetString("DB", "NotificationDB").Trim();
         var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
 
-        optionsBuilder.UseMongoDB(mongoConnectionString, db);
+        var client = MongoDBExtension.CreateTracedMongoClient(mongoConnectionString);
+        optionsBuilder.UseMongoDB(client, db);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -97,7 +99,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
         var db = DotNetEnv.Env.GetString("DB", "NotificationDB").Trim();
         var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
-        var client = new MongoClient(mongoConnectionString);
+        var client = MongoDBExtension.CreateTracedMongoClient(mongoConnectionString);
         return client.GetDatabase(db);
     }
 }

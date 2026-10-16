@@ -8,6 +8,7 @@ using UploadFileService.Application.Utilities;
 using UploadFileService.Domain.Responses;
 
 namespace UploadFileService.Application.Files.Commands;
+
 public record UpdateMultipleImageFileCommand : IRequest<Result<List<FileResponse>?>>
 {
     public List<string>? DeleteUrls { get; init; } = null!;

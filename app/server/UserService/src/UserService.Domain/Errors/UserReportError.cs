@@ -1,5 +1,6 @@
 ﻿using System.Net;
 namespace UserService.Domain.Errors;
+
 public class UserReportError
 {
     public static Error NotFound =>

@@ -3,6 +3,7 @@ using RecipeService.Domain.Responses;
 using Contract.Constants;
 
 namespace RecipeService.Application.ReportReasons.Queries;
+
 public class GetReportReasonsQuery : IRequest<Result<List<ReportReasonResponse>?>>
 {
     public string ReportType { get; set; } = null!;

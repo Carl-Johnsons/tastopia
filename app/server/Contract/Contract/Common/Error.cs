@@ -1,4 +1,5 @@
 ﻿namespace Contract.Common;
+
 public sealed record Error(string Code, int? StatusCode = null, string? Message = null)
 {
     public static readonly Error None = new(string.Empty);

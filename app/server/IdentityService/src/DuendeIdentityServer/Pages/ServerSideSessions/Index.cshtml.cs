@@ -46,7 +46,7 @@ namespace DuendeIdentityServer.Pages.ServerSideSessions
                     DisplayName = DisplayNameFilter,
                     SessionId = SessionIdFilter,
                     SubjectId = SubjectIdFilter
-                });
+                }, HttpContext.RequestAborted);
             }
         }
 
@@ -60,7 +60,7 @@ namespace DuendeIdentityServer.Pages.ServerSideSessions
             await _sessionManagementService.RemoveSessionsAsync(new RemoveSessionsContext
             {
                 SessionId = SessionId,
-            });
+            }, HttpContext.RequestAborted);
             return RedirectToPage("/ServerSideSessions/Index", new { Token, DisplayNameFilter, SessionIdFilter, SubjectIdFilter, Prev });
         }
     }

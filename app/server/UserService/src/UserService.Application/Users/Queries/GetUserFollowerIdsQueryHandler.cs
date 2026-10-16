@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using UserService.Domain.Errors;
 namespace UserService.Application.Users.Queries;
+
 public class GetUserFollowerIdsQuery : IRequest<Result<List<Guid>?>>
 {
     public Guid? AccountId { get; set; }

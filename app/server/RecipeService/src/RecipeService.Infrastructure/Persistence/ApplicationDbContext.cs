@@ -1,3 +1,4 @@
+using Contract.Extension;
 using Contract.Utilities;
 using DnsClient.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -47,10 +48,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         EnvUtility.LoadEnvFile();
         var db = DotNetEnv.Env.GetString("DB", "RecipeDB").Trim();
         var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
+        var client = MongoDBExtension.CreateTracedMongoClient(mongoConnectionString);
 
         _logger.LogInformation($"DB Connection string: {mongoConnectionString}");
-
-        optionsBuilder.UseMongoDB(mongoConnectionString, db);
+        optionsBuilder.UseMongoDB(client, db);
     }
 
     public async Task SeedDb(IServiceProvider serviceProvider)
@@ -120,7 +121,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
         var db = DotNetEnv.Env.GetString("DB", "RecipeDB").Trim();
         var mongoConnectionString = EnvUtility.GetMongoDBConnectionString();
-        var client = new MongoClient(mongoConnectionString);
+        var client = MongoDBExtension.CreateTracedMongoClient(mongoConnectionString);
         return client.GetDatabase(db);
     }
 }

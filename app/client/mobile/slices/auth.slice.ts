@@ -12,6 +12,7 @@ export enum ROLE {
 export interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
+  idToken: string | null;
   role: ROLE | null;
   isVerifyingAccount: boolean;
   verifyIdentifier: string | null;
@@ -29,6 +30,7 @@ export type SaveAuthDataAction = {
 const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
+  idToken: null,
   role: null,
   isVerifyingAccount: false,
   verifyIdentifier: null,
@@ -40,6 +42,7 @@ const initialState: AuthState = {
 
 export const selectAccessToken = () => useAppSelector(state => state.auth.accessToken);
 export const selectRefreshToken = () => useAppSelector(state => state.auth.refreshToken);
+export const selectIdToken = () => useAppSelector(state => state.auth.idToken);
 export const selectRole = () => useAppSelector(state => state.auth.role);
 export const selectIsVerifyingAccount = () =>
   useAppSelector(state => state.auth.isVerifyingAccount);
