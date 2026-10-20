@@ -76,14 +76,9 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.Entity<AdminActivityLog>(entity =>
         {
             entity.Property(e => e.ActivityType)
-                  .HasConversion(typeof(string));
+                  .HasConversion<string>();
             entity.Property(e => e.EntityType)
-                  .HasConversion(typeof(string));
-            entity.Property(e => e.SecondaryEntityType)
-                  .HasConversion(
-                      v => v.HasValue ? v.Value.ToString() : null,  // convert enum to string (or null)
-                      v => string.IsNullOrEmpty(v) ? (ActivityEntityType?)null : Enum.Parse<ActivityEntityType>(v) // convert string back to enum
-                  );
+                  .HasConversion<string>();
         });
     }
     public IMongoDatabase GetDatabase()
