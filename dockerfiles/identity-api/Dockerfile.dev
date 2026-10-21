@@ -1,6 +1,6 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER app
 EXPOSE 80
 EXPOSE 443
@@ -11,6 +11,8 @@ WORKDIR /src
 # Copy pre-build lib
 COPY ["./data/nuget", "./nuget"]
 
+COPY ["./app/server/IdentityService/Directory.Packages.props", "./"]
+COPY ["./app/server/IdentityService/Directory.Build.targets", "./"]
 COPY ["./app/server/IdentityService/src/DuendeIdentityServer/DuendeIdentityServer.csproj", "DuendeIdentityServer/"]
 COPY ["./app/server/IdentityService/src/IdentityService.Application/IdentityService.Application.csproj", "IdentityService.Application/"]
 COPY ["./app/server/IdentityService/src/IdentityService.Domain/IdentityService.Domain.csproj", "IdentityService.Domain/"]

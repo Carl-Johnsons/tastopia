@@ -8,6 +8,7 @@ using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using UserProto;
 namespace RecipeService.Application.Activities;
+
 public class AdminGetUserActivityQuery : IRequest<Result<PaginatedUserActivityListResponse?>>
 {
     public int? Skip { get; set; }

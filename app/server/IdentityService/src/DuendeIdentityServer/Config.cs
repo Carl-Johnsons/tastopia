@@ -1,7 +1,6 @@
 ﻿using Contract.Utilities;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Models;
-using DuendeIdentityServer.Services;
 
 namespace DuendeIdentityServer;
 
@@ -54,6 +53,7 @@ public static class Config
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.LocalApi.ScopeName,
                     },
+                    CoordinateLifetimeWithUserSession = true
                 },
                 new Client
                 {
@@ -79,6 +79,7 @@ public static class Config
                         IdentityServerConstants.StandardScopes.Email,
                         IdentityServerConstants.LocalApi.ScopeName,
                     },
+                    CoordinateLifetimeWithUserSession = true
                 }
             ];
         }

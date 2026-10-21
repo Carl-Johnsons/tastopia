@@ -1,6 +1,7 @@
 import axios from "axios";
 import { auth } from "@/auth";
 import { API_URI, CLIENT_BASE_URL } from "./api";
+import { propagation, context } from "@opentelemetry/api";
 
 const defaultHeaders = {
   "Content-Type": "application/json"
@@ -35,6 +36,9 @@ protectedAxiosInstance.interceptors.request.use(
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
+
+    config.headers = config.headers ?? {};
+    propagation.inject(context.active(), config.headers);
     return config;
   },
   error => {

@@ -1,4 +1,5 @@
 ﻿namespace RecipeService.Domain.Constants;
+
 public class ReportReasonData
 {
     public static List<RecipeReason> RecipeReportReasons =

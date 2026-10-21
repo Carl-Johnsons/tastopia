@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace UploadFileService.Application.Files.Commands;
+
 public record DeleteMultipleImageFileCommand : IRequest<Result>
 {
     [Required]

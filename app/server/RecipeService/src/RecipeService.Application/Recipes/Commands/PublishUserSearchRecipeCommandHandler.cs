@@ -2,6 +2,7 @@
 using RecipeService.Domain.Errors;
 
 namespace RecipeService.Application.Recipes.Commands;
+
 public class PublishUserSearchRecipeCommand : IRequest<Result<string?>>
 {
     public Guid AccountId { get; init; }

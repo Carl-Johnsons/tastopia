@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using UserService.Domain.Errors;
 using UserService.Domain.Responses;
 namespace RecipeService.Application.Reports.Commands;
+
 public record MarkReportCommand : IRequest<Result<AdminMarkReportResponse?>>
 {
     public Guid ReportId { get; set; }

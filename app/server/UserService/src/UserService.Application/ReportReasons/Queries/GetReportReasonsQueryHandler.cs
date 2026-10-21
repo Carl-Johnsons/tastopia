@@ -3,6 +3,7 @@ using UserService.Domain.Errors;
 using UserService.Domain.Responses;
 
 namespace UserService.Application.ReportReasons.Queries;
+
 public class GetReportReasonsQuery : IRequest<Result<List<ReportReasonResponse>?>>
 {
     public string Language { get; set; } = null!;

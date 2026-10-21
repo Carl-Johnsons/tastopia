@@ -1,0 +1,36 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <!-- ═══════════════ Gateway Dependencies ═══════════════ -->
+  <ItemGroup>
+    <!-- ◆ Cache -->
+    <PackageVersion Include="CacheManager.Serialization.Json" Version="3.0.0" />
+    <PackageVersion Include="CacheManager.StackExchange.Redis" Version="3.0.0" />
+
+    <!-- ◆ Identity -->
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.13" />
+
+    <!-- ◆ Logging -->
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageVersion Include="Serilog" Version="4.4.0" />
+
+    <!-- ◆ Ocelot -->
+    <PackageVersion Include="Ocelot" Version="25.0.1" />
+    <PackageVersion Include="Ocelot.Cache.CacheManager" Version="25.0.0" />
+    <PackageVersion Include="Ocelot.Discovery.Consul" Version="25.0.1" />
+
+    <!-- ◆ Swagger -->
+    <PackageVersion Include="MMLib.SwaggerForOcelot" Version="11.0.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore.Swagger" Version="10.3.0" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="10.3.0" />
+
+    <!-- ◆ Other -->
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.13" />
+    <PackageVersion Include="DotNetEnv" Version="3.2.0" />
+
+    <!-- ═══════════════ Transitive package ═══════════════ -->
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+  </ItemGroup>
+</Project>

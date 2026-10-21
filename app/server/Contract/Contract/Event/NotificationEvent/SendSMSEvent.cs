@@ -1,6 +1,7 @@
 ﻿using MassTransit;
 using System.ComponentModel.DataAnnotations;
 namespace Contract.Event.NotificationEvent;
+
 [EntityName("SendSMSEvent")]
 public class SendSMSEvent
 {

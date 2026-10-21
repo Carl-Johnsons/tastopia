@@ -1,6 +1,6 @@
 ﻿using Contract.Constants;
-using IdentityModel.Client;
-using IdentityService.Infrastructure.Utilities;
+using Duende.IdentityModel.Client;
+using IdentityService.Application.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import * as Linking from "expo-linking";
+import { enableCiMode } from "@/utils/telemetry";
 import i18n from "@/i18n/i18next";
 import { useFonts } from "expo-font";
 import { Provider } from "react-redux";
@@ -47,6 +49,26 @@ const RootLayout = () => {
 
     if (fontsLoaded) SplashScreen.hideAsync();
   }, [fontsLoaded, error]);
+
+  useEffect(() => {
+    const handleUrl = (url: string | null) => {
+      if (!url) return;
+      const parsed = Linking.parse(url);
+
+      if (parsed.queryParams?.ci === "true") {
+        enableCiMode({
+          traceId: parsed.queryParams?.traceId as string | undefined,
+          testName: parsed.queryParams?.test as string | undefined,
+          env: parsed.queryParams?.env as string | undefined,
+          runId: parsed.queryParams?.runId as string | undefined
+        });
+      }
+    };
+
+    Linking.getInitialURL().then(handleUrl);
+    const subscription = Linking.addEventListener("url", event => handleUrl(event.url));
+    return () => subscription.remove();
+  }, []);
 
   if (!fontsLoaded && !error) return null;
 

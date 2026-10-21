@@ -1,10 +1,10 @@
 ﻿using Contract.Constants;
 using Contract.DTOs;
 using Contract.Utilities;
-using MongoDB.Driver;
 using UserService.Domain.Responses;
 
 namespace UserService.Application.UserReports.Queries;
+
 public record GetUserReportsQuery : IRequest<Result<PaginatedAdminUserReportListResponse?>>
 {
     public string Lang { get; init; } = "en";

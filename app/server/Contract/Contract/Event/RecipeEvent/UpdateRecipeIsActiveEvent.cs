@@ -1,6 +1,7 @@
 ﻿using MassTransit;
 using System.ComponentModel.DataAnnotations;
 namespace Contract.Event.RecipeEvent;
+
 [EntityName("UpdateRecipeIsActiveEvent")]
 public class UpdateRecipeIsActiveEvent
 {

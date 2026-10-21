@@ -6,6 +6,7 @@ using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using UserProto;
 namespace RecipeService.Application.Recipes.Queries;
+
 public class AdminGetRecipesQuery : IRequest<Result<PaginatedAdminRecipeListResponse?>>
 {
     public PaginatedDTO paginatedDTO { get; set; } = null!;

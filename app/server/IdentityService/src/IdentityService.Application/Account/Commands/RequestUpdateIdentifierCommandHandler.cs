@@ -1,5 +1,5 @@
 ﻿using Contract.Constants;
-using IdentityService.Infrastructure.Utilities;
+using IdentityService.Application.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

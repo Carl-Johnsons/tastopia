@@ -4,7 +4,7 @@
 using Duende.IdentityServer;
 using Duende.IdentityServer.Events;
 using Duende.IdentityServer.Services;
-using IdentityModel;
+using Duende.IdentityModel;
 using IdentityService.Application.Account.Commands;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -124,8 +124,8 @@ namespace DuendeIdentityServer.Pages.ExternalLogin
             await HttpContext.SignOutAsync(IdentityServerConstants.ExternalCookieAuthenticationScheme);
 
             // check if external login is in the context of an OIDC request
-            var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
-            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user!.Id, user.UserName, true, context?.Client.ClientId));
+            var context = await _interaction.GetAuthorizationContextAsync(returnUrl, HttpContext.RequestAborted);
+            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, providerUserId, user!.Id, user.UserName, true, context?.Client.ClientId), HttpContext.RequestAborted);
             Telemetry.Metrics.UserLogin(context?.Client.ClientId, provider!);
 
             if (context != null)

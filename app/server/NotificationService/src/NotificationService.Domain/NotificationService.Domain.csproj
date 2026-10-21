@@ -1,23 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="MassTransit" Version="8.2.2" />
-		<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.2" />
-		<PackageReference Include="MongoDB.EntityFrameworkCore" Version="8.2.1" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.5" />
-	</ItemGroup>
-	<ItemGroup>
-		<Reference Include="Contract">
-			<HintPath Condition="Exists('..\..\..\Contract\Contract\bin\Release\net8.0\Contract.dll')">..\..\..\Contract\Contract\bin\Release\net8.0\Contract.dll</HintPath>
-			<HintPath Condition="Exists('..\..\..\Contract\Contract\Published\Contract.dll')">..\..\..\Contract\Contract\Published\Contract.dll</HintPath>
-			<HintPath Condition="Exists('..\Contract\Contract.dll')">..\Contract\Contract.dll</HintPath>
-		</Reference>
-	</ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseContractReference>true</UseContractReference>
+  </PropertyGroup>
+
+  <!-- ═══════════════ Domain Dependencies ═══════════════  -->
+  <ItemGroup>
+    <!-- ◆ Entity Framework Core -->
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="MongoDB.EntityFrameworkCore" />
+
+    <!-- ◆ JSON -->
+    <PackageReference Include="Newtonsoft.Json" />
+
+    <!-- ◆ Message queue -->
+    <PackageReference Include="MassTransit" />
+    <PackageReference Include="MassTransit.RabbitMQ" />
+
+    <!-- ◆ SignalR client  -->
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
+  </ItemGroup>
+
 </Project>

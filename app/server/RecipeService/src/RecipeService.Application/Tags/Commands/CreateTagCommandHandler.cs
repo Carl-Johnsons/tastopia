@@ -11,6 +11,7 @@ using RecipeService.Domain.Errors;
 using RecipeService.Domain.Responses;
 using UploadFileProto;
 namespace RecipeService.Application.Tags.Commands;
+
 public class CreateTagCommand : IRequest<Result<TagResponse?>>
 {
     public string Code { get; set; } = null!;

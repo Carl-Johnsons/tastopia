@@ -1,4 +1,4 @@
-﻿using Contract.Extension;
+using Contract.Extension;
 using Contract.Utilities;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
@@ -20,9 +20,14 @@ public static class DependenciesInjection
         var services = builder.Services;
         var host = builder.Host;
 
-        builder.ConfigureCommonAPIServices();
+        const string serviceName = "SignalRService";
 
-        services.AddCommonInfrastructureServices("SignalRHub");
+        builder.ConfigureLoggingService(serviceName)
+               .ConfigureKestrel()
+               .ConfigureLivenessCheck();
+
+        services.AddExternalInfrastructureServices()
+                .AddOpenTelemetry(serviceName);
 
         var apiGatewayUrl = DotNetEnv.Env.GetString("API_GATEWAY_URL", "https://localhost:7000");
 
@@ -59,14 +64,27 @@ public static class DependenciesInjection
     public static WebApplication UseChatHubService(this WebApplication app)
     {
         // Set endpoint for a chat hub
-        app.UseSerilogServices();
-        app.UseConsulServiceDiscovery(DotNetEnv.Env.GetString("CONSUL_SIGNALR", "Not Found"), IsSecure: false);
-        app.UseCors("AllowSPAClientOrigin");
+        app.UseInfrastructureServices();
+
         app.UseRouting();
+        app.UseCors("AllowSPAClientOrigin");
         app.UseAuthentication();
         app.UseAuthorization();
+
         app.MapHub<HubServer>(HUB_ENDPOINT);
         app.UseCustomHealthCheck();
+
         return app;
     }
+
+    private static IServiceCollection AddExternalInfrastructureServices(this IServiceCollection services)
+    {
+        services.AddServiceDiscoveryService()
+                .AddMessagingService("SignalRHub");
+        return services;
+    }
+
+    public static WebApplication UseInfrastructureServices(this WebApplication app)
+        => app.UseLoggingServices()
+               .UseServiceDiscoveryService(DotNetEnv.Env.GetString("CONSUL_SIGNALR", "Not Found"));
 }

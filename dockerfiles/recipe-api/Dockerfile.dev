@@ -1,6 +1,6 @@
 #See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER app
 EXPOSE 80
 EXPOSE 443
@@ -11,15 +11,17 @@ WORKDIR /src
 # Copy pre-build lib
 COPY ["./data/nuget", "./nuget"]
 
-COPY ["./app/server/UserService/src/UserService.API/UserService.API.csproj", "UserService.API/"]
-COPY ["./app/server/UserService/src/UserService.Application/UserService.Application.csproj", "UserService.Application/"]
-COPY ["./app/server/UserService/src/UserService.Infrastructure/UserService.Infrastructure.csproj", "UserService.Infrastructure/"]
-COPY ["./app/server/UserService/src/UserService.Domain/UserService.Domain.csproj", "UserService.Domain/"]
+COPY ["./app/server/RecipeService/Directory.Packages.props", "./"]
+COPY ["./app/server/RecipeService/Directory.Build.targets", "./"]
+COPY ["./app/server/RecipeService/src/RecipeService.API/RecipeService.API.csproj", "RecipeService.API/"]
+COPY ["./app/server/RecipeService/src/RecipeService.Application/RecipeService.Application.csproj", "RecipeService.Application/"]
+COPY ["./app/server/RecipeService/src/RecipeService.Infrastructure/RecipeService.Infrastructure.csproj", "RecipeService.Infrastructure/"]
+COPY ["./app/server/RecipeService/src/RecipeService.Domain/RecipeService.Domain.csproj", "RecipeService.Domain/"]
 COPY ["./app/server/Contract/Contract/Published", "Contract/"]
 
 # Building the services
-WORKDIR "/src/UserService.API"
+WORKDIR "/src/RecipeService.API"
 RUN dotnet restore --packages "../nuget" --verbosity normal
-COPY ["./app/server/UserService/src","/src"]
+COPY ["./app/server/RecipeService/src","/src"]
 
 ENTRYPOINT ["dotnet", "watch", "run", "--no-restore"]

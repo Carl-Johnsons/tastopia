@@ -1,21 +1,28 @@
-﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Serilog;
 
 namespace SignalRHub.Filters;
 
 public class GlobalLoggingFilter : IHubFilter
 {
+    private readonly ILogger<GlobalLoggingFilter> _logger;
+
+    public GlobalLoggingFilter(ILogger<GlobalLoggingFilter> logger)
+    {
+        _logger = logger;
+    }
+
 #pragma warning disable CS8613 // Nullability of reference types in return type doesn't match implicitly implemented member.
     public async ValueTask<object> InvokeMethodAsync(
 #pragma warning restore CS8613 // Nullability of reference types in return type doesn't match implicitly implemented member.
     HubInvocationContext invocationContext, Func<HubInvocationContext, ValueTask<object>> next)
     {
-        Log.Information($"Calling hub method '{invocationContext.HubMethodName}'");
+        _logger.LogInformation("Calling hub method '{HubMethodName}'", invocationContext.HubMethodName);
         // Log the parameters
         if (invocationContext.HubMethodArguments != null && invocationContext.HubMethodArguments.Count > 0)
         {
-            Log.Information($"Parameters: {JsonConvert.SerializeObject(invocationContext.HubMethodArguments, Formatting.Indented)}");
+            _logger.LogInformation("Parameters: {Parameters}", JsonConvert.SerializeObject(invocationContext.HubMethodArguments, Formatting.Indented));
         }
         try
         {
@@ -23,7 +30,7 @@ public class GlobalLoggingFilter : IHubFilter
         }
         catch (Exception ex)
         {
-            Log.Information($"Exception calling '{invocationContext.HubMethodName}': {ex}");
+            _logger.LogError(ex, "Exception calling '{HubMethodName}': {Message}", invocationContext.HubMethodName, ex.Message);
             throw;
         }
     }

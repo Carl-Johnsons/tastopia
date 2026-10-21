@@ -3,7 +3,7 @@ using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Google.Protobuf.Collections;
 using IdentityService.Application.Account.Commands;
-using IdentityService.Infrastructure.Utilities;
+using IdentityService.Application.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -149,7 +149,7 @@ public class Index : PageModel
     private async Task<IActionResult> DenyAuthorization(string? returnUrl)
     {
         // check if we are in the context of an authorization request
-        var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
+        var context = await _interaction.GetAuthorizationContextAsync(returnUrl, HttpContext.RequestAborted);
         if (context != null)
         {
             // This "can't happen", because if the ReturnUrl was null, then the context would be null
@@ -158,7 +158,7 @@ public class Index : PageModel
             // if the user cancels, send a result back into IdentityServer as if they 
             // denied the consent (even if this client does not require consent).
             // this will send back an access denied OIDC error response to the client.
-            await _interaction.DenyAuthorizationAsync(context, AuthorizationError.AccessDenied);
+            await _interaction.DenyAuthorizationAsync(context, InteractionError.AccessDenied, HttpContext.RequestAborted);
 
             // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
             if (context.IsNativeClient())

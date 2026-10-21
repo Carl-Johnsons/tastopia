@@ -1,4 +1,5 @@
 ﻿namespace UserService.Domain.Responses;
+
 public class AdminUserReportDetailResponse
 {
     public Guid ReportId { get; set; }

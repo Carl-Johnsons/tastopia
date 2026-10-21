@@ -1,0 +1,8 @@
+<Project>
+  <ItemGroup Condition="'$(UseContractReference)' == 'true'">
+    <Reference Include="Contract">
+      <HintPath Condition="Exists('..\..\..\Contract\Contract\Published\Contract.dll')">..\..\..\Contract\Contract\Published\Contract.dll</HintPath>
+      <HintPath Condition="Exists('..\Contract\Contract.dll')">..\Contract\Contract.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>

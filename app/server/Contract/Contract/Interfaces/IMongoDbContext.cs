@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 
 namespace Contract.Interfaces;
+
 public interface IMongoDbContext : IDisposable
 {
     DbContext Instance { get; }

@@ -1,7 +1,7 @@
 // Copyright (c) Duende Software. All rights reserved.
 // See LICENSE in the project root for license information.
 
-using Duende.IdentityServer;
+using Duende.IdentityServer.Licensing;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Reflection;
@@ -11,7 +11,7 @@ namespace DuendeIdentityServer.Pages
     [AllowAnonymous]
     public class Index : PageModel
     {
-        public Index(IdentityServerLicense? license = null)
+        public Index(LicenseInformation? license = null)
         {
             License = license;
         }
@@ -23,6 +23,6 @@ namespace DuendeIdentityServer.Pages
                 ?.InformationalVersion.Split('+').First()
                 ?? "unavailable";
         }
-        public IdentityServerLicense? License { get; }
+        public LicenseInformation? License { get; }
     }
 }

@@ -1,10 +1,8 @@
-﻿using Duende.IdentityServer;
 using Duende.IdentityServer.Configuration;
 using Duende.IdentityServer.ResponseHandling;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Validation;
 using Microsoft.AspNetCore.WebUtilities;
-using Serilog;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -12,23 +10,27 @@ namespace DuendeIdentityServer.Services;
 
 public class CustomAuthorizeInteractionResponseGenerator : AuthorizeInteractionResponseGenerator
 {
-    public CustomAuthorizeInteractionResponseGenerator(IdentityServerOptions options, IClock clock, ILogger<AuthorizeInteractionResponseGenerator> logger, IConsentService consent, IProfileService profile) : base(options, clock, logger, consent, profile)
+    public CustomAuthorizeInteractionResponseGenerator(
+        IdentityServerOptions options,
+        TimeProvider timeProvider,
+        ILogger<AuthorizeInteractionResponseGenerator> logger,
+        IConsentService consent,
+        IProfileService profile)
+        : base(options, timeProvider, logger, consent, profile)
     {
-
     }
-    protected override async Task<InteractionResponse> ProcessLoginAsync(ValidatedAuthorizeRequest request)
+
+    protected override async Task<InteractionResponse> ProcessLoginAsync(ValidatedAuthorizeRequest request, CancellationToken ct)
     {
-        var response = await base.ProcessLoginAsync(request);
+        var response = await base.ProcessLoginAsync(request, ct);
 
         if (response.IsLogin && request.ClientId == "react.native")
         {
-            Log.Information("Login to provider instead default login page:)");
+            Logger.LogInformation("Login to provider instead default login page:)");
 
             var externalProvider = "Google";
-            var codeChallenge = request.Raw.Get("code_challenge");
-            var codeChallengeMethod = request.Raw.Get("code_challenge_method");
 
-            Log.Information("Authorize request details: ClientId={ClientId}, RedirectUri={RedirectUri}, ResponseType={ResponseType}, State={State}, RequestedScopes={RequestedScopes}",
+            Logger.LogInformation("Authorize request details: ClientId={ClientId}, RedirectUri={RedirectUri}, ResponseType={ResponseType}, State={State}, RequestedScopes={RequestedScopes}",
                            request.ClientId, request.RedirectUri, request.ResponseType, request.State, string.Join(", ", request.RequestedScopes));
 
             var callbackPath = "/connect/authorize/callback";
@@ -45,7 +47,7 @@ public class CustomAuthorizeInteractionResponseGenerator : AuthorizeInteractionR
 
             var returnUrl = QueryHelpers.AddQueryString(callbackPath, qsParams);
 
-            Log.Information("Constructed Return URL: {ReturnUrl}", returnUrl.ToString());
+            Logger.LogInformation("Constructed Return URL: {ReturnUrl}", returnUrl.ToString());
 
             var externalParams = new Dictionary<string, string?>
             {
@@ -53,7 +55,7 @@ public class CustomAuthorizeInteractionResponseGenerator : AuthorizeInteractionR
                 ["returnUrl"] = returnUrl
             };
             var redirectUrl = QueryHelpers.AddQueryString("/ExternalLogin/Challenge", externalParams);
-            Log.Information("Constructed redirect Url: " + redirectUrl);
+            Logger.LogInformation("Constructed redirect Url: {RedirectUrl}", redirectUrl);
 
             // Redirect to the external provider
             return new InteractionResponse
